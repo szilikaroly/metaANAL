@@ -40,7 +40,8 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
 - **S03 keresés**: minden koncepcióblokk lefedett? MeSH + szabadszavas? szintaxis-hibák (zárójelek, csonkolás, mezőkódok)?
   legalább 2 releváns adatbázis + regiszterek? dátum és találatszám naplózva? Ismert kulcsvizsgálatokat megtalál-e a keresés
   (próbáld ki PubMed MCP-vel)?
-- **S04 szűrés**: PRISMA 2020-számok összeadódnak? (A1 + A2 − D1 duplikátum − D2 automatikusan kizárt − D3 egyéb ok = B szűrt;
+- **S04 szűrés**: futtasd: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (vagy `--composer prisma-flow.json`);
+  a P-kódú hibák blocker megállapítások. PRISMA 2020-számok összeadódnak? (A1 + A2 − D1 duplikátum − D2 automatikusan kizárt − D3 egyéb ok = B szűrt;
   B − C = E teljes szövegre keresett; E − F nem elérhető = G értékelt; G − H kizárt (okokkal) = J bevont közlemény; a bevont
   **vizsgálatok** száma I ≤ J, külön számolva — lásd `02_szures/prisma_folyamat.md`; ha a `composer` plugin `prisma` exportja
   van, a `prisma-flow.json` számait vesd össze). Kizárási okok a teljes szövegnél? Kettős független szűrés dokumentált?
@@ -50,7 +51,8 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
 - **S06 torzítási kockázat**: a vizsgálattípushoz illő eszköz; doménenkénti indoklás; két független értékelő; összesítés.
 - **S07–S12 elemzés**: független újraszámolás a motorral; az eredmény egyezik a riporttal? Érzékenység: FE vs RE,
   DL vs REML, HKSJ vs z, leave-one-out; változik-e a következtetés? k < 5 → HKSJ/PI óvatos értelmezés; k < 10 →
-  funnel-tesztek nem értelmezhetők; OR-nál a klasszikus Egger helyett Harbord/Peters az irányadó; I² ≥ 75% → magyarázott? Alcsoportok előre tervezettek? Meta-regresszió ≥10 vizsgálat/moderátor?
+  funnel-tesztek nem értelmezhetők; OR-nál a klasszikus Egger helyett Harbord/Peters az irányadó (a riport mindkettőt
+  kiírja); az LFK/Doi-plot csak heurisztika; kiugró vizsgálatok: `--outliers` (dmetar-szabály) újraillesztéssel; I² ≥ 75% → magyarázott? Alcsoportok előre tervezettek? Meta-regresszió ≥10 vizsgálat/moderátor?
 - **S13 bizonyosság**: a GRADE-leminősítések indokoltak és konzisztensek az adatokkal (RoB-arány, I²/PI, CI vs MCID, funnel).
 - **S14 kézirat**: minden szám a szövegben = táblázat = ábra = `results.json`; PRISMA 2020 tételek; óvatos nyelvezet;
   hivatkozások léteznek (PubMed/DOI ellenőrzés).

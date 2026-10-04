@@ -97,9 +97,25 @@ def _schema_hash(schema=None):
     return hashlib.sha256((schema if schema is not None else _read_schema()).encode("utf-8")).hexdigest()
 
 
+# a motor szabálykészletei: (modul, szakasz) → a kb decision_rule táblájába kerülnek
+ENGINE_RULESETS = (("validate", "S05"), ("prisma", "S04"))
+
+
 def _engine_rules():
-    from .validate import RULES
-    return RULES
+    """A motor összes szabálya egy szótárban: kód → (súlyosság, cím, teendő, forrás)."""
+    out = {}
+    for mod, _stage in ENGINE_RULESETS:
+        out.update(__import__("metaelemzes." + mod, fromlist=["RULES"]).RULES)
+    return out
+
+
+def _engine_rule_meta():
+    """kód → (szakasz, modul) — melyik szakaszhoz és melyik motormodulhoz tartozik a szabály."""
+    meta = {}
+    for mod, stage in ENGINE_RULESETS:
+        for code in __import__("metaelemzes." + mod, fromlist=["RULES"]).RULES:
+            meta[code] = (stage, mod)
+    return meta
 
 
 def _seed_fingerprint():
@@ -110,7 +126,7 @@ def _seed_fingerprint():
         with open(f, "rb") as fh:
             h.update(os.path.basename(f).encode("utf-8"))
             h.update(fh.read())
-    h.update(b"\0validate.RULES\0")
+    h.update(b"\0engine.RULES\0")
     h.update(json.dumps(_engine_rules(), sort_keys=True, ensure_ascii=False, default=str).encode("utf-8"))
     return h.hexdigest()
 
@@ -320,12 +336,15 @@ def build(path=None, keep_fulltext=True):
             raise KBError("A seed-szabály azonosítója ütközik a motor validálási szabályával: %s (%s) — a "
                           "V-kódok a metaelemzes/validate.py RULES-ból jönnek." % (
                               ", ".join(clash), ", ".join(seed_ids["decision_rule"][c] for c in clash)))
+        rmeta = _engine_rule_meta()
         for code, (sev, title, advice, src) in rules.items():
+            stage, mod = rmeta[code]
+            kind = "Adatvalidálási" if mod == "validate" else "PRISMA-számellenőrzési"
             cur.execute("INSERT INTO decision_rule (rule_id, stage_id, applies_to, condition, recommendation, "
                         "rationale, strength, machine_check, source_ids, locator) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                        (code, "S05", "engine", title, advice, "Adatvalidálási szabály (%s)" % sev,
+                        (code, stage, "engine", title, advice, "%s szabály (%s)" % (kind, sev),
                          "must" if sev == "error" else ("should" if sev == "warning" else "consider"),
-                         "metaelemzes.validate:%s" % code, "engine", src))
+                         "metaelemzes.%s:%s" % (mod, code), "engine", src))
         if keep_fulltext:
             # a seed-ből törölt/átnevezett, teljes szöveg nélküli (nem felhasználói) források eltávolítása
             keep = list(seed_ids.get("source", {}))

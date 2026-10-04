@@ -38,7 +38,8 @@ a tervdokumentumokat magyarul írod (a PICO és a keresőkifejezések angolul is
    (pl. Cochrane RCT-szűrő), adatbázisonkénti szintaxis-vázlat (PubMed, Embase, CENTRAL, Web of Science/Scopus),
    regiszterek (ClinicalTrials.gov, WHO ICTRP), szürke irodalom, hivatkozás-követés. A PRISMA-S elvei szerint.
 5. **Elemzési terv (S07–S12)** — minden pontnál `kb rules`-ból indulj, és a terv sorában tüntesd fel a szabály-ID-t:
-   - hatásméret (MD vs SMD; OR vs RR vs RD; arányoknál transzformáció), irány-konvenció (mi a „jobb”);
+   - hatásméret (MD vs SMD [Hedges g; Glass-delta csak indokolt esetben]; egycsoportos/páros elrendezés: MC/SMCC;
+     OR vs RR vs RD; arányoknál transzformáció és visszatranszformálás), irány-konvenció (mi a „jobb”);
    - modell: véletlen hatás alapértelmezésben, ha klinikai/módszertani heterogenitás várható; τ²: REML (vagy PM);
      CI: HKSJ (k kicsi → óvatosság, ad hoc változat érzékenységi elemzésként); predikciós intervallum;
    - ritka események: MH vagy Peto (feltételekkel), kettős-nulla vizsgálatok kezelése;
@@ -48,12 +49,15 @@ a tervdokumentumokat magyarul írod (a PICO és a keresőkifejezések angolul is
    - érzékenység: magas RoB kizárása, becsült/imputált adatok kizárása, FE vs RE, másik τ²-becslő, leave-one-out;
    - hiányzó adatok kezelése (medián/IQR → átlag/SD: Luo/Wan; SE/CI → SD; változás-SD imputált korrelációval);
    - többkarú vizsgálatok, klaszter-randomizált, keresztezett elrendezés (egységelemzési hibák elkerülése).
-6. **GRADE-terv (S13)**: mely kimenetekre készül Summary of Findings; MCID-források; abszolút hatás alapkockázata.
-7. **Eszközök és hozzáférések (S00)**: `kb checklist PREFLIGHT` és a `tool` tábla alapján állítsd össze, mi kell ehhez a
+6. **Erő és megvalósíthatóság**: a várható k, mintanagyság és heterogenitás mellett becsüld az összesített hatás
+   kimutatásának erejét: `ma.py power --k <k> --effect <d> --n1 <n> --n2 <n> --heterogeneity moderate`
+   (vagy `--target-power 0.8` a szükséges vizsgálatszámhoz) — ez tervezési segédlet, nem döntési küszöb.
+7. **GRADE-terv (S13)**: mely kimenetekre készül Summary of Findings; MCID-források; abszolút hatás alapkockázata.
+8. **Eszközök és hozzáférések (S00)**: `kb checklist PREFLIGHT` és a `tool` tábla alapján állítsd össze, mi kell ehhez a
    projekthez: Claude-konnektorok (PubMed, ClinicalTrials.gov…), intézményi adatbázisok (Embase, Scopus, WoS — Magyarországon
    jellemzően EISZ-en keresztül: ellenőrizendő), szűrőszoftver (Rayyan/Covidence), hivatkozáskezelő (Zotero), API-kulcsok
    (NCBI), regisztráció (PROSPERO). Jelöld, mi érhető el most (próbáld ki: pl. egy PubMed MCP-hívás), és mi hiányzik.
-8. **Naplózás**: minden lényeges döntést rögzíts `project log`-gal (`--kb` a szabály-ID-kkel, `--alternatives` a
+9. **Naplózás**: minden lényeges döntést rögzíts `project log`-gal (`--kb` a szabály-ID-kkel, `--alternatives` a
    mérlegelt lehetőségekkel).
 
 ## Kimenet (ezt add vissza az orkesztrátornak)

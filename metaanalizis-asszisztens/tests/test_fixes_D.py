@@ -418,8 +418,9 @@ class TestBuild(_SeedTmp):
         self.seed_file("rules_a.json", [{"rule_id": "D-SYN-001", "stage_id": "S08", "applies_to": "planner",
                                          "condition": "k<5", "recommendation": "HKSJ", "strength": "should"}])
         counts = kb.build(self.db)
-        self.assertEqual(counts["decision_rule"], 1 + len(validate.RULES))
-        self.assertEqual(counts["engine_rules"], len(validate.RULES))
+        self.assertEqual(counts["decision_rule"], 1 + len(kb._engine_rules()))
+        self.assertEqual(counts["engine_rules"], len(kb._engine_rules()))
+        self.assertTrue(set(validate.RULES) <= set(kb._engine_rules()))
         self.assertEqual(counts["decision_rule"], kb.stats(self.db)["decision_rule"])
 
     def test_failed_build_leaves_db_unchanged(self):

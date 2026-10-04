@@ -62,7 +62,8 @@ Minden szakasz végén hívd a `ma-ellenorzo`-t **checkpoint módban** (add meg:
 fájlok változtak). Tipikus pontok:
 - S03 keresés: stratégia (blokkok, szinonimák, MeSH/Emtree, szűrők), adatbázisonkénti szintaxis, dátum,
   találatszámok a `01_kereses/kereses_naplo.md`-ben.
-- S04 szűrés: PRISMA-számok konzisztenciája, kizárási okok a teljes szövegnél.
+- S04 szűrés: PRISMA-számok konzisztenciája (`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md`, vagy
+  `--composer prisma-flow.json`; P001–P0xx szabályok), kizárási okok a teljes szövegnél.
 - S05 adatkinyerés: `ma.py validate --data … --measure …`; a gyanús tételek (V011 SE/SD, V012 mértékegység,
   V014 szélsőséges hatás) forrás-visszaellenőrzése.
 - S06 RoB: eszköz megfelelősége (RoB 2 RCT-re, ROBINS-I nem randomizáltra, NOS megfigyelésesre, QUADAS-2
@@ -70,7 +71,8 @@ fájlok változtak). Tipikus pontok:
 - S07–S12 elemzés: `ma.py analyze --data … --measure … --project <mappa> --out <mappa>/05_elemzes/<kimenet>`
   (bináris OR-nál a kis-vizsgálat teszt Harbord/Peters, nem a klasszikus Egger);
   az előre tervezett érzékenységi elemzések (`--exclude rob=high`, `--exclude estimated=igen`, FE vs RE,
-  másik τ²-becslő) külön kimeneti mappába.
+  másik τ²-becslő, `--outliers`, `--ci hksj_adhoc`) külön kimeneti mappába. A τ²-becslő alapértelmezése modellenként
+  dől el (RE: REML; IVhet: DL) — a `results.json` minden blokkjában a ténylegesen használt `tau2_method` szerepel.
 - S14 kézirat: PRISMA 2020 (`kb checklist PRISMA2020`), a `report.md` angol Methods-bekezdése kiindulásnak.
 
 ### 3. Értékelés → `ma-ertekelo` (kimenetenként, a következtetések megírása ELŐTT)
