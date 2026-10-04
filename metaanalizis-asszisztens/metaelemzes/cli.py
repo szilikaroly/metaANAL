@@ -268,6 +268,10 @@ def cmd_kb(a):
                               it["snippet"], it["source_id"], it["locator"] or ""))
                     else:
                         print("[#%s] %s %s — %s" % (it["id"], it["source_id"], it["locator"] or "", it["snippet"]))
+            if not any(res.get(s) for s in ("rule", "knowledge", "chunk")):
+                print("Nincs találat: %r (kör: %s%s). Tipp: a teljes szöveg nagyrészt angol nyelvű — próbáld "
+                      "angol kulcsszóval is (pl. 'heterogeneity')." % (
+                          a.query, a.scope, (", forrás: %s" % a.source) if a.source else ""))
     elif a.kb_cmd == "show":
         item = kb.show(a.id, a.db)
         if item is None:
@@ -588,6 +592,15 @@ def main(argv=None):
         parser.parse_args([a.cmd, "-h"])
     try:
         return a.func(a)
+    except BrokenPipeError:
+        # a kimenet olvasója (pl. `| head`) bezárta a csövet: nem programhiba, nincs "HIBA:" üzenet
+        # (a Python-dokumentáció ajánlása: a stdout a /dev/null-ra, hogy a kilépéskori flush se hibázzon)
+        try:
+            devnull = os.open(os.devnull, os.O_WRONLY)
+            os.dup2(devnull, sys.stdout.fileno())
+        except (OSError, ValueError, AttributeError):
+            pass
+        return 1
     except Exception as exc:  # felhasználóbarát hibaüzenet, kód 1
         if os.environ.get("METAELEMZES_DEBUG"):
             raise

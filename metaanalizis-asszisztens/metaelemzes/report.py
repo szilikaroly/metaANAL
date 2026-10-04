@@ -80,6 +80,17 @@ def _p_eq(p):
     return "p " + s if s.startswith("<") else "p = " + s
 
 
+def _col(out, name):
+    """Az oszlop megjelenítési neve (eredeti CSV-fejléc; pipeline 'column_labels'), különben a megadott opció."""
+    lab = (out.get("column_labels") or {}).get(name)
+    return lab if lab else (out.get("options") or {}).get(name)
+
+
+def _sentence(s):
+    """Mondatzáró pont, de nem duplán (pl. 'Otsubo et al.' végű címkénél)."""
+    return s if s.endswith(".") else s + "."
+
+
 def _md(s):
     """Markdown-táblázatcella / felsorolás escape: '|' → '\\|', HTML-tagek semlegesítése, sortörés → szóköz."""
     s = "–" if s is None else str(s)
@@ -285,14 +296,16 @@ def methods_text_en(out):
         else:
             within = "random-effects models with a separate τ² in each subgroup"
         parts.append("Pre-specified subgroup analyses by %s were performed (%s), and differences between subgroups "
-                     "were tested with a χ² test for subgroup differences (Q_between, based on the Wald-type "
-                     "standard errors of the subgroup estimates)." % (o.get("subgroup"), within))
+                     "were tested with a χ² test for subgroup differences (Q_between, based on the %s "
+                     "standard errors of the subgroup estimates)." % (
+                         _col(out, "subgroup"), within,
+                         "IVhet (heterogeneity-inflated)" if sg.get("Q_between_se") == "ivhet" else "Wald-type"))
     mr = out.get("metaregression")
     if mr is not None:
         parts.append("Mixed-effects meta-regression (%s; %s tests) was used to examine the moderator(s) %s." % (
             TAU2_NAMES_EN.get(mr.tau2_method, mr.tau2_method),
             "Knapp–Hartung" if mr.test == "knha" else "Wald-type z",
-            ", ".join(o.get("moderators") or [])))
+            ", ".join(x for x in (_col(out, "moderators") or []) if x not in (out.get("metaregression_dropped") or []))))
     sens = out.get("sensitivity") or {}
     if sens.get("leave_one_out"):
         parts.append("Influence was examined with leave-one-out analyses and influence diagnostics (externally "
@@ -300,7 +313,7 @@ def methods_text_en(out):
     else:
         parts.append("Leave-one-out and influence analyses were not performed (fewer than 3 studies).")
     if sens.get("cumulative"):
-        parts.append("A cumulative meta-analysis ordered by %s was performed." % o.get("cumulative"))
+        parts.append("A cumulative meta-analysis ordered by %s was performed." % _col(out, "cumulative"))
     b = out.get("bias") or {}
     tests = []
     if b.get("egger") is not None:
@@ -457,6 +470,7 @@ def build_report(out, title=None, date=None):
         L.append("| Predikciós intervallum [%d%%, %s] | %s |" % (
             lv, pdf % (pr.pi_df if pr.pi_method != "z" else ""), _pair(bt["pi"][0], bt["pi"][1])))
     h = pr.heterogeneity or {}
+    qp_note = None
     if pr.k >= 2:
         L.append("| Q (df), p | %.2f (%d), %s |" % (pr.Q, pr.Q_df, _p(pr.p_Q)))
         i2ht = h.get("I2_ci_HT")
@@ -470,9 +484,19 @@ def build_report(out, title=None, date=None):
             tci = h.get("tau2_ci_QP")
             L.append("| τ² [%d%% CI, Q-profile] ; τ | %s %s ; %s |" % (
                 lv, _f(pr.tau2, 4), ("[%s; %s]" % (_f(tci[0], 4), _f(tci[1], 4))) if tci else "", _f(pr.tau, 4)))
+            # a Q-profile CI nem a DL (vagy más nem-REML) becslőhöz tartozik: a pontbecslés kívül eshet rajta
+            if tci and pr.tau2 is not None and None not in tci and (
+                    pr.tau2 < tci[0] - 1e-10 * max(1.0, tci[0]) or pr.tau2 > tci[1] + 1e-10 * max(1.0, tci[1])):
+                qp_note = ("A τ²-pontbecslés (%s) és a τ²-alapú I² kívül esik a Q-profile CI-n: a Q-profile CI nem "
+                           "ebből a becslőből származik (a metafor confint() ugyanezt adja). Erős heterogenitásnál a "
+                           "%s alulbecsülheti a τ²-et; érzékenységi elemzésként a REML vagy PM becslő ajánlott."
+                           % (pr.tau2_method or "?", pr.tau2_method or "becslő"))
     if bt.get("scale_note"):
         L.append("")
         L.append("_%s_" % bt["scale_note"])
+    if qp_note:
+        L.append("")
+        L.append("_%s_" % qp_note)
     if (out.get("totals") or {}).get("absolute_per_1000"):
         L.append("")
         L.append("_¹ %s_" % out["totals"]["absolute_per_1000"]["note"])
@@ -509,12 +533,12 @@ def build_report(out, title=None, date=None):
     for w_ in warns:
         L.append("- %s" % _md(w_))
     if not warns:
-        L.append("- —")
+        L.append("- Nincs külön értelmezési figyelmeztetés.")
     L.append("")
     # alcsoportok
     sg = out.get("subgroups")
     if sg is not None:
-        L.append("## Alcsoport-elemzés (%s)" % _md(o.get("subgroup")))
+        L.append("## Alcsoport-elemzés (%s)" % _md(_col(out, "subgroup")))
         L.append("")
         if o.get("model") == "fixed":
             within = "közös hatású modell alcsoportonként"
@@ -526,7 +550,7 @@ def build_report(out, title=None, date=None):
             within = "véletlen hatású modell, alcsoportonként külön τ²; az egyvizsgálatos alcsoport közös hatású"
         L.append("_Modell: %s._" % within)
         L.append("")
-        L.append("| Alcsoport | k | Becslés [%d%% CI] | τ² | I² |" % lv)
+        L.append("| Alcsoport | k | Becslés [%d%% CI] | τ² | I² (Q-alapú) |" % lv)
         L.append("|---|---|---|---|---|")
         for g in sg.groups:
             dd = g.get("display") or _bt(m, (g.estimate, g.ci_lower, g.ci_upper), g.get("n_harmonic") or nh)
@@ -558,8 +582,8 @@ def build_report(out, title=None, date=None):
             "log" if m in ("OR", "RR", "ROM", "PLN") else ("logit" if m == "PLO" else
                                                           ("Fisher z" if m == "ZCOR" else "nyers/transzformált"))))
         L.append("")
-        L.append("Reziduális τ² = %s; QE(%d) = %.2f, p = %s; moderátor-teszt (%s) p = %s; R² = %s%%." % (
-            _f(mr.tau2, 4), mr.QE_df, mr.QE, _p(mr.QE_p), mr.QM_type, _p(mr.QM_p), _f(mr.R2, 1)))
+        L.append("Reziduális τ² = %s; QE(%d) = %s, %s; moderátor-teszt (%s) %s; R² = %s%%." % (
+            _f(mr.tau2, 4), mr.QE_df, _f(mr.QE, 2), _p_eq(mr.QE_p), mr.QM_type, _p_eq(mr.QM_p), _f(mr.R2, 1)))
         for w_ in mr.warnings:
             L.append("- %s" % _md(w_))
         L.append("")
@@ -572,10 +596,11 @@ def build_report(out, title=None, date=None):
         L.append("")
     if b.get("egger") is not None:
         eg = b["egger"]
-        L.append("- Egger-teszt: tengelymetszet = %.3f (SE %.3f), t(%d) = %.2f, p = %s" % (eg.intercept, eg.se_intercept, eg.df, eg.t, _p(eg.p)))
+        L.append("- Egger-teszt: tengelymetszet = %s (SE %s), t(%d) = %s, %s" % (
+            _f(eg.intercept, 3), _f(eg.se_intercept, 3), eg.df, _f(eg.t, 2), _p_eq(eg.p)))
     if b.get("begg") is not None:
         bg = b["begg"]
-        L.append("- Begg–Mazumdar: Kendall τ = %.3f, p = %s (%s)" % (bg.kendall_tau, _p(bg.p), bg.method))
+        L.append("- Begg–Mazumdar: Kendall τ = %s, %s (%s)" % (_f(bg.kendall_tau, 3), _p_eq(bg.p), bg.method))
     if b.get("trimfill") is not None:
         tf = b["trimfill"]
         a = tf.adjusted
@@ -603,20 +628,20 @@ def build_report(out, title=None, date=None):
             r["omitted"] for r in loo
             if (r["ci_lower"] > 0) != (pr.ci_lower > 0) or (r["ci_upper"] < 0) != (pr.ci_upper < 0)]
         if sig_change:
-            L.append("Szignifikancia-váltás az alábbi vizsgálat(ok) kihagyásakor: %s." % ", ".join(_md(x) for x in sig_change))
+            L.append(_sentence("Szignifikancia-váltás az alábbi vizsgálat(ok) kihagyásakor: %s" % ", ".join(_md(x) for x in sig_change)))
         infl = [r["study"] for r in sens.get("influence", []) if r["influential"]]
-        L.append("Befolyásos vizsgálat (metafor-kritériumok): %s." % (", ".join(_md(x) for x in infl) if infl else "nincs"))
+        L.append(_sentence("Befolyásos vizsgálat (metafor-kritériumok): %s" % (", ".join(_md(x) for x in infl) if infl else "nincs")))
         outl = [r["study"] for r in sens.get("influence", []) if r["outlier_flag"]]
         if outl:
-            L.append("Kiugró (|rstudent| > 1.96): %s." % ", ".join(_md(x) for x in outl))
+            L.append(_sentence("Kiugró (|rstudent| > 1.96): %s" % ", ".join(_md(x) for x in outl)))
         L.append("")
     elif out["effect_sizes"]["k"] < 3:
         L.append("_Leave-one-out és befolyás-elemzés nem készült (k < 3)._")
         L.append("")
     if sens.get("cumulative"):
-        L.append("### Kumulatív metaanalízis (rendezés: %s)" % _md(o.get("cumulative")))
+        L.append("### Kumulatív metaanalízis (rendezés: %s)" % _md(_col(out, "cumulative")))
         L.append("")
-        L.append("| k | Hozzáadott vizsgálat | Rendezőkulcs | Becslés [%d%% CI] | τ² | I² |" % lv)
+        L.append("| k | Hozzáadott vizsgálat | Rendezőkulcs | Becslés [%d%% CI] | τ² | I² (Q-alapú) |" % lv)
         L.append("|---|---|---|---|---|---|")
         for r in sens["cumulative"]:
             key = r.get("key")

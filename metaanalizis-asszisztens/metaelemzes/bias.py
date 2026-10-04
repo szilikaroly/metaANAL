@@ -176,6 +176,12 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method="REML", estim
 
     side: 'left' / 'right' / None (automatikus: y ~ se meta-regresszió meredekségének
     előjele; pozitív → a hiányzó vizsgálatok bal oldalon).
+
+    A korrigált (kitöltött) modell a megadott ci_method-dal és level-lel illeszkedik (a
+    pipeline az elsődleges modellét adja át). k0 = 0 esetén ez pontosan az elsődleges
+    eredmény (mint a metaforban). Eltérés a metafor 4.4-től k0 > 0 esetén: a metafor a
+    kitöltött adatokat test='z'-vel és 95%-os szinttel illeszti újra (a test/level nem
+    öröklődik); ugyanezt itt ci_method='z', level=0.95 adja.
     """
     k = len(yi)
     if k < 3:

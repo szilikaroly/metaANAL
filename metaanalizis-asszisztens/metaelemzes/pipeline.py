@@ -86,6 +86,23 @@ def resolve_columns(opt, meta, rows):
     return cols
 
 
+def column_labels(cols, meta):
+    """A feloldott oszlopkulcsok megjelenítési neve: az eredeti CSV-fejléc (pl. 'year' → 'év'),
+    hogy a riport a felhasználó oszlopnevét mutassa, ne a belső kanonikus kulcsot."""
+    mapping = (meta or {}).get("mapping") or {}
+
+    def lab(key):
+        for orig, k in mapping.items():
+            if k == key:
+                return orig.strip()
+        return key
+
+    out = {}
+    for name, val in cols.items():
+        out[name] = [lab(v) for v in val] if isinstance(val, list) else lab(val)
+    return out
+
+
 def _num(v):
     if isinstance(v, float) and v.is_integer():
         return int(v)
@@ -148,7 +165,7 @@ def run(rows, options=None, meta=None):
     cols = resolve_columns(opt, meta, rows)
     out = {"engine": {"name": "metaelemzes", "version": __version__}, "options": opt,
            "input": {k: v for k, v in (meta or {}).items() if k != "mapping"}, "warnings": [],
-           "columns": cols}
+           "columns": cols, "column_labels": column_labels(cols, meta)}
     # 0) szűrők (--exclude / --include): mi maradt ki, és hány sor maradt
     flt = dict(out["input"].get("filters") or {})
     frep = opt.get("filter_report") or []
@@ -212,13 +229,13 @@ def run(rows, options=None, meta=None):
         try:
             out["mh"] = M.mantel_haenszel(*cols4, measure=measure, level=opt["level"], labels=es.labels,
                                           cc=opt["cc"], rd_var=opt["rd_var"])
-        except M.ModelError as exc:
+        except (M.ModelError, ArithmeticError, ValueError) as exc:
             out["warnings"].append("MH: %s" % exc)
     if measure == "OR" and opt["peto"]:
         cols4 = [[r.get(c) for r in es.rows] for c in ("e1", "n1", "e2", "n2")]
         try:
             out["peto"] = M.peto(*cols4, level=opt["level"], labels=es.labels)
-        except M.ModelError as exc:
+        except (M.ModelError, ArithmeticError, ValueError) as exc:
             out["warnings"].append("Peto: %s" % exc)
     out["back_transformed"] = {
         "estimate_ci": _display(measure, primary.estimate, primary.ci_lower, primary.ci_upper, nh),
@@ -241,10 +258,14 @@ def run(rows, options=None, meta=None):
                                    "kimaradt." % (opt["subgroup"], ", ".join(missing)))
         else:
             grp = [_level_str(g) for g in groups]
-            sg = MO.subgroup_analysis(es.yi, es.vi, grp, es.labels, opt["model"], opt["tau2"], opt["ci"],
-                                      opt["level"], opt["common_tau2"], opt["pi"])
+            try:
+                sg = MO.subgroup_analysis(es.yi, es.vi, grp, es.labels, opt["model"], opt["tau2"], opt["ci"],
+                                          opt["level"], opt["common_tau2"], opt["pi"])
+            except (M.ModelError, ArithmeticError) as exc:
+                sg = None
+                out["warnings"].append("Alcsoport-elemzés: %s" % exc)
             rix = list(getattr(es, "row_index", []) or [])
-            for g in sg.groups:
+            for g in (sg.groups if sg is not None else []):
                 # pozíció szerint (nem címke szerint): ismétlődő címkéjű sorok (több kar) is jók
                 g.indices = [i for i, x in enumerate(grp) if x == g.group]
                 if len(rix) == k:
@@ -253,13 +274,26 @@ def run(rows, options=None, meta=None):
                 if measure == "PFT" and g.n_harmonic is None:
                     g.n_harmonic = nh
                 g.display = _display(measure, g.estimate, g.ci_lower, g.ci_upper, g.n_harmonic)
-            out["subgroups"] = sg
+            if sg is not None:
+                out["subgroups"] = sg
     if opt["moderators"]:
+        # az együtthatók neve az eredeti oszlopnév (nem a belső kanonikus kulcs, pl. 'év', nem 'year')
+        mods = list(zip(cols["moderators"], out["column_labels"]["moderators"]))
+        # az elemzett vizsgálatokban állandó moderátor (pl. szűrés után egyetlen szint) nem becsülhető:
+        # kategoriálisnál csendben eltűnne (csak tengelymetszet), numerikusnál szinguláris lenne
+        const = [lab for key, lab in mods if len(set(_level_str(r.get(key)) for r in es.rows)) < 2]
+        if const:
+            out["warnings"].append("Meta-regresszió: a(z) %s moderátor az elemzett vizsgálatokban egyetlen értéket "
+                                   "vesz fel (nincs becsülhető hatás), ezért kimaradt a modellből." % ", ".join(const))
+            mods = [(key, lab) for key, lab in mods if lab not in const]
+            out["metaregression_dropped"] = const
+    if opt["moderators"] and mods:
         try:
-            x, names = MO.design_matrix(es.rows, cols["moderators"])
+            view = [{lab: r.get(key) for key, lab in mods} for r in es.rows]
+            x, names = MO.design_matrix(view, [lab for _, lab in mods])
             out["metaregression"] = MO.meta_regression(
                 es.yi, es.vi, x, names,
-                opt["tau2"] if opt["tau2"] in ("REML", "ML", "DL") else "REML",
+                opt["tau2"] if opt["tau2"] in MO.MR_TAU2_METHODS else "REML",
                 opt["metareg_test"], opt["level"])
         except (M.ModelError, ArithmeticError) as exc:
             out["warnings"].append("Meta-regresszió: %s" % exc)
@@ -406,7 +440,7 @@ def make_plots(out, es, opt=None):
 
 
 def _p(p):
-    if p is None:
+    if p is None or (isinstance(p, float) and math.isnan(p)):
         return "= –"
     return "< 0.001" if p < 0.001 else "= %.3f" % p
 

@@ -33,6 +33,9 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method="
     megjelenített CI-módszertől (--ci): ez a Borenstein 19. fejezet / RevMan 5 tesztje és a
     metafor rma(est, sei, mods=~g, method="FE") a különálló τ²-es csoportbecslésekre; közös τ²
     esetén pontosan a metafor rma(yi, vi, mods=~g) QM-je (Wald).
+    IVhet modellnél se_g a csoportbecslés IVhet-standardhibája (√Σ(w_i/Σw)²(v_i + τ²_DL), a
+    megjelenített z-CI alapja), NEM a √(1/Σw) inverz-variancia SE (az a csoporton belüli
+    heterogenitást figyelmen kívül hagyná, és túl liberális tesztet adna).
     """
     if len(groups) != len(yi):
         raise ModelError("a csoportváltozó hossza eltér")
@@ -80,7 +83,9 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method="
         r.group = g
         out_groups.append(r)
     mus = [r.estimate for r in out_groups]
-    ses = [r.se_wald for r in out_groups]
+    # IVhet: a csoportbecslés saját (heterogenitással inflált, z-alapú) SE-je; az IVhet se_wald-ja
+    # a √(1/Σw) inverz-variancia SE (a forrás-összevetésekhez), ami itt fix hatású tesztet adna
+    ses = [r.se if r.model == "ivhet" else r.se_wald for r in out_groups]
     df = len(out_groups) - 1
     q_between = p_between = None
     if all(math.isfinite(s) and s > 0 for s in ses):
@@ -101,8 +106,10 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method="
     return MetaResult(
         kind="subgroup", model=model, groups=out_groups, overall=overall,
         Q_between=q_between, df_between=df, p_between=p_between,
-        Q_between_se="wald",
-        Q_between_note=("Q_between a csoportbecslések Wald-standardhibáiból (nem HKSJ), "
+        Q_between_se="ivhet" if model == "ivhet" else "wald",
+        Q_between_note=(("Q_between a csoportbecslések IVhet-standardhibáiból (z-alapú, a csoporton belüli "
+                         "heterogenitással inflált), χ²(G−1) eloszlással") if model == "ivhet" else
+                        "Q_between a csoportbecslések Wald-standardhibáiból (nem HKSJ), "
                         "χ²(G−1) eloszlással"
                         + ("; közös τ² mellett = metafor rma(mods=~alcsoport) QM" if tau2_common is not None
                            else "")),
