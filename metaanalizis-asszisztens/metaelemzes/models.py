@@ -51,6 +51,16 @@ def _check(yi, vi):
             raise ModelError("minden vi-nek pozitív, véges számnak kell lennie")
 
 
+def ratio_stat(est, se):
+    """Teszt-statisztika est/se; se = 0 esetén ±inf (est ≠ 0), illetve NaN a 0/0 esetben
+    (a metafor ilyenkor NA-t ad) — sosem 'végtelen' egy pontosan 0 becslésre."""
+    if se > 0:
+        return est / se
+    if est == 0 or math.isnan(est) or math.isnan(se):
+        return float("nan")
+    return math.copysign(math.inf, est)
+
+
 def _wmean(yi, w):
     sw = sum(w)
     return sum(a * b for a, b in zip(w, yi)) / sw, sw
@@ -151,46 +161,92 @@ def tau2_pm(yi, vi, tol=1e-12, maxiter=1000):
     return 0.5 * (lo + hi)
 
 
-def _fisher_scoring(yi, vi, kind, start, tol=1e-10, maxiter=1000):
-    """REML/ML Fisher-scoring lépésfelezéssel (Viechtbauer 2005)."""
+def variance_scale(vi):
+    """A mintavételi varianciák tipikus nagysága (medián) — a τ²-iterációk relatív
+    toleranciáihoz, hogy az eredmény ne függjön a hatásméret mértékegységétől."""
+    s = sorted(vi)
+    m = s[len(s) // 2]
+    return m if m > 0 else 1.0
+
+
+def _reml_traces(w):
+    """tr(P) és tr(PP) a P = W - w wᵀ/Σw projekcióhoz kiejtéses hiba nélkül.
+
+    A naiv Σw - Σw²/Σw alak egy domináns súly (pl. v_i ~ 1e-10) esetén katasztrofálisan
+    kiejt; itt S₋ᵢ = Σ_{j≠i} w_j és T₋ᵢ = Σ_{j≠i} w_j² prefix/suffix összegekből:
+    tr(P) = Σ w_i S₋ᵢ / Σw,  tr(PP) = Σ [(w_i S₋ᵢ)² + w_i² T₋ᵢ] / (Σw)² (csak pozitív tagok).
+    """
+    k = len(w)
+    w2 = [x * x for x in w]
+    pre, pre2 = [0.0] * (k + 1), [0.0] * (k + 1)
+    for i in range(k):
+        pre[i + 1] = pre[i] + w[i]
+        pre2[i + 1] = pre2[i] + w2[i]
+    suf, suf2 = [0.0] * (k + 1), [0.0] * (k + 1)
+    for i in range(k - 1, -1, -1):
+        suf[i] = suf[i + 1] + w[i]
+        suf2[i] = suf2[i + 1] + w2[i]
+    sw = pre[k]
+    tr_p = tr_pp = 0.0
+    for i in range(k):
+        s_mi = pre[i] + suf[i + 1]
+        t_mi = pre2[i] + suf2[i + 1]
+        tr_p += w[i] * s_mi
+        tr_pp += (w[i] * s_mi) ** 2 + w2[i] * t_mi
+    return tr_p / sw, tr_pp / (sw * sw)
+
+
+def _fisher_scoring(yi, vi, kind, start, tol=1e-10, maxiter=1000, scale=None):
+    """REML/ML Fisher-scoring lépésfelezéssel (Viechtbauer 2005).
+
+    Konvergencia: |Δτ²| <= tol · max(τ², skála), ahol a skála a v_i mediánja (mértékegység-
+    független). Nem véges vagy nem pozitív információ esetén converged=False-szal kilép,
+    és a hívó a profil-likelihood kereséssel folytatja."""
+    if scale is None:
+        scale = variance_scale(vi)
     tau2 = max(0.0, start)
     converged = False
+    it = -1
     for it in range(maxiter):
         w = [1.0 / (v + tau2) for v in vi]
         mu, sw = _wmean(yi, w)
-        sw2 = sum(x * x for x in w)
         r2w2 = sum((wi * (y - mu)) ** 2 for wi, y in zip(w, yi))
         if kind == "REML":
-            sw3 = sum(x ** 3 for x in w)
-            tr_p = sw - sw2 / sw
-            tr_pp = sw2 - 2.0 * sw3 / sw + (sw2 / sw) ** 2
+            tr_p, tr_pp = _reml_traces(w)
+            if not (tr_pp > 0) or not math.isfinite(tr_pp):
+                break
             adj = (r2w2 - tr_p) / tr_pp
         else:  # ML
+            sw2 = sum(x * x for x in w)
             adj = (r2w2 - sw) / sw2
+        if not math.isfinite(adj):
+            break
         while tau2 + adj < 0:
             adj /= 2.0
             if abs(adj) < 1e-300:
                 adj = -tau2
                 break
         tau2 += adj
-        if abs(adj) <= tol * max(1.0, tau2):
+        if abs(adj) <= tol * max(tau2, scale):
             converged = True
             break
     return tau2, converged, it + 1
 
 
-def _maximize_1d(fn, hi_guess):
-    """Tartalék: arany-metszés a log(1+τ²) skálán [0, felső korlát]."""
-    hi = max(hi_guess, 1.0)
-    while fn(hi * 2) > fn(hi) and hi < 1e10:
-        hi *= 2
-    hi *= 2
-    a, b = 0.0, math.log1p(hi)
+def _safe_ll(ll, t):
+    try:
+        val = ll(t)
+    except (ArithmeticError, ValueError):
+        return -math.inf
+    return val if math.isfinite(val) else -math.inf
+
+
+def _golden_max(f, a, b, tol=1e-13, maxiter=300):
+    """Arany-metszéses maximumkeresés [a, b]-n; (argmax, max) párt ad."""
     g = (math.sqrt(5) - 1) / 2
     c, d = b - g * (b - a), a + g * (b - a)
-    f = lambda u: fn(math.expm1(u))
     fc, fd = f(c), f(d)
-    for _ in range(300):
+    for _ in range(maxiter):
         if fc > fd:
             b, d, fd = d, c, fc
             c = b - g * (b - a)
@@ -199,32 +255,115 @@ def _maximize_1d(fn, hi_guess):
             a, c, fc = c, d, fd
             d = a + g * (b - a)
             fd = f(d)
-        if b - a < 1e-13:
+        if b - a < tol * max(1.0, abs(a)):
             break
-    best = math.expm1(0.5 * (a + b))
-    return 0.0 if fn(0.0) >= fn(best) else best
+    x = 0.5 * (a + b)
+    return x, f(x)
+
+
+def optimize_tau2(ll, fs, start, scale, hi, ngrid=30):
+    """(RE)ML τ²: Fisher-scoring + globális ellenőrzés a profil-likelihoodon.
+
+    ll: τ² -> (RE)ML log-likelihood; fs: kezdőérték -> (τ², converged, iterációk).
+    1) Fisher-scoring a kezdőértékből (HE, mint a metafor-ban).
+    2) A τ² = 0 határ összehasonlítása: ha ll(0) nagyobb, mint ll(τ²_FS), akkor τ² = 0
+       (a metafor 'Fisher scoring algorithm may have gotten stuck at a local maximum.
+       Setting tau^2 = 0' esete) — info['boundary_reset'].
+    3) Durva rács az u = log(1 + τ²/skála) tengelyen [0, felső korlát]; ha egy rácspont
+       láthatóan nagyobb likelihoodot ad, a környezetében arany-metszés + Fisher-scoring
+       finomítás (info['global_search']). Ez a nem konvergált Fisher-scoring tartaléka is.
+    """
+    t_fs, conv, it = fs(start)
+    info = {"converged": conv, "iterations": it}
+    ll0 = _safe_ll(ll, 0.0)
+    if conv and math.isfinite(t_fs) and t_fs >= 0:
+        ll_fs = _safe_ll(ll, t_fs)
+    else:
+        t_fs, ll_fs = None, -math.inf
+
+    def tol_for(a):
+        return 1e-9 * (1.0 + abs(a)) if math.isfinite(a) else 0.0
+
+    # 1) Fisher-scoring vs. τ² = 0
+    if t_fs is not None and not (ll0 > ll_fs + tol_for(ll_fs)):
+        best_t, best_ll, source = t_fs, ll_fs, "fs"
+    else:
+        best_t, best_ll, source = 0.0, ll0, "zero"
+    # 2) durva rács a log(1 + τ²/skála) tengelyen
+    umax = math.log1p(max(hi, scale) / scale)
+    us = [umax * j / ngrid for j in range(ngrid + 1)]
+    vals = [ll0] + [_safe_ll(ll, scale * math.expm1(u)) for u in us[1:]]
+    j = max(range(len(us)), key=lambda i: vals[i])
+    if j > 0 and vals[j] > best_ll + tol_for(best_ll):
+        a, b = us[j - 1], us[min(j + 1, ngrid)]
+        if j == ngrid:   # a rács szélén: tágítsuk a keresést
+            b = us[ngrid] + 2.0
+        u_best, _ = _golden_max(lambda u: _safe_ll(ll, scale * math.expm1(u)), a, b)
+        t_g = scale * math.expm1(u_best)
+        ll_g = _safe_ll(ll, t_g)
+        t2, conv2, _ = fs(t_g)     # finomítás Fisher-scoringgal
+        if conv2 and math.isfinite(t2) and t2 >= 0:
+            ll2 = _safe_ll(ll, t2)
+            if ll2 >= ll_g - tol_for(ll_g):
+                t_g, ll_g = t2, ll2
+        if ll_g > best_ll + tol_for(best_ll):
+            best_t, best_ll, source = t_g, ll_g, "grid"
+    if best_t < 1e-10 * scale:
+        best_t = 0.0
+    if t_fs is not None and source != "fs":
+        info["tau2_fisher_scoring"] = t_fs
+        if source == "zero":
+            info["boundary_reset"] = True
+        else:
+            info["global_search"] = True
+    if t_fs is None:
+        info["fallback"] = "profil-likelihood rács + arany-metszés"
+    return best_t, info
+
+
+def _tau2_upper(yi, vi):
+    """Felső korlát a τ²-keresési rácshoz: e fölött a (RE)ML score biztosan negatív."""
+    k = len(yi)
+    ybar = sum(yi) / k
+    ss = sum((y - ybar) ** 2 for y in yi)
+    return 2.0 * ss + 2.0 * max(vi)
+
+
+def _tau2_uni(yi, vi, kind):
+    if len(yi) < 2:
+        return 0.0, {"converged": True, "iterations": 0}
+    scale = variance_scale(vi)
+    ll = (lambda x: reml_loglik(yi, vi, x)) if kind == "REML" else (lambda x: ml_loglik(yi, vi, x))
+    fs = lambda s: _fisher_scoring(yi, vi, kind, s, scale=scale)
+    return optimize_tau2(ll, fs, tau2_he(yi, vi), scale, _tau2_upper(yi, vi))
 
 
 def tau2_reml(yi, vi):
-    if len(yi) < 2:
-        return 0.0, {"converged": True, "iterations": 0}
-    t, conv, it = _fisher_scoring(yi, vi, "REML", tau2_he(yi, vi))
-    if not conv:
-        t = _maximize_1d(lambda x: reml_loglik(yi, vi, x), tau2_dl(yi, vi) + 1.0)
-    if t < 1e-10:
-        t = 0.0
-    return t, {"converged": conv, "iterations": it}
+    return _tau2_uni(yi, vi, "REML")
 
 
 def tau2_ml(yi, vi):
-    if len(yi) < 2:
-        return 0.0, {"converged": True, "iterations": 0}
-    t, conv, it = _fisher_scoring(yi, vi, "ML", tau2_he(yi, vi))
-    if not conv:
-        t = _maximize_1d(lambda x: ml_loglik(yi, vi, x), tau2_dl(yi, vi) + 1.0)
-    if t < 1e-10:
-        t = 0.0
-    return t, {"converged": conv, "iterations": it}
+    return _tau2_uni(yi, vi, "ML")
+
+
+def tau2_info_warnings(method, info):
+    """A τ²-becslés info-szótárából felhasználónak szóló figyelmeztetések."""
+    out = []
+    if not info:
+        return out
+    if info.get("converged") is False:
+        out.append("A(z) %s τ²-becslés Fisher-scoringja nem konvergált; a τ² a profil-likelihood "
+                   "rács- és arany-metszéses keresésével (tartalék) adódott." % method)
+    if info.get("boundary_reset"):
+        out.append("A(z) %s Fisher-scoring lokális maximumon akadt el (τ² = %.4g); a log-likelihood "
+                   "τ² = 0-nál nagyobb, ezért τ² = 0 (a metafor is így jár el)."
+                   % (method, info.get("tau2_fisher_scoring", float("nan"))))
+    if info.get("global_search"):
+        out.append("A(z) %s Fisher-scoring nem a globális maximumhoz konvergált (τ² = %.4g); a "
+                   "profil-likelihood rácskeresése nagyobb likelihoodú τ²-t talált, ezt használtam "
+                   "(a metafor alapbeállítással a Fisher-scoring értékét adná). Ellenőrizd a "
+                   "profil-likelihoodot (metafor: profile())." % (method, info.get("tau2_fisher_scoring", float("nan"))))
+    return out
 
 
 def estimate_tau2(yi, vi, method="REML"):
@@ -378,6 +517,11 @@ def meta_analysis(yi, vi, model="random", tau2_method="REML", ci_method=None, le
         raise ModelError("ismeretlen PI-módszer: %r" % pi_method)
     warnings = []
     tau2_info = {}
+    vratio = max(vi) / min(vi)
+    if vratio >= 1e7:
+        warnings.append("A legnagyobb és a legkisebb mintavételi variancia aránya rendkívül nagy "
+                        "(%.3g ≥ 10⁷); az eredmények numerikusan instabilak lehetnek — ellenőrizd az "
+                        "adatokat (pl. SE helyett p-érték vagy elírt tizedesjegy)." % vratio)
     if model == "fixed":
         tau2 = 0.0
         tau2_method_used = None
@@ -387,9 +531,7 @@ def meta_analysis(yi, vi, model="random", tau2_method="REML", ci_method=None, le
         else:
             tau2, tau2_info = estimate_tau2(yi, vi, tau2_method)
             tau2_method_used = tau2_method.upper()
-            if tau2_info.get("converged") is False:
-                warnings.append("A(z) %s τ²-becslés Fisher-scoringja nem konvergált; "
-                                "tartalék 1D maximalizálás futott." % tau2_method_used)
+            warnings += tau2_info_warnings(tau2_method_used, tau2_info)
     w = [1.0 / (v + tau2) for v in vi]
     mu, sw = _wmean(yi, w)
     se_wald = math.sqrt(1.0 / sw)
@@ -417,7 +559,12 @@ def meta_analysis(yi, vi, model="random", tau2_method="REML", ci_method=None, le
                 warnings.append("HKSJ: q = %.3f < 1, ezért a HKSJ-CI szűkebb lehet a Wald-CI-nál; "
                                 "érzékenységi elemzésként fontold meg a hksj_adhoc módszert." % q_hk)
         crit = dist.t_ppf(1 - alpha / 2, df_t)
-        stat = mu / se if se > 0 else math.inf
+        stat = ratio_stat(mu, se)
+        if math.isnan(stat):
+            # HKSJ: q = 0 (minden y_i azonos) és a becslés pontosan 0 → 0/0 (metafor: NA)
+            warnings.append("HKSJ: q = 0 (azonos hatásméretek) és a becslés 0, így a teszt 0/0 — "
+                            "nem értelmezhető; érzékenységi elemzésként használd a hksj_adhoc vagy a "
+                            "z (Wald) CI-t.")
         p = dist.t_two_sided_p(stat, df_t)
         test = "t"
     het = heterogeneity(yi, vi, tau2 if model == "random" else None, level)
@@ -502,9 +649,12 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
     Varianciák: OR — Robins–Breslow–Greenland (1986); RR — Greenland & Robins (1985);
     RD — rd_var='sato': Sato, Greenland & Robins (1989), kettősen konzisztens (metafor
     alapértelmezés); rd_var='gr': Greenland & Robins (1985) (RevMan-képlet).  A pontbecslés folytonossági korrekció nélküli
-    (a kettős-nulla vizsgálatok OR/RR-nél nem járulnak hozzá). A heterogenitási Q a
-    vizsgálatonkénti inverz-variancia becslésekből számolódik az MH-becslés körül
-    (RevMan-gyakorlat).
+    (metafor rma.mh, drop00 = c(TRUE, FALSE)): a kettős-nulla táblák OR/RR-nél nem járulnak
+    hozzá, a kettős-100% táblák OR-nél nem, RR-nél viszont igen (m1·m2/n a számlálóhoz és a
+    nevezőhöz) — ezért RR-nél bent maradnak; üres karú (n = 0) tábla kimarad. A heterogenitási
+    Q a vizsgálatonkénti inverz-variancia becslésekből számolódik az MH-becslés körül
+    (a kettős-nulla / kettős-100% táblák nélkül, mint a metafor-ban). Nulla összesített
+    variancia (degenerált táblák) esetén se = 0, a z-statisztika ±inf vagy 0/0 → NaN.
     """
     measure = measure.upper()
     if measure not in ("OR", "RR", "RD"):
@@ -523,8 +673,20 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
         a, c, m1, m2 = float(a), float(c), float(m1), float(m2)
         b, d = m1 - a, m2 - c
         n = m1 + m2
-        if measure in ("OR", "RR") and ((a == 0 and c == 0) or (b == 0 and d == 0)):
-            excluded.append((lab, "kettős nulla / kettős 100% — nem járul hozzá"))
+        if m1 <= 0 or m2 <= 0:
+            excluded.append((lab, "üres kar (n1 vagy n2 = 0) — nincs információ"))
+            continue
+        double_zero = a == 0 and c == 0
+        double_full = b == 0 and d == 0
+        # metafor rma.mh (drop00[2] = FALSE): a kettős-nulla tábla OR-nél és RR-nél is 0-t ad
+        # minden összeghez; a kettős-100% tábla OR-nél 0-t ad (R = S = 0), RR-nél viszont a
+        # számlálóhoz és a nevezőhöz is m1·m2/n-t ad (1 felé húz) — ezért RR-nél bent marad.
+        if measure == "OR" and (double_zero or double_full):
+            excluded.append((lab, "kettős nulla esemény — az MH-becsléshez nem járul hozzá" if double_zero
+                             else "kettős 100% esemény — OR-nél nem járul hozzá"))
+            continue
+        if measure == "RR" and double_zero:
+            excluded.append((lab, "kettős nulla esemény — az MH-becsléshez nem járul hozzá"))
             continue
         used.append(lab)
         mh_w[lab] = (b * c / n) if measure == "OR" else ((c * m1 / n) if measure == "RR" else m1 * m2 / n)
@@ -559,19 +721,31 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
         est = math.log(rr_num / rr_den)
         var = rr_var / (rr_num * rr_den)
     else:
+        if rd_den <= 0:
+            raise ModelError("MH RD nem becsülhető")
         est = rd_num / rd_den
         if rd_var == "gr":
             var = rd_gr / rd_den ** 2
         else:
             var = (est * rd_p + rd_q) / rd_den ** 2
+    # analitikusan nemnegatív; pl. 0% vs 100%-os tábláknál kerekítés miatt lehet -1e-17
+    var = max(var, 0.0)
     se = math.sqrt(var)
     z = dist.norm_ppf(0.5 + level / 2)
+    mh_warn = []
+    if se == 0:
+        mh_warn.append("MH: az összesített variancia 0 (degenerált táblák, pl. minden vizsgálat "
+                       "kettős nulla vagy 0% vs 100%); a z-teszt nem értelmezhető.")
     # heterogenitás: IV-becslések az MH körül (metafor rma.mh konvenció: a kettős-nulla
-    # táblák kimaradnak, a nulla cellás táblák minden cellájához +cc kerül — RD-nél is)
+    # táblák kimaradnak, a nulla cellás táblák minden cellájához +cc kerül — RD-nél is).
+    # Az üres karú (n = 0) tábla itt is kimarad: nincs becsülhető hatása (a metafor ilyenkor
+    # a +cc-vel kapott, értelmetlen 0,5/1 arányt is beszámítaná a QE-be).
     yi, vi, labs = [], [], []
     for lab, (a, m1, c, m2) in zip(labels, rows):
         a, c, m1, m2 = float(a), float(c), float(m1), float(m2)
         b, d = m1 - a, m2 - c
+        if m1 <= 0 or m2 <= 0:
+            continue
         if (a == 0 and c == 0) or (b == 0 and d == 0):
             continue
         if min(a, b, c, d) == 0:
@@ -586,12 +760,13 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
         yi.append(y)
         vi.append(v)
         labs.append(lab)
-    q = sum((y - est) ** 2 / v for y, v in zip(yi, vi))
-    df = len(yi) - 1
+    # metafor rma.mh: k.yi <= 1 esetén QE = 0
+    q = sum((y - est) ** 2 / v for y, v in zip(yi, vi)) if len(yi) > 1 else 0.0
+    df = max(0, len(yi) - 1)
     tot = sum(mh_w.values())
     w_mh = {lab: 100.0 * w / tot for lab, w in mh_w.items()} if tot > 0 else {}
     het = heterogeneity(yi, vi) if len(yi) >= 1 else {}
-    stat = est / se
+    stat = ratio_stat(est, se)
     return MetaResult(
         model="MH", measure=measure, k=len(rows), k_estimable=len(used), estimate=est, se=se, se_wald=se,
         ci_lower=est - z * se, ci_upper=est + z * se, level=level, test="z", stat=stat,
@@ -601,7 +776,7 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
         I2=(max(0.0, (q - df) / q) * 100 if df > 0 and q > 0 else 0.0),
         H2=(q / df if df > 0 else None), heterogeneity=het,
         weights_pct=None, weights_by_label=w_mh, yi=yi, vi=vi, labels=labs, excluded=excluded,
-        warnings=[],
+        warnings=mh_warn,
     )
 
 
@@ -616,11 +791,17 @@ def peto(e1, n1, e2, n2, level=0.95, labels=None):
         n = m1 + m2
         events = a + c
         nonevents = n - events
+        if m1 <= 0 or m2 <= 0:
+            excluded.append((lab, "üres kar (n1 vagy n2 = 0) — nincs információ"))
+            continue
         if n <= 1 or events == 0 or nonevents == 0:
             excluded.append((lab, "nincs információ (0 vagy 100% esemény összesen)"))
             continue
         e = m1 * events / n
         v = m1 * m2 * events * nonevents / (n * n * (n - 1))
+        if not (v > 0):
+            excluded.append((lab, "nincs információ (nulla hipergeometrikus variancia)"))
+            continue
         o_e.append(a - e)
         var_list.append(v)
         yi.append((a - e) / v)

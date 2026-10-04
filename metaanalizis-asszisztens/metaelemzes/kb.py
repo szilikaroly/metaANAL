@@ -8,13 +8,18 @@ Elérési utak:
   tudasbazis/tudasbazis.sqlite   — a felépített adatbázis (gitignore; `kb build` újraépíti)
   tudasbazis/forrasok/           — a helyi forrásfájlok (gitignore; szerzői jog)
 """
+import collections
+import datetime
 import glob
 import hashlib
 import json
 import os
+import pathlib
 import re
 import sqlite3
 import subprocess
+import sys
+import time
 import zipfile
 from xml.etree import ElementTree
 
@@ -37,9 +42,34 @@ SEED_TABLES = [
     ("examples*.json", "worked_example", ["example_id", "source_id", "title", "location", "effect_measure", "input_type", "method_settings", "studies", "reported_results", "verification", "usable_as_test_oracle"]),
 ]
 
+# a helyben betöltött teljes szöveg táblái: sémaváltáskor átmentjük (ha kompatibilis), a seed-építés nem törli
+FULLTEXT_TABLES = ("source", "chunk", "ingest_file")
+
+# az azonosítók feloldási sorrendje (kb show / a projektnapló --kb ellenőrzése)
+ID_TABLES = (("decision_rule", "rule_id"), ("knowledge", "k_id"), ("formula", "formula_id"),
+             ("checklist_item", "item_id"), ("tool", "tool_id"), ("worked_example", "example_id"),
+             ("source", "source_id"), ("stage", "stage_id"))
+
+SUPPORTED_EXT = (".pdf", ".docx", ".txt", ".md")
+
 
 class KBError(RuntimeError):
     pass
+
+
+def _readonly_uri(path, path_cls=pathlib.Path):
+    """Csak-olvasó SQLite URI. A pathlib százalékosan kódolja a '#', '?', '%' és szóköz
+    karaktereket, és Windows-meghajtóbetűre 'file:///C:/…' alakot ad. UNC-útvonalnál
+    (\\\\szerver\\megosztás) az SQLite csak üres authority-t fogad el, ezért a
+    'file:////szerver/megosztás/…' alakot használjuk. A relatív útvonal (pl. --db kb.sqlite)
+    az aktuális mappához képest értendő."""
+    p = path_cls(path)
+    if not p.is_absolute():
+        p = p.absolute()
+    uri = p.as_uri()
+    if uri.startswith("file://") and not uri.startswith("file:///"):
+        uri = "file:////" + uri[len("file://"):]
+    return uri + "?mode=ro"
 
 
 def connect(path=None, readonly=False):
@@ -47,8 +77,7 @@ def connect(path=None, readonly=False):
     if readonly:
         if not os.path.exists(path):
             raise KBError("A tudásbázis még nincs felépítve: futtasd a `kb build` parancsot.")
-        uri = "file:%s?mode=ro" % path.replace("\\", "/")
-        con = sqlite3.connect(uri, uri=True)
+        con = sqlite3.connect(_readonly_uri(path), uri=True)
     else:
         con = sqlite3.connect(path)
     con.row_factory = sqlite3.Row
@@ -59,12 +88,30 @@ def _seed_files(pattern):
     return sorted(glob.glob(os.path.join(SEED_DIR, pattern)))
 
 
+def _read_schema():
+    with open(SCHEMA, encoding="utf-8") as fh:
+        return fh.read()
+
+
+def _schema_hash(schema=None):
+    return hashlib.sha256((schema if schema is not None else _read_schema()).encode("utf-8")).hexdigest()
+
+
+def _engine_rules():
+    from .validate import RULES
+    return RULES
+
+
 def _seed_fingerprint():
+    """A seed-ek, a séma ÉS a motor validálási szabályai (validate.RULES) együttes ujjlenyomata:
+    bármelyik változása automatikus újraépítést vált ki."""
     h = hashlib.sha256()
     for f in sorted(glob.glob(os.path.join(SEED_DIR, "*.json"))) + [SCHEMA]:
         with open(f, "rb") as fh:
             h.update(os.path.basename(f).encode("utf-8"))
             h.update(fh.read())
+    h.update(b"\0validate.RULES\0")
+    h.update(json.dumps(_engine_rules(), sort_keys=True, ensure_ascii=False, default=str).encode("utf-8"))
     return h.hexdigest()
 
 
@@ -74,74 +121,273 @@ def _jsonify(v):
     return v
 
 
-def build(path=None, keep_fulltext=True):
-    """(Újra)építi a strukturált táblákat a seed-ekből. A teljes szöveg (chunk) megmarad."""
-    path = path or DEFAULT_DB
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    con = connect(path)
-    with open(SCHEMA, encoding="utf-8") as fh:
-        con.executescript(fh.read())
-    cur = con.cursor()
-    cur.execute("PRAGMA foreign_keys = OFF")
-    for table in ("knowledge_fts", "rule_fts"):
-        cur.execute("DELETE FROM %s" % table)
-    for _, table, _ in reversed(SEED_TABLES):
-        if table == "source" and keep_fulltext:
+def _split_sql(script):
+    """SQL-szkript → utasítások (az sqlite3.complete_statement szerint; a megjegyzéseket és a
+    sztringekben lévő ';'-t helyesen kezeli). A PRAGMA-kat kihagyjuk (tranzakcióban hatástalanok)."""
+    out, buf = [], ""
+    for line in script.splitlines(True):
+        buf += line
+        if sqlite3.complete_statement(buf):
+            s = buf.strip()
+            if s and not re.match(r"(?is)^(\s*--[^\n]*\n)*\s*pragma\b", s):
+                out.append(s)
+            buf = ""
+    rest = "\n".join(l for l in buf.splitlines() if not l.strip().startswith("--")).strip()
+    if rest:
+        out.append(rest)   # befejezetlen utasítás: a végrehajtás jelzi a hibát
+    return out
+
+
+_CREATE_NAME = re.compile(r'(?is)create\s+(?:virtual\s+|unique\s+|temp\s+|temporary\s+)?(table|view|index|trigger)\s+'
+                          r'(?:if\s+not\s+exists\s+)?["`\[]?(\w+)')
+
+
+def _schema_objects(statements):
+    """A sémában létrehozott objektumok (típus, név) listája."""
+    out = []
+    for s in statements:
+        m = _CREATE_NAME.search(re.sub(r"(?m)--[^\n]*$", "", s))
+        if m:
+            out.append((m.group(1).lower(), m.group(2)))
+    return out
+
+
+def _meta_get(con, key):
+    try:
+        row = con.execute("SELECT value FROM meta WHERE key=?", (key,)).fetchone()
+    except sqlite3.Error:
+        return None
+    return row[0] if row else None
+
+
+def _user_objects(con):
+    return {r[0]: r[1] for r in con.execute(
+        "SELECT name, type FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'")}
+
+
+def _migrate_schema(con, statements):
+    """Sémaváltás (a schema.sql megváltozott): a tudásbázis kezelt objektumait eldobja és az aktuális
+    sémából újra létrehozza. A helyben betöltött teljes szöveg (source, chunk, ingest_file) sorait
+    átmenti a közös oszlopokon, ha az új séma kompatibilis; különben eldobja, és az újrabetöltésre
+    figyelmeztet. Tranzakción belül fut (a hívó kezeli)."""
+    notes = []
+    existing = _user_objects(con)
+    new_objects = _schema_objects(statements)
+    managed = {name for _, name in new_objects}
+    old_list = _meta_get(con, "managed_objects")
+    if old_list:
+        managed |= set(json.loads(old_list))
+    # nézetek, triggerek, indexek (átnevezéskor a táblával vándorolnának, és az új séma
+    # IF NOT EXISTS-e miatt nem jönnének létre), majd a virtuális (FTS) táblák — az árnyéktábláik
+    # velük együtt tűnnek el
+    for name, typ in existing.items():
+        if name in managed and typ in ("view", "trigger", "index"):
+            con.execute('DROP %s IF EXISTS "%s"' % (typ.upper(), name))
+    for (name,) in con.execute("SELECT name FROM sqlite_master WHERE type='table' AND "
+                               "sql LIKE 'CREATE VIRTUAL TABLE%'").fetchall():
+        if name in managed:
+            con.execute('DROP TABLE IF EXISTS "%s"' % name)
+    kept = []
+    for t in FULLTEXT_TABLES:
+        if existing.get(t) == "table":
+            con.execute('DROP TABLE IF EXISTS "_old_%s"' % t)
+            con.execute('ALTER TABLE "%s" RENAME TO "_old_%s"' % (t, t))
+            kept.append(t)
+    for name, typ in _user_objects(con).items():
+        if name in managed and typ == "table":
+            con.execute('DROP TABLE IF EXISTS "%s"' % name)
+    for s in statements:
+        con.execute(s)
+    # kompatibilitás: az új tábla minden kötelező (NOT NULL, alapérték nélküli, nem kulcs) oszlopa megvan-e
+    plan, compatible = {}, True
+    for t in kept:
+        old_cols = [r[1] for r in con.execute('PRAGMA table_info("_old_%s")' % t)]
+        info = con.execute('PRAGMA table_info("%s")' % t).fetchall()
+        n_old = con.execute('SELECT COUNT(*) FROM "_old_%s"' % t).fetchone()[0]
+        if not info:                    # az új sémából kikerült tábla: nincs hová átmenteni
+            plan[t] = ([], 0)
             continue
-        cur.execute("DELETE FROM %s" % table)
-    counts = {}
-    for pattern, table, cols in SEED_TABLES:
-        n = 0
-        for f in _seed_files(pattern):
-            with open(f, encoding="utf-8") as fh:
-                try:
-                    items = json.load(fh)
-                except ValueError as exc:
-                    raise KBError("Hibás JSON: %s (%s)" % (f, exc))
-            for it in items:
-                missing = [c for c in cols[:1] if not it.get(c)]
-                if missing:
-                    raise KBError("%s: hiányzó azonosító (%s) egy tételnél" % (os.path.basename(f), cols[0]))
-                vals = [_jsonify(it.get(c)) for c in cols]
-                verb = "INSERT OR REPLACE"
-                cur.execute("%s INTO %s (%s) VALUES (%s)" % (verb, table, ",".join(cols), ",".join("?" * len(cols))), vals)
-                n += 1
-        counts[table] = n
-    # a motor adatvalidálási szabályai is szabályok (egy igazságforrás)
-    from .validate import RULES
-    for code, (sev, title, advice, src) in RULES.items():
-        cur.execute("INSERT OR REPLACE INTO decision_rule (rule_id, stage_id, applies_to, condition, recommendation, "
-                    "rationale, strength, machine_check, source_ids, locator) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                    (code, "S05", "engine", title, advice, "Adatvalidálási szabály (%s)" % sev,
-                     "must" if sev == "error" else ("should" if sev == "warning" else "consider"),
-                     "metaelemzes.validate:%s" % code, "engine", src))
-    cur.execute("INSERT INTO knowledge_fts (k_id, title, body, tags) SELECT k_id, title, body, COALESCE(tags,'') FROM knowledge")
-    cur.execute("INSERT INTO rule_fts (rule_id, condition, recommendation, rationale) "
-                "SELECT rule_id, condition, recommendation, COALESCE(rationale,'') FROM decision_rule")
-    cur.execute("INSERT OR REPLACE INTO meta (key, value) VALUES ('seed_fingerprint', ?)", (_seed_fingerprint(),))
-    con.commit()
-    bad = cur.execute("PRAGMA foreign_key_check").fetchall()
-    cur.execute("PRAGMA foreign_keys = ON")
-    con.close()
-    counts["foreign_key_problems"] = len(bad)
+        common = [r[1] for r in info if r[1] in old_cols]
+        required = {r[1] for r in info if r[3] and r[4] is None and not r[5]}
+        if n_old and (not common or required - set(common)):
+            compatible = False
+        plan[t] = (common, n_old)
+    for t in kept:
+        common, n_old = plan[t]
+        if compatible and n_old and common:
+            cols = ",".join('"%s"' % c for c in common)
+            con.execute('INSERT INTO "%s" (%s) SELECT %s FROM "_old_%s"' % (t, cols, cols, t))
+        con.execute('DROP TABLE "_old_%s"' % t)
+    if not compatible:
+        # a seed-források a seed-ből visszatöltődnek; a teljes szöveget újra be kell tölteni
+        lost = ["%s: %d sor" % (t, plan[t][1]) for t in kept if plan[t][1]]
+        notes.append("A séma inkompatibilis módon változott, a helyben betöltött teljes szöveg (%s) nem "
+                     "menthető át. Töltsd be újra: ma.py kb ingest tudasbazis/forrasok (és a saját fájljaidat "
+                     "a korábbi --source-id/--citation értékekkel)." % ", ".join(lost))
+    elif kept:
+        con.execute("INSERT INTO chunk_fts(chunk_fts) VALUES('rebuild')")
+        n_chunk = plan.get("chunk", ([], 0))[1]
+        notes.append("Sémaváltás: a tudásbázis táblái újra létrehozva; a teljes szöveg átmentve (%d szövegrész)." % n_chunk)
+    return notes
+
+
+def _fk_report(con, bad):
+    """PRAGMA foreign_key_check sorai → olvasható leírás."""
+    out = []
+    for table, rowid, parent, fkid in bad:
+        fk = [r for r in con.execute('PRAGMA foreign_key_list("%s")' % table) if r[0] == fkid]
+        col = fk[0][3] if fk else "?"
+        key = dict(ID_TABLES + (("chunk", "chunk_id"),)).get(table)
+        try:
+            row = con.execute('SELECT %s, "%s" FROM "%s" WHERE rowid=?' % (
+                ('"%s"' % key) if key else "rowid", col, table), (rowid,)).fetchone()
+            ident, val = (row[0], row[1]) if row else (rowid, "?")
+        except sqlite3.Error:
+            ident, val = rowid, "?"
+        out.append("%s %s: %s=%s → nincs ilyen %s" % (table, ident, col, val, parent))
+    return out
+
+
+def build(path=None, keep_fulltext=True):
+    """(Újra)építi a strukturált táblákat a seed-ekből, egyetlen tranzakcióban.
+    A teljes szöveg (source/chunk/ingest_file) alapból megmarad; keep_fulltext=False esetén törlődik.
+    Sémaváltáskor a kezelt táblák eldobva és újra létrehozva (a teljes szöveg átmentve, ha lehet).
+    Hibát jelez (KBError) duplikált seed-azonosítóra, motorszabály-ütközésre és a seed-táblák
+    hivatkozási (FK) hibáira — ekkor az adatbázis változatlan marad."""
+    path = path or DEFAULT_DB
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    schema = _read_schema()
+    statements = _split_sql(schema)
+    con = connect(path)
+    con.isolation_level = None   # explicit tranzakció (a DDL is benne van)
+    notes = []
+    try:
+        con.execute("PRAGMA foreign_keys = OFF")
+        con.execute("BEGIN IMMEDIATE")
+        existing = _user_objects(con)
+        if existing and "meta" not in existing:
+            raise KBError("A(z) %s nem tudásbázis-adatbázis (nincs 'meta' táblája) — nem írom felül. "
+                          "Adj meg másik --db útvonalat." % path)
+        if _meta_get(con, "schema_hash") != _schema_hash(schema):
+            if existing:
+                notes += _migrate_schema(con, statements)
+            else:
+                for s in statements:
+                    con.execute(s)
+        else:
+            for s in statements:          # IF NOT EXISTS: hiányzó objektumok pótlása
+                con.execute(s)
+        cur = con.cursor()
+        for table in ("knowledge_fts", "rule_fts"):
+            cur.execute("DELETE FROM %s" % table)
+        if not keep_fulltext:
+            cur.execute("INSERT INTO chunk_fts(chunk_fts) VALUES('delete-all')")
+            cur.execute("DELETE FROM chunk")
+            cur.execute("DELETE FROM ingest_file")
+        for _, table, _ in reversed(SEED_TABLES):
+            if table == "source" and keep_fulltext:
+                continue
+            cur.execute("DELETE FROM %s" % table)
+        seed_ids = {}
+        for pattern, table, cols in SEED_TABLES:
+            ids = seed_ids.setdefault(table, {})
+            for f in _seed_files(pattern):
+                fname = os.path.basename(f)
+                with open(f, encoding="utf-8") as fh:
+                    try:
+                        items = json.load(fh)
+                    except ValueError as exc:
+                        raise KBError("Hibás JSON: %s (%s)" % (f, exc))
+                if not isinstance(items, list):
+                    raise KBError("%s: a seed-fájlnak JSON-tömbnek kell lennie" % fname)
+                for it in items:
+                    key = it.get(cols[0]) if isinstance(it, dict) else None
+                    if not key:
+                        raise KBError("%s: hiányzó azonosító (%s) egy tételnél" % (fname, cols[0]))
+                    if key in ids:
+                        raise KBError("Duplikált azonosító a seed-ekben: %s.%s = %s (%s és %s) — az egyik tétel "
+                                      "csendben felülírná a másikat; nevezd át az egyiket." % (
+                                          table, cols[0], key, ids[key], fname))
+                    ids[key] = fname
+                    vals = [_jsonify(it.get(c)) for c in cols]
+                    # a source-ban a megtartott (helyben betöltött) sorokat a seed felülírhatja
+                    verb = "INSERT OR REPLACE" if table == "source" else "INSERT"
+                    cur.execute("%s INTO %s (%s) VALUES (%s)" % (verb, table, ",".join(cols), ",".join("?" * len(cols))), vals)
+        # a motor adatvalidálási szabályai is szabályok (egy igazságforrás)
+        rules = _engine_rules()
+        clash = sorted(set(rules) & set(seed_ids.get("decision_rule", {})))
+        if clash:
+            raise KBError("A seed-szabály azonosítója ütközik a motor validálási szabályával: %s (%s) — a "
+                          "V-kódok a metaelemzes/validate.py RULES-ból jönnek." % (
+                              ", ".join(clash), ", ".join(seed_ids["decision_rule"][c] for c in clash)))
+        for code, (sev, title, advice, src) in rules.items():
+            cur.execute("INSERT INTO decision_rule (rule_id, stage_id, applies_to, condition, recommendation, "
+                        "rationale, strength, machine_check, source_ids, locator) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                        (code, "S05", "engine", title, advice, "Adatvalidálási szabály (%s)" % sev,
+                         "must" if sev == "error" else ("should" if sev == "warning" else "consider"),
+                         "metaelemzes.validate:%s" % code, "engine", src))
+        if keep_fulltext:
+            # a seed-ből törölt/átnevezett, teljes szöveg nélküli (nem felhasználói) források eltávolítása
+            keep = list(seed_ids.get("source", {}))
+            cur.execute("DELETE FROM source WHERE COALESCE(kind,'') <> 'user' AND source_id NOT IN (%s) "
+                        "AND source_id NOT IN (SELECT source_id FROM chunk) "
+                        "AND source_id NOT IN (SELECT source_id FROM ingest_file)" % (",".join("?" * len(keep)) or "''"), keep)
+        cur.execute("INSERT INTO knowledge_fts (k_id, title, body, tags) SELECT k_id, title, body, COALESCE(tags,'') FROM knowledge")
+        cur.execute("INSERT INTO rule_fts (rule_id, condition, recommendation, rationale) "
+                    "SELECT rule_id, condition, recommendation, COALESCE(rationale,'') FROM decision_rule")
+        bad = cur.execute("PRAGMA foreign_key_check").fetchall()
+        seed_bad = [b for b in bad if b[0] not in FULLTEXT_TABLES]
+        if seed_bad:
+            raise KBError("Hivatkozási hiba a seed-ekben (%d): %s" % (len(seed_bad), "; ".join(_fk_report(con, seed_bad[:10]))))
+        if bad:
+            notes.append("A teljes szöveg %d sora nem létező forrásra hivatkozik (%s)." % (
+                len(bad), "; ".join(_fk_report(con, bad[:5]))))
+        cur.execute("INSERT OR REPLACE INTO meta (key, value) VALUES ('seed_fingerprint', ?)", (_seed_fingerprint(),))
+        cur.execute("INSERT OR REPLACE INTO meta (key, value) VALUES ('schema_hash', ?)", (_schema_hash(schema),))
+        cur.execute("INSERT OR REPLACE INTO meta (key, value) VALUES ('managed_objects', ?)",
+                    (json.dumps(sorted({n for _, n in _schema_objects(statements)})),))
+        counts = {table: cur.execute("SELECT COUNT(*) FROM %s" % table).fetchone()[0] for _, table, _ in SEED_TABLES}
+        counts["engine_rules"] = len(rules)
+        counts["foreign_key_problems"] = len(bad)
+        con.execute("COMMIT")
+    except BaseException:
+        if con.in_transaction:
+            con.execute("ROLLBACK")
+        raise
+    finally:
+        try:
+            con.execute("PRAGMA foreign_keys = ON")
+        finally:
+            con.close()
+    if notes:
+        counts["figyelmeztetesek"] = notes
     return counts
 
 
 def ensure_built(path=None):
     path = path or DEFAULT_DB
     if not os.path.exists(path):
-        build(path)
+        res = build(path)
+        _print_notes(res)
         return True
     try:
         con = connect(path, readonly=True)
-        row = con.execute("SELECT value FROM meta WHERE key='seed_fingerprint'").fetchone()
-        con.close()
+        try:
+            row = con.execute("SELECT value FROM meta WHERE key='seed_fingerprint'").fetchone()
+        finally:
+            con.close()
     except sqlite3.Error:
         row = None
     if row is None or row[0] != _seed_fingerprint():
-        build(path)
+        res = build(path)
+        _print_notes(res)
         return True
     return False
+
+
+def _print_notes(res):
+    for n in (res or {}).get("figyelmeztetesek", []):
+        print("FIGYELEM (tudásbázis): %s" % n, file=sys.stderr)
 
 
 # --------------------------------------------------------------- betöltés
@@ -156,36 +402,169 @@ def _sha256(path):
 def pdf_pages(path):
     """PDF → oldalak szövege. Sorrend: pypdf (ha telepítve), különben pdftotext (poppler)."""
     try:
-        import pypdf  # noqa: F401
-        reader = pypdf.PdfReader(path)
-        return [(p.extract_text() or "") for p in reader.pages]
+        import pypdf
     except ImportError:
-        pass
+        pypdf = None
+    if pypdf is not None:
+        try:
+            reader = pypdf.PdfReader(path)
+            return [(p.extract_text() or "") for p in reader.pages]
+        except Exception as exc:   # sérült / titkosított PDF
+            raise KBError("%s: a PDF nem olvasható (pypdf: %s)" % (path, exc))
     try:
-        txt = subprocess.run(["pdftotext", "-layout", path, "-"], check=True, capture_output=True).stdout
-    except (OSError, subprocess.CalledProcessError):
+        res = subprocess.run(["pdftotext", "-layout", path, "-"], capture_output=True)
+    except OSError:
         raise KBError("PDF-hez telepítsd a pypdf csomagot (pip install pypdf) vagy a pdftotext-et (poppler).")
-    return txt.decode("utf-8", "replace").split("\f")
+    if res.returncode != 0:
+        msg = "; ".join(l.strip() for l in res.stderr.decode("utf-8", "replace").splitlines() if l.strip())
+        raise KBError("%s: a pdftotext nem tudta feldolgozni (sérült vagy titkosított PDF?): %s" % (
+            path, msg[:300] or "kilépési kód %d" % res.returncode))
+    return res.stdout.decode("utf-8", "replace").split("\f")
+
+
+_W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+_MC = "{http://schemas.openxmlformats.org/markup-compatibility/2006}"
+# tartalmat hordozó "burkoló" elemek (tartalomvezérlők, egyéni XML, követett beszúrás)
+_DOCX_WRAPPERS = {_W + t for t in ("sdt", "sdtContent", "customXml", "smartTag", "ins", "moveTo", "hyperlink",
+                                    "fldSimple")}
+_DOCX_SKIP = {_W + t for t in ("pPr", "rPr", "sdtPr", "sdtEndPr", "del", "moveFrom", "tblPr", "tblGrid", "trPr", "tcPr")}
+
+
+def _docx_textboxes(node):
+    """A futáson belüli szövegdobozok (w:txbxContent); mc:AlternateContent-nél csak az első ág."""
+    if node.tag == _W + "txbxContent":
+        return [node]
+    if node.tag == _MC + "AlternateContent":
+        kids = list(node)
+        return _docx_textboxes(kids[0]) if kids else []
+    out = []
+    for c in node:
+        out += _docx_textboxes(c)
+    return out
+
+
+def _docx_run(r, out):
+    for e in r:
+        tag = e.tag
+        if tag == _W + "t":
+            out.append(e.text or "")
+        elif tag == _W + "tab":
+            out.append("\t")
+        elif tag in (_W + "br", _W + "cr"):
+            out.append("\n")
+        elif tag == _W + "noBreakHyphen":
+            out.append("-")
+        elif tag in _DOCX_SKIP:
+            continue
+        else:
+            for box in _docx_textboxes(e):
+                txt = " ".join(t for t in (_docx_par_text(p) for p in box.iter(_W + "p")) if t.strip())
+                if txt:
+                    out.append(" %s " % txt)
+
+
+def _docx_par_text(p):
+    """Egy bekezdés szövege dokumentum-sorrendben: a futások (w:r) w:t-szövege elválasztó nélkül,
+    w:tab → tabulátor, w:br/w:cr → sortörés; hivatkozások, tartalomvezérlők és beszúrások belseje
+    is, a törölt szöveg nem."""
+    out = []
+
+    def walk(node):
+        for e in node:
+            tag = e.tag
+            if tag == _W + "r":
+                _docx_run(e, out)
+            elif tag in _DOCX_SKIP:
+                continue
+            elif tag == _MC + "AlternateContent":
+                kids = list(e)
+                if kids:
+                    walk(kids[0])
+            else:
+                walk(e)
+    walk(p)
+    return "".join(out)
+
+
+def _docx_children(node, tag):
+    """Az adott címkéjű közvetlen gyermekek, a burkoló elemeken (w:sdt stb.) át is."""
+    for c in node:
+        if c.tag == tag:
+            yield c
+        elif c.tag in _DOCX_WRAPPERS:
+            for x in _docx_children(c, tag):
+                yield x
+
+
+def _docx_cell_text(tc):
+    parts = []
+
+    def walk(node):
+        for c in node:
+            if c.tag == _W + "p":
+                parts.append(_docx_par_text(c))
+            elif c.tag == _W + "tbl":            # beágyazott táblázat: cellánként, sorrendben
+                for tr in _docx_children(c, _W + "tr"):
+                    for inner in _docx_children(tr, _W + "tc"):
+                        walk(inner)
+            elif c.tag in _DOCX_WRAPPERS:
+                walk(c)
+    walk(tc)
+    return re.sub(r"\s+", " ", " ".join(parts)).strip()
 
 
 def docx_paragraphs(path):
-    """DOCX → bekezdések (táblázatok sorai ' | ' elválasztással), csak standard könyvtárral."""
-    ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
-    w = "{%s}" % ns["w"]
-    with zipfile.ZipFile(path) as z:
-        root = ElementTree.fromstring(z.read("word/document.xml"))
-    body = root.find("w:body", ns)
+    """DOCX → bekezdések (táblázatok sorai ' | ' elválasztással), csak standard könyvtárral.
+    A futások szövegét elválasztó nélkül fűzi (a szavak egyben maradnak a cellákban is),
+    a w:tab tabulátor, a w:br/w:cr sortörés; a tartalomvezérlők (w:sdt) tartalma is bekerül."""
+    try:
+        with zipfile.ZipFile(path) as z:
+            root = ElementTree.fromstring(z.read("word/document.xml"))
+    except (zipfile.BadZipFile, KeyError) as exc:
+        raise KBError("%s: nem érvényes DOCX (%s)" % (path, exc))
+    except ElementTree.ParseError as exc:
+        raise KBError("%s: hibás DOCX XML (%s)" % (path, exc))
+    body = root.find(_W + "body")
     out = []
-    for child in body:
-        if child.tag == w + "p":
-            out.append("".join(t.text or "" for t in child.iter(w + "t")))
-        elif child.tag == w + "tbl":
-            out.append("[TÁBLÁZAT]")
-            for tr in child.iter(w + "tr"):
-                cells = [" ".join((t.text or "") for t in tc.iter(w + "t")).strip() for tc in tr.iter(w + "tc")]
-                out.append(" | ".join(cells))
-            out.append("[/TÁBLÁZAT]")
+    if body is None:
+        return out
+
+    def walk(node):
+        for child in node:
+            if child.tag == _W + "p":
+                out.append(_docx_par_text(child))
+            elif child.tag == _W + "tbl":
+                out.append("[TÁBLÁZAT]")
+                for tr in _docx_children(child, _W + "tr"):
+                    out.append(" | ".join(_docx_cell_text(tc) for tc in _docx_children(tr, _W + "tc")))
+                out.append("[/TÁBLÁZAT]")
+            elif child.tag in _DOCX_WRAPPERS:
+                walk(child)
+            elif child.tag == _MC + "AlternateContent":
+                kids = list(child)
+                if kids:
+                    walk(kids[0])
+    walk(body)
     return out
+
+
+def _read_text(path):
+    """TXT/MD beolvasása: UTF-8 (BOM-mal is), UTF-16 BOM-mal, végül cp1250; bináris tartalom elutasítva."""
+    with open(path, "rb") as fh:
+        data = fh.read()
+    if data.startswith((b"\xff\xfe", b"\xfe\xff")):
+        try:
+            return data.decode("utf-16")
+        except UnicodeDecodeError as exc:
+            raise KBError("%s: hibás UTF-16 szöveg (%s)" % (path, exc))
+    if b"\x00" in data:
+        raise KBError("%s: bináris tartalom (nem szövegfájl) — a .txt/.md csak egyszerű szöveg lehet" % path)
+    for enc in ("utf-8-sig", "cp1250"):
+        try:
+            return data.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    raise KBError("%s: a szöveg kódolása nem ismerhető fel (UTF-8 szükséges)" % path)
 
 
 _heading = re.compile(r"^(chapter|fejezet|part|appendix|\d+(\.\d+)*\s+[A-ZÁÉÍÓÖŐÚÜŰ])", re.I)
@@ -199,7 +578,7 @@ def _group_paragraphs(paras, target=1400):
         if not s:
             continue
         if len(s) < 90 and _heading.match(s):
-            current = s[:80]
+            current = re.sub(r"\s+", " ", s)[:80]
         if size + len(s) > target and buf:
             chunks.append((loc or current or "", "\n".join(buf)))
             buf, size, loc = [], 0, None
@@ -212,65 +591,217 @@ def _group_paragraphs(paras, target=1400):
     return chunks
 
 
+def _extract(path):
+    """Fájl → [(lokátor, szöveg)] a betöltéshez (üres darabok nélkül)."""
+    ext = os.path.splitext(path)[1].lower()
+    if ext == ".pdf":
+        pieces = [("p. %d" % (i + 1), t) for i, t in enumerate(pdf_pages(path)) if t.strip()]
+    elif ext == ".docx":
+        pieces = _group_paragraphs(docx_paragraphs(path))
+    elif ext in (".txt", ".md"):
+        pieces = _group_paragraphs(_read_text(path).replace("\r\n", "\n").replace("\r", "\n").split("\n\n"))
+    else:
+        raise KBError(_unsupported_msg(path))
+    out = []
+    for loc, text in pieces:
+        text = re.sub(r"[ \t]{3,}", "  ", text).strip()
+        if text:
+            out.append((loc, text))
+    if not out:
+        raise KBError("%s: nem nyerhető ki szöveg (szkennelt PDF esetén előbb OCR szükséges)" % path)
+    return out
+
+
+def _unsupported_msg(path):
+    return ("Nem támogatott formátum: %s (támogatott: PDF, DOCX, TXT, MD; .doc/.xls(x)/.ppt(x)/.rtf/.odt "
+            "esetén előbb mentsd PDF-be vagy DOCX-be)." % path)
+
+
+def _hint_matches(hint, base):
+    """file_hint egyezés: csak elég specifikus minta (legalább 6 karakter, vagy elválasztót tartalmaz,
+    pl. '978-981', '_khan_'), és csak szó/token-határon (a 'khan' nem illeszkedik a 'Khanna'-ra)."""
+    h = (hint or "").strip().lower()
+    if not h:
+        return False
+    if len(h) < 6 and not re.search(r"[^a-z0-9]", h):
+        return False
+    pre = r"(?<![a-z0-9])" if h[0].isalnum() else ""
+    post = r"(?![a-z0-9])" if h[-1].isalnum() else ""
+    return re.search(pre + re.escape(h) + post, base) is not None
+
+
 def _match_source(con, path):
     base = os.path.basename(path).lower()
-    for row in con.execute("SELECT source_id, file_hint FROM source WHERE file_hint IS NOT NULL"):
+    for row in con.execute("SELECT source_id, file_hint FROM source WHERE file_hint IS NOT NULL ORDER BY source_id"):
         for hint in (row["file_hint"] or "").split("|"):
-            if hint and hint.lower() in base:
+            if _hint_matches(hint, base):
                 return row["source_id"]
     return None
 
 
-def ingest(path, source_id=None, citation=None, db=None, replace=True):
-    """Egy fájl vagy mappa teljes szövegének betöltése. Visszaad: [(source_id, chunk-szám, fájl)]."""
+def _slug(path):
+    return re.sub(r"[^a-z0-9]+", "_", os.path.splitext(os.path.basename(path))[0].lower()).strip("_")[:40] or "forras"
+
+
+def _same_document_text(con, sid, pieces):
+    """Régi (nyilvántartás nélküli) teljes szövegnél: ugyanaz a dokumentum-e? A szavak multihalmazának
+    legalább 90%-os átfedése (a kinyerési javítások — pl. tabulátor, szövegdoboz — miatti apró
+    eltérések megengedettek, egy másik dokumentum nem)."""
+    old = collections.Counter(re.findall(r"\w+", " ".join(
+        r[0] for r in con.execute("SELECT text FROM chunk WHERE source_id=?", (sid,))).lower()))
+    new = collections.Counter(re.findall(r"\w+", " ".join(t for _, t in pieces).lower()))
+    if not old or not new:
+        return False
+    return sum((old & new).values()) >= 0.9 * max(sum(old.values()), sum(new.values()))
+
+
+def _can_take(con, sid, path, digest, pieces, claimed):
+    """Kaphatja-e a fájl a sid forrást úgy, hogy közben más dokumentum szövege ne vesszen el?"""
+    if sid in claimed:
+        return False, "a(z) '%s' forrást ebben a futásban már egy másik fájl kapta (%s)" % (
+            sid, os.path.basename(claimed[sid]))
+    n = con.execute("SELECT COUNT(*) FROM chunk WHERE source_id=?", (sid,)).fetchone()[0]
+    if not n:
+        return True, None
+    recs = con.execute("SELECT sha256, filename FROM ingest_file WHERE source_id=?", (sid,)).fetchall()
+    base = os.path.basename(path)
+    if not recs:   # régebbi betöltés: a felhasználói forrás sorában van a fájlnév és a hash
+        row = con.execute("SELECT short, notes, kind FROM source WHERE source_id=?", (sid,)).fetchone()
+        if row is not None and row["kind"] == "user" and (row["notes"] or "").startswith("sha256="):
+            recs = [((row["notes"] or "")[7:].strip(), row["short"])]
+    if recs:
+        if any(r[0] == digest or r[1] == base for r in recs):
+            return True, None      # ugyanaz a fájl (vagy annak új változata) → újratöltés
+    elif _same_document_text(con, sid, pieces):
+        return True, None
+    return False, "a(z) '%s' forrás már egy másik dokumentum teljes szövegét tartalmazza" % sid
+
+
+def _resolve_source(con, path, digest, pieces, claimed, use_hint=True):
+    """Automatikus forrás-azonosító: file_hint (token-határon), különben a fájlnévből képzett
+    azonosító; ha az már más dokumentumé, saját, hash-utótagos azonosító (és figyelmeztetés)."""
+    tried = []
+    # ugyanez a fájl (tartalom-hash) korábban már betöltve → ugyanoda (átnevezett fájl sem duplikálódik)
+    for (sid,) in con.execute("SELECT source_id FROM ingest_file WHERE sha256=? ORDER BY source_id", (digest,)).fetchall():
+        if sid not in claimed:
+            return sid, None
+    hint_sid = _match_source(con, path) if use_hint else None
+    for sid in ([hint_sid] if hint_sid else []) + [_slug(path)]:
+        ok, why = _can_take(con, sid, path, digest, pieces, claimed)
+        if ok:
+            note = None
+            if tried:
+                note = "%s; ezért saját forrásként: %s" % (tried[0], sid)
+            return sid, note
+        tried.append(why)
+    sid = "%s_%s" % (_slug(path)[:31], digest[:8])
+    return sid, "%s; ezért saját forrásként: %s (ha ugyanaz a dokumentum, add meg a --source-id-t)" % (tried[0], sid)
+
+
+def _delete_chunks(con, sid):
+    for row in con.execute("SELECT chunk_id, text, locator FROM chunk WHERE source_id=?", (sid,)).fetchall():
+        con.execute("INSERT INTO chunk_fts(chunk_fts, rowid, text, locator) VALUES('delete', ?, ?, ?)",
+                    (row["chunk_id"], row["text"], row["locator"] or ""))
+    con.execute("DELETE FROM chunk WHERE source_id=?", (sid,))
+    con.execute("DELETE FROM ingest_file WHERE source_id=?", (sid,))
+
+
+def _list_files(path):
+    if os.path.isdir(path):
+        files, skipped = [], []
+        for root, dirs, names in os.walk(path):
+            dirs[:] = sorted(d for d in dirs if not d.startswith("."))
+            for n in sorted(names):
+                if n.startswith(".") or n.startswith("~$"):
+                    continue
+                full = os.path.join(root, n)
+                (files if os.path.splitext(n)[1].lower() in SUPPORTED_EXT else skipped).append(full)
+        return sorted(files), sorted(skipped)
+    if not os.path.isfile(path):
+        raise KBError("Nincs ilyen fájl vagy mappa: %s" % path)
+    if os.path.splitext(path)[1].lower() not in SUPPORTED_EXT:
+        raise KBError(_unsupported_msg(path))
+    return [path], []
+
+
+def ingest(path, source_id=None, citation=None, db=None, replace=True, report=None):
+    """Egy fájl vagy mappa teljes szövegének betöltése. Visszaad: [(source_id, chunk-szám, fájl)];
+    kihagyott vagy hibás fájlnál a source_id None, és a fájlnév mögött zárójelben az ok.
+
+    - Forrás-azonosító: --source-id esetén mind ide kerül (a forrás meglévő szövege a futás elején
+      egyszer törlődik, a további fájlok hozzáfűződnek). Különben fájlonként saját forrás: file_hint
+      (token-határon) vagy a fájlnévből képzett azonosító — más dokumentum szövegét sosem írja felül
+      csendben; ütközéskor hash-utótagos saját azonosítót kap, és ezt jelzi.
+    - Egy hibás fájl nem állítja le a többit: fájlonként külön tranzakció.
+    - Csak PDF/DOCX/TXT/MD (a kiterjesztés kis-/nagybetűtől függetlenül); más formátum elutasítva.
+    - report: ha lista, fájlonként {"file","source_id","chunks","status","message"} kerül bele
+      (status: ok | duplicate | skipped | error)."""
     db = db or DEFAULT_DB
     ensure_built(db)
-    files = []
-    if os.path.isdir(path):
-        for ext in ("*.pdf", "*.docx", "*.txt", "*.md"):
-            files += glob.glob(os.path.join(path, "**", ext), recursive=True)
-    else:
-        files = [path]
-    con = connect(db)
+    files, skipped = _list_files(path)
+    rep = report if report is not None else []
     results = []
-    seen_hash = set()
-    for f in sorted(files):
-        digest = _sha256(f)
-        if digest in seen_hash:
-            results.append((None, 0, f + " (duplikátum, kihagyva)"))
-            continue
-        seen_hash.add(digest)
-        sid = source_id or _match_source(con, f)
-        if sid is None:
-            sid = re.sub(r"[^a-z0-9]+", "_", os.path.splitext(os.path.basename(f))[0].lower()).strip("_")[:40] or "forras"
-        if con.execute("SELECT 1 FROM source WHERE source_id=?", (sid,)).fetchone() is None:
-            con.execute("INSERT INTO source (source_id, citation, short, kind, license_note, notes) VALUES (?,?,?,?,?,?)",
-                        (sid, citation or os.path.basename(f), os.path.basename(f), "user",
-                         "helyben betöltött teljes szöveg", "sha256=%s" % digest))
-        ext = os.path.splitext(f)[1].lower()
-        if ext == ".pdf":
-            pieces = [("p. %d" % (i + 1), t) for i, t in enumerate(pdf_pages(f)) if t.strip()]
-        elif ext == ".docx":
-            pieces = _group_paragraphs(docx_paragraphs(f))
-        else:
-            with open(f, encoding="utf-8", errors="replace") as fh:
-                pieces = _group_paragraphs(fh.read().split("\n\n"))
-        if replace:
-            ids = [r[0] for r in con.execute("SELECT chunk_id FROM chunk WHERE source_id=?", (sid,))]
-            for cid in ids:
-                row = con.execute("SELECT text, locator FROM chunk WHERE chunk_id=?", (cid,)).fetchone()
-                con.execute("INSERT INTO chunk_fts(chunk_fts, rowid, text, locator) VALUES('delete', ?, ?, ?)",
-                            (cid, row["text"], row["locator"] or ""))
-            con.execute("DELETE FROM chunk WHERE source_id=?", (sid,))
-        for seq, (loc, text) in enumerate(pieces):
-            text = re.sub(r"[ \t]{3,}", "  ", text).strip()
-            if not text:
-                continue
-            cur = con.execute("INSERT INTO chunk (source_id, seq, locator, text) VALUES (?,?,?,?)", (sid, seq, loc, text))
-            con.execute("INSERT INTO chunk_fts(rowid, text, locator) VALUES (?,?,?)", (cur.lastrowid, text, loc or ""))
-        results.append((sid, len(pieces), f))
-    con.commit()
-    con.close()
+    for f in skipped:
+        msg = "nem támogatott formátum, kihagyva"
+        results.append((None, 0, "%s (%s)" % (f, msg)))
+        rep.append({"file": f, "source_id": None, "chunks": 0, "status": "skipped", "message": msg})
+    con = connect(db)
+    con.isolation_level = None
+    seen_hash, claimed = {}, {}
+    explicit = bool(source_id)
+    try:
+        for f in files:
+            con.execute("SAVEPOINT ingest_one")
+            try:
+                digest = _sha256(f)
+                if digest in seen_hash:
+                    msg = "duplikátum: azonos tartalom, mint %s — kihagyva" % os.path.basename(seen_hash[digest])
+                    con.execute("RELEASE ingest_one")
+                    results.append((None, 0, "%s (%s)" % (f, msg)))
+                    rep.append({"file": f, "source_id": None, "chunks": 0, "status": "duplicate", "message": msg})
+                    continue
+                pieces = _extract(f)   # előbb a kinyerés: hiba esetén semmi nem törlődik
+                note = None
+                if explicit:
+                    sid = source_id
+                    do_replace = replace and sid not in claimed
+                else:
+                    # --citation: a felhasználó saját dokumentumként jelöli → nincs file_hint-egyezés
+                    sid, note = _resolve_source(con, f, digest, pieces, claimed, use_hint=not citation)
+                    do_replace = replace
+                base = os.path.basename(f)
+                row = con.execute("SELECT kind FROM source WHERE source_id=?", (sid,)).fetchone()
+                if row is None:
+                    con.execute("INSERT INTO source (source_id, citation, short, kind, license_note, notes) VALUES (?,?,?,?,?,?)",
+                                (sid, citation or base, base, "user", "helyben betöltött teljes szöveg", "sha256=%s" % digest))
+                elif citation and row["kind"] == "user":
+                    con.execute("UPDATE source SET citation=? WHERE source_id=?", (citation, sid))
+                elif citation:
+                    note = ((note + "; ") if note else "") + \
+                        "a(z) '%s' a seed-ből származó forrás, a --citation nem írja felül" % sid
+                if do_replace:
+                    _delete_chunks(con, sid)
+                seq0 = con.execute("SELECT COALESCE(MAX(seq) + 1, 0) FROM chunk WHERE source_id=?", (sid,)).fetchone()[0]
+                for i, (loc, text) in enumerate(pieces):
+                    cur = con.execute("INSERT INTO chunk (source_id, seq, locator, text) VALUES (?,?,?,?)",
+                                      (sid, seq0 + i, loc, text))
+                    con.execute("INSERT INTO chunk_fts(rowid, text, locator) VALUES (?,?,?)", (cur.lastrowid, text, loc or ""))
+                con.execute("INSERT OR REPLACE INTO ingest_file (source_id, sha256, filename, path, chunks, ts) "
+                            "VALUES (?,?,?,?,?,?)", (sid, digest, base, os.path.abspath(f), len(pieces),
+                                                     datetime.datetime.now().replace(microsecond=0).isoformat()))
+                con.execute("RELEASE ingest_one")   # fájlonként véglegesítve
+                claimed[sid] = f
+                seen_hash[digest] = f
+                results.append((sid, len(pieces), f + (" (FIGYELEM: %s)" % note if note else "")))
+                rep.append({"file": f, "source_id": sid, "chunks": len(pieces), "status": "ok", "message": note})
+            except (KBError, OSError, sqlite3.Error, ValueError) as exc:
+                con.execute("ROLLBACK TO ingest_one")
+                con.execute("RELEASE ingest_one")
+                msg = str(exc)
+                results.append((None, 0, "%s (HIBA: %s)" % (f, msg)))
+                rep.append({"file": f, "source_id": None, "chunks": 0, "status": "error", "message": msg})
+    finally:
+        con.close()
     return results
 
 
@@ -302,6 +833,7 @@ def search(query, limit=8, db=None, scopes=("rule", "knowledge", "chunk"), sourc
     fq = _fts_query(query)
     out = {}
     if not fq:
+        con.close()
         return out
     if "rule" in scopes:
         out["rule"] = [dict(r) for r in con.execute(
@@ -330,31 +862,75 @@ def search(query, limit=8, db=None, scopes=("rule", "knowledge", "chunk"), sourc
     return out
 
 
-def show(item_id, db=None):
-    db = db or DEFAULT_DB
-    ensure_built(db)
-    con = connect(db, readonly=True)
-    for table, key in (("decision_rule", "rule_id"), ("knowledge", "k_id"), ("formula", "formula_id"),
-                       ("checklist_item", "item_id"), ("tool", "tool_id"), ("worked_example", "example_id"),
-                       ("source", "source_id"), ("stage", "stage_id")):
+def _lookup(con, item_id):
+    for table, key in ID_TABLES:
         row = con.execute("SELECT * FROM %s WHERE %s = ?" % (table, key), (item_id,)).fetchone()
         if row:
             d = dict(row)
             d["_table"] = table
-            con.close()
             return d
-    if item_id.isdigit():
-        row = con.execute("SELECT * FROM chunk WHERE chunk_id = ?", (int(item_id),)).fetchone()
+    cid = item_id.lstrip("#")
+    if cid.isdigit():
+        row = con.execute("SELECT * FROM chunk WHERE chunk_id = ?", (int(cid),)).fetchone()
         if row:
             d = dict(row)
             d["_table"] = "chunk"
-            con.close()
             return d
-    con.close()
     return None
 
 
+def show(item_id, db=None):
+    db = db or DEFAULT_DB
+    ensure_built(db)
+    con = connect(db, readonly=True)
+    try:
+        return _lookup(con, item_id)
+    finally:
+        con.close()
+
+
+def existing_ids(ids, db=None):
+    """A megadott azonosítók közül azok halmaza, amelyek léteznek a tudásbázisban
+    (szabály, tudás, képlet, ellenőrzőlista-tétel, eszköz, példa, forrás, szakasz, szövegrész)."""
+    db = db or DEFAULT_DB
+    ensure_built(db)
+    con = connect(db, readonly=True)
+    try:
+        return {i for i in ids if _lookup(con, i) is not None}
+    finally:
+        con.close()
+
+
+def normalize_stage(stage):
+    """'s5' / 'S05' / '5' → 'S05'; egyéb érték változatlanul (nagybetűsítve)."""
+    s = str(stage).strip().upper()
+    m = re.fullmatch(r"S?(\d{1,2})", s)
+    return "S%02d" % int(m.group(1)) if m else s
+
+
+def stage_ids(db=None):
+    db = db or DEFAULT_DB
+    ensure_built(db)
+    con = connect(db, readonly=True)
+    try:
+        return [r[0] for r in con.execute("SELECT stage_id FROM stage ORDER BY ord, stage_id")]
+    finally:
+        con.close()
+
+
+def checklist_names(db=None):
+    db = db or DEFAULT_DB
+    ensure_built(db)
+    con = connect(db, readonly=True)
+    try:
+        return [r[0] for r in con.execute("SELECT DISTINCT checklist FROM checklist_item ORDER BY 1")]
+    finally:
+        con.close()
+
+
 def rules(stage=None, applies_to=None, db=None):
+    """Döntési szabályok szakasz és/vagy szerep szerint. A reviewer a motor validálási
+    szabályait (V-kódok, applies_to='engine') is látja, mert ezeket ellenőrzi."""
     db = db or DEFAULT_DB
     ensure_built(db)
     con = connect(db, readonly=True)
@@ -362,10 +938,11 @@ def rules(stage=None, applies_to=None, db=None):
     args = []
     if stage:
         sql += " AND stage_id = ?"
-        args.append(stage)
+        args.append(normalize_stage(stage))
     if applies_to:
-        sql += " AND (applies_to = ? OR applies_to = 'all')"
-        args.append(applies_to)
+        roles = [applies_to, "all"] + (["engine"] if applies_to == "reviewer" else [])
+        sql += " AND applies_to IN (%s)" % ",".join("?" * len(roles))
+        args += roles
     rows = [dict(r) for r in con.execute(sql + " ORDER BY stage_id, rule_id", args)]
     con.close()
     return rows
@@ -375,7 +952,8 @@ def checklist(name, db=None):
     db = db or DEFAULT_DB
     ensure_built(db)
     con = connect(db, readonly=True)
-    rows = [dict(r) for r in con.execute("SELECT * FROM checklist_item WHERE checklist = ? ORDER BY ord, item_id", (name,))]
+    rows = [dict(r) for r in con.execute(
+        "SELECT * FROM checklist_item WHERE checklist = ? COLLATE NOCASE ORDER BY ord, item_id", (name.strip(),))]
     con.close()
     return rows
 
@@ -383,19 +961,37 @@ def checklist(name, db=None):
 _READONLY_SQL = re.compile(r"^\s*(select|with|pragma\s+table_info|explain)\b", re.I)
 
 
-def query(sql, params=(), db=None, max_rows=500):
-    """Csak-olvasó SQL (SELECT/WITH). Az adatbázis read-only módban nyílik meg."""
+def query(sql, params=(), db=None, max_rows=500, timeout=10.0, info=None):
+    """Csak-olvasó SQL (SELECT/WITH). Az adatbázis read-only módban nyílik meg.
+    max_rows: legfeljebb ennyi sor (0/None = korlát nélkül); timeout: másodperc (0/None = nincs),
+    utána a lekérdezés megszakad (KBError). info: ha dict, ide kerül {"truncated": bool, "max_rows": n}."""
     if not _READONLY_SQL.match(sql):
         raise KBError("Csak SELECT / WITH lekérdezés engedélyezett.")
     db = db or DEFAULT_DB
     ensure_built(db)
     con = connect(db, readonly=True)
+    truncated = False
+    if timeout:
+        deadline = time.monotonic() + float(timeout)
+        con.set_progress_handler(lambda: 1 if time.monotonic() > deadline else 0, 10000)
     try:
         cur = con.execute(sql, params)
         cols = [d[0] for d in cur.description] if cur.description else []
-        rows = cur.fetchmany(max_rows)
+        if max_rows:
+            rows = cur.fetchmany(max_rows + 1)
+            truncated = len(rows) > max_rows
+            rows = rows[:max_rows]
+        else:
+            rows = cur.fetchall()
+    except sqlite3.OperationalError as exc:
+        if timeout and "interrupt" in str(exc).lower():
+            raise KBError("A lekérdezés túllépte az időkorlátot (%g s), megszakítva — szűkítsd (WHERE/LIMIT)." % float(timeout))
+        raise
     finally:
         con.close()
+    if info is not None:
+        info["truncated"] = truncated
+        info["max_rows"] = max_rows
     return cols, [tuple(r) for r in rows]
 
 

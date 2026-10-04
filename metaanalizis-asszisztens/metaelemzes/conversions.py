@@ -17,9 +17,43 @@ class ConversionError(ValueError):
     pass
 
 
+def _check_level(level):
+    if level is None or not 0 < level < 1:
+        raise ConversionError("0 < level < 1 szükséges (pl. 0.95), kapott: %r" % (level,))
+
+
+def _check_n(n, minimum=2):
+    if n is None:
+        raise ConversionError("n (mintanagyság) kötelező")
+    if n < minimum:
+        raise ConversionError("n >= %d szükséges, kapott: %g" % (minimum, n))
+
+
+def _check_interval(lower, upper):
+    if lower is None or upper is None:
+        raise ConversionError("az alsó és a felső határ is kötelező")
+    if lower > upper:
+        raise ConversionError("az alsó határ (%g) nagyobb, mint a felső (%g) — felcserélt határok?" % (lower, upper))
+
+
+def _check_fivenum(n, median=None, q1=None, q3=None, minimum=None, maximum=None, need_n=True):
+    """min <= Q1 <= medián <= Q3 <= max (a megadott értékekre), és n >= 2 — mint a
+    metafor::conv.fivenum. Felcserélt kvartilisek negatív SD-t adnának."""
+    if need_n:
+        _check_n(n, 2)
+    seq = [(name, v) for name, v in (("min", minimum), ("Q1", q1), ("medián", median), ("Q3", q3),
+                                     ("max", maximum)) if v is not None]
+    for (na, a), (nb, b) in zip(seq, seq[1:]):
+        if a > b:
+            raise ConversionError("min <= Q1 <= medián <= Q3 <= max nem teljesül: %s = %g > %s = %g" % (na, a, nb, b))
+
+
 # --------------------------------------------------- SD / SE / CI átváltás
 def sd_from_se(se, n):
     """Egy csoport átlagának SE-jéből SD = SE·√n."""
+    _check_n(n, 1)
+    if se is None or se < 0:
+        raise ConversionError("SE >= 0 szükséges, kapott: %r" % (se,))
     return se * math.sqrt(n)
 
 
@@ -29,6 +63,9 @@ def sd_from_ci(lower, upper, n, level=0.95, use_t=True):
     Kis mintánál (n < 60) a t-eloszlás kvantilise használandó; use_t=True ezt
     mindig alkalmazza (n >= 60-nál a különbség elhanyagolható).
     """
+    _check_level(level)
+    _check_n(n, 2)
+    _check_interval(lower, upper)
     q = 0.5 + level / 2.0
     crit = dist.t_ppf(q, n - 1) if use_t else dist.norm_ppf(q)
     return math.sqrt(n) * (upper - lower) / (2.0 * crit)
@@ -36,6 +73,8 @@ def sd_from_ci(lower, upper, n, level=0.95, use_t=True):
 
 def se_from_ci(lower, upper, level=0.95, log_scale=False):
     """Hatásméret SE-je a CI-ből (arányoknál log_scale=True: ln(U), ln(L))."""
+    _check_level(level)
+    _check_interval(lower, upper)
     if log_scale:
         if lower <= 0 or upper <= 0:
             raise ConversionError("log-skálához pozitív határok kellenek")
@@ -61,6 +100,9 @@ def se_from_p(estimate, p, log_scale=False, df=None):
 # -------------------------------------------- medián / IQR / tartomány
 def mean_from_median(n, median, q1=None, q3=None, minimum=None, maximum=None, method="luo"):
     """Átlag becslése (Luo et al. 2018); method='hozo' a régi (a+2m+b)/4 képlet (S1)."""
+    if median is None:
+        raise ConversionError("a medián kötelező")
+    _check_fivenum(n, median, q1, q3, minimum, maximum, need_n=(method != "hozo"))
     s1 = minimum is not None and maximum is not None
     s2 = q1 is not None and q3 is not None
     if method == "hozo":
@@ -80,8 +122,10 @@ def mean_from_median(n, median, q1=None, q3=None, minimum=None, maximum=None, me
     raise ConversionError("min+max vagy Q1+Q3 kell")
 
 
-def sd_from_median(n, q1=None, q3=None, minimum=None, maximum=None):
-    """SD becslése (Wan et al. 2014, S1/S2/S3 forgatókönyv)."""
+def sd_from_median(n, q1=None, q3=None, minimum=None, maximum=None, median=None):
+    """SD becslése (Wan et al. 2014, S1/S2/S3 forgatókönyv). A median (ha megadod) csak
+    a sorrend-ellenőrzéshez kell (min <= Q1 <= medián <= Q3 <= max)."""
+    _check_fivenum(n, median, q1, q3, minimum, maximum)
     s1 = minimum is not None and maximum is not None
     s2 = q1 is not None and q3 is not None
     xi = 2.0 * dist.norm_ppf((n - 0.375) / (n + 0.25))

@@ -76,6 +76,7 @@ class EffectSizes(object):
         self.vi = []
         self.ni = []          # teljes mintanagyság (ha értelmezhető), a PFT-hez és a riporthoz
         self.rows = []        # az eredeti sor (dict), a moderátorokhoz
+        self.row_index = []   # a bevont vizsgálat eredeti sorindexe (a compute-nak átadott listában)
         self.notes = []       # vizsgálatonkénti megjegyzések (pl. folytonossági korrekció)
         self.excluded = []    # (címke, ok)
         self.warnings = []    # globális figyelmeztetések
@@ -83,10 +84,11 @@ class EffectSizes(object):
     def __len__(self):
         return len(self.yi)
 
-    def add(self, label, yi, vi, ni=None, row=None, note=""):
+    def add(self, label, yi, vi, ni=None, row=None, note="", index=None):
         if vi is None or not (vi > 0) or math.isinf(vi) or math.isnan(vi) or math.isnan(yi):
             self.excluded.append((label, "nem pozitív vagy hiányzó variancia (vi=%r)" % (vi,)))
             return
+        self.row_index.append(index if index is not None else len(self.labels))
         self.labels.append(label)
         self.yi.append(yi)
         self.vi.append(vi)
@@ -176,12 +178,17 @@ def two_by_two(measure, e1, n1, e2, n2, cc=0.5, cc_to="only0", drop00=None):
     if cc_to == "all" or (cc_to == "only0" and has_zero):
         add = cc
     if measure == "RD":
-        # RD-nél a pontbecslés korrekció nélküli; a korrekció csak akkor kell, ha
-        # a variancia egyébként 0 lenne (mindkét karban 0% vagy 100%).
+        # RD-nél a nulla cella nem akadálya a számításnak, ezért alapértelmezésben (only0) NEM
+        # korrigálunk (Cochrane Handbook 10.4.4.1); a korrekció csak akkor kell, ha a variancia
+        # egyébként 0 lenne (mindkét karban 0% vagy 100%). Kifejezett cc_to="all" kérésre a
+        # metafor::escalc(to="all") szerint minden vizsgálat minden cellájához hozzáadjuk.
+        if cc_to == "all" and cc > 0:
+            a, b, c, d = a + cc, b + cc, c + cc, d + cc
+            note = "folytonossági korrekció +%g minden cellához" % cc
         p1, p2 = a / (a + b), c / (c + d)
         y = p1 - p2
         v = p1 * (1 - p1) / (a + b) + p2 * (1 - p2) / (c + d)
-        if v <= 0 and cc > 0:
+        if v <= 0 and cc > 0 and cc_to != "none":
             aa, bb, cc_, dd = a + cc, b + cc, c + cc, d + cc
             q1, q2 = aa / (aa + bb), cc_ / (cc_ + dd)
             v = q1 * (1 - q1) / (aa + bb) + q2 * (1 - q2) / (cc_ + dd)
@@ -237,8 +244,9 @@ def correlation(measure, r, n):
         if n <= 3:
             raise EffectSizeError("ZCOR: n > 3 szükséges")
         return math.atanh(r), 1.0 / (n - 3.0), ""
-    if n <= 1:
-        raise EffectSizeError("COR: n > 1 szükséges")
+    if n <= 3:
+        # metafor::escalc: ni <= 3 esetén a mintavételi variancia nem becsülhető (NA)
+        raise EffectSizeError("COR: n > 3 szükséges")
     return r, (1 - r * r) ** 2 / (n - 1.0), ""
 
 
@@ -299,17 +307,36 @@ def harmonic_mean(values):
 
 
 # --------------------------------------------------------------- tömeges
+def row_label(row, i, label_col="study"):
+    """A vizsgálat címkéje pontosan úgy, ahogy a CSV-ben áll ('0', '2005', '001' is);
+    '#n' (1-től számozva) csak akkor, ha a cella tényleg üres."""
+    v = row.get(label_col)
+    if v is None or str(v).strip() == "":
+        return "#%d" % (i + 1)
+    return str(v).strip()
+
+
 def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
-            cc=0.5, cc_to="only0", drop00=None, ci_level=0.95):
+            cc=0.5, cc_to="only0", drop00=None, ci_level=0.95, skip_labels=None):
     """Sorok (dict-ek listája, már számmá alakítva) → EffectSizes.
 
     A hibás sorokat nem dobja el csendben: az `excluded` listába kerülnek indoklással.
+    skip_labels: azoknak a vizsgálatoknak a címkéi, amelyek 'error' súlyosságú validálási
+    tételt kaptak (validate.blocking_labels); ezek "validálási hiba" indokkal kimaradnak.
+    Lehet szótár is (címke → a hibakódok szövege), ekkor az indoklás a kódokat is tartalmazza.
+    Az es.row_index minden bevont vizsgálat eredeti sorindexét adja (a `rows` listában).
     """
     if measure not in ALL_MEASURES:
         raise EffectSizeError("ismeretlen mérték: %r (lehetséges: %s)" % (measure, ", ".join(ALL_MEASURES)))
     es = EffectSizes(measure)
+    skip = skip_labels or ()
     for i, row in enumerate(rows):
-        label = str(row.get(label_col) or "#%d" % (i + 1))
+        label = row_label(row, i, label_col)
+        if label in skip:
+            detail = skip.get(label) if isinstance(skip, dict) else None
+            es.excluded.append((label, "validálási hiba: %s" % detail if detail else
+                                "validálási hiba (lásd a validálási tételeket)"))
+            continue
         try:
             if measure in CONTINUOUS:
                 args = [row[c] for c in REQUIRED_COLUMNS[measure]]
@@ -329,7 +356,7 @@ def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
                                "LS2" if smd_vtype == "LS2" else "LS")
                 else:
                     y, v = rom(m1, sd1, n1, m2, sd2, n2)
-                es.add(label, y, v, n1 + n2, row)
+                es.add(label, y, v, n1 + n2, row, index=i)
             elif measure in BINARY:
                 e1, n1, e2, n2 = [row[c] for c in REQUIRED_COLUMNS[measure]]
                 if None in (e1, n1, e2, n2):
@@ -341,19 +368,19 @@ def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
                     es.excluded.append((label, "kettős nulla (vagy kettős 100%%) esemény — %s-nél kizárva" % measure))
                     continue
                 y, v, note = res
-                es.add(label, y, v, n1 + n2, row, note)
+                es.add(label, y, v, n1 + n2, row, note, index=i)
             elif measure in PROPORTION:
                 x, n = row["x"], row["n"]
                 if x is None or n is None:
                     raise EffectSizeError("hiányzó érték")
                 y, v, note = proportion(measure, x, n, cc, cc_to)
-                es.add(label, y, v, n, row, note)
+                es.add(label, y, v, n, row, note, index=i)
             elif measure in CORRELATION:
                 r, n = row["r"], row["n"]
                 if r is None or n is None:
                     raise EffectSizeError("hiányzó érték")
                 y, v, note = correlation(measure, r, n)
-                es.add(label, y, v, n, row, note)
+                es.add(label, y, v, n, row, note, index=i)
             else:  # GEN
                 y = row.get("yi")
                 v = row.get("vi")
@@ -361,8 +388,10 @@ def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
                     v = row["sei"] ** 2
                 if y is None or v is None:
                     raise EffectSizeError("GEN: yi és vi (vagy sei) kell")
-                es.add(label, y, v, row.get("n"), row)
-        except (EffectSizeError, KeyError, ZeroDivisionError, ValueError) as exc:
+                es.add(label, y, v, row.get("n"), row, index=i)
+        except KeyError as exc:
+            es.excluded.append((label, "hiányzó oszlop: %s" % exc))
+        except (EffectSizeError, ZeroDivisionError, ValueError, TypeError) as exc:
             es.excluded.append((label, "%s: %s" % (type(exc).__name__, exc)))
     if es.excluded:
         es.warnings.append("%d sor kimaradt a hatásméret-számításból (lásd: excluded)." % len(es.excluded))

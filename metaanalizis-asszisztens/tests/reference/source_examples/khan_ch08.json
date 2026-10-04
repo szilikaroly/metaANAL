@@ -1,0 +1,7082 @@
+[
+ {
+  "case_id": "khan_ch08__ginkgo_md_unequal_var",
+  "example_id": "khan_ch08__ginkgo_raw_md_equal_unequal_var",
+  "source_id": "khan2020",
+  "location": "Ch8 §8.1(a): Table 8.1 p. 161; Example 8.1 pp. 161-162",
+  "description": "Raw mean difference Ginkgo (28, 58.4, 3.8) minus placebo (24, 56.8, 4.3): MD = 1.6 and the unequal-variance Var/SE.",
+  "measure": "MD",
+  "options": {},
+  "rows": [
+   {
+    "study": "Ginkgo vs Placebo (hypothetical)",
+    "m1": 58.4,
+    "sd1": 3.8,
+    "n1": 28,
+    "m2": 56.8,
+    "sd2": 4.3,
+    "n2": 24
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 1.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "printed MD = 58.4 - 56.8 (1 dp), p. 161"
+   },
+   {
+    "path": "vi.0",
+    "value": 1.286131,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed unequal-variance Var = S1^2/n1 + S2^2/n2 (6 dp), p. 162"
+   },
+   {
+    "path": "vi.0",
+    "value": 1.1341,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "printed unequal-variance SE (4 dp), p. 162"
+   },
+   {
+    "path": "yi.0",
+    "value": 1.6000000000000014,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "vi.0",
+    "value": 1.2861309523809523,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "vi.0",
+    "value": 1.1340771368742746,
+    "tol": 1e-09,
+    "transform": "sqrt",
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (SE)"
+   }
+  ],
+  "note": "Group 1 = Ginkgo (treatment), effect = mean1 - mean2. The engine's MD variance is the unequal-variance form, which is the book's second variant.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__ginkgo_md_pooled_equal_var",
+  "example_id": "khan_ch08__ginkgo_raw_md_equal_unequal_var",
+  "source_id": "khan2020",
+  "location": "Ch8 §8.1(a): Example 8.1 p. 162",
+  "description": "Raw MD with the equal-variance (pooled-SD) variance (n1+n2)/(n1 n2) * Sp^2: Sp^2 = 16.303, Var = 1.261542, SE = 1.1232.",
+  "measure": "MD",
+  "options": {},
+  "rows": [
+   {
+    "study": "Ginkgo vs Placebo (hypothetical)",
+    "m1": 58.4,
+    "sd1": 3.8,
+    "n1": 28,
+    "m2": 56.8,
+    "sd2": 4.3,
+    "n2": 24
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "vi.0",
+    "value": 1.261542,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed equal-variance Var (6 dp), p. 162"
+   },
+   {
+    "path": "vi.0",
+    "value": 1.1232,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "printed equal-variance SE (4 dp), p. 162"
+   },
+   {
+    "path": "vi.0",
+    "value": 1.2615416666666668,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "vi.0",
+    "value": 1.1231837190178047,
+    "tol": 1e-09,
+    "transform": "sqrt",
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (SE)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Convention option missing: effect_sizes.md() always uses the unequal-variance Var = sd1^2/n1 + sd2^2/n2 (metafor escalc MD vtype='LS'); there is no option for the homoscedastic pooled-SD variance (n1+n2)/(n1 n2) * Sp^2 (metafor vtype='HO'). The engine returns vi = 1.286131 (SE 1.1341), i.e. the book's unequal-variance result (tested in khan_ch08__ginkgo_md_unequal_var), not 1.261542/1.1232. The pooled variance Sp^2 = 16.303 (p. 162) has no result path either."
+ },
+ {
+  "case_id": "khan_ch08__cholesterol_paired_mean_difference",
+  "example_id": "khan_ch08__cholesterol_paired_mean_difference",
+  "source_id": "khan2020",
+  "location": "Ch8 §8.1(b): Example 8.2 p. 163",
+  "description": "Matched-pairs (pre/post) mean difference from n = 15, sum D = 254, sum (D - Dbar)^2 = 2808.9333: Dbar, Var(Dbar) = S_D^2/n and SE.",
+  "measure": "other",
+  "options": {},
+  "rows": [
+   {
+    "study": "Cholesterol pre/post (hypothetical)",
+    "n": 15,
+    "sum_d": 254,
+    "sum_sq_dev_d": 2808.9333
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 16.9333,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Dbar = 254/15 (4 dp), p. 163"
+   },
+   {
+    "path": "vi.0",
+    "value": 13.3759,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Var(Dbar) = S_D^2/n (4 dp), p. 163"
+   },
+   {
+    "path": "vi.0",
+    "value": 3.6573,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "printed SE(Dbar) (4 dp), p. 163"
+   },
+   {
+    "path": "yi.0",
+    "value": 16.933333333333334,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "vi.0",
+    "value": 13.37587285714286,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Missing feature: single-group / matched-pairs designs are not implemented. All continuous measures of effect_sizes (MD, SMD, COHEN_D, ROM) are two-independent-group measures; there is no measure for the mean of paired differences with Var = S_D^2/n (metafor escalc 'MN' applied to the differences, or 'MC'), and no input format for the summary sums n, sum D, sum (D - Dbar)^2. The printed S_D^2 = 200.6381 has no path."
+ },
+ {
+  "case_id": "khan_ch08__quant_ability_study1_wald_ci_ztest",
+  "example_id": "khan_ch08__hedges1985_quant_ability_study1_se_ci_ztest",
+  "source_id": "khan2020",
+  "location": "Ch8 Table 8.2 p. 168 (g = 0.72, N = 76); Example 8.3 p. 167 (Var, SE, CI); Example 8.4 p. 168 (z, P)",
+  "description": "Single SMD (Hedges 1985 Study 1, g = 0.72, printed Var 0.056134): SE, 95% Wald CI (0.256, 1.184), z = 3.039 and two-sided P = 0.0024.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1 (Hedges 1985, sex differences in quantitative ability)",
+    "yi": 0.72,
+    "vi": 0.056134,
+    "n1": 38,
+    "n2": 38
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "se",
+    "value": 0.236927,
+    "tol": 1.56e-06,
+    "transform": null,
+    "note": "printed SE = sqrt(0.056134) (6 dp), p. 167; tol = half unit + sqrt of the 6-dp variance (1.1e-6)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.256,
+    "tol": 0.000509,
+    "transform": null,
+    "note": "printed 95% CI LL 0.72 - 0.464 (3 dp), p. 167; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.184,
+    "tol": 0.000509,
+    "transform": null,
+    "note": "printed 95% CI UL (3 dp), p. 167; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "stat",
+    "value": 3.039,
+    "tol": 0.000514,
+    "transform": null,
+    "note": "printed z = 0.72/0.236927 (3 dp), p. 168"
+   },
+   {
+    "path": "p",
+    "value": 0.0024,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed two-sided P = 2 x 0.0012 (4 dp), p. 168 (exact 0.002374)"
+   }
+  ],
+  "note": "Input vi is the printed Var(g) = 0.056134 (computed by the book with n1 = n2 = 38 assumed and the 2(N-2) denominator; that variance step is a known_gap, see khan_ch08__quant_ability_study1_variance_from_g). Not checked (no engine path): one-sided P 0.0012, CI half-width 0.464, g* = 0.71. Not a meta-analysis: k = 1 FE returns the study's own estimate.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__quant_ability_study1_variance_from_g",
+  "example_id": "khan_ch08__hedges1985_quant_ability_study1_se_ci_ztest",
+  "source_id": "khan2020",
+  "location": "Ch8 Table 8.2 p. 168; Example 8.3 p. 167",
+  "description": "Var(g) = (n1+n2)/(n1 n2) + g^2/(2(n1+n2-2)) for a reported g = 0.72 with N = 76 split 38/38: Var 0.056134, SE 0.236927.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1 (Hedges 1985, sex differences in quantitative ability)",
+    "yi": 0.72,
+    "n1": 38,
+    "n2": 38
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "vi.0",
+    "value": 0.056134,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed Var(g) (6 dp), p. 167"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.236927,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "printed SE(g) (6 dp), p. 167"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.05613428165007112,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Missing feature: the engine cannot derive an SMD sampling variance from a reported SMD and arm sizes (GEN requires vi or sei; SMD/COHEN_D need raw means/SDs, which Table 8.2 does not give). Even with such an input, none of the SMD variance options uses the book's 2(N-2) denominator: LS and LS2 use 2N, giving 0.056042 (SE 0.236732) instead of 0.056134."
+ },
+ {
+  "case_id": "khan_ch08__open_education_fe",
+  "example_id": "khan_ch08__open_education_fixed_effect_q_i2",
+  "source_id": "khan2020",
+  "location": "Ch8 Table 8.3 p. 170; Tables 8.4-8.7 pp. 171-176; Ex 8.7 p. 172; Ex 8.8 pp. 173-174; Ex 8.9 p. 176; Fig. 8.1 p. 173",
+  "description": "Open education vs attitude toward school (6 SMDs, Hedges 1985): fixed-effect inverse-variance pooling, z test, Cochran's Q and I^2.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.094511,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.202372,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.200164,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.051485,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.040274,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.02125,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed theta_FE = 1.478124/69.55727 (5 dp), Ex 8.7 p. 172"
+   },
+   {
+    "path": "estimate",
+    "value": 0.021,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed theta_FE ~= 0.021 (3 dp), Ex 8.7 p. 172"
+   },
+   {
+    "path": "estimate",
+    "value": 0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall ES (2 dp), Fig. 8.1 p. 173"
+   },
+   {
+    "path": "se",
+    "value": 0.014377,
+    "tol": 5e-07,
+    "transform": "square",
+    "note": "printed Var(theta_FE) = 1/69.55727 (6 dp), Ex 8.7 p. 172"
+   },
+   {
+    "path": "se",
+    "value": 0.119903,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed SE(theta_FE) (6 dp), Ex 8.7 p. 172"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.214,
+    "tol": 0.000504,
+    "transform": null,
+    "note": "printed 95% CI LL 0.021 - 0.235 (3 dp), Ex 8.7 p. 172; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.256,
+    "tol": 0.000504,
+    "transform": null,
+    "note": "printed 95% CI UL (3 dp), Ex 8.7 p. 172; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.21,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI LL (2 dp), Ex 8.7 / Fig. 8.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.26,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI UL (2 dp), Ex 8.7 / Fig. 8.1"
+   },
+   {
+    "path": "stat",
+    "value": 0.177227,
+    "tol": 1e-05,
+    "transform": null,
+    "note": "printed z0 = 0.02125/0.119903 (6 dp), Ex 8.8 p. 174; the book divides the 5-dp-rounded estimate (shifts z by up to 4.2e-5; realized shift 6.5e-6): tol = half unit + realized rounding shift, rounded up"
+   },
+   {
+    "path": "p",
+    "value": 0.8572,
+    "tol": 0.00222,
+    "transform": null,
+    "note": "printed two-sided P (4 dp), Ex 8.8 p. 174: a normal-table lookup at z rounded to 0.18 (2(1 - Phi(0.18)) = 0.857162); tol = half unit + |P(0.177231) - P(0.18)| = 0.002167 (exact P 0.859327)"
+   },
+   {
+    "path": "Q",
+    "value": 7.51041,
+    "tol": 1.12e-05,
+    "transform": null,
+    "note": "printed Q = 7.541822 - 1.478124^2/69.55719 (5 dp), Ex 8.9 p. 176; tol = half unit + |Q(exact v) - Q(6-dp v)| = 6.2e-6 (the book's Table 8.7 sums use 6-dp v)"
+   },
+   {
+    "path": "Q",
+    "value": 7.51,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Ex 8.9 / Fig. 8.1"
+   },
+   {
+    "path": "Q_df",
+    "value": 5,
+    "tol": 0.0,
+    "transform": null,
+    "note": "printed df = k - 1, Ex 8.9 p. 176"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.19,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p for Q (2 dp), Fig. 8.1 (exact 0.18536)"
+   },
+   {
+    "path": "I2",
+    "value": 33.4257,
+    "tol": 0.000105,
+    "transform": null,
+    "note": "printed I^2 = (Q - df)/Q = 0.334257 as a FRACTION (6 dp), Ex 8.9 p. 176; the engine reports percent, so value = 100 x 0.334257 and tol = 100 x half unit + |I2(exact v) - I2(6-dp v)| (5.5e-5 %)"
+   },
+   {
+    "path": "I2",
+    "value": 33,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 = 33%, Ex 8.9 / Fig. 8.1"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 15.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 1 FE % weight (1 dp), Fig. 8.1 p. 173"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 7.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 2 FE % weight (1 dp), Fig. 8.1 p. 173"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 3 FE % weight (1 dp), Fig. 8.1 p. 173"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 6.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 4 FE % weight (1 dp), Fig. 8.1 p. 173"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 27.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 5 FE % weight (1 dp), Fig. 8.1 p. 173"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 35.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 6 FE % weight (1 dp), Fig. 8.1 p. 173"
+   }
+  ],
+  "note": "Inputs: theta (Table 8.3; Study 6 = -0.234 as in Tables 8.4-8.9 and A8.1, not the Table 8.3 typo -0.24) and the printed Var (Table 8.4/8.6, 6 dp), v = (nE+nC)/(nE nC) + theta^2/(2(nE+nC)). The book's Table 8.7/8.8 sums were computed from these 6-dp variances. Not checked (no engine path): sum w 69.55727 (Table 8.6) / 69.55719 (Table 8.7), sum w*theta 1.478124, sum w*theta^2 7.541822 / 7.541828, column sum of Var 0.797746, CI half-width 0.235, chi2(5) 10% critical value 9.236, per-study raw weights w_i and w_i*theta_i (Tables 8.6-8.7) - all covered through estimate, SE and Q.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__open_education_per_study_wald_ci",
+  "example_id": "khan_ch08__open_education_fixed_effect_q_i2",
+  "source_id": "khan2020",
+  "location": "Ch8 Table 8.5 p. 171 (Ex 8.6); Ex 8.8 p. 173 (Study 1 z, P); Fig. 8.1 p. 173",
+  "description": "Per-study 95% Wald CIs of the 6 open-education SMDs (Table 8.5, 4 dp; Fig. 8.1, 2 dp) and the Study 1 z test, each study in its own group of a 'subgroup' call (k = 1 groups use a fixed-effect z CI).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.094511,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.202372,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.200164,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.051485,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.040274,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.S1.ci_lower",
+    "value": -0.0395,
+    "tol": 0.000112,
+    "transform": null,
+    "note": "Study 1 CI LL, Table 8.5 (4 dp, truncated - Study 1 used SE 0.3074); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S1.ci_upper",
+    "value": 1.1655,
+    "tol": 0.000112,
+    "transform": null,
+    "note": "Study 1 CI UL, Table 8.5 (4 dp, truncated); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S1.estimate",
+    "value": 0.56,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 1 ES, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S1.ci_lower",
+    "value": -0.04,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 1 CI LL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S1.ci_upper",
+    "value": 1.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 1 CI UL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S2.ci_lower",
+    "value": -0.5737,
+    "tol": 0.000117,
+    "transform": null,
+    "note": "Study 2 CI LL, Table 8.5 (4 dp, truncated - Study 1 used SE 0.3074); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S2.ci_upper",
+    "value": 1.1897,
+    "tol": 0.000117,
+    "transform": null,
+    "note": "Study 2 CI UL, Table 8.5 (4 dp, truncated); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S2.estimate",
+    "value": 0.31,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 2 ES, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S2.ci_lower",
+    "value": -0.57,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 2 CI LL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S2.ci_upper",
+    "value": 1.19,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 2 CI UL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S3.ci_lower",
+    "value": -0.7959,
+    "tol": 0.000117,
+    "transform": null,
+    "note": "Study 3 CI LL, Table 8.5 (4 dp, truncated - Study 1 used SE 0.3074); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S3.ci_upper",
+    "value": 0.9578,
+    "tol": 0.000117,
+    "transform": null,
+    "note": "Study 3 CI UL, Table 8.5 (4 dp, truncated); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S3.estimate",
+    "value": 0.08,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 3 ES, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S3.ci_lower",
+    "value": -0.8,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 3 CI LL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S3.ci_upper",
+    "value": 0.96,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 3 CI UL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S4.ci_lower",
+    "value": -0.2979,
+    "tol": 0.000117,
+    "transform": null,
+    "note": "Study 4 CI LL, Table 8.5 (4 dp, truncated - Study 1 used SE 0.3074); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S4.ci_upper",
+    "value": 1.4939,
+    "tol": 0.000117,
+    "transform": null,
+    "note": "Study 4 CI UL, Table 8.5 (4 dp, truncated); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S4.estimate",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 4 ES, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S4.ci_lower",
+    "value": -0.3,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 4 CI LL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S4.ci_upper",
+    "value": 1.49,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 4 CI UL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S5.ci_lower",
+    "value": -0.6227,
+    "tol": 0.000109,
+    "transform": null,
+    "note": "Study 5 CI LL, Table 8.5 (4 dp, truncated - Study 1 used SE 0.3074); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S5.ci_upper",
+    "value": 0.2667,
+    "tol": 0.000109,
+    "transform": null,
+    "note": "Study 5 CI UL, Table 8.5 (4 dp, truncated); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S5.estimate",
+    "value": -0.18,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 5 ES, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S5.ci_lower",
+    "value": -0.62,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 5 CI LL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S5.ci_upper",
+    "value": 0.27,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 5 CI UL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S6.ci_lower",
+    "value": -0.6273,
+    "tol": 0.000108,
+    "transform": null,
+    "note": "Study 6 CI LL, Table 8.5 (4 dp, truncated - Study 1 used SE 0.3074); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S6.ci_upper",
+    "value": 0.1593,
+    "tol": 0.000108,
+    "transform": null,
+    "note": "Study 6 CI UL, Table 8.5 (4 dp, truncated); tol = truncation 1e-4 + 1.96 allowance"
+   },
+   {
+    "path": "groups.S6.estimate",
+    "value": -0.23,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 6 ES, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S6.ci_lower",
+    "value": -0.63,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 6 CI LL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S6.ci_upper",
+    "value": 0.16,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Study 6 CI UL, Fig. 8.1 (2 dp)"
+   },
+   {
+    "path": "groups.S1.stat",
+    "value": 1.831335,
+    "tol": 5.44e-06,
+    "transform": null,
+    "note": "printed z(Study 1) = 0.563/0.307426 (6 dp), Ex 8.8 p. 173; tol = half unit + sqrt-of-6-dp-Var allowance"
+   },
+   {
+    "path": "groups.S1.p",
+    "value": 0.0672,
+    "tol": 0.00025,
+    "transform": null,
+    "note": "printed two-sided P(Study 1) (4 dp), Ex 8.8 p. 173: normal-table lookup at z = 1.83 (0.067250); tol = half unit + |P(1.831332) - P(1.83)| = 2.0e-4 (exact 0.067051)"
+   },
+   {
+    "path": "groups.S1.stat",
+    "value": 1.831332444412849,
+    "tol": 3e-06,
+    "transform": null,
+    "note": "verifier z(Study 1) = 0.563/sqrt(v exact); tol covers the 6-dp-rounded input Var (2.5e-6)"
+   }
+  ],
+  "note": "Inputs: theta (Table 8.3; Study 6 = -0.234 as in Tables 8.4-8.9 and A8.1, not the Table 8.3 typo -0.24) and the printed Var (Table 8.4/8.6, 6 dp), v = (nE+nC)/(nE nC) + theta^2/(2(nE+nC)). The book's Table 8.7/8.8 sums were computed from these 6-dp variances. The 'key' column (S1..S6) names the per-study groups. Table 8.4 SEs equal sqrt of the input Var and are not re-checked.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__open_education_fe_fullprec",
+  "example_id": "khan_ch08__open_education_fixed_effect_q_i2",
+  "source_id": "khan2020",
+  "location": "Ch8 Tables 8.3-8.7 pp. 170-176; Ex 8.7-8.9 pp. 172-177",
+  "description": "Open-education fixed-effect pooling recomputed from full-precision v_i: tight checks against the verifier's values.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.09451101136363636,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.2023716,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.20016402500000002,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894010000000002,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.05148515384615385,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.04027378,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.021250455956246722,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.11990263599280059,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.014376642118022037,
+    "tol": 1e-09,
+    "transform": "square",
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (variance)"
+   },
+   {
+    "path": "stat",
+    "value": 0.17723093225008565,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (z, not printed at full precision)"
+   },
+   {
+    "path": "p",
+    "value": 0.8593269998195321,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (exact two-sided P; the book's table value is 0.8572)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.2137543922410584,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.25625530415355185,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "Q",
+    "value": 7.510416674470057,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.18536175606012406,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "I2",
+    "value": 33.4257975726386,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (percent)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 15.211605410407797,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 7.104080868077356,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.182430568141321,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 6.880748175205255,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 27.923859683865025,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 35.69727529430323,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   }
+  ],
+  "note": "Inputs: theta (Table 8.3, Study 6 = -0.234) and v = (nE+nC)/(nE nC) + theta^2/(2(nE+nC)) at full precision (the book's Hedges-Olkin variance with the 2N denominator; reproduces every printed Var/SE of Table 8.4 to 6 dp). Derived input, not printed; used only for tight checks against the verifier's full-precision values.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__open_education_fe_text_slips",
+  "example_id": "khan_ch08__open_education_fixed_effect_q_i2",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.7 p. 172; Ex 8.8 p. 174; interpretation p. 177",
+  "description": "Three printed slips in the open-education FE text: estimate called '(-0.02)', z0 written '= 1.77', CI quoted as '(-0.21, 0.20)'.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.094511,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.202372,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.200164,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.051485,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.040274,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed '(-0.02)' for the pooled estimate, Ex 8.7 p. 172"
+   },
+   {
+    "path": "stat",
+    "value": 1.77,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 'z0 = 0.177227 = 1.77', Ex 8.8 p. 174"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.2,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI '(-0.21, 0.20)', interpretation p. 177"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (text slips, not an engine gap): the pooled estimate is +0.02125 (Ex 8.7 itself computes 0.02125 and Fig. 8.1 prints 0.02), z0 = 0.177227 rounds to 0.18 not 1.77 (decimal shift), and the CI upper limit is 0.256 -> 0.26 (Ex 8.7 and Fig. 8.1), not 0.20. The correct values are checked in khan_ch08__open_education_fe."
+ },
+ {
+  "case_id": "khan_ch08__open_education_per_study_variance",
+  "example_id": "khan_ch08__open_education_fixed_effect_q_i2",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.5 p. 170; Table 8.4 p. 171",
+  "description": "Per-study SMD variances from the reported theta and equal arm sizes: v = 2/n + theta^2/(4n) (Table 8.4 Var and SE, 6 dp).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "yi": 0.563,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "yi": 0.308,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "yi": 0.081,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "yi": 0.598,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "yi": -0.178,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "yi": -0.234,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "vi.0",
+    "value": 0.094511,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Study 1 Var, Table 8.4/8.6 (6 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.307426,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "Study 1 SE, Table 8.4 (6 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.202372,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Study 2 Var, Table 8.4/8.6 (6 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.449857,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "Study 2 SE, Table 8.4 (6 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.200164,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Study 3 Var, Table 8.4/8.6 (6 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.447397,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "Study 3 SE, Table 8.4 (6 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.20894,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Study 4 Var, Table 8.4/8.6 (6 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.4571,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "Study 4 SE, Table 8.4 (6 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.051485,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Study 5 Var, Table 8.4/8.6 (6 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.226903,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "Study 5 SE, Table 8.4 (6 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.040274,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Study 6 Var, Table 8.4/8.6 (6 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.200683,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "Study 6 SE, Table 8.4 (6 dp)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Missing feature: the engine cannot derive an SMD variance from a reported SMD (theta) and arm sizes; GEN requires vi or sei, and SMD/COHEN_D need raw means and SDs, which Hedges (1985)/Table 8.3 does not give. The formula itself, (nE+nC)/(nE nC) + theta^2/(2(nE+nC)), equals the engine's SMD vtype 'LS' with y = theta, so only the input path is missing. The pooled analyses use the printed Var as input instead."
+ },
+ {
+  "case_id": "khan_ch08__open_education_re_dl",
+  "example_id": "khan_ch08__open_education_random_effects_dl",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.10 pp. 178-181; Table 8.8 p. 179; Fig. 8.2 p. 181",
+  "description": "Open education: DerSimonian-Laird random-effects pooling (Q, C, tau^2, RE estimate, SE, 95% Wald CI, RE % weights).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.094511,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.202372,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.200164,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.051485,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.040274,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 7.5104,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Q (4 dp), Ex 8.10 p. 180"
+   },
+   {
+    "path": "Q_df",
+    "value": 5,
+    "tol": 0.0,
+    "transform": null,
+    "note": "printed df, Ex 8.10 p. 180"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 52.62122,
+    "tol": 4.36e-05,
+    "transform": null,
+    "note": "printed C = 69.55719 - 1178.0185/69.55719 (5 dp), p. 180; tol = half unit + |C(exact v) - C(6-dp v)| = 3.8e-5 (the book's sums use 6-dp v)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.047707,
+    "tol": 6e-07,
+    "transform": null,
+    "note": "printed tau^2 = (Q - df)/C (6 dp), p. 180; tol = half unit + 6-dp-v allowance (8e-8)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed tau^2 ~= 0.05 (2 dp), p. 180"
+   },
+   {
+    "path": "estimate",
+    "value": 0.083967,
+    "tol": 6e-07,
+    "transform": null,
+    "note": "printed theta_RE = 3.393/40.4085 (6 dp), p. 180; tol = half unit + rounded-tau^2 allowance"
+   },
+   {
+    "path": "se",
+    "value": 0.157313,
+    "tol": 6e-07,
+    "transform": null,
+    "note": "printed SE(theta_RE) = sqrt(1/40.4085) (6 dp), p. 181"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.2244,
+    "tol": 5.57e-05,
+    "transform": null,
+    "note": "printed 95% CI LL (4 dp), p. 181; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.3923,
+    "tol": 5.57e-05,
+    "transform": null,
+    "note": "printed 95% CI UL (4 dp), p. 181; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.08,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall ES (2 dp), Fig. 8.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.22,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI LL (2 dp), Fig. 8.2"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.39,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI UL (2 dp), Fig. 8.2"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.19,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p for Q (2 dp), Fig. 8.2"
+   },
+   {
+    "path": "I2",
+    "value": 33,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 = 33%, Fig. 8.2"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 17.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 1 RE % weight (1 dp), Fig. 8.2 p. 181"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 9.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 2 RE % weight (1 dp), Fig. 8.2 p. 181"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 10.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 3 RE % weight (1 dp), Fig. 8.2 p. 181"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 9.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 4 RE % weight (1 dp), Fig. 8.2 p. 181"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 24.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 5 RE % weight (1 dp), Fig. 8.2 p. 181"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 28.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 6 RE % weight (1 dp), Fig. 8.2 p. 181"
+   }
+  ],
+  "note": "Inputs: theta (Table 8.3; Study 6 = -0.234 as in Tables 8.4-8.9 and A8.1, not the Table 8.3 typo -0.24) and the printed Var (Table 8.4/8.6, 6 dp), v = (nE+nC)/(nE nC) + theta^2/(2(nE+nC)). The book's Table 8.7/8.8 sums were computed from these 6-dp variances. Not checked (no engine path): sum w 69.55719, sum w^2 1178.0185, sum w* 40.4085, sum w* theta 3.393 (the text's '3.39399' is a typo for 3.39299), Table 8.8 per-study w, w^2, v*, w*, w* theta - covered through C, tau^2, estimate and SE.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__open_education_re_dl_fullprec",
+  "example_id": "khan_ch08__open_education_random_effects_dl",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.10 pp. 178-181",
+  "description": "Open-education DL random-effects pooling from full-precision v_i: tight checks against the verifier's values.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.09451101136363636,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.2023716,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.20016402500000002,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894010000000002,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.05148515384615385,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.04027378,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 7.510416674470057,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 52.621256245755966,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.04770727370600409,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "tau",
+    "value": 0.21841994804963233,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (not printed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.08396731082012325,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.1573127824914215,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.22436007717084605,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.3922946988110926,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 17.400935135081397,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 9.895802539596582,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 9.98393588301066,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 9.642534493083083,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 24.9487910981718,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 28.12800085105648,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   }
+  ],
+  "note": "Inputs: theta (Table 8.3, Study 6 = -0.234) and v = (nE+nC)/(nE nC) + theta^2/(2(nE+nC)) at full precision (the book's Hedges-Olkin variance with the 2N denominator; reproduces every printed Var/SE of Table 8.4 to 6 dp). Derived input, not printed; used only for tight checks against the verifier's full-precision values.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__open_education_ivhet",
+  "example_id": "khan_ch08__open_education_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.11 pp. 183-185; Table 8.9 p. 183; Fig. 8.3 p. 184",
+  "description": "Open education: inverse-variance heterogeneity (IVhet) model - FE point estimate with Var = sum (w_i/W)^2 (v_i + tau^2_DL).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.094511,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.202372,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.200164,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.051485,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.040274,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.021251,
+    "tol": 7.87e-07,
+    "transform": null,
+    "note": "printed theta_IVhet (6 dp), p. 183 = 1.478142/69.55719 (typo'd numerator); tol = half unit + |1.478142/69.55719 - exact| (2.9e-7)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall ES (2 dp), Fig. 8.3"
+   },
+   {
+    "path": "tau2",
+    "value": 0.047707,
+    "tol": 6e-07,
+    "transform": null,
+    "note": "printed tau^2 used in Table 8.9 (6 dp)"
+   },
+   {
+    "path": "se",
+    "value": 0.02599,
+    "tol": 5e-06,
+    "transform": "square",
+    "note": "printed Var(theta_IVhet) = sum W* (5 dp), Table 8.9 p. 183"
+   },
+   {
+    "path": "se",
+    "value": 0.16122,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), p. 183"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.294744,
+    "tol": 6.59e-06,
+    "transform": null,
+    "note": "printed 95% CI LL (6 dp), p. 184; tol = half unit + 1.96 allowance (5.8e-6) + estimate allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.33725,
+    "tol": 1.11e-05,
+    "transform": null,
+    "note": "printed 95% CI UL (5 dp), p. 184; tol = half unit + 1.96 allowance (5.8e-6) + estimate allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.29,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI LL (2 dp), Fig. 8.3"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI UL (2 dp), Fig. 8.3"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.19,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p for Q (2 dp), Fig. 8.3"
+   },
+   {
+    "path": "I2",
+    "value": 33,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 = 33%, Fig. 8.3"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 15.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 1 IVhet % weight (= FE weight, 1 dp), Fig. 8.3 p. 184"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 7.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 2 IVhet % weight (= FE weight, 1 dp), Fig. 8.3 p. 184"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 3 IVhet % weight (= FE weight, 1 dp), Fig. 8.3 p. 184"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 6.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 4 IVhet % weight (= FE weight, 1 dp), Fig. 8.3 p. 184"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 27.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 5 IVhet % weight (= FE weight, 1 dp), Fig. 8.3 p. 184"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 35.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Study 6 IVhet % weight (= FE weight, 1 dp), Fig. 8.3 p. 184"
+   }
+  ],
+  "note": "Inputs: theta (Table 8.3; Study 6 = -0.234 as in Tables 8.4-8.9 and A8.1, not the Table 8.3 typo -0.24) and the printed Var (Table 8.4/8.6, 6 dp), v = (nE+nC)/(nE nC) + theta^2/(2(nE+nC)). The book's Table 8.7/8.8 sums were computed from these 6-dp variances. Not checked (no engine path): Table 8.9 per-study v* = v + tau^2 and variance components W* (0.00329, 0.00126, 0.00128, 0.00122, 0.00773, 0.01121), sum w 69.557, sum w theta 1.4781. The CI formula line on p. 184 plugs in 0.083967 (the RE estimate) but the printed limits correspond to 0.021251.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__open_education_ivhet_fullprec",
+  "example_id": "khan_ch08__open_education_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.11 pp. 183-185",
+  "description": "Open-education IVhet from full-precision v_i: tight checks against the verifier's values.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "key": "S1",
+    "yi": 0.563,
+    "vi": 0.09451101136363636,
+    "n1": 22,
+    "n2": 22
+   },
+   {
+    "study": "Study 2",
+    "key": "S2",
+    "yi": 0.308,
+    "vi": 0.2023716,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 3",
+    "key": "S3",
+    "yi": 0.081,
+    "vi": 0.20016402500000002,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 4",
+    "key": "S4",
+    "yi": 0.598,
+    "vi": 0.20894010000000002,
+    "n1": 10,
+    "n2": 10
+   },
+   {
+    "study": "Study 5",
+    "key": "S5",
+    "yi": -0.178,
+    "vi": 0.05148515384615385,
+    "n1": 39,
+    "n2": 39
+   },
+   {
+    "study": "Study 6",
+    "key": "S6",
+    "yi": -0.234,
+    "vi": 0.04027378,
+    "n1": 50,
+    "n2": 50
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.021250455956246722,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.04770727370600409,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.161222063403416,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.025992553728055087,
+    "tol": 1e-09,
+    "transform": "square",
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (IVhet variance)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.29473898182768177,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.33723989374017516,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 15.211605410407797,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (IVhet % weight = FE weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 7.104080868077356,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (IVhet % weight = FE weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.182430568141321,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (IVhet % weight = FE weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 6.880748175205255,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (IVhet % weight = FE weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 27.923859683865025,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (IVhet % weight = FE weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 35.69727529430323,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (IVhet % weight = FE weight)"
+   }
+  ],
+  "note": "Inputs: theta (Table 8.3, Study 6 = -0.234) and v = (nE+nC)/(nE nC) + theta^2/(2(nE+nC)) at full precision (the book's Hedges-Olkin variance with the 2N denominator; reproduces every printed Var/SE of Table 8.4 to 6 dp). Derived input, not printed; used only for tight checks against the verifier's full-precision values.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_cohen_per_study_es",
+  "example_id": "khan_ch08__operative_time_cohen_d_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Figs. 8.4a/8.5a/8.6a pp. 186-189 (ES column)",
+  "description": "Operative time LARR vs ORR (9 studies): per-study Cohen's d = (m1 - m2)/Sp with the (n-1) pooled SD, native engine measure COHEN_D.",
+  "measure": "COHEN_D",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 1.58,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.47,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.32,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.69,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.4",
+    "value": 1.24,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.85,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.39,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.7",
+    "value": 1.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.8",
+    "value": 0.64,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) d (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "yi.0",
+    "value": 1.5789100623123757,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.467924956989091,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.3170303867781498,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.6898848881955785,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.4",
+    "value": 1.2356422525309994,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.8539170141224313,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.39388692521745194,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.7",
+    "value": 1.109993523687659,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.8",
+    "value": 0.6385218146808666,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   }
+  ],
+  "note": "MetaXL/metan 'Cohen' d uses the (n-1) pooled SD (the engine's COHEN_D), not the n-denominator SD of the book's text definition (p. 164). Group 1 = LARR (laparoscopic), effect = LARR - ORR in SD units. Per-study CIs depend on the MetaXL variance and are checked in khan_ch08__optime_cohen_per_study_ci_metaxl_var.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_cohen_per_study_ci_metaxl_var",
+  "example_id": "khan_ch08__operative_time_cohen_d_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Figs. 8.4a/8.5a/8.6a pp. 186-189",
+  "description": "Operative time: per-study 95% Wald CIs of Cohen's d with the MetaXL variance (each study its own group of a 'subgroup' call).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5789100623123757,
+    "vi": 0.0055254024461983825
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.467924956989091,
+    "vi": 0.008909164394402957
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.3170303867781498,
+    "vi": 0.008563696494390538
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6898848881955785,
+    "vi": 0.012468760851229607
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2356422525309994,
+    "vi": 0.05978725497589668
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8539170141224313,
+    "vi": 0.012733456679578752
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39388692521745194,
+    "vi": 0.019993754967684747
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.109993523687659,
+    "vi": 0.04679213328826115
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6385218146808666,
+    "vi": 0.024637319929953567
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.Bonjer2015.ci_lower",
+    "value": 1.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Bonjer2015.ci_upper",
+    "value": 1.72,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Fleshman2015.ci_lower",
+    "value": 0.28,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Fleshman2015.ci_upper",
+    "value": 0.65,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Stevenson2015.ci_lower",
+    "value": 0.14,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Stevenson2015.ci_upper",
+    "value": 0.5,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Jeong2014.ci_lower",
+    "value": 0.47,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Jeong2014.ci_upper",
+    "value": 0.91,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Ng2014.ci_lower",
+    "value": 0.76,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Ng2014.ci_upper",
+    "value": 1.71,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Liang2011.ci_lower",
+    "value": 0.63,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Liang2011.ci_upper",
+    "value": 1.08,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Lujan2009.ci_lower",
+    "value": 0.12,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Lujan2009.ci_upper",
+    "value": 0.67,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Ng2008.ci_lower",
+    "value": 0.69,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Ng2008.ci_upper",
+    "value": 1.53,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI UL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Zhou2004.ci_lower",
+    "value": 0.33,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI LL (2 dp), Figs. 8.4a-8.6a"
+   },
+   {
+    "path": "groups.Zhou2004.ci_upper",
+    "value": 0.95,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI UL (2 dp), Figs. 8.4a-8.6a"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Cohen' formulas (d = (m1-m2)/Sp with the (n-1) pooled SD; v = N/(n1 n2) + d^2/(2(N-2))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_cohen_fe_metaxl_var",
+  "example_id": "khan_ch08__operative_time_cohen_d_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.4a p. 186",
+  "description": "Operative time: fixed-effect (inverse-variance) pooling of Cohen's d with the MetaXL/metan variance.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5789100623123757,
+    "vi": 0.0055254024461983825
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.467924956989091,
+    "vi": 0.008909164394402957
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.3170303867781498,
+    "vi": 0.008563696494390538
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6898848881955785,
+    "vi": 0.012468760851229607
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2356422525309994,
+    "vi": 0.05978725497589668
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8539170141224313,
+    "vi": 0.012733456679578752
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39388692521745194,
+    "vi": 0.019993754967684747
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.109993523687659,
+    "vi": 0.04679213328826115
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6385218146808666,
+    "vi": 0.024637319929953567
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE overall ES (2 dp), Fig. 8.4a p. 186"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.77,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI LL (2 dp), Fig. 8.4a"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.92,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI UL (2 dp), Fig. 8.4a"
+   },
+   {
+    "path": "Q",
+    "value": 163.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Figs. 8.4a/8.5a/8.6a"
+   },
+   {
+    "path": "Q_df",
+    "value": 8,
+    "tol": 0.0,
+    "transform": null,
+    "note": "df = k - 1 = 8"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Figs. 8.4a/8.5a/8.6a"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 = 95%, Figs. 8.4a/8.5a/8.6a"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 25.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8426512596563464,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.037865927278812495,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.7684354059486611,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9168671133640316,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "Q",
+    "value": 163.8852537225632,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "I2",
+    "value": 95.1185357936212,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (percent)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 25.94975592539556,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.09386004354231,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.743102112779383,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.499366021948518,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.3982175620244917,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.260323765688971,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.1713815188881025,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.064251077956354,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.819741971776304,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Cohen' formulas (d = (m1-m2)/Sp with the (n-1) pooled SD; v = N/(n1 n2) + d^2/(2(N-2))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi. The book's MetaXL call for this plot passes \"RE\" as the model (typo, p. 185); the plot title says FE.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_cohen_re_dl_metaxl_var",
+  "example_id": "khan_ch08__operative_time_cohen_d_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.5a p. 187",
+  "description": "Operative time: DerSimonian-Laird random-effects pooling of Cohen's d with the MetaXL/metan variance.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5789100623123757,
+    "vi": 0.0055254024461983825
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.467924956989091,
+    "vi": 0.008909164394402957
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.3170303867781498,
+    "vi": 0.008563696494390538
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6898848881955785,
+    "vi": 0.012468760851229607
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2356422525309994,
+    "vi": 0.05978725497589668
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8539170141224313,
+    "vi": 0.012733456679578752
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39388692521745194,
+    "vi": 0.019993754967684747
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.109993523687659,
+    "vi": 0.04679213328826115
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6385218146808666,
+    "vi": 0.024637319929953567
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.8,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE overall ES (2 dp), Fig. 8.5a p. 187"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.45,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE CI LL (2 dp), Fig. 8.5a"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE CI UL (2 dp), Fig. 8.5a"
+   },
+   {
+    "path": "Q",
+    "value": 163.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.5a"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Fig. 8.5a"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 10.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 11.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) RE % weight (1 dp), Fig. 8.5a"
+   },
+   {
+    "path": "tau2",
+    "value": 0.2652089449583244,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (DL tau^2, not printed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8016497777253474,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.17836675853354,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4520573549604566,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.151242200490238,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.751261284267576,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 11.606201656974044,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 11.620847277121767,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.45741983750844,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.789253091636587,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.446508471639968,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.155118993619602,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 10.196984167028383,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 10.976405220203624,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Cohen' formulas (d = (m1-m2)/Sp with the (n-1) pooled SD; v = N/(n1 n2) + d^2/(2(N-2))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_cohen_ivhet_metaxl_var",
+  "example_id": "khan_ch08__operative_time_cohen_d_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.6a p. 189; comments p. 188",
+  "description": "Operative time: IVhet pooling of Cohen's d with the MetaXL/metan variance (FE estimate, heterogeneity-inflated variance).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5789100623123757,
+    "vi": 0.0055254024461983825
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.467924956989091,
+    "vi": 0.008909164394402957
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.3170303867781498,
+    "vi": 0.008563696494390538
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6898848881955785,
+    "vi": 0.012468760851229607
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2356422525309994,
+    "vi": 0.05978725497589668
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8539170141224313,
+    "vi": 0.012733456679578752
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39388692521745194,
+    "vi": 0.019993754967684747
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.109993523687659,
+    "vi": 0.04679213328826115
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6385218146808666,
+    "vi": 0.024637319929953567
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet overall ES (2 dp), Fig. 8.6a p. 189"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.44,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet CI LL (2 dp), Fig. 8.6a"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.25,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet CI UL (2 dp), Fig. 8.6a"
+   },
+   {
+    "path": "Q",
+    "value": 163.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.6a"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Fig. 8.6a"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 25.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) IVhet % weight (= FE weight, 1 dp), Fig. 8.6a"
+   },
+   {
+    "path": "tau2",
+    "value": 0.2652089449583244,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (DL tau^2 inside IVhet, not printed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8426512596563464,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.207677783812388,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.43561028299497045,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.2496922363177223,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Cohen' formulas (d = (m1-m2)/Sp with the (n-1) pooled SD; v = N/(n1 n2) + d^2/(2(N-2))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_cohen_lfk_metaxl_var",
+  "example_id": "khan_ch08__operative_time_cohen_d_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.8 p. 191 (Doi plot subtitle)",
+  "description": "Operative time: LFK index of the Doi plot for Cohen's d with the MetaXL/metan variance (printed 0.53, 'No asymmetry').",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5789100623123757,
+    "vi": 0.0055254024461983825
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.467924956989091,
+    "vi": 0.008909164394402957
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.3170303867781498,
+    "vi": 0.008563696494390538
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6898848881955785,
+    "vi": 0.012468760851229607
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2356422525309994,
+    "vi": 0.05978725497589668
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8539170141224313,
+    "vi": 0.012733456679578752
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39388692521745194,
+    "vi": 0.019993754967684747
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.109993523687659,
+    "vi": 0.04679213328826115
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6385218146808666,
+    "vi": 0.024637319929953567
+   }
+  ],
+  "call": "lfk",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "lfk",
+    "value": 0.53,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 'LFK index: 0.53 (No asymmetry)', Fig. 8.8 p. 191 (image)"
+   },
+   {
+    "path": "lfk",
+    "value": 0.5313689512605071,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (metasens::lfkindex algorithm on the MetaXL SEs)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Cohen' formulas (d = (m1-m2)/Sp with the (n-1) pooled SD; v = N/(n1 n2) + d^2/(2(N-2))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi. The category string is not checked by the runner (engine: 'nincs aszimmetria' = no asymmetry). The Doi-plot |Z| points are only drawn in the image (no printed numbers) and are not checked. The book's reading of the funnel/Doi plots as 'no heterogeneity' (pp. 190-191) is a source error (I^2 = 95%), not a number.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_cohen_fe_native_variance",
+  "example_id": "khan_ch08__operative_time_cohen_d_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.4a p. 186",
+  "description": "Operative time: FE pooling of Cohen's d computed natively from the arm data with the engine's own SMD variance (MetaXL convention not available).",
+  "measure": "COHEN_D",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE overall ES (2 dp), Fig. 8.4a"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.77,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI LL (2 dp), Fig. 8.4a"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.92,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI UL (2 dp), Fig. 8.4a"
+   },
+   {
+    "path": "Q",
+    "value": 163.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.4a"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 25.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight (1 dp), Fig. 8.4a"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight (1 dp), Fig. 8.4a"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Convention option missing: the engine's COHEN_D variance is 1/n1 + 1/n2 + d^2/(2N) (LS; LS2 is identical without J), whereas MetaXL/Stata metan 'Cohen' uses N/(n1 n2) + d^2/(2(N-2)). With the native variance the engine gives Q = 163.948 (printed 163.89, outside +-0.005) and, under DL RE, a Bonjer weight of 11.7497 -> 11.7 (printed 11.8, Fig. 8.5a); the FE estimate/CI, I^2, FE % weights, per-study CIs, RE/IVhet estimates and CIs still round to the printed values. No smd_vtype reproduces the MetaXL/metan denominator. The same printed numbers pass with MetaXL-derived inputs (khan_ch08__optime_cohen_*_metaxl_var)."
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_per_study_es",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Figs. 8.4b/8.5b/8.6b pp. 186-189 (ES column)",
+  "description": "Operative time LARR vs ORR (9 studies): per-study Hedges' g = d x (1 - 3/(4N - 9)), native engine SMD with the approximate J.",
+  "measure": "SMD",
+  "options": {
+   "j_method": "approx"
+  },
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 1.58,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.47,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.32,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.69,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.4",
+    "value": 1.22,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.85,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.39,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.7",
+    "value": 1.1,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.8",
+    "value": 0.64,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) g (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "yi.0",
+    "value": 1.5777733380054555,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.46716162100705333,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.31652529322513095,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.6883529454386674,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.4",
+    "value": 1.2237228738892212,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.8520375195939153,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.39242266155493355,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.7",
+    "value": 1.10138892272884,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.8",
+    "value": 0.6356839399489516,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   }
+  ],
+  "note": "MetaXL/metan 'Hedges' g = J d with J = 1 - 3/(4N - 9) = the engine's approximate J with df = N - 2. (The book's text defines g without J, p. 165; the software applies it.) Per-study CIs depend on the MetaXL variance and are checked in khan_ch08__optime_hedges_per_study_ci_metaxl_var.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_per_study_ci_metaxl_var",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Figs. 8.4b/8.5b/8.6b pp. 186-189",
+  "description": "Operative time: per-study 95% Wald CIs of Hedges' g with the MetaXL variance (each study its own group of a 'subgroup' call).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5777733380054555,
+    "vi": 0.005525908724245284
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.46716162100705333,
+    "vi": 0.008909393216473029
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.31652529322513095,
+    "vi": 0.00856379667155605
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6883529454386674,
+    "vi": 0.012469683828990578
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2237228738892212,
+    "vi": 0.05984418664264853
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8520375195939153,
+    "vi": 0.012734845886870055
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39242266155493355,
+    "vi": 0.019994601364321848
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.10138892272884,
+    "vi": 0.046821660160414634
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6356839399489516,
+    "vi": 0.02464050497193006
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.Bonjer2015.ci_lower",
+    "value": 1.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Bonjer2015.ci_upper",
+    "value": 1.72,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Fleshman2015.ci_lower",
+    "value": 0.28,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Fleshman2015.ci_upper",
+    "value": 0.65,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Stevenson2015.ci_lower",
+    "value": 0.14,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Stevenson2015.ci_upper",
+    "value": 0.5,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Jeong2014.ci_lower",
+    "value": 0.47,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Jeong2014.ci_upper",
+    "value": 0.91,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Ng2014.ci_lower",
+    "value": 0.74,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Ng2014.ci_upper",
+    "value": 1.7,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Liang2011.ci_lower",
+    "value": 0.63,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Liang2011.ci_upper",
+    "value": 1.07,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Lujan2009.ci_lower",
+    "value": 0.12,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Lujan2009.ci_upper",
+    "value": 0.67,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Ng2008.ci_lower",
+    "value": 0.68,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Ng2008.ci_upper",
+    "value": 1.53,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI UL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Zhou2004.ci_lower",
+    "value": 0.33,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI LL (2 dp), Figs. 8.4b-8.6b"
+   },
+   {
+    "path": "groups.Zhou2004.ci_upper",
+    "value": 0.94,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI UL (2 dp), Figs. 8.4b-8.6b"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Hedges' formulas (g = d (1 - 3/(4N-9)), d on the (n-1) pooled SD; v = N/(n1 n2) + g^2/(2(N-3.94))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_fe_metaxl_var",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.4b p. 186",
+  "description": "Operative time: fixed-effect (inverse-variance) pooling of Hedges' g with the MetaXL/metan variance.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5777733380054555,
+    "vi": 0.005525908724245284
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.46716162100705333,
+    "vi": 0.008909393216473029
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.31652529322513095,
+    "vi": 0.00856379667155605
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6883529454386674,
+    "vi": 0.012469683828990578
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2237228738892212,
+    "vi": 0.05984418664264853
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8520375195939153,
+    "vi": 0.012734845886870055
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39242266155493355,
+    "vi": 0.019994601364321848
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.10138892272884,
+    "vi": 0.046821660160414634
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6356839399489516,
+    "vi": 0.02464050497193006
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE overall ES (2 dp), Fig. 8.4b p. 186"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.77,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI LL (2 dp), Fig. 8.4b"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.92,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI UL (2 dp), Fig. 8.4b"
+   },
+   {
+    "path": "Q",
+    "value": 163.59,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Figs. 8.4b/8.5b/8.6b"
+   },
+   {
+    "path": "Q_df",
+    "value": 8,
+    "tol": 0.0,
+    "transform": null,
+    "note": "df = k - 1 = 8"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Figs. 8.4b/8.5b/8.6b"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 = 95%, Figs. 8.4b/8.5b/8.6b"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 26.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8409167324577393,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.03786788432817974,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.7666970430037783,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9151364219117004,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "Q",
+    "value": 163.58981938663976,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "I2",
+    "value": 95.10972013417765,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (percent)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 25.950060615383222,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.095110280249486,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.74463696989954,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.499703466086045,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.396183729683216,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.260259262115348,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.171819219417763,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.0626352388605733,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.819591218304804,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Hedges' formulas (g = d (1 - 3/(4N-9)), d on the (n-1) pooled SD; v = N/(n1 n2) + g^2/(2(N-3.94))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_re_dl_metaxl_var",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.5b p. 187",
+  "description": "Operative time: DerSimonian-Laird random-effects pooling of Hedges' g with the MetaXL/metan variance.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5777733380054555,
+    "vi": 0.005525908724245284
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.46716162100705333,
+    "vi": 0.008909393216473029
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.31652529322513095,
+    "vi": 0.00856379667155605
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6883529454386674,
+    "vi": 0.012469683828990578
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2237228738892212,
+    "vi": 0.05984418664264853
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8520375195939153,
+    "vi": 0.012734845886870055
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39242266155493355,
+    "vi": 0.019994601364321848
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.10138892272884,
+    "vi": 0.046821660160414634
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6356839399489516,
+    "vi": 0.02464050497193006
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.8,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE overall ES (2 dp), Fig. 8.5b p. 187"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.45,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE CI LL (2 dp), Fig. 8.5b"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE CI UL (2 dp), Fig. 8.5b"
+   },
+   {
+    "path": "Q",
+    "value": 163.59,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.5b"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Fig. 8.5b"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 10.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 11.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) RE % weight (1 dp), Fig. 8.5b"
+   },
+   {
+    "path": "tau2",
+    "value": 0.26473678103126874,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (DL tau^2, not printed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.7984381643049877,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.17822178145471393,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4491298913931799,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.1477464372167956,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.752640889360412,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 11.607325946437541,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 11.622003748352677,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.458247700284932,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.785849001720205,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.447297778760893,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.155427658747499,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 10.19487813053665,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 10.9763291457992,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Hedges' formulas (g = d (1 - 3/(4N-9)), d on the (n-1) pooled SD; v = N/(n1 n2) + g^2/(2(N-3.94))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_ivhet_metaxl_var",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.6b p. 189; comments p. 188",
+  "description": "Operative time: IVhet pooling of Hedges' g with the MetaXL/metan variance (FE estimate, heterogeneity-inflated variance).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5777733380054555,
+    "vi": 0.005525908724245284
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.46716162100705333,
+    "vi": 0.008909393216473029
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.31652529322513095,
+    "vi": 0.00856379667155605
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6883529454386674,
+    "vi": 0.012469683828990578
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2237228738892212,
+    "vi": 0.05984418664264853
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8520375195939153,
+    "vi": 0.012734845886870055
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39242266155493355,
+    "vi": 0.019994601364321848
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.10138892272884,
+    "vi": 0.046821660160414634
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6356839399489516,
+    "vi": 0.02464050497193006
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet overall ES (2 dp), Fig. 8.6b p. 189"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet CI LL (2 dp), Fig. 8.6b (the text p. 188 says 0.44; see khan_ch08__optime_hedges_ivhet_text_ci_lower)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.25,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet CI UL (2 dp), Fig. 8.6b"
+   },
+   {
+    "path": "Q",
+    "value": 163.59,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.6b"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Fig. 8.6b"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 26.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) IVhet % weight (= FE weight, 1 dp), Fig. 8.6b"
+   },
+   {
+    "path": "tau2",
+    "value": 0.26473678103126874,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (DL tau^2 inside IVhet, not printed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8409167324577393,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.20750563273637235,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4342131657052539,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.2476202992102248,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Hedges' formulas (g = d (1 - 3/(4N-9)), d on the (n-1) pooled SD; v = N/(n1 n2) + g^2/(2(N-3.94))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_lfk_metaxl_var",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.10 p. 192 (Doi plot subtitle)",
+  "description": "Operative time: LFK index of the Doi plot for Hedges' g with the MetaXL/metan variance (printed 0.52, 'No asymmetry').",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5777733380054555,
+    "vi": 0.005525908724245284
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.46716162100705333,
+    "vi": 0.008909393216473029
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.31652529322513095,
+    "vi": 0.00856379667155605
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6883529454386674,
+    "vi": 0.012469683828990578
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2237228738892212,
+    "vi": 0.05984418664264853
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8520375195939153,
+    "vi": 0.012734845886870055
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39242266155493355,
+    "vi": 0.019994601364321848
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.10138892272884,
+    "vi": 0.046821660160414634
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6356839399489516,
+    "vi": 0.02464050497193006
+   }
+  ],
+  "call": "lfk",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "lfk",
+    "value": 0.52,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 'LFK index: 0.52 (No asymmetry)', Fig. 8.10 p. 192 (image)"
+   },
+   {
+    "path": "lfk",
+    "value": 0.5224881341349374,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (metasens::lfkindex algorithm on the MetaXL SEs)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Hedges' formulas (g = d (1 - 3/(4N-9)), d on the (n-1) pooled SD; v = N/(n1 n2) + g^2/(2(N-3.94))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi. The category string is not checked by the runner (engine: 'nincs aszimmetria' = no asymmetry). The Doi-plot |Z| points are only drawn in the image (no printed numbers) and are not checked. The book's reading of the funnel/Doi plots as 'no heterogeneity' (pp. 190-191) is a source error (I^2 = 95%), not a number.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_fe_native_variance",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.4b p. 186",
+  "description": "Operative time: FE pooling of Hedges' g computed natively from the arm data with the engine's own SMD variance (MetaXL convention not available).",
+  "measure": "SMD",
+  "options": {
+   "j_method": "approx"
+  },
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE overall ES (2 dp), Fig. 8.4b"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.77,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI LL (2 dp), Fig. 8.4b"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.92,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI UL (2 dp), Fig. 8.4b"
+   },
+   {
+    "path": "Q",
+    "value": 163.59,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.4b"
+   },
+   {
+    "path": "I2",
+    "value": 95,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 26.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 16.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight (1 dp), Fig. 8.4b"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight (1 dp), Fig. 8.4b"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Convention option missing: MetaXL/Stata metan 'Hedges' uses Var = N/(n1 n2) + g^2/(2(N-3.94)); the engine's SMD variances are LS = 1/n1 + 1/n2 + g^2/(2N) and LS2 = J^2 (N/(n1 n2) + d^2/(2N)), and no smd_vtype gives the metan denominator. Native LS (used here): Q = 163.712 (printed 163.59), FE Bonjer weight 25.948 -> 25.9 (printed 26.0), per-study CIs Ng 2014 LL 0.7462 -> 0.75 (printed 0.74) and Ng 2008 UL 1.5243 -> 1.52 (printed 1.53). Native LS2: Q = 164.131, Bonjer 25.87, the same two CI mismatches. The FE estimate/CI and I^2 round to the printed values either way. The same printed numbers pass with MetaXL-derived inputs (khan_ch08__optime_hedges_*_metaxl_var)."
+ },
+ {
+  "case_id": "khan_ch08__optime_hedges_ivhet_text_ci_lower",
+  "example_id": "khan_ch08__operative_time_hedges_g_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; comments p. 188 vs Fig. 8.6b p. 189",
+  "description": "Text claim (p. 188) that the Hedges' g IVhet CI is (0.44, 1.25), the same as for Cohen's d.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.5777733380054555,
+    "vi": 0.005525908724245284
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.46716162100705333,
+    "vi": 0.008909393216473029
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.31652529322513095,
+    "vi": 0.00856379667155605
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.6883529454386674,
+    "vi": 0.012469683828990578
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.2237228738892212,
+    "vi": 0.05984418664264853
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8520375195939153,
+    "vi": 0.012734845886870055
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.39242266155493355,
+    "vi": 0.019994601364321848
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.10138892272884,
+    "vi": 0.046821660160414634
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.6356839399489516,
+    "vi": 0.02464050497193006
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "ci_lower",
+    "value": 0.44,
+    "tol": 0.005,
+    "transform": null,
+    "note": "text p. 188: IVhet CI (0.44, 1.25) 'for both d and g'"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source inconsistency: Fig. 8.6b prints the Hedges' g IVhet lower limit as 0.43, and recomputation with the MetaXL formulas gives 0.434206 (z = 1.96) / 0.43421 (exact quantile); the text's 0.44 copies the Cohen's d value (0.4356). The figure value 0.43 is checked in khan_ch08__optime_hedges_ivhet_metaxl_var."
+ },
+ {
+  "case_id": "khan_ch08__optime_glass_per_study_es",
+  "example_id": "khan_ch08__operative_time_glass_delta_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Figs. 8.4c/8.5c/8.6c pp. 186-189 (ES column)",
+  "description": "Operative time LARR vs ORR (9 studies): per-study Glass's Delta = (m1 - m2)/SD_control.",
+  "measure": "GLASS",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 1.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.49,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.76,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.4",
+    "value": 1.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.35,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.7",
+    "value": 1.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.8",
+    "value": 0.56,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) Delta (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "yi.0",
+    "value": 1.8893129770992367,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.4935064935064934,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.33783783783783783,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.7615262321144675,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.4",
+    "value": 1.4257907542579074,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.8890404729422471,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.3501683501683499,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.7",
+    "value": 1.1474654377880187,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "yi.8",
+    "value": 0.56,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Missing feature: Glass's Delta (SMD standardized by the control-group SD, variance N/(n1 n2) + Delta^2/(2(n2-1)); metafor escalc 'SMD1') is not implemented - effect_sizes has no such measure ('GLASS' here is a placeholder name). The pooled Glass analyses are tested with derived yi/vi (khan_ch08__optime_glass_*_metaxl_var)."
+ },
+ {
+  "case_id": "khan_ch08__optime_glass_per_study_ci_metaxl_var",
+  "example_id": "khan_ch08__operative_time_glass_delta_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Figs. 8.4c/8.5c/8.6c pp. 186-189",
+  "description": "Operative time: per-study 95% Wald CIs of Glass's Delta with the MetaXL variance (each study its own group of a 'subgroup' call).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.8893129770992367,
+    "vi": 0.009517397757524096
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.4935064935064934,
+    "vi": 0.009222186237083105
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.33783783783783783,
+    "vi": 0.008700876754271199
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.7615262321144675,
+    "vi": 0.013480452042703407
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.4257907542579074,
+    "vi": 0.07606255480676068
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8890404729422471,
+    "vi": 0.013948658924168555
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.3501683501683499,
+    "vi": 0.02021079597024259
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.1474654377880187,
+    "vi": 0.05444837786333344
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.56,
+    "vi": 0.02521289518921747
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.Bonjer2015.ci_lower",
+    "value": 1.7,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Bonjer2015.ci_upper",
+    "value": 2.08,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Bonjer2015.estimate",
+    "value": 1.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Fleshman2015.ci_lower",
+    "value": 0.31,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Fleshman2015.ci_upper",
+    "value": 0.68,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Fleshman2015.estimate",
+    "value": 0.49,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Stevenson2015.ci_lower",
+    "value": 0.16,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Stevenson2015.ci_upper",
+    "value": 0.52,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Stevenson2015.estimate",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Jeong2014.ci_lower",
+    "value": 0.53,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Jeong2014.ci_upper",
+    "value": 0.99,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Jeong2014.estimate",
+    "value": 0.76,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Ng2014.ci_lower",
+    "value": 0.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Ng2014.ci_upper",
+    "value": 1.97,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Ng2014.estimate",
+    "value": 1.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Liang2011.ci_lower",
+    "value": 0.66,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Liang2011.ci_upper",
+    "value": 1.12,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Liang2011.estimate",
+    "value": 0.89,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liang et al. (2011) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Lujan2009.ci_lower",
+    "value": 0.07,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Lujan2009.ci_upper",
+    "value": 0.63,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Lujan2009.estimate",
+    "value": 0.35,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Ng2008.ci_lower",
+    "value": 0.69,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Ng2008.ci_upper",
+    "value": 1.6,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Ng2008.estimate",
+    "value": 1.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) Delta (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "groups.Zhou2004.ci_lower",
+    "value": 0.25,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI LL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Zhou2004.ci_upper",
+    "value": 0.87,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI UL (2 dp), Figs. 8.4c-8.6c"
+   },
+   {
+    "path": "groups.Zhou2004.estimate",
+    "value": 0.56,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) Delta (2 dp), Fig. 8.4c"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Glass' formulas (Delta = (m1-m2)/sd2 (ORR = control SD); v = N/(n1 n2) + Delta^2/(2(n2-1))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_glass_fe_metaxl_var",
+  "example_id": "khan_ch08__operative_time_glass_delta_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.4c p. 186",
+  "description": "Operative time: fixed-effect (inverse-variance) pooling of Glass's Delta with the MetaXL/metan variance.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.8893129770992367,
+    "vi": 0.009517397757524096
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.4935064935064934,
+    "vi": 0.009222186237083105
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.33783783783783783,
+    "vi": 0.008700876754271199
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.7615262321144675,
+    "vi": 0.013480452042703407
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.4257907542579074,
+    "vi": 0.07606255480676068
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8890404729422471,
+    "vi": 0.013948658924168555
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.3501683501683499,
+    "vi": 0.02021079597024259
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.1474654377880187,
+    "vi": 0.05444837786333344
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.56,
+    "vi": 0.02521289518921747
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.82,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE overall ES (2 dp), Fig. 8.4c p. 186"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.74,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI LL (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI UL (2 dp), Fig. 8.4c"
+   },
+   {
+    "path": "Q",
+    "value": 179.4,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Figs. 8.4c/8.5c/8.6c"
+   },
+   {
+    "path": "Q_df",
+    "value": 8,
+    "tol": 0.0,
+    "transform": null,
+    "note": "df = k - 1 = 8"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Figs. 8.4c/8.5c/8.6c"
+   },
+   {
+    "path": "I2",
+    "value": 96,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 = 96%, Figs. 8.4c/8.5c/8.6c"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 17.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 18.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 19.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 12.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 8.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 6.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight (1 dp), Fig. 8.4c"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8243143951360954,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.0409972897191882,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.7439611838227322,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9046676064494585,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "Q",
+    "value": 179.40074093014528,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "I2",
+    "value": 95.54070960993688,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (percent)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 17.66005590120782,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 18.225372174338887,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 19.317337916480344,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.468259662173663,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.209730883467067,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 12.049744519932347,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 8.31623735548937,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.0869198133649487,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 6.666341773545526,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (FE % weight)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Glass' formulas (Delta = (m1-m2)/sd2 (ORR = control SD); v = N/(n1 n2) + Delta^2/(2(n2-1))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_glass_re_dl_metaxl_var",
+  "example_id": "khan_ch08__operative_time_glass_delta_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.5c p. 187",
+  "description": "Operative time: DerSimonian-Laird random-effects pooling of Glass's Delta with the MetaXL/metan variance.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.8893129770992367,
+    "vi": 0.009517397757524096
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.4935064935064934,
+    "vi": 0.009222186237083105
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.33783783783783783,
+    "vi": 0.008700876754271199
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.7615262321144675,
+    "vi": 0.013480452042703407
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.4257907542579074,
+    "vi": 0.07606255480676068
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8890404729422471,
+    "vi": 0.013948658924168555
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.3501683501683499,
+    "vi": 0.02021079597024259
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.1474654377880187,
+    "vi": 0.05444837786333344
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.56,
+    "vi": 0.02521289518921747
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.86,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE overall ES (2 dp), Fig. 8.5c p. 187"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.47,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE CI LL (2 dp), Fig. 8.5c"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.25,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RE CI UL (2 dp), Fig. 8.5c"
+   },
+   {
+    "path": "Q",
+    "value": 179.4,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.5c"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Fig. 8.5c"
+   },
+   {
+    "path": "I2",
+    "value": 96,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 10.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 11.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) RE % weight (1 dp), Fig. 8.5c"
+   },
+   {
+    "path": "tau2",
+    "value": 0.33678054328628854,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (DL tau^2, not printed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8620759882926364,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.20031871654091685,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4694585184431514,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.2546934581421214,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.587590753686685,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 11.59747735281657,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 11.61497720829363,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 11.456482089565608,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.71981568347692,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 11.44118822832477,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.240493475323454,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 10.256805166316875,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 11.0851700421955,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (RE % weight)"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Glass' formulas (Delta = (m1-m2)/sd2 (ORR = control SD); v = N/(n1 n2) + Delta^2/(2(n2-1))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch08__optime_glass_ivhet_metaxl_var",
+  "example_id": "khan_ch08__operative_time_glass_delta_fe_re_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.6c p. 189; comments p. 188",
+  "description": "Operative time: IVhet pooling of Glass's Delta with the MetaXL/metan variance (FE estimate, heterogeneity-inflated variance).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "Bonjer2015",
+    "m1": 241,
+    "sd1": 33.6,
+    "n1": 699,
+    "m2": 191.5,
+    "sd2": 26.2,
+    "n2": 345,
+    "yi": 1.8893129770992367,
+    "vi": 0.009517397757524096
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "Fleshman2015",
+    "m1": 266.2,
+    "sd1": 101.9,
+    "n1": 240,
+    "m2": 220.6,
+    "sd2": 92.4,
+    "n2": 222,
+    "yi": 0.4935064935064934,
+    "vi": 0.009222186237083105
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "Stevenson2015",
+    "m1": 210,
+    "sd1": 66.7,
+    "n1": 238,
+    "m2": 190,
+    "sd2": 59.2,
+    "n2": 235,
+    "yi": 0.33783783783783783,
+    "vi": 0.008700876754271199
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "Jeong2014",
+    "m1": 244.9,
+    "sd1": 75.4,
+    "n1": 170,
+    "m2": 197,
+    "sd2": 62.9,
+    "n2": 170,
+    "yi": 0.7615262321144675,
+    "vi": 0.013480452042703407
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "Ng2014",
+    "m1": 211.6,
+    "sd1": 53,
+    "n1": 40,
+    "m2": 153,
+    "sd2": 41.1,
+    "n2": 40,
+    "yi": 1.4257907542579074,
+    "vi": 0.07606255480676068
+   },
+   {
+    "study": "Liang et al. (2011)",
+    "key": "Liang2011",
+    "m1": 138.08,
+    "sd1": 23.79,
+    "n1": 169,
+    "m2": 118.53,
+    "sd2": 21.99,
+    "n2": 174,
+    "yi": 0.8890404729422471,
+    "vi": 0.013948658924168555
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "Lujan2009",
+    "m1": 193.7,
+    "sd1": 45.1,
+    "n1": 101,
+    "m2": 172.9,
+    "sd2": 59.4,
+    "n2": 103,
+    "yi": 0.3501683501683499,
+    "vi": 0.02021079597024259
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "Ng2008",
+    "m1": 213.5,
+    "sd1": 46.2,
+    "n1": 51,
+    "m2": 163.7,
+    "sd2": 43.4,
+    "n2": 48,
+    "yi": 1.1474654377880187,
+    "vi": 0.05444837786333344
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "Zhou2004",
+    "m1": 120,
+    "sd1": 18,
+    "n1": 82,
+    "m2": 106,
+    "sd2": 25,
+    "n2": 89,
+    "yi": 0.56,
+    "vi": 0.02521289518921747
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.82,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet overall ES (2 dp), Fig. 8.6c p. 189"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.38,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet CI LL (2 dp), Fig. 8.6c"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.26,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed IVhet CI UL (2 dp), Fig. 8.6c"
+   },
+   {
+    "path": "Q",
+    "value": 179.4,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 8.6c"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00, Fig. 8.6c"
+   },
+   {
+    "path": "I2",
+    "value": 96,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2, Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 17.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 18.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 19.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 12.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liang et al. (2011) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 8.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 6.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) IVhet % weight (= FE weight, 1 dp), Fig. 8.6c"
+   },
+   {
+    "path": "tau2",
+    "value": 0.33678054328628854,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (DL tau^2 inside IVhet, not printed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8243143951360954,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "se",
+    "value": 0.2244432376067689,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.3844137328532625,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate - 1.959963985 x verifier SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.2642150574189284,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "independent: verifier estimate + 1.959963985 x verifier SE"
+   }
+  ],
+  "note": "Inputs yi/vi are NOT printed in the source: they are derived here from the Table 8.10 arm data with the MetaXL/Stata metan 'Glass' formulas (Delta = (m1-m2)/sd2 (ORR = control SD); v = N/(n1 n2) + Delta^2/(2(n2-1))), at full precision. The verifier showed these formulas reproduce every printed per-study ES/CI, % weight, pooled result and Q of Figs. 8.4-8.6 (other variance denominators do not). The arm data are kept in the rows for reference; GEN uses only yi and vi.",
+  "status": "active"
+ }
+]

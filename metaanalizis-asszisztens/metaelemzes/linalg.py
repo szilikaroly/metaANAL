@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Minimális lineáris algebra a meta-regresszióhoz (kis p×p mátrixok)."""
+import math
 
 
 class SingularMatrixError(ArithmeticError):
@@ -41,6 +42,24 @@ def inverse(a):
                 if f:
                     m[r] = [x - f * y for x, y in zip(m[r], m[col])]
     return [row[n:] for row in m]
+
+
+def logdet_spd(a):
+    """log det(A) szimmetrikus pozitív definit A-ra (Cholesky-felbontás)."""
+    n = len(a)
+    low = [[0.0] * n for _ in range(n)]
+    out = 0.0
+    for i in range(n):
+        for j in range(i + 1):
+            s = a[i][j] - sum(low[i][m] * low[j][m] for m in range(j))
+            if i == j:
+                if not (s > 0):
+                    raise SingularMatrixError("nem pozitív definit mátrix (kollineáris moderátorok?)")
+                low[i][i] = math.sqrt(s)
+                out += math.log(s)
+            else:
+                low[i][j] = s / low[j][j]
+    return out
 
 
 def xtwx(x, w):

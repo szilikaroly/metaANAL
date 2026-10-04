@@ -1,0 +1,4323 @@
+[
+ {
+  "case_id": "khan_ch03_04__vaccine_arm_risks_pr",
+  "example_id": "khan_ch03_04__vaccine_2x2_rr",
+  "source_id": "khan2020",
+  "location": "Ch3 Table 3.1 p. 43, §3.3 pp. 44-45",
+  "description": "Arm risks of the vaccination 2x2 table (20/80 vaccinated, 80/100 unvaccinated) and P(no disease | vaccinated) = 60/80, as raw proportions (PR).",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "risk treatment (20/80)",
+    "x": 20,
+    "n": 80
+   },
+   {
+    "study": "risk control (80/100)",
+    "x": 80,
+    "n": 100
+   },
+   {
+    "study": "P(no disease) treatment (60/80)",
+    "x": 60,
+    "n": 80
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.25,
+    "tol": 0.005,
+    "transform": null,
+    "note": "risk_treatment printed '1/4 or 25%' (p. 45); half unit of 2 dp"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "risk_control printed '4/5 or 80%' (p. 45); half unit of 1 dp"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.75,
+    "tol": 0.005,
+    "transform": null,
+    "note": "P(No Disease) = 60/80 = 0.75 = 3/4 (Table 3.1, p. 43)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.25,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "exact fraction 1/4 printed by the book (p. 45)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.8,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "exact fraction 4/5 printed by the book (p. 45)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.75,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "exact fraction 3/4 printed by the book (p. 43)"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__vaccine_rr_effect_size",
+  "example_id": "khan_ch03_04__vaccine_2x2_rr",
+  "source_id": "khan2020",
+  "location": "Ch3 §3.3-3.3.1 pp. 45-46; Ch4 Example 4.1 p. 57",
+  "description": "Single-study log risk ratio and its delta-method variance/SE for the vaccination table (a=20, n1=80, c=80, n2=100): RR = 5/16.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Hypothetical vaccination data (Table 3.2 = Table 4.1)",
+    "e1": 20,
+    "n1": 80,
+    "e2": 80,
+    "n2": 100
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.3125,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "RR printed 0.3125 (Ch3 p. 46; Ch4 Ex 4.1 p. 57)"
+   },
+   {
+    "path": "yi.0",
+    "value": -1.16315081,
+    "tol": 5e-09,
+    "transform": null,
+    "note": "ln RR printed -1.16315081 (Ex 4.1 p. 57)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.04,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Var(ln RR) = 1/20 - 1/80 + 1/80 - 1/100 = 0.04 (Ch3 p. 46; Ch4 p. 57)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": "sqrt",
+    "note": "SE(ln RR) printed 0.2 (Ch3 p. 46; Ch4 p. 57)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.3125,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact: RR = 5/16 (printed as the fraction 1/4 / 4/5)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.04,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "exact: the four reciprocal terms give exactly 0.04"
+   },
+   {
+    "path": "yi.0",
+    "value": -1.1631508098056809,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__vaccine_rr_ci_ztest",
+  "example_id": "khan_ch03_04__vaccine_2x2_rr",
+  "source_id": "khan2020",
+  "location": "Ch4 Example 4.1 pp. 57-58, Example 4.2 p. 58",
+  "description": "Single-study 95% Wald CI and z-test for ln RR of the vaccination table (k = 1, fixed, z).",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Hypothetical vaccination data (Table 3.2 = Table 4.1)",
+    "e1": 20,
+    "n1": 80,
+    "e2": 80,
+    "n2": 100
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "ci_lower",
+    "value": -1.55515081,
+    "tol": 7.21e-06,
+    "transform": null,
+    "note": "printed -1.55515081 (p. 57); tol = half unit + 1.96-vs-exact-quantile allowance |1.96 - z_.975|*SE (book multiplies by 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -0.77115081,
+    "tol": 7.21e-06,
+    "transform": null,
+    "note": "printed -0.77115081 (p. 57); tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.211157536,
+    "tol": 1.53e-06,
+    "transform": "exp",
+    "note": "printed 0.211157536 (p. 58) = exp(-1.55515081); tol = half unit + 1.96 allowance on the RR scale"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.462480535,
+    "tol": 3.34e-06,
+    "transform": "exp",
+    "note": "printed 0.462480535 (p. 58); tol = half unit + 1.96 allowance on the RR scale"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.2111,
+    "tol": 0.000102,
+    "transform": "exp",
+    "note": "summary printed 0.2111 (p. 58) is a TRUNCATION of 0.2111575 (rounding gives 0.2112): tol = one unit of the 4th dp + 1.96 allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.4625,
+    "tol": 5.34e-05,
+    "transform": "exp",
+    "note": "summary printed 0.4625 (p. 58); half unit + 1.96 allowance"
+   },
+   {
+    "path": "estimate",
+    "value": -1.16315081,
+    "tol": 5e-09,
+    "transform": null,
+    "note": "ln RR (k = 1 pooled estimate = the study estimate)"
+   },
+   {
+    "path": "se",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "SE printed 0.2"
+   },
+   {
+    "path": "stat",
+    "value": -5.8157,
+    "tol": 0.0001,
+    "transform": null,
+    "note": "z printed -5.8157 (Ex 4.2 p. 58); exact -5.815754 so the book TRUNCATES: tol = one unit of the 4th dp"
+   },
+   {
+    "path": "stat",
+    "value": -5.82,
+    "tol": 0.005,
+    "transform": null,
+    "note": "z printed rounded -5.82 (p. 58)"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "two-sided p printed '= 0 (from the Normal Table)' (p. 58); tol = half unit of the 4-dp normal-table resolution the book uses elsewhere (0.0212, 0.0066)"
+   },
+   {
+    "path": "stat",
+    "value": -5.815754049028404,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: z = lnRR/SE); not printed in the source"
+   },
+   {
+    "path": "p",
+    "value": 6.036116284171919e-09,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_two_sided = 6.04e-9); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__vaccine_arm_odds_plo",
+  "example_id": "khan_ch03_04__vaccine_2x2_or",
+  "source_id": "khan2020",
+  "location": "Ch3 Table 3.1 p. 43; §3.4 p. 47",
+  "description": "Arm odds of the vaccination table (20/60, 80/20) and odds of no disease in the treatment arm (60/20), obtained as exp(logit) of PLO proportions.",
+  "measure": "PLO",
+  "options": {},
+  "rows": [
+   {
+    "study": "odds treatment (20 of 80)",
+    "x": 20,
+    "n": 80
+   },
+   {
+    "study": "odds control (80 of 100)",
+    "x": 80,
+    "n": 100
+   },
+   {
+    "study": "odds no disease treatment (60 of 80)",
+    "x": 60,
+    "n": 80
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.33,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "odds_treatment printed 0.33 (p. 43) and 1/3 (p. 47)"
+   },
+   {
+    "path": "yi.1",
+    "value": 4.0,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "odds_control printed 4 (p. 47)"
+   },
+   {
+    "path": "yi.2",
+    "value": 3.0,
+    "tol": 0.5,
+    "transform": "exp",
+    "note": "Odds(No Disease) = b/a = 60/20 = 3 (p. 43)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.3333333333333333,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact fraction 1/3 printed on p. 47"
+   },
+   {
+    "path": "yi.1",
+    "value": 1.3862943611198906,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: odds_control = 4 (log scale)); not printed in the source"
+   },
+   {
+    "path": "yi.2",
+    "value": 3.0,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact: 60/20 = 3"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__vaccine_arm_odds_cc05_plo",
+  "example_id": "khan_ch03_04__vaccine_2x2_or",
+  "source_id": "khan2020",
+  "location": "Ch3 'Avoid division by zero' pp. 47-48",
+  "description": "Arm odds after adding 0.5 to every cell (Agresti 1996), forced on a table without zero cells: 20.5/60.5 and 80.5/20.5 (PLO with cc_to = 'all').",
+  "measure": "PLO",
+  "options": {
+   "cc": 0.5,
+   "cc_to": "all"
+  },
+  "rows": [
+   {
+    "study": "odds treatment cc0.5 (20 of 80)",
+    "x": 20,
+    "n": 80
+   },
+   {
+    "study": "odds control cc0.5 (80 of 100)",
+    "x": 80,
+    "n": 100
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.3388,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "odds_treatment_cc05 printed 0.3388 (= 20.5/60.5, p. 48)"
+   },
+   {
+    "path": "yi.1",
+    "value": 3.9268,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "odds_control_cc05 printed 3.9268 (= 80.5/20.5, p. 48)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.33884297520661155,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "tight check vs the verifier's full-precision value (verification.computed: odds_treatment_cc05); not printed in the source"
+   },
+   {
+    "path": "yi.1",
+    "value": 3.926829268292683,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "tight check vs the verifier's full-precision value (verification.computed: odds_control_cc05); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__vaccine_or_effect_size",
+  "example_id": "khan_ch03_04__vaccine_2x2_or",
+  "source_id": "khan2020",
+  "location": "Ch3 §3.4-3.4.1 p. 47",
+  "description": "Single-study log odds ratio and Woolf variance/SE for the vaccination table: OR = 1/12, Var = 1/20+1/60+1/80+1/20.",
+  "measure": "OR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Hypothetical vaccination data (Table 3.2)",
+    "e1": 20,
+    "n1": 80,
+    "e2": 80,
+    "n2": 100
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.0833,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "OR printed 0.0833 (= 1/12, p. 47)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.129167,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Var(ln OR) printed 0.129167 (p. 47)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.359398,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "SE(ln OR) printed 0.359398 (p. 47)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.08333333333333333,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact: OR = 400/4800 = 1/12"
+   },
+   {
+    "path": "yi.0",
+    "value": -2.4849066497880004,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnOR); not printed in the source"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.12916666666666665,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: var_lnOR); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__vaccine_or_cc05_all_cells",
+  "example_id": "khan_ch03_04__vaccine_2x2_or",
+  "source_id": "khan2020",
+  "location": "Ch3 'Avoid division by zero' pp. 47-48",
+  "description": "Odds ratio of the vaccination table with 0.5 added to all four cells although none is zero (cc_to = 'all'): OR* = 0.0863.",
+  "measure": "OR",
+  "options": {
+   "cc": 0.5,
+   "cc_to": "all"
+  },
+  "rows": [
+   {
+    "study": "Hypothetical vaccination data (Table 3.2)",
+    "e1": 20,
+    "n1": 80,
+    "e2": 80,
+    "n2": 100
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.0863,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "OR_cc05 printed 0.0863 (p. 48); requires the correction on every cell"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.08628920486627996,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "tight check vs the verifier's full-precision value (verification.computed: OR_cc05); not printed in the source"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.126512261478038,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: var_lnOR_cc05_not_printed (the book prints no corrected variance)); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__rare_events_rr",
+  "example_id": "khan_ch03_04__rare_events_rr_vs_or",
+  "source_id": "khan2020",
+  "location": "Ch3 §3.5 p. 49 (Table 3.3 and text)",
+  "description": "Risk ratios of two single rare-event tables (2/80 vs 5/100; 1/80 vs 1/100), not pooled.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Scenario A (Table 3.3)",
+    "e1": 2,
+    "n1": 80,
+    "e2": 5,
+    "n2": 100
+   },
+   {
+    "study": "Scenario B (text: a*=1,b*=79,c*=1,d*=99)",
+    "e1": 1,
+    "n1": 80,
+    "e2": 1,
+    "n2": 100
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.5,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "scenario A RR printed '1/2 or 50%' (p. 49); half unit of 50% (0 dp) on the ratio scale"
+   },
+   {
+    "path": "yi.1",
+    "value": 1.25,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "scenario B RR printed '5/4 or 125.00%' (p. 49); half unit of 2 dp in % = 5e-5 on the ratio scale"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.5,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact fraction 1/2 printed by the book"
+   },
+   {
+    "path": "yi.1",
+    "value": 1.25,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact fraction 5/4 printed by the book"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__rare_events_or",
+  "example_id": "khan_ch03_04__rare_events_rr_vs_or",
+  "source_id": "khan2020",
+  "location": "Ch3 §3.5 p. 49 (Table 3.3 and text)",
+  "description": "Odds ratios of the same two rare-event tables: 19/39 and 99/79 (close to the RRs 0.5 and 1.25).",
+  "measure": "OR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Scenario A (Table 3.3)",
+    "e1": 2,
+    "n1": 80,
+    "e2": 5,
+    "n2": 100
+   },
+   {
+    "study": "Scenario B (text: a*=1,b*=79,c*=1,d*=99)",
+    "e1": 1,
+    "n1": 80,
+    "e2": 1,
+    "n2": 100
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.48,
+    "tol": 0.01,
+    "transform": "exp",
+    "note": "scenario A OR printed '19/39 or 0.48' (p. 49); 19/39 = 0.4872 so 0.48 is a TRUNCATION (rounding gives 0.49): tol = one unit of the 2nd dp"
+   },
+   {
+    "path": "yi.1",
+    "value": 1.2531,
+    "tol": 0.0001,
+    "transform": "exp",
+    "note": "scenario B OR printed '99/79 or 125.31' (%) (p. 49); 125.3165% TRUNCATED: tol = one unit of the 2nd dp in % (1e-4 on the ratio scale)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.48717948717948717,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact fraction 19/39 printed by the book"
+   },
+   {
+    "path": "yi.1",
+    "value": 1.2531645569620253,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact fraction 99/79 printed by the book"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__pesticide_or",
+  "example_id": "khan_ch03_04__pesticide_breast_cancer_or",
+  "source_id": "khan2020",
+  "location": "Ch3 'Misuse and Misinterpretation of OR' p. 51 (unnumbered table)",
+  "description": "Odds ratio of the pesticide-exposure / breast-cancer pilot table (7/10 vs 6/57): OR = 6.65.",
+  "measure": "OR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Hypothetical pilot study (cited from Boston University 2020)",
+    "e1": 7,
+    "n1": 17,
+    "e2": 6,
+    "n2": 63
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 6.65,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "OR printed 6.65 (p. 51)"
+   },
+   {
+    "path": "yi.0",
+    "value": 6.65,
+    "tol": 1e-12,
+    "transform": "exp",
+    "note": "exact: (7*57)/(10*6) = 399/60 = 6.65"
+   },
+   {
+    "path": "yi.0",
+    "value": 1.8946168546677629,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnOR); not printed in the source"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.4270676691729323,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: var_lnOR_not_printed); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__thyroid_rr_per_study",
+  "example_id": "khan_ch03_04__thyroid_ablation_fixed",
+  "source_id": "khan2020",
+  "location": "Ch4 Table 4.2 p. 61 (inputs); Table 4.3 p. 62; Table 4.4 p. 65",
+  "description": "Per-study ln RR, RR and Var(ln RR) of the 7 thyroid-ablation studies (high vs low dose), as printed in Tables 4.3/4.4.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Doi (2000)",
+    "e1": 23,
+    "n1": 49,
+    "e2": 25,
+    "n2": 39
+   },
+   {
+    "study": "Ramacciotti (1982)",
+    "e1": 3,
+    "n1": 9,
+    "e2": 12,
+    "n2": 20
+   },
+   {
+    "study": "Angelini (1997)",
+    "e1": 226,
+    "n1": 426,
+    "e2": 101,
+    "n2": 180
+   },
+   {
+    "study": "Liu (1987)",
+    "e1": 14,
+    "n1": 40,
+    "e2": 11,
+    "n2": 20
+   },
+   {
+    "study": "Lin (1998)",
+    "e1": 6,
+    "n1": 21,
+    "e2": 11,
+    "n2": 25
+   },
+   {
+    "study": "McCowen (1976)",
+    "e1": 10,
+    "n1": 28,
+    "e2": 15,
+    "n2": 36
+   },
+   {
+    "study": "Maxon (1992)",
+    "e1": 6,
+    "n1": 37,
+    "e2": 6,
+    "n2": 26
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.7322,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "Doi (2000) RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "yi.0",
+    "value": -0.3116,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Doi (2000) ln RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.037429,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Doi (2000) Var(ln RR), Table 4.3 (6 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.0374,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Doi (2000) Var(ln RR), Table 4.4 (4 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.5556,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "Ramacciotti (1982) RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": -0.5878,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Ramacciotti (1982) ln RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.255556,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Ramacciotti (1982) Var(ln RR), Table 4.3 (6 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.2556,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Ramacciotti (1982) Var(ln RR), Table 4.4 (4 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.9455,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "Angelini (1997) RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": -0.0561,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Angelini (1997) ln RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.006423,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Angelini (1997) Var(ln RR), Table 4.3 (6 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0064,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Angelini (1997) Var(ln RR), Table 4.4 (4 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.6364,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "Liu (1987) RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": -0.452,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Liu (1987) ln RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.087338,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Liu (1987) Var(ln RR), Table 4.3 (6 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.0873,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Liu (1987) Var(ln RR), Table 4.4 (4 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.6494,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "Lin (1998) RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": -0.4318,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Lin (1998) ln RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.169957,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Lin (1998) Var(ln RR), Table 4.3 (6 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.17,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Lin (1998) Var(ln RR), Table 4.4 (4 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.8571,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "McCowen (1976) RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": -0.1542,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "McCowen (1976) ln RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.103175,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "McCowen (1976) Var(ln RR), Table 4.3 (6 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.1032,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "McCowen (1976) Var(ln RR), Table 4.4 (4 dp)"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.7027,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "Maxon (1992) RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "yi.6",
+    "value": -0.3528,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Maxon (1992) ln RR, Table 4.3 (4 dp)"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.267845,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Maxon (1992) Var(ln RR), Table 4.3 (6 dp)"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.2678,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Maxon (1992) Var(ln RR), Table 4.4 (4 dp)"
+   },
+   {
+    "path": "yi.0",
+    "value": -0.3116402609200312,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[0]); not printed in the source"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.03742907196323345,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[0]); not printed in the source"
+   },
+   {
+    "path": "yi.1",
+    "value": -0.587786664902119,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[1]); not printed in the source"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.25555555555555554,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[1]); not printed in the source"
+   },
+   {
+    "path": "yi.2",
+    "value": -0.05606801294813363,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[2]); not printed in the source"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.006422795464140704,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[2]); not printed in the source"
+   },
+   {
+    "path": "yi.3",
+    "value": -0.45198512374305744,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[3]); not printed in the source"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.08733766233766234,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[3]); not printed in the source"
+   },
+   {
+    "path": "yi.4",
+    "value": -0.4317824164255378,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[4]); not printed in the source"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.16995670995670994,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[4]); not printed in the source"
+   },
+   {
+    "path": "yi.5",
+    "value": -0.15415067982725836,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[5]); not printed in the source"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.10317460317460318,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[5]); not printed in the source"
+   },
+   {
+    "path": "yi.6",
+    "value": -0.3528213746227423,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[6]); not printed in the source"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.26784476784476785,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[6]); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__thyroid_per_study_wald_ci",
+  "example_id": "khan_ch03_04__thyroid_ablation_fixed",
+  "source_id": "khan2020",
+  "location": "Ch4 Table 4.3 p. 62; Fig. 4.1 p. 64",
+  "description": "Per-study 95% Wald CIs of RR for the 7 thyroid studies (Table 4.3, 4 dp; forest plot Fig. 4.1, 2 dp), computed by putting each study in its own group of a 'subgroup' call (k = 1 groups use a fixed-effect z CI).",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Doi (2000)",
+    "e1": 23,
+    "n1": 49,
+    "e2": 25,
+    "n2": 39,
+    "key": "Doi2000"
+   },
+   {
+    "study": "Ramacciotti (1982)",
+    "e1": 3,
+    "n1": 9,
+    "e2": 12,
+    "n2": 20,
+    "key": "Ramacciotti1982"
+   },
+   {
+    "study": "Angelini (1997)",
+    "e1": 226,
+    "n1": 426,
+    "e2": 101,
+    "n2": 180,
+    "key": "Angelini1997"
+   },
+   {
+    "study": "Liu (1987)",
+    "e1": 14,
+    "n1": 40,
+    "e2": 11,
+    "n2": 20,
+    "key": "Liu1987"
+   },
+   {
+    "study": "Lin (1998)",
+    "e1": 6,
+    "n1": 21,
+    "e2": 11,
+    "n2": 25,
+    "key": "Lin1998"
+   },
+   {
+    "study": "McCowen (1976)",
+    "e1": 10,
+    "n1": 28,
+    "e2": 15,
+    "n2": 36,
+    "key": "McCowen1976"
+   },
+   {
+    "study": "Maxon (1992)",
+    "e1": 6,
+    "n1": 37,
+    "e2": 6,
+    "n2": 26,
+    "key": "Maxon1992"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.Doi2000.ci_lower",
+    "value": 0.5012,
+    "tol": 5.35e-05,
+    "transform": "exp",
+    "note": "Doi (2000) CI LL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Doi2000.ci_upper",
+    "value": 1.0699,
+    "tol": 5.75e-05,
+    "transform": "exp",
+    "note": "Doi (2000) CI UL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Doi2000.estimate",
+    "value": 0.73,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Doi (2000) RR, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Doi2000.ci_lower",
+    "value": 0.5,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Doi (2000) CI LL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Doi2000.ci_upper",
+    "value": 1.07,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Doi (2000) CI UL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Ramacciotti1982.ci_lower",
+    "value": 0.2063,
+    "tol": 5.38e-05,
+    "transform": "exp",
+    "note": "Ramacciotti (1982) CI LL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Ramacciotti1982.ci_upper",
+    "value": 1.4964,
+    "tol": 7.73e-05,
+    "transform": "exp",
+    "note": "Ramacciotti (1982) CI UL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Ramacciotti1982.estimate",
+    "value": 0.56,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Ramacciotti (1982) RR, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Ramacciotti1982.ci_lower",
+    "value": 0.21,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Ramacciotti (1982) CI LL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Ramacciotti1982.ci_upper",
+    "value": 1.5,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Ramacciotti (1982) CI UL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Angelini1997.ci_lower",
+    "value": 0.808,
+    "tol": 5.24e-05,
+    "transform": "exp",
+    "note": "Angelini (1997) CI LL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Angelini1997.ci_upper",
+    "value": 1.1063,
+    "tol": 5.32e-05,
+    "transform": "exp",
+    "note": "Angelini (1997) CI UL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Angelini1997.estimate",
+    "value": 0.95,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Angelini (1997) RR, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Angelini1997.ci_lower",
+    "value": 0.81,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Angelini (1997) CI LL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Angelini1997.ci_upper",
+    "value": 1.11,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Angelini (1997) CI UL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Liu1987.ci_lower",
+    "value": 0.3566,
+    "tol": 5.38e-05,
+    "transform": "exp",
+    "note": "Liu (1987) CI LL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Liu1987.ci_upper",
+    "value": 1.1357,
+    "tol": 6.21e-05,
+    "transform": "exp",
+    "note": "Liu (1987) CI UL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Liu1987.estimate",
+    "value": 0.64,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Liu (1987) RR, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Liu1987.ci_lower",
+    "value": 0.36,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Liu (1987) CI LL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Liu1987.ci_upper",
+    "value": 1.14,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Liu (1987) CI UL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Lin1998.ci_lower",
+    "value": 0.2894,
+    "tol": 5.43e-05,
+    "transform": "exp",
+    "note": "Lin (1998) CI LL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Lin1998.ci_upper",
+    "value": 1.4568,
+    "tol": 7.17e-05,
+    "transform": "exp",
+    "note": "Lin (1998) CI UL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Lin1998.estimate",
+    "value": 0.65,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Lin (1998) RR, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Lin1998.ci_lower",
+    "value": 0.29,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Lin (1998) CI LL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Lin1998.ci_upper",
+    "value": 1.46,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Lin (1998) CI UL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.McCowen1976.ci_lower",
+    "value": 0.4567,
+    "tol": 5.53e-05,
+    "transform": "exp",
+    "note": "McCowen (1976) CI LL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.McCowen1976.ci_upper",
+    "value": 1.6087,
+    "tol": 6.87e-05,
+    "transform": "exp",
+    "note": "McCowen (1976) CI UL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.McCowen1976.estimate",
+    "value": 0.86,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "McCowen (1976) RR, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.McCowen1976.ci_lower",
+    "value": 0.46,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "McCowen (1976) CI LL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.McCowen1976.ci_upper",
+    "value": 1.61,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "McCowen (1976) CI UL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Maxon1992.ci_lower",
+    "value": 0.2548,
+    "tol": 5.48e-05,
+    "transform": "exp",
+    "note": "Maxon (1992) CI LL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Maxon1992.ci_upper",
+    "value": 1.9378,
+    "tol": 8.62e-05,
+    "transform": "exp",
+    "note": "Maxon (1992) CI UL, Table 4.3; tol = half unit + 1.96 allowance"
+   },
+   {
+    "path": "groups.Maxon1992.estimate",
+    "value": 0.7,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Maxon (1992) RR, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Maxon1992.ci_lower",
+    "value": 0.25,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Maxon (1992) CI LL, Fig. 4.1 (2 dp)"
+   },
+   {
+    "path": "groups.Maxon1992.ci_upper",
+    "value": 1.94,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Maxon (1992) CI UL, Fig. 4.1 (2 dp)"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__thyroid_fixed",
+  "example_id": "khan_ch03_04__thyroid_ablation_fixed",
+  "source_id": "khan2020",
+  "location": "Ch4 Example 4.4 pp. 61-63; Example 4.5 pp. 65-66; Fig. 4.1 p. 64",
+  "description": "Fixed-effect inverse-variance meta-analysis of ln RR for the 7 thyroid-ablation studies: pooled RR, Wald CI, z-test, Q, I2 and FE % weights.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Doi (2000)",
+    "e1": 23,
+    "n1": 49,
+    "e2": 25,
+    "n2": 39
+   },
+   {
+    "study": "Ramacciotti (1982)",
+    "e1": 3,
+    "n1": 9,
+    "e2": 12,
+    "n2": 20
+   },
+   {
+    "study": "Angelini (1997)",
+    "e1": 226,
+    "n1": 426,
+    "e2": 101,
+    "n2": 180
+   },
+   {
+    "study": "Liu (1987)",
+    "e1": 14,
+    "n1": 40,
+    "e2": 11,
+    "n2": 20
+   },
+   {
+    "study": "Lin (1998)",
+    "e1": 6,
+    "n1": 21,
+    "e2": 11,
+    "n2": 25
+   },
+   {
+    "study": "McCowen (1976)",
+    "e1": 10,
+    "n1": 28,
+    "e2": 15,
+    "n2": 36
+   },
+   {
+    "study": "Maxon (1992)",
+    "e1": 6,
+    "n1": 37,
+    "e2": 6,
+    "n2": 26
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.1377,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "summary ln RR printed -0.1377 (p. 61)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8714,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "summary RR printed 0.8714 (p. 62)"
+   },
+   {
+    "path": "se",
+    "value": 0.06787,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "SE printed 0.06787 (p. 62)"
+   },
+   {
+    "path": "se",
+    "value": 0.004606,
+    "tol": 5e-07,
+    "transform": "square",
+    "note": "Var = 1/sum W printed 0.004606 (p. 62)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.27068,
+    "tol": 7.45e-06,
+    "transform": null,
+    "note": "ln CI LL printed -0.27068 (p. 62); half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": -0.00463,
+    "tol": 7.45e-06,
+    "transform": null,
+    "note": "ln CI UL printed -0.00463 (p. 62); half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.7628,
+    "tol": 0.000102,
+    "transform": "exp",
+    "note": "RR CI LL printed 0.7628 (p. 62) is a TRUNCATION of 0.76286: one unit of the 4th dp + 1.96 allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9954,
+    "tol": 5.25e-05,
+    "transform": "exp",
+    "note": "RR CI UL printed 0.9954 (p. 62)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.87,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest summary RR 0.87 (Fig. 4.1)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.76,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI LL 0.76 (Fig. 4.1)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.0,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI UL 1.00 (Fig. 4.1)"
+   },
+   {
+    "path": "stat",
+    "value": -2.0289,
+    "tol": 0.000754,
+    "transform": null,
+    "note": "z printed -2.0289 (p. 62) = -0.1377/0.06787 from ROUNDED inputs; tol = half unit + |book-arith z - exact z|"
+   },
+   {
+    "path": "stat",
+    "value": -2.03,
+    "tol": 0.00571,
+    "transform": null,
+    "note": "z printed rounded -2.03 (p. 62); same rounded-input allowance"
+   },
+   {
+    "path": "p",
+    "value": 0.0424,
+    "tol": 0.000286,
+    "transform": null,
+    "note": "p printed 0.0424 = 2 x 0.0212 (normal table at |z| = 2.03, p. 63); tol = doubled table half unit (1e-4) + |2*Phi(-2.03) - exact p|"
+   },
+   {
+    "path": "Q",
+    "value": 4.4538,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Q printed 4.4538 (Example 4.5 p. 66)"
+   },
+   {
+    "path": "Q",
+    "value": 4.45,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Q printed 4.45 (p. 66; Fig. 4.1)"
+   },
+   {
+    "path": "Q_df",
+    "value": 6,
+    "tol": 0,
+    "transform": null,
+    "note": "df = k - 1 = 6 (p. 66)"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.62,
+    "tol": 0.005,
+    "transform": null,
+    "note": "p(Q) printed 0.62 (p. 66; Fig. 4.1)"
+   },
+   {
+    "path": "I2",
+    "value": 0.0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "I2 printed 0% (p. 66; Fig. 4.1): negative raw I2 truncated at 0"
+   },
+   {
+    "path": "I2",
+    "value": 0.0,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "exact: Q < df so the truncated I2 is exactly 0"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 12.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Doi (2000) FE % weight, Fig. 4.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 1.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ramacciotti (1982) FE % weight, Fig. 4.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 71.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Angelini (1997) FE % weight, Fig. 4.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 5.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu (1987) FE % weight, Fig. 4.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lin (1998) FE % weight, Fig. 4.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 4.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "McCowen (1976) FE % weight, Fig. 4.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 1.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Maxon (1992) FE % weight, Fig. 4.1 (1 dp)"
+   },
+   {
+    "path": "estimate",
+    "value": -0.13765449823666867,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: summary_lnRR_fixed); not printed in the source"
+   },
+   {
+    "path": "se",
+    "value": 0.06787110569087493,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: se_fixed); not printed in the source"
+   },
+   {
+    "path": "stat",
+    "value": -2.028175271869424,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: z); not printed in the source"
+   },
+   {
+    "path": "p",
+    "value": 0.04254236273880897,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_two_sided); not printed in the source"
+   },
+   {
+    "path": "Q",
+    "value": 4.453769027876433,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: Q); not printed in the source"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.6155139967681291,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_Q); not printed in the source"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 100.79997648009861,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: C = sum w - sum w^2/sum w); not printed in the source"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.0,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: DL tau2 truncated at 0 since Q < df, so RE = IVhet = FE); not printed in the source"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 12.307243396862372,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_pct[0]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 1.8025383864920537,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_pct[1]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 71.7209042919166,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_pct[2]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 5.274341978483977,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_pct[3]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 2.7103884211898683,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_pct[4]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 4.464748926541855,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_pct[5]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 1.7198345985132892,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_pct[6]); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__thyroid_i2_raw_book_error",
+  "example_id": "khan_ch03_04__thyroid_ablation_fixed",
+  "source_id": "khan2020",
+  "location": "Ch4 Example 4.5 p. 66",
+  "description": "Raw (untruncated) I2 printed by the book for the thyroid data: '-0.35%' (book arithmetic error; correct raw value -34.7%).",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Doi (2000)",
+    "e1": 23,
+    "n1": 49,
+    "e2": 25,
+    "n2": 39
+   },
+   {
+    "study": "Ramacciotti (1982)",
+    "e1": 3,
+    "n1": 9,
+    "e2": 12,
+    "n2": 20
+   },
+   {
+    "study": "Angelini (1997)",
+    "e1": 226,
+    "n1": 426,
+    "e2": 101,
+    "n2": 180
+   },
+   {
+    "study": "Liu (1987)",
+    "e1": 14,
+    "n1": 40,
+    "e2": 11,
+    "n2": 20
+   },
+   {
+    "study": "Lin (1998)",
+    "e1": 6,
+    "n1": 21,
+    "e2": 11,
+    "n2": 25
+   },
+   {
+    "study": "McCowen (1976)",
+    "e1": 10,
+    "n1": 28,
+    "e2": 15,
+    "n2": 36
+   },
+   {
+    "study": "Maxon (1992)",
+    "e1": 6,
+    "n1": 37,
+    "e2": 6,
+    "n2": 26
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "I2",
+    "value": -0.35,
+    "tol": 0.005,
+    "transform": null,
+    "note": "raw I2 printed '-0.35%' on p. 66 (BOOK ERROR)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error: the book prints the raw I2 as (4.45 - 6)/4.45 = '-0.35%', but that ratio is -0.348, i.e. -34.8% (the x100 was dropped; exact raw value 100*(4.453769-6)/4.453769 = -34.72%). In addition the engine reports only the truncated I2 (max(0, .) -> 0), which is the value the book itself adopts ('I2 = 0%', p. 66 and Fig. 4.1) and which is tested in khan_ch03_04__thyroid_fixed."
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_rr_per_study",
+  "example_id": "khan_ch03_04__heartburn_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch4 Table 4.5 p. 68 (inputs); Table 4.6 p. 68; Table 4.7 p. 69; text p. 68",
+  "description": "Per-study RR, ln RR and Var(ln RR) of the 7 heartburn RCTs (LAF vs LPF fundoplication) as printed in Tables 4.6/4.7, plus the study-1 illustration (RR 0.9815, ln RR -0.0187).",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.98,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (1999) RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "yi.0",
+    "value": -0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Watson et al. (1999) ln RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.36261,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Watson et al. (1999) Var(ln RR), Table 4.6 (5 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.3626,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Watson et al. (1999) Var(ln RR), Table 4.7 (4 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": 2.55,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Hagedorn et al. (2003) RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.94,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) ln RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.09789,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) Var(ln RR), Table 4.6 (5 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.0979,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) Var(ln RR), Table 4.7 (4 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": 4.77,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (2004) RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": 1.56,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Watson et al. (2004) ln RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.55501,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Watson et al. (2004) Var(ln RR), Table 4.6 (5 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.555,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Watson et al. (2004) Var(ln RR), Table 4.7 (4 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": 1.17,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Spence et al. (2006) RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.16,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Spence et al. (2006) ln RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.31603,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Spence et al. (2006) Var(ln RR), Table 4.6 (5 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.316,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Spence et al. (2006) Var(ln RR), Table 4.7 (4 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": 2.18,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Khan et al. (2010) RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.78,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Khan et al. (2010) ln RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.40945,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Khan et al. (2010) Var(ln RR), Table 4.6 (5 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.4094,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Khan et al. (2010) Var(ln RR), Table 4.7 (4 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.9,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Raue et al. (2011) RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": -0.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Raue et al. (2011) ln RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 1.92963,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Raue et al. (2011) Var(ln RR), Table 4.6 (5 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 1.9296,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Raue et al. (2011) Var(ln RR), Table 4.7 (4 dp)"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.96,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Cao et al. (2012) RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "yi.6",
+    "value": -0.04,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Cao et al. (2012) ln RR, Table 4.6 (2 dp)"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.20832,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Cao et al. (2012) Var(ln RR), Table 4.6 (5 dp)"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.2083,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Cao et al. (2012) Var(ln RR), Table 4.7 (4 dp)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.9815,
+    "tol": 5e-05,
+    "transform": "exp",
+    "note": "Watson 1999 RR = 0.0926/0.0943 printed 0.9815 (p. 68)"
+   },
+   {
+    "path": "yi.0",
+    "value": -0.0187,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Watson 1999 ln RR printed -0.0187 (p. 68)"
+   },
+   {
+    "path": "yi.0",
+    "value": -0.018692133012152633,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[0]); not printed in the source"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.36261355695317965,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[0]); not printed in the source"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.9373441410719873,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[1]); not printed in the source"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.09789007092198583,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[1]); not printed in the source"
+   },
+   {
+    "path": "yi.2",
+    "value": 1.5616472485977517,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[2]); not printed in the source"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.555011655011655,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[2]); not printed in the source"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.1570037488096649,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[3]); not printed in the source"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.316025641025641,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[3]); not printed in the source"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.7806064858885313,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[4]); not printed in the source"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.4094496530536575,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[4]); not printed in the source"
+   },
+   {
+    "path": "yi.5",
+    "value": -0.10536051565782628,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[5]); not printed in the source"
+   },
+   {
+    "path": "vi.5",
+    "value": 1.9296296296296298,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[5]); not printed in the source"
+   },
+   {
+    "path": "yi.6",
+    "value": -0.041672696400568074,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_lnRR[6]); not printed in the source"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.20831524099001303,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_var[6]); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_study1_arm_risks",
+  "example_id": "khan_ch03_04__heartburn_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch4 p. 68 (Watson et al. 1999 illustration)",
+  "description": "Arm risks of the first heartburn study (Watson 1999): 5/54 (LAF) and 5/53 (LPF), as raw proportions (PR).",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson 1999 LAF (5/54)",
+    "x": 5,
+    "n": 54
+   },
+   {
+    "study": "Watson 1999 LPF (5/53)",
+    "x": 5,
+    "n": 53
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.0926,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "risk LAF printed 0.0926 (p. 68)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.0943,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "risk LPF printed 0.0943 (p. 68)"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.09259259259259259,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: risk_LAF_study1); not printed in the source"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.09433962264150944,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: risk_LPF_study1); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_per_study_wald_ci",
+  "example_id": "khan_ch03_04__heartburn_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch4 Fig. 4.2 p. 71 (same per-study columns in Figs. 4.3-4.5)",
+  "description": "Per-study RR and 95% Wald CI of the 7 heartburn RCTs as printed in the MetaXL forest plot (2 dp), via single-study groups of a 'subgroup' call.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53,
+    "key": "Watson1999"
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48,
+    "key": "Hagedorn2003"
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52,
+    "key": "Watson2004"
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39,
+    "key": "Spence2006"
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29,
+    "key": "Khan2010"
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27,
+    "key": "Raue2011"
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47,
+    "key": "Cao2012"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.Watson1999.estimate",
+    "value": 0.98,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (1999) RR, Fig. 4.2"
+   },
+   {
+    "path": "groups.Watson1999.ci_lower",
+    "value": 0.3,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (1999) CI LL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Watson1999.ci_upper",
+    "value": 3.19,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (1999) CI UL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Hagedorn2003.estimate",
+    "value": 2.55,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Hagedorn et al. (2003) RR, Fig. 4.2"
+   },
+   {
+    "path": "groups.Hagedorn2003.ci_lower",
+    "value": 1.38,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Hagedorn et al. (2003) CI LL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Hagedorn2003.ci_upper",
+    "value": 4.71,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Hagedorn et al. (2003) CI UL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Watson2004.estimate",
+    "value": 4.77,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (2004) RR, Fig. 4.2"
+   },
+   {
+    "path": "groups.Watson2004.ci_lower",
+    "value": 1.11,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (2004) CI LL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Watson2004.ci_upper",
+    "value": 20.53,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Watson et al. (2004) CI UL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Spence2006.estimate",
+    "value": 1.17,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Spence et al. (2006) RR, Fig. 4.2"
+   },
+   {
+    "path": "groups.Spence2006.ci_lower",
+    "value": 0.39,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Spence et al. (2006) CI LL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Spence2006.ci_upper",
+    "value": 3.52,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Spence et al. (2006) CI UL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Khan2010.estimate",
+    "value": 2.18,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Khan et al. (2010) RR, Fig. 4.2"
+   },
+   {
+    "path": "groups.Khan2010.ci_lower",
+    "value": 0.62,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Khan et al. (2010) CI LL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Khan2010.ci_upper",
+    "value": 7.65,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Khan et al. (2010) CI UL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Raue2011.estimate",
+    "value": 0.9,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Raue et al. (2011) RR, Fig. 4.2"
+   },
+   {
+    "path": "groups.Raue2011.ci_lower",
+    "value": 0.06,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Raue et al. (2011) CI LL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Raue2011.ci_upper",
+    "value": 13.7,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Raue et al. (2011) CI UL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Cao2012.estimate",
+    "value": 0.96,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Cao et al. (2012) RR, Fig. 4.2"
+   },
+   {
+    "path": "groups.Cao2012.ci_lower",
+    "value": 0.39,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Cao et al. (2012) CI LL, Fig. 4.2"
+   },
+   {
+    "path": "groups.Cao2012.ci_upper",
+    "value": 2.35,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "Cao et al. (2012) CI UL, Fig. 4.2"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_random_dl",
+  "example_id": "khan_ch03_04__heartburn_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch4 pp. 68-71 (Q, C, tau2 p. 69; Example 4.7 pp. 70-71); Fig. 4.2 p. 71",
+  "description": "DerSimonian-Laird random-effects meta-analysis of ln RR (Wald z CI) for the 7 heartburn RCTs: Q, C, tau2, pooled RR, CI, z-test, I2 and RE % weights.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 6.7854,
+    "tol": 8.88e-05,
+    "transform": null,
+    "note": "Q printed 6.7854 (p. 69) from ROUNDED sums (14.9508 - 14.4863^2/25.7003 = 6.785413); tol = half unit + |book-arith Q - exact Q|"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 19.6887,
+    "tol": 6.69e-05,
+    "transform": null,
+    "note": "C printed 19.6887 (p. 69) from rounded sums (25.7003 - 154.499/25.7003); tol = half unit + |book-arith C - exact C|"
+   },
+   {
+    "path": "Q_df",
+    "value": 6,
+    "tol": 0,
+    "transform": null,
+    "note": "df = 6 (p. 69)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.0399,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "tau2 (DL) printed 0.0399 (p. 69)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.54,
+    "tol": 0.005,
+    "transform": null,
+    "note": "summary ln RR printed 0.54 (p. 70)"
+   },
+   {
+    "path": "se",
+    "value": 0.2182,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "SE printed 0.2182 (p. 70)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.1123,
+    "tol": 5.79e-05,
+    "transform": null,
+    "note": "ln CI LL printed 0.1123 (p. 70); half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9678,
+    "tol": 5.79e-05,
+    "transform": null,
+    "note": "ln CI UL printed 0.9678 (p. 70); half unit + 1.96 allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 1.1189,
+    "tol": 5.88e-05,
+    "transform": "exp",
+    "note": "RR CI LL printed 1.1189 (p. 70)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 2.6322,
+    "tol": 7.07e-05,
+    "transform": "exp",
+    "note": "RR CI UL printed 2.6322 (p. 70)"
+   },
+   {
+    "path": "estimate",
+    "value": 1.7162,
+    "tol": 0.000111,
+    "transform": "exp",
+    "note": "summary RR printed 1.7162 (p. 70) = exp(0.5401), the 4-dp working value of ln RR (exact RR 1.716118); tol = half unit + |exp(0.5401) - exp(exact)| (same practice as exp(0.5637) in Ex 4.9 and exp(-0.1377) in Ex 4.4)"
+   },
+   {
+    "path": "estimate",
+    "value": 1.72,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest summary RR 1.72 (Fig. 4.2)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 1.12,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI LL 1.12 (Fig. 4.2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 2.63,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI UL 2.63 (Fig. 4.2)"
+   },
+   {
+    "path": "stat",
+    "value": 2.4759,
+    "tol": 0.0014,
+    "transform": null,
+    "note": "z printed 2.4759 (p. 71) = 0.54/0.2181 from ROUNDED/truncated inputs; tol = half unit + |book-arith z - exact z|"
+   },
+   {
+    "path": "stat",
+    "value": 2.48,
+    "tol": 0.00635,
+    "transform": null,
+    "note": "z printed rounded 2.48 (p. 71); same rounded-input allowance (exact z 2.4746 would round to 2.47)"
+   },
+   {
+    "path": "p",
+    "value": 0.0132,
+    "tol": 0.000301,
+    "transform": null,
+    "note": "p printed 0.0132 = 2 x 0.0066 (normal table at |z| = 2.48, p. 71); tol = doubled table half unit + |2*Phi(-2.48) - exact p|"
+   },
+   {
+    "path": "Q",
+    "value": 6.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest Q 6.79 (Fig. 4.2)"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest p(Q) 0.34 (Fig. 4.2)"
+   },
+   {
+    "path": "I2",
+    "value": 12.0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "forest I2 12% (Fig. 4.2)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (1999) RE % weight, Fig. 4.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 34.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) RE % weight, Fig. 4.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 8.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (2004) RE % weight, Fig. 4.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 13.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Spence et al. (2006) RE % weight, Fig. 4.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 10.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Khan et al. (2010) RE % weight, Fig. 4.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Raue et al. (2011) RE % weight, Fig. 4.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 19.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Cao et al. (2012) RE % weight, Fig. 4.2 (1 dp)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.03989343746407343,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: tau2_DL); not printed in the source"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5400646204543681,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: summary_lnRR_random); not printed in the source"
+   },
+   {
+    "path": "se",
+    "value": 0.2182447286284586,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: se_random); not printed in the source"
+   },
+   {
+    "path": "stat",
+    "value": 2.474582657039923,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: z); not printed in the source"
+   },
+   {
+    "path": "p",
+    "value": 0.01333919498098683,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_two_sided); not printed in the source"
+   },
+   {
+    "path": "Q",
+    "value": 6.785452029089756,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: Q); not printed in the source"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 19.688752812968428,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: C); not printed in the source"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.34114512307198036,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_Q); not printed in the source"
+   },
+   {
+    "path": "I2",
+    "value": 11.57552990902393,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: I2_pct); not printed in the source"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.833523947346313,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_random_pct[0]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 34.569276201511464,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_random_pct[1]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 8.006447108376841,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_random_pct[2]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 13.3824693456229,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_random_pct[3]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 10.60008767893362,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_random_pct[4]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.4183906433954667,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_random_pct[5]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 19.189805074813393,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: per_study_weight_random_pct[6]); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_fixed",
+  "example_id": "khan_ch03_04__heartburn_fixed",
+  "source_id": "khan2020",
+  "location": "Ch4 Fig. 4.3 p. 72 (ln-scale Fig. 4.7 p. 81); p. 75; Table 4.10 p. 76",
+  "description": "Fixed-effect inverse-variance meta-analysis of ln RR for the 7 heartburn RCTs (MetaXL 'IV'): pooled ln RR, RR (95% CI), Q, I2 and FE % weights.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.56366,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "summary ln RR printed 0.56366 (p. 75: IVhet = FE point estimate)"
+   },
+   {
+    "path": "estimate",
+    "value": 1.76,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest summary RR 1.76 (Fig. 4.3)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 1.19,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI LL 1.19 (Fig. 4.3; p. 81)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 2.59,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI UL 2.59 (Fig. 4.3; p. 81)"
+   },
+   {
+    "path": "Q",
+    "value": 6.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest Q 6.79 (Fig. 4.3)"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest p(Q) 0.34 (Fig. 4.3)"
+   },
+   {
+    "path": "I2",
+    "value": 12.0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "forest I2 12% (Fig. 4.3)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 10.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (1999) FE % weight, Fig. 4.3 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 39.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) FE % weight, Fig. 4.3 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (2004) FE % weight, Fig. 4.3 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Spence et al. (2006) FE % weight, Fig. 4.3 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Khan et al. (2010) FE % weight, Fig. 4.3 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Raue et al. (2011) FE % weight, Fig. 4.3 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 18.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Cao et al. (2012) FE % weight, Fig. 4.3 (1 dp)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5636617664531031,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: summary_lnRR_fixed); not printed in the source"
+   },
+   {
+    "path": "se",
+    "value": 0.19725625043189457,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: se_fixed); not printed in the source"
+   },
+   {
+    "path": "stat",
+    "value": 2.85751029546065,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: z); not printed in the source"
+   },
+   {
+    "path": "p",
+    "value": 0.004269787824657413,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_two_sided); not printed in the source"
+   },
+   {
+    "path": "Q",
+    "value": 6.785452029089756,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: Q); not printed in the source"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.34114512307198036,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_Q); not printed in the source"
+   },
+   {
+    "path": "I2",
+    "value": 11.57552990902393,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: I2_pct); not printed in the source"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 10.730439496357366,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[0]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 39.74869766460781,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[1]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.010668691927418,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[2]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.31230105512018,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[3]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.50300679076439,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[4]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.0164506046644113,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[5]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 18.678435696558424,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[6]); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_ivhet_table49_per_study",
+  "example_id": "khan_ch03_04__heartburn_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch4 Table 4.8 p. 74 (inputs); Table 4.9 p. 74",
+  "description": "Per-study ln RR and Var(ln RR) of the 7 heartburn RCTs as printed (mixed precision) in the IVhet worksheet Table 4.9.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": -0.019,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Watson et al. (1999) ln RR, Table 4.9 (3 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.362614,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Watson et al. (1999) Var(ln RR), Table 4.9 (6 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.9373,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) ln RR, Table 4.9 (4 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.09789,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) Var(ln RR), Table 4.9 (5 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": 1.5616,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Watson et al. (2004) ln RR, Table 4.9 (4 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.555012,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Watson et al. (2004) Var(ln RR), Table 4.9 (6 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.157,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Spence et al. (2006) ln RR, Table 4.9 (3 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.316026,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Spence et al. (2006) Var(ln RR), Table 4.9 (6 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.7806,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Khan et al. (2010) ln RR, Table 4.9 (4 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.40945,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Khan et al. (2010) Var(ln RR), Table 4.9 (5 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": -0.105,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Raue et al. (2011) ln RR, Table 4.9 (3 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 1.92963,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Raue et al. (2011) Var(ln RR), Table 4.9 (5 dp)"
+   },
+   {
+    "path": "yi.6",
+    "value": -0.042,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Cao et al. (2012) ln RR, Table 4.9 (3 dp)"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.208315,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "Cao et al. (2012) Var(ln RR), Table 4.9 (6 dp)"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_ivhet",
+  "example_id": "khan_ch03_04__heartburn_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch4 Examples 4.8-4.9 pp. 73-77; Tables 4.9-4.10 pp. 74-76; Fig. 4.4 p. 77 / Fig. 4.9 p. 82",
+  "description": "Inverse-variance heterogeneity (IVhet, Doi et al. 2015) meta-analysis of ln RR for the 7 heartburn RCTs: FE point estimate with Var = sum (w_i/sum w)^2 (v_i + tau2_DL), z CI and test.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "tau2",
+    "value": 0.0399,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "tau2 (DL) printed 0.0399 (Table 4.9)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.56366,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "summary ln RR printed 0.56366 (p. 75)"
+   },
+   {
+    "path": "se",
+    "value": 0.048241,
+    "tol": 6.03e-07,
+    "transform": "square",
+    "note": "Var(IVhet) printed 0.048241 (p. 75; Tables 4.9/4.10), computed with tau2 rounded to 0.039893; tol = half unit + |dVar| from that rounding = |0.039893 - tau2| * sum (w_i/sum w)^2"
+   },
+   {
+    "path": "se",
+    "value": 0.219638,
+    "tol": 1.65e-06,
+    "transform": null,
+    "note": "SE printed 0.219638 = sqrt(0.048241) (p. 75), i.e. from the ROUNDED variance; tol = half unit + |sqrt(0.048241) - exact SE|"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.133209,
+    "tol": 5.01e-05,
+    "transform": null,
+    "note": "ln CI LL printed 0.133209 (p. 75) = 0.5637 - 1.96*0.219638 = 0.1332095 TRUNCATED; tol = one unit of the 6th dp + rounding allowance |0.5637 - mu| + 1.96*|0.219638 - SE| + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 1.142487,
+    "tol": 5.66e-05,
+    "transform": "exp",
+    "note": "RR CI LL printed 1.142487 (p. 75); tol = half unit + RR * (same log-scale rounding allowance)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 2.702537,
+    "tol": 0.000134,
+    "transform": "exp",
+    "note": "RR CI UL printed 2.702537 (p. 75); tol = half unit + RR * (log-scale rounding allowance: rounded mu 0.5637, SE from rounded Var, 1.96)"
+   },
+   {
+    "path": "estimate",
+    "value": 1.757162,
+    "tol": 6.77e-05,
+    "transform": "exp",
+    "note": "summary RR printed 1.757162 = exp(0.5637) (p. 75), the 4-dp working value of ln RR; tol = half unit + |exp(0.5637) - exp(exact)|"
+   },
+   {
+    "path": "estimate",
+    "value": 1.76,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest summary RR 1.76 (Remark p. 75; Fig. 4.9 p. 82)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 1.14,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI LL 1.14 (Remark p. 75; Fig. 4.9 p. 82)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 2.7,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "forest CI UL 2.70 (Remark p. 75; Fig. 4.9 p. 82)"
+   },
+   {
+    "path": "stat",
+    "value": 2.5663,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "z printed 2.5663 (p. 77)"
+   },
+   {
+    "path": "stat",
+    "value": 2.57,
+    "tol": 0.005,
+    "transform": null,
+    "note": "z printed rounded 2.57 (p. 77)"
+   },
+   {
+    "path": "p",
+    "value": 0.01016,
+    "tol": 0.00012,
+    "transform": null,
+    "note": "p printed 0.01016 = 2 x 0.00508 (normal table at |z| = 2.57, p. 77); tol = doubled table half unit (1e-5) + |2*Phi(-2.57) - exact p|"
+   },
+   {
+    "path": "Q",
+    "value": 6.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest Q 6.79 (Fig. 4.9 p. 82)"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest p(Q) 0.34 (Fig. 4.9 p. 82)"
+   },
+   {
+    "path": "I2",
+    "value": 12.0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "forest I2 12% (Fig. 4.9 p. 82)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 10.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (1999) IVhet % weight (= FE weight), Fig. 4.4/4.9 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 39.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) IVhet % weight (= FE weight), Fig. 4.4/4.9 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (2004) IVhet % weight (= FE weight), Fig. 4.4/4.9 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Spence et al. (2006) IVhet % weight (= FE weight), Fig. 4.4/4.9 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Khan et al. (2010) IVhet % weight (= FE weight), Fig. 4.4/4.9 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Raue et al. (2011) IVhet % weight (= FE weight), Fig. 4.4/4.9 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 18.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Cao et al. (2012) IVhet % weight (= FE weight), Fig. 4.4/4.9 (1 dp)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.03989343746407343,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: tau2_DL); not printed in the source"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5636617664531031,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: summary_lnRR); not printed in the source"
+   },
+   {
+    "path": "se",
+    "value": 0.048241505091289855,
+    "tol": 1e-12,
+    "transform": "square",
+    "note": "tight check vs the verifier's full-precision value (verification.computed: var_ivhet); not printed in the source"
+   },
+   {
+    "path": "se",
+    "value": 0.2196394889160186,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: se_ivhet); not printed in the source"
+   },
+   {
+    "path": "stat",
+    "value": 2.5663043072761154,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: z); not printed in the source"
+   },
+   {
+    "path": "p",
+    "value": 0.010278860708775074,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: p_two_sided); not printed in the source"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 10.730439496357366,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[0]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 39.74869766460781,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[1]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.010668691927418,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[2]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.31230105512018,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[3]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 9.50300679076439,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[4]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.0164506046644113,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[5]); not printed in the source"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 18.678435696558424,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: weight_pct[6]); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_ivhet_ci_upper_ln_typo",
+  "example_id": "khan_ch03_04__heartburn_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch4 Example 4.9 p. 75",
+  "description": "Upper ln-scale IVhet CI limit printed by the book as 0.994199 (a digit typo for 0.994190 = 0.5637 + 1.96*0.219638).",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "ci_upper",
+    "value": 0.994199,
+    "tol": 4.96e-05,
+    "transform": null,
+    "note": "ln CI UL printed 0.994199 (p. 75); tol = half unit + log-scale rounding allowance (as for ci_lower in heartburn_ivhet)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (digit typo): the book prints the IVhet ln-scale upper limit as 0.994199, but its own arithmetic 0.5637 + 1.96*0.219638 = 0.994190, and its printed RR upper limit 2.702537 corresponds to ln 0.994191 (that RR limit is tested and passing in khan_ch03_04__heartburn_ivhet). The exact value with the exact quantile is 0.9941473; |0.994199 - 0.9941473| = 5.2e-5 exceeds the full rounding allowance (half unit 5e-7 + |0.5637 - mu| 3.8e-5 + SE-rounding 2.9e-6 + 1.96-vs-quantile 7.9e-6 = 5.0e-5), and the printed RR limits back-solve to ln UL 0.994191, not 0.994199. The related p. 81 typo 'CI width 2.70 - 1.44 = 1.66' (correct 2.70 - 1.14 = 1.56) is not a single engine output and is not encoded."
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_subgroup_period_random",
+  "example_id": "khan_ch03_04__heartburn_subgroup_period_random",
+  "source_id": "khan2020",
+  "location": "Ch4 §4.7 pp. 78-80; grouping table p. 79; Fig. 4.5 p. 79 (Fig. 4.6 p. 80)",
+  "description": "Subgroup analysis of the heartburn RR by publication period (old 1999-2006, k = 4 vs recent 2010-2012, k = 3) under DL random effects with a separate tau2 per subgroup (MetaXL MASubGroups).",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29,
+    "period": "recent",
+    "period_label": "Recent studies (2010-2012)"
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27,
+    "period": "recent",
+    "period_label": "Recent studies (2010-2012)"
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47,
+    "period": "recent",
+    "period_label": "Recent studies (2010-2012)"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "period",
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.old.estimate",
+    "value": 1.95,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "old studies RR 1.95 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.old.ci_lower",
+    "value": 1.07,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "old studies CI LL 1.07 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.old.ci_upper",
+    "value": 3.55,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "old studies CI UL 3.55 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.old.Q",
+    "value": 4.27,
+    "tol": 0.005,
+    "transform": null,
+    "note": "old studies Q 4.27 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.old.p_Q",
+    "value": 0.23,
+    "tol": 0.005,
+    "transform": null,
+    "note": "old studies p(Q) 0.23 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.old.I2",
+    "value": 30.0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "old studies I2 30% (Fig. 4.5)"
+   },
+   {
+    "path": "groups.recent.estimate",
+    "value": 1.24,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "recent studies RR 1.24 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.recent.ci_lower",
+    "value": 0.61,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "recent studies CI LL 0.61 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.recent.ci_upper",
+    "value": 2.5,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "recent studies CI UL 2.50 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.recent.Q",
+    "value": 1.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "recent studies Q 1.15 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.recent.p_Q",
+    "value": 0.56,
+    "tol": 0.005,
+    "transform": null,
+    "note": "recent studies p(Q) 0.56 (Fig. 4.5)"
+   },
+   {
+    "path": "groups.recent.I2",
+    "value": 0.0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "recent studies I2 0% (Fig. 4.5)"
+   },
+   {
+    "path": "overall.estimate",
+    "value": 1.72,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "overall RR 1.72 (Fig. 4.5)"
+   },
+   {
+    "path": "overall.ci_lower",
+    "value": 1.12,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "overall CI LL 1.12 (Fig. 4.5)"
+   },
+   {
+    "path": "overall.ci_upper",
+    "value": 2.63,
+    "tol": 0.005,
+    "transform": "exp",
+    "note": "overall CI UL 2.63 (Fig. 4.5)"
+   },
+   {
+    "path": "overall.Q",
+    "value": 6.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "overall Q 6.79 (Fig. 4.5)"
+   },
+   {
+    "path": "overall.p_Q",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "overall p(Q) 0.34 (Fig. 4.5)"
+   },
+   {
+    "path": "overall.I2",
+    "value": 12.0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "overall I2 12% (Fig. 4.5)"
+   },
+   {
+    "path": "overall.weights_pct.0",
+    "value": 11.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (1999) overall-RE % weight, Fig. 4.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.1",
+    "value": 34.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Hagedorn et al. (2003) overall-RE % weight, Fig. 4.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.2",
+    "value": 8.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Watson et al. (2004) overall-RE % weight, Fig. 4.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.3",
+    "value": 13.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Spence et al. (2006) overall-RE % weight, Fig. 4.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.4",
+    "value": 10.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Khan et al. (2010) overall-RE % weight, Fig. 4.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.5",
+    "value": 2.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Raue et al. (2011) overall-RE % weight, Fig. 4.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.6",
+    "value": 19.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Cao et al. (2012) overall-RE % weight, Fig. 4.5 (1 dp)"
+   },
+   {
+    "path": "groups.old.tau2",
+    "value": 0.11554743061655187,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: old.tau2 (separate DL tau2 within the subgroup)); not printed in the source"
+   },
+   {
+    "path": "groups.old.estimate",
+    "value": 0.6655891911183235,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: old.mu); not printed in the source"
+   },
+   {
+    "path": "groups.old.se",
+    "value": 0.3073657534324471,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: old.se); not printed in the source"
+   },
+   {
+    "path": "groups.old.Q",
+    "value": 4.266294524989618,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: old.Q); not printed in the source"
+   },
+   {
+    "path": "groups.old.p_Q",
+    "value": 0.23410779299038617,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: old.pQ); not printed in the source"
+   },
+   {
+    "path": "groups.old.I2",
+    "value": 29.681366759194848,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: old.I2); not printed in the source"
+   },
+   {
+    "path": "groups.recent.tau2",
+    "value": 0.0,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: recent.tau2 (DL truncated at 0)); not printed in the source"
+   },
+   {
+    "path": "groups.recent.estimate",
+    "value": 0.2128384805260694,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: recent.mu); not printed in the source"
+   },
+   {
+    "path": "groups.recent.se",
+    "value": 0.35895702065417706,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: recent.se); not printed in the source"
+   },
+   {
+    "path": "groups.recent.Q",
+    "value": 1.1507249770967785,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: recent.Q); not printed in the source"
+   },
+   {
+    "path": "groups.recent.p_Q",
+    "value": 0.562500931700556,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: recent.pQ); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_subgroup_weight_share",
+  "example_id": "khan_ch03_04__heartburn_subgroup_period_random",
+  "source_id": "khan2020",
+  "location": "Ch4 Fig. 4.5 p. 79",
+  "description": "Subgroup % weight column of the MetaXL subgroup forest plot: old 67.8% and recent 32.2% = sums of the member studies' overall-RE weights.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39,
+    "period": "old",
+    "period_label": "Old studies (1999-2006)"
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29,
+    "period": "recent",
+    "period_label": "Recent studies (2010-2012)"
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27,
+    "period": "recent",
+    "period_label": "Recent studies (2010-2012)"
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47,
+    "period": "recent",
+    "period_label": "Recent studies (2010-2012)"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "period",
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.old.weight_pct_of_overall",
+    "value": 67.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "old studies weight 67.8% (Fig. 4.5) = 11.8 + 34.6 + 8.0 + 13.4"
+   },
+   {
+    "path": "groups.recent.weight_pct_of_overall",
+    "value": 32.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "recent studies weight 32.2% (Fig. 4.5) = 10.6 + 2.4 + 19.2"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Missing output: moderators.subgroup_analysis does not expose a subgroup's share of the total weight (MetaXL/RevMan subtotal '% weight' column = sum of the member studies' weights in the overall analysis). The per-study overall-RE weights that sum to 67.8/32.2 are tested in khan_ch03_04__heartburn_subgroup_period_random (overall.weights_pct.*); the verifier reproduced 67.79/32.21. Activate once the group results carry e.g. 'weight_pct_of_overall'."
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_lfk",
+  "example_id": "khan_ch03_04__heartburn_doi_plot_lfk",
+  "source_id": "khan2020",
+  "location": "Ch4 Publication Bias pp. 83-84 (text p. 84; Fig. 4.11)",
+  "description": "LFK index of Doi-plot asymmetry (Furuya-Kanamori et al. 2018, metasens::lfkindex algorithm) for the heartburn ln RR computed from the 2x2 tables: -2.70, major asymmetry.",
+  "measure": "RR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "e1": 5,
+    "n1": 54,
+    "e2": 5,
+    "n2": 53
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "e1": 25,
+    "n1": 47,
+    "e2": 10,
+    "n2": 48
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "e1": 11,
+    "n1": 60,
+    "e2": 2,
+    "n2": 52
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "e1": 6,
+    "n1": 40,
+    "e2": 5,
+    "n2": 39
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "e1": 7,
+    "n1": 31,
+    "e2": 3,
+    "n2": 29
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "e1": 1,
+    "n1": 30,
+    "e2": 1,
+    "n2": 27
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "e1": 8,
+    "n1": 49,
+    "e2": 8,
+    "n2": 47
+   }
+  ],
+  "call": "lfk",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "lfk",
+    "value": -2.7,
+    "tol": 0.005,
+    "transform": null,
+    "note": "LFK index printed -2.70 (p. 84); |LFK| > 2 = 'major asymmetry'"
+   },
+   {
+    "path": "lfk",
+    "value": -2.696215940512371,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: LFK_metasens_exact_inputs (metasens::lfkindex algorithm)); not printed in the source"
+   },
+   {
+    "path": "points.0.abs_z",
+    "value": 2.327045175359171,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: |zscores_sorted[0]|); not printed in the source"
+   },
+   {
+    "path": "points.1.abs_z",
+    "value": 1.2083524436872404,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: |zscores_sorted[1]|); not printed in the source"
+   },
+   {
+    "path": "points.2.abs_z",
+    "value": 0.6418039633995739,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: |zscores_sorted[2]|); not printed in the source"
+   },
+   {
+    "path": "points.3.abs_z",
+    "value": 0.31675714870370897,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: |zscores_sorted[3]|); not printed in the source"
+   },
+   {
+    "path": "points.4.abs_z",
+    "value": 0.038133853299980314,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: |zscores_sorted[4]|); not printed in the source"
+   },
+   {
+    "path": "points.5.abs_z",
+    "value": 0.6159886731004537,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: |zscores_sorted[5]|); not printed in the source"
+   },
+   {
+    "path": "points.6.abs_z",
+    "value": 1.8099191112045863,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: |zscores_sorted[6]|); not printed in the source"
+   },
+   {
+    "path": "points.0.y",
+    "value": -0.10536051565782628,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR_sorted[0]); not printed in the source"
+   },
+   {
+    "path": "points.1.y",
+    "value": -0.041672696400568074,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR_sorted[1]); not printed in the source"
+   },
+   {
+    "path": "points.2.y",
+    "value": -0.018692133012152633,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR_sorted[2]); not printed in the source"
+   },
+   {
+    "path": "points.3.y",
+    "value": 0.1570037488096649,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR_sorted[3]); not printed in the source"
+   },
+   {
+    "path": "points.4.y",
+    "value": 0.7806064858885313,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR_sorted[4]); not printed in the source"
+   },
+   {
+    "path": "points.5.y",
+    "value": 0.9373441410719873,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR_sorted[5]); not printed in the source"
+   },
+   {
+    "path": "points.6.y",
+    "value": 1.5616472485977517,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: lnRR_sorted[6]); not printed in the source"
+   },
+   {
+    "path": "points.4.study_index",
+    "value": 4,
+    "tol": 0,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: Doi-plot peak (min |z|) = Khan et al. (2010), original row 4); not printed in the source"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch03_04__heartburn_lfk_table49_inputs",
+  "example_id": "khan_ch03_04__heartburn_doi_plot_lfk",
+  "source_id": "khan2020",
+  "location": "Ch4 Table 4.9 p. 74 (inputs); text p. 84",
+  "description": "LFK index recomputed from the rounded per-study ln RR and Var printed in Table 4.9 (generic yi/vi input): still -2.70.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Watson et al. (1999)",
+    "yi": -0.019,
+    "vi": 0.362614
+   },
+   {
+    "study": "Hagedorn et al. (2003)",
+    "yi": 0.9373,
+    "vi": 0.09789
+   },
+   {
+    "study": "Watson et al. (2004)",
+    "yi": 1.5616,
+    "vi": 0.555012
+   },
+   {
+    "study": "Spence et al. (2006)",
+    "yi": 0.157,
+    "vi": 0.316026
+   },
+   {
+    "study": "Khan et al. (2010)",
+    "yi": 0.7806,
+    "vi": 0.40945
+   },
+   {
+    "study": "Raue et al. (2011)",
+    "yi": -0.105,
+    "vi": 1.92963
+   },
+   {
+    "study": "Cao et al. (2012)",
+    "yi": -0.042,
+    "vi": 0.208315
+   }
+  ],
+  "call": "lfk",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "lfk",
+    "value": -2.7,
+    "tol": 0.005,
+    "transform": null,
+    "note": "LFK index printed -2.70 (p. 84)"
+   },
+   {
+    "path": "lfk",
+    "value": -2.6969849758643973,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed: LFK_metasens_table49_inputs); not printed in the source"
+   }
+  ],
+  "status": "active"
+ }
+]

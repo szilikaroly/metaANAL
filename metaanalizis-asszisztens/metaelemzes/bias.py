@@ -10,11 +10,12 @@ Fontos (Sterne et al. 2011, BMJ; Cochrane Handbook 13. fejezet): a tesztek ereje
 esetén kicsi, és az aszimmetria nem egyenlő a publikációs torzítással (heterogenitás,
 kis vizsgálatok eltérő minősége, véletlen is okozhatja).
 """
+import functools
 import math
 
 from . import distributions as dist
-from .models import meta_analysis, ModelError, MetaResult
-from .moderators import meta_regression
+from .models import meta_analysis, ModelError, MetaResult, ratio_stat
+from .moderators import meta_regression, MR_TAU2_METHODS
 
 
 def egger_test(yi, vi):
@@ -34,13 +35,24 @@ def egger_test(yi, vi):
     intercept = ym - slope * xm
     resid = [y - intercept - slope * x for x, y in zip(prec, zs)]
     df = k - 2
-    s2 = sum(r * r for r in resid) / df if df > 0 else float("nan")
+    rss = sum(r * r for r in resid)
+    warn = []
+    # tökéletes illeszkedés (pl. minden y_i azonos → z_i = c·prec_i): a reziduális variancia
+    # csak kerekítési zaj, a t = 0/0 nem értelmezhető (metafor regtest: NA)
+    perfect = rss <= 1e-20 * max(sum(z * z for z in zs), 1e-300)
+    if perfect:
+        rss = 0.0
+    s2 = rss / df if df > 0 else float("nan")
     se_int = math.sqrt(s2 * (1.0 / k + xm * xm / sxx))
     se_slope = math.sqrt(s2 / sxx)
-    t = intercept / se_int if se_int > 0 else math.inf
+    if perfect and abs(intercept) <= 1e-10 * (abs(ym) + abs(slope * xm) + 1e-300):
+        intercept = 0.0
+    t = ratio_stat(intercept, se_int)
+    if math.isnan(t):
+        warn.append("Egger-teszt: nulla reziduális variancia (azonos hatásméretek / tökéletes "
+                    "illeszkedés) — a teszt nem értelmezhető.")
     p = dist.t_two_sided_p(t, df)
     crit = dist.t_ppf(0.975, df)
-    warn = []
     if k < 10:
         warn.append("k = %d < 10: az Egger-teszt ereje kicsi; ne értelmezd önmagában "
                     "(Sterne et al. 2011)." % k)
@@ -49,25 +61,50 @@ def egger_test(yi, vi):
                       slope=slope, se_slope=se_slope, warnings=warn)
 
 
-def _kendall_exact_sf(s_abs, n):
-    """P(|S| >= s_abs) pontosan, kötések nélkül (inverziószám-eloszlás DP)."""
-    maxinv = n * (n - 1) // 2
-    counts = [1]
+_KENDALL_EXACT_MAX_N = 170   # e fölött az R pKendall túlcsordul (metafor: NaN) → normális közelítés
+
+
+@functools.lru_cache(maxsize=8)
+def _kendall_inv_dist(n):
+    """Az inverziószám eloszlása n elem véletlen permutációjánál (valószínűségek; túlcsordulás-
+    mentes, O(n³) csúszóablakos DP)."""
+    probs = [1.0]
     for m in range(2, n + 1):
-        new = [0] * (len(counts) + m - 1)
-        for i, c in enumerate(counts):
-            if c:
-                for j in range(m):
-                    new[i + j] += c
-        counts = new
-    total = float(sum(counts))
+        size = len(probs) + m - 1
+        new = [0.0] * size
+        acc = 0.0
+        for i in range(size):
+            if i < len(probs):
+                acc += probs[i]
+            if i - m >= 0:
+                acc -= probs[i - m]
+            new[i] = acc / m
+        probs = new
+    return tuple(probs)
+
+
+def _kendall_exact_sf(s_abs, n):
+    """P(|S| >= s_abs) pontosan, kötések nélkül (R cor.test(..., exact=TRUE) pKendall)."""
+    maxinv = n * (n - 1) // 2
+    probs = _kendall_inv_dist(n)
     # S = (konkordáns - diszkordáns) = maxinv - 2*inv
-    p = 0.0
-    for inv, c in enumerate(counts):
-        s = maxinv - 2 * inv
-        if abs(s) >= s_abs - 1e-9:
-            p += c
-    return p / total
+    p = sum(pr for inv, pr in enumerate(probs) if abs(maxinv - 2 * inv) >= s_abs - 1e-9)
+    return min(1.0, max(0.0, p))
+
+
+def _kendall_var_s(x, y):
+    """S varianciája H0 alatt, kötésekkel (R cor.test kendall, exact=FALSE ág)."""
+    from collections import Counter
+    n = len(x)
+    tx = [c for c in Counter(x).values() if c > 1]
+    ty = [c for c in Counter(y).values() if c > 1]
+    v0 = n * (n - 1) * (2 * n + 5)
+    vt = sum(c * (c - 1) * (2 * c + 5) for c in tx)
+    vu = sum(c * (c - 1) * (2 * c + 5) for c in ty)
+    v1 = sum(c * (c - 1) for c in tx) * sum(c * (c - 1) for c in ty)
+    v2 = sum(c * (c - 1) * (c - 2) for c in tx) * sum(c * (c - 1) * (c - 2) for c in ty)
+    return ((v0 - vt - vu) / 18.0 + v1 / (2.0 * n * (n - 1))
+            + (v2 / (9.0 * n * (n - 1) * (n - 2)) if n > 2 else 0.0))
 
 
 def begg_test(yi, vi):
@@ -100,11 +137,15 @@ def begg_test(yi, vi):
     denom = math.sqrt((n0 - _tie_pairs(tstar)) * (n0 - _tie_pairs(vi)))
     tau = s / denom if denom > 0 else 0.0
     has_ties = _tie_pairs(tstar) > 0 or _tie_pairs(vi) > 0
-    if not has_ties and k <= 50:
+    # metafor ranktest: cor.test(..., method="kendall", exact=TRUE) → kötések nélkül pontos
+    # eloszlás bármely k-ra (k > 170-nél az R is NaN-t ad, ott normális közelítés);
+    # kötésekkel normális közelítés a teljes, kötés-korrigált varianciával, folytonossági
+    # korrekció nélkül.
+    if not has_ties and k <= _KENDALL_EXACT_MAX_N:
         p = _kendall_exact_sf(abs(s), k)
         method = "pontos"
     else:
-        var_s = (k * (k - 1) * (2 * k + 5) - _tie_term(tstar) - _tie_term(vi)) / 18.0
+        var_s = _kendall_var_s(tstar, vi)
         z = s / math.sqrt(var_s) if var_s > 0 else 0.0
         p = dist.z_two_sided_p(z)
         method = "normális közelítés"
@@ -118,11 +159,6 @@ def begg_test(yi, vi):
 def _tie_pairs(vals):
     from collections import Counter
     return sum(c * (c - 1) / 2.0 for c in Counter(vals).values() if c > 1)
-
-
-def _tie_term(vals):
-    from collections import Counter
-    return sum(c * (c - 1) * (2 * c + 5) for c in Counter(vals).values() if c > 1)
 
 
 def _rank_first(values):
@@ -145,8 +181,15 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method="REML", estim
     if k < 3:
         raise ModelError("trim-and-fill: k >= 3 szükséges")
     labels = list(labels) if labels else ["#%d" % (i + 1) for i in range(k)]
-    mr_method = tau2_method if (model == "random" and tau2_method in ("REML", "ML", "DL")) else \
-        ("FE" if model == "fixed" else "REML")
+    # metafor::trimfill: az oldal-regresszió (y ~ √v) a modell saját τ²-becslőjével fut
+    # (method = x$method), PM/HE/SJ esetén is
+    tm = (tau2_method or "REML").upper()
+    if model == "fixed":
+        mr_method = "FE"
+    elif model == "random" and tm in MR_TAU2_METHODS:
+        mr_method = tm
+    else:
+        mr_method = "REML"
     if side is None:
         x = [[1.0, math.sqrt(v)] for v in vi]
         mr = meta_regression(yi, vi, x, ["intercept", "sei"], mr_method)

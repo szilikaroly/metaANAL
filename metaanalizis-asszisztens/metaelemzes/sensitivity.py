@@ -64,9 +64,42 @@ def influence(yi, vi, labels, model="random", tau2_method="REML", level=0.95):
     return rows
 
 
+def _natural_key(value):
+    """Típusbiztos természetes rendezési kulcs vegyes szám/szöveg értékekhez: az egész
+    számértékű float egészként íródik ('2019'), a számjegy-sorozatok számként hasonlítanak
+    (így '2018-12' < 2019 < '2019-05' < '2019a' < 2020)."""
+    import re
+    if isinstance(value, bool):
+        value = int(value)
+    if isinstance(value, float) and value.is_integer():
+        value = int(value)
+    parts = re.split(r"(\d+)", str(value).strip().lower())
+    return tuple(int(p) if i % 2 else p for i, p in enumerate(parts))
+
+
+def cumulative_order(order_key):
+    """A kumulatív elemzés sorrendje: a hiányzó (None/üres) kulcsú vizsgálatok a végére
+    kerülnek (mint a metafor cumul()-ban az NA); ha minden kulcs szám, numerikus rendezés,
+    vegyes szám/szöveg kulcsoknál típusbiztos természetes rendezés (nincs TypeError)."""
+    n = len(order_key)
+    missing = [i for i in range(n) if order_key[i] is None or
+               (isinstance(order_key[i], str) and not order_key[i].strip()) or
+               (isinstance(order_key[i], float) and math.isnan(order_key[i]))]
+    miss = set(missing)
+    present = [i for i in range(n) if i not in miss]
+    if all(isinstance(order_key[i], (int, float)) and not isinstance(order_key[i], bool)
+           for i in present):
+        present.sort(key=lambda i: (order_key[i], i))
+    else:
+        present.sort(key=lambda i: (_natural_key(order_key[i]), i))
+    return present + missing
+
+
 def cumulative(yi, vi, labels, order_key, model="random", tau2_method="REML", ci_method=None,
                level=0.95):
-    idx = sorted(range(len(yi)), key=lambda i: (order_key[i], i))
+    """Kumulatív metaanalízis order_key szerint (hiányzó kulcs: a sor végére, mint a metafor
+    cumul()-ban; vegyes típusú kulcsok: természetes rendezés)."""
+    idx = cumulative_order(order_key)
     out = []
     for n in range(1, len(idx) + 1):
         sel = idx[:n]

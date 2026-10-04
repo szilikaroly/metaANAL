@@ -250,6 +250,8 @@ def t_ppf(p, df):
 
 
 def t_two_sided_p(t, df):
+    if t != t:          # NaN-statisztika (pl. 0/0) → NaN p (nem 1 és nem 0)
+        return float("nan")
     return min(1.0, 2.0 * t_sf(abs(t), df))
 
 
@@ -288,4 +290,6 @@ def _bisect(fn, lo, hi, tol=1e-14, maxiter=500):
 
 
 def z_two_sided_p(z):
+    if z != z:          # NaN-statisztika (pl. 0/0) → NaN p
+        return float("nan")
     return min(1.0, 2.0 * norm_sf(abs(z)))

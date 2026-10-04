@@ -115,6 +115,18 @@ CREATE TABLE IF NOT EXISTS chunk (
     text      TEXT NOT NULL
 );
 
+-- a betöltött fájlok nyilvántartása: melyik fájl (sha256) szövege van az egyes forrásokban —
+-- ez alapján az ingest sosem írja felül csendben egy másik dokumentum teljes szövegét
+CREATE TABLE IF NOT EXISTS ingest_file (
+    source_id TEXT NOT NULL REFERENCES source(source_id),
+    sha256    TEXT NOT NULL,
+    filename  TEXT NOT NULL,
+    path      TEXT,
+    chunks    INTEGER,
+    ts        TEXT,
+    PRIMARY KEY (source_id, sha256)
+);
+
 CREATE VIRTUAL TABLE IF NOT EXISTS chunk_fts USING fts5(
     text, locator, content='chunk', content_rowid='chunk_id',
     tokenize = "unicode61 remove_diacritics 2"
