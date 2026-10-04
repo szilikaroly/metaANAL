@@ -103,6 +103,10 @@ Kisebb, ismert hiányok (a `known_gap` forrás-esetek is ezeket dokumentálják)
 - k = 2 esetén nincs H/I² CI (a meta Q > k-nál ad); a kiugró-szűrés egylépéses (nem iterált); az erőelemzés csak az
   összesített hatás z-tesztjére vonatkozik (a heterogenitás-tesztre nem).
 
+## Tervezett validáló és grafikus felület (MA-munkapad)
+
+A [`TERV_validalo_grafikus_felulet.md`](TERV_validalo_grafikus_felulet.md) a böngészős munkafelület végleges terve (nem implementált): helyi, csak 127.0.0.1-en figyelő stdlib szerver (`python ma.py gui --project <mappa>`), a számok egyetlen forrása a motor; a `figure-forge` (ábra-export, audit) és a `validator` (RoB, PROBAST+AI, TRIPOD+AI, GRADE, AMSTAR 2) opcionális adapterként, verziózott `szk.*` JSON-szerződéssel csatlakozik, nélkülük is működik. A 11. fejezet a döntést igénylő kérdéseket sorolja fel.
+
 ## Tudásbázis (`tudasbazis/`)
 
 | Tábla | Mi van benne |
