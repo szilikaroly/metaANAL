@@ -205,3 +205,114 @@ def failsafe_n_rosenthal(yi, vi, alpha=0.05):
     return MetaResult(kind="failsafe_rosenthal", N=max(0.0, n), k=k,
                       warnings=["A fail-safe N elavult, félrevezető mutató; csak kiegészítő "
                                 "információként jelentsd (Cochrane Handbook 13.3.5.6)."])
+
+
+# ------------------------------------------------- Doi-plot / LFK-index
+def doi_plot_data(yi, vi):
+    """Doi-plot pontjai és az LFK-index (Furuya-Kanamori, Barendregt & Doi 2018;
+    a metasens::lfkindex algoritmusa szerint; Khan 2020, 12. fejezet).
+
+    Lépések: rendezés hatás szerint; N_j = 100·max(v)/v_j; középrangok
+    MR_1 = N_1/2, MR_j = MR_{j-1} + (N_{j-1} + N_j)/2; pct_j = (MR_j - 0,5)/ΣN;
+    Z_j = Φ⁻¹(pct_j); a csúcs (m) a legkisebb |Z|-jű vizsgálat;
+    LFK = 5/(2k)·Σ_j [Z_j + (max Z - min Z)/(max(θ-θ_m) - min(θ-θ_m))·(θ_j - θ_m)].
+    Értelmezés: |LFK| ≤ 1 szimmetrikus, 1–2 kisebb, > 2 jelentős aszimmetria.
+    """
+    k = len(yi)
+    if k < 3:
+        raise ModelError("LFK: k >= 3 szükséges")
+    order = sorted(range(k), key=lambda i: (yi[i], i))
+    y = [yi[i] for i in order]
+    v = [vi[i] for i in order]
+    vmax = max(v)
+    n = [100.0 * vmax / x for x in v]
+    mr = [n[0] / 2.0]
+    for j in range(1, k):
+        mr.append(mr[-1] + (n[j - 1] + n[j]) / 2.0)
+    tot = sum(n)
+    z = [dist.norm_ppf((m - 0.5) / tot) for m in mr]
+    m_idx = min(range(k), key=lambda j: (abs(z[j]), j))
+    d = [a - y[m_idx] for a in y]
+    rng_d = max(d) - min(d)
+    if rng_d <= 0:
+        raise ModelError("LFK: a hatásméretek azonosak")
+    slope = (max(z) - min(z)) / rng_d
+    lfk = 5.0 / (2.0 * k) * sum(zj + slope * dj for zj, dj in zip(z, d))
+    a = abs(lfk)
+    category = "nincs aszimmetria" if a <= 1 else ("kisebb aszimmetria" if a <= 2 else "jelentős aszimmetria")
+    return MetaResult(kind="lfk", k=k, lfk=lfk, category=category,
+                      points=[{"study_index": order[j], "y": y[j], "abs_z": abs(z[j])} for j in range(k)],
+                      warnings=["Az LFK-index a Doi-csoport módszere; a küszöbök heurisztikusak, és a Cochrane "
+                                "Handbook nem ajánlja önálló tesztként — a funnel-plot és az Egger-teszt mellett, "
+                                "érzékenységi jelleggel értelmezd."])
+
+
+def harbord_test(e1, n1, e2, n2):
+    """Harbord-teszt (bináris kimenet, log OR): Z/√V regressziója √V-re, a tengelymetszet
+    t(k−2)-tesztje (Harbord et al. 2006; Cochrane Handbook 13.3.5.4). Z = a − (a+c)n1/N,
+    V = n1·n2·(a+c)(b+d) / (N²(N−1))."""
+    xs, ys = [], []
+    for a, m1, c, m2 in zip(e1, n1, e2, n2):
+        a, c, m1, m2 = float(a), float(c), float(m1), float(m2)
+        n = m1 + m2
+        ev = a + c
+        nev = n - ev
+        if n <= 1 or ev == 0 or nev == 0:
+            continue
+        zs = a - ev * m1 / n
+        v = m1 * m2 * ev * nev / (n * n * (n - 1))
+        xs.append(math.sqrt(v))
+        ys.append(zs / math.sqrt(v))
+    return _ols_intercept_test(xs, ys, "harbord")
+
+
+def peters_test(e1, n1, e2, n2, cc=0.5):
+    """Peters-teszt (bináris kimenet): ln OR súlyozott regressziója 1/N-re, súly
+    1/(1/(a+c) + 1/(b+d)) a korrekció nélküli összegekből; a meredekség t(k−2)-tesztje
+    (Peters et al. 2006; Stata metabias). Nulla cellánál az ln OR-hez +cc kerül."""
+    xs, ys, ws = [], [], []
+    for a, m1, c, m2 in zip(e1, n1, e2, n2):
+        a, c, m1, m2 = float(a), float(c), float(m1), float(m2)
+        b, d = m1 - a, m2 - c
+        if (a == 0 and c == 0) or (b == 0 and d == 0):
+            continue
+        # a súly a korrekció nélküli esemény/nem-esemény összegekből (Stata metabias)
+        ws.append(1.0 / (1.0 / (a + c) + 1.0 / (b + d)))
+        if min(a, b, c, d) == 0:
+            a, b, c, d = a + cc, b + cc, c + cc, d + cc
+        ys.append(math.log(a * d / (b * c)))
+        xs.append(1.0 / (m1 + m2))
+    k = len(xs)
+    if k < 3:
+        raise ModelError("Peters-teszt: k >= 3 szükséges")
+    sw = sum(ws)
+    xm = sum(w * x for w, x in zip(ws, xs)) / sw
+    ym = sum(w * y for w, y in zip(ws, ys)) / sw
+    sxx = sum(w * (x - xm) ** 2 for w, x in zip(ws, xs))
+    slope = sum(w * (x - xm) * (y - ym) for w, x, y in zip(ws, xs, ys)) / sxx
+    inter = ym - slope * xm
+    rss = sum(w * (y - inter - slope * x) ** 2 for w, x, y in zip(ws, xs, ys))
+    df = k - 2
+    se = math.sqrt(rss / df / sxx)
+    t = slope / se
+    return MetaResult(kind="peters", k=k, slope=slope, se_slope=se, t=t, df=df,
+                      p=dist.t_two_sided_p(t, df), warnings=[] if k >= 10 else
+                      ["k < 10: a teszt ereje kicsi (Sterne et al. 2011)."])
+
+
+def _ols_intercept_test(xs, ys, kind):
+    k = len(xs)
+    if k < 3:
+        raise ModelError("%s: k >= 3 szükséges" % kind)
+    xm = sum(xs) / k
+    ym = sum(ys) / k
+    sxx = sum((x - xm) ** 2 for x in xs)
+    slope = sum((x - xm) * (y - ym) for x, y in zip(xs, ys)) / sxx
+    inter = ym - slope * xm
+    df = k - 2
+    s2 = sum((y - inter - slope * x) ** 2 for x, y in zip(xs, ys)) / df
+    se = math.sqrt(s2 * (1.0 / k + xm * xm / sxx))
+    t = inter / se
+    return MetaResult(kind=kind, k=k, intercept=inter, se_intercept=se, t=t, df=df,
+                      p=dist.t_two_sided_p(t, df), slope=slope,
+                      warnings=[] if k >= 10 else ["k < 10: a teszt ereje kicsi (Sterne et al. 2011)."])
