@@ -28,12 +28,12 @@
   "stage_id": "S05",
   "applies_to": "planner",
   "condition": "Egy kvantitatív kimenet kinyerő űrlapjának mezőit határozod meg.",
-  "recommendation": "A motor oszlopneveivel rögzítsd a nyers összesítő adatokat karonként: folytonos → n1, m1, sd1, n2, m2, sd2 (1 = kísérleti, 2 = kontroll kar); bináris → e1, n1, e2, n2; egy arány → x, n; korreláció → r, n (a párok száma); ha csak kész hatásméret van → yi + sei (vagy vi) az elemzési skálán (arány-mértéknél ln). Mellé: study, study_id, design, mértékegység, mérőeszköz, időpont, elemzési populáció (ITT/per-protocol), estimated, rob, forráshely. Kinyerés után: `ma.py validate --data … --measure …`.",
+  "recommendation": "A motor oszlopneveivel rögzítsd a nyers összesítő adatokat karonként: folytonos → n1, m1, sd1, n2, m2, sd2 (1 = kísérleti, 2 = kontroll kar); bináris → e1, n1, e2, n2; egy arány → x, n; korreláció → r, n (a párok száma); párosított/egycsoportos elrendezés (`--measure MC` / `SMCC`) → n + átlagos változás (m1 és m2, vagy mdiff) + a változás SD-je (sd_diff, vagy sd1, sd2 és r); ha csak kész hatásméret van → yi + sei (vagy vi) az elemzési skálán (arány-mértéknél ln; közölt SMD-nél yi + n1 + n2 is elég a `--gen-smd-vtype`-pal, lásd D-S05-032). Mellé: study, study_id, design, mértékegység, mérőeszköz, időpont, elemzési populáció (ITT/per-protocol), estimated, rob, forráshely. Kinyerés után: `ma.py validate --data … --measure …`.",
   "rationale": "Az inverz-variancia súlyozáshoz minden vizsgálatnak hatásméret ÉS variancia kell (Borenstein 2007; Cheung 2016: variancia nélküli hatásméret nem használható); a nyers adatból a hatásméret újraszámolható és ellenőrizhető. A V001/V002 a hiányzó oszlopot/értéket blokkolja. [EN: extraction fields, summary statistics per arm, effect size and variance, required columns]",
   "strength": "must",
   "machine_check": "metaelemzes.validate:V001; metaelemzes.validate:V002",
   "source_ids": "borenstein2007_fe_re,cheung2016,khan2020,cochrane_handbook,engine",
-  "locator": "Cochrane Handbook v6.5 ch. 5–6; K-BOR07-005, K-CHE16-015, K-CHE16-016, K-KHN0102-083, K-KHN0304-004, K-KHN05-004, K-KHN0607-005, K-KHN08-002, K-KHN09-004, K-KHN10-005"
+  "locator": "Cochrane Handbook v6.5 ch. 5–6; K-BOR07-005, K-CHE16-015, K-CHE16-016, K-KHN0102-083, K-KHN0304-004, K-KHN05-004, K-KHN0607-005, K-KHN08-002, K-KHN09-004, K-KHN10-005, K-KHN08-013, F-KHN08-005"
  },
  {
   "rule_id": "D-S05-004",
@@ -112,8 +112,8 @@
   "stage_id": "S05",
   "applies_to": "all",
   "condition": "Egy vizsgálat átlag/SD helyett mediánt közöl IQR-rel és/vagy minimum–maximummal.",
-  "recommendation": "Az átlagot Luo et al. 2018, az SD-t Wan et al. 2014 szerint becsüld: `ma.py convert median --n … --median … --q1 … --q3 …` és/vagy `--min … --max …` (ha mindkettő közölt, add meg mindet). A Hozo 2005-képletet (`--method hozo`) ne használd elsődlegesen, IQR-re pedig soha (Hozo csak tartományra vonatkozik). A sort jelöld `estimated=igen`-nel, a konverziót naplózd (bemenetek, módszer, helyes hivatkozás), és tervezz érzékenységi elemzést a becsült sorok nélkül.",
-  "rationale": "Eltérés a forrásoktól: Khan 2020 és Morvaridzadeh 2020 még Hozo 2005-öt idézi, utóbbi tévesen az IQR-átváltáshoz is. A jelenlegi gyakorlat (Cochrane Handbook v6; a motor) a pontosabb Wan 2014 / Luo 2018 becslőket használja; mindkettő közel normális eloszlást feltételez. [EN: median IQR range to mean SD conversion, Wan 2014, Luo 2018, Hozo 2005 outdated]",
+  "recommendation": "Az átlagot Luo et al. 2018, az SD-t Wan et al. 2014 szerint becsüld: `ma.py convert median --n … --median … --q1 … --q3 …` és/vagy `--min … --max …` (ha mindkettő közölt, add meg mindet). A Hozo 2005-képletet (`--method hozo`) ne használd elsődlegesen, IQR-re pedig soha (Hozo csak tartományra vonatkozik; n > 25-nél maga Hozo is a mediánt ajánlja, amit a motor `--method hozo` nem alkalmaz). Előbb nézd meg, ferde-e az eloszlás (D-S05-011). A sort jelöld `estimated=igen`-nel, a konverziót naplózd (bemenetek, módszer, helyes hivatkozás), és tervezz érzékenységi elemzést a becsült sorok nélkül.",
+  "rationale": "Eltérés a forrásoktól: Khan 2020 és Morvaridzadeh 2020 még Hozo 2005-öt idézi, utóbbi tévesen az IQR-átváltáshoz is. A pontosabb Wan 2014 (SD) és Luo 2018 (átlag) becslők a jelenlegi gyakorlat és a motor alapértelmezése; mindkettő közel normális eloszlást feltételez, ezért ferde adatnál a Cochrane Handbook óvatosságot kér (a konvertált érték nem egyenértékű a közölt átlag/SD-vel). [EN: median IQR range to mean SD conversion, Wan 2014, Luo 2018, Hozo 2005 outdated, skewness]",
   "strength": "should",
   "machine_check": "ma.py convert median; metaelemzes.validate:V018",
   "source_ids": "luo2018,wan2014,cochrane_handbook,khan2020,morvaridzadeh2020,engine",
@@ -172,7 +172,7 @@
   "stage_id": "S05",
   "applies_to": "all",
   "condition": "Egy többkarú vizsgálat két vagy több kísérleti karja ugyanazzal a kontrollkarral kerülne ugyanabba a metaanalízisbe (V017 vagy V007 jelez, vagy egy kimenet k-ja nagyobb a független vizsgálatok számánál).",
-  "recommendation": "A kontrollcsoport nem számolható kétszer. Ha a karok ugyanahhoz az összehasonlításhoz relevánsak, vond össze őket (`ma.py convert combine --n1 … --m1 … --sd1 … --n2 … --m2 … --sd2 …`; binárisnál az eseményeket és az n-eket add össze). Ha külön összehasonlítás kell (pl. dózis-alcsoport), oszd fel a kontroll n-jét — binárisnál az eseményszámot is — a karok között (`conversions.split_shared_control`), a sorokat jelöld `control_split=igen`-nel, azonos `study_id`-val. A választást naplózd.",
+  "recommendation": "A kontrollcsoport nem számolható kétszer. Ha a karok ugyanahhoz az összehasonlításhoz relevánsak, vond össze őket (`ma.py convert combine --n1 … --m1 … --sd1 … --n2 … --m2 … --sd2 …`; binárisnál az eseményeket és az n-eket add össze). Ha külön összehasonlítás kell (pl. dózis-alcsoport), oszd fel a kontroll n-jét — binárisnál az eseményszámot is — a karok között (`conversions.split_shared_control`), a sorokat jelöld `control_split=igen`-nel, azonos `study_id`-val. A V017 csak `study_id` oszlop mellett ismeri fel a közös kontrollt, ezért többkarú vizsgálatnál mindig töltsd ki. A választást naplózd.",
   "rationale": "Egységelemzési hiba (Cochrane 23.3.4): a közös kontroll többszöri használata túlbecsüli a pontosságot. Morvaridzadeh 'kezelési karokat' számolt vizsgálatként; Zhang 2022 az összevonást javasolja; hálózati/többváltozós modell a motorban nincs. [EN: multi-arm trial, shared control group, double counting, combine groups, split control, unit of analysis]",
   "strength": "must",
   "machine_check": "metaelemzes.validate:V017; metaelemzes.validate:V007; ma.py convert combine",
@@ -196,11 +196,11 @@
   "stage_id": "S05",
   "applies_to": "all",
   "condition": "Keresztezett (crossover) vizsgálat kerül be (ugyanazok a résztvevők kapják mindkét kezelést).",
-  "recommendation": "Ne kezeld párhuzamos csoportos vizsgálatként. Sorrend: (1) páros elemzés eredménye (személyen belüli különbség és SE páros t-ből vagy CI-ből) `--measure GEN`-nel; (2) ha csak karonkénti átlag/SD van, a páros SE-t imputált személyen belüli korrelációval közelítsd, érzékenységi elemzéssel; (3) vagy csak az első periódus adatait használd. Mérlegeld az alkalmasságot (stabil állapot, átvivő hatás, kimosási periódus). Jelöld `design=crossover`, és tervezz érzékenységi elemzést nélkülük (`--exclude design=crossover`).",
-  "rationale": "A párhuzamos kezelés kétszer számolja a résztvevőket és figyelmen kívül hagyja a személyen belüli korrelációt (Cochrane ch. 23.2). Morvaridzadeh 5 keresztezett vizsgálatot összesített módszer megadása nélkül; Khan a párosított MD varianciáját S_D²/n-nel adja, a független csoportos képlet erre nem alkalmazható. [EN: crossover trial, paired analysis, within-person correlation, first period data, carry-over]",
+  "recommendation": "Ne kezeld párhuzamos csoportos vizsgálatként. Sorrend: (1) a páros elemzés eredménye (személyen belüli átlagkülönbség és SE páros t-ből vagy CI-ből) GEN-ként; (2) ha a különbségek SD-je, vagy a kezelésenkénti átlag/SD és egy (imputált) személyen belüli korreláció ismert, a páros MD-t és varianciáját a motor `MC` mértékével számold (oszlopok: n, m1 = a kísérleti, m2 = a kontrollkezelés alatti átlag, sd_diff — vagy sd1, sd2, r; v = sd_diff²/n): `ma.py es --data … --measure MC`, a kapott yi/vi-t a párhuzamos vizsgálatokéval közös fájlban `--measure GEN`-nel elemezd, az imputált r-t érzékenységi elemzésben változtasd; (3) vagy csak az első periódus adatait használd párhuzamos vizsgálatként. SMD-nél ne a különbségek SD-jével standardizálj (a motor `SMCC`-je ilyen), mert az nem vethető össze a párhuzamos vizsgálatok SMD-jével (D-S07-010). Mérlegeld az alkalmasságot (stabil állapot, átvivő hatás, kimosási periódus). Jelöld `design=crossover`, és tervezz érzékenységi elemzést nélkülük (`--exclude design=crossover`).",
+  "rationale": "A párhuzamos kezelés kétszer számolja a résztvevőket és figyelmen kívül hagyja a személyen belüli korrelációt (Cochrane ch. 23.2). Morvaridzadeh 5 keresztezett vizsgálatot összesített módszer megadása nélkül; Khan a párosított MD varianciáját S_D²/n-nel adja (ezt számolja a motor MC-mértéke), a független csoportos képlet erre nem alkalmazható. [EN: crossover trial, paired analysis, within-person correlation, first period data, carry-over, mean change MC]",
   "strength": "must",
-  "machine_check": "ma.py analyze --measure GEN; ma.py analyze --exclude design=crossover",
-  "source_ids": "cochrane_handbook,morvaridzadeh2020,khan2020",
+  "machine_check": "ma.py es --measure MC; ma.py analyze --measure GEN; ma.py analyze --exclude design=crossover",
+  "source_ids": "cochrane_handbook,morvaridzadeh2020,khan2020,engine",
   "locator": "Cochrane Handbook v6.5 6.2, ch. 23.2; K-MOR20-034, K-MOR20-061, K-KHN08-003, K-KHN08-013, K-KHN09-005, F-KHN08-005"
  },
  {
@@ -333,7 +333,7 @@
   "strength": "should",
   "machine_check": "ma.py analyze --measure GEN",
   "source_ids": "robins_i,cochrane_handbook,khan2020",
-  "locator": "Cochrane Handbook v6.5 ch. 24; ROBINS-I (confounding domain); K-KHN0304-016, K-KHN0304-017, K-KHN1113-051"
+  "locator": "Cochrane Handbook v6.5 ch. 24; ROBINS-I (confounding domain); K-KHN0304-016, K-KHN0304-017"
  },
  {
   "rule_id": "D-S05-029",
@@ -364,12 +364,24 @@
   "stage_id": "S05",
   "applies_to": "reviewer",
   "condition": "Az adattábla elkészült, és az S05 szakaszt le akarod zárni.",
-  "recommendation": "Futtasd: `ma.py validate --data <fájl> --measure <mérték> --json`; minden error (V001–V006, V010, V024) javítva, minden warning (V007, V008, V011, V012, V014, V017, V020, V022, V023) forrás-visszaellenőrzéssel kezelve vagy a naplóban indokolva (`project finding` / `resolve`); a jelölt és a kiugró/befolyásos vizsgálatok adatát a forrásban szúrópróbaszerűen visszaellenőrizd. Csak ezután adható PASS az S05 checkpointon.",
+  "recommendation": "Futtasd: `ma.py validate --data <fájl> --measure <mérték> --json` (ugyanazokkal a konvenció-kapcsolókkal, mint az elemzésnél); minden error (V001–V006, V010, V024 — ezek a vizsgálatot kizárják az elemzésből) javítva, minden warning (V007, V008, V011, V012, V014, V015, V017, V020, V021, V022, V023) forrás-visszaellenőrzéssel kezelve vagy a naplóban indokolva (`project finding` / `resolve`), az info-tételek (V009, V013, V016, V018, V019) tudomásul véve, a V018/V019 érzékenységi elemzése betervezve; a jelölt és a kiugró/befolyásos vizsgálatok adatát a forrásban szúrópróbaszerűen visszaellenőrizd. Csak ezután adható PASS az S05 checkpointon.",
   "rationale": "Khan: a szoftver bármilyen bemenetre ad eredményt ('szemét be, szemét ki'), ezért kettős kinyerés és tartomány-ellenőrzés kell; Zhang: a hatásméretek újraszámolása a kinyerési hibák fő detektora. [EN: data validation, validate command, data checks before analysis]",
   "strength": "must",
   "machine_check": "ma.py validate --json",
   "source_ids": "engine,khan2020,zhang2022_jslhr,cochrane_handbook",
   "locator": "K-KHN0102-028, K-KHN0102-029, K-ZHA22-026"
+ },
+ {
+  "rule_id": "D-S05-032",
+  "stage_id": "S05",
+  "applies_to": "all",
+  "condition": "Egy vizsgálat csak kész standardizált átlagkülönbséget (d vagy g) közöl karonkénti n-nel, karonkénti átlag/SD nélkül.",
+  "recommendation": "Előbb azonosítsd a becslőt (Cohen d vagy Hedges g; összevont SD n vagy n − 1 nevezővel; a közlemény vagy a használt szoftver definíciója szerint), és ha korrekció nélküli d, alakítsd g-vé (g = J·d; J ≈ 1 − 3/(4(n1 + n2) − 9)), hogy minden sor ugyanazt a becslőt tartalmazza. Ha a közlemény SE-t is ad, yi + sei; ha nem, a varianciát a karlétszámokból ugyanazzal a konvencióval számold, mint a többi vizsgálatnál: `ma.py convert smd-var --g … --n1 … --n2 … --vtype LS`, vagy GEN-fájlban yi + n1 + n2 oszlopokkal `ma.py analyze --measure GEN --gen-smd-vtype LS`. Az előjelet a D-S07-008 konvenció szerint ellenőrizd (a közölt SMD gyakran előjel nélküli), és jelöld `estimated=igen`-nel, ha az irány, az n-ek vagy a becslő típusa feltételezett.",
+  "rationale": "Khan Ch8: kész hatásméretnél vizsgálatonként d vagy g és SE kell; a könyv d/g-definíciója eltér a szoftverekétől, ezért a becslőt azonosítani kell (kis vizsgálatoknál d és g a második tizedesben is eltérhet). Cheung: variancia nélkül a hatásméret nem súlyozható; a varianciaváltozatokat meg kell nevezni. [EN: reported SMD only, Cohen d vs Hedges g, variance from sample sizes, gen-smd-vtype, smd-var]",
+  "strength": "should",
+  "machine_check": "ma.py convert smd-var; ma.py analyze --measure GEN --gen-smd-vtype LS",
+  "source_ids": "khan2020,cheung2016,borenstein2009,engine",
+  "locator": "K-KHN08-002, K-KHN08-018, K-KHN08-024, K-CHE16-015, K-CHE16-016, K-CHE16-033, F-BOR09-030, F-KHN08-015"
  },
  {
   "rule_id": "D-S06-001",
@@ -412,7 +424,7 @@
   "stage_id": "S06",
   "applies_to": "all",
   "condition": "RoB 2-vel értékelsz egy randomizált vizsgálatot.",
-  "recommendation": "Eredményenként (kimenet + időpont) értékelj — ugyanaz a vizsgálat kimenetenként eltérő ítéletet kaphat —, előre rögzítsd az érdeklődés tárgyát képező hatást (hozzárendelés hatása vs. protokollhoz ragaszkodás hatása), mind az 5 domén jelzőkérdéseit válaszold meg szó szerinti idézettel és oldalszámmal, és az összesített ítéletet az algoritmus szerint add: 'high', ha bármely domén high, vagy több domén 'some concerns' oly módon, hogy az lényegesen csökkenti a bizalmat; 'low' csak akkor, ha minden domén low.",
+  "recommendation": "Eredményenként (kimenet + időpont) értékelj — ugyanaz a vizsgálat kimenetenként eltérő ítéletet kaphat —, előre rögzítsd az érdeklődés tárgyát képező hatást (hozzárendelés hatása vs. protokollhoz ragaszkodás hatása), mind az 5 domén jelzőkérdéseit válaszold meg szó szerinti idézettel és oldalszámmal, és az összesített ítéletet az algoritmus szerint add: 'low', ha minden domén low; 'some concerns', ha legalább egy domén some concerns, de egyik sem high; 'high', ha bármely domén high, vagy több domén 'some concerns' oly módon, hogy az lényegesen csökkenti az eredménybe vetett bizalmat.",
   "rationale": "Sterne 2019 (RoB 2): az eszköz eredmény-specifikus; a vakítás hiánya például objektív és szubjektív kimenetre eltérően hat. [EN: RoB 2 domains, signalling questions, overall judgement algorithm, result-level assessment, effect of assignment vs adhering]",
   "strength": "must",
   "machine_check": null,
@@ -484,12 +496,12 @@
   "stage_id": "S06",
   "applies_to": "planner",
   "condition": "Ugyanarra a kérdésre randomizált és nem randomizált vizsgálatok is beválaszthatók.",
-  "recommendation": "A protokollban rögzítsd, hogy külön szintetizálod őket (külön elemzési fájl; legfeljebb leíró egymás mellé tétel `--subgroup design`-nal), mert az eszközök ítéletei (RoB 2 vs ROBINS-I) és a torzítási mechanizmusok nem összevethetők, és a GRADE-ben eltérő kiinduló bizonyosságból indulnak.",
-  "rationale": "Cochrane ch. 24; GRADE: a randomizált vizsgálatok magas, a megfigyelésesek alacsony bizonyosságról indulnak (Guyatt 2011); Khan Ch13: az elrendezéseket külön kell összesíteni (keresztmetszeti vizsgálat: fordított okság). [EN: randomized and non-randomized studies pooled separately, study design]",
+  "recommendation": "A protokollban rögzítsd, hogy külön szintetizálod őket (külön elemzési fájl; legfeljebb leíró egymás mellé tétel `--subgroup design`-nal), mert az eszközök ítéletei (RoB 2 vs ROBINS-I) és a torzítási mechanizmusok nem összevethetők, és a GRADE-ben a két evidenciatest bizonyosságát külön ítéled meg.",
+  "rationale": "Cochrane ch. 24; GRADE: a randomizált vizsgálatok magas, a megfigyelésesek hagyományosan alacsony bizonyosságról indulnak (Guyatt 2011); ha a nem randomizált vizsgálatokat ROBINS-I-gyel értékeled, a GRADE újabb útmutatása szerint ezek is magasról indulhatnak, és a torzítási kockázat miatt jellemzően leminősülnek (Cochrane ch. 14) — a kétféle kiindulópontot ne keverd. Khan Ch13: az elrendezéseket külön kell összesíteni (keresztmetszeti vizsgálat: fordított okság). [EN: randomized and non-randomized studies pooled separately, study design, GRADE starting certainty with ROBINS-I]",
   "strength": "should",
   "machine_check": "ma.py analyze --subgroup design",
   "source_ids": "cochrane_handbook,grade_handbook,guyatt2011,khan2020",
-  "locator": "Cochrane Handbook v6.5 ch. 24; GRADE Handbook ch. 5; K-KHN1113-051"
+  "locator": "Cochrane Handbook v6.5 ch. 14, ch. 24; GRADE Handbook ch. 5; K-KHN1113-051"
  },
  {
   "rule_id": "D-S06-011",
@@ -533,7 +545,7 @@
   "applies_to": "reviewer",
   "condition": "A RoB-eredményeket táblázatban vagy ábrán (traffic-light, összesítő sávdiagram) közlöd.",
   "recommendation": "A szabványos konvenciót kövesd (robvis-színek: zöld = low, sárga = some concerns, piros = high; ROBINS-I-nél low / moderate / serious / critical / no information), ellenőrizd a jelmagyarázatot, a doménenkénti százalékokat a vizsgálatonkénti táblából programmal számold, és vizsgálatonként, kimenetenként közöld az ítéleteket indoklással (PRISMA 2020 18. tétel).",
-  "rationale": "Morvaridzadeh 3. mellékletében fordított jelmagyarázat ('+: High risk') és hibás százalék (15/24 = 60% helyett 62,5%) szerepel. [EN: risk of bias figure, traffic light plot, robvis, summary plot]",
+  "rationale": "Morvaridzadeh 3. mellékletében fordított jelmagyarázat ('+: High risk') szerepel, és a 15/24 arányt 62,5% helyett 60%-nak közli. [EN: risk of bias figure, traffic light plot, robvis, summary plot]",
   "strength": "should",
   "machine_check": null,
   "source_ids": "prisma2020,morvaridzadeh2020,robins_i,rob2",
@@ -628,11 +640,11 @@
   "stage_id": "S07",
   "applies_to": "reviewer",
   "condition": "SMD-t számolsz vagy egy közölt SMD-metaanalízist reprodukálsz, és a vizsgálatonkénti g, a variancia vagy a Q a 3–4. tizedesben eltér.",
-  "recommendation": "Előbb a változatot azonosítsd, ne hibát feltételezz: összevont SD (n vagy n − 1 nevező), J (pontos gamma-függvényes vagy közelítő 1 − 3/(4df − 1)), varianciaképlet (LS: 1/n1 + 1/n2 + g²/(2N); LS2: Borenstein J²-es; UB; MetaXL/Stata 2(N − 3,94) nevező — ez utóbbi a motorban nincs). Reprodukcióhoz `--j-method approx` és/vagy `--smd-vtype LS2` állítható; a választott változatot a módszertanban nevezd meg.",
-  "rationale": "Khan egy fejezeten belül háromféle Var(g)-nevezőt használ, és a d/g definíciója eltér a szoftverétől; Zhang 7. egyenlete valójában d varianciája; a metafor és a motor pontos J-vel számol. [EN: SMD variance formula, Hedges correction J, exact vs approximate, reproducing published results]",
+  "recommendation": "Előbb a változatot azonosítsd, ne hibát feltételezz: összevont SD (n vagy n − 1 nevező), J (pontos gamma-függvényes vagy közelítő 1 − 3/(4df − 1)), varianciaképlet (LS: 1/n1 + 1/n2 + g²/(2N); LS2: Borenstein J²-es; UB; Stata metan/MetaXL: N/(n1·n2) + y²/(2(N − 2)) a Cohen-, 2(N − 3,94) nevezővel a Hedges-változatnál). Reprodukcióhoz a motorban állítható: `--j-method approx`, `--smd-vtype LS2|UB|METAN_COHEN|METAN_HEDGES` (a METAN_HEDGES mindig a közelítő J-t használja; korrekció nélküli d-hez `--measure COHEN_D`). Az elsődleges elemzés maradjon az előre rögzített változat (motor-alapértelmezés: pontos J, LS); a választott változatot a módszertanban nevezd meg.",
+  "rationale": "Khan egy fejezeten belül háromféle Var(g)-nevezőt használ, és a d/g definíciója eltér a szoftverétől; a MetaXL/admetan 'Cohen'/'Hedges' számai a METAN_COHEN/METAN_HEDGES konvencióval reprodukálhatók; Zhang 7. egyenlete valójában d varianciája; a metafor és a motor alapból pontos J-vel számol. [EN: SMD variance formula, Hedges correction J, exact vs approximate, reproducing published results, Stata metan, MetaXL]",
   "strength": "should",
-  "machine_check": "ma.py analyze --measure SMD --j-method approx --smd-vtype LS2",
-  "source_ids": "khan2020,zhang2022_jslhr,cheung2016,borenstein2009,viechtbauer2010",
+  "machine_check": "ma.py analyze --measure SMD --j-method approx --smd-vtype LS2; ma.py analyze --measure SMD --smd-vtype METAN_HEDGES",
+  "source_ids": "khan2020,zhang2022_jslhr,cheung2016,borenstein2009,viechtbauer2010,engine",
   "locator": "K-CHE16-033, K-CHE16-077, K-KHN08-023, K-KHN08-024, K-KHN08-025, K-KHN08-026, K-ZHA22-034, K-ZHA22-038, F-KHN08-015"
  },
  {
@@ -640,11 +652,11 @@
   "stage_id": "S07",
   "applies_to": "planner",
   "condition": "A beavatkozás várhatóan a kimenet szórását is megváltoztatja (a kezelt és a kontrollkar SD-je rendszeresen és lényegesen eltér).",
-  "recommendation": "Mérlegeld az előre indokolt, kontroll-SD-vel standardizált Glass-Δ-t; a motorban nincs Glass-Δ, ezért yi = (m1 − m2)/SD_kontroll és vi = N/(n1·n2) + Δ²/(2(n2 − 1)) bevitel előtt számolandó, majd `--measure GEN`. Egyébként az összevont SD-s Hedges g a pontosabb.",
-  "rationale": "Khan Ex 8.12: a Glass-Δ a Bonjer-becslést 1,58-ról 1,89-re, Q-t 163,9-ről 179,4-re változtatja; a könyv nem ad választási szabályt, a szokásos tanács (Glass 1981; Borenstein 2009) a fenti. [EN: Glass delta, control group SD, unequal variances]",
+  "recommendation": "Mérlegeld az előre indokolt, kontroll-SD-vel standardizált Glass-Δ-t: `--measure SMD_GLASS` (a 2. kar = kontroll SD-jével; variancia `--glass-vtype METAN` alapértelmezéssel: N/(n1·n2) + Δ²/(2(n2 − 1)), korrekció nélkül; metafor-konvenciók: LS, LS2, UB, SMD1H). Egyébként az összevont SD-s Hedges g (`--measure SMD`) a pontosabb, mert több adatból becsli az SD-t; a Glass-Δ-t ne az eredmények ismeretében válaszd.",
+  "rationale": "Khan Ex 8.12: a Glass-Δ a Bonjer-becslést 1,58-ról 1,89-re, Q-t 163,9-ről 179,4-re változtatja; a könyv nem ad választási szabályt, a szokásos tanács (Glass 1981; Borenstein 2009) a fenti. A forrásegységek (F-KHN08-010, F-KHN08-013) szerinti 'nincs a motorban' megjegyzés elavult: a motor `SMD_GLASS` mértéke implementálja (METAN-variancia = Khan képlete). [EN: Glass delta, control group SD, unequal variances]",
   "strength": "consider",
-  "machine_check": "ma.py analyze --measure GEN",
-  "source_ids": "khan2020,borenstein2009",
+  "machine_check": "ma.py analyze --measure SMD_GLASS --glass-vtype METAN",
+  "source_ids": "khan2020,borenstein2009,engine",
   "locator": "K-KHN08-019, K-KHN08-030, F-KHN08-010, F-KHN08-013"
  },
  {
@@ -688,12 +700,12 @@
   "stage_id": "S07",
   "applies_to": "planner",
   "condition": "Egycsoportos pre–post (kontroll nélküli) vagy páros elrendezésű vizsgálatok hatásmérete kerülne össze független csoportos vizsgálatokéval.",
-  "recommendation": "Alapesetben elemezd külön (vagy legalább `--subgroup design`); együtt csak akkor, ha minden becslés ugyanabban a metrikában van (a nyers pontszámok SD-jével, nem a változás-SD-vel standardizálva), ugyanazt a hatást becsli, és a varianciák az elrendezésnek megfelelők. Pretest–posttest–kontroll elrendezésre a Morris-féle (kiinduló SD-vel standardizált) g-t a motoron kívül, a becslőhöz illő varianciával számold, és GEN-ként vidd be. Kevés vizsgálatnál a nem szignifikáns elrendezés-moderátorteszt nem bizonyít egyenértékűséget.",
-  "rationale": "Zhang 2022 (Morris & DeShon 2002 feltételei; a 10. egyenlet varianciája nem illik a 8. egyenlet becslőjéhez); Cheung: megfelelő választással a két metrika összevethető; Khan Ch8 páros SMD-t nem tárgyal. [EN: pre-post design, within-subject effect size, paired design, Morris pretest-posttest-control]",
+  "recommendation": "Alapesetben elemezd külön (vagy legalább `--subgroup design`); együtt csak akkor, ha minden becslés ugyanabban a metrikában van (a nyers pontszámok SD-jével, nem a változás-SD-vel standardizálva), ugyanazt a hatást becsli, és a varianciák az elrendezésnek megfelelők. A kontroll nélküli pre–post változás nem összehasonlító hatás (időbeli trend, regresszió a középhez), ezt az értelmezésben mondd ki. Egycsoportos/páros adatra a motor mértékei: `--measure MC` (nyers átlagos változás, v = sd_diff²/n) és `--measure SMCC` (a változás SD-jével standardizált — független csoportos SMD-vel NEM keverhető); a változás SD-je sd_diff-ből, sd1 + sd2 + r-ből vagy `ma.py convert paired-sums`-ból jön. MC-nél az irány m1 − m2 (metafor-konvenció: előtte − utána esetén a pozitív érték csökkenést jelent) — rögzítsd és a riportban mondd ki. A nyers SD-vel standardizált változást (SMCR) és a pretest–posttest–kontroll elrendezés Morris-féle (kiinduló SD-vel standardizált) g-jét a motor nem számolja: a motoron kívül, a becslőhöz illő varianciával számold, és GEN-ként vidd be. Kevés vizsgálatnál a nem szignifikáns elrendezés-moderátorteszt nem bizonyít egyenértékűséget.",
+  "rationale": "Zhang 2022 (Morris & DeShon 2002 feltételei; a pre–post elrendezések jellemzően nagyobb hatást adnak; a 10. egyenlet varianciája nem illik a 8. egyenlet becslőjéhez); Cheung: megfelelő választással a két metrika összevethető; Khan Ch8 a párosított MD-t (Var = S_D²/n) adja, páros SMD-t nem tárgyal; a README szerint SMCR nincs a motorban. [EN: pre-post design, within-subject effect size, paired design, mean change, SMCC, Morris pretest-posttest-control]",
   "strength": "should",
-  "machine_check": "ma.py analyze --subgroup design; ma.py analyze --measure GEN",
-  "source_ids": "zhang2022_jslhr,cheung2016,khan2020",
-  "locator": "K-ZHA22-035, K-ZHA22-036, K-ZHA22-037, K-CHE16-027, K-KHN08-014, F-ZHA22-008, F-ZHA22-026"
+  "machine_check": "ma.py analyze --measure MC; ma.py analyze --measure SMCC; ma.py analyze --subgroup design; ma.py analyze --measure GEN",
+  "source_ids": "zhang2022_jslhr,cheung2016,khan2020,engine",
+  "locator": "K-ZHA22-035, K-ZHA22-036, K-ZHA22-037, K-CHE16-027, K-KHN08-013, K-KHN08-014, F-KHN08-005, F-ZHA22-008, F-ZHA22-026"
  },
  {
   "rule_id": "D-S07-011",
@@ -712,12 +724,12 @@
   "stage_id": "S07",
   "applies_to": "planner",
   "condition": "Bináris kimenetre randomizált vagy kohorszvizsgálatokból választasz hatásmértéket.",
-  "recommendation": "Relatív mértéket összesíts: jellemzően RR-t (`--measure RR`), mert kockázatként értelmezhető, és a relatív mértékek általában konzisztensebbek a vizsgálatok között, mint az RD; OR-t (`--measure OR`), ha a protokoll így rögzíti, ha a vizsgálatok jellemzően (kiigazított) OR-t közölnek, vagy ritka eseménynél. Az abszolút hatást (RD, NNT) a relatív becslésből egy feltételezett alapkockázatra számolva közöld (Summary of Findings). A választást naplózd.",
-  "rationale": "Eltérés a forrástól: Khan (Ch3) szerint az OR 'a legjobb' mérték — ez a szerző vitatható véleménye; a Cochrane Handbook konzisztencia, matematikai tulajdonságok és értelmezhetőség alapján mérlegel, és figyelmeztet, hogy az OR-t gyakran kockázatként olvassák; 10.4.3: az RD eltérő alapkockázatnál kevésbé konzisztens. [EN: risk ratio vs odds ratio vs risk difference, binary outcomes, baseline risk, absolute effect, NNT]",
+  "recommendation": "Relatív mértéket összesíts: jellemzően RR-t (`--measure RR`), mert kockázatként értelmezhető, és a relatív mértékek általában konzisztensebbek a vizsgálatok között, mint az RD; OR-t (`--measure OR`), ha a protokoll így rögzíti, ha a vizsgálatok jellemzően (kiigazított) OR-t közölnek, vagy ritka eseménynél. RR-nél előre rögzítsd, mi az 'esemény' (pl. halálozás vs túlélés), mert az RR — az OR-ral ellentétben — a kódolás irányától függ. Az abszolút hatást (RD, NNT) a relatív becslésből egy feltételezett alapkockázatra számolva közöld (Summary of Findings). A választást naplózd.",
+  "rationale": "Eltérés a forrástól: Khan (Ch3) szerint az OR 'a legjobb' mérték — ez a szerző vitatható véleménye; a Cochrane Handbook konzisztencia, matematikai tulajdonságok és értelmezhetőség alapján mérlegel, és figyelmeztet, hogy az OR-t gyakran kockázatként olvassák; 10.4.3: az RD eltérő alapkockázatnál kevésbé konzisztens; Khan: az OR a kimenet kódolására szimmetrikus. [EN: risk ratio vs odds ratio vs risk difference, binary outcomes, baseline risk, absolute effect, NNT, event definition]",
   "strength": "must",
   "machine_check": "ma.py analyze --measure RR",
   "source_ids": "cochrane_handbook,khan2020,grade_handbook",
-  "locator": "Cochrane Handbook v6.5 6.4, 10.4.3, ch. 14; K-KHN0304-017, K-KHN0304-018, K-KHN05-003, K-KHN0607-011, K-KHN0304-074"
+  "locator": "Cochrane Handbook v6.5 6.4, 10.4.3, ch. 14; K-KHN0304-017, K-KHN0304-018, K-KHN05-003, K-KHN0607-011, K-KHN0304-074, K-KHN0304-010"
  },
  {
   "rule_id": "D-S07-013",
@@ -760,10 +772,10 @@
   "stage_id": "S07",
   "applies_to": "all",
   "condition": "Bináris adatban egy vagy több vizsgálatnak nulla cellája van (V009), vagy mindkét karban 0 (vagy 100%) az esemény (V008).",
-  "recommendation": "A 0,5-ös folytonossági korrekciót csak a nulla cellás vizsgálatokra alkalmazd (motor-alapértelmezés: `--cc 0.5 --cc-to only0`), ne mindegyikre; a kettős nulla vizsgálatok OR/RR-nél kimaradnak (`--drop00`), RD-nél bent maradnak. Ritka eseménynél tervezz alternatívát: Mantel–Haenszel (`--mh`, korrekció nélkül kezeli az egy karban nulla eseményt) vagy Peto OR (`--peto`; ritka esemény, kiegyensúlyozott karok, nem nagy hatás esetén), és kerüld a DL-alapú inverz-variancia összesítést. A korrekció értékét, az érintett vizsgálatokat és az alternatív módszer eredményét közöld.",
+  "recommendation": "A 0,5-ös folytonossági korrekciót csak a nulla cellás vizsgálatokra alkalmazd (motor-alapértelmezés: `--cc 0.5 --cc-to only0`), ne mindegyikre; a kettős nulla vizsgálatok OR/RR-nél alapból kimaradnak (`--drop00 yes`), RD-nél bent maradnak. Ritka eseménynél tervezz alternatívát: Mantel–Haenszel (`--mh`; közös hatású módszer, korrekció nélkül kezeli az egy karban nulla eseményt) vagy Peto OR (`--peto`; ritka esemény, kiegyensúlyozott karok, nem nagy hatás esetén), és kerüld a DL-alapú inverz-variancia összesítést. A korrekció értékét, az érintett vizsgálatokat és az alternatív módszer eredményét közöld.",
   "rationale": "Eltérés a forrástól: Khan Ch3 a 0,5-ös korrekciót nulla cella nélküli táblán mutatja be (az OR így is elmozdul: 0,0833 → 0,0863); Cochrane 10.4.4: a fix 0,5 torzíthat, különösen kiegyensúlyozatlan karoknál; Cheung nem ad korrekciót. [EN: zero cell, zero cells, zero events, continuity correction, double-zero studies, rare events, Mantel-Haenszel, Peto]",
   "strength": "should",
-  "machine_check": "metaelemzes.validate:V008; metaelemzes.validate:V009; ma.py analyze --mh; ma.py analyze --peto",
+  "machine_check": "metaelemzes.validate:V008; metaelemzes.validate:V009; ma.py analyze --mh; ma.py analyze --peto; ma.py analyze --drop00 yes",
   "source_ids": "cochrane_handbook,khan2020,cheung2016,engine",
   "locator": "Cochrane Handbook v6.5 10.4.4; K-KHN0304-006, K-KHN0304-011, K-KHN0304-069, K-CHE16-030, K-KHN1113-010, K-KHN1113-083, F-KHN0304-007"
  },
@@ -772,7 +784,7 @@
   "stage_id": "S07",
   "applies_to": "planner",
   "condition": "A kérdés kifejezetten abszolút kockázatkülönbségre vonatkozik (pl. ártalmak, NNT), vagy sok vizsgálat kettős nulla eseményű.",
-  "recommendation": "Az RD (`--measure RD`; Mantel–Haenszel-változat `--mh --rd-var sato`) elsődleges vagy kiegészítő mérték lehet — a kettős nulla vizsgálatok RD-nél bent maradnak —, de ellenőrizd, mennyire térnek el az alapkockázatok a vizsgálatok között (az RD-heterogenitás gyakran ebből ered), és közöld relatív mértékkel is érzékenységi elemzésként.",
+  "recommendation": "Az RD (`--measure RD`; Mantel–Haenszel-változat `--mh --rd-var sato`, közös hatású) elsődleges vagy kiegészítő mérték lehet — a kettős nulla vizsgálatok RD-nél bent maradnak —, de ellenőrizd, mennyire térnek el az alapkockázatok a vizsgálatok között (az RD-heterogenitás gyakran ebből ered), és közöld relatív mértékkel is érzékenységi elemzésként.",
   "rationale": "Khan Ch7: az RD két csoport kockázatának különbsége; Cochrane 10.4.3: az RD kevésbé konzisztens, ha az alapkockázatok eltérnek; a motor RD-nél alapból nem alkalmaz korrekciót. [EN: risk difference, absolute effect, double-zero studies, NNT]",
   "strength": "should",
   "machine_check": "ma.py analyze --measure RD --mh --rd-var sato",
@@ -784,7 +796,7 @@
   "stage_id": "S07",
   "applies_to": "planner",
   "condition": "A kérdés egy csoport gyakoriságára (prevalencia, incidencia, szövődményarány) vonatkozik, és egyes arányokat összesítesz.",
-  "recommendation": "Egyetlen arányt csak gyakorisági kérdésre használj (két csoport összehasonlításához RR/OR/RD kell). Elsődleges skála a logit (`--measure PLO`), vagy — ha elérhető — binomiális GLMM (a motorban nincs: R metafor `rma.glmm` / meta `metaprop`); a Freeman–Tukey (`--measure PFT`) legfeljebb érzékenységi elemzés, a visszatranszformálás n-jének megadásával (a motorban a harmonikus átlag); a nyers arány (`PR`) ne legyen elsődleges, ha kis vizsgálatok vagy 0-hoz/1-hez közeli arányok vannak. A skálát (összesítés, Q, I², τ², visszatranszformálás) előre rögzítsd.",
+  "recommendation": "Egyetlen arányt csak gyakorisági kérdésre használj (két csoport összehasonlításához RR/OR/RD kell). Elsődleges skála a logit (`--measure PLO`), vagy — ha elérhető — binomiális GLMM (a motorban nincs: R metafor `rma.glmm` / meta `metaprop`); a Freeman–Tukey (`--measure PFT`) legfeljebb érzékenységi elemzés, a visszatranszformálás n-jének megadásával (a motorban alapból a harmonikus átlag; MetaXL-konvenció: `--pft-backtransform variance`); a nyers arány (`PR`) ne legyen elsődleges, ha kis vizsgálatok vagy 0-hoz/1-hez közeli arányok vannak. A skálát (összesítés, Q, I², τ², visszatranszformálás) előre rögzítsd.",
   "rationale": "Eltérés a forrástól: Khan Ch6 transzformáció nélkül, az n ≥ 30 szabályra hivatkozva összesít — ez gyenge érv (a [0, 1] határ közelében torz eloszlás, kilógó Wald-CI). A Freeman–Tukey-visszatranszformálás vitatott (Schwarzer et al. 2019); a jelenlegi gyakorlat GLMM vagy logit. [EN: proportion meta-analysis, prevalence, logit transformation, Freeman-Tukey double arcsine, GLMM]",
   "strength": "must",
   "machine_check": "ma.py analyze --measure PLO; ma.py analyze --measure PFT",
@@ -862,5 +874,29 @@
   "machine_check": null,
   "source_ids": "khan2020,cochrane_handbook",
   "locator": "Cochrane Handbook v6.5 ch. 15; K-KHN08-020"
+ },
+ {
+  "rule_id": "D-S07-025",
+  "stage_id": "S07",
+  "applies_to": "all",
+  "condition": "A kimenet egy résztvevőnél többször is előforduló esemény (pl. exacerbációk, esések, fertőzések száma), és a vizsgálatok eseményszámot személyidővel, rátát vagy rátahányadost közölnek.",
+  "recommendation": "Ne kezeld binárisként (e1/n1), mert egy résztvevő több eseménye sérti a 2×2-es tábla feltevéseit; a rátahányadost log-skálán összesítsd: yi = ln[(E1/T1)/(E2/T2)], sei = √(1/E1 + 1/E2) (E = eseményszám, T = személyidő karonként), vagy közölt (kiigazított Poisson- vagy negatív binomiális) rátahányadosnál yi = ln(becslés), sei a CI-ből (`ma.py convert se-from-ci --lower … --upper … --log`), majd `--measure GEN`, a pontbecslést és a CI-t a riportban exp()-pel alakítsd vissza. Ha csak a 'legalább egy eseményt elszenvedők' száma közölt, az bináris kimenet (RR/OR). A választást a protokollban rögzítsd.",
+  "rationale": "Cochrane Handbook 6.7 (count and rate data): ismétlődő eseményeknél a rátahányados a megfelelő mérték. A √(1/E1 + 1/E2) Poisson-feltevésen alapul; egymással összefüggő, ismétlődő eseményeknél (túlszórás) alábecsülheti a bizonytalanságot, ezért ha a vizsgálat túlszórást kezelő (pl. negatív binomiális) becslést közöl, azt használd. A feltöltött források nem tárgyalják; a motorban nincs külön ráta-mérték. [EN: count data, rate ratio, person-time, recurrent events, overdispersion, generic inverse variance]",
+  "strength": "should",
+  "machine_check": "ma.py convert se-from-ci --log; ma.py analyze --measure GEN",
+  "source_ids": "cochrane_handbook,khan2020,engine",
+  "locator": "Cochrane Handbook v6.5 6.7; F-KHN1113-003 (SE log-skálás CI-ből); a ráta-adatra nincs támogató K-egység"
+ },
+ {
+  "rule_id": "D-S07-026",
+  "stage_id": "S07",
+  "applies_to": "planner",
+  "condition": "A kimenet ordinális skála (pl. módosított Rankin-skála, tünetsúlyossági kategóriák), és a vizsgálatok eltérő formában közlik (teljes kategóriaeloszlás, dichotomizált arány, átlag/SD).",
+  "recommendation": "A protokollban, az eredmények ismerete előtt rögzítsd az elemzési formát: hosszú (sok kategóriás) skálát folytonosként (MD/SMD), rövidet egy előre megadott, klinikailag indokolt vágóponttal dichotomizálva (RR/OR) elemezz; a vágópont minden vizsgálatban azonos legyen. Az arányos esélyek (proportional odds) modelljét a motor nem számolja: közölt közös OR-t log-skálán, GEN-ként vihetsz be (`ma.py convert se-from-ci --log`). Az eltérő formából átvett vagy átszámolt vizsgálatokat jelöld, és érzékenységi elemzéssel ellenőrizd.",
+  "rationale": "Cochrane Handbook 6.6: a hosszabb ordinális skálákat jellemzően folytonosként, a rövidebbeket szomszédos kategóriák összevonásával binárisként elemzik; a vágópont eredményalapú megválasztása a közölt eredmény szelekciója (RoB 2 5. domén). Eltérő mértékek keverése egy elemzésben érvénytelen (Khan). A feltöltött források ordinális kimenetet nem tárgyalnak. [EN: ordinal outcomes, modified Rankin scale, dichotomisation cut-off, proportional odds]",
+  "strength": "should",
+  "machine_check": "ma.py convert se-from-ci --log; ma.py analyze --measure GEN",
+  "source_ids": "cochrane_handbook,rob2,khan2020",
+  "locator": "Cochrane Handbook v6.5 6.6; RoB 2 domain 5; K-KHN0102-027"
  }
 ]

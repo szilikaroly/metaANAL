@@ -1,0 +1,482 @@
+[
+ {
+  "item_id": "GRADE-00",
+  "checklist": "GRADE",
+  "section": "Alapelvek",
+  "ord": 0,
+  "text": "A GRADE-értékelés egysége a kimenet: minden összehasonlítás × kimenet × időpont kombinációra külön ítélet készül, nem az egyes vizsgálatokra és nem az áttekintés egészére. A bizonyosság azt fejezi ki, mennyire bízhatunk abban, hogy a valódi hatás közel van a becsléshez (magas / mérsékelt / alacsony / nagyon alacsony). Az ítélet globális mérlegelés: a domének nem pontszámok, és minden lépést lábjegyzetben, a konkrét adatra hivatkozva kell indokolni. A bizonyosság nem következtethető ki MI-eszköz szintéziséből vagy a vizsgálatok elrendezéséből önmagában.",
+  "how_to_verify": "A ma-ertekelo kimenetenként végigmegy a GRADE-01 … GRADE-12 tételeken, és minden kimenetet külön rögzít: `ma.py project grade <mappa> --outcome \"<kimenet, időpont>\" --certainty high|moderate|low|\"very low\" --k … --participants … --effect \"…\" --rob \"…\" --inconsistency \"…\" --indirectness \"…\" --imprecision \"…\" --publication-bias \"…\" --upgrades \"…\" --rationale \"…\" --kb GRADE-00,…`. Ellenőrzés: `ma.py project list <mappa> grades` — a 06_kezirat/grade_sof.md minden kimenetéhez van bejegyzés. KB: K-SIM24-078, K-KHA26-072, K-KHN10-057.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,simplypsychology2024,kharbach2026_tools,khan2020"
+ },
+ {
+  "item_id": "GRADE-01",
+  "checklist": "GRADE",
+  "section": "Kimenetek kiválasztása és fontossága",
+  "ord": 1,
+  "text": "A GRADE-be és a Summary of Findings (SoF) táblázatba kerülő kimeneteket a protokollban előre rögzítsd. Minden jelölt kimenet fontosságát értékeld (GRADE 1–9-es skála: 7–9 a döntéshez kritikus, 4–6 fontos, 1–3 korlátozottan fontos); a SoF-ba legfeljebb hét kritikus vagy fontos kimenet kerül, a korlátozottan fontosak nem. A kritikus és fontos kimenetek között a nemkívánatos hatások (ártalmak) is szerepeljenek, mindegyiknél a mérőeszközzel és az időponttal. A lista nem igazodhat ahhoz, hogy melyik kimenetre lett szignifikáns eredmény; az adat nélküli kritikus kimenet is bekerül a táblázatba.",
+  "how_to_verify": "00_protokoll/protokoll.md 3. pont (elsődleges és másodlagos kimenetek, mérőeszköz, időpont) és 10. pont (SoF-kimenetek, fontossági besorolás, MCID-források). A 06_kezirat/grade_sof.md kimenetlistája ezzel azonos; eltérés csak a 00_protokoll/protokoll.md 11. pontjában, dátummal és döntés-ID-vel dokumentálva. Adat nélküli kritikus kimenet: „nincs bevont vizsgálat” sor. KB: K-MOR20-062. Kapcsolódó: PRISMA2020-15, PRISMA2020-22.",
+  "stage_id": "S13",
+  "source_ids": "guyatt2011,grade_handbook,cochrane_handbook,morvaridzadeh2020"
+ },
+ {
+  "item_id": "GRADE-02",
+  "checklist": "GRADE",
+  "section": "Kiindulási szint",
+  "ord": 2,
+  "text": "A kiinduló bizonyosságot a kimenethez tartozó vizsgálatok elrendezése adja: randomizált vizsgálatokból magasról, nem randomizált (megfigyeléses) vizsgálatokból alacsonyról indulsz. Ha a nem randomizált vizsgálatokat ROBINS-I-gyel értékelted, a kiindulás magas lehet, de ekkor a zavaró tényezők és a szelekció miatti torzítást a torzítási kockázat doménjében kell érvényesíteni. Randomizált és nem randomizált bizonyítékot ne vonj össze egy ítéletbe indoklás nélkül: értékeld külön, és indokold, melyik adja a kimenet bizonyosságát. Elrendezés szerinti evidenciaszint-hierarchia nem helyettesíti a GRADE-et.",
+  "how_to_verify": "04_torzitas_kockazat/rob.csv „eszkoz” oszlopa (RoB 2 → RCT; ROBINS-I; NOS) és a vizsgálatjellemzők táblázata; a `project grade --rationale` megnevezi a kiinduló szintet és okát. A projektnapló grade_consistency-ellenőrzése a kiindulási szintet nem ismeri: csak azt nézi, hogy a végső szint elérhető-e magas vagy alacsony kiindulásból az előjeles lépésekkel — ezért a kiindulást a `--rationale`-ben mindig ki kell mondani, és az ellenőrzés nem helyettesíti a tartalmi vizsgálatot. Eltérés a forrásoktól: Khan 2020 elrendezés-hierarchiája a nem randomizált kontrollált vizsgálatokat az RCT-kkel egy szintre teszi (K-KHN0102-068, K-KHN0102-073) — ezt a jelenlegi konszenzus (GRADE, Cochrane Handbook v6.5) a GRADE kiindulási szintjével váltotta fel.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,robins_i,khan2020,engine"
+ },
+ {
+  "item_id": "GRADE-03",
+  "checklist": "GRADE",
+  "section": "Leminősítés – torzítási kockázat",
+  "ord": 3,
+  "text": "Ítéld meg, mennyire veszélyeztetik a becslést a kimenethez hozzájáruló vizsgálatok korlátai (randomizáció, allokáció-elrejtés, vakítás, hiányzó kimeneti adat, kimenetmérés, szelektív eredményközlés; nem randomizált vizsgálatnál zavaró tényezők és szelekció). Lépések: (1) határozd meg, a súly mekkora része jön magas vagy „some concerns” (RoB 2), illetve közepes, súlyos vagy kritikus (ROBINS-I) kockázatú vizsgálatokból, az adott kimenetre releváns doménekben (pl. szubjektív kimenet vakítás nélkül) — a ROBINS-I „alacsony” kategóriája a jól kivitelezett RCT-nek felel meg, ezért a „közepes” is érdemi korlát; (2) vesd össze az előre tervezett érzékenységi elemzéssel (magas kockázatú vizsgálatok nélkül, illetve csak alacsony kockázatúakkal): változik-e a becslés, illetve a CI viszonya a döntési küszöbhöz; (3) mérlegeld, torzíthat-e minden vizsgálat ugyanabba az irányba. Tájékoztató ítélet: 0, ha a súly túlnyomó része alacsony kockázatú vizsgálatból jön és a kizárás nem változtat a következtetésen; −1, ha a súly jelentős része (pl. többsége) érdemi korlátú vizsgálatból származik, vagy a kizárás megváltoztatja a következtetést; −2, ha gyakorlatilag minden információ több kulcsdoménben súlyosan korlátozott vizsgálatból jön.",
+  "how_to_verify": "Súlyarány: results.json primary.weights_pct a primary.labels sorrendjében, párosítva a 04_torzitas_kockazat/rob.csv „osszesitett” oszlopával (a 03_adatok/adatkinyeres.csv „rob” oszlopa ezzel egyezik). Érzékenység: `ma.py analyze --data 03_adatok/adatkinyeres.csv --measure <M> --exclude rob=high --project <mappa> --out <mappa>/05_elemzes/<kimenet>_rob`, és `… --include rob=low --out <mappa>/05_elemzes/<kimenet>_rob_low` (csak alacsony kockázat; a `rob=high` szűrő a high/magas/serious/súlyos értéket zárja ki, a „some concerns” / közepes vizsgálatok bent maradnak), a fő futás primary.estimate / primary.ci_lower / primary.ci_upper (arány-mértéknél back_transformed.estimate_ci) értékeivel összevetve; validation.findings V019. Teljes vizsgálatok hiánya nem ide, hanem a GRADE-07-be tartozik. Rögzítés: `--rob \"−1 súlyos: …\"` vagy `--rob \"0: …\"`. KB: K-MOR20-066, K-KHN0102-035, K-BOR09-069, K-MOR20-062, K-ZHA22-031, K-SIM24-075. Kapcsolódó: AMSTAR2-12, AMSTAR2-13.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,rob2,robins_i,morvaridzadeh2020,khan2020,borenstein2009,zhang2022_jslhr,simplypsychology2024"
+ },
+ {
+  "item_id": "GRADE-04",
+  "checklist": "GRADE",
+  "section": "Leminősítés – inkonzisztencia",
+  "ord": 4,
+  "text": "Ítéld meg, mennyire térnek el a vizsgálatok eredményei egymástól olyan mértékben, hogy az a döntést befolyásolja. Együtt mérlegeld: (a) a pontbecslések a döntési küszöb (nullhatás vagy MCID) különböző oldalára esnek-e; (b) mennyire fedik át egymást a CI-k; (c) a 95%-os predikciós intervallum (PI) átlépi-e a küszöböt, miközben a CI nem; (d) τ nagysága a hatás nagyságához képest; (e) I² a CI-jével, csak kiegészítő jelzésként. Rögzített I²-határ nem leminősítési szabály, és kevés vizsgálatnál a nem szignifikáns Q nem bizonyítja a homogenitást. Ha az eltérést hiteles, előre tervezett alcsoport-elemzés magyarázza, a GRADE-04a szerint járj el. −1, ha a megmagyarázatlan eltérés bizonytalanná teszi a következtetést; −2 kivételesen, ha a vizsgálatok jelentős része egymással ellentétes irányú, klinikailag fontos hatást mutat.",
+  "how_to_verify": "forest.svg (pontbecslések, CI-átfedés); results.json back_transformed.pi (arány-mértéknél) vagy primary.pi_lower / primary.pi_upper (MD, SMD; a t(k−2) PI csak k ≥ 3 és véletlen hatású modell mellett létezik), primary.tau, primary.heterogeneity.tau2_ci_QP, primary.heterogeneity.I2_ci_QP és I2_ci_HT, primary.Q, primary.p_Q; report.md „Értelmezési figyelmeztetések” (pl. „A CI nem tartalmazza a nullhatást, de a predikciós intervallum igen”). A report.md I² ≥ 75%-os figyelmeztetése figyelemfelhívás, nem szabály. k = 1 (results.json model_fallback): „nem alkalmazható (egy vizsgálat)”, a kevés adatot a pontatlanságnál mérlegeld. Eltérés a forrásoktól: Morvaridzadeh 2020 kb. 75%-os I²-határt használ leminősítésre (K-MOR20-064) — a jelenlegi konszenzus (GRADE, Cochrane Handbook v6.5) szerint ez csak heurisztika. KB: K-BOR07-079, K-BOR09-068, K-MOR20-064, K-KHN09-056, K-KHN0607-070, K-ZHA22-080, K-SIM24-074, K-KHN05-074; F-MOR20-026.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,inthout2016,higgins2002,viechtbauer2007,borenstein2007_fe_re,borenstein2009,morvaridzadeh2020,khan2020,zhang2022_jslhr,simplypsychology2024"
+ },
+ {
+  "item_id": "GRADE-04a",
+  "checklist": "GRADE",
+  "section": "Inkonzisztencia – magyarázat alcsoporttal",
+  "ord": 5,
+  "text": "Ha a heterogenitást előre tervezett alcsoport-elemzés vagy meta-regresszió hitelesen magyarázza (előre rögzített hipotézis várható iránnyal, kevés tesztelt moderátor, formális különbségi teszt, alcsoportonként elegendő vizsgálat, lehetőleg vizsgálaton belüli összehasonlítás, biológiai plauzibilitás), az alcsoportokra külön becslést és külön GRADE-ítéletet adj; az alcsoportokon belül a már megmagyarázott heterogenitás miatt nem kell leminősíteni, és a fő eredmény ilyenkor az alcsoport-becslés, nem a teljes összesítés. Nem hiteles magyarázat (utólagos elemzés, egy szignifikáns és egy nem szignifikáns alcsoport szembeállítása, alcsoportonként néhány vizsgálat) esetén a heterogenitás megmagyarázatlan. A vizsgálatok közötti moderátor-összefüggés megfigyeléses jellegű, ökológiai torzításra hajlamos.",
+  "how_to_verify": "results.json subgroups (groups: alcsoportonkénti k, becslés, τ², I²; Q_between, df_between, p_between) és metaregression (coefficients, QM, QM_p, R2, test); 00_protokoll/protokoll.md 9. pont (előre rögzített moderátorok, várható irány), az utólagos elemzés a 11. pontban jelölve. A hitelesség ICEMAN-szempontok szerinti indoklása a `--rationale`-ben. KB: K-KHN05-077, K-KHN1113-075, K-KHN0607-063, K-KHN0304-078, K-ZHA22-082, K-CHE16-068, K-KHN09-056.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,iceman2020,khan2020,zhang2022_jslhr,cheung2016"
+ },
+ {
+  "item_id": "GRADE-05",
+  "checklist": "GRADE",
+  "section": "Leminősítés – indirektség",
+  "ord": 6,
+  "text": "Vesd össze a bevont vizsgálatok populációját, beavatkozását (dózis, forma, időtartam), összehasonlító karját és kimenetét a protokoll PICO-jával. Leminősítési okok: eltérő populáció vagy környezet (súlyosság, életkor, ellátási szint, földrajzi vagy nemi koncentráció); eltérő beavatkozás vagy kontroll (pl. placebo, amikor a kérdés aktív kontrollra vonatkozik); helyettesítő (surrogate) vagy nem validált végpont a betegszempontból fontos kimenet helyett; túl rövid követés; csak közvetett összehasonlítás (A vs C és B vs C az A vs B kérdésre). −1, ha a súly jelentős részét adó vizsgálatoknál az eltérés valószínűleg módosítja a hatást; −2, ha több súlyos eltérés halmozódik (pl. helyettesítő végpont és eltérő populáció).",
+  "how_to_verify": "00_protokoll/protokoll.md 3. pont (PICO, kimenet-definíció, időpont) ↔ a vizsgálatjellemzők táblázata és a kinyerési űrlap populáció / beavatkozás / kontroll / kimenet mezői; súly: results.json primary.weights_pct; a mérőeszköz és a biomarker validitása a kinyerési megjegyzésekben. Közvetett összehasonlításhoz a motor nem végez hálózati metaanalízist (README, Ismert korlátok) — ezt jelezd. KB: K-MOR20-067, K-MOR20-030, K-KHA26-073, K-MOR20-072, K-KHA26-050.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,morvaridzadeh2020,kharbach2026_tools,engine"
+ },
+ {
+  "item_id": "GRADE-06",
+  "checklist": "GRADE",
+  "section": "Leminősítés – pontatlanság: CI a döntési küszöbhöz",
+  "ord": 7,
+  "text": "A pontatlanságot a CI és az előre rögzített döntési küszöb viszonyából ítéld meg, nem a statisztikai szignifikanciából. A küszöb a „van-e hatás” kérdésnél a nullhatás, egyébként a minimális klinikailag fontos különbség (MCID) vagy egy abszolút döntési határ (esemény /1000); ha kis / közepes / nagy hatás határaihoz mérsz, azokat is előre add meg. A küszöböt az eredmények ismerete előtt rögzítsd. Bináris kimenetnél a CI-t abszolút skálán is nézd. 0, ha a teljes CI a küszöb egyik oldalán van és az optimális információméret teljesül (GRADE-06a); −1, ha a CI átlépi a küszöböt (a hatás egyaránt lehet fontos és elhanyagolható); −2, ha a CI egyszerre tartalmaz jelentős előnyt és jelentős ártalmat, vagy nagyon kevés esemény, illetve résztvevő mellett lépi át a küszöböt. A nullát tartalmazó CI nem bizonyítja a hatás hiányát.",
+  "how_to_verify": "Küszöb és MCID-forrás: 00_protokoll/protokoll.md 10. pont (ellenőrzött hivatkozással; ha nincs, mondd ki, és a nullhatáshoz mérj). CI: results.json back_transformed.estimate_ci [becslés, alsó, felső] (OR, RR, ROM, arányok, r) vagy primary.estimate / primary.ci_lower / primary.ci_upper (MD, SMD). Abszolút: totals.absolute_per_1000.difference (illusztratív alapkockázattal; a SoF-hoz a GRADE-10a szerint újraszámolva). Rögzítés: `--imprecision \"−1 súlyos: a 95% CI … átlépi az MCID-t …\"`. KB: K-MOR20-065, K-KHN0102-072, K-KHN09-057, K-KHN09-053, K-BOR09-072.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,khan2020,morvaridzadeh2020,borenstein2009,engine"
+ },
+ {
+  "item_id": "GRADE-06a",
+  "checklist": "GRADE",
+  "section": "Pontatlanság – optimális információméret és kevés adat",
+  "ord": 8,
+  "text": "Ellenőrizd az optimális információméretet (OIS): az összes résztvevő (folytonos kimenet) vagy esemény (bináris kimenet) száma eléri-e azt a mintanagyságot, amely egyetlen, megfelelő erejű vizsgálatnak kellene a tervezett hatás kimutatásához; a számítás feltevéseit (α, erő, kontrollkockázat vagy SD, feltételezett hatás) dokumentáld. Ha az OIS nem teljesül, szűk CI mellett is mérlegeld a −1-et. Kevés vizsgálatnál a véletlen hatású CI-t ne fogadd el névértéken: a τ² bizonytalan, a pontosság alsó korlátja nagyjából √(τ²/k), így nagy összlétszám sem garantál pontosságot. A megfigyelt hatásból utólag számolt erő nem informatív.",
+  "how_to_verify": "results.json totals.participants (ha null: totals.participants_partial és participants_known_k), totals.k, bináris kimenetnél totals.events1 + totals.events2 (és totals.n1, totals.n2); validation.findings V015 (k < 5) és V020 (nagyon kis minta); primary.ci_method (alapértelmezés HKSJ), primary.tau2. Az OIS-t a motoron kívül, szokásos mintanagyság-képlettel számold, a feltevéseket a `--rationale`-be írd; a `ma.py power` egy tervezett metaanalízis prospektív erejét adja, nem OIS-t, és nem a megfigyelt hatással használandó. KB: K-MOR20-065, K-BOR09-070, K-CHE16-066, K-SIM24-073, K-ZHA22-078, K-BOR07-078; F-BOR09-026.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,borenstein2009,borenstein2007_fe_re,cheung2016,simplypsychology2024,zhang2022_jslhr,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "GRADE-06b",
+  "checklist": "GRADE",
+  "section": "Pontatlanság – modellfüggés, valósághű intervallum",
+  "ord": 9,
+  "text": "A pontatlanságot a protokollban előre rögzített elsődleges modell intervallumából ítéld meg (a motor alapértelmezése: véletlen hatás, REML τ², HKSJ CI); ha a HKSJ-szorzó q < 1, a HKSJ-CI szűkebb lehet a Wald-CI-nál, ezt a módosított (ad hoc) HKSJ-vel ellenőrizd; heterogenitás mellett a közös hatású CI hamisan szűk, nem lehet a pontosság alapja. Ha a CI és a döntési küszöb viszonya megváltozik az érzékenységi modellekben (közös hatás, DL + z, IVhet, Mantel–Haenszel, Peto) vagy egy domináns vizsgálat elhagyásakor, mondd ki, és vedd figyelembe a pontatlanságnál (ha a szóródás az ok, az inkonzisztenciánál — de csak egyszer). Az elsődleges modellt utólag ne cseréld a kedvezőbb vagy a szélesebb CI-t adóra; az IVhet nem konszenzusosan jobb modell, csak érzékenységi elemzés.",
+  "how_to_verify": "results.json primary_model, primary.tau2_method, primary.ci_method, primary.q_hksj és primary.warnings (q < 1 figyelmeztetés → `ma.py analyze … --ci hksj_adhoc --out …_hksj_adhoc`); a fixed blokk és — ha futott — az ivhet, mh, peto blokk; report.md „Érzékenység — közös hatású modell” sora; sensitivity.leave_one_out és primary.weights_pct (van-e > 50% súlyú vizsgálat). Külön futás pl. `ma.py analyze … --tau2 DL --ci z --out …_dl` vagy `… --model ivhet --out …_ivhet`. Eltérés a forrásoktól: Khan 2020 az IVhet-et preferálja, és utólag a szélesebb CI-t választaná (K-KHN05-073, K-KHN10-054) — a jelenlegi konszenzus (Cochrane Handbook v6.5) az előre rögzített véletlen hatású modell, a többi modell érzékenységi elemzés. KB: K-KHN0607-069, K-KHN09-054, K-KHN05-072, K-KHN08-063, K-KHN09-055, K-KHN0607-068, K-BOR07-077, K-KHN0304-075, K-KHN0102-054.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,rover2015,doi2015_ivhet,khan2020,borenstein2007_fe_re,engine"
+ },
+ {
+  "item_id": "GRADE-06c",
+  "checklist": "GRADE",
+  "section": "Becsült és ferde eloszlású adatok",
+  "ord": 10,
+  "text": "Ha a súly jelentős részét adó vizsgálatoknál az átlag vagy az SD medián/IQR-ből vagy más konverzióval becsült, vagy a kimenet ferde eloszlású, de átlag ± SD-vel közölt, nézd meg az előre tervezett érzékenységi elemzést (becsült adatok nélkül; szükség esetén arány-skálán, ROM). Ha a következtetés megváltozik, ezt a pontatlanság vagy a torzítási kockázat doménjében vedd figyelembe: a GRADE-nek erre nincs külön doménje, és ugyanaz az ok csak egyszer vezethet leminősítéshez.",
+  "how_to_verify": "results.json validation.findings V013 (ferde eloszlás gyanúja) és V018 (becsült értékek); 03_adatok/adatkinyeres.csv „estimated” oszlop; `ma.py analyze … --exclude estimated=igen --out …_becsult_nelkul`, illetve `--measure ROM` érzékenységi futás; a konverziók (Luo 2018, Wan 2014) a 00_protokoll/protokoll.md 7. pontjában. KB: K-KHN09-058, K-ZHA22-079.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,khan2020,zhang2022_jslhr,wan2014,luo2018,engine"
+ },
+ {
+  "item_id": "GRADE-07",
+  "checklist": "GRADE",
+  "section": "Leminősítés – publikációs torzítás",
+  "ord": 11,
+  "text": "Ítéld meg, valószínű-e, hogy vizsgálatok vagy eredmények szisztematikusan hiányoznak a szintézisből; az ítélet „nem észlelt” vagy „erősen gyanítható” (utóbbi rendszerint −1). Együtt mérlegeld: a keresés teljességét (regiszterek, szürke irodalom, nyelvi és közlési korlátozás nélkül), regisztrált, de nem közölt vizsgálatokat, a kis, ipar által finanszírozott vizsgálatok túlsúlyát, a kis vizsgálatok eltérő hatását, és k ≥ 10 esetén (ha a vizsgálatok mérete érdemben eltér) a kontúr-javított funnel plotot a kimenethez illő teszttel (MD: Egger; bináris: Harbord vagy Peters, mert a klasszikus Egger OR-nál álpozitív lehet; SMD-nél a klasszikus Egger szintén álpozitív lehet, mert az SMD és a standard hibája összefügg — a mintanagyság-alapú pontossággal végzett változat a motorban nincs, ezért a motor Egger-eredményét SMD-nél csak tájékoztatónak tekintsd). k < 10 esetén a tesztet ne értelmezd, de a többi jelet igen; kevés vizsgálattal a szimmetrikus plot nem igazolja a torzítás hiányát. Az aszimmetria heterogenitásból, véletlenből vagy a kis vizsgálatok magasabb torzítási kockázatából is eredhet, ezért önmagában nem bizonyít publikációs torzítást.",
+  "how_to_verify": "results.json bias.k, bias.min_k_recommended, bias.note (k < 10), bias.egger.p, bináris kimenetnél bias.harbord.p, bias.peters.p és bias.binary_note; funnel.svg (kontúrok: plot_data.json funnel.contour); 01_kereses/kereses_naplo.md (regiszterek: ClinicalTrials.gov, WHO ICTRP; dátumok, korlátozások); a vizsgálatok finanszírozása (AMSTAR2-10). Rögzítés: `--publication-bias \"−1 erősen gyanítható: …\"` vagy `\"0 nem észlelt: …\"`. Ha a validator plugin GRADE-összesítését használod, ezt a domént kézzel ellenőrizd (a „suspected” választ a plugin nem minősíti le). SMD-s Egger-műtermék: K-MOR20-057, K-ZHA22-065. KB: K-KHN1113-074, K-KHN0304-079, K-KHN05-078, K-KHN1113-003, K-KHN1113-053, K-SIM24-076, K-ZHA22-018, K-KHN0102-066. Kapcsolódó: AMSTAR2-15, PRISMA2020-21.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,sterne2011,egger1997,harbord2006,peters2006,peters2008,khan2020,simplypsychology2024,zhang2022_jslhr,morvaridzadeh2020"
+ },
+ {
+  "item_id": "GRADE-07a",
+  "checklist": "GRADE",
+  "section": "Publikációs torzítás – nem elfogadható döntési alapok",
+  "ord": 12,
+  "text": "A publikációs torzításról szóló ítélet és a „robusztus eredmény” állítás nem alapulhat a Rosenthal-féle fail-safe N-en, a trim-and-fill „korrigált” becslésén vagy a Doi-plot / LFK-index küszöbein. A trim-and-fill és az LFK csak érzékenységi jelzés: ha a korrigált becslés a döntési küszöb másik oldalára kerül, az a bizonyíték törékenységét jelzi, de a SoF fő eredménye az elsődleges becslés marad.",
+  "how_to_verify": "results.json bias.trimfill.k0 és bias.trimfill.adjusted (becslés, CI) — a `--rationale`-ben érzékenységként említve; bias.lfk.lfk és bias.lfk.category (heurisztika, lásd bias.lfk.warnings); a SoF relatív hatása = back_transformed.estimate_ci, nem a trim-and-fill érték. Eltérés a forrásoktól: Cheung 2016 a fail-safe N-t a használható módszerek között említi (K-CHE16-060), Khan 2020 az LFK ±1/±2 küszöbeit ítéleti alapnak veszi (K-KHN1113-074) — a jelenlegi konszenzus (Cochrane Handbook v6.5, 13. fejezet; Sterne 2011) a fail-safe N-t nem fogadja el, a trim-and-fill korrigált becslését erős feltevésekre épülő érzékenységi elemzésnek tekinti, a Doi-plot / LFK-index küszöbei pedig a fejlesztők heurisztikái, nem ajánlott ítéleti alapok (vö. a motor bias.lfk.warnings és bias.trimfill.warnings üzenetével). KB: K-CHE16-069, K-ZHA22-081, K-KHN05-058, K-KHN08-066, K-KHN0304-079.",
+  "stage_id": "S13",
+  "source_ids": "cochrane_handbook,grade_handbook,duval2000,furuya2018_lfk,cheung2016,khan2020,zhang2022_jslhr,sterne2011"
+ },
+ {
+  "item_id": "GRADE-08",
+  "checklist": "GRADE",
+  "section": "Felminősítés – általános feltétel",
+  "ord": 13,
+  "text": "Felminősítést elsősorban nem randomizált (megfigyeléses) bizonyítéknál mérlegelj, és általában csak akkor, ha a kimenetet nem minősítetted le érdemi torzítási kockázat miatt, és más doménben sincs olyan súlyos probléma, amely a felminősítési jelet hiteltelenné tenné. Három ok lehetséges: nagy hatás (GRADE-08a), dózis–hatás összefüggés (GRADE-08b), illetve maradék zavaró tényezők, amelyek a megfigyelt hatás ellen dolgoznak (GRADE-08c). A felminősítést ugyanolyan részletesen indokold, mint a leminősítést.",
+  "how_to_verify": "`project grade --upgrades \"+1 nagy hatás: …\"` vagy `--upgrades \"0\"`; a grade_consistency-ellenőrzés a felminősítést is beszámítja. A `--rationale` megmagyarázza, miért nem ütközik a felminősítés a leminősítésekkel. KB: K-KHN0102-068.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,khan2020,engine"
+ },
+ {
+  "item_id": "GRADE-08a",
+  "checklist": "GRADE",
+  "section": "Felminősítés – nagy hatás",
+  "ord": 14,
+  "text": "Nagy hatás miatt +1 akkor mérlegelhető, ha több vizsgálatból konzisztensen nagy relatív hatás adódik (a GRADE-útmutató tájékoztató értéke: RR > 2 vagy < 0,5), és nincs plauzibilis zavaró tényező, amely ezt teljesen megmagyarázná; +2 nagyon nagy hatásnál (tájékoztató érték: RR > 5 vagy < 0,2), közvetlen bizonyíték és a validitást fenyegető lényeges probléma hiánya mellett. A határ a CI-t is figyelembe vevő ítélet, nem gépies szabály.",
+  "how_to_verify": "results.json back_transformed.estimate_ci és forest.svg (a hatás nagysága és iránya vizsgálatonként); megfigyeléses vizsgálatnál a korrigált (adjusted) becslések kinyerése a 03_adatok/adatkinyeres.csv megjegyzésében. Az `--upgrades` szövege tartalmazza a becslést és a CI-t.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook"
+ },
+ {
+  "item_id": "GRADE-08b",
+  "checklist": "GRADE",
+  "section": "Felminősítés – dózis–hatás összefüggés",
+  "ord": 15,
+  "text": "Dózis–hatás grádiens miatt +1 akkor indokolt, ha a hatás nagysága hihetően és konzisztensen változik a dózissal vagy az expozíció mértékével, és ezt megfelelő módszer mutatja. Dózis–hatás metaanalízisnél a hitelesség feltételei: következetes vagy centrált referenciadózis, vizsgálatonként elegendő dóziskategória, a vizsgálaton belüli korreláció kezelése, a nemlinearitás helyes tesztelése, a keresztmetszeti vizsgálatok külön kezelése. A vizsgálatok átlagdózisára épülő hagyományos meta-regresszió erre nem elegendő. Az eredményt klinikailag is fordítsd le (a legnagyobb hatású dózis és az ott várható abszolút hatás, a referenciaponthoz viszonyítva).",
+  "how_to_verify": "A motor nem végez dózis–hatás metaanalízist (README, Ismert korlátok): a validált R-csomag (dosresmeta) kimenete és kódja a 05_elemzes/ mappában, a referenciadózissal, a csomópontok (knot) helyével és a nemlinearitási teszttel. A dózisra futtatott meta-regresszió (results.json metaregression) csak kiegészítő, megfigyeléses jelzés. KB: K-KHN1113-077, K-KHN1113-040, K-KHN1113-085, K-KHN1113-051, K-KHN1113-075, K-KHN1113-078.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,khan2020,engine"
+ },
+ {
+  "item_id": "GRADE-08c",
+  "checklist": "GRADE",
+  "section": "Felminősítés – maradék zavaró tényezők",
+  "ord": 16,
+  "text": "+1 akkor mérlegelhető, ha minden plauzibilis, nem kontrollált zavaró tényező vagy torzítás a megfigyelt hatás csökkentése irányába hatna (pl. a súlyosabb állapotú betegek kapták a mégis kedvezőnek bizonyult beavatkozást), vagy ha hatás hiányában álhatást keltene, mégsem látunk hatást. A zavaró tényezőt és a várható irányt konkrétan nevezd meg, ne általános feltételezésként.",
+  "how_to_verify": "A ROBINS-I zavaró tényezők doménjének indoklása (04_torzitas_kockazat/rob.csv „megjegyzes” oszlop) és a vizsgálatokban korrigált változók listája; az `--upgrades` szövege megnevezi a zavaró tényezőt és a várható irányt.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,robins_i"
+ },
+ {
+  "item_id": "GRADE-09",
+  "checklist": "GRADE",
+  "section": "Összesített bizonyosság és dokumentálás",
+  "ord": 17,
+  "text": "A végső szint a kiindulásból, a leminősítésekből és a felminősítésekből adódik, de globális ítéletként: a domének összefüggenek, ugyanazt a problémát ne számold kétszer (pl. a heterogenitás miatt széles CI-t az inkonzisztenciánál és a pontatlanságnál is; a vizsgálaton belüli szelektív eredményközlést a torzítási kockázatnál és a publikációs torzításnál is), és határesetben indokold, hol vonsz le. A szintek jelentése: magas — nagyon biztosak vagyunk, hogy a valódi hatás közel van a becsléshez; mérsékelt — valószínűleg közel van, de lényegesen el is térhet; alacsony — a valódi hatás lényegesen eltérhet; nagyon alacsony — valószínűleg lényegesen eltér. „Nagyon alacsony” alá nem lehet menni.",
+  "how_to_verify": "`ma.py project grade`: minden domén szövege előjeles lépéssel kezdődik („−1 …”, „−2 …”, „0 …”, „+1 …”), mert csak így ellenőrzi a napló, hogy a végső szint összefér-e a lépésekkel (figyelmeztet, ha nem). `ma.py project list <mappa> grades` és `ma.py project show <mappa> grade <id>`: minden doménnél szöveges indoklás, a `--rationale` megnevezi a kiindulást; a ma-ellenorzo S13 checkpointja tartalmilag is ellenőrzi. KB: K-KHA26-072, K-MOR20-062.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,kharbach2026_tools,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "GRADE-10",
+  "checklist": "GRADE",
+  "section": "Summary of Findings – szerkezet",
+  "ord": 18,
+  "text": "Készíts SoF-táblázatot a fő összehasonlításra: a fejlécben a populáció, a környezet, a beavatkozás és az összehasonlítás; legfeljebb hét, előre kiválasztott kritikus vagy fontos kimenet (ártalmakkal), a mérőeszközzel és az időponttal. Kimenetenként: résztvevők és vizsgálatok száma; relatív hatás 95% CI-vel; feltételezett alapkockázat és abszolút hatás 95% CI-vel; bizonyosság szimbólummal és szóval (pl. ⊕⊕⊕◯ mérsékelt); megjegyzés. Minden le- és felminősítést lábjegyzet magyaráz a konkrét adattal (pl. „a 95% CI átlépi az MCID-t”).",
+  "how_to_verify": "06_kezirat/grade_sof.md (a grade_sof_sablon.md oszlopaival); résztvevők és vizsgálatok = results.json totals.participants és totals.k (bináris kimenetnél totals.n1, totals.n2, totals.events1, totals.events2); relatív hatás = back_transformed.estimate_ci; bizonyosság = az adott kimenet utolsó bejegyzése a `ma.py project list <mappa> grades` listában; a lábjegyzetek egyeznek a domén-indoklásokkal. KB: K-MOR20-062, K-KHN08-061. Kapcsolódó: PRISMA2020-22.",
+  "stage_id": "S13",
+  "source_ids": "guyatt2011,grade_handbook,cochrane_handbook,prisma2020,morvaridzadeh2020,khan2020,engine"
+ },
+ {
+  "item_id": "GRADE-10a",
+  "checklist": "GRADE",
+  "section": "Summary of Findings – abszolút hatás bináris kimenetnél",
+  "ord": 19,
+  "text": "Bináris kimenetnél az abszolút hatást az összesített relatív hatásból (RR vagy OR) és egy feltételezett alapkockázatból számold (/1000, a CI két határára is), ne az összesített kockázatkülönbségből, mert az erősebben függ az alapkockázattól. Az alapkockázat klinikailag releváns forrásból származzon (pl. a célpopulációt reprezentáló kohorsz vagy a bevont vizsgálatok kontrollkarjai), ellenőrzött hivatkozással; ha a kockázat a célcsoportok között érdemben eltér, adj meg alacsony és magas kockázatú sort is. A forrást a lábjegyzet nevezze meg.",
+  "how_to_verify": "results.json totals.absolute_per_1000 (difference és intervention_risk: [becslés, alsó, felső]; assumed_control_risk_per_1000) — a motor a kontrollkarok nyers összesített kockázatával számol (note: illusztratív). Más alapkockázatnál (ACR): RR-ből ACR·RR − ACR, OR-ből ACR·OR/(1 − ACR + ACR·OR) − ACR, a CI határaira is (F-KHN0304-010). Eltérés a forrásoktól: Khan 2020 a pooled RD-t közvetlenül értelmezi (K-KHN0607-071) — ez csak hasonló alapkockázatú populációra elfogadható; a jelenlegi konszenzus (Cochrane Handbook v6.5, GRADE) a relatív hatás + alapkockázat. KB: K-KHN0607-071, K-KHN0607-011; F-KHN0607-026, F-KHN0304-010.",
+  "stage_id": "S13",
+  "source_ids": "cochrane_handbook,grade_handbook,guyatt2011,khan2020,engine"
+ },
+ {
+  "item_id": "GRADE-10b",
+  "checklist": "GRADE",
+  "section": "Summary of Findings – folytonos kimenet",
+  "ord": 20,
+  "text": "Folytonos kimenetnél, ha a vizsgálatok ugyanazt a skálát használják, a SoF az átlagkülönbséget (MD) adja természetes mértékegységben, a kontrollcsoport jellemző átlagával együtt. SMD csak eltérő skáláknál indokolt; ilyenkor vissza kell alakítani egy ismert skálára, vagy az MCID-hez kell viszonyítani. Arány-skálán (ROM) a százalékos változást add meg. A megjegyzés jelezze, ha a hatás vagy a CI-határ az MCID alatt marad.",
+  "how_to_verify": "results.json effect_sizes.measure; MD: primary.estimate, primary.ci_lower, primary.ci_upper; SMD: ugyanez, a visszaalakítás képletével és a referencia-SD forrásával a lábjegyzetben; ROM: back_transformed.estimate_ci; a kontrollátlag forrása (pl. 03_adatok/adatkinyeres.csv m2 oszlop) a lábjegyzetben. KB: K-KHN08-061, K-KHN08-065, K-MOR20-073, K-ZHA22-076.",
+  "stage_id": "S13",
+  "source_ids": "cochrane_handbook,grade_handbook,khan2020,morvaridzadeh2020,zhang2022_jslhr"
+ },
+ {
+  "item_id": "GRADE-11",
+  "checklist": "GRADE",
+  "section": "A következtetések megfogalmazása",
+  "ord": 21,
+  "text": "A kéziratban (absztrakt, eredmények, következtetések) minden kimenetnél a hatás iránya és nagysága mellett a szóhasználat jelezze a bizonyosságot: magas — „X reduces/increases Y”; mérsékelt — „X probably reduces Y”; alacsony — „X may reduce Y”; nagyon alacsony — „the evidence is very uncertain about the effect of X on Y”. „Little or no difference” csak akkor írható, ha a CI kizárja a fontos hatást, és ekkor is a bizonyosságnak megfelelő módosítóval (mérsékelt: „probably results in little or no difference”; alacsony: „may result in little or no difference”); „nincs hatás” nem írható csak azért, mert a CI tartalmazza a nullát. A véletlen hatású becslés a valódi hatások eloszlásának átlaga, nem „a” hatás.",
+  "how_to_verify": "06_kezirat/ absztrakt, Results és Conclusions mondatai kimenetenként összevetve a `ma.py project list <mappa> grades` bizonyosságával és a 06_kezirat/grade_sof.md-vel; minden becslés CI-vel, pl. „RR 0.49 (95% CI 0.33–0.73)”. Keresendő kifejezések: „no effect”, „no difference”, „significantly”. KB: K-KHN0102-072, K-BOR09-072, K-BOR07-051, K-MOR20-068, K-SIM24-070.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,khan2020,borenstein2009,borenstein2007_fe_re,morvaridzadeh2020,simplypsychology2024"
+ },
+ {
+  "item_id": "GRADE-12",
+  "checklist": "GRADE",
+  "section": "GRADE metaanalízis nélkül",
+  "ord": 22,
+  "text": "Ha egy kimenetre nem végezhető metaanalízis (eltérő mértékek, hiányzó varianciák, túl eltérő PICO), a GRADE-et akkor is el kell végezni: a doméneket a vizsgálatonkénti eredményekből ítéld meg (a hatások iránya és nagysága, a CI-k, a vizsgálatok mérete és torzítási kockázata), a szintézis módját a SWiM szerint írd le. Szignifikancia szerinti szavazatszámlálás nem elfogadható. Elfogadható módszerek: a hatásbecslések összegzése (medián, IQR, tartomány), a p-értékek kombinálása, vagy — leggyengébb lehetőségként — a hatás iránya szerinti szavazatszámlálás előjelteszttel.",
+  "how_to_verify": "06_kezirat/ narratív szintézis-táblázata vizsgálatonkénti becslésekkel és CI-vel; 00_protokoll/protokoll.md 9. pont (SWiM-terv); `project grade` bejegyzés az adott kimenetre (--k, --participants kitöltve). KB: K-BOR09-061, K-BOR09-075, K-KHN0102-071, K-KHN0102-074.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,swim2020,borenstein2009,khan2020"
+ },
+ {
+  "item_id": "EVALUATOR-00",
+  "checklist": "EVALUATOR",
+  "section": "Előfeltételek és számok egyezése",
+  "ord": 0,
+  "text": "Az értékelés csak a motor által előállított, ellenőrzött eredményekre épülhet: kimenetenként létezik a results.json és a report.md, az adatvalidálásban nincs feloldatlan hiba, az S05–S12 szakaszok (adatkinyeréstől az érzékenységi elemzésig) ellenőrzője PASS vagy PASS_WITH_FIXES ítéletet adott, és nincs nyitott blocker. Számot nem számolsz fejben vagy ad hoc kóddal; ha további szám kell (pl. érzékenységi futás), a motort futtatod, a futást naplózod. A kéziratban, a SoF-ban és a következtetésekben szereplő minden szám egyezik a forrásával.",
+  "how_to_verify": "`ma.py project status <mappa>` (nyitott megállapítások, checkpointok); results.json validation.summary.error = 0 és validation.findings; `ma.py project list <mappa> runs` (futások adat-hash-sel). Szúrópróba: a kézirat két-három számát (becslés, CI, k, résztvevők) a results.json megfelelő mezőjével vesd össze. KB: K-KHN0607-072, K-KHN08-067, K-BOR07-080.",
+  "stage_id": "S13",
+  "source_ids": "engine,cochrane_handbook,khan2020,borenstein2007_fe_re"
+ },
+ {
+  "item_id": "EVALUATOR-01",
+  "checklist": "EVALUATOR",
+  "section": "Klinikai jelentőség – MCID",
+  "ord": 1,
+  "text": "Minden elsődleges kimenetnél ítéld meg a hatás klinikai jelentőségét: a pontbecslést és a CI mindkét határát vesd össze az előre rögzített minimális klinikailag fontos különbséggel (MCID) vagy döntési küszöbbel. Külön nézd a nullához közelebbi CI-határt: a statisztikailag szignifikáns hatás is lehet klinikailag elhanyagolható. Az MCID forrása ellenőrzött hivatkozás legyen (PubMed/DOI); ha nincs elfogadott MCID, mondd ki, és indokold a használt küszöböt.",
+  "how_to_verify": "00_protokoll/protokoll.md 10. pont (MCID-források); results.json primary.ci_lower / primary.ci_upper (MD) vagy back_transformed.estimate_ci; a Discussion bekezdése, amely a hatást az MCID-hez viszonyítja. Naplózás: `ma.py project log <mappa> --agent evaluator --stage S13 --decision \"MCID: …\" --rationale \"forrás: …\" --kb EVALUATOR-01,…`. KB: K-KHN09-057, K-KHN09-053, K-SIM24-070, K-ZHA22-082, K-MOR20-073.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,khan2020,simplypsychology2024,zhang2022_jslhr,morvaridzadeh2020"
+ },
+ {
+  "item_id": "EVALUATOR-02",
+  "checklist": "EVALUATOR",
+  "section": "Klinikai jelentőség – standardizált mértékek és általános küszöbök",
+  "ord": 2,
+  "text": "SMD-t csak akkor fogadj el, ha a vizsgálatok eltérő skálán mérték a kimenetet; azonos mértékegységnél a nyers MD az érthetőbb. Az SMD-t ne pusztán Cohen-féle (0,2 / 0,5 / 0,8) vagy szakterületi címkékkel értelmezd: alakítsd vissza ismert skálára, vagy viszonyítsd az MCID-hez. Korrelációnál az erősségi sávok csak tájékoztatók; ha a CI két sávot fed le, az erősség bizonytalan, és r ≈ 0 csak a lineáris összefüggés hiányát jelzi. Kevés vizsgálatból adódó szélsőséges SMD értelmezés előtt adat- és kiugróérték-ellenőrzést kíván.",
+  "how_to_verify": "results.json effect_sizes.measure és effect_sizes.label; a report.md Methods-bekezdése (SMD-változat, korrekció, variancia); validation.findings V014 (szélsőséges hatásméret). A kéziratban az SMD mellett szerepel a visszaalakított érték vagy az MCID-viszonyítás. Eltérés a forrásoktól: Zhang 2022 és Khan 2020 általános hatásméret-sávokat használ (K-ZHA22-076, K-KHN10-010) — klinikai kimenetnél a jelenlegi konszenzus (GRADE, Cochrane Handbook v6.5) az MCID-hez vagy döntési küszöbhöz mérés. KB: K-KHN08-061, K-KHN08-062, K-KHN08-065, K-MOR20-073, K-KHN10-051, K-KHN10-055.",
+  "stage_id": "S13",
+  "source_ids": "cochrane_handbook,grade_handbook,khan2020,zhang2022_jslhr,morvaridzadeh2020"
+ },
+ {
+  "item_id": "EVALUATOR-03",
+  "checklist": "EVALUATOR",
+  "section": "Abszolút hatások",
+  "ord": 3,
+  "text": "Bináris kimenetnél a relatív hatás mellett mindig közöld az abszolút hatást (/1000, 95% CI-vel) legalább egy, klinikailag releváns, forrással alátámasztott alapkockázatra; eltérő kockázatú célcsoportoknál többre is. Ugyanaz a relatív hatás alacsony alapkockázatnál elhanyagolható, magasnál fontos lehet, ezért a klinikai értelmezés az abszolút hatásra épüljön. A szöveg és a SoF ugyanazokat az abszolút értékeket használja.",
+  "how_to_verify": "06_kezirat/grade_sof.md „Alapkockázat” és „Abszolút hatás /1000” oszlopa; results.json totals.absolute_per_1000 (illusztratív, a kontrollkarok nyers kockázatával; más alapkockázatnál a GRADE-10a képletével újraszámolva); a Results és a Discussion abszolút számai egyeznek a SoF-fal. KB: K-KHN0607-071; F-KHN0607-026, F-KHN0304-010. Kapcsolódó: GRADE-10a.",
+  "stage_id": "S13",
+  "source_ids": "cochrane_handbook,grade_handbook,khan2020,engine"
+ },
+ {
+  "item_id": "EVALUATOR-03a",
+  "checklist": "EVALUATOR",
+  "section": "NNT és NNH",
+  "ord": 4,
+  "text": "NNT-t vagy NNH-t csak az abszolút kockázatkülönbségből (NNT = 1 / abszolút különbség), megnevezett alapkockázattal és időtávval közölj. Ha az abszolút különbség CI-je tartalmazza a nullát, az NNT-intervallum nem folytonos (előny és ártalom felé is kiterjed): ilyenkor egyetlen NNT-szám helyett az abszolút különbséget add meg /1000 főre. Eltérő alapkockázatú vizsgálatoknál az NNT-t ne a pooled RD-ből számold.",
+  "how_to_verify": "A kézirat NNT/NNH-értékei mellett a számítás bemenete (alapkockázat, relatív hatás CI-vel, időtáv) a SoF lábjegyzetében vagy a kiegészítő anyagban; a bemenő számok: results.json back_transformed.estimate_ci és totals.absolute_per_1000 (vagy az újraszámolt abszolút hatás). KB: K-KHN0607-071; F-KHN0607-026.",
+  "stage_id": "S13",
+  "source_ids": "cochrane_handbook,khan2020,engine"
+ },
+ {
+  "item_id": "EVALUATOR-04",
+  "checklist": "EVALUATOR",
+  "section": "Irány és megfogalmazás a relatív mértékeknél",
+  "ord": 5,
+  "text": "Minden relatív mértéknél nevezd meg a számláló (beavatkozási) és a referencia kart, és az értelmezés iránya ehhez igazodjon. RR < 1 esetén a relatív kockázatcsökkenés (1 − RR)·100%, RR > 1 esetén a növekedés (RR − 1)·100%. Az OR esélyekre vonatkozik, nem kockázatra vagy valószínűségre; gyakori kimenetnél az OR távolabb esik az 1-től, mint az RR, ezért kockázatként olvasva túlozza a hatást. A szignifikancia-állítás kerekítetlen CI-határokon és ugyanazon próba p-értékén alapuljon; a szöveg, a forest plot és a p-érték egyezzen.",
+  "how_to_verify": "03_adatok/adatkinyeres.csv: az 1. kar (e1, n1 vagy m1, sd1, n1) a számláló; a forest.svg bal/jobb felirata (--left-label / --right-label); a kézirat mondatai összevetve a results.json back_transformed.estimate_ci és primary.p mezőivel. KB: K-KHN0304-064, K-KHN0304-077, K-KHN05-076, K-KHN05-038, K-KHN05-039, K-KHN0304-068, K-KHN05-075; F-KHN0304-011.",
+  "stage_id": "S13",
+  "source_ids": "khan2020,cochrane_handbook"
+ },
+ {
+  "item_id": "EVALUATOR-05",
+  "checklist": "EVALUATOR",
+  "section": "A következtetések és a bizonyosság összhangja",
+  "ord": 6,
+  "text": "A következtetések erőssége kimenetenként a GRADE-bizonyossághoz igazodjon, az absztraktban, az eredményekben, a megbeszélésben és a következtetésekben egyformán (GRADE-11). A gyakorlati alkalmazást sugalló mondatok a bizonyossággal arányosak legyenek: alacsony vagy nagyon alacsony bizonyosságnál a szöveg a bizonytalanságot és a további kutatás szükségességét hangsúlyozza. A bizonyosság nem lehet nagyobb, mint amit a bevont vizsgálatok elrendezése és korlátai megengednek; ha a szerzők maguk súlyos korlátokat sorolnak fel, a következtetés nem lehet határozottabb ezeknél.",
+  "how_to_verify": "`ma.py project list <mappa> grades` ↔ 06_kezirat/ absztrakt, Discussion és Conclusions mondatai kimenetenként; a Limitations korlátai és a következtetés erőssége közti ellentmondás keresése. KB: K-MOR20-068, K-MOR20-063, K-KHN0102-073, K-KHA26-072, K-CHE16-066.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,morvaridzadeh2020,khan2020,kharbach2026_tools,cheung2016"
+ },
+ {
+  "item_id": "EVALUATOR-05a",
+  "checklist": "EVALUATOR",
+  "section": "Hatásnagyság és CI, nem p-érték",
+  "ord": 7,
+  "text": "A következtetés a hatás nagyságán és a CI-n alapuljon, ne a p < 0,05 határon. A nullát tartalmazó CI nem bizonyítja a hatás hiányát: „nem igazolt hatás” vagy „pontatlan becslés”, nem „nincs hatás”. Eltérő eredmények (vizsgálatok között, vagy a metaanalízis és egy nagy RCT között) összevetése hatásméretekkel és CI-kkel történjen, ne szignifikancia szerinti szavazatszámlálással; a valódi eltérést a populáció, a módszer vagy a beavatkozás különbségeivel kell magyarázni, nem az egyik eredmény „hibásnak” nyilvánításával. A fő állításokhoz az ellentmondó evidenciát is aktívan keresd és tárgyald.",
+  "how_to_verify": "A kézirat Results és Discussion mondatai: minden becslés CI-vel; a „no effect”, „no difference” és „significant” szavak használata; a korábbi áttekintésekkel és nagy RCT-kkel való összevetés becslés + CI formában, ellenőrzött hivatkozással. KB: K-BOR09-072, K-BOR09-075, K-BOR09-071, K-BOR09-062, K-KHN0102-072, K-KHN10-052, K-KHA26-071.",
+  "stage_id": "S13",
+  "source_ids": "borenstein2009,khan2020,kharbach2026_tools,cochrane_handbook"
+ },
+ {
+  "item_id": "EVALUATOR-05b",
+  "checklist": "EVALUATOR",
+  "section": "Véletlen hatású eredmény és általánosíthatóság",
+  "ord": 8,
+  "text": "Véletlen hatású modellnél az összesített becslést a valódi hatások eloszlásának átlagaként értelmezd, τ²-tel (τ-val) és predikciós intervallummal együtt; ha a CI kizárja a nullát, de a PI nem, mondd ki, hogy új környezetben a hatás iránya is eltérhet. A következtetés hatóköre illeszkedjen a modellhez és a szintézis céljához: közös hatású eredmény csak a bevont vizsgálatok közös hatására enged következtetni, más populációkra általánosítani véletlen hatású elemzéssel lehet.",
+  "how_to_verify": "results.json primary_model, primary.tau2, primary.tau, back_transformed.pi vagy primary.pi_lower / primary.pi_upper; report.md „Értelmezési figyelmeztetések”; a kéziratban a PI a fő eredmény mellett szerepel. KB: K-BOR07-076, K-BOR07-075, K-BOR09-067, K-BOR09-073, K-SIM24-077, K-BOR07-051; F-SIM24-014.",
+  "stage_id": "S09",
+  "source_ids": "borenstein2007_fe_re,borenstein2009,simplypsychology2024,inthout2016,cochrane_handbook"
+ },
+ {
+  "item_id": "EVALUATOR-05c",
+  "checklist": "EVALUATOR",
+  "section": "A heterogenitás a következtetésben",
+  "ord": 9,
+  "text": "A következtetés tükrözze a hatások szóródását, ne csak az átlagot: jelentős, megmagyarázatlan heterogenitásnál a fő üzenet a hatások változékonysága és lehetséges okai legyen. Ellenőrizd, hogy a heterogenitást τ², I² (CI-vel) és PI számszerűsíti, a feltárás előre tervezett moderátorokkal történt, és a nem szignifikáns Q kevés vizsgálatnál nem szerepel a homogenitás bizonyítékaként. Az I²-sávok átfedő, durva tájékozódási pontok, nem szabályok.",
+  "how_to_verify": "results.json primary.heterogeneity (I2_ci_QP, tau2_ci_QP), primary.Q, primary.p_Q, subgroups, metaregression; a kézirat Results és Discussion része; a GRADE-04 indoklása (`ma.py project list <mappa> grades`). KB: K-BOR09-068, K-SIM24-074, K-KHN0607-070, K-ZHA22-080, K-CHE16-068, K-KHN05-074, K-KHN10-053, K-BOR07-079, K-KHN0102-059, K-KHN0304-076.",
+  "stage_id": "S09",
+  "source_ids": "borenstein2009,borenstein2007_fe_re,simplypsychology2024,khan2020,zhang2022_jslhr,cheung2016,cochrane_handbook,higgins2002,inthout2016"
+ },
+ {
+  "item_id": "EVALUATOR-05d",
+  "checklist": "EVALUATOR",
+  "section": "Alcsoport- és moderátor-állítások hitelessége",
+  "ord": 10,
+  "text": "Hatásmódosításra vonatkozó állítás csak akkor fogadható el, ha a moderátor előre rögzített (várható iránnyal), kevés hipotézis egyike, formális különbségi teszt (Q_between vagy meta-regresszió) támogatja, alcsoportonként elegendő vizsgálat van (meta-regressziónál moderátoronként legalább kb. 10), és plauzibilis. Egy szignifikáns és egy nem szignifikáns alcsoport szembeállítása nem bizonyít különbséget. A vizsgálatok közötti moderátor-összefüggés megfigyeléses (zavaró tényezők, ökológiai torzítás), ezért hipotézisgeneráló, és a nem szignifikáns moderátor sem bizonyítja a hatásmódosítás hiányát.",
+  "how_to_verify": "results.json subgroups (groups, Q_between, p_between) és metaregression (coefficients, QM, QM_p, R2); 00_protokoll/protokoll.md 9. pont (előre tervezett moderátorok) és 11. pont (eltérések); a kézirat Discussion része. Meta-regresszió: az elsődleges a véletlen hatású modell Knapp–Hartung-próbával (results.json metaregression.test, `--metareg-test knha`); a robusztus (HC1) változat (`--robust`) csak érzékenységi elemzés. Eltérés a forrásoktól: Khan 2020 a robusztus vagy IVhet-megközelítést preferálja (K-KHN1113-076) — a jelenlegi konszenzus (Cochrane Handbook v6.5, 10. fejezet) a véletlen hatású meta-regresszió. KB: K-KHN05-077, K-KHN1113-075, K-KHN0607-063, K-KHN0304-078, K-ZHA22-082, K-CHE16-068, K-KHN1113-076.",
+  "stage_id": "S10",
+  "source_ids": "iceman2020,cochrane_handbook,khan2020,zhang2022_jslhr,cheung2016"
+ },
+ {
+  "item_id": "EVALUATOR-05e",
+  "checklist": "EVALUATOR",
+  "section": "Robusztusság az érzékenységi elemzésekben",
+  "ord": 11,
+  "text": "Ellenőrizd, hogy a következtetés (iránya és a CI viszonya a döntési küszöbhöz) stabil-e az előre tervezett érzékenységi elemzésekben: közös vs véletlen hatás, másik τ²-becslő vagy CI-módszer, a magas torzítási kockázatú és a becsült adatú vizsgálatok kizárása, leave-one-out, befolyásos és kiugró vizsgálatok, integritási aggályos (pl. aggályjelzéssel ellátott) közlemények. A visszavont közlemény nem érzékenységi kérdés: eleve ki kell zárni. Ha egy vizsgálat viszi a súly több mint felét, az eredmény lényegében az övé — minőségét és adatait külön ellenőrizd. Ha egy érzékenységi elemzés megfordítja a következtetést, a kézirat mondja ki, és a GRADE-ítélet (pontatlanság, torzítási kockázat vagy inkonzisztencia) vegye figyelembe.",
+  "how_to_verify": "results.json sensitivity.leave_one_out, sensitivity.influence, sensitivity.outliers (ha `--outliers` futott), a fixed és a primary blokk, primary.weights_pct; külön futások: `--exclude rob=high`, `--exclude estimated=igen`, `--tau2 DL --ci z`; a kéziratban minden érzékenységi eredmény szerepel (PRISMA2020-20d). KB: K-ZHA22-081, K-KHN09-055, K-KHN0607-068, K-BOR07-077, K-SIM24-075, K-KHN0607-069, K-KHN05-072, K-KHN08-064, K-KHN10-054, K-KHA26-070, K-KHA26-065.",
+  "stage_id": "S12",
+  "source_ids": "cochrane_handbook,grade_handbook,zhang2022_jslhr,khan2020,borenstein2007_fe_re,simplypsychology2024,kharbach2026_tools,prisma2020"
+ },
+ {
+  "item_id": "EVALUATOR-05f",
+  "checklist": "EVALUATOR",
+  "section": "Kevés vizsgálatra épülő következtetés",
+  "ord": 12,
+  "text": "Kevés vizsgálatra (különösen k < 5) épülő eredményt gyenge bizonyítékként kezelj: a τ² becslése megbízhatatlan, a moderátor-elemzés erőtlen, a publikációs torzítás nem tesztelhető, és a kevés vizsgálat a terület éretlenségét is jelezheti. A kéziratban kimenetenként szerepeljen k, a kis k-ra épülő következtetés óvatos legyen, és a bizonytalanság a GRADE-ítéletben (főként a pontatlanságnál) jelenjen meg. Minimális k-t a Cochrane nem ír elő; két kellően hasonló vizsgálat is összevonható.",
+  "how_to_verify": "results.json totals.k / effect_sizes.k, validation.findings V015 (k < 5) és V016 (k < 10), bias.note; a kézirat táblázataiban kimenetenként k. KB: K-CHE16-066, K-SIM24-073, K-ZHA22-078, K-BOR09-070, K-SIM24-068, K-BOR09-038.",
+  "stage_id": "S13",
+  "source_ids": "cheung2016,simplypsychology2024,zhang2022_jslhr,borenstein2009,cochrane_handbook,grade_handbook"
+ },
+ {
+  "item_id": "EVALUATOR-06",
+  "checklist": "EVALUATOR",
+  "section": "Az összevonás érvényessége és a függetlenség",
+  "ord": 13,
+  "text": "Ítéld meg — klinikai szakértelmet is bevonva —, van-e értelme az összevont átlagnak: a populációk, beavatkozások, kimenetek és elrendezések elég hasonlók-e („alma és körte”), és ugyanazt a mértéket, skálát és mértékegységet használják-e. Ellenőrizd a statisztikai függetlenséget: ugyanaz a minta nem szerepel kétszer (egy vizsgálat több közleménye, összefüggő kutatócsoport ismételt beszámolói, többkarú vizsgálat közös kontrollkarja), és a függő hatásméretek kezelése megfelelő (összevonás vagy erre alkalmas modell).",
+  "how_to_verify": "A vizsgálatjellemzők táblázata és 00_protokoll/protokoll.md 4. pont; results.json validation.findings V007 (ismétlődő azonosító), V012 (mértékegység), V017 (közös kontrollkar); 03_adatok/adatkinyeres.csv study_id oszlopa. A motor függő hatásméretekre nem illeszt többszintű modellt (README, Ismert korlátok) — ilyenkor validált R-csomag kell. KB: K-KHN0102-074, K-SIM24-073, K-CHE16-070, K-KHA26-074, K-SIM24-076, K-ZHA22-079, K-CHE16-069, K-BOR09-074, K-SIM24-054.",
+  "stage_id": "S08",
+  "source_ids": "khan2020,simplypsychology2024,cheung2016,kharbach2026_tools,zhang2022_jslhr,cochrane_handbook,engine,borenstein2009"
+ },
+ {
+  "item_id": "EVALUATOR-06a",
+  "checklist": "EVALUATOR",
+  "section": "A hatásmérték és az adatok érvényessége",
+  "ord": 14,
+  "text": "Ellenőrizd, hogy a hatásmérték illeszkedik a kérdéshez és az elrendezéshez (két csoport összehasonlításához RR, OR vagy RD, nem egyetlen arány; OR nem olvasható kockázatként gyakori kimenetnél); hogy a ferde eloszlású, átlag ± SD-vel közölt kimenetek és a medián/IQR-ből becsült átlagok nem torzítják-e az MD-t (érzékenységi elemzés becsült adatok nélkül, szükség esetén arány-skálán); és hogy a módszertani részletek (transzformáció, variancia-képlet, τ²-becslő, visszatranszformálás, imputált korrelációk) a kéziratban szerepelnek.",
+  "how_to_verify": "results.json effect_sizes.measure, validation.findings V013 (ferde eloszlás) és V018 (becsült értékek), az `--exclude estimated=igen` érzékenységi futás, a report.md Methods-bekezdése. KB: K-KHN09-058, K-KHN0607-012, K-KHN0304-074, K-ZHA22-079, K-KHN10-056, K-KHN0607-024.",
+  "stage_id": "S07",
+  "source_ids": "khan2020,zhang2022_jslhr,cochrane_handbook,wan2014,luo2018,engine"
+ },
+ {
+  "item_id": "EVALUATOR-07",
+  "checklist": "EVALUATOR",
+  "section": "AMSTAR 2 önellenőrzés",
+  "ord": 15,
+  "text": "A kész áttekintést beadás előtt AMSTAR 2 szerint értékeld tételenként (igen / részben igen / nem, ahol értelmezhető „nem volt metaanalízis”; indoklással és a bizonyíték helyével). A kritikus tételek (2: protokoll, 4: keresés, 7: kizárt vizsgálatok listája, 9: torzítási kockázat, 11: statisztikai módszer, 13: torzítási kockázat az értelmezésben, 15: publikációs torzítás) hiányosságát a kéziratban javítsd, vagy kifejezetten korlátként vállald. Az összbesorolás (magas / mérsékelt / alacsony / kritikusan alacsony) a kritikus hibák és a nem kritikus gyengeségek számán alapul, nem pontszámon (magas: kritikus hiba nincs, legfeljebb egy nem kritikus gyengeség; mérsékelt: több nem kritikus gyengeség; alacsony: egy kritikus hiba; kritikusan alacsony: egynél több kritikus hiba — AMSTAR2-00). Az AMSTAR 2 a végrehajtást, a PRISMA a jelentést értékeli — mindkettő kell.",
+  "how_to_verify": "`ma.py kb checklist AMSTAR2` (AMSTAR2-00 … AMSTAR2-16); naplózás: `ma.py project log <mappa> --agent evaluator --stage S13 --decision \"AMSTAR 2: <besorolás>\" --rationale \"…\" --kb AMSTAR2-00,<nem teljesült tételek>`; ha telepítve van, a validator plugin AMSTAR 2-összesítésével összevetve. Kidolgozott példa: K-MOR20-070. KB: K-MOR20-069, K-MOR20-070, K-SIM24-079, K-KHN09-059.",
+  "stage_id": "S13",
+  "source_ids": "amstar2,morvaridzadeh2020,simplypsychology2024,prisma2020,khan2020"
+ },
+ {
+  "item_id": "EVALUATOR-07a",
+  "checklist": "EVALUATOR",
+  "section": "Átláthatóság és reprodukálhatóság",
+  "ord": 16,
+  "text": "Ellenőrizd, hogy független olvasó reprodukálni tudja-e az áttekintést: regisztrált protokoll; minden forrás teljes keresési stratégiája dátummal; a szűrés és a kinyerés módja (bírálók száma, függetlenség, egyeztetés); vizsgálatonkénti hatásméretek, varianciák és konverziók; a szoftver, a verzió és minden beállítás (modell, τ²-becslő, CI-módszer, folytonossági korrekció); az adatok és a kód elérhetősége. Bármelyik hiánya gyengeség, amelyet a kéziratban pótolni kell.",
+  "how_to_verify": "00_protokoll/protokoll.md 1. pont (regisztráció); 01_kereses/kereses_naplo.md; effect_sizes.csv és results.json effect_sizes, options; a report.md Methods-bekezdése (a motor minden ténylegesen használt opciót megnevez); `ma.py project export <mappa>` (döntési és ellenőrzési napló a kiegészítő anyaghoz); PRISMA2020-13d, PRISMA2020-27. KB: K-ZHA22-077, K-SIM24-071, K-BOR09-066, K-MOR20-071, K-CHE16-070, K-CHE16-067, K-KHN1113-079, K-KHN05-079, K-BOR07-080, K-KHN0102-080, K-KHN0304-080.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,amstar2,zhang2022_jslhr,simplypsychology2024,borenstein2009,morvaridzadeh2020,cheung2016,khan2020,borenstein2007_fe_re,engine"
+ },
+ {
+  "item_id": "EVALUATOR-07b",
+  "checklist": "EVALUATOR",
+  "section": "A keresés és a kiválasztás teljessége",
+  "ord": 17,
+  "text": "Ellenőrizd, hogy a keresés teljessége bizonyított, nem feltételezett: több, a témához illő adatbázis reprodukálható stratégiával, regiszterek és szürke irodalom, hivatkozáskövetés, indokolatlan nyelvi vagy közlési korlátozás nélkül, és a keresés nem MI- vagy ajánlóeszközökre épül. A kiválasztás átlátható: a PRISMA-folyamatábra számai egyeznek, a teljes szöveg alapján kizárt vizsgálatok indokkal szerepelnek, a szűrés két független bírálóval, dokumentált egyeztetéssel történt.",
+  "how_to_verify": "01_kereses/kereses_naplo.md (adatbázisok, dátumok, teljes stratégiák, regiszterek); `ma.py prisma check --md 02_szures/prisma_folyamat.md` a folyamatábra számaira (P001–P016); 02_szures/ a kizárási okokkal. Kapcsolódó: AMSTAR2-04, AMSTAR2-05, AMSTAR2-07, PRISMA2020-16a, `ma.py kb checklist PRISMA_S`. KB: K-KHA26-025, K-SIM24-072, K-KHN0102-016, K-KHA26-044, K-KHN0102-022.",
+  "stage_id": "S03",
+  "source_ids": "amstar2,prisma2020,prisma_s,kharbach2026_tools,simplypsychology2024,khan2020"
+ },
+ {
+  "item_id": "EVALUATOR-07c",
+  "checklist": "EVALUATOR",
+  "section": "A torzítási kockázat és a kinyerés hitelessége",
+  "ord": 18,
+  "text": "Ellenőrizd, hogy a torzítási kockázatot validált, a vizsgálattípushoz illő eszközzel, két független értékelő rögzítette — nem idézettségi mutatók, térképpozíció vagy MI-egyetértés alapján —, és az ítéletet ténylegesen felhasználták (érzékenységi elemzés, GRADE), nem csak táblázatba tették. A kinyert adatok szúrópróbaszerű mintája egyezik az eredeti közleményekkel, és az MI-vel vagy gépi fordítással kinyert adatot ember ellenőrizte.",
+  "how_to_verify": "04_torzitas_kockazat/rob.csv (eszkoz, ertekelo1, ertekelo2, egyeztetes oszlopok); a `--exclude rob=high` futás és a GRADE-03 indoklása; a ma-ellenorzo S05 checkpointjának forrás-visszaellenőrzése (`ma.py project list <mappa> checkpoints`). Kapcsolódó: AMSTAR2-09, AMSTAR2-12, AMSTAR2-13. KB: K-ZHA22-031, K-KHA26-064, K-KHN0102-035, K-BOR09-069, K-KHA26-059, K-KHA26-060.",
+  "stage_id": "S06",
+  "source_ids": "rob2,robins_i,amstar2,cochrane_handbook,zhang2022_jslhr,kharbach2026_tools,khan2020,borenstein2009"
+ },
+ {
+  "item_id": "EVALUATOR-08",
+  "checklist": "EVALUATOR",
+  "section": "Predikciós modellek – átadás PROBAST+AI / TRIPOD+AI felé",
+  "ord": 19,
+  "text": "Ha az áttekintés diagnosztikus vagy prognosztikus predikciós modellek (regressziós vagy MI / gépi tanulásos algoritmusok) fejlesztését, validálását vagy teljesítményét vizsgálja, jelezd az orkesztrátornak, hogy: a torzítási kockázatot és az alkalmazhatóságot PROBAST+AI szerint kell értékelni (a probast-tripod-ai skill vagy a validator plugin prediction-model folyamata); a jelentést TRIPOD+AI / TRIPOD-SRMA szerint kell ellenőrizni; a motor teljesítménymutatókra (diszkrimináció, kalibráció) csak általános inverz-variancia összesítést ad (GEN: előre transzformált becslés + SE), a mutatók transzformációját és a hiányzó SE-k pótlását a motoron kívül, dokumentáltan kell elvégezni; a diagnosztikus pontosság bivariáns modelljét a motor nem támogatja (README, Ismert korlátok), ahhoz validált R-csomag kell. A GRADE-domének ilyenkor is érvényesek: a PROBAST+AI torzítási ítélete a torzítási kockázat, az alkalmazhatósági ítélete az indirektség doménjébe kerül.",
+  "how_to_verify": "00_protokoll/protokoll.md 3. pont (vizsgálattípus) és 8. pont (eszköz: PROBAST+AI); 04_torzitas_kockazat/rob.csv „eszkoz” oszlopa; az orkesztrátornak adott válasz „Nyitott kérdések” része tartalmazza az átadást; naplózás: `ma.py project log <mappa> --agent evaluator --stage S13 --decision \"Predikciós modell: PROBAST+AI / TRIPOD+AI átadás\" --kb EVALUATOR-08`. A tudásbázis forrásai a predikciós modelleket nem tárgyalják, ezért ehhez kitalált hivatkozás vagy szabály-ID nem adható.",
+  "stage_id": "S13",
+  "source_ids": "engine,grade_handbook"
+ },
+ {
+  "item_id": "EVALUATOR-09",
+  "checklist": "EVALUATOR",
+  "section": "Korlátok – a bevont bizonyítékok korlátai",
+  "ord": 20,
+  "text": "A Limitations rész kimenetenként tárgyalja a bevont bizonyítékok korlátait a GRADE-doménekkel összhangban: torzítási kockázat, inkonzisztencia, indirektség (alkalmazhatóság, földrajzi vagy populációs koncentráció), pontatlanság, publikációs torzítás, valamint a becsült adatok és a kevés vizsgálat. Minden SoF-lábjegyzetben szereplő leminősítési ok jelenjen meg itt is, és fordítva: a Limitationsben említett súlyos korlát legyen összhangban a GRADE-ítélettel. Nevezd meg, honnan származik a bizonyíték (országok, nemek, ellátási szint).",
+  "how_to_verify": "06_kezirat/ Discussion – Limitations ↔ 06_kezirat/grade_sof.md lábjegyzetei ↔ `ma.py project list <mappa> grades`; PRISMA2020-23b. KB: K-MOR20-063, K-MOR20-072, K-KHA26-073, K-KHN0102-070, K-KHN0102-075.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,cochrane_handbook,grade_handbook,morvaridzadeh2020,kharbach2026_tools,khan2020"
+ },
+ {
+  "item_id": "EVALUATOR-09a",
+  "checklist": "EVALUATOR",
+  "section": "Korlátok – az áttekintés folyamatának korlátai",
+  "ord": 21,
+  "text": "A Limitations rész az áttekintés saját korlátait is tárgyalja: keresési korlátozások (adatbázisok, nyelv, időszak, nem közölt vizsgálatok), egy bírálóval végzett lépések, a protokolltól való eltérések és okaik, a konverziók és imputálások feltevései, a szerzői megkeresések eredménye, módszertani korlátok (pl. kevés vizsgálat miatt bizonytalan τ², a motor által nem támogatott módszerek), valamint az MI-eszközök használata és ellenőrzésük módja.",
+  "how_to_verify": "00_protokoll/protokoll.md 11. pont (eltérések táblázata) és `ma.py project list <mappa> decisions`; 01_kereses/kereses_naplo.md korlátozásai; results.json validation.findings V018 (becsült értékek); a Methods MI-használati nyilatkozata; PRISMA2020-23c, PRISMA2020-24c. KB: K-KHA26-082, K-KHA26-060, K-KHN0102-014, K-SIM24-072, K-KHN0102-016.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,cochrane_handbook,kharbach2026_tools,khan2020,simplypsychology2024"
+ },
+ {
+  "item_id": "EVALUATOR-10",
+  "checklist": "EVALUATOR",
+  "section": "Következmények a gyakorlatra és a kutatásra",
+  "ord": 22,
+  "text": "A Discussion különítse el a gyakorlatra és a kutatásra vonatkozó következményeket, ajánlás megfogalmazása nélkül. A kutatási következmény nevezze meg, milyen vizsgálat szüntetné meg a fő bizonytalanságot: melyik GRADE-domén miatt alacsony a bizonyosság, és milyen populáció, kimenet vagy követési idő hiányzik.",
+  "how_to_verify": "06_kezirat/ Discussion „Implications for practice / research” része, összevetve a GRADE-leminősítések okaival (`ma.py project list <mappa> grades`); PRISMA2020-23d. KB: K-BOR09-065, K-MOR20-068.",
+  "stage_id": "S14",
+  "source_ids": "cochrane_handbook,grade_handbook,prisma2020,borenstein2009,morvaridzadeh2020"
+ },
+ {
+  "item_id": "EVALUATOR-11",
+  "checklist": "EVALUATOR",
+  "section": "MI-eszközök és hivatkozások ellenőrzése",
+  "ord": 23,
+  "text": "Ellenőrizd, hogy a következtetések és a bizonyosság-állítások nem MI-eszköz szintéziséből vagy egyetértési mutatójából származnak, hanem az ellenőrzött primer vizsgálatokból és a formális elemzésből, és hogy a kézirat nyilvánosságra hozza az MI-eszközök használatát. A kéziratban szereplő minden hivatkozás (MCID- és alapkockázat-forrás, összevetett áttekintések és vizsgálatok) ellenőrzött (PubMed/DOI); ha az ellenőrzés nem volt lehetséges, ezt rögzíteni kell.",
+  "how_to_verify": "A Methods MI-nyilatkozata; a Discussion hivatkozásai PubMed MCP-vel vagy DOI-val ellenőrizve, az ellenőrzés eredménye a projektnaplóban (`ma.py project log <mappa> --agent evaluator --decision \"hivatkozás-ellenőrzés: …\"`). KB: K-KHA26-072, K-KHA26-082.",
+  "stage_id": "S14",
+  "source_ids": "kharbach2026_tools,grade_handbook,prisma2020"
+ },
+ {
+  "item_id": "EVALUATOR-12",
+  "checklist": "EVALUATOR",
+  "section": "Átadás az orkesztrátornak és naplózás",
+  "ord": 24,
+  "text": "Az értékelés végén az orkesztrátornak adott válasz szerkezete: összefoglaló (kimenetenként egy sor: hatás és bizonyosság), SoF-táblázat, a leminősítések indoklása, javasolt angol következtetés-mondatok, AMSTAR 2-összesítés, nyitott kérdések és hiányzó adatok. Minden kimenet GRADE-ítélete `project grade`-del, minden további döntés `project log`-gal rögzítve, csak létező tudásbázis-azonosítókkal; a feltárt hiányosságok a ma-ellenorzo végső ellenőrzése elé kerülnek.",
+  "how_to_verify": "`ma.py project list <mappa> grades` (minden SoF-kimenet szerepel); `ma.py project list <mappa> decisions` (evaluator-bejegyzések --kb azonosítókkal; a `--strict` kapcsolóval az ismeretlen ID hiba); `ma.py project list <mappa> findings`; ezután a ma-ellenorzo final módja fut.",
+  "stage_id": "S13",
+  "source_ids": "engine,grade_handbook,guyatt2011"
+ }
+]

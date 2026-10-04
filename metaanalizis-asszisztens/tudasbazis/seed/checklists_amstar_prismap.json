@@ -1,0 +1,432 @@
+[
+ {
+  "item_id": "AMSTAR2-00",
+  "checklist": "AMSTAR2",
+  "section": "Összesített minősítés",
+  "ord": 0,
+  "text": "Az AMSTAR 2 nem ad pontszámot: a 16 tételt egyenként ítéld meg (igen / nem; a 2., 4., 7., 8. és 9. tételnél „részben igen” is adható; a 11., 12. és 15. tételnél „nem volt metaanalízis” is lehetséges), majd az áttekintés eredményeibe vetett bizalmat a gyengeségek súlya alapján sorold be. Kritikus tételek: 2, 4, 7, 9, 11, 13, 15 (a többi nem kritikus tétel). Besorolás: magas — kritikus hiba nincs, legfeljebb egy nem kritikus gyengeség; mérsékelt — kritikus hiba nincs, de egynél több nem kritikus gyengeség (sok ilyen gyengeség együtt indokolhatja az alacsony besorolást); alacsony — egy kritikus hiba, nem kritikus gyengeségekkel vagy azok nélkül; kritikusan alacsony — egynél több kritikus hiba, nem kritikus gyengeségekkel vagy azok nélkül. Az „igen” válaszok összeszámolása vagy összpontszám képzése nem megengedett.",
+  "how_to_verify": "A ma-ertekelo a `ma.py kb checklist AMSTAR2` tételein megy végig, és mindegyikhez rögzíti az ítéletet (igen / részben igen / nem / nem volt metaanalízis), az indoklást és a bizonyíték helyét (fájl, results.json mező, kéziratrész). Projektkonvenció: kritikus tételnél a „nem” kritikus hiba, egyéb tételnél nem kritikus gyengeség; a „részben igen” nem számít hibának, de indokold, és jelezd, változna-e a besorolás, ha hibának számítanád. Az összbesorolást a kritikus hibák és a nem kritikus gyengeségek száma adja, nem pontszám; ha a projekt a 7 kritikus tételtől eltérne, azt előre, indoklással rögzítsd. Naplózás: `ma.py project log <mappa> --agent evaluator --stage S13 --decision \"AMSTAR 2: <besorolás>\" --rationale \"…\" --kb AMSTAR2-00,<a nem teljesült tételek ID-i>`. Ha telepítve van a validator plugin: `appraise.py --skeleton amstar2` → kitöltés → `--verify` → `--rollup`, és vesd össze a saját besorolással. Kidolgozott példa: K-MOR20-070 (egy kritikus hiba → alacsony, több → kritikusan alacsony); a tételek összefoglalása: K-MOR20-069; kapcsolódó szabály: D-S02-019.",
+  "stage_id": "S13",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-01",
+  "checklist": "AMSTAR2",
+  "section": "PICO-elemek (egyéb tétel)",
+  "ord": 1,
+  "text": "A kutatási kérdés és a beválasztási kritériumok kifejezetten tartalmazzák a PICO minden elemét: populáció, beavatkozás, összehasonlító (kontroll) és kimenet. Ajánlott a követési időtartam megadása is.",
+  "how_to_verify": "protokoll.md 3. pont PICO-táblázata minden sorban kitöltött (a kimenetnél definíció, mérőeszköz, időpont), a 4. pont kritériumai ezzel ellentmondásmentesek, és ugyanez szerepel a kézirat Introduction/Methods részében. KB: K-MOR20-004, K-KHN0102-008. Kapcsolódó szabály: D-S01-015, D-S01-001.",
+  "stage_id": "S01",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-02",
+  "checklist": "AMSTAR2",
+  "section": "Előre rögzített protokoll (kritikus tétel)",
+  "ord": 2,
+  "text": "Az áttekintés kifejezetten kijelenti, hogy módszereit a végrehajtás előtt rögzítették, és minden lényeges eltérést indokol. Részben igen: létezik írásos protokoll, amely tartalmazza a kérdés(eke)t, a keresési stratégiát, a be- és kizárási kritériumokat és a torzításikockázat-értékelés módját. Igen: ezen felül a protokollt regisztrálták, és rögzítette a metaanalízis/szintézis tervét (ha releváns) és a heterogenitás okainak vizsgálati tervét, a jelentés pedig minden protokolleltérést indokol.",
+  "how_to_verify": "protokoll.md 1–10. pontja kitöltött, a jóváhagyott változat dátuma megelőzi a keresést; a regisztrációs azonosító és dátum a protokoll.md 1. pontjában (PROSPERO/OSF), a regisztráció megelőzi a szűrést; a 9. pont tartalmazza a szintézis- és a heterogenitás-vizsgálati tervet; minden eltérés a 11. pont táblázatában dátummal, indoklással és döntés-ID-vel (`ma.py project list <mappa> decisions`); a protokoll-checkpoint PASS (`ma.py project list <mappa> checkpoints`). A protokoll teljessége: `ma.py kb checklist PRISMA_P`. KB: K-MOR20-006, K-MOR20-007, K-SIM24-012, K-ZHA22-012, K-CHE16-010. Kapcsolódó szabály: D-S02-019, D-S02-002.",
+  "stage_id": "S02",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-03",
+  "checklist": "AMSTAR2",
+  "section": "A bevont vizsgálattípusok indoklása (egyéb tétel)",
+  "ord": 3,
+  "text": "A szerzők megindokolják, miért éppen az adott vizsgálati elrendezéseket vonták be: csak randomizált kontrollált vizsgálatot (RCT), csak nem randomizált beavatkozásos vizsgálatot (NRSI), vagy mindkettőt.",
+  "how_to_verify": "protokoll.md 3. pont („Vizsgálattípusok (S)”) és 4. pont („Vizsgálattípus”) mellett írásos indoklás (pl. miért elegendő az RCT-evidencia, vagy miért kellenek nem randomizált adatok ritka ártalmakhoz, hosszú követéshez) ↔ a kézirat Methods része. KB: K-KHN0102-009, K-SIM24-009, K-BOR09-015. Kapcsolódó szabály: D-S01-015, D-S01-006.",
+  "stage_id": "S02",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-04",
+  "checklist": "AMSTAR2",
+  "section": "Átfogó irodalomkeresés (kritikus tétel)",
+  "ord": 4,
+  "text": "A keresési stratégia átfogó. Részben igen: legalább két, a kérdéshez illő bibliográfiai adatbázisban kerestek; közölték a kulcsszavakat és/vagy a keresési stratégiát; a közlési korlátozásokat (pl. nyelv) indokolták. Igen: ezen felül átnézték a bevont vizsgálatok irodalomjegyzékét, vizsgálati regisztereket is átkerestek, szakértőket vontak be vagy kerestek meg, ahol releváns, szürke irodalmat is kerestek, és a keresés az áttekintés befejezése előtti 24 hónapon belül történt.",
+  "how_to_verify": "01_kereses/kereses_naplo.md: legalább két, a kérdéshez illő bibliográfiai adatbázis, továbbá ClinicalTrials.gov és WHO ICTRP külön sorban, keresési dátummal; a teljes keresőstring legalább egy adatbázisra a kiegészítő anyagban (01_kereses/strategia_*.txt); a hivatkozás-követés sora kitöltött, a szürke irodalom (a sablonban nincs külön sora — vedd fel) és a szakértők megkeresése dokumentált; nyelvi vagy közlési korlátozás csak indoklással (protokoll.md 4. pont); az utolsó keresés dátuma az áttekintés befejezése előtti 24 hónapon belül van (a Cochrane MECIR szigorúbb, 12 hónapos elvárását érdemes célozni — K-KHA26-019, D-S03-018). Részletes ellenőrzés: `ma.py kb checklist PRISMA_S`. KB: K-KHA26-022, K-SIM24-022, K-KHN1113-003, K-SIM24-011, K-KHN0102-016; kapcsolódó szabály: D-S03-021.",
+  "stage_id": "S03",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-05",
+  "checklist": "AMSTAR2",
+  "section": "Kettős vizsgálatkiválasztás (egyéb tétel)",
+  "ord": 5,
+  "text": "A vizsgálatok kiválasztása kettős: legalább két bíráló egymástól függetlenül döntött a beválasztásról, és az eltéréseket konszenzussal rendezte; elfogadható az is, ha két bíráló egy mintán jó egyetértést (legalább 80%) ért el, és a maradékot egy bíráló szűrte.",
+  "how_to_verify": "protokoll.md 6. pont; a szűrőszoftver (Rayyan/Covidence) exportjában minden rekordnál két, vakon hozott független döntés és az ütközések feloldása; naplózva: `ma.py project list <mappa> decisions --stage S04`. A projekt elvárása a teljes kettős szűrés; a mintavételes változat csak indokolt kivétel. KB: K-KHA26-038, K-SIM24-028, K-KHN0102-021. Kapcsolódó szabály: D-S04-014, D-S04-003.",
+  "stage_id": "S04",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-06",
+  "checklist": "AMSTAR2",
+  "section": "Kettős adatkinyerés (egyéb tétel)",
+  "ord": 6,
+  "text": "Az adatkinyerés kettős: legalább két bíráló konszenzusra jutott a kinyert adatokban; elfogadható az is, ha két bíráló egy mintán jó egyetértést (legalább 80%) ért el, és a maradékot egy bíráló nyerte ki.",
+  "how_to_verify": "protokoll.md 7. pont; a 03_adatok/adatkinyeres.csv „forras_oldal” oszlopa minden sorban kitöltött; a két kinyerő eltéréseinek egyeztetése naplózva (`ma.py project list <mappa> decisions --stage S05`); `ma.py validate --data 03_adatok/adatkinyeres.csv --measure <M>` lefutott, és a ma-ellenorzo S05 szúrópróbája (a vizsgálatok ≥ 20%-a és minden V011–V014 jelzés) megtörtént. KB: K-KHN0102-024, K-SIM24-032, K-ZHA22-021. Kapcsolódó szabály: D-S05-001.",
+  "stage_id": "S05",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-07",
+  "checklist": "AMSTAR2",
+  "section": "Kizárt vizsgálatok listája és indoklása (kritikus tétel)",
+  "ord": 7,
+  "text": "A szerzők felsorolják a teljes szövegben értékelt, de kizárt, potenciálisan releváns vizsgálatokat (részben igen), és mindegyik kizárását konkrét okkal indokolják (igen).",
+  "how_to_verify": "Kiegészítő táblázat a teljes szövegben kizárt közleményekről, mindegyiknél egy konkrét okkal (a szűrőszoftver exportjából); az okonkénti darabszámok összege egyezik a 02_szures/prisma_folyamat.md H sorával; a dobozszámok konzisztenciája: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md`. KB: K-KHA26-041, K-KHA26-042, K-MOR20-070. Kapcsolódó szabály: D-S04-008, D-S04-014.",
+  "stage_id": "S04",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-08",
+  "checklist": "AMSTAR2",
+  "section": "A bevont vizsgálatok leírása (egyéb tétel)",
+  "ord": 8,
+  "text": "A bevont vizsgálatok kellő részletességgel vannak leírva. Részben igen: megadták a populációt, a beavatkozást, az összehasonlítót, a kimeneteket és a vizsgálati elrendezést. Igen: ezen felül részletesen jellemezték a populációt, a beavatkozást (releváns esetben a dózist is) és az összehasonlítót, valamint a vizsgálat helyszínét/környezetét és a követési időt.",
+  "how_to_verify": "A kézirat „Characteristics of included studies” táblázata (06_kezirat/) vizsgálatonként: elrendezés, ország/környezet, populáció (n, életkor, nem, diagnózis), beavatkozás (dózis, időtartam), összehasonlító, kimenet és mérési időpont; forrása a 03_adatok/adatkinyeres.csv; a vizsgálat- és résztvevőszám egyezik a results.json totals blokkjával. KB: K-SIM24-030, K-MOR20-082, K-MOR20-020.",
+  "stage_id": "S05",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-09",
+  "checklist": "AMSTAR2",
+  "section": "Torzításikockázat-értékelés módszere (kritikus tétel)",
+  "ord": 9,
+  "text": "Kielégítő módszerrel értékelték az egyes bevont vizsgálatok torzítási kockázatát (RCT-re és NRSI-re külön ítélve). RCT — részben igen: a nem rejtett besorolás, valamint a betegek és a kimenetet értékelők vakításának hiánya (objektív kimenetnél, pl. összhalálozás, a vakítás nem szükséges); igen: ezen felül a nem valódi véletlen besorolási szekvencia és a közölt eredmény szelektív kiválasztása több mérés vagy elemzés közül. NRSI — részben igen: zavaró tényezők és szelekciós torzítás; igen: ezen felül az expozíció és a kimenetek megállapításának módszerei, valamint a közölt eredmény szelektív kiválasztása több mérés vagy elemzés közül.",
+  "how_to_verify": "protokoll.md 8. pont (eszköz és indoklás a vizsgálattípus szerint: RCT → RoB 2, nem randomizált beavatkozásos → ROBINS-I) ↔ 04_torzitas_kockazat/rob.csv: az „eszkoz” illik az elrendezéshez, minden domén kitöltve indoklással, az „ertekelo1”, „ertekelo2” és „egyeztetes” oszlop kitöltött; összpontszámos skála (pl. NOS-összpontszám, Jadad) nem helyettesíti a doménalapú ítéletet. KB: K-SIM24-039, K-SIM24-035, K-ZHA22-029; kapcsolódó szabály: D-S06-001, D-S06-005.",
+  "stage_id": "S06",
+  "source_ids": "amstar2,rob2,robins_i"
+ },
+ {
+  "item_id": "AMSTAR2-10",
+  "checklist": "AMSTAR2",
+  "section": "A bevont vizsgálatok finanszírozása (egyéb tétel)",
+  "ord": 10,
+  "text": "Az áttekintés közli a bevont vizsgálatok finanszírozási forrásait; az is megfelel, ha a szerzők jelzik, hogy keresték ezt az információt, de az eredeti közlemények nem tartalmazták.",
+  "how_to_verify": "A kinyerésben vizsgálatonként rögzített finanszírozás (ipari / állami / nonprofit / „nem közölt”) — az adatkinyero_sablon.csv-ben nincs ilyen oszlop, ezért vegyél fel egyet (pl. „finanszirozas”), vagy a „megjegyzes” oszlopban rögzítsd —, és jelenjen meg a kézirat jellemzők-táblázatában. KB: K-SIM24-036, K-SIM24-030, K-MOR20-070. Kapcsolódó szabály: D-S05-029.",
+  "stage_id": "S05",
+  "source_ids": "amstar2"
+ },
+ {
+  "item_id": "AMSTAR2-11",
+  "checklist": "AMSTAR2",
+  "section": "A statisztikai összevonás módszere (kritikus tétel)",
+  "ord": 11,
+  "text": "Ha volt metaanalízis, az eredmények statisztikai összevonása megfelelő módszerrel történt. RCT-knél: indokolták az összevonást; megfelelő súlyozott módszert használtak, amely a heterogenitással is számol; vizsgálták a heterogenitás okait. NRSI-nél ezen felül: zavaró tényezőkre korrigált hatásbecsléseket vontak össze (nyers adatokat csak indoklással, ha korrigált becslés nincs), és RCT-re és NRSI-re külön összesített becslést adtak, ha mindkettő szerepelt.",
+  "how_to_verify": "protokoll.md 9. pont és 00_protokoll/elemzesi_terv.md (előre rögzített modell) ↔ results.json options.model, primary.tau2_method, primary.ci_method, primary.pi_method; a többkarú, keresztezett és klaszter-randomizált vizsgálatok kezelése dokumentált (V017 közös kontroll; `ma.py convert combine`); RCT + NRSI esetén elrendezésenként külön összesített becslés (`--subgroup` az elrendezés oszlopával, vagy külön futás `--include` / `--exclude` szűrővel). Jelenlegi konszenzus (Cochrane Handbook v6.5): a „heterogenitáshoz igazítás” nem jelenti a modell Q-teszt vagy I²-küszöb szerinti megválasztását — a modellt előre, fogalmi alapon rögzítik; a DerSimonian–Laird nem alapértelmezés (REML vagy PM τ², HKSJ-CI — kis k mellett óvatosan, q < 1 esetén `--ci hksj_adhoc` érzékenységként —, predikciós intervallum); a feltöltött forrásokban favorizált IVhet legfeljebb érzékenységi elemzés. KB: K-KHN0304-030, K-BOR09-041, K-CHE16-038, K-KHN0102-002, K-MOR20-021, K-MOR20-034, K-ZHA22-024; kapcsolódó szabály: D-S08-001, D-S08-023, D-S08-025.",
+  "stage_id": "S08",
+  "source_ids": "amstar2,cochrane_handbook"
+ },
+ {
+  "item_id": "AMSTAR2-12",
+  "checklist": "AMSTAR2",
+  "section": "A torzítási kockázat hatása a metaanalízisre (egyéb tétel)",
+  "ord": 12,
+  "text": "Ha volt metaanalízis, a szerzők megvizsgálták, hogyan befolyásolja az egyes vizsgálatok torzítási kockázata az összesített eredményt: vagy csak alacsony kockázatú RCT-ket vontak be, vagy változó kockázatú RCT-k és/vagy NRSI-k esetén elemzéssel (pl. érzékenységi vagy alcsoport-elemzés a torzítási kockázat szerint) mutatták meg a hatást.",
+  "how_to_verify": "Előre tervezett érzékenységi futás: `ma.py analyze --data 03_adatok/adatkinyeres.csv --measure <M> --exclude rob=high --out <mappa>/05_elemzes/<kimenet>_rob` (results.json input.filters), a fő futással összevetve a becslés és a CI változását; az adatkinyeres.csv „rob” oszlopa egyezik a rob.csv „osszesitett” oszlopával (kimenetenként). Pontszámos minőségsúlyozás (quality-effects modell) vagy egy alulerőzött minőség-moderátor teszt ezt nem helyettesíti (K-CHE16-023, K-KHN0102-002). KB: K-MOR20-062, K-KHN0102-033, K-SIM24-038; kapcsolódó szabály: D-S12-002, D-S06-008.",
+  "stage_id": "S12",
+  "source_ids": "amstar2,cochrane_handbook"
+ },
+ {
+  "item_id": "AMSTAR2-13",
+  "checklist": "AMSTAR2",
+  "section": "A torzítási kockázat az értelmezésben (kritikus tétel)",
+  "ord": 13,
+  "text": "Az eredmények értelmezésekor és megvitatásakor a szerzők számolnak az egyes vizsgálatok torzítási kockázatával: ha csak alacsony kockázatú RCT-k szerepeltek, ez teljesül; ha közepes vagy magas kockázatú RCT-k, illetve NRSI-k is, a megbeszélés kitér arra, hogyan befolyásolhatja ez az eredményeket.",
+  "how_to_verify": "A GRADE torzítási kockázat doménje kimenetenként indokolva (`ma.py project list <mappa> grades`), a 06_kezirat/grade_sof.md lábjegyzetei, és a kézirat Discussion/Limitations része kifejezetten tárgyalja a torzítási kockázat hatását (a 12. tétel érzékenységi eredményére hivatkozva); a következtetés erőssége a GRADE-nyelvezetet követi. KB: K-MOR20-066, K-MOR20-062, K-MOR20-068, K-KHN0102-035.",
+  "stage_id": "S13",
+  "source_ids": "amstar2,grade_handbook"
+ },
+ {
+  "item_id": "AMSTAR2-14",
+  "checklist": "AMSTAR2",
+  "section": "A heterogenitás magyarázata (egyéb tétel)",
+  "ord": 14,
+  "text": "A szerzők kielégítően magyarázzák és megvitatják az eredmények heterogenitását: ha érdemi heterogenitás nem volt, ez teljesül; ha volt, megvizsgálták a lehetséges forrásait, és megvitatták, hogyan érinti az áttekintés eredményeit.",
+  "how_to_verify": "Az „érdemi heterogenitás” nem a Q-teszt p-értékéből vagy merev I²-küszöbből ítélendő (jelenlegi konszenzus, Cochrane Handbook v6.5), hanem results.json primary.tau2, primary.heterogeneity.I2_ci_QP (az I² CI-je), primary.pi_lower / primary.pi_upper (predikciós intervallum) és a forest plot szórása alapján. Ha van: előre tervezett alcsoport vagy meta-regresszió (results.json subgroups.Q_between, subgroups.p_between; metaregression.QM, metaregression.QM_p, metaregression.R2), meta-regresszió csak kb. ≥ 10 vizsgálat/moderátor mellett; az alcsoport-különbséget a formális különbségteszt mutatja, nem az alcsoportonkénti p-értékek összevetése, hitelessége az ICEMAN szerint ítélhető; az utólagos moderátor csak feltáró. A Discussion tárgyalja a megmagyarázatlan heterogenitás következményét. KB: K-KHN0102-086, K-CHE16-051, K-SIM24-074, K-KHN1113-029, K-ZHA22-055; kapcsolódó szabály: D-S09-009, D-S10-001.",
+  "stage_id": "S09",
+  "source_ids": "amstar2,cochrane_handbook,inthout2016,iceman2020"
+ },
+ {
+  "item_id": "AMSTAR2-15",
+  "checklist": "AMSTAR2",
+  "section": "Publikációs torzítás (kritikus tétel)",
+  "ord": 15,
+  "text": "Ha volt kvantitatív szintézis, a szerzők megfelelően vizsgálták a publikációs (kis-vizsgálat) torzítást grafikus vagy statisztikai módszerrel, és megvitatták, mennyire valószínű és mekkora hatású lehet az eredményekre.",
+  "how_to_verify": "Jelenlegi konszenzus (Cochrane Handbook v6.5; Sterne 2011): k ≥ 10 esetén kontúr-javított funnel (funnel.svg) és a mértékhez illő, előre rögzített teszt (folytonos MD: Egger; bináris OR: Harbord vagy Peters; SMD-nél az Egger álpozitív lehet — D-S11-005; egycsoportos aránynál nem végzendő — D-S11-008) — results.json bias.performed, bias.k, bias.min_k_recommended, bias.egger / bias.harbord / bias.peters. Az aszimmetria kis-vizsgálat hatás, nem bizonyított publikációs torzítás: valódi heterogenitás, a kis vizsgálatok rosszabb minősége vagy a véletlen is okozhatja (D-S11-009). k < 10 esetén a tesztek nem ajánlottak, mert erejük túl kicsi (a motor bias.note mezője jelzi; D-S11-001): ilyenkor a regiszterkeresés (regisztrált, nem közölt vizsgálatok), a szelektív kimenetközlés és a finanszírozás alapján strukturált ítélet kell (D-S11-018). A fail-safe N nem elfogadható; a trim-and-fill csak érzékenységi elemzés; a Doi-plot/LFK nem helyettesíti a fentieket. A Discussion és a GRADE publikációs torzítás doménje (`ma.py project list <mappa> grades`) tárgyalja a torzítás valószínűségét és várható hatását. KB: K-KHN1113-055, K-KHN1113-067, K-BOR09-059, K-KHN1113-074, K-KHN1113-003, K-CHE16-069; kapcsolódó szabály: D-S11-021.",
+  "stage_id": "S11",
+  "source_ids": "amstar2,sterne2011,peters2008,cochrane_handbook"
+ },
+ {
+  "item_id": "AMSTAR2-16",
+  "checklist": "AMSTAR2",
+  "section": "Az áttekintés összeférhetetlensége és finanszírozása (egyéb tétel)",
+  "ord": 16,
+  "text": "A szerzők beszámolnak minden lehetséges összeférhetetlenségről, az áttekintés elkészítéséhez kapott finanszírozást is beleértve: vagy kijelentik, hogy nincs versengő érdekeltségük, vagy leírják a finanszírozás forrásait és a lehetséges összeférhetetlenség kezelésének módját.",
+  "how_to_verify": "protokoll.md 1. pont „Finanszírozás, összeférhetetlenség” ↔ a kézirat Funding és Competing interests nyilatkozata (06_kezirat/), minden szerzőre kiterjedően; ha egy szerző bevont vizsgálat szerzője vagy ipari kapcsolata van, a kezelés módja leírva (pl. nem ő értékelte a saját vizsgálatát). Kapcsolódó jelentési tételek: `ma.py kb show PRISMA2020-25`, `ma.py kb show PRISMA2020-26`.",
+  "stage_id": "S14",
+  "source_ids": "amstar2,prisma2020"
+ },
+ {
+  "item_id": "PRISMA_P-01a",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Cím: azonosítás",
+  "ord": 1,
+  "text": "A cím jelezze, hogy a dokumentum egy szisztematikus áttekintés protokollja (ha metaanalízis is tervezett, érdemes ezt is feltüntetni).",
+  "how_to_verify": "protokoll.md 1. pont „Cím (angol)”: tartalmazza pl. a „protocol for a systematic review (and meta-analysis)” fordulatot; ugyanez áll a PROSPERO/OSF-rekord címében.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-01b",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Cím: frissítés",
+  "ord": 2,
+  "text": "Ha a protokoll egy korábbi szisztematikus áttekintés frissítésére készül, ezt jelezd.",
+  "how_to_verify": "protokoll.md 1. pont címe és 2. pontja (duplikáció-ellenőrzés): frissítésnél a korábbi áttekintés PubMed/DOI alapján ellenőrzött hivatkozása és a frissítés indoka; ha nem frissítés, a tétel nem alkalmazandó (ezt rögzítsd). KB: K-KHN0102-008.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-02",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Regisztráció",
+  "ord": 3,
+  "text": "Ha a protokollt regisztráltad, add meg a regiszter nevét (pl. PROSPERO, OSF) és a regisztrációs számot. A projekt elvárása a szűrés megkezdése előtti, prospektív regisztráció: az AMSTAR 2 2. tételének „igen” szintje regisztrált protokollt kíván, a PRISMA 2020 24a pedig a kész áttekintésben a regisztrációs adatok (vagy a regisztráció hiányának) közlését kéri.",
+  "how_to_verify": "protokoll.md 1. pont „Regisztráció (PROSPERO/OSF azonosító, dátum)” kitöltve; a regisztráció dátuma megelőzi az első szűrési döntést (`ma.py project list <mappa> decisions --stage S04`); ha nincs regisztráció, az indoka rögzítve. KB: K-MOR20-006, K-MOR20-007, K-ZHA22-012, K-KHN0102-010. Kapcsolódó szabály: D-S02-002.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p,prisma2020,amstar2"
+ },
+ {
+  "item_id": "PRISMA_P-03a",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Szerzők: elérhetőség",
+  "ord": 4,
+  "text": "Add meg minden protokollszerző nevét, intézményi hovatartozását és e-mail-címét, a levelező szerzőnek a postai címét is.",
+  "how_to_verify": "protokoll.md 1. pont „Szerzők, szerepek”: minden szerzőnél név, intézmény, e-mail; a levelező szerző postai címe (ha a sablonból hiányzik, egészítsd ki); egyezik a regisztrációs rekorddal.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-03b",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Szerzők: hozzájárulás",
+  "ord": 5,
+  "text": "Írd le, mivel járult hozzá az egyes szerzők a protokollhoz, és nevezd meg az áttekintés garanciavállalóját (guarantor).",
+  "how_to_verify": "protokoll.md 1. pont: a szerepek név szerint (két független szűrő, két független kinyerő, két torzításikockázat-értékelő, statisztikus, keresési szakember) és a garanciavállaló; a szerepek lefedik az AMSTAR 2 kettős munkát igénylő tételeit (`ma.py kb show AMSTAR2-05`, `AMSTAR2-06`, `AMSTAR2-09`). KB: K-KHN0102-021. Kapcsolódó szabály: D-S00-009.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-04",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Módosítások",
+  "ord": 6,
+  "text": "Ha a protokoll egy korábban elkészült vagy közölt protokoll módosítása, jelezd ezt, és sorold fel a változásokat; ha nem az, írd le, hogyan fogod dokumentálni a lényeges protokollmódosításokat.",
+  "how_to_verify": "protokoll.md 11. pont „Módosítások a protokollhoz képest” táblázata (dátum, módosítás, indoklás, döntés-ID) létezik, és minden módosítás a projektnaplóban is szerepel (`ma.py project list <mappa> decisions`); a regisztrációs rekord frissítése tervezett. KB: K-MOR20-007. Kapcsolódó szabály: D-S02-017.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-05a",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Támogatás: források",
+  "ord": 7,
+  "text": "Nevezd meg az áttekintés anyagi és egyéb támogatásának forrásait.",
+  "how_to_verify": "protokoll.md 1. pont „Finanszírozás, összeférhetetlenség”: a támogatás forrása (vagy annak kijelentése, hogy nem volt).",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-05b",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Támogatás: szponzor",
+  "ord": 8,
+  "text": "Add meg az áttekintés finanszírozójának és/vagy szponzorának nevét.",
+  "how_to_verify": "protokoll.md 1. pont: a finanszírozó/szponzor neve (pályázati azonosítóval, ha van); később egyezik a kézirat Funding-nyilatkozatával (`ma.py kb show PRISMA2020-25`).",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-05c",
+  "checklist": "PRISMA_P",
+  "section": "Adminisztratív adatok – Támogatás: a szponzor szerepe",
+  "ord": 9,
+  "text": "Írd le, milyen szerepe volt — ha volt — a finanszírozó(k)nak, a szponzor(ok)nak és/vagy az intézmény(ek)nek a protokoll kidolgozásában.",
+  "how_to_verify": "protokoll.md 1. pont: a finanszírozó szerepe kifejezetten megnevezve, vagy kijelentve, hogy nem volt; a szerzők összeférhetetlenségi nyilatkozata ugyanitt (`ma.py kb show AMSTAR2-16`).",
+  "stage_id": "S02",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-06",
+  "checklist": "PRISMA_P",
+  "section": "Bevezetés – Indoklás",
+  "ord": 10,
+  "text": "Indokold az áttekintés szükségességét azzal összevetve, amit a témáról már tudni lehet.",
+  "how_to_verify": "protokoll.md 2. pont: a klinikai probléma, a meglévő bizonyítékok hiányossága és a duplikáció-ellenőrzés eredménye (PROSPERO, Cochrane Library, PubMed felderítő keresés, találatszámokkal); az idézett korábbi áttekintések PubMed/DOI alapján ellenőrzöttek. KB: K-KHN0102-008, K-BOR09-007. Kapcsolódó szabály: D-S01-002.",
+  "stage_id": "S01",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-07",
+  "checklist": "PRISMA_P",
+  "section": "Bevezetés – Célkitűzések",
+  "ord": 11,
+  "text": "Fogalmazd meg kifejezetten, milyen kérdés(eke)t válaszol meg az áttekintés, a résztvevők, a beavatkozások, az összehasonlítások és a kimenetek (PICO) megnevezésével.",
+  "how_to_verify": "protokoll.md 3. pont PICO-táblázata kitöltve; ugyanez a kérdés áll a projektnaplóban (`ma.py project status <mappa>`) és a regisztrációs rekordban. KB: K-MOR20-004, K-SIM24-005. Kapcsolódó szabály: D-S01-001.",
+  "stage_id": "S01",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-08",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Beválasztási kritériumok",
+  "ord": 12,
+  "text": "Határozd meg a beválasztás feltételeit: a vizsgálatok jellemzőit (PICO, vizsgálati elrendezés, környezet, időtáv) és a közlemények jellemzőit (figyelembe vett évek, nyelv, közlési státusz).",
+  "how_to_verify": "protokoll.md 4. pont minden sora kitöltve, indoklással; nyelvi vagy közlési státusz szerinti korlátozás csak indokolva (a Cochrane Handbook nem javasolja); a kritériumok ellentmondásmentesek a 3. pont PICO-jával. KB: K-SIM24-009, K-SIM24-011, K-KHN0102-009, K-ZHA22-016. Kapcsolódó szabály: D-S02-003, D-S02-004.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p,cochrane_handbook"
+ },
+ {
+  "item_id": "PRISMA_P-09",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Információforrások",
+  "ord": 13,
+  "text": "Írd le az összes tervezett információforrást (elektronikus adatbázisok, a vizsgálatok szerzőinek megkeresése, vizsgálati regiszterek, egyéb szürke irodalom), a tervezett lefedési időszakkal együtt.",
+  "how_to_verify": "protokoll.md 5. pont: adatbázisok felülettel és lefedett időszakkal, regiszterek (ClinicalTrials.gov, WHO ICTRP), szürke irodalom, hivatkozás-követés, szerzők megkeresése; ugyanezek a 01_kereses/kereses_naplo.md soraiként. KB: K-SIM24-022, K-KHA26-022, K-KHN1113-002, K-SIM24-015. Kapcsolódó szabály: D-S03-001, D-S03-006, D-S03-007.",
+  "stage_id": "S03",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-10",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Keresési stratégia",
+  "ord": 14,
+  "text": "Mutasd be legalább egy elektronikus adatbázis keresési stratégiájának tervezetét a tervezett korlátozásokkal együtt, olyan részletesen, hogy megismételhető legyen.",
+  "how_to_verify": "protokoll.md 5. pont „Keresési stratégia” → teljes keresőstring legalább egy adatbázisra (01_kereses/kereses_strategia_vazlat.md vagy 01_kereses/strategia_pubmed.txt) koncepcióblokkokkal, MeSH és szabadszavas tagokkal, szűrőkkel; a szintaxis ellenőrzött (zárójelek, csonkolás, mezőkódok). KB: K-SIM24-021, K-MOR20-010, K-ZHA22-014.",
+  "stage_id": "S03",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-11a",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Vizsgálati rekordok: adatkezelés",
+  "ord": 15,
+  "text": "Írd le, milyen eszközökkel és módon kezeled a rekordokat és az adatokat az áttekintés teljes folyamatában.",
+  "how_to_verify": "protokoll.md 6. pont (szűrőszoftver, duplikátumszűrés módja) és 7. pont (kinyerő űrlap: 03_adatok/adatkinyeres.csv); a hivatkozáskezelő és a többi eszköz a 00_protokoll/eszkozok_hozzaferesek.md-ben; betegazonosításra alkalmas adat nem kerül a repóba. KB: K-SIM24-023, K-KHA26-036, K-KHN0102-023.",
+  "stage_id": "S04",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-11b",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Vizsgálati rekordok: kiválasztás",
+  "ord": 16,
+  "text": "Rögzítsd, hogyan választod ki a vizsgálatokat az áttekintés minden fázisában (szűrés, alkalmasság, a metaanalízisbe való bevonás), pl. két független bírálóval.",
+  "how_to_verify": "protokoll.md 6. pont: két független szűrő a cím/absztrakt és a teljes szöveg szintjén, az egyeztetés módja (harmadik bíráló), a teljes szövegnél a kizárási okok rögzítése; automatizálás/MI szerepe (ha van) megadva. KB: K-SIM24-024, K-KHA26-038, K-ZHA22-017. Kapcsolódó szabály: D-S04-003, D-S04-006.",
+  "stage_id": "S04",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-11c",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Vizsgálati rekordok: adatgyűjtés",
+  "ord": 17,
+  "text": "Írd le, hogyan tervezed kinyerni az adatokat a közleményekből (pl. az űrlap pilotálása, független, kettős kinyerés), és hogyan szerzed be vagy erősíted meg az adatokat a vizsgálatok szerzőitől.",
+  "how_to_verify": "protokoll.md 7. pont: kinyerő űrlap és pilotja, két független kinyerő és egyeztetés, a szerzők megkeresése hiányzó adatért; a forráshely (oldal/táblázat) minden értéknél kötelező (adatkinyeres.csv „forras_oldal”). KB: K-SIM24-029, K-KHN0102-024, K-ZHA22-021. Kapcsolódó szabály: D-S05-001.",
+  "stage_id": "S05",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-12",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Adattételek",
+  "ord": 18,
+  "text": "Sorold fel és definiáld az összes változót, amelyre adatot gyűjtesz (pl. PICO-elemek, finanszírozási források), valamint az előre tervezett adatfeltevéseket és egyszerűsítéseket.",
+  "how_to_verify": "protokoll.md 7. pont és a 03_adatok/adatkinyeres.csv oszlopai definícióval; előre rögzített konverziók és imputációk (medián/IQR → átlag/SD: Luo 2018 + Wan 2014; SE/CI → SD; változás-SD imputált korrelációval), a becsült értékek `estimated=igen` jelöléssel (V018); a finanszírozás külön változó (AMSTAR 2 10. tétel). KB: K-SIM24-030, K-ZHA22-022, K-MOR20-026, K-ZHA22-025. Kapcsolódó szabály: D-S02-012, D-S05-029.",
+  "stage_id": "S05",
+  "source_ids": "prisma_p,luo2018,wan2014"
+ },
+ {
+  "item_id": "PRISMA_P-13",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Kimenetek és rangsorolásuk",
+  "ord": 19,
+  "text": "Sorold fel és definiáld az összes kimenetet, amelyre adatot gyűjtesz, a fő és a további kimenetek rangsorával és annak indoklásával.",
+  "how_to_verify": "protokoll.md 3. pont: elsődleges és másodlagos kimenetek külön sorban, mindegyiknél definíció, mérőeszköz/skála, időpont és a rangsor indoka; a 10. pont Summary of Findings kimenetei ezek közül valók. KB: K-MOR20-004, K-MOR20-067. Kapcsolódó szabály: D-S01-003.",
+  "stage_id": "S01",
+  "source_ids": "prisma_p"
+ },
+ {
+  "item_id": "PRISMA_P-14",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Torzítási kockázat az egyes vizsgálatokban",
+  "ord": 20,
+  "text": "Írd le, hogyan tervezed értékelni az egyes vizsgálatok torzítási kockázatát — kimenet- vagy vizsgálati szinten, esetleg mindkettőn —, és hogyan használod fel ezt az információt az adatszintézisben.",
+  "how_to_verify": "protokoll.md 8. pont: eszköz a vizsgálattípus szerint (RoB 2 / ROBINS-I / QUADAS-2 …) indoklással, két független értékelő, az értékelés szintje (RoB 2-nél kimenetenként / eredményenként), és a felhasználás módja (érzékenységi elemzés `--exclude rob=high`, GRADE torzítási kockázat domén) — ez a 9. pont érzékenységi elemzései között is szerepel. KB: K-SIM24-039, K-SIM24-038, K-MOR20-062; kapcsolódó szabály: D-S02-011.",
+  "stage_id": "S06",
+  "source_ids": "prisma_p,rob2,robins_i"
+ },
+ {
+  "item_id": "PRISMA_P-15a",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Adatszintézis: a kvantitatív szintézis feltételei",
+  "ord": 21,
+  "text": "Írd le, milyen feltételek teljesülése esetén végzel kvantitatív szintézist a vizsgálati adatokból.",
+  "how_to_verify": "protokoll.md 9. pont: az összevonás előre rögzített feltételei elsősorban klinikai és módszertani hasonlóság (PICO, elrendezés, egyező vagy átváltható hatásmérték, skála és mértékegység), és az is, mikor nem lesz összevonás (akkor a 15d szerinti szintézis). A statisztikai heterogenitás mértéke nem előre rögzített összevonási küszöb. KB: K-KHN0102-071, K-KHN0102-074, K-SIM24-073, K-BOR09-014; kapcsolódó szabály: D-S08-025.",
+  "stage_id": "S08",
+  "source_ids": "prisma_p,cochrane_handbook"
+ },
+ {
+  "item_id": "PRISMA_P-15b",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Adatszintézis: összesítő mértékek és módszerek",
+  "ord": 22,
+  "text": "Ha az adatok kvantitatív szintézisre alkalmasak, írd le a tervezett összesítő hatásmértékeket, az adatok kezelésének és a vizsgálatok összevonásának módszereit, a konzisztencia (heterogenitás) tervezett vizsgálatával együtt.",
+  "how_to_verify": "protokoll.md 9. pont és 00_protokoll/elemzesi_terv.md: hatásmérték és irány-konvenció; a modell előre, fogalmi alapon rögzítve, nem Q-teszt vagy I²-küszöb alapján; τ²-becslő (REML vagy PM — a DerSimonian–Laird nem alapértelmezés), CI-módszer (HKSJ, kis k mellett óvatos értelmezéssel), predikciós intervallum; ritka eseményeknél MH vagy Peto (a Peto csak kb. 1% alatti kockázat, kiegyensúlyozott karok és nem nagy hatás mellett, egyébként korrekció nélküli MH OR — D-S08-013); heterogenitás: Q, I² CI-vel, τ², PI — az I² sávjai nem gépies döntési szabályok (jelenlegi konszenzus, Cochrane Handbook v6.5). A megvalósítás később egyezik a results.json options.model, primary.tau2_method, primary.ci_method, primary.pi_method mezőivel. KB: K-BOR07-003, K-BOR07-062, K-KHN0304-030, K-KHN0102-002, K-MOR20-047, K-CHE16-051; kapcsolódó szabály: D-S08-001, D-S09-001.",
+  "stage_id": "S08",
+  "source_ids": "prisma_p,cochrane_handbook,veroniki2016,rover2015,inthout2016"
+ },
+ {
+  "item_id": "PRISMA_P-15c",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Adatszintézis: további elemzések",
+  "ord": 23,
+  "text": "Írd le a tervezett további elemzéseket (pl. érzékenységi vagy alcsoport-elemzés, meta-regresszió).",
+  "how_to_verify": "protokoll.md 9. pont: előre tervezett, kevés számú alcsoport/moderátor, mindegyik várható iránnyal és indoklással (meta-regresszió csak kb. ≥ 10 vizsgálat/moderátor mellett), és az érzékenységi elemzések listája (magas torzítási kockázat kizárása, becsült adatok kizárása, közös vs véletlen hatás, másik τ²-becslő, HKSJ vs z, leave-one-out). Az alcsoport-különbségek hitelessége később az ICEMAN szerint ítélhető meg. KB: K-ZHA22-055, K-KHN1113-029, K-MOR20-061, K-ZHA22-074. Kapcsolódó szabály: D-S02-008, D-S02-009.",
+  "stage_id": "S10",
+  "source_ids": "prisma_p,iceman2020"
+ },
+ {
+  "item_id": "PRISMA_P-15d",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Adatszintézis: ha nincs metaanalízis",
+  "ord": 24,
+  "text": "Ha a kvantitatív szintézis nem megfelelő, írd le, milyen típusú összefoglalást tervezel helyette.",
+  "how_to_verify": "protokoll.md 9. pont „Narratív szintézis”: a SWiM-irányelv szerinti terv (a vizsgálatok csoportosítása, egységes mérőszám, szintézismódszer — pl. a hatás iránya szerinti számlálás előjelpróbával vagy a hatásméretek összegzése —, megjelenítés); a statisztikai szignifikancia szerinti szavazatszámlálás nem elfogadható. KB: K-BOR09-061, K-CHE16-009, K-KHN0102-071, K-KHN0102-084; kapcsolódó szabály: D-S02-014, D-S08-025.",
+  "stage_id": "S08",
+  "source_ids": "prisma_p,swim2020"
+ },
+ {
+  "item_id": "PRISMA_P-16",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – Meta-torzítás(ok)",
+  "ord": 25,
+  "text": "Határozd meg, hogyan tervezed értékelni a meta-torzítás(oka)t (pl. publikációs torzítás a vizsgálatok között, szelektív kimenetközlés a vizsgálatokon belül).",
+  "how_to_verify": "protokoll.md 9. pont „Kis-vizsgálat hatások”: kontúr-javított funnel és a mértékhez illő, előre megnevezett teszt csak k ≥ 10 esetén (folytonos MD: Egger; bináris OR: Harbord vagy Peters; egycsoportos aránynál nem); az aszimmetriát kis-vizsgálat hatásként kell értelmezni, nem automatikusan publikációs torzításként (más okok: valódi heterogenitás, a kis vizsgálatok rosszabb minősége, véletlen); a regiszterek összevetése a közölt kimenetekkel (szelektív kimenetközlés) k-tól függetlenül; trim-and-fill csak érzékenységként; fail-safe N nem; a Doi-plot/LFK nem helyettesíti a fentieket (jelenlegi konszenzus: Cochrane Handbook v6.5, Sterne 2011). KB: K-KHN1113-055, K-KHN1113-067, K-KHN1113-002, K-BOR09-059, K-ZHA22-069, K-KHN0102-063; kapcsolódó szabály: D-S02-010, D-S11-009.",
+  "stage_id": "S11",
+  "source_ids": "prisma_p,sterne2011,peters2008,cochrane_handbook"
+ },
+ {
+  "item_id": "PRISMA_P-17",
+  "checklist": "PRISMA_P",
+  "section": "Módszerek – A kumulatív bizonyíték megbízhatósága",
+  "ord": 26,
+  "text": "Írd le, hogyan fogod megítélni a bizonyítékok összességének erősségét (pl. GRADE).",
+  "how_to_verify": "protokoll.md 10. pont: GRADE kimenetenként (kiindulási szint, az öt leminősítési és a felminősítési szempont), a Summary of Findings kimenetei, MCID-források és alapkockázat; a ma-ertekelo a `ma.py kb checklist GRADE` szerint dolgozik, az ítéletek `ma.py project grade`-del rögzülnek. KB: K-MOR20-062, K-MOR20-064, K-MOR20-065. Kapcsolódó szabály: D-S02-015.",
+  "stage_id": "S13",
+  "source_ids": "prisma_p,grade_handbook"
+ }
+]
