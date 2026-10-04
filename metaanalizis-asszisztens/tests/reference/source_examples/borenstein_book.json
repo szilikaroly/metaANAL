@@ -1,0 +1,1010 @@
+[
+  {
+    "case_id": "borenstein_book__ch13_smd_hedges_g",
+    "example_id": "borenstein_book__ch13_six_studies_smd_fe_vs_re",
+    "source_id": "borenstein2009",
+    "location": "Ch13 p. 78 Figure 13.1 ('Std Diff (g)' column); raw inputs from full book Ch14 Table 14.1 p. 88",
+    "description": "Hedges' g (J = 1-3/(4df-1)) and Borenstein variance for the six Ch13 'impact of intervention' studies.",
+    "measure": "SMD",
+    "options": {
+      "smd_vtype": "LS2",
+      "j_method": "approx"
+    },
+    "rows": [
+      {
+        "study": "Carroll",
+        "m1": 94,
+        "sd1": 22,
+        "n1": 60,
+        "m2": 92,
+        "sd2": 20,
+        "n2": 60
+      },
+      {
+        "study": "Grant",
+        "m1": 98,
+        "sd1": 21,
+        "n1": 65,
+        "m2": 92,
+        "sd2": 22,
+        "n2": 65
+      },
+      {
+        "study": "Peck",
+        "m1": 98,
+        "sd1": 28,
+        "n1": 40,
+        "m2": 88,
+        "sd2": 26,
+        "n2": 40
+      },
+      {
+        "study": "Donat",
+        "m1": 94,
+        "sd1": 19,
+        "n1": 200,
+        "m2": 82,
+        "sd2": 17,
+        "n2": 200
+      },
+      {
+        "study": "Stewart",
+        "m1": 98,
+        "sd1": 21,
+        "n1": 50,
+        "m2": 88,
+        "sd2": 22,
+        "n2": 45
+      },
+      {
+        "study": "Young",
+        "m1": 96,
+        "sd1": 21,
+        "n1": 85,
+        "m2": 92,
+        "sd2": 22,
+        "n2": 85
+      }
+    ],
+    "call": "effect_sizes",
+    "call_args": {},
+    "expected": [
+      {
+        "path": "yi.0",
+        "value": 0.1,
+        "tol": 0.0055,
+        "transform": null,
+        "note": "printed g (Carroll) 0.10, but g = 0.094524 rounds to 0.09: source double-rounded (0.0945 -> 0.095 -> 0.10); every value in [0.0945, 0.1045) prints as 0.10 that way, so tol = 0.0055 (0.005 half-unit + 0.0005 double-rounding allowance)"
+      },
+      {
+        "path": "yi.1",
+        "value": 0.28,
+        "tol": 0.005,
+        "transform": null,
+        "note": "printed g (Grant), 2 dp: tol = 0.005 half-unit"
+      },
+      {
+        "path": "yi.2",
+        "value": 0.37,
+        "tol": 0.005,
+        "transform": null,
+        "note": "printed g (Peck), 2 dp: tol = 0.005 half-unit"
+      },
+      {
+        "path": "yi.3",
+        "value": 0.66,
+        "tol": 0.005,
+        "transform": null,
+        "note": "printed g (Donat), 2 dp: tol = 0.005 half-unit"
+      },
+      {
+        "path": "yi.4",
+        "value": 0.46,
+        "tol": 0.005,
+        "transform": null,
+        "note": "printed g (Stewart), 2 dp: tol = 0.005 half-unit"
+      },
+      {
+        "path": "yi.5",
+        "value": 0.19,
+        "tol": 0.005,
+        "transform": null,
+        "note": "printed g (Young), 2 dp: tol = 0.005 half-unit"
+      },
+      {
+        "path": "yi.0",
+        "value": 0.0945243733606383,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "Carroll: g = J*d, J = 1-3/(4df-1) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "yi.1",
+        "value": 0.27735640148036095,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "Grant: g = J*d, J = 1-3/(4df-1) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "yi.2",
+        "value": 0.3665463484579782,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "Peck: g = J*d, J = 1-3/(4df-1) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "yi.3",
+        "value": 0.6643850998911356,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "Donat: g = J*d, J = 1-3/(4df-1) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "yi.4",
+        "value": 0.46180797677414176,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "Stewart: g = J*d, J = 1-3/(4df-1) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "yi.5",
+        "value": 0.18516464424648887,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "Young: g = J*d, J = 1-3/(4df-1) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "vi.0",
+        "value": 0.03294728577462873,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "Carroll: V_g = J^2[(n1+n2)/(n1n2) + d^2/(2(n1+n2))] (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "vi.1",
+        "value": 0.030704880168783876,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "Grant: V_g = J^2[(n1+n2)/(n1n2) + d^2/(2(n1+n2))] (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "vi.2",
+        "value": 0.04987974874207455,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "Peck: V_g = J^2[(n1+n2)/(n1n2) + d^2/(2(n1+n2))] (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "vi.3",
+        "value": 0.01051408287558142,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "Donat: V_g = J^2[(n1+n2)/(n1n2) + d^2/(2(n1+n2))] (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "vi.4",
+        "value": 0.04266459968258572,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "Stewart: V_g = J^2[(n1+n2)/(n1n2) + d^2/(2(n1+n2))] (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "vi.5",
+        "value": 0.0234203259925918,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "Young: V_g = J^2[(n1+n2)/(n1n2) + d^2/(2(n1+n2))] (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      }
+    ],
+    "status": "active",
+    "notes": "Raw means/SDs/ns are NOT printed in the Ch13 sample; they come from the full book's Ch14 Table 14.1 (pp. 87-88) and were verified by recomputation to reproduce every printed g, weight, summary and SE in Figs 13.1/13.2 and pp. 79-80. Treated = group 1, control = group 2."
+  },
+  {
+    "case_id": "borenstein_book__ch13_smd_fixed_effect",
+    "example_id": "borenstein_book__ch13_six_studies_smd_fe_vs_re",
+    "source_id": "borenstein2009",
+    "location": "Ch13 p. 78 Figure 13.1 (summary 0.41, relative weights); p. 79 text; p. 80 text (SE 0.064)",
+    "description": "Fixed-effect inverse-variance pooling of six Hedges' g values: summary 0.41, SE 0.064, integer relative weights.",
+    "measure": "SMD",
+    "options": {
+      "smd_vtype": "LS2",
+      "j_method": "approx"
+    },
+    "rows": [
+      {
+        "study": "Carroll",
+        "m1": 94,
+        "sd1": 22,
+        "n1": 60,
+        "m2": 92,
+        "sd2": 20,
+        "n2": 60
+      },
+      {
+        "study": "Grant",
+        "m1": 98,
+        "sd1": 21,
+        "n1": 65,
+        "m2": 92,
+        "sd2": 22,
+        "n2": 65
+      },
+      {
+        "study": "Peck",
+        "m1": 98,
+        "sd1": 28,
+        "n1": 40,
+        "m2": 88,
+        "sd2": 26,
+        "n2": 40
+      },
+      {
+        "study": "Donat",
+        "m1": 94,
+        "sd1": 19,
+        "n1": 200,
+        "m2": 82,
+        "sd2": 17,
+        "n2": 200
+      },
+      {
+        "study": "Stewart",
+        "m1": 98,
+        "sd1": 21,
+        "n1": 50,
+        "m2": 88,
+        "sd2": 22,
+        "n2": 45
+      },
+      {
+        "study": "Young",
+        "m1": 96,
+        "sd1": 21,
+        "n1": 85,
+        "m2": 92,
+        "sd2": 22,
+        "n2": 85
+      }
+    ],
+    "call": "meta_analysis",
+    "call_args": {
+      "model": "fixed",
+      "ci_method": "z"
+    },
+    "expected": [
+      {
+        "path": "estimate",
+        "value": 0.41,
+        "tol": 0.005,
+        "transform": null,
+        "note": "printed FE summary g 0.41 (Fig 13.1, p. 79 text)"
+      },
+      {
+        "path": "se",
+        "value": 0.064,
+        "tol": 0.0005,
+        "transform": null,
+        "note": "printed FE SE 0.064 (p. 80 text)"
+      },
+      {
+        "path": "weights_pct.0",
+        "value": 12,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed FE relative weight Carroll 12% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.1",
+        "value": 13,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed FE relative weight Grant 13% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.2",
+        "value": 8,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed FE relative weight Peck 8% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.3",
+        "value": 39,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed FE relative weight Donat 39% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.4",
+        "value": 10,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed FE relative weight Stewart 10% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.5",
+        "value": 18,
+        "tol": 1.0,
+        "transform": null,
+        "note": "printed FE relative weight Young 18%; computed 17.484% half-up rounds to 17. The printed integers 12/13/8/39/10/18 are exactly the largest-remainder rounding forced to sum to 100, which moves a value to floor or ceil (|error| < 1), so tol = 1.0 for this entry"
+      },
+      {
+        "path": "estimate",
+        "value": 0.41426967159745853,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE M (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "se",
+        "value": 0.06399025859781013,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE SE (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "ci_lower",
+        "value": 0.2888510693843461,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE 95% CI lower with exact z=1.959964 (metafor; verifier's 0.288849 used 1.96) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "ci_upper",
+        "value": 0.5396882738105709,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE 95% CI upper with exact z (metafor) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "stat",
+        "value": 6.473949014665111,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE Z (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "p",
+        "value": 9.547412937659344e-11,
+        "tol": 1e-14,
+        "transform": null,
+        "note": "FE two-tailed p (metafor) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "Q",
+        "value": 12.003251889504003,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "Q (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "p_Q",
+        "value": 0.03474324926650779,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "p(Q), df=5 (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "I2",
+        "value": 58.34462155732859,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "I^2 % (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "heterogeneity.C",
+        "value": 187.69784751455916,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "C = sum W - sum W^2/sum W (Borenstein eq 12.3) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "heterogeneity.tau2_DL",
+        "value": 0.03731130634814967,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "T^2 = (Q-df)/C (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.0",
+        "value": 12.428195825975461,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE weight % Carroll (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.1",
+        "value": 13.335838384341084,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE weight % Grant (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.2",
+        "value": 8.209249843234694,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE weight % Peck (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.3",
+        "value": 38.94541486756331,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE weight % Donat (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.4",
+        "value": 9.597542754130089,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE weight % Stewart (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.5",
+        "value": 17.483758324755367,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "FE weight % Young (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      }
+    ],
+    "status": "active",
+    "notes": "Raw means/SDs/ns are NOT printed in the Ch13 sample; they come from the full book's Ch14 Table 14.1 (pp. 87-88) and were verified by recomputation to reproduce every printed g, weight, summary and SE in Figs 13.1/13.2 and pp. 79-80. The p. 79 text's Donat/Peck weight ratio ('about five times', computed 4.74) cannot be expressed as a result path and is not tested."
+  },
+  {
+    "case_id": "borenstein_book__ch13_smd_random_dl",
+    "example_id": "borenstein_book__ch13_six_studies_smd_fe_vs_re",
+    "source_id": "borenstein2009",
+    "location": "Ch13 p. 78 Figure 13.2 (summary 0.36, relative weights); p. 79 text; p. 80 text (SE 0.105)",
+    "description": "DerSimonian-Laird random-effects pooling (z-based CI) of six Hedges' g values: summary 0.36, SE 0.105, integer relative weights.",
+    "measure": "SMD",
+    "options": {
+      "smd_vtype": "LS2",
+      "j_method": "approx"
+    },
+    "rows": [
+      {
+        "study": "Carroll",
+        "m1": 94,
+        "sd1": 22,
+        "n1": 60,
+        "m2": 92,
+        "sd2": 20,
+        "n2": 60
+      },
+      {
+        "study": "Grant",
+        "m1": 98,
+        "sd1": 21,
+        "n1": 65,
+        "m2": 92,
+        "sd2": 22,
+        "n2": 65
+      },
+      {
+        "study": "Peck",
+        "m1": 98,
+        "sd1": 28,
+        "n1": 40,
+        "m2": 88,
+        "sd2": 26,
+        "n2": 40
+      },
+      {
+        "study": "Donat",
+        "m1": 94,
+        "sd1": 19,
+        "n1": 200,
+        "m2": 82,
+        "sd2": 17,
+        "n2": 200
+      },
+      {
+        "study": "Stewart",
+        "m1": 98,
+        "sd1": 21,
+        "n1": 50,
+        "m2": 88,
+        "sd2": 22,
+        "n2": 45
+      },
+      {
+        "study": "Young",
+        "m1": 96,
+        "sd1": 21,
+        "n1": 85,
+        "m2": 92,
+        "sd2": 22,
+        "n2": 85
+      }
+    ],
+    "call": "meta_analysis",
+    "call_args": {
+      "model": "random",
+      "tau2_method": "DL",
+      "ci_method": "z"
+    },
+    "expected": [
+      {
+        "path": "estimate",
+        "value": 0.36,
+        "tol": 0.005,
+        "transform": null,
+        "note": "printed RE summary g 0.36 (Fig 13.2, p. 79 text)"
+      },
+      {
+        "path": "se",
+        "value": 0.105,
+        "tol": 0.0005,
+        "transform": null,
+        "note": "printed RE SE 0.105 (p. 80 text); identifies DL (REML would give 0.101)"
+      },
+      {
+        "path": "weights_pct.0",
+        "value": 16,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed RE relative weight Carroll 16% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.1",
+        "value": 16,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed RE relative weight Grant 16% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.2",
+        "value": 13,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed RE relative weight Peck 13% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.3",
+        "value": 23,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed RE relative weight Donat 23% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.4",
+        "value": 14,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed RE relative weight Stewart 14% (integer): tol 0.5"
+      },
+      {
+        "path": "weights_pct.5",
+        "value": 18,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed RE relative weight Young 18% (integer): tol 0.5"
+      },
+      {
+        "path": "estimate",
+        "value": 0.3582294175628439,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE-DL M* (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "se",
+        "value": 0.10524355164411991,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE-DL SE* (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "tau2",
+        "value": 0.03731130634814967,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "DL T^2 (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "ci_lower",
+        "value": 0.15195584673528767,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE 95% CI lower with exact z (metafor; verifier's 0.151952 used 1.96) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "ci_upper",
+        "value": 0.5645029883904,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE 95% CI upper with exact z (metafor) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "stat",
+        "value": 3.4038134590344624,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE Z* (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "p",
+        "value": 0.0006645211831376388,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "RE two-tailed p (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "pi_lower",
+        "value": -0.2525096968496999,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "95% prediction interval M* - t(0.975, k-2)*sqrt(T^2 + SE*^2) (Borenstein Ch17 / Higgins 2009); NOT printed in the Ch13 sample (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "pi_upper",
+        "value": 0.9689685319753877,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "95% prediction interval upper, t(k-2); NOT printed in the Ch13 sample (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.0",
+        "value": 15.764911917552556,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE weight % Carroll (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.1",
+        "value": 16.284660651933144,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE weight % Grant (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.2",
+        "value": 12.703373243054594,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE weight % Peck (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.3",
+        "value": 23.159675942945572,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE weight % Donat (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.4",
+        "value": 13.849427549357,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE weight % Stewart (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "weights_pct.5",
+        "value": 18.237950695157135,
+        "tol": 1e-06,
+        "transform": null,
+        "note": "RE weight % Young (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      }
+    ],
+    "status": "active",
+    "notes": "Raw means/SDs/ns are NOT printed in the Ch13 sample; they come from the full book's Ch14 Table 14.1 (pp. 87-88) and were verified by recomputation to reproduce every printed g, weight, summary and SE in Figs 13.1/13.2 and pp. 79-80. T^2 = (Q-df)/C (eq 12.2). The p. 79 'only 1.8 times' Donat/Peck RE weight ratio (computed 1.823) cannot be expressed as a result path; it is implied by the weight checks."
+  },
+  {
+    "case_id": "borenstein_book__ch43_se_from_p",
+    "example_id": "borenstein_book__ch43_five_identical_trials_rr",
+    "source_id": "borenstein2009",
+    "location": "Ch43 p. 382, Figure 43.1 (per-trial RR 0.80, p 0.265)",
+    "description": "Back-calculate SE(ln RR) of each trial from its printed RR 0.80 and two-sided p 0.265.",
+    "call": "conversion",
+    "call_args": {
+      "function": "se_from_p",
+      "estimate": 0.8,
+      "p": 0.265,
+      "log_scale": true
+    },
+    "expected": [
+      {
+        "path": "",
+        "value": 0.20019140369929217,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "SE = |ln 0.80| / Phi^-1(1-0.265/2) = 0.223144/1.114651; nothing printed for SE in the source (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      }
+    ],
+    "status": "active",
+    "notes": "Supporting step of the Ch43 example: the source prints no SE/CI, so the SE must be derived from p."
+  },
+  {
+    "case_id": "borenstein_book__ch43_identical_rr_fixed",
+    "example_id": "borenstein_book__ch43_five_identical_trials_rr",
+    "source_id": "borenstein2009",
+    "location": "Ch43 p. 382, Figure 43.1 (columns RR, N, p-value; 'Summary' row 0.80, 4,000, 0.013)",
+    "description": "Fixed-effect pooling of five trials with identical RR 0.80 (p = 0.265 each): summary RR 0.80, p = 0.013.",
+    "measure": "GEN",
+    "options": {},
+    "rows": [
+      {
+        "study": "Trial A",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial B",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial C",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial D",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial E",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      }
+    ],
+    "call": "meta_analysis",
+    "call_args": {
+      "model": "fixed",
+      "ci_method": "z"
+    },
+    "expected": [
+      {
+        "path": "estimate",
+        "value": 0.8,
+        "tol": 0.005,
+        "transform": "exp",
+        "note": "printed summary RR 0.80"
+      },
+      {
+        "path": "p",
+        "value": 0.013,
+        "tol": 0.0005,
+        "transform": null,
+        "note": "printed summary two-tailed p 0.013"
+      },
+      {
+        "path": "estimate",
+        "value": -0.2231435513142097,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "ln(0.80) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "se",
+        "value": 0.08952831743654403,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "SE_i/sqrt(5) (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "stat",
+        "value": -2.492435440578559,
+        "tol": 1e-08,
+        "transform": null,
+        "note": "Z = -sqrt(5)*z_i (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "p",
+        "value": 0.012687039245141793,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "two-tailed p (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "ci_lower",
+        "value": 0.6712485259854567,
+        "tol": 1e-06,
+        "transform": "exp",
+        "note": "RR 95% CI lower, exact z (metafor; verifier 0.671246 used 1.96); not printed, drawn diamond 0.673 (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "ci_upper",
+        "value": 0.9534471588752007,
+        "tol": 1e-06,
+        "transform": "exp",
+        "note": "RR 95% CI upper, exact z (metafor); not printed, drawn diamond 0.951 (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      }
+    ],
+    "status": "active",
+    "notes": "Only RR 0.80, N 800 and two-sided p 0.265 are printed per trial (no counts/CIs). Inputs: yi = ln(0.80); sei = |ln 0.80| / Phi^-1(1 - 0.265/2) = 0.2001914 (back-calculated from the printed p; the engine's conversions.se_from_p gives the same, see the ch43_se_from_p case). Over the rounding interval of the printed p_i in [0.2645, 0.2655) the pooled p stays in [0.01259, 0.01278], i.e. always prints as 0.013, so no extra tolerance allowance is needed. Text says 'odds ratio' while the figure says RR; numbers unaffected."
+  },
+  {
+    "case_id": "borenstein_book__ch43_identical_rr_random_dl_tau2_zero",
+    "example_id": "borenstein_book__ch43_five_identical_trials_rr",
+    "source_id": "borenstein2009",
+    "location": "Ch43 p. 382, Figure 43.1 (columns RR, N, p-value; 'Summary' row 0.80, 4,000, 0.013)",
+    "description": "DL random-effects on five identical log RRs: T^2 must be clamped to 0, so RE equals FE (RR 0.80, p = 0.013).",
+    "measure": "GEN",
+    "options": {},
+    "rows": [
+      {
+        "study": "Trial A",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial B",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial C",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial D",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      },
+      {
+        "study": "Trial E",
+        "yi": -0.2231435513142097,
+        "sei": 0.20019140369929217,
+        "n": 800,
+        "printed_rr": 0.8,
+        "printed_p": 0.265
+      }
+    ],
+    "call": "meta_analysis",
+    "call_args": {
+      "model": "random",
+      "tau2_method": "DL",
+      "ci_method": "z"
+    },
+    "expected": [
+      {
+        "path": "estimate",
+        "value": 0.8,
+        "tol": 0.005,
+        "transform": "exp",
+        "note": "printed summary RR 0.80 (identical effects: RE = FE)"
+      },
+      {
+        "path": "p",
+        "value": 0.013,
+        "tol": 0.0005,
+        "transform": null,
+        "note": "printed summary two-tailed p 0.013"
+      },
+      {
+        "path": "tau2",
+        "value": 0.0,
+        "tol": 1e-12,
+        "transform": null,
+        "note": "DL T^2 = max(0, (Q-df)/C) = max(0, -4/C) = 0: must be clamped (statsmodels returns -0.040 untruncated)"
+      },
+      {
+        "path": "Q",
+        "value": 0.0,
+        "tol": 1e-12,
+        "transform": null,
+        "note": "Q = 0 for identical effects"
+      },
+      {
+        "path": "I2",
+        "value": 0.0,
+        "tol": 1e-12,
+        "transform": null,
+        "note": "I^2 = 0"
+      },
+      {
+        "path": "se",
+        "value": 0.08952831743654403,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "RE SE equals FE SE when T^2 = 0 (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      },
+      {
+        "path": "p",
+        "value": 0.012687039245141793,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "two-tailed p (tight check vs full-precision verifier value, cross-checked with metafor (not printed in source))"
+      }
+    ],
+    "status": "active",
+    "notes": "Only RR 0.80, N 800 and two-sided p 0.265 are printed per trial (no counts/CIs). Inputs: yi = ln(0.80); sei = |ln 0.80| / Phi^-1(1 - 0.265/2) = 0.2001914 (back-calculated from the printed p; the engine's conversions.se_from_p gives the same, see the ch43_se_from_p case). Over the rounding interval of the printed p_i in [0.2645, 0.2655) the pooled p stays in [0.01259, 0.01278], i.e. always prints as 0.013, so no extra tolerance allowance is needed. Text says 'odds ratio' while the figure says RR; numbers unaffected."
+  },
+  {
+    "case_id": "borenstein_book__ch43_heterogeneous_rr_partial",
+    "example_id": "borenstein_book__ch43_heterogeneous_trials_rr_partial",
+    "source_id": "borenstein2009",
+    "location": "Ch43 p. 383 Figure 43.2 (RR column, summary 0.67); p. 383 text ('95% confidence interval of 0.84 to 0.77')",
+    "description": "Five heterogeneous stroke trials (RR 0.55-0.82) pooled to RR 0.67 (CI printed as '0.84 to 0.77'); per-trial variances not printed.",
+    "measure": "GEN",
+    "options": {},
+    "rows": [
+      {
+        "study": "Trial A",
+        "yi": -0.5978370007556204,
+        "sei": 0.0505,
+        "printed_rr": 0.55
+      },
+      {
+        "study": "Trial B",
+        "yi": -0.4942963218147801,
+        "sei": 0.0505,
+        "printed_rr": 0.61
+      },
+      {
+        "study": "Trial C",
+        "yi": -0.40047756659712525,
+        "sei": 0.0505,
+        "printed_rr": 0.67
+      },
+      {
+        "study": "Trial D",
+        "yi": -0.3011050927839216,
+        "sei": 0.0505,
+        "printed_rr": 0.74
+      },
+      {
+        "study": "Trial E",
+        "yi": -0.19845093872383832,
+        "sei": 0.0505,
+        "printed_rr": 0.82
+      }
+    ],
+    "call": "meta_analysis",
+    "call_args": {
+      "model": "random",
+      "tau2_method": "DL",
+      "ci_method": "z"
+    },
+    "expected": [
+      {
+        "path": "estimate",
+        "value": 0.67,
+        "tol": 0.005,
+        "transform": "exp",
+        "note": "printed summary RR 0.67"
+      },
+      {
+        "path": "ci_upper",
+        "value": 0.77,
+        "tol": 0.005,
+        "transform": "exp",
+        "note": "printed upper CI limit 0.77"
+      }
+    ],
+    "status": "known_gap",
+    "gap_reason": "Source error + missing inputs (verifier: usable_as_test_oracle = false). The printed summary CI '0.84 to 0.77' is impossible (lower limit above both the estimate 0.67 and the upper limit; the drawn diamond and RE-DL give about 0.58-0.59), and the per-trial variances/CIs are not printed at all: the sei = 0.0505 used here is measured graphically from the forest plot, and the model (RE-DL) is inferred, not stated. Kept only as documentation; never test against 0.84.",
+    "notes": "With equal within-study variances DL gives v + T^2 = sample variance of the log RRs, so the RE-DL CI (0.5851, 0.7703) is the same for any common SE < 0.157; the engine reproduces 0.6714 and 0.7703 here."
+  }
+]
