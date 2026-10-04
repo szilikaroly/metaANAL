@@ -1,6 +1,6 @@
 # MA-munkapad — validáló és grafikus felület a metaanalízis-motorhoz, a figure-forge és a validator (PROBAST+AI / TRIPOD+AI) pluginnal vagy önállóan
 
-**Végleges terv** · Dátum: 2026-10-04 · Állapot: döntés-előkészítés (nem implementált; a pluginok repóját nem módosítottam)
+**Végleges terv** · Dátum: 2026-10-04 · Állapot: **elfogadva** (2026-10-04, a 11. fejezet ajánlott válaszaival); az MVP építése folyamatban
 
 Alapja: három független javaslat (*local-server-first*, *offline-first*, *plugin-ecosystem-first*) és két független
 bírálat. Mindkét bíráló a **local-server-first** utat választotta (41/50 és 40/50 pont; a plugin-út 38 és 39, az
@@ -2240,6 +2240,12 @@ skilljén keresztül megy; hogy a motor és a munkapad később pluginná váljo
 ---
 
 ## 11. Nyitott kérdések a felhasználónak
+
+> **Döntés (2026-10-04):** a felhasználó mind a hat kérdésben az ajánlott választ fogadta el: 1A (a kód a motor
+> repójában, `ma_gui/`), 2A (Python nélküli gépre csak olvasható, kitakaró pillanatkép), 3B (C osztályú adat csak
+> `_privat/`-ban, védőrétegekkel), 4A (a „Suspected” feloldatlan, amíg ember nem dönt; „Strongly suspected” −1),
+> 5A (második kinyerő/értékelő saját gépen, fájlcserével), 6A (Claude-vázlat csak „AI-vázlat” státusszal, kötelező
+> emberi jóváhagyással, nem második értékelő, C osztálynál tiltva). A lenti szöveg a döntés előtti állapotot rögzíti.
 
 Hat döntés, mindegyiknél ajánlott alapértelmezéssel. Ha egyikre sem érkezik válasz, a terv az ajánlott
 értékekkel hajtható végre.
