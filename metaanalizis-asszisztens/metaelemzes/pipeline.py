@@ -16,6 +16,7 @@ from . import bias as B
 from . import sensitivity as SE
 from . import validate as V
 from . import plots as P
+from .tableio import NumText
 
 DEFAULTS = {
     # tau2: None = a modell alapértelmezése (random → REML, ivhet → DL; az érzékenységi és
@@ -31,6 +32,11 @@ DEFAULTS = {
     "pft_backtransform": "harmonic", "h_centre": "truncated", "trimfill_trim_model": None,
     "egger_ci_dist": "t", "begg_method": "auto", "begg_continuity": False,
     "metareg_robust": False, "outliers": False,
+    # metareg_tau2: a meta-regresszió τ²-becslője (None = a --tau2, ha meta-regresszióban értelmezett,
+    # különben REML); 'FE' = inverz-variancia súlyok (τ² = 0; a --robust így = Stata regress [aw=1/v])
+    "metareg_tau2": None,
+    # az alcsoport-elemzés a protokollban előre tervezett volt (csak ekkor írja a Methods 'Pre-specified'-et)
+    "subgroup_prespecified": False,
 }
 
 # az enumerált opciók megengedett értékei (a CLI choices-szal azonos; programból hívva is ellenőrizzük)
@@ -64,6 +70,12 @@ def check_options(opt):
         if t not in M.TAU2_METHODS:
             raise ValueError("tau2: érvénytelen becslő %r (lehetséges: %s)" % (opt["tau2"], ", ".join(M.TAU2_METHODS)))
         opt["tau2"] = t
+    if opt.get("metareg_tau2") is not None:
+        t = str(opt["metareg_tau2"]).upper()
+        if t not in MO.MR_TAU2_METHODS:
+            raise ValueError("metareg_tau2: érvénytelen becslő %r (lehetséges: %s)"
+                             % (opt["metareg_tau2"], ", ".join(MO.MR_TAU2_METHODS)))
+        opt["metareg_tau2"] = t
 
 
 def to_jsonable(obj):
@@ -105,10 +117,21 @@ def _row_se(row, ci_method, level, single_fixed=False):
 
 
 def _level_str(v):
-    """Alcsoport-szint szövegként: a számként beolvasott egész érték egészként ('2', nem '2.0')."""
+    """Alcsoport-szint szövegként: a számként beolvasott egész érték egészként ('2', nem '2.0');
+    a tableio.NumText az eredeti szövegét adja ('01' és '1' két külön szint marad)."""
+    if isinstance(v, NumText):
+        return str(v)
     if isinstance(v, float) and v.is_integer():
         return str(int(v))
     return str(v).strip() if isinstance(v, str) else str(v)
+
+
+def _mod_levels(column):
+    """Egy moderátor-oszlop különböző értékei a design_matrix logikája szerint: csupa számból álló
+    oszlopban számként ('01' = '1' = 1.0), különben szövegként."""
+    if all(isinstance(x, (int, float)) for x in column):
+        return set(float(v) for v in column)
+    return set(_level_str(v) for v in column)
 
 
 def _blank(v):
@@ -217,7 +240,7 @@ def _totals(measure, es, out):
                 else:
                     r = acr + x
                 return min(1.0, max(0.0, r))
-            t["absolute_per_1000"] = {
+            ab = t["absolute_per_1000"] = {
                 "assumed_control_risk_per_1000": 1000 * acr,
                 # RD: maga a kockázatkülönbség (alapkockázattól független); RR/OR: az alapkockázatra vetítve
                 "difference": [1000 * (x if measure == "RD" else risk(x) - acr) for x in bt],
@@ -226,6 +249,18 @@ def _totals(measure, es, out):
                          "összesített kockázata (Σe2/Σn2); a GRADE SoF-hoz a klinikailag releváns "
                          "alapkockázatot használd, ha van."),
             }
+            if measure == "RD" and any(not 0.0 <= acr + x <= 1.0 for x in bt):
+                # a (véletlen hatású) RD nagyobb, mint amit ez az alapkockázat megenged: nincs levágott,
+                # a 'difference'-nek ellentmondó beavatkozási kockázat
+                ab["intervention_risk"] = [1000 * (acr + x) if 0.0 <= acr + x <= 1.0 else None for x in bt]
+                ab["incompatible_with_baseline"] = True
+                out["warnings"].append(
+                    "Abszolút hatás (RD): az összesített kockázatkülönbség vagy CI-határa (%.1f [%.1f; %.1f]/1000) "
+                    "nem egyeztethető össze a feltételezett kontrollkockázattal (%.1f/1000, Σe2/Σn2): a "
+                    "beavatkozási kockázat 0 alá vagy 1 fölé esne. Az összesített RD főként a magas "
+                    "alapkockázatú vizsgálatokból adódhat; a GRADE SoF abszolút hatásához az összesített "
+                    "RR-t/OR-t alkalmazd egy klinikailag releváns alapkockázatra."
+                    % (1000 * bt[0], 1000 * bt[1], 1000 * bt[2], 1000 * acr))
     if measure in E.PROPORTION:
         t["events"] = colsum("x")
     return t
@@ -275,6 +310,9 @@ def run(rows, options=None, meta=None):
                                                     if measure in E.BINARY and _double_zero(r)],
                            "excluded": [{"study": a, "reason": b} for a, b in es.excluded],
                            "warnings": es.warnings}
+    # a hatásméret-számítás felülírt opciói (pl. COHEN_D + UB → LS) a riportban is látsszanak; a kizárt
+    # sorokat a riport külön listázza
+    out["warnings"] += [w for w in es.warnings if "sor kimaradt a hatásméret-számításból" not in w]
     if k == 0:
         out["warnings"].append("Nincs elemezhető vizsgálat.")
         return out, es
@@ -368,7 +406,7 @@ def run(rows, options=None, meta=None):
         mods = list(zip(cols["moderators"], out["column_labels"]["moderators"]))
         # az elemzett vizsgálatokban állandó moderátor (pl. szűrés után egyetlen szint) nem becsülhető:
         # kategoriálisnál csendben eltűnne (csak tengelymetszet), numerikusnál szinguláris lenne
-        const = [lab for key, lab in mods if len(set(_level_str(r.get(key)) for r in es.rows)) < 2]
+        const = [lab for key, lab in mods if len(_mod_levels([r.get(key) for r in es.rows])) < 2]
         if const:
             out["warnings"].append("Meta-regresszió: a(z) %s moderátor az elemzett vizsgálatokban egyetlen értéket "
                                    "vesz fel (nincs becsülhető hatás), ezért kimaradt a modellből." % ", ".join(const))
@@ -378,10 +416,14 @@ def run(rows, options=None, meta=None):
         try:
             view = [{lab: r.get(key) for key, lab in mods} for r in es.rows]
             x, names = MO.design_matrix(view, [lab for _, lab in mods])
+            mr_tau2 = opt["metareg_tau2"] or (opt["tau2"] if opt["tau2"] in MO.MR_TAU2_METHODS else "REML")
             out["metaregression"] = MO.meta_regression(
-                es.yi, es.vi, x, names,
-                opt["tau2"] if opt["tau2"] in MO.MR_TAU2_METHODS else "REML",
+                es.yi, es.vi, x, names, mr_tau2,
                 opt["metareg_test"], opt["level"], robust=bool(opt["metareg_robust"]))
+            if mr_tau2 == "FE" and opt["metareg_test"] == "knha":
+                out["warnings"].append("Meta-regresszió: a Knapp–Hartung-próba nem közös hatású (FE) modellhez "
+                                       "készült (a metafor is figyelmeztet); FE-súlyokkal a modell-alapú SE a Stata "
+                                       "regress [aw=1/v] (nem robusztus) SE-je. Wald-próbához: z teszt.")
         except (M.ModelError, ArithmeticError) as exc:
             out["warnings"].append("Meta-regresszió: %s" % exc)
     # 5) kis-vizsgálat hatások (minden teszt külön: egyik hibája nem viszi magával a többit)

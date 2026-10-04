@@ -42,8 +42,10 @@ def egger_test(yi, vi, ci_dist="t", level=0.95):
     xm = sum(prec) / k
     ym = sum(zs) / k
     sxx = sum((x - xm) ** 2 for x in prec)
-    if sxx <= 0:
-        raise ModelError("Egger-teszt: a pontosságok azonosak")
+    # azonos pontosságoknál az xm kerekítési hibája miatt sxx ~1e-30 is lehet (nem pontosan 0):
+    # a tervmátrix ekkor is rangdefektes (metafor regtest: 'Model matrix no longer of full rank')
+    if sxx <= 0 or max(prec) - min(prec) <= 1e-12 * max(prec):
+        raise ModelError("Egger-teszt: a pontosságok azonosak (a regresszió nem illeszthető)")
     sxy = sum((x - xm) * (y - ym) for x, y in zip(prec, zs))
     slope = sxy / sxx
     intercept = ym - slope * xm
@@ -161,7 +163,13 @@ def begg_test(yi, vi, method="auto", continuity=False):
     s = conc - disc
     n0 = k * (k - 1) / 2.0
     denom = math.sqrt((n0 - _tie_pairs(tstar)) * (n0 - _tie_pairs(vi)))
-    tau = s / denom if denom > 0 else 0.0
+    var_s = _kendall_var_s(tstar, vi)
+    if not (denom > 0) or not (var_s > 0):
+        # minden v_i azonos vagy minden standardizált hatás azonos: a Kendall-τ nem definiált
+        # (metafor ranktest: tau = NA, p = NA, 'the standard deviation is zero')
+        raise ModelError("Begg-teszt: nem számolható — a v_i-k (vagy a standardizált hatások) mind "
+                         "azonosak, így a Kendall-τ nem definiált")
+    tau = s / denom
     has_ties = _tie_pairs(tstar) > 0 or _tie_pairs(vi) > 0
     # metafor ranktest: cor.test(..., method="kendall", exact=TRUE) → kötések nélkül pontos
     # eloszlás bármely k-ra (k > 170-nél az R is NaN-t ad, ott normális közelítés);
@@ -173,12 +181,11 @@ def begg_test(yi, vi, method="auto", continuity=False):
         warn.append("Begg-teszt: a pontos Kendall-eloszlás nem használható (%s); normális közelítést "
                     "alkalmaztam." % ("kötések vannak az adatokban" if has_ties else "k > %d" % _KENDALL_EXACT_MAX_N))
     use_exact = exact_ok and method in ("auto", "exact")
-    var_s = _kendall_var_s(tstar, vi)
-    sd_s = math.sqrt(var_s) if var_s > 0 else 0.0
+    sd_s = math.sqrt(var_s)
     if continuity:
-        z = math.copysign(max(0.0, abs(s) - 1.0), s) / sd_s if sd_s > 0 else 0.0
+        z = math.copysign(max(0.0, abs(s) - 1.0), s) / sd_s
     else:
-        z = s / sd_s if sd_s > 0 else 0.0
+        z = s / sd_s
     if use_exact:
         p = _kendall_exact_sf(abs(s), k)
         method_used = "pontos"
@@ -251,6 +258,13 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method=None, estimat
     else:
         trim_m = model
     labels = list(labels) if labels else ["#%d" % (i + 1) for i in range(k)]
+    # a β-hoz képesti eltérések kerekítési zaja (néhány ulp) ne számítson előjelnek
+    tol = 1e-12 * max(abs(a) for a in yi)
+    if max(yi) - min(yi) <= tol:
+        # azonos hatásméreteknél nincs aszimmetria; az L0/R0 csak kerekítési zajra reagálna
+        # (metafor trimfill: hiba vagy zajfüggő k0)
+        raise ModelError("trim-and-fill: a hatásméretek azonosak — nincs kitölthető aszimmetria, "
+                         "a módszer nem alkalmazható")
     # metafor::trimfill: az oldal-regresszió (y ~ √v) a modell saját τ²-becslőjével fut
     # (method = x$method), PM/HE/SJ esetén is; itt a VÁGÁSI modellé
     tm = (tau2_method or "REML").upper()
@@ -284,10 +298,15 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method=None, estimat
         beta = fit.estimate
         yc = [a - beta for a in ys]
         r = _rank_first([abs(a) for a in yc])
-        rs = [(1 if a > 0 else (-1 if a < 0 else 0)) * rr for a, rr in zip(yc, r)]
+        rs = [(1 if a > tol else (-1 if a < -tol else 0)) * rr for a, rr in zip(yc, r)]
         if estimator == "R0":
-            negs = [-a for a in rs if a < 0]
-            k0f = (k - max(negs)) - 1 if negs else k - 1
+            # R0 = γ* − 1, γ* = a legnagyobb rangoktól lefelé megszakítás nélkül pozitív rangok száma
+            # (negatív rang mellett = metafor k − max(|negatív rang|) − 1; a 0 eltérés nem pozitív)
+            pos = {rr for rr in rs if rr > 0}
+            gamma = 0
+            while k - gamma in pos:
+                gamma += 1
+            k0f = gamma - 1
             se_k0 = math.sqrt(2 * max(0, k0f) + 2)
         else:
             sr = sum(a for a in rs if a > 0)

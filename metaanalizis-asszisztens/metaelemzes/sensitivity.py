@@ -37,7 +37,10 @@ def influence(yi, vi, labels, model="random", tau2_method=None, level=0.95):
         return []
     full = meta_analysis(yi, vi, model, tau2_method, "z", level)
     tau2 = full.tau2
-    w = [1.0 / (v + tau2) for v in vi]
+    # a hat-érték az illesztett becslő tényleges súlya: IVhet-nél 1/v_i (FE-súlyok, a forest plot
+    # súlyai), nem 1/(v_i + τ²) — a kihagyásos becslések is IVhet-illesztések
+    ivhet = full.model == "ivhet"
+    w = [1.0 / v for v in vi] if ivhet else [1.0 / (v + tau2) for v in vi]
     sw = sum(w)
     p = 1
     rows = []
@@ -52,8 +55,11 @@ def influence(yi, vi, labels, model="random", tau2_method=None, level=0.95):
         dffits = (full.estimate - r.estimate) / math.sqrt(hat * (r.tau2 + vi[i]))
         cook = (full.estimate - r.estimate) ** 2 / full.se ** 2
         covratio = r.se ** 2 / full.se ** 2
-        # metafor: a nevező a TELJES adatsor varianciája a kihagyásos τ²-tel
-        vb_del = 1.0 / sum(1.0 / (v_ + r.tau2) for v_ in vi)
+        # metafor: a nevező a TELJES adatsor varianciája a kihagyásos τ²-tel (IVhet-nél az IVhet-variancia)
+        if ivhet:
+            vb_del = sum((wj / sw) ** 2 * (v_ + r.tau2) for wj, v_ in zip(w, vi))
+        else:
+            vb_del = 1.0 / sum(1.0 / (v_ + r.tau2) for v_ in vi)
         dfbetas = (full.estimate - r.estimate) / math.sqrt(vb_del)
         infl = (abs(dffits) > 3 * math.sqrt(p / float(k - p))
                 or cook > dist.chi2_ppf(0.5, p)

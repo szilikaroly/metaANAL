@@ -52,8 +52,10 @@ def power_analysis(k, effect=None, n1=None, n2=None, v=None, sd=None, OR=None, m
 
     k: a várható vizsgálatszám; effect: a feltételezett hatás (SMD-nél d, MD-nél nyers különbség,
     GEN-nél tetszőleges skálán, pl. ln OR); OR: esélyhányados (d = ln(OR)·√3/π, measure = SMD);
-    n1, n2: vizsgálatonkénti karlétszám; v: a vizsgálatonkénti mintavételi variancia (megadva
-    felülírja a képletet); sd: közös SD a nyers MD-hez.
+    n1, n2: vizsgálatonkénti karlétszám; v: a vizsgálatonkénti mintavételi variancia a hatás
+    skáláján (megadva felülírja a képletet); sd: közös SD a nyers MD-hez.
+    OR mellett v és tau2 nem adható meg (a d-skálára váltás miatt egy ln OR-skálájú v / τ² hibás
+    erőt adna): ln OR-skálájú varianciához measure='GEN', effect=ln(OR) használandó.
     Heterogenitás (elsőbbségi sorrend): tau2 (abszolút τ²) > i2 (I² %-ban: τ² = v·I²/(100 − I²)) >
     heterogeneity ('fixed' / 'low' / 'moderate' / 'high', factors szerinti tényezővel).
     alpha: szignifikanciaszint; tails: 2 (kétoldali, alapértelmezés) vagy 1.
@@ -82,6 +84,11 @@ def power_analysis(k, effect=None, n1=None, n2=None, v=None, sd=None, OR=None, m
             raise ModelError("erőelemzés: vagy effect (d), vagy OR adható meg, a kettő együtt nem")
         if not (OR > 0):
             raise ModelError("erőelemzés: OR > 0 kell")
+        if v is not None or tau2 is not None:
+            raise ModelError("erőelemzés: OR mellett v és τ² nem adható meg (az OR a d-skálára vált, d = ln OR·√3/π, "
+                             "így egy ln OR-skálájú v / τ² hibás erőt adna); ln OR-skálájú varianciához: "
+                             "--measure GEN --effect <ln OR> --v ..., OR mellett pedig n1/n2 (és --heterogeneity "
+                             "vagy --i2)")
         effect = math.log(OR) * math.sqrt(3.0) / math.pi
         measure = "SMD"
     if effect is None:

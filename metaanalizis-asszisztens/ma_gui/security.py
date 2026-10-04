@@ -603,21 +603,19 @@ def safe_resolve(root, rel, allowed_ext=None, must_exist=False, allow_hidden=Fal
     ``allowed_ext`` adott, a kért név és a feloldott cél kiterjesztése is az allowlistben
     kell legyen. ``must_exist``: hiányzó fájlra NOT_FOUND."""
     segs = check_relpath(rel, allow_hidden=allow_hidden)
+    # os.path.realpath: a lógó symlinket is követi (Windows-on a 3.9-es Path.resolve nem)
     try:
-        root_r = Path(root).resolve(strict=True)
-    except (OSError, RuntimeError):
-        raise UnsafePath("A gyökérmappa nem érhető el.", code="NOT_FOUND") from None
-    if not root_r.is_dir():
+        root_r = Path(os.path.realpath(os.fspath(root)))
+        root_ok = root_r.is_dir()
+        resolved = Path(os.path.realpath(str(root_r.joinpath(*segs))))
+    except (OSError, ValueError, TypeError):
+        raise UnsafePath("Az útvonal nem oldható fel.") from None
+    if not root_ok:
         raise UnsafePath("A gyökérmappa nem érhető el.", code="NOT_FOUND")
-    cand = root_r.joinpath(*segs)
-    try:
-        resolved = cand.resolve(strict=bool(must_exist))
-    except FileNotFoundError:
-        raise UnsafePath("A fájl nem található.", code="NOT_FOUND") from None
-    except (OSError, RuntimeError):
-        raise UnsafePath("Az útvonal nem oldható fel (symlink-hurok?).") from None
     if not is_within(resolved, root_r):
         raise UnsafePath("Az útvonal a megengedett gyökéren kívülre mutat.")
+    if must_exist and not resolved.exists():
+        raise UnsafePath("A fájl nem található.", code="NOT_FOUND")
     if allowed_ext is not None:
         if not check_extension(segs[-1], allowed_ext) or not check_extension(resolved.name, allowed_ext):
             raise UnsafePath("Ez a fájltípus nem engedett.")

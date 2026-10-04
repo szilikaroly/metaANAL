@@ -20,7 +20,8 @@ from .models import (ModelError, MetaResult, meta_analysis, estimate_tau2, optim
 
 # ------------------------------------------------------------- alcsoportok
 def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=None,
-                      ci_method=None, level=0.95, common_tau2=False, pi_method="t_k-2"):
+                      ci_method=None, level=0.95, common_tau2=False, pi_method="t_k-2",
+                      h_centre="truncated"):
     """Alcsoportonkénti összesítés + alcsoport-különbség teszt (Q_between).
 
     common_tau2=True: közös τ² a csoportokon belül (vegyes hatású modell faktor
@@ -29,6 +30,9 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=N
     becsülhető (k <= csoportok száma, szinguláris modell), figyelmeztetéssel csoportonként
     külön τ²-re vált. Különben csoportonként külön τ² (Borenstein 19. fejezet mindkét
     változatot tárgyalja); az egyvizsgálatos csoport ekkor fix hatású (RevMan-gyakorlat).
+    IVhet modellnél is használható: a közös τ² ekkor alapértelmezésben a faktor-modell DL
+    becslése (mint az IVhet saját τ²-e), és a csoportok IVhet-varianciája ezzel számol.
+    Fix hatású modellnél a common_tau2 nem értelmezett (figyelmeztetés).
 
     Q_between = Σ (μ_g - μ̄)² / se_g², df = G - 1, ahol se_g a csoportbecslés Wald-féle
     (NEM HKSJ-korrigált) standard hibája, √(1/Σw). A χ²(G-1) teszt így független a
@@ -40,6 +44,8 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=N
     heterogenitást figyelmen kívül hagyná, és túl liberális tesztet adna).
 
     tau2_method: None = a modell alapértelmezése (random → REML, ivhet → DL).
+    h_centre: a Higgins–Thompson H/I² CI középpontja minden (csoport- és teljes) modellben
+    (lásd models.heterogeneity), hogy a teljes modell blokkja egyezzen az elsődleges modellével.
     Minden csoport-eredmény kap egy weight_share_pct mezőt: a csoport vizsgálatainak összsúlya
     a TELJES (alcsoportok nélküli) modellben, a teljes súly %-ában (MetaXL / RevMan
     'Subtotal % weight'; véletlen hatásnál a teljes adatsor τ²-ével számolt 1/(v_i + τ²) súlyok,
@@ -55,13 +61,17 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=N
             order.append(g)
     tau2_common = None
     tau2_common_info = None
-    if common_tau2 and model == "random":
+    method = None
+    if common_tau2 and model not in ("random", "ivhet"):
+        warnings.append("A közös τ² (--common-tau2) csak véletlen hatású és IVhet modellnél értelmezett; "
+                        "a(z) %s modellnél figyelmen kívül hagytam." % model)
+    elif common_tau2:
         if len(yi) <= len(order):
             warnings.append("Közös τ² nem becsülhető (k = %d <= alcsoportok száma = %d); "
                             "csoportonként külön τ²-t használtam." % (len(yi), len(order)))
         else:
             x = [[1.0] + [1.0 if g == lev else 0.0 for lev in order[1:]] for g in groups]
-            method = (tau2_method or "REML").upper()
+            method = (tau2_method or ("DL" if model == "ivhet" else "REML")).upper()
             if method not in MR_TAU2_METHODS:
                 method = "REML"
             try:
@@ -79,15 +89,15 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=N
         if len(y) == 1:
             if tau2_common is not None:
                 # közös τ²-es modellben az egyetlen vizsgálat varianciája v_i + τ²_közös
-                r = meta_analysis(y, v, "random", tau2_method, "z", level, pi_method, labs,
-                                  tau2_fixed=tau2_common)
+                r = meta_analysis(y, v, "ivhet" if model == "ivhet" else "random", tau2_method, "z",
+                                  level, pi_method, labs, tau2_fixed=tau2_common, h_centre=h_centre)
                 r.warnings = []
             else:
-                r = meta_analysis(y, v, "fixed", ci_method="z", level=level, labels=labs)
+                r = meta_analysis(y, v, "fixed", ci_method="z", level=level, labels=labs, h_centre=h_centre)
             r.note = "egyetlen vizsgálat — nincs összesítés"
         else:
             r = meta_analysis(y, v, model, tau2_method, ci_method, level, pi_method, labs,
-                              tau2_fixed=tau2_common)
+                              tau2_fixed=tau2_common, h_centre=h_centre)
         r.group = g
         out_groups.append(r)
     mus = [r.estimate for r in out_groups]
@@ -104,7 +114,8 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=N
     else:
         warnings.append("Az alcsoport-különbség teszt nem számolható (nulla vagy nem véges "
                         "csoport-standardhiba).")
-    overall = meta_analysis(yi, vi, model, tau2_method, ci_method, level, pi_method, labels)
+    overall = meta_analysis(yi, vi, model, tau2_method, ci_method, level, pi_method, labels,
+                            h_centre=h_centre)
     # alcsoport-részesedés a teljes modell súlyából (MetaXL/RevMan 'Subtotal' % weight)
     w_all = overall.weights_raw
     for g, r in zip(order, out_groups):
@@ -122,7 +133,9 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=N
         Q_between=q_between, df_between=df, p_between=p_between,
         Q_between_se="ivhet" if model == "ivhet" else "wald",
         Q_between_note=(("Q_between a csoportbecslések IVhet-standardhibáiból (z-alapú, a csoporton belüli "
-                         "heterogenitással inflált), χ²(G−1) eloszlással") if model == "ivhet" else
+                         "heterogenitással inflált), χ²(G−1) eloszlással"
+                         + ("; közös τ² (%s, faktor-modellből) az alcsoportokban" % method
+                            if tau2_common is not None else "")) if model == "ivhet" else
                         "Q_between a csoportbecslések Wald-standardhibáiból (nem HKSJ), "
                         "χ²(G−1) eloszlással"
                         + ("; közös τ² mellett = metafor rma(mods=~alcsoport) QM" if tau2_common is not None
@@ -306,13 +319,32 @@ def _robust_hc1(x, y, w, b, m, e, names, level, idx, has_int):
                       "p": dist.t_two_sided_p(stat, df),
                       "ci_lower": b[j] - crit * se, "ci_upper": b[j] + crit * se})
     f = f_p = None
+    warn = []
     if idx:
         bsub = [b[i] for i in idx]
         vsub = [[vb[i][j] for j in idx] for i in idx]
-        vinv = la.inverse(vsub)
-        q = len(idx)
-        f = sum(bsub[i] * sum(vinv[i][j] * bsub[j] for j in range(q)) for i in range(q)) / q
-        f_p = dist.f_sf(f, q, df)
+        try:
+            vinv = la.inverse(vsub)
+        except la.SingularMatrixError:
+            # pl. egyvizsgálatos moderátor-szint: a reziduuma 0, így a robusztus blokk szinguláris
+            # (metafor robust(): 'Could not obtain the cluster-robust omnibus Wald test', QM = NA)
+            vinv = None
+            warn.append("A robusztus (HC1) omnibusz F-próba nem számolható: a robusztus kovariancia-blokk "
+                        "szinguláris (pl. egyetlen vizsgálatot tartalmazó moderátor-szint); a modell-alapú "
+                        "moderátor-teszt (QM) érvényes.")
+        if vinv is not None:
+            q = len(idx)
+            f = sum(bsub[i] * sum(vinv[i][j] * bsub[j] for j in range(q)) for i in range(q)) / q
+            f_p = dist.f_sf(f, q, df)
+    # a tökéletesen illesztett (hat = 1) vizsgálat reziduuma 0, így a HC1 'hús' kihagyja: az ehhez
+    # kötött együttható robusztus SE-je alulbecsült (a vizsgálat saját varianciáját sem tartalmazza)
+    hat = [wi * sum(row[i] * sum(m[i][j] * row[j] for j in range(p)) for i in range(p))
+           for row, wi in zip(x, w)]
+    n_lev1 = sum(1 for h in hat if h > 1.0 - 1e-8)
+    if n_lev1:
+        warn.append("Robusztus (HC1) SE: %d vizsgálatot a modell tökéletesen illeszt (hat = 1, pl. egyvizsgálatos "
+                    "moderátor-szint); a hozzájuk tartozó együtthatók robusztus SE-je alulbecsült, ezeknél a "
+                    "modell-alapú SE az irányadó." % n_lev1)
     sw = sum(w)
     sse = sum(wi * ei * ei for wi, ei in zip(w, e))
     r2 = r2_adj = None
@@ -330,6 +362,7 @@ def _robust_hc1(x, y, w, b, m, e, names, level, idx, has_int):
         # Khan (2020, 248. o.) nem standard 'I²_model' = (F − df_r)/F a robusztus F-ből (0-nál csonkolva);
         # csak a könyv reprodukálásához — heterogenitási mérőszámként nem ajánlott
         "I2_model_pct": (100.0 * max(0.0, (f - df) / f)) if (f is not None and f > 0) else None,
+        "warnings": warn,
         "note": ("HC1 szendvics-SE (k/(k−p) korrekció), t(k−p) próbák; a súlyok a modell súlyai "
                  "(τ² = 0 esetén 1/v_i: Stata regress [aw=1/v], robust)."),
     }
@@ -416,8 +449,14 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
                         "moderátor; Cochrane Handbook 10.11.4).")
     rob = None
     if robust:
-        rob = _robust_hc1(x, yi, w, b, m, e, names, level, idx, has_int)
-        if k < 20:
+        try:
+            rob = _robust_hc1(x, yi, w, b, m, e, names, level, idx, has_int)
+        except (ArithmeticError, ValueError) as exc:
+            # a kiegészítő robusztus blokk hibája nem viheti magával a modell-alapú eredményt
+            warnings.append("A robusztus (HC1) SE nem számolható (%s); a modell-alapú eredmények érvényesek." % exc)
+        else:
+            warnings += rob.pop("warnings")
+        if rob is not None and k < 20:
             warnings.append("Robusztus (HC1) SE kevés vizsgálatnál (k = %d) alulbecsülheti a "
                             "bizonytalanságot; kis mintás korrekció (pl. CR2, clubSandwich) "
                             "megbízhatóbb." % k)

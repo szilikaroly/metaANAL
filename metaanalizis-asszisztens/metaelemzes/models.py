@@ -75,15 +75,20 @@ def cochran_q(yi, vi):
 
 
 def typical_within_variance(vi):
-    """s̃² = (k-1)Σw / ((Σw)² - Σw²)  (Higgins & Thompson 2002; metafor)."""
-    w = [1.0 / v for v in vi]
-    sw = sum(w)
-    sw2 = sum(x * x for x in w)
+    """s̃² = (k-1)Σw / ((Σw)² - Σw²) = (k-1)/C  (Higgins & Thompson 2002; metafor)."""
     k = len(vi)
-    den = sw * sw - sw2
-    if k < 2 or den <= 0:
+    if k < 2:
         return None
-    return (k - 1) * sw / den
+    c = _dl_c([1.0 / v for v in vi])
+    if not c > 0:
+        return None
+    return (k - 1) / c
+
+
+def _dl_c(w):
+    """C = Σw − Σw²/Σw kiejtéses hiba nélkül (= tr(P) τ² = 0-nál, lásd _reml_traces): egy domináns
+    súlynál (pl. elírt, 1e-10 nagyságú SE) a naiv alak 0-ra vagy kerekítési zajra kerekedik."""
+    return _reml_traces(w)[0]
 
 
 def generalized_q(yi, vi, tau2):
@@ -111,9 +116,9 @@ def tau2_dl(yi, vi):
     k = len(yi)
     if k < 2:
         return 0.0
-    w = [1.0 / v for v in vi]
-    sw = sum(w)
-    c = sw - sum(x * x for x in w) / sw
+    c = _dl_c([1.0 / v for v in vi])
+    if not c > 0:
+        return 0.0
     q = cochran_q(yi, vi)
     return max(0.0, (q - (k - 1)) / c)
 
@@ -147,7 +152,8 @@ def tau2_pm(yi, vi, tol=1e-12, maxiter=1000):
     target = k - 1.0
     if generalized_q(yi, vi, 0.0) <= target:
         return 0.0
-    lo, hi = 0.0, max(tau2_dl(yi, vi), 1e-4)
+    scale = variance_scale(vi)
+    lo, hi = 0.0, max(tau2_dl(yi, vi), scale, 1e-4)
     while generalized_q(yi, vi, hi) > target:
         hi *= 2.0
         if hi > 1e12:
@@ -158,7 +164,9 @@ def tau2_pm(yi, vi, tol=1e-12, maxiter=1000):
             lo = mid
         else:
             hi = mid
-        if hi - lo < tol * max(1.0, hi):
+        # skálához viszonyított tolerancia (mint a _tau2_pm_mr-ben): az eredmény ne függjön a
+        # hatásméret mértékegységétől (kis varianciáknál az abszolút 1e-12 durva volna)
+        if hi - lo < tol * max(hi, scale):
             break
     return 0.5 * (lo + hi)
 
@@ -396,6 +404,8 @@ def tau2_ci_qprofile(yi, vi, level=0.95):
     crit_hi = dist.chi2_ppf(1 - alpha / 2.0, df)   # alsó határhoz
     crit_lo = dist.chi2_ppf(alpha / 2.0, df)       # felső határhoz
 
+    scale = variance_scale(vi)
+
     def solve(target):
         if generalized_q(yi, vi, 0.0) <= target:
             return 0.0
@@ -410,7 +420,7 @@ def tau2_ci_qprofile(yi, vi, level=0.95):
                 lo = mid
             else:
                 hi = mid
-            if hi - lo < 1e-12 * max(1.0, hi):
+            if hi - lo < 1e-12 * max(hi, scale):
                 break
         return 0.5 * (lo + hi)
 
@@ -514,9 +524,7 @@ def heterogeneity(yi, vi, tau2=None, level=0.95, h_centre="truncated"):
     _check_h_centre(h_centre)
     k = len(yi)
     df = k - 1
-    w = [1.0 / v for v in vi]
-    sw = sum(w)
-    c = sw - sum(x * x for x in w) / sw if k > 1 else 0.0
+    c = _dl_c([1.0 / v for v in vi]) if k > 1 else 0.0
     q = cochran_q(yi, vi)
     out = {
         "k": k, "Q": q, "df": df,
@@ -627,10 +635,15 @@ def meta_analysis(yi, vi, model="random", tau2_method=None, ci_method=None, leve
             q_hk = sum(wi * (y - mu) ** 2 for wi, y in zip(w, yi)) / (k - 1)
             qq = max(1.0, q_hk) if ci_method == "hksj_adhoc" else q_hk
             se = math.sqrt(qq / sw)
-            if ci_method == "hksj" and q_hk < 1:
-                warnings.append("HKSJ: q = %.3f < 1, ezért a HKSJ-CI szűkebb lehet a Wald-CI-nál; "
-                                "érzékenységi elemzésként fontold meg a hksj_adhoc módszert." % q_hk)
         crit = dist.t_ppf(1 - alpha / 2, df_t)
+        if ci_method == "hksj" and q_hk < 1:
+            # q < 1 önmagában nem elég: a HKSJ-CI csak akkor szűkebb, ha t(k−1)·√q < z
+            # (q < (z/t)², pl. k = 4-nél 0,38); a tényleges félszélességeket hasonlítjuk össze
+            z_half = dist.norm_ppf(1 - alpha / 2) * se_wald
+            if crit * se < z_half:
+                warnings.append("HKSJ: q = %.3f < 1, és a HKSJ-CI szűkebb a Wald-CI-nál (félszélesség %.4g vs. "
+                                "%.4g); érzékenységi elemzésként fontold meg a hksj_adhoc módszert."
+                                % (q_hk, crit * se, z_half))
         stat = ratio_stat(mu, se)
         if math.isnan(stat):
             # HKSJ: q = 0 (minden y_i azonos) és a becslés pontosan 0 → 0/0 (metafor: NA)
@@ -742,7 +755,8 @@ def _drop_incomplete(labels, rows):
     return keep_l, keep_r, excluded
 
 
-def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.5, rd_var="sato"):
+def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.5, rd_var="sato",
+                    h_centre="truncated"):
     """Mantel–Haenszel fix hatású összesítés (OR, RR, RD).
 
     Varianciák: OR — Robins–Breslow–Greenland (1986); RR — Greenland & Robins (1985);
@@ -754,7 +768,12 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
     Q a vizsgálatonkénti inverz-variancia becslésekből számolódik az MH-becslés körül
     (a kettős-nulla / kettős-100% táblák nélkül, mint a metafor-ban). Nulla összesített
     variancia (degenerált táblák) esetén se = 0, a z-statisztika ±inf vagy 0/0 → NaN.
+    Súlyok: weights_raw / weights_pct / weights_labels pozíció szerint (a becslésbe bevont
+    táblák sorrendjében, ismétlődő címkével is); weights_by_label és weights_raw_by_label
+    címkénként összegez (ismétlődő címkéjű sorok — több kar — súlya összeadódik).
+    h_centre: a heterogenitási blokk H/I² CI-középpontja (lásd heterogeneity()).
     """
+    _check_h_centre(h_centre)
     measure = measure.upper()
     if measure not in ("OR", "RR", "RD"):
         raise ModelError("MH: OR, RR vagy RD")
@@ -767,7 +786,7 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
     rd_num = rd_den = rd_gr = 0.0
     rd_p = rd_q = 0.0
     used = []
-    mh_w = {}
+    w_raw = []
     for lab, (a, m1, c, m2) in zip(labels, rows):
         a, c, m1, m2 = float(a), float(c), float(m1), float(m2)
         b, d = m1 - a, m2 - c
@@ -788,7 +807,7 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
             excluded.append((lab, "kettős nulla esemény — az MH-becsléshez nem járul hozzá"))
             continue
         used.append(lab)
-        mh_w[lab] = (b * c / n) if measure == "OR" else ((c * m1 / n) if measure == "RR" else m1 * m2 / n)
+        w_raw.append((b * c / n) if measure == "OR" else ((c * m1 / n) if measure == "RR" else m1 * m2 / n))
         if measure == "OR":
             r, s = a * d / n, b * c / n
             p_, q_ = (a + d) / n, (b + c) / n
@@ -862,9 +881,9 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
     # metafor rma.mh: k.yi <= 1 esetén QE = 0
     q = sum((y - est) ** 2 / v for y, v in zip(yi, vi)) if len(yi) > 1 else 0.0
     df = max(0, len(yi) - 1)
-    tot = sum(mh_w.values())
-    w_mh = {lab: 100.0 * w / tot for lab, w in mh_w.items()} if tot > 0 else {}
-    het = heterogeneity(yi, vi) if len(yi) >= 1 else {}
+    tot = sum(w_raw)
+    w_pct = [100.0 * w / tot for w in w_raw] if tot > 0 else None
+    het = heterogeneity(yi, vi, None, level, h_centre) if len(yi) >= 1 else {}
     stat = ratio_stat(est, se)
     return MetaResult(
         model="MH", measure=measure, k=len(rows), k_estimable=len(used), estimate=est, se=se, se_wald=se,
@@ -874,14 +893,28 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
         Q=q, Q_df=df, p_Q=dist.chi2_sf(q, df) if df > 0 else None,
         I2=(max(0.0, (q - df) / q) * 100 if df > 0 and q > 0 else 0.0),
         H2=(q / df if df > 0 else None), heterogeneity=het,
-        weights_pct=None, weights_by_label=w_mh, weights_raw_by_label=dict(mh_w), sum_weights=tot,
+        weights_pct=w_pct, weights_raw=w_raw, weights_labels=list(used), sum_weights=tot,
+        weights_by_label=_sum_by_label(used, w_pct) if w_pct is not None else {},
+        weights_raw_by_label=_sum_by_label(used, w_raw),
         yi=yi, vi=vi, labels=labs, excluded=excluded,
         warnings=mh_warn,
     )
 
 
-def peto(e1, n1, e2, n2, level=0.95, labels=None):
-    """Peto-féle egylépéses OR (ritka események, kiegyensúlyozott karok esetén)."""
+def _sum_by_label(labels, values):
+    """Címke → összeg (ismétlődő címkéjű sorok értéke összeadódik, nem íródik felül)."""
+    out = {}
+    for lab, v in zip(labels, values):
+        out[lab] = out.get(lab, 0.0) + v
+    return out
+
+
+def peto(e1, n1, e2, n2, level=0.95, labels=None, h_centre="truncated"):
+    """Peto-féle egylépéses OR (ritka események, kiegyensúlyozott karok esetén).
+
+    weights_pct / weights_raw / weights_labels pozíció szerint; weights_by_label címkénként
+    összegez (ismétlődő címkék). h_centre: a heterogenitási blokk H/I² CI-középpontja."""
+    _check_h_centre(h_centre)
     rows = list(zip(e1, n1, e2, n2))
     labels = list(labels) if labels else ["#%d" % (i + 1) for i in range(len(rows))]
     labels, rows, excluded = _drop_incomplete(labels, rows)
@@ -923,8 +956,9 @@ def peto(e1, n1, e2, n2, level=0.95, labels=None):
         tau2_method=None, pi_lower=None, pi_upper=None, pi_method=None,
         Q=q, Q_df=df, p_Q=dist.chi2_sf(q, df) if df > 0 else None,
         I2=(max(0.0, (q - df) / q) * 100 if df > 0 and q > 0 else 0.0),
-        H2=(q / df if df > 0 else None), heterogeneity=heterogeneity(yi, vi),
+        H2=(q / df if df > 0 else None), heterogeneity=heterogeneity(yi, vi, None, level, h_centre),
         weights_pct=[100 * v / sv for v in var_list], weights_raw=list(var_list), sum_weights=sv,
-        weights_by_label={lab: 100 * v / sv for lab, v in zip(labs, var_list)}, yi=yi, vi=vi, labels=labs,
+        weights_labels=list(labs), weights_by_label=_sum_by_label(labs, [100 * v / sv for v in var_list]),
+        yi=yi, vi=vi, labels=labs,
         excluded=excluded, warnings=[],
     )
