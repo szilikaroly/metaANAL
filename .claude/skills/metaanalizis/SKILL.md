@@ -17,7 +17,7 @@ magyarul kommunikálj vele, a kéziratba szánt szövegeket angolul írd. Szakma
 | Tudásbázis (SQLite + FTS5) | `python metaanalizis-asszisztens/ma.py kb search "…"`, `kb rules --stage S08 --agent planner`, `kb checklist PRISMA2020`, `kb show <ID>`, `kb sql "SELECT …"` |
 | Projektnapló (SQLite) | `python metaanalizis-asszisztens/ma.py project status <mappa>`, `project log …`, `project finding …`, `project checkpoint …` |
 | Alágensek | `ma-tervezo`, `ma-ellenorzo`, `ma-ertekelo` (Agent eszközzel hívod őket) |
-| Eszköz- és hozzáférés-lista | `metaanalizis-asszisztens/ESZKOZOK_ES_HOZZAFERESEK.md` |
+| Eszköz- és hozzáférés-lista | általános: `metaanalizis-asszisztens/ESZKOZOK_ES_HOZZAFERESEK.md`; projektenként: `<projekt>/00_protokoll/eszkozok_hozzaferesek.md` (a ma-tervezo írja, a `kb sql "SELECT * FROM tool"` és `kb checklist PREFLIGHT` alapján) |
 
 A szakaszkódok (stage_id): S00 előfeltételek · S01 kérdés · S02 protokoll · S03 keresés · S04 szűrés ·
 S05 adatkinyerés · S06 torzítási kockázat · S07 hatásméret · S08 szintézis · S09 heterogenitás ·
@@ -31,7 +31,8 @@ S14 jelentés (PRISMA 2020).
 2. **Minden számítást a motor végez** (`ma.py analyze`), nem fejben vagy ad hoc kóddal. Ha a motor nem tud
    valamit, mondd ki, és javasolj validált eszközt (R metafor/meta).
 3. **Minden módszertani döntés a tudásbázisból indul**: előtte `kb rules`/`kb search`, utána
-   `project log … --kb <szabály-ID-k>`. Ha a tudásbázis nem fedi le a kérdést, írd le, mire alapozod.
+   `project log … --kb <szabály-ID-k>`. Ha a tudásbázis nem fedi le a kérdést, írd le, mire alapozod
+   (forrás + oldal a teljes szöveges találatból) — kitalált szabály-ID-t soha ne adj meg.
 4. **Hivatkozást csak ellenőrzötten** adsz meg (PubMed MCP / DOI). Kitalált vagy nem ellenőrzött hivatkozás tilos.
 5. **Emberi döntés kell** a végső be-/kizáráshoz, az adatkinyerés kettős ellenőrzéséhez és a torzítási kockázat
    értékeléséhez (két független bíráló). Te előkészíted, összeveted, és jelzed az eltéréseket — a döntést rögzíted.
@@ -65,7 +66,8 @@ fájlok változtak). Tipikus pontok:
   V014 szélsőséges hatás) forrás-visszaellenőrzése.
 - S06 RoB: eszköz megfelelősége (RoB 2 RCT-re, ROBINS-I nem randomizáltra, NOS megfigyelésesre, QUADAS-2
   diagnosztikusra; predikciós modellnél PROBAST+AI — erre a `probast-tripod-ai` skill használható).
-- S07–S12 elemzés: `ma.py analyze --data … --measure … --project <mappa> --out <mappa>/05_elemzes/<kimenet>`;
+- S07–S12 elemzés: `ma.py analyze --data … --measure … --project <mappa> --out <mappa>/05_elemzes/<kimenet>`
+  (bináris OR-nál a kis-vizsgálat teszt Harbord/Peters, nem a klasszikus Egger);
   az előre tervezett érzékenységi elemzések (`--exclude rob=high`, `--exclude estimated=igen`, FE vs RE,
   másik τ²-becslő) külön kimeneti mappába.
 - S14 kézirat: PRISMA 2020 (`kb checklist PRISMA2020`), a `report.md` angol Methods-bekezdése kiindulásnak.
@@ -78,6 +80,21 @@ klinikai jelentőség (MCID, abszolút hatás), AMSTAR 2 önellenőrzés. Rögz�
 Teljes reprodukció (adat → riport → kézirat számai), PRISMA 2020 tételenként, protokolltól való eltérések,
 hivatkozások ellenőrzése. FAIL esetén vissza a megfelelő szakaszhoz.
 Végül: `project export <mappa>` → döntési és ellenőrzési napló a kiegészítő anyaghoz.
+
+## Együttműködés a szk-plugins pluginjaival (ha telepítve vannak)
+
+A pluginokra névvel hivatkozz (ne slash-paranccsal a kódban/szövegben); ha egyik sincs telepítve, a motor és a sablonok
+önmagukban is elegendőek.
+
+| Plugin | Mire használd ebben a folyamatban |
+|---|---|
+| `composer` | irodalomgyűjtés és 5D bibliográfiai validálás; **PRISMA 2020 számok** (`prisma` → `prisma-flow.json`, PRISMA-S keresési napló) és **PROSPERO-rekord** (`protocol`). Ha használod, ez a PRISMA-számok egyetlen forrása; a `02_szures/prisma_folyamat.md` csak ellenőrzés. |
+| `validator` | torzítási kockázat eszközválasztása (`route`) és kitöltés-ellenőrzés (RoB 2, ROBINS-I, NOS, QUADAS-2 …); **GRADE** és **AMSTAR 2** összesítés; PROBAST+AI / TRIPOD+AI predikciós modelleknél. A GRADE publikációs torzítás-doménjét kézzel ellenőrizd (ismert hiba: a „suspected” nem minősít le). |
+| `figure-forge` | a motor `forest.svg` / `funnel.svg` ábráinak **`audit`-ja** (szerkeszthető szöveg, betűkészlet, tipográfia); PRISMA-folyamatábra rajzolása a composer által adott specifikációból. A forest/funnel rajzolását NE bízd rá (nincs gyémánt, PI, alcsoport, funnel). |
+| `presubmit` | kézirat-ellenőrzés beadás előtt; a `claims` ellenőrzés a CI nélküli hatásbecsléseket jelzi — a becslést mindig így írd: „RR 0.49 (95% CI 0.33–0.73)”. |
+
+**Adatvédelem:** a `vault` plugin a `~/Documents/claude` alatti projekteket automatikusan GitHubra menti — betegszintű vagy
+érzékeny kinyerési adat ne legyen ott (vagy legyen `.gitignore`-ban).
 
 ## Alágens-hívás minta
 

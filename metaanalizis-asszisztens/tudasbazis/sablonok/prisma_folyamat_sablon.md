@@ -1,5 +1,8 @@
 # PRISMA 2020 folyamatábra — számok és ellenőrzés
 
+> Ha a `composer` plugin telepítve van, annak `prisma` parancsa ugyanezeket a számokat vezeti (`prisma-flow.json`) és
+> figure-forge folyamatábra-specifikációt ad; ez a sablon akkor csak ellenőrzésre kell.
+
 | Lépés | Szám | Ellenőrzés |
 |---|---|---|
 | Azonosított rekordok — adatbázisok (n = A1) | | adatbázisonként a keresési naplóból |
@@ -11,7 +14,7 @@
 | Nem elérhető teljes szöveg (n = F) | | |
 | Teljes szövegben értékelt (n = G) | | G = E − F |
 | Kizárt teljes szöveg okokkal (n = H = H1 + H2 + …) | | okonként felsorolva |
-| Bevont vizsgálatok (n = I) és közlemények (n = J) | | I = G − H (vizsgálat vs közlemény külön!) |
+| Bevont közlemények (n = J) és vizsgálatok (n = I) | | J = G − H (+ egyéb forrásból bevont közlemények); I ≤ J — a vizsgálatokat külön számold (egy vizsgálatnak több közleménye lehet) |
 | Ebből metaanalízisben (kimenetenként) | | |
 | Egyéb forrásból (hivatkozás-követés, szakértő) — külön ág | | |
 
@@ -24,5 +27,5 @@ flowchart TD
   E --> F["Nem elérhető n=F"]
   E --> G["Teljes szövegben értékelt n=G"]
   G --> H["Kizárva okokkal n=H"]
-  G --> I["Bevont vizsgálatok n=I (közlemények n=J)"]
+  G --> I["Bevont közlemények n=J; vizsgálatok n=I"]
 ```
