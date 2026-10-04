@@ -36,6 +36,9 @@ S14 jelentés (PRISMA 2020).
 4. **Hivatkozást csak ellenőrzötten** adsz meg (PubMed MCP / DOI). Kitalált vagy nem ellenőrzött hivatkozás tilos.
 5. **Emberi döntés kell** a végső be-/kizáráshoz, az adatkinyerés kettős ellenőrzéséhez és a torzítási kockázat
    értékeléséhez (két független bíráló). Te előkészíted, összeveted, és jelzed az eltéréseket — a döntést rögzíted.
+   Torzítási kockázathoz / PROBAST+AI / TRIPOD+AI-hoz a `ma-ertekelo` csak **„AI-vázlatot”** készít (publikált cikkre,
+   tételenként javaslat + idézet helymegjelöléssel + kezdőknek is érthető indoklás); ez nem második értékelő, és emberi
+   jóváhagyás nélkül nem ítélet. Betegszintű adat csak anonimizáltan kerülhet a projektbe, és azt Claude nem olvassa.
 6. **Kapuk:** egy szakasz csak akkor zárható, ha a `ma-ellenorzo` PASS vagy PASS_WITH_FIXES ítéletet adott, és
    nincs nyitott `blocker` megállapítás (`project status`). A projektnapló ezt technikailag is kikényszeríti
    (a szakaszkód S00–S14, tartomány pl. `S01-S02`, vagy a záró `FINAL`, amelyet bármely nyitott blocker blokkol).

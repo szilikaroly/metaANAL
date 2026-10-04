@@ -2241,11 +2241,25 @@ skilljén keresztül megy; hogy a motor és a munkapad később pluginná váljo
 
 ## 11. Nyitott kérdések a felhasználónak
 
-> **Döntés (2026-10-04):** a felhasználó mind a hat kérdésben az ajánlott választ fogadta el: 1A (a kód a motor
-> repójában, `ma_gui/`), 2A (Python nélküli gépre csak olvasható, kitakaró pillanatkép), 3B (C osztályú adat csak
-> `_privat/`-ban, védőrétegekkel), 4A (a „Suspected” feloldatlan, amíg ember nem dönt; „Strongly suspected” −1),
-> 5A (második kinyerő/értékelő saját gépen, fájlcserével), 6A (Claude-vázlat csak „AI-vázlat” státusszal, kötelező
-> emberi jóváhagyással, nem második értékelő, C osztálynál tiltva). A lenti szöveg a döntés előtti állapotot rögzíti.
+> **Döntés (2026-10-04, a felhasználó pontosításaival):**
+> 1. **Mindkettő:** a kód ebben a repóban él (`ma_gui/`, `python ma.py gui`), ÉS ugyanebből a repóból Claude Code-
+>    pluginként is telepíthető (a repó gyökerében `marketplace.json`, a `metaanalizis-asszisztens/` mappa a plugin;
+>    az ágens- és skill-fájlok plugin-változatát egy generátor állítja elő a `.claude/` változatból, teszt őrzi az
+>    egyezést). Az szk-plugins marketplace-be csak külön engedéllyel kerül.
+> 2. Python nélküli gépen csak olvasható, kitakarható HTML-pillanatkép; szerkesztés Pythonos gépen.
+> 3. **Betegszintű adat csak anonimizált formában** kerülhet a projektbe (a felhasználó nyilatkozata). A védőrétegek
+>    (C osztály → `_privat/`, TAJ/PHI-szkenner, vault/OneDrive-figyelmeztetés) biztonsági hálóként megmaradnak: a
+>    szkenner találata azt jelzi, hogy az anonimizálás hiányos lehet.
+> 4. GRADE publikációs torzítás: a „Suspected” feloldatlan, amíg ember nem dönt indoklással 0 vagy −1 között;
+>    „Strongly suspected” −1.
+> 5. Második kinyerő/értékelő a saját gépén, fájlcserével; hálózati elérés nincs.
+> 6. **AI-vázlat kezdőknek is érthető indoklással:** Claude PROBAST+AI / TRIPOD+AI / RoB vázlatot készíthet
+>    („AI-vázlat” státusz, kötelező emberi jóváhagyás, nem második értékelő, csak publikált cikkre, betegszintű adatra
+>    nem). Minden tételnél kötelező: (a) javasolt ítélet, (b) bizonyíték szó szerinti rövid idézettel és hellyel
+>    (oldal/táblázat), (c) **indoklás egyszerű nyelven** — mit kérdez a tétel, miért ez a javaslat, mi változtatná
+>    meg —, (d) bizonytalanság jelölése, ha a cikk nem közli. A felület a „Miért?” panelben mutatja; a
+>    `ma-ertekelo` ágens ugyanezt a formát követi.
+> A lenti szöveg a döntés előtti állapotot rögzíti.
 
 Hat döntés, mindegyiknél ajánlott alapértelmezéssel. Ha egyikre sem érkezik válasz, a terv az ajánlott
 értékekkel hajtható végre.

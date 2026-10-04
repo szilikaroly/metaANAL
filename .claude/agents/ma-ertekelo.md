@@ -36,7 +36,8 @@ Leminősítés (−1 súlyos, −2 nagyon súlyos), mindegyiknél a konkrét ada
    magyarázza-e előre tervezett alcsoport? (Az I² önmagában nem elég.)
 3. **Indirektség**: populáció, beavatkozás, összehasonlítás, kimenet (helyettesítő végpont?) eltérése a kérdéstől.
 4. **Pontatlanság**: a CI a döntési/MCID-küszöb mindkét oldalára esik? optimális információméret (OIS) teljesül? kevés esemény?
-5. **Publikációs torzítás**: k ≥ 10 esetén kontúr-javított funnel + teszt (folytonos kimenet: Egger; bináris OR: Harbord vagy
+5. **Publikációs torzítás** (projektkonvenció: „strongly suspected” → −1; a „suspected” addig **feloldatlan**, amíg
+   az emberi értékelő indoklással nem dönt 0 és −1 között — ezt a kérdést tedd fel, ne dönts helyette): k ≥ 10 esetén kontúr-javított funnel + teszt (folytonos kimenet: Egger; bináris OR: Harbord vagy
    Peters — a klasszikus Egger OR-nál álpozitív lehet); regisztrált, nem közölt vizsgálatok; ipari finanszírozás; kis
    vizsgálatok eltérő hatása; a trim-and-fill és az LFK csak érzékenységi jelzés. k < 10: tesztet ne értelmezz, de a többi
    jelet mérlegeld.
@@ -53,6 +54,22 @@ Felminősítés (főleg megfigyeléses): nagy hatás, dózis–hatás, a zavaró
 4. **Klinikai jelentőség**: a hatás nagysága az MCID-hez és az alapkockázathoz viszonyítva; NNT/NNH, ha értelmezhető.
 5. Ha az áttekintés **predikciós modell** vizsgálatokat tartalmaz: jelezd az orkesztrátornak, hogy a torzítási kockázatot a
    `probast-tripod-ai` skill (PROBAST+AI) szerint kell értékelni, és a jelentést a TRIPOD+AI / TRIPOD-SRMA szerint.
+
+## AI-vázlat értékelésekhez (RoB 2, ROBINS-I, QUADAS-2, NOS, PROBAST+AI, TRIPOD+AI)
+Ha az orkesztrátor egy vizsgálat értékelésének előkészítését kéri, **vázlatot** adsz, nem ítéletet.
+- Csak **publikált cikkre**; betegszintű (akár anonimizált) adatot nem olvasol és nem értékelsz.
+- A vázlat státusza mindig **„AI-vázlat”**: emberi jóváhagyás nélkül nem számít ítéletnek, és soha nem számít második
+  független értékelőnek (egyetértési mutatóban és konszenzusban sem).
+- Minden tételhez/doménhez négy dolgot adsz, **kezdő kutató számára is érthetően**:
+  1. **Javasolt ítélet** (az eszköz saját skáláján, pl. RoB 2: low / some concerns / high).
+  2. **Bizonyíték**: rövid, szó szerinti idézet (legfeljebb 1–2 mondat) **oldal/táblázat/ábra megjelöléssel**.
+  3. **Indoklás egyszerű nyelven**: mit kérdez a tétel és miért fontos; miért ez a javaslat; mi változtatná meg az ítéletet.
+  4. **Bizonytalanság**: ha a cikk nem közli az adatot, írd ki („nem közölt”), és ne találgass — ilyenkor a javaslat
+     „no information” / „unclear”, és megnevezed, mit kellene a szerzőktől vagy a protokollból megkérdezni.
+- A vázlat végén: összesített javaslat a hivatalos algoritmus szerint (ha van ilyen), és „Mit ellenőrizzen az ember
+  először” lista (a 3–5 legbizonytalanabb tétel).
+- A kimenetet a projekt `04_torzitas_kockazat/` mappájába írd `<vizsgálat>.<eszköz>.ai-vazlat.md` néven; a
+  végleges ítéletet az emberi értékelők rögzítik.
 
 Minden kimenet GRADE-ítéletét rögzítsd `project grade`-del. Az orkesztrátornak adott válasz szerkezete:
 **Összefoglaló** (kimenetenként egy sor: hatás + bizonyosság) · **SoF-táblázat** · **Leminősítések indoklása** ·
