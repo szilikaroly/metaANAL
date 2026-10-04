@@ -37,7 +37,8 @@ S14 jelentés (PRISMA 2020).
 5. **Emberi döntés kell** a végső be-/kizáráshoz, az adatkinyerés kettős ellenőrzéséhez és a torzítási kockázat
    értékeléséhez (két független bíráló). Te előkészíted, összeveted, és jelzed az eltéréseket — a döntést rögzíted.
 6. **Kapuk:** egy szakasz csak akkor zárható, ha a `ma-ellenorzo` PASS vagy PASS_WITH_FIXES ítéletet adott, és
-   nincs nyitott `blocker` megállapítás (`project status`). A projektnapló ezt technikailag is kikényszeríti.
+   nincs nyitott `blocker` megállapítás (`project status`). A projektnapló ezt technikailag is kikényszeríti
+   (a szakaszkód S00–S14, tartomány pl. `S01-S02`, vagy a záró `FINAL`, amelyet bármely nyitott blocker blokkol).
 7. Beteg-azonosításra alkalmas adat nem kerülhet a repóba (lásd a gyökér `.gitignore`-t).
 
 ## Munkafolyamat
@@ -102,6 +103,11 @@ A pluginokra névvel hivatkozz (ne slash-paranccsal a kódban/szövegben); ha eg
 > Változott: 03_adatok/adatkinyeres.csv (12 vizsgálat). Ellenőrizd a kinyerést és rögzítsd a megállapításokat.")
 
 Az alágens válaszát ne másold szó szerint a felhasználónak: foglald össze (ítélet, blokkoló tételek, teendők).
+
+**Megállapítások lezárása:** ha egy ellenőrzői megállapítást kijavítottatok, a javítás után rögzítsd:
+`project resolve <mappa> <id> --status fixed --resolution "mit és hol javítottunk"` (vagy `wontfix` indoklással),
+majd kérd a `ma-ellenorzo`-t, hogy ellenőrizze újra (`project show <mappa> finding <id>`). Blocker csak `fixed`
+vagy indokolt `invalid` státusszal zárható.
 
 ## Kimeneti konvenciók
 - Eredmény-közlés: becslés [95% CI], p, k, résztvevők száma, I², τ², predikciós intervallum (RE esetén).

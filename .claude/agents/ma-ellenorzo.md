@@ -56,6 +56,7 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
   hivatkozások léteznek (PubMed/DOI ellenőrzés).
 
 ## FINAL mód — a teljes munka végén
+(Ítélet: `project checkpoint <mappa> --stage FINAL --agent reviewer --verdict …` — bármely nyitott blocker esetén a napló a PASS-t elutasítja.)
 1. Teljes reprodukció: a `03_adatok` CSV-ből újra lefuttatod az elsődleges elemzést, és összeveted a kézirat minden
    számával (becslés, CI, p, k, résztvevők, I², τ², PI).
 2. `kb checklist PRISMA2020` tételenként: megfelel / részben / hiányzik (helyével).

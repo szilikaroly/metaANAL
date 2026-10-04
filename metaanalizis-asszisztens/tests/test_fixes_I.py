@@ -234,5 +234,75 @@ class TestTrimFillMetaforRefit(unittest.TestCase):
             assert_close(self, math.exp(got), want, 2e-6)
 
 
+class TestPipelineInputs(_Tmp):
+
+    def test_level_normalized_or_rejected(self):
+        rows, meta = tableio.read_table(NORMAND)
+        for lv, want in ((95, 0.95), ("0,9", 0.9), ("90", 0.9), (0.9, 0.9)):
+            out, es = pipeline.run(rows, {"measure": "SMD", "level": lv}, meta)
+            assert_close(self, out["options"]["level"], want, 1e-12, str(lv))
+            assert_close(self, out["primary"].level, want, 1e-12, str(lv))
+        for bad in (0, 100, -0.5, "x"):
+            with self.assertRaises(ValueError):
+                pipeline.run(rows, {"measure": "SMD", "level": bad}, meta)
+
+    def test_mixed_cumulative_key_warns(self):
+        p = self.write("mix.csv", "study,yi,vi,datum\nA,0.1,0.02,2001\nB,0.3,0.03,2003a\nC,0.2,0.01,2002\n"
+                                  "D,0.5,0.04,1999\nE,0.15,0.02,2000-05\n")
+        out, es, md = self.analyze(p, measure="GEN", cumulative="datum")
+        self.assertEqual([r["added"] for r in out["sensitivity"]["cumulative"]], ["D", "E", "A", "C", "B"])
+        self.assertTrue(any("vegyesen tartalmaz" in w and "B, E" in w for w in out["warnings"]), out["warnings"])
+        out, es, md = self.analyze(BCG, measure="RR", cumulative="év")
+        self.assertFalse(any("vegyesen" in w for w in out["warnings"]))
+
+    def test_double_zero_detail_matches_compute(self):
+        from metaelemzes import validate as V
+        rows = [{"study": "A", "e1": 0.0, "n1": 20.0, "e2": 0.0, "n2": 22.0},
+                {"study": "B", "e1": 3.0, "n1": 20.0, "e2": 0.0, "n2": 22.0},
+                {"study": "C", "e1": 5.0, "n1": 30.0, "e2": 8.0, "n2": 31.0}]
+        for measure, opts in (("OR", {}), ("OR", {"drop00": False}), ("OR", {"drop00": False, "cc_to": "none"}),
+                              ("RD", {}), ("RD", {"drop00": True}), ("RD", {"cc_to": "all", "cc": 0.25})):
+            det = [f["detail"] for f in V.validate(rows, measure, None, opts) if f["code"] == "V008"][0]
+            included = "A" in E.compute(rows, measure, **opts).labels
+            self.assertEqual("bent marad" in det, included, (measure, opts, det))
+        v9 = [f for f in V.validate(rows, "OR", None, {"cc": 0.25}) if f["code"] == "V009"]
+        self.assertEqual(v9[0]["detail"], "+0.25 minden cellához")
+        self.assertNotIn("(0,5)", v9[0]["advice"])
+
+
+class TestCliKbProject(_Tmp):
+
+    def test_kb_search_no_hits_says_so(self):
+        db = os.path.join(self.tmp, "kb.sqlite")
+        code, so, se = run_cli("kb", "--db", db, "build")
+        self.assertEqual(code, 0, so + se)
+        code, so, se = run_cli("kb", "--db", db, "search", "xyzzyqq")
+        self.assertEqual(code, 0, so + se)
+        self.assertIn("Nincs találat: 'xyzzyqq'", so)
+
+    def test_broken_pipe_is_quiet(self):
+        with mock.patch.object(cli, "cmd_kb", side_effect=BrokenPipeError(32, "Broken pipe")):
+            code, so, se = run_cli("kb", "stats")
+        self.assertEqual(code, 1)
+        self.assertNotIn("HIBA", se)
+
+    def test_grade_consistency_warning(self):
+        from metaelemzes import projekt
+        g = projekt.grade_consistency
+        self.assertIsNone(g("low", risk_of_bias="-1", inconsistency="−1 (I² 92%)"))
+        self.assertIsNone(g("moderate", risk_of_bias="súlyos, 40% magas RoB"))     # szabad szöveg: nincs találgatás
+        self.assertIsNone(g("moderate", upgrades="+1 nagy hatás"))
+        self.assertIn("csak 'very low'", g("high", risk_of_bias="-2", imprecision="-1"))
+        self.assertIn("'moderate'–'high'", g("low", upgrades="+1"))
+        self.assertIsNone(g("high", risk_of_bias="-1.5"))
+        p = os.path.join(self.tmp, "proj")
+        self.assertEqual(run_cli("project", "init", p, "--title", "T")[0], 0)
+        code, so, se = run_cli("project", "grade", p, "--outcome", "X", "--certainty", "high", "--rob", "-2")
+        self.assertEqual(code, 0, so + se)
+        self.assertIn("nem egyeztethető össze", se)
+        code, so, se = run_cli("project", "grade", p, "--outcome", "Y", "--certainty", "low", "--rob", "-2")
+        self.assertNotIn("nem egyeztethető össze", se)
+
+
 if __name__ == "__main__":
     unittest.main()

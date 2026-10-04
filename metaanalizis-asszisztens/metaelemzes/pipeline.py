@@ -64,6 +64,21 @@ def _double_zero(r):
     return (e1 == 0 and e2 == 0) or (e1 == n1 and e2 == n2)
 
 
+def normalize_level(v):
+    """Megbízhatósági szint: 0 < level < 1; a metafor-konvenció szerint 1 < x < 100 százalék (95 → 0.95).
+    Számként írt szöveg ('0.9', '0,9') is jó. Érvénytelen érték → ValueError (a CLI --level szabálya,
+    hogy a programból hívott pipeline se adjon csendben 0 szélességű CI-t vagy mély norm_ppf-hibát)."""
+    try:
+        x = float(str(v).strip().replace(",", "."))
+    except ValueError:
+        raise ValueError("level: érvénytelen szám: %r" % (v,))
+    if 1 < x < 100:
+        x = x / 100.0
+    if not 0 < x < 1:
+        raise ValueError("level: 0 < level < 1 szükséges (pl. 0.95 vagy 95), kapott: %r" % (v,))
+    return x
+
+
 def resolve_columns(opt, meta, rows):
     """A --subgroup / --moderators / --cumulative oszlopnevek feloldása (eredeti fejléc,
     kanonikus név vagy szinonima; tableio.resolve_column). Ismeretlen oszlop → ValueError
@@ -162,6 +177,7 @@ def run(rows, options=None, meta=None):
     opt.update({k: v for k, v in (options or {}).items() if v is not None})
     measure = opt["measure"].upper()
     opt["measure"] = measure
+    opt["level"] = normalize_level(opt["level"])
     cols = resolve_columns(opt, meta, rows)
     out = {"engine": {"name": "metaelemzes", "version": __version__}, "options": opt,
            "input": {k: v for k, v in (meta or {}).items() if k != "mapping"}, "warnings": [],
@@ -331,6 +347,13 @@ def run(rows, options=None, meta=None):
             if miss:
                 out["warnings"].append("Kumulatív elemzés: %d vizsgálatnál hiányzik a rendezőkulcs (%s); ezek a "
                                        "sor végére kerültek (mint a metafor cumul()-ban)." % (len(miss), ", ".join(miss)))
+            present = [kk for kk in keys if not _blank(kk)]
+            if any(isinstance(kk, (int, float)) for kk in present) and any(isinstance(kk, str) for kk in present):
+                txt = [lab for lab, kk in zip(es.labels, keys) if isinstance(kk, str) and not _blank(kk)]
+                out["warnings"].append("Kumulatív elemzés: a(z) '%s' oszlop vegyesen tartalmaz számot és szöveget "
+                                       "(szöveges: %s); természetes (szöveg szerinti) rendezés történt — ellenőrizd a "
+                                       "sorrendet, vagy egységesítsd az oszlopot (pl. csak évszám)."
+                                       % (out["column_labels"].get("cumulative") or opt["cumulative"], ", ".join(txt)))
             sens["cumulative"] = SE.cumulative(es.yi, es.vi, es.labels, keys, opt["model"], opt["tau2"],
                                                ci_eff, opt["level"])
     out["sensitivity"] = sens

@@ -28,11 +28,12 @@ RULES = {
              "Ugyanaz a címke többször: többkarú vizsgálat vagy kettős közlés? Az egységelemzési "
              "hibát kerüld (Cochrane 23.3.4).", "Cochrane Handbook 23.3"),
     "V008": ("warning", "Kettős nulla esemény",
-             "Mindkét karban 0 (vagy 100%) esemény: OR/RR-nél kimarad, RD-nél bent marad. Ritka "
-             "eseménynél fontold meg a Peto- vagy MH-módszert, és érzékenységi elemzést.",
+             "Mindkét karban 0 (vagy 100%) esemény: alapértelmezésben OR/RR-nél kimarad, RD-nél bent marad "
+             "(--drop00; a tényleges kezelést a részletek mutatják). Ritka eseménynél fontold meg a Peto- "
+             "vagy MH-módszert, és érzékenységi elemzést.",
              "Cochrane Handbook 10.4.4"),
-    "V009": ("info", "Nulla cella", "Folytonossági korrekció (0,5) kerül alkalmazásra a vizsgálat "
-             "hatásméreténél.", "Cochrane Handbook 10.4.4.1"),
+    "V009": ("info", "Nulla cella", "Folytonossági korrekció kerül alkalmazásra a vizsgálat "
+             "hatásméreténél (mértéke: --cc, alapértelmezés 0,5; lásd a részleteket).", "Cochrane Handbook 10.4.4.1"),
     "V010": ("error", "Érvénytelen korreláció", "r a (-1, 1) intervallumon kívül.", "engine"),
     "V011": ("warning", "SD helyett SE gyanúja",
              "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg "
@@ -83,6 +84,29 @@ def _finding(code, study=None, detail=""):
     sev, title, advice, source = RULES[code]
     return {"code": code, "severity": sev, "title": title, "study": study,
             "detail": detail, "advice": advice, "source": source}
+
+
+def _double_zero_detail(r, measure, opts, corrects):
+    """A V008 részlete: mi történik TÉNYLEG a kettős nulla vizsgálattal ezekkel a beállításokkal
+    (az effect_sizes.two_by_two logikája szerint: drop00, cc, cc_to)."""
+    head = "e1 = %g/%g, e2 = %g/%g" % (r["e1"], r["n1"], r["e2"], r["n2"])
+    drop = opts.get("drop00")
+    if drop is None:
+        drop = measure in ("OR", "RR")
+    cc, cc_to = opts.get("cc", 0.5), opts.get("cc_to", "only0")
+    if drop:
+        return head + " — ebben az elemzésben kimarad (drop00)"
+    if measure == "RD":
+        if cc_to == "all" and cc > 0:
+            how = "+%g korrekcióval minden cellához" % cc
+        elif cc > 0 and cc_to != "none":
+            how = "RD = 0, a 0 variancia %g-es korrekcióval számolva" % cc
+        else:
+            return head + " — 0 variancia miatt korrekció nélkül kimarad"
+        return head + " — ebben az elemzésben bent marad (%s)" % how
+    if corrects:
+        return head + " — ebben az elemzésben bent marad (+%g korrekció minden cellához)" % cc
+    return head + " — korrekció nélkül az %s nem számolható, ezért kimarad" % measure
 
 
 def _median(vals):
@@ -222,17 +246,18 @@ def validate(rows, measure, meta=None, options=None):
             if ok:
                 cells = (r["e1"], r["n1"] - r["e1"], r["e2"], r["n2"] - r["e2"])
                 if (r["e1"] == 0 and r["e2"] == 0) or (cells[1] == 0 and cells[3] == 0):
-                    out.append(_finding("V008", lab))
+                    out.append(_finding("V008", lab, _double_zero_detail(r, measure, opts, corrects)))
                 elif min(cells) == 0 and corrects and (measure != "RD" or opts.get("cc_to") == "all"):
                     # RD-nél alapértelmezésben nincs korrekció (effect_sizes.two_by_two)
-                    out.append(_finding("V009", lab))
+                    out.append(_finding("V009", lab, "+%g minden cellához" % opts.get("cc", 0.5)))
         elif measure in PROPORTION:
             if r["n"] < 1 or not _is_int(r["n"]):
                 out.append(_finding("V004", lab, "n = %g (arány-adatnál egész n >= 1 kell)" % r["n"]))
             elif r["x"] < 0 or r["x"] > r["n"] or not _is_int(r["x"]):
                 out.append(_finding("V006", lab, "x = %g, n = %g" % (r["x"], r["n"])))
             elif r["x"] in (0, r["n"]) and measure in ("PR", "PLN", "PLO") and corrects:
-                out.append(_finding("V009", lab, "x = %g / n = %g" % (r["x"], r["n"])))
+                out.append(_finding("V009", lab, "x = %g / n = %g; +%g korrekció" % (r["x"], r["n"],
+                                                                                   opts.get("cc", 0.5))))
         elif measure in CORRELATION:
             if not -1 < r["r"] < 1:
                 out.append(_finding("V010", lab, "r = %g" % r["r"]))

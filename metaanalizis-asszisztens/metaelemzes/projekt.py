@@ -304,9 +304,55 @@ def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None):
         con.close()
 
 
+_GRADE_LEVELS = ("very low", "low", "moderate", "high")
+_GRADE_DOWN = ("risk_of_bias", "inconsistency", "indirectness", "imprecision", "publication_bias")
+_SIGNED = re.compile(r"^\s*([+\-\u2212\u2013])\s*([0-3])(?![0-9.,])")
+_ZERO = re.compile(r"^\s*0(?![0-9.,])")
+
+
+def _grade_step(text):
+    """A domén-szöveg elején álló előjeles lépés (pl. '−1 súlyos' → -1, '+1 nagy hatás' → +1, '0' → 0);
+    None, ha nincs ilyen (szabad szöveg: nem találgatunk)."""
+    if text is None:
+        return None
+    m = _SIGNED.match(str(text))
+    if m:
+        return (1 if m.group(1) == "+" else -1) * int(m.group(2))
+    return 0 if _ZERO.match(str(text)) else None
+
+
+def grade_consistency(certainty, **domains):
+    """A GRADE-bizonyosság és a domén-lépések összhangja. A kiindulás magas (RCT, ROBINS-I) vagy
+    alacsony (megfigyeléses), ezért a bizonyosság [alacsony − L + F, magas − L + F] között lehet
+    (L: a leminősítések összege, F: a felminősítéseké; 'very low'–'high' közé vágva).
+    Csak az előjeles lépést tartalmazó doménekből számol; ellentmondásnál figyelmeztető szöveg, különben None."""
+    if certainty not in _GRADE_LEVELS:
+        return None
+    steps = {d: _grade_step(domains.get(d)) for d in _GRADE_DOWN + ("upgrades",)}
+    if all(v is None for v in steps.values()):
+        return None
+    down = sum(abs(steps[d]) for d in _GRADE_DOWN if steps[d] is not None)
+    up = abs(steps["upgrades"] or 0)
+    c = _GRADE_LEVELS.index(certainty) + 1
+    hi = max(1, min(4, 4 - down + up))
+    lo = min(4, max(1, 2 - down + up))
+    if lo <= c <= hi:
+        return None
+    rng = ("csak '%s'" % _GRADE_LEVELS[lo - 1]) if lo == hi else \
+        ("'%s'–'%s'" % (_GRADE_LEVELS[lo - 1], _GRADE_LEVELS[hi - 1]))
+    return ("A bizonyosság ('%s') nem egyeztethető össze a megadott lépésekkel (leminősítés összesen %s, "
+            "felminősítés összesen %s): a kiindulástól (RCT: magas; megfigyeléses: alacsony) függően %s lehet. "
+            "Ellenőrizd a domének értékét vagy a végső ítéletet."
+            % (certainty, ("−%d" % down) if down else "0", ("+%d" % up) if up else "0", rng))
+
+
 def add_grade(project_dir, outcome, certainty, kb_db=None, strict=False, warnings=None, check_kb=True, **kw):
     cols = ["k", "participants", "effect", "risk_of_bias", "inconsistency", "indirectness", "imprecision",
             "publication_bias", "upgrades", "rationale", "kb_refs", "kb_unverified"]
+    if warnings is not None:
+        msg = grade_consistency(certainty, **{d: kw.get(d) for d in _GRADE_DOWN + ("upgrades",)})
+        if msg:
+            warnings.append(msg)
     con = connect(project_dir)
     try:
         _, refs, unverified = _prepare(None, None, kw.get("kb_refs"), kb_db, strict, warnings, check_kb)
