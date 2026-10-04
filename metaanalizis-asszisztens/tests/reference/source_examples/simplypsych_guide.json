@@ -1,0 +1,84 @@
+[
+  {
+    "case_id": "simplypsych_guide__fe_inverse_variance_weight",
+    "example_id": "simplypsych_guide__fe_inverse_variance_weight",
+    "source_id": "simplypsychology2024",
+    "location": "p. 25, 'Estimating effect size using fixed effects' -> '1. Calculate weights (wi) for each study' -> 'Practical steps'",
+    "description": "Fixed-effect inverse-variance weight of a single study with within-study variance 0.04 (w = 1/0.04 = 25), checked through a k = 1 fixed-effect pooling.",
+    "measure": "GEN",
+    "options": {},
+    "rows": [
+      {"study": "hypothetical study (unnamed, p. 25)", "yi": 1.0, "vi": 0.04}
+    ],
+    "call": "meta_analysis",
+    "call_args": {"model": "fixed", "ci_method": "z"},
+    "expected": [
+      {
+        "path": "stat",
+        "value": 25,
+        "tol": 0.5,
+        "transform": "square",
+        "note": "printed weight 25 (integer, tol = half unit). With k = 1, the fixed-effect model and the placeholder yi = 1, z = yi / sqrt(1/w) so z^2 = w = 1/vi."
+      },
+      {
+        "path": "stat",
+        "value": 25.0,
+        "tol": 1e-09,
+        "transform": "square",
+        "note": "tight check vs verifier full-precision value (verification.computed.weight_fixed = 25.0; also statsmodels combine_effects weights_fe)"
+      },
+      {
+        "path": "se_wald",
+        "value": 0.04,
+        "tol": 1e-12,
+        "transform": "square",
+        "note": "derived, not printed as a result: Var(FE pooled) = 1/sum(w) = 1/25 for a single study, i.e. the reciprocal of the printed weight"
+      },
+      {
+        "path": "weights_pct.0",
+        "value": 100.0,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "derived, not printed: a single study carries 100% of the weight"
+      }
+    ],
+    "note": "The source gives only the within-study variance (0.04) and the resulting weight (25); no effect size is printed, so yi = 1 is a placeholder needed to run the engine and is chosen so that z^2 equals the raw weight (the engine exposes only relative weights, not raw 1/vi weights). The random-effects weight 1/(VY + T^2) and DL T^2 = (Q - df)/C appear only as formulas (p. 27) with no numbers, so nothing else is testable from this source.",
+    "status": "active"
+  },
+  {
+    "case_id": "simplypsych_guide__prisma2009_flow_bialek2023",
+    "example_id": "simplypsych_guide__prisma2009_flow_bialek2023",
+    "source_id": "simplypsychology2024",
+    "location": "p. 16, figure reproduced under 'PRISMA Flowchart' (source credit: Bialek, Gao, Yao & Feldman 2023, Eur J Soc Psychol 53(1):90-107)",
+    "description": "PRISMA 2009-style flow-diagram counts (756 identified, 663 excluded at screening, 93 full texts, 78 excluded, 15 qualitative, 13 meta-analysed): flow arithmetic consistency.",
+    "measure": "other",
+    "options": {},
+    "rows": [
+      {
+        "study": "Bialek et al. 2023 (PRISMA flow, single review)",
+        "records_identified_database_searching": 756,
+        "records_identified_other_sources": 0,
+        "records_after_duplicates_removed": 756,
+        "records_screened": 756,
+        "records_excluded_at_screening": 663,
+        "fulltext_assessed_for_eligibility": 93,
+        "fulltext_excluded_with_reasons": 78,
+        "studies_included_qualitative_synthesis": 15,
+        "studies_included_quantitative_synthesis": 13
+      }
+    ],
+    "call": "prisma_flow",
+    "call_args": {"template": "PRISMA2009"},
+    "expected": [
+      {"path": "records_after_duplicates_removed", "value": 756, "tol": 0, "transform": null, "note": "printed; = 756 + 0 - duplicates (0 duplicates implied)"},
+      {"path": "records_screened", "value": 756, "tol": 0, "transform": null, "note": "printed"},
+      {"path": "fulltext_assessed", "value": 93, "tol": 0, "transform": null, "note": "printed; = 756 - 663"},
+      {"path": "studies_included_qualitative", "value": 15, "tol": 0, "transform": null, "note": "printed; = 93 - 78"},
+      {"path": "studies_included_quantitative", "value": 13, "tol": 0, "transform": null, "note": "printed; must be <= 15"},
+      {"path": "duplicates_removed", "value": 0, "tol": 0, "transform": null, "note": "derived, not printed (verification.computed.duplicates_removed_implied)"},
+      {"path": "qualitative_only_not_meta_analysed", "value": 2, "tol": 0, "transform": null, "note": "derived, not printed: 15 - 13 (reason not stated in the source)"}
+    ],
+    "status": "known_gap",
+    "gap_reason": "Not a pooling-engine oracle and no matching engine function: these are review-level PRISMA 2009 flow counts (exact integers, internally consistent per the verifier). The metaelemzes package has no PRISMA flow-count consistency validator (only a PRISMA 2020 checklist in the knowledge base and a Markdown flow template in projekt.py), and tests/source_cases.py has no corresponding call ('prisma_flow' is a placeholder). Activate once a flow validator exists that derives duplicates removed, full texts assessed, qualitative and quantitative inclusions from the box counts and checks that quantitative <= qualitative. No per-reason breakdown of the 78 full-text exclusions is printed, so a 'reasons sum to total' rule cannot be tested from this example."
+  }
+]
