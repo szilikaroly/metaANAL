@@ -5,7 +5,9 @@ Parancsok (magyar álnévvel):
   analyze  / elemez       teljes elemzés CSV-ből → riport, ábrák, JSON
   validate / validal      csak adatvalidálás (kilépési kód 1, ha hiba van)
   es       / hatasmeret   vizsgálatonkénti hatásméretek CSV-be
-  convert  / konvertal    adatkinyerési konverziók (medián/IQR, SE, CI → SD stb.)
+  convert  / konvertal    adatkinyerési konverziók (medián/IQR, SE, CI → SD, SMD-variancia, párosított összegek)
+  power    / ero          prospektív erőelemzés (Hedges & Pigott 2001; dmetar::power.analysis)
+  prisma   / prisma       PRISMA folyamatábra-számok ellenőrzése (prisma check; kilépési kód 1, ha hibás)
   kb       / tudasbazis   tudásbázis: build, ingest, search, show, rules, checklist, sql, stats
   project  / projekt      projektnapló: init, log, finding, resolve, checkpoint, grade, status, export
   selftest / onteszt      a beépített tesztek futtatása
@@ -111,9 +113,16 @@ def cmd_analyze(a):
             "moderators": [m.strip() for m in a.moderators.split(",")] if a.moderators else [],
             "metareg_test": a.metareg_test, "cumulative": a.cumulative, "title": a.title,
             "left_label": a.left_label, "right_label": a.right_label,
-            "trimfill_estimator": a.trimfill_estimator, "filter_report": filter_report}
+            "trimfill_estimator": a.trimfill_estimator, "filter_report": filter_report,
+            "md_vtype": a.md_vtype, "glass_vtype": a.glass_vtype, "gen_smd_vtype": a.gen_smd_vtype,
+            "pft_backtransform": a.pft_backtransform, "h_centre": a.ht_centre,
+            "trimfill_trim_model": a.trimfill_trim_model, "egger_ci_dist": a.egger_ci_dist,
+            "begg_method": a.begg_method, "begg_continuity": a.begg_continuity,
+            "metareg_robust": a.robust, "outliers": a.outliers}
     if a.drop00 is not None:
         opts["drop00"] = a.drop00 == "yes"
+    if a.robust and not a.moderators:
+        print("FIGYELEM: a --robust csak meta-regresszióval (--moderators) értelmezett; most nincs hatása.")
     out, es = pipeline.run(rows, opts, meta)
     date = a.date or datetime.date.today().isoformat()
     md = report.build_report(out, a.title, date)
@@ -134,6 +143,9 @@ def cmd_analyze(a):
     bt = out["back_transformed"]["estimate_ci"]
     print("Összesített becslés: %.4g [%.4g; %.4g], k = %d, I² = %.1f%%" % (
         bt[0], bt[1], bt[2], out["effect_sizes"]["k"], out["primary"].I2))
+    ol = (out.get("sensitivity") or {}).get("outliers")
+    if ol is not None:
+        print("Kiugró-szűrés: %d kiugró vizsgálat%s" % (ol.k_removed, (" (%s)" % ", ".join(ol.flagged)) if ol.flagged else ""))
     return 0
 
 
@@ -141,9 +153,10 @@ def cmd_analyze(a):
 def cmd_validate(a):
     from . import tableio, validate, effect_sizes
     rows, meta = tableio.read_table(a.data)
-    f = validate.validate(rows, a.measure.upper(), meta)
+    copt = _compute_opts(a)
+    f = validate.validate(rows, a.measure.upper(), meta, copt)
     # ugyanaz a kizárás, mint az elemzésben: a vizsgálat-szintű hibás sorok kimaradnak
-    es = effect_sizes.compute(rows, a.measure.upper(), skip_labels=validate.blocking_reasons(f))
+    es = effect_sizes.compute(rows, a.measure.upper(), skip_labels=validate.blocking_reasons(f), **copt)
     f += validate.check_effect_sizes(es)
     if a.json:
         _print_json({"summary": validate.summarize(f), "findings": f, "k": len(es),
@@ -161,14 +174,20 @@ def cmd_validate(a):
     return 1 if any(x["severity"] == "error" for x in f) else 0
 
 
+def _compute_opts(a):
+    """A hatásméret-számítás konvenció-opciói (validate / es / analyze közös)."""
+    return {"smd_vtype": a.smd_vtype, "md_vtype": a.md_vtype, "glass_vtype": a.glass_vtype,
+            "gen_smd_vtype": a.gen_smd_vtype}
+
+
 def cmd_es(a):
     from . import tableio, validate, effect_sizes as E
     from .distributions import norm_ppf
     import math
     rows, meta = tableio.read_table(a.data)
-    findings = validate.validate(rows, a.measure.upper(), meta, {"smd_vtype": a.smd_vtype, "cc": a.cc})
-    es = E.compute(rows, a.measure.upper(), smd_vtype=a.smd_vtype, cc=a.cc,
-                   skip_labels=validate.blocking_reasons(findings))
+    copt = _compute_opts(a)
+    findings = validate.validate(rows, a.measure.upper(), meta, dict(copt, cc=a.cc))
+    es = E.compute(rows, a.measure.upper(), cc=a.cc, skip_labels=validate.blocking_reasons(findings), **copt)
     z = norm_ppf(0.975)
     out_rows = []
     for lab, y, v, note in zip(es.labels, es.yi, es.vi, es.notes):
@@ -190,6 +209,8 @@ _CONVERT_REQUIRED = {
     "combine": ("n1", "m1", "sd1", "n2", "m2", "sd2"),
     "change": ("sd_baseline", "sd_final", "corr"),
     "se-from-ci": ("lower", "upper"),
+    "smd-var": ("g", "n1", "n2"),
+    "paired-sums": ("n", "sum_d", "sum_sq_dev"),
 }
 
 
@@ -217,6 +238,13 @@ def cmd_convert(a):
         res = {"sd_change": C.sd_change(a.sd_baseline, a.sd_final, a.corr)}
     elif k == "se-from-ci":
         res = {"se": C.se_from_ci(a.lower, a.upper, a.level, a.log)}
+    elif k == "smd-var":
+        import math
+        v = C.smd_variance(a.g, a.n1, a.n2, a.vtype, a.j_method)
+        res = {"vi": v, "sei": math.sqrt(v), "vtype": a.vtype, "j_method": a.j_method}
+    elif k == "paired-sums":
+        mean_d, sd_d = C.paired_from_sums(a.n, a.sum_d, a.sum_sq_dev)
+        res = {"mdiff": mean_d, "sd_diff": sd_d, "n": a.n}
     else:
         raise SystemExit("ismeretlen konverzió")
     res["figyelem"] = "Becsült érték — jelöld az adattáblában (estimated=igen) és végezz érzékenységi elemzést."
@@ -377,6 +405,113 @@ def cmd_project(a):
     return 0
 
 
+# --------------------------------------------------------------------- power
+def cmd_power(a):
+    from . import power as PW
+    kw = {"effect": a.effect, "n1": a.n1, "n2": a.n2, "v": a.v, "sd": a.sd, "OR": a.odds_ratio,
+          "measure": a.measure, "heterogeneity": a.heterogeneity, "tau2": a.tau2, "i2": a.i2,
+          "alpha": a.alpha, "tails": a.tails, "factors": a.factors}
+    if a.target_power is not None:
+        res = PW.studies_needed(a.target_power, **kw)
+        core = res.result
+    else:
+        if a.k is None:
+            raise ValueError("power: --k (a várható vizsgálatszám) vagy --target-power megadása kötelező")
+        res = core = PW.power_analysis(a.k, **kw)
+    if a.json:
+        _print_json(res)
+        return 0
+    print("Prospektív erőelemzés (%s)" % core.method)
+    print("  feltételezett hatás: %s = %.4g%s" % (core.measure, core.effect,
+                                                  (" (OR = %g → d = ln OR·√3/π)" % a.odds_ratio) if a.odds_ratio else ""))
+    print("  vizsgálatonkénti variancia v = %.6g; heterogenitás: %s (tényező %.4g, τ² = %.4g)" % (
+        core.v_study, core.heterogeneity, core.het_factor, core.tau2))
+    print("  α = %g, %d-oldali; kritikus z = %.4f" % (core.alpha, core.tails, core.z_crit))
+    if a.target_power is not None:
+        if res.k is None:
+            print("A %.0f%%-os célerő %d vizsgálattal sem érhető el (erő ott: %.4f)." % (
+                100 * a.target_power, core.k, core.power))
+        else:
+            print("Szükséges vizsgálatszám a %.0f%%-os erőhöz: k = %d (erő: %.4f; λ = %.4f)" % (
+                100 * a.target_power, res.k, res.power, core.lambda_))
+    else:
+        print("k = %d: λ = %.4f, az összesített becslés SE-je %.4g → erő = %.6g (%.2f%%)" % (
+            core.k, core.lambda_, core.se_pooled, core.power, 100 * core.power))
+    for w in core.warnings or []:
+        print("FIGYELEM: %s" % w)
+    print("Megjegyzés: a prospektív erő a tervezéshez való; elkészült metaanalízis utólagos ereje nem informatív.")
+    return 0
+
+
+# -------------------------------------------------------------------- prisma
+_PRISMA_LETTER_FIELDS = (("A1", "identified_databases"), ("A2", "identified_registers"),
+                         ("D1", "duplicates_removed"), ("D2", "automation_removed"), ("D3", "other_removed"),
+                         ("B", "screened"), ("C", "excluded_screening"), ("E", "sought"),
+                         ("F", "not_retrieved"), ("G", "assessed"), ("H", "excluded_eligibility"),
+                         ("J", "included_reports"), ("I", "included_studies"))
+
+
+def _parse_reasons(text):
+    """'ok A:5; ok B:4' → {ok: n}."""
+    out = {}
+    for part in str(text).split(";"):
+        if not part.strip():
+            continue
+        name, sep, num = part.rpartition(":")
+        if not sep:
+            name, sep, num = part.rpartition("=")
+        if not sep or not name.strip():
+            raise ValueError("--reasons: 'ok: szám; ok: szám' alakban add meg (kapott: %r)" % part.strip())
+        out[name.strip()] = int(num.strip())
+    return out
+
+
+def cmd_prisma(a):
+    from . import prisma
+    flow = {}
+    src = None
+    if a.json_file:
+        with open(a.json_file, encoding="utf-8-sig") as fh:
+            data = json.load(fh)
+        flow = prisma.from_composer(data) if "dedup_removed" in data else dict(data)
+        src = a.json_file
+    if a.composer:
+        with open(a.composer, encoding="utf-8-sig") as fh:
+            flow.update(prisma.from_composer(json.load(fh)))
+        src = a.composer
+    if a.md:
+        with open(a.md, encoding="utf-8-sig") as fh:
+            flow.update(prisma.parse_markdown_table(fh.read()))
+        src = a.md
+    for letter, field in _PRISMA_LETTER_FIELDS:
+        v = getattr(a, "L_" + letter)
+        if v is not None:
+            flow[field] = v
+    for name in ("identified_other", "included_meta", "awaiting"):
+        if getattr(a, name, None) is not None:
+            flow[name] = getattr(a, name)
+    if a.reasons:
+        flow["excluded_eligibility_reasons"] = _parse_reasons(a.reasons)
+    if not flow:
+        raise ValueError("prisma check: adj meg bemenetet (--json, --composer, --md vagy --A1 … dobozértékek)")
+    res = prisma.check_flow(flow, a.template)
+    if a.out_format == "json":
+        _print_json(res.to_dict())
+    else:
+        s = res.summary()
+        print("PRISMA-folyamatábra ellenőrzése (%s%s): %s — %d hiba, %d figyelmeztetés, %d megjegyzés" % (
+            res.template, (", " + src) if src else "", "RENDBEN" if res.ok else "HIBÁS", s["error"], s["warning"],
+            s["info"]))
+        for f in res.findings:
+            print("[%s] %-7s %s%s" % (f["code"], f["severity"], f["title"], (": " + f["detail"]) if f["detail"] else ""))
+            if f["severity"] == "error":
+                print("        teendő: %s" % f["advice"])
+        if res.derived:
+            print("Levezetett értékek: %s" % ", ".join("%s = %s" % (k, v) for k, v in sorted(res.derived.items())
+                                                        if not isinstance(v, dict)))
+    return 0 if res.ok else 1
+
+
 def cmd_selftest(a):
     import unittest
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -402,27 +537,79 @@ def _level(s):
     return x
 
 
+def _md_vtype(s):
+    from .effect_sizes import md_vtype_name, EffectSizeError
+    try:
+        return md_vtype_name(s)
+    except EffectSizeError as exc:
+        raise argparse.ArgumentTypeError(str(exc))
+
+
+def _measure_epilog():
+    """A mértékek és a szükséges CSV-oszlopok listája a súgóhoz (a motor táblázataiból)."""
+    from .effect_sizes import ALL_MEASURES, REQUIRED_COLUMNS, MEASURE_LABELS, PAIRED_INPUTS
+    lines = ["mértékek és szükséges oszlopok (a CSV fejlécében; magyar szinonimák is jók):"]
+    for m in ALL_MEASURES:
+        cols = ", ".join(REQUIRED_COLUMNS.get(m, ()))
+        if m == "GEN":
+            cols += " + vi vagy sei (vagy n1, n2 a --gen-smd-vtype-pal)"
+        elif m in ("MC", "SMCC"):
+            cols += " + átlagos változás és annak SD-je (lásd lent)"
+        lines.append("  %-9s %s — %s" % (m, MEASURE_LABELS.get(m, m), cols))
+    mean = " | ".join("+".join(c) for c in PAIRED_INPUTS["mean"])
+    sd = " | ".join("+".join(c) for c in PAIRED_INPUTS["sd"])
+    lines.append("  párosított (MC, SMCC): n mellett az átlagos változás (%s) és a változás SD-je (%s) — "
+                 "az első teljes készlet nyer" % (mean, sd))
+    lines.append("  SMD_GLASS: Glass Δ = (m1 − m2)/sd2, a 2. kar (kontroll) SD-jével")
+    return "\n".join(lines)
+
+
+def _add_es_conventions(sp):
+    """A hatásméret-számítás konvenció-kapcsolói (analyze / validate / es)."""
+    from .effect_sizes import SMD_VTYPES, GLASS_VTYPES
+    sp.add_argument("--smd-vtype", default="LS", type=str.upper, choices=SMD_VTYPES,
+                    help="SMD / Cohen d / SMCC variancia: LS (alap), LS2 (Borenstein), UB (torzítatlan), "
+                         "METAN_COHEN (Stata metan/MetaXL: N/(n1n2) + d²/(2(N−2))), METAN_HEDGES "
+                         "(N/(n1n2) + g²/(2(N−3.94)), közelítő J)")
+    sp.add_argument("--md-vtype", default="unequal", type=_md_vtype, metavar="{unequal,pooled}",
+                    help="MD variancia: unequal (alap; sd1²/n1 + sd2²/n2, metafor LS) vagy pooled (közös SD, "
+                         "metafor HO)")
+    sp.add_argument("--glass-vtype", default="METAN", type=str.upper, choices=GLASS_VTYPES,
+                    help="SMD_GLASS variancia: METAN (alap; Stata metan/MetaXL), LS, LS2, UB, SMD1H (metafor)")
+    sp.add_argument("--gen-smd-vtype", default=None, type=str.upper, choices=SMD_VTYPES,
+                    help="GEN: ha egy sorban nincs vi/sei, de van n1 és n2, a yi-t közölt SMD-nek veszi és "
+                         "ezzel a képlettel számol varianciát")
+
+
 _STAGE_HELP = "szakasz: S00–S14, tartomány (pl. S01-S02, szakaszonként kibontva) vagy FINAL"
 _KB_HELP = ("tudásbázis-azonosítók vesszővel (pl. V015,S08); csak a kb show/kb search által ismert ID — "
             "ismeretlen ID: figyelmeztetés és jelölés, --strict esetén hiba")
 
 
 def build_parser():
-    from .effect_sizes import ALL_MEASURES
-    from .models import TAU2_METHODS, CI_METHODS, PI_METHODS
+    from .effect_sizes import ALL_MEASURES, PFT_N_METHODS, SMD_VTYPES
+    from .models import TAU2_METHODS, CI_METHODS, PI_METHODS, H_CENTRES
+    from .bias import EGGER_CI_DISTS, BEGG_METHODS
+    from .power import HETEROGENEITY_FACTORS, POWER_MEASURES
+    from .prisma import TEMPLATES
     p = argparse.ArgumentParser(prog="ma.py", description="Metaanalízis-motor (metaelemzes v%s)" % __version__)
     p.add_argument("--version", action="version", version=__version__)
     sub = p.add_subparsers(dest="cmd")
 
-    an = sub.add_parser("analyze", aliases=["elemez"], help="teljes elemzés")
+    epilog = _measure_epilog()
+    an = sub.add_parser("analyze", aliases=["elemez"], help="teljes elemzés", epilog=epilog,
+                        formatter_class=argparse.RawDescriptionHelpFormatter)
     an.add_argument("--data", required=True, help="CSV/TSV (; vagy , elválasztó, tizedesvessző is)")
-    an.add_argument("--measure", required=True, type=str.upper, choices=ALL_MEASURES)
+    an.add_argument("--measure", required=True, type=str.upper, choices=ALL_MEASURES,
+                    help="hatásméret (a szükséges oszlopokat lásd lent)")
     an.add_argument("--model", default="random", choices=["random", "fixed", "ivhet"])
-    an.add_argument("--tau2", default="REML", type=str.upper, choices=TAU2_METHODS)
+    an.add_argument("--tau2", default=None, type=str.upper, choices=TAU2_METHODS,
+                    help="τ²-becslő (alap: a modellé — random → REML, ivhet → DL, a Doi 2015 szerint; "
+                         "ivhet-nél más becslő figyelmeztetéssel)")
     an.add_argument("--ci", default=None, choices=CI_METHODS, help="alap: random→hksj, fixed→z")
     an.add_argument("--pi", default="t_k-2", choices=PI_METHODS)
     an.add_argument("--level", type=_level, default=0.95, help="megbízhatósági szint: 0.95 vagy 95")
-    an.add_argument("--smd-vtype", default="LS", choices=["LS", "LS2", "UB"])
+    _add_es_conventions(an)
     an.add_argument("--j-method", default="exact", choices=["exact", "approx"])
     an.add_argument("--cc", type=float, default=0.5, help="folytonossági korrekció")
     an.add_argument("--cc-to", default="only0", choices=["only0", "all", "none"],
@@ -438,6 +625,29 @@ def build_parser():
     an.add_argument("--metareg-test", default="knha", choices=["knha", "z"])
     an.add_argument("--cumulative", help="kumulatív elemzés rendező oszlopa (pl. year)")
     an.add_argument("--trimfill-estimator", default="L0", choices=["L0", "R0"])
+    an.add_argument("--trimfill-trim-model", default=None, choices=["fixed", "random"],
+                    help="a trim-and-fill vágási modellje (alap: az elsődleges modell, mint a metafor; fixed: "
+                         "közös hatással vág, a kitöltött adatokat az elsődleges modellel összesíti — a "
+                         "meta::trimfill alapértelmezése)")
+    an.add_argument("--egger-ci-dist", default="t", choices=EGGER_CI_DISTS,
+                    help="az Egger-tengelymetszet CI-je: t (alap; t(k−2), metafor) vagy norm (z, dmetar)")
+    an.add_argument("--begg-method", default="auto", choices=BEGG_METHODS,
+                    help="Begg-teszt: auto (alap; metafor: pontos Kendall-eloszlás, kötésnél normális), exact, "
+                         "normal (Stata metabias)")
+    an.add_argument("--begg-continuity", action="store_true",
+                    help="Begg normális közelítés folytonossági korrekcióval (Stata metabias 2. sora)")
+    an.add_argument("--ht-centre", "--ht-center", dest="ht_centre", default="truncated", choices=H_CENTRES,
+                    help="a Higgins–Thompson H/I² CI középpontja: truncated (alap; ln max(1, H), R meta) vagy "
+                         "untruncated (½·ln(Q/df), Borenstein 2009)")
+    an.add_argument("--pft-backtransform", default="harmonic", choices=PFT_N_METHODS,
+                    help="PFT visszatranszformálás n-je: harmonic (alap; metafor/meta) vagy variance (MetaXL: "
+                         "m = 1/Var(t) az adott összesített becslésből)")
+    an.add_argument("--robust", action="store_true",
+                    help="meta-regresszió: robusztus (HC1 szendvics) SE-k, t(k−p) és robusztus F is (Stata "
+                         "regress, vce(robust)); --moderators kell hozzá")
+    an.add_argument("--outliers", action="store_true",
+                    help="kiugró vizsgálatok szűrése (dmetar::find.outliers: a vizsgálat CI-je teljesen az "
+                         "összesített CI-n kívül) és újraillesztés nélkülük (érzékenységi elemzés)")
     an.add_argument("--exclude", action="append", help="sorszűrő: oszlop=érték (ismételhető)")
     an.add_argument("--include", action="append", help="sorszűrő: oszlop=érték (ismételhető)")
     an.add_argument("--title")
@@ -449,25 +659,32 @@ def build_parser():
     an.add_argument("--no-plots", action="store_true")
     an.set_defaults(func=cmd_analyze)
 
-    va = sub.add_parser("validate", aliases=["validal"], help="adatvalidálás")
+    va = sub.add_parser("validate", aliases=["validal"], help="adatvalidálás", epilog=epilog,
+                        formatter_class=argparse.RawDescriptionHelpFormatter)
     va.add_argument("--data", required=True)
     va.add_argument("--measure", required=True, type=str.upper, choices=ALL_MEASURES)
+    _add_es_conventions(va)
     va.add_argument("--json", action="store_true")
     va.set_defaults(func=cmd_validate)
 
-    e = sub.add_parser("es", aliases=["hatasmeret"], help="hatásméretek CSV-be")
+    e = sub.add_parser("es", aliases=["hatasmeret"], help="hatásméretek CSV-be", epilog=epilog,
+                       formatter_class=argparse.RawDescriptionHelpFormatter)
     e.add_argument("--data", required=True)
     e.add_argument("--measure", required=True, type=str.upper, choices=ALL_MEASURES)
-    e.add_argument("--smd-vtype", default="LS", choices=["LS", "LS2", "UB"])
+    _add_es_conventions(e)
     e.add_argument("--cc", type=float, default=0.5)
     e.add_argument("--out")
     e.set_defaults(func=cmd_es)
 
     c = sub.add_parser("convert", aliases=["konvertal"], help="konverziók")
-    c.add_argument("kind", choices=["median", "se", "ci", "combine", "change", "se-from-ci"])
+    c.add_argument("kind", choices=["median", "se", "ci", "combine", "change", "se-from-ci", "smd-var", "paired-sums"],
+                   help="smd-var: közölt SMD (--g) + karlétszámok → variancia (--vtype); paired-sums: n, Σd, "
+                        "Σ(d − d̄)² → átlagos változás és SD")
     for name in ("n", "median", "q1", "q3", "min", "max", "se", "lower", "upper", "n1", "m1", "sd1",
-                 "n2", "m2", "sd2", "sd_baseline", "sd_final", "corr"):
+                 "n2", "m2", "sd2", "sd_baseline", "sd_final", "corr", "g", "sum_d", "sum_sq_dev"):
         c.add_argument("--" + name.replace("_", "-"), dest=name, type=float)
+    c.add_argument("--vtype", default="LS", type=str.upper, choices=SMD_VTYPES, help="smd-var: a variancia-képlet")
+    c.add_argument("--j-method", default="exact", choices=["exact", "approx"], help="smd-var: a J korrekció")
     c.add_argument("--level", type=_level, default=0.95, help="megbízhatósági szint: 0.95 vagy 95")
     c.add_argument("--method", default="luo", choices=["luo", "hozo"])
     c.add_argument("--log", action="store_true", help="arány-mérték CI-je (log-skála)")
@@ -573,6 +790,52 @@ def build_parser():
     pe.add_argument("--out")
     pj.set_defaults(func=cmd_project)
 
+    pw = sub.add_parser("power", aliases=["ero"], help="prospektív erőelemzés (Hedges & Pigott 2001)",
+                        description="Prospektív erő egy TERVEZETT metaanalízis összesített hatásának z-tesztjéhez "
+                                    "(dmetar::power.analysis konvenció). Példa: power --k 18 --effect 0.7 --n1 15 "
+                                    "--n2 15 --heterogeneity moderate; vagy --target-power 0.8 a szükséges k-hoz.")
+    pw.add_argument("--k", type=int, help="a várható vizsgálatszám")
+    pw.add_argument("--effect", type=float, help="feltételezett hatás (SMD-nél d; MD-nél nyers különbség; GEN-nél "
+                                                 "az elemzési skálán)")
+    pw.add_argument("--or", dest="odds_ratio", type=float, help="feltételezett OR (d = ln OR·√3/π; az --effect helyett)")
+    pw.add_argument("--n1", type=float, help="vizsgálatonkénti létszám az 1. karban")
+    pw.add_argument("--n2", type=float, help="vizsgálatonkénti létszám a 2. karban")
+    pw.add_argument("--v", type=float, help="vizsgálatonkénti mintavételi variancia (felülírja a képletet)")
+    pw.add_argument("--sd", type=float, help="közös SD (nyers MD-hez)")
+    pw.add_argument("--measure", default="SMD", type=str.upper, choices=POWER_MEASURES)
+    pw.add_argument("--heterogeneity", default="fixed", choices=["fixed", "low", "moderate", "high"],
+                    help="heterogenitás szóban (dmetar: 1 / 1.33 / 1.67 / 2 tényező)")
+    pw.add_argument("--tau2", type=float, help="abszolút τ² (elsőbbséget élvez)")
+    pw.add_argument("--i2", type=float, help="I² %%-ban (τ² = v·I²/(100 − I²))")
+    pw.add_argument("--alpha", type=float, default=0.05)
+    pw.add_argument("--tails", type=int, default=2, choices=[1, 2])
+    pw.add_argument("--factors", default="dmetar", choices=sorted(HETEROGENEITY_FACTORS),
+                    help="a szóbeli heterogenitás tényezői: dmetar (alap) vagy hedges_pigott (4/3, 5/3, 2)")
+    pw.add_argument("--target-power", type=float, help="célerő (pl. 0.8): a szükséges legkisebb k kiszámítása")
+    pw.add_argument("--json", action="store_true")
+    pw.set_defaults(func=cmd_power)
+
+    pz = sub.add_parser("prisma", help="PRISMA folyamatábra-számok ellenőrzése")
+    pzs = pz.add_subparsers(dest="prisma_cmd")
+    pzc = pzs.add_parser("check", help="a dobozszámok konzisztenciája (kilépési kód 1, ha hibás)",
+                         description="Bemenet: --json (flow-szótár), --composer (prisma-flow.json), --md "
+                                     "(02_szures/prisma_folyamat.md) és/vagy a dobozok betűjeleivel (--A1 … --I); "
+                                     "a betűs értékek felülírják a fájlból olvasottakat.")
+    pzc.add_argument("--json", dest="json_file", help="flow JSON (kanonikus vagy 2009-es mezőnevek)")
+    pzc.add_argument("--composer", help="a composer plugin prisma-flow.json kimenete")
+    pzc.add_argument("--md", help="a projekt prisma_folyamat.md táblázata")
+    for letter, field in _PRISMA_LETTER_FIELDS:
+        pzc.add_argument("--" + letter, dest="L_" + letter, type=int, metavar="N", help=field)
+    pzc.add_argument("--other", dest="identified_other", type=int, metavar="N",
+                     help="identified_other (egyéb forrásból, a fő ágba olvasztva)")
+    pzc.add_argument("--meta", dest="included_meta", type=int, metavar="N", help="included_meta (metaanalízisben)")
+    pzc.add_argument("--awaiting", type=int, metavar="N", help="elbírálásra váró")
+    pzc.add_argument("--reasons", help="a H kizárási okai: 'ok A: 5; ok B: 4'")
+    pzc.add_argument("--template", default=None, type=lambda x: x.upper().replace("_", "").replace(" ", ""),
+                     choices=TEMPLATES, help="PRISMA2020 | PRISMA2009 (alap: felismerés a mezőnevekből)")
+    pzc.add_argument("--out-format", default="text", choices=["text", "json"])
+    pz.set_defaults(func=cmd_prisma)
+
     st = sub.add_parser("selftest", aliases=["onteszt"], help="tesztek futtatása")
     st.set_defaults(func=cmd_selftest)
     return p
@@ -589,6 +852,8 @@ def main(argv=None):
     if a.cmd in ("kb", "tudasbazis") and not a.kb_cmd:
         parser.parse_args([a.cmd, "-h"])
     if a.cmd in ("project", "projekt") and not a.p_cmd:
+        parser.parse_args([a.cmd, "-h"])
+    if a.cmd == "prisma" and not a.prisma_cmd:
         parser.parse_args([a.cmd, "-h"])
     try:
         return a.func(a)

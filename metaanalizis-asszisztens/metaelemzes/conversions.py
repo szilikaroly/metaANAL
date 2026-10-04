@@ -11,6 +11,7 @@ Borenstein et al. 2009, 7. fejezet (hatásméretek közti átváltás).
 import math
 
 from . import distributions as dist
+from . import effect_sizes as _es
 
 
 class ConversionError(ValueError):
@@ -158,6 +159,17 @@ def sd_change(sd_baseline, sd_final, corr):
     return math.sqrt(v)
 
 
+def paired_from_sums(n, sum_d, sum_sq_dev):
+    """Párosított különbségek összegeiből (n, ΣD, Σ(D − D̄)²) → (D̄, S_D), S_D² = Σ(D − D̄)²/(n − 1)
+    (Khan 2020 Ex. 8.2). A metafor "MC"/"SMCC" mértékhez: mdiff = D̄, sd_diff = S_D."""
+    _check_n(n, 2)
+    if sum_d is None or sum_sq_dev is None:
+        raise ConversionError("ΣD és Σ(D − D̄)² kötelező")
+    if sum_sq_dev < 0:
+        raise ConversionError("Σ(D − D̄)² >= 0 szükséges, kapott: %g" % sum_sq_dev)
+    return sum_d / float(n), math.sqrt(sum_sq_dev / (n - 1.0))
+
+
 def corr_from_change(sd_baseline, sd_final, sd_change_):
     """A kiindulás–végpont korreláció visszaszámolása egy teljesen közölt vizsgálatból."""
     return (sd_baseline ** 2 + sd_final ** 2 - sd_change_ ** 2) / (2 * sd_baseline * sd_final)
@@ -190,6 +202,32 @@ def d_to_r(d, v_d, n1, n2):
     """r = d/√(d²+a), a = (n1+n2)²/(n1·n2); V_r = a²V_d/(d²+a)³ (Borenstein 7.7–7.9)."""
     a = (n1 + n2) ** 2 / float(n1 * n2)
     return d / math.sqrt(d * d + a), a * a * v_d / (d * d + a) ** 3
+
+
+def smd_variance(g, n1, n2, vtype="LS", j_method="exact"):
+    """Közölt standardizált átlagkülönbség (Hedges g vagy Cohen d) mintavételi varianciája a
+    karlétszámokból, amikor a közlemény csak a hatásméretet és az n-eket adja meg.
+
+    vtype (effect_sizes.SMD_VTYPES; N = n1 + n2):
+      LS           — metafor alapértelmezés: 1/n1 + 1/n2 + g²/(2N)
+      LS2          — Borenstein 2009 (4.20, 4.24): J²·[N/(n1·n2) + d²/(2N)], d = g/J (g legyen Hedges g)
+      UB           — torzítatlan becslő: 1/n1 + 1/n2 + (1 − (N−4)/((N−2)·J²))·g² (g legyen Hedges g)
+      METAN_COHEN  — Hedges 1985 / Stata metan 'cohen' / MetaXL; Khan 2020 Ex. 8.3:
+                     N/(n1·n2) + g²/(2(N−2))
+      METAN_HEDGES — Stata metan 'hedges' / MetaXL: N/(n1·n2) + g²/(2(N−3.94))
+    j_method: a J (df = N − 2) számítása LS2-nél és UB-nél ('exact' vagy 'approx').
+    Glass Δ-hoz lásd effect_sizes.glass_delta (ott a variancia a kontroll n2-jétől függ)."""
+    if g is None:
+        raise ConversionError("a hatásméret (g) kötelező")
+    for name, n in (("n1", n1), ("n2", n2)):
+        if n is None or not n >= 1:
+            raise ConversionError("%s >= 1 szükséges, kapott: %r" % (name, n))
+    if vtype not in _es.SMD_VTYPES:
+        raise ConversionError("ismeretlen vtype: %r (lehetséges: %s)" % (vtype, ", ".join(_es.SMD_VTYPES)))
+    try:
+        return _es.smd_variance_from_estimate(g, n1, n2, vtype, j_method=j_method)
+    except _es.EffectSizeError as exc:
+        raise ConversionError(str(exc))
 
 
 def d_from_t(t, n1, n2):

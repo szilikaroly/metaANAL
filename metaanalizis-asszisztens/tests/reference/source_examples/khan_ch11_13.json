@@ -2565,8 +2565,8 @@
     "note": "printed 'sum of wgt is 8.8607e+02' (placeholder path)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Method not implemented: robust-error (Huber-White HC1 sandwich, n/(n-1) factor) inverse-variance WLS regression (Stata regress [aw=1/SE^2], vce(robust)) and Stata's aweight root MSE / R2. The verifier reproduced every printed digit with statsmodels WLS + HC1 (SE(b) 0.0400199, t -4.8198, CI 0.7595715-0.8951422, root MSE 0.2411571). The point estimate is checked in khan_ch11_13__ihdchol_wls_intercept_point_estimate."
+  "status": "active",
+  "activation_note": "Activated: moderators.meta_regression(test='robust_hc1') returns the HC1 sandwich (Stata regress [aw=1/v], vce(robust)) block under 'robust' with t(k-p) inference, aweight R2 / root MSE and sum of weights."
  },
  {
   "case_id": "khan_ch11_13__ihdchol_wls_metareg_continuous_point_estimates",
@@ -3233,8 +3233,11 @@
     "note": "book p. 248: I2_model = (F - df_r)/F = (30.23 - 26)/30.23 = 13.99% (non-standard; full-precision F gives 14.00): tol = half unit 0.005 + 0.01 rounded-F allowance (placeholder path)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Method not implemented: robust-error (HC1 sandwich) WLS meta-regression with t(k-p) inference, robust Wald F, and Stata's aweight R2 / adjusted R2 / root MSE (and the book's non-standard I2_model = (F - df_r)/F built on the robust F). Verifier reproduced every printed digit with statsmodels WLS + HC1 (b_chol -0.4752450, SE 0.0864316; F = t^2 = 30.2336; R2 0.237955). Coefficients are checked in khan_ch11_13__ihdchol_wls_metareg_continuous_point_estimates."
+  "status": "active",
+  "input_storage": {
+   "chol_reduc": "float32"
+  },
+  "activation_note": "Activated: moderators.meta_regression(test='robust_hc1') returns the HC1 sandwich block under 'robust'. The book's Stata run stored chol_reduc as a 'float' (single precision; see the note on the CI lower limit), so the runner reads that column with float32 storage (input_storage); this reproduces every printed digit including e(r2_a) to 16 digits, while double-precision inputs give the CI lower limit 0.52052997 (6.8e-8 from the printed .5205299)."
  },
  {
   "case_id": "khan_ch11_13__ihdchol_metareg_dl_knha",
@@ -4566,9 +4569,9 @@
     "note": "printed CI upper 1.224997 (placeholder path)"
    }
   ],
-  "status": "known_gap",
+  "status": "active",
   "note": "Group 1 = cholesterol lowering, group 2 = control; e1/e2 = IHD events (Cases1/Cases2), n1/n2 = N1/N2 of Table 11.1. T22 and T23 have a zero control-arm cell: admetan and MetaXL add 0.5 to all four cells of those studies only (MetaXL Fig. 11.2: T22 OR 2.8378378 = 2.5*52.5/(92.5*0.5)) = engine cc=0.5, cc_to='only0'. chol_grp from the printed recode rule (min/0.499 = 0, 0.5/0.999999 = 1, 1/max = 2): group 0 = T9, T17, T25; group 2 = T12, T16, T20, T21, T22, T24; group 1 = the other 19. chol_grp_1 / chol_grp_2 are the indicator columns of Stata's i.chol_grp (reference = group 0).",
-  "gap_reason": "Method not implemented: robust-error (HC1 sandwich) WLS meta-regression with t(k-p) inference, robust Wald F and Stata's aweight R2 / root MSE. Verifier reproduced every printed digit with statsmodels WLS + HC1 (F 8.3159, p 0.001704, R2 0.186345). Coefficients are checked in khan_ch11_13__ihdchol_wls_metareg_categorical_point_estimates."
+  "activation_note": "Activated: moderators.meta_regression(test='robust_hc1') returns the HC1 sandwich block under 'robust' (robust Wald F, t(k-p) inference, aweight R2 / root MSE)."
  },
  {
   "case_id": "khan_ch11_13__fibrinolysis_begg",
@@ -5153,7 +5156,9 @@
    }
   ],
   "call": "begg",
-  "call_args": {},
+  "call_args": {
+   "method": "normal"
+  },
   "expected": [
    {
     "path": "p",
@@ -5163,9 +5168,9 @@
     "note": "printed Begg p = 0.51 (Table 12.1 p. 261)"
    }
   ],
-  "status": "known_gap",
+  "status": "active",
   "note": "Group 1 = IV magnesium, group 2 = control; e1/e2 = deaths. Santoro (2000) has 0/75 deaths with magnesium: 0.5 is added to all four cells of that study only (engine cc=0.5, cc_to='only0'), as in the book's Ch11 software (admetan/MetaXL). The plots and tests are on ln RR (p. 256).",
-  "gap_reason": "Convention option missing: the book (Stata metabias) uses the large-sample normal approximation z = S/sd(S) without continuity correction (S = 19, sd 28.583, z 0.6647, p 0.5062 -> 0.51; metafor ranktest(exact=FALSE) gives 0.5062). With no ties in the data the engine follows metafor's default ranktest (exact Kendall distribution, cor.test exact=TRUE): p = 0.5340, which is correct for that method (metafor 4.4-0 ranktest default: 0.5339737) but prints 0.53. bias.begg_test has no switch to force the normal approximation. The Kendall score and the exact p are checked in khan_ch11_13__magnesium_begg_kendall_exact."
+  "activation_note": "Activated: bias.begg_test(method='normal') forces the large-sample normal approximation z = S/sd(S) without continuity correction (Stata metabias; metafor ranktest(exact=FALSE))."
  },
  {
   "case_id": "khan_ch11_13__magnesium_begg_kendall_exact",

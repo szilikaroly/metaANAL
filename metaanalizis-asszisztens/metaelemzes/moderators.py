@@ -4,7 +4,9 @@
 Meta-regresszió: y = Xβ + u + e, u ~ N(0, τ²), e ~ N(0, v_i).
 τ²-becslők: REML, ML (Fisher-scoring + τ² = 0 határ és profil-likelihood rács ellenőrzése),
 DL, HE, SJ, PM (a metafor rma.uni képletei moderátorokkal), FE (τ² = 0).
-Tesztek: z (Wald) vagy Knapp–Hartung (t / F).
+Tesztek: z (Wald) vagy Knapp–Hartung (t / F); kiegészítésként HC1 robusztus (szendvics) SE-k
+(Stata regress [aw=1/v], robust; metafor robust(..., adjust=TRUE)).
+Alcsoportok: csoportonkénti összesítés, Q_between, a csoport részesedése a teljes súlyból.
 Források: Borenstein et al. 2009 (19–20. fejezet); Khan 2020 (11. fejezet);
 Viechtbauer 2010 (metafor rma.uni); Knapp & Hartung 2003.
 """
@@ -17,7 +19,7 @@ from .models import (ModelError, MetaResult, meta_analysis, estimate_tau2, optim
 
 
 # ------------------------------------------------------------- alcsoportok
-def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method="REML",
+def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=None,
                       ci_method=None, level=0.95, common_tau2=False, pi_method="t_k-2"):
     """Alcsoportonkénti összesítés + alcsoport-különbség teszt (Q_between).
 
@@ -36,6 +38,12 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method="
     IVhet modellnél se_g a csoportbecslés IVhet-standardhibája (√Σ(w_i/Σw)²(v_i + τ²_DL), a
     megjelenített z-CI alapja), NEM a √(1/Σw) inverz-variancia SE (az a csoporton belüli
     heterogenitást figyelmen kívül hagyná, és túl liberális tesztet adna).
+
+    tau2_method: None = a modell alapértelmezése (random → REML, ivhet → DL).
+    Minden csoport-eredmény kap egy weight_share_pct mezőt: a csoport vizsgálatainak összsúlya
+    a TELJES (alcsoportok nélküli) modellben, a teljes súly %-ában (MetaXL / RevMan
+    'Subtotal % weight'; véletlen hatásnál a teljes adatsor τ²-ével számolt 1/(v_i + τ²) súlyok,
+    IVhet-nél és fix hatásnál 1/v_i). Ugyanez kerül a weight_share_raw mezőbe nyers súlyösszegként.
     """
     if len(groups) != len(yi):
         raise ModelError("a csoportváltozó hossza eltér")
@@ -97,6 +105,12 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method="
         warnings.append("Az alcsoport-különbség teszt nem számolható (nulla vagy nem véges "
                         "csoport-standardhiba).")
     overall = meta_analysis(yi, vi, model, tau2_method, ci_method, level, pi_method, labels)
+    # alcsoport-részesedés a teljes modell súlyából (MetaXL/RevMan 'Subtotal' % weight)
+    w_all = overall.weights_raw
+    for g, r in zip(order, out_groups):
+        idx = [i for i, gg in enumerate(groups) if gg == g]
+        r.weight_share_raw = sum(w_all[i] for i in idx)
+        r.weight_share_pct = 100.0 * r.weight_share_raw / overall.sum_weights
     if any(r.k < 3 for r in out_groups):
         warnings.append("Van < 3 vizsgálatot tartalmazó alcsoport: az alcsoport-becslések és a "
                         "különbség-teszt erősen bizonytalanok.")
@@ -264,17 +278,83 @@ def _tau2_mr(x, y, v, method):
                          _tau2_he_mr(x, y, v), scale, hi)
 
 
-def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95):
+def _robust_hc1(x, y, w, b, m, e, names, level, idx, has_int):
+    """HC1 (Huber–White, k/(k−p) korrekció) szendvics-kovariancia a súlyozott LS-illesztéshez.
+
+    V = k/(k−p) · M (Σ w_i² e_i² x_i x_iᵀ) M, M = (XᵀWX)⁻¹; t(k−p) próbák és CI-k, robusztus
+    Wald F(q, k−p) a tengelymetszeten kívüli együtthatókra. Fix hatású súlyokkal (w = 1/v_i) ez a
+    Stata 'regress y x [aweight = 1/v], vce(robust)' (Khan 2020 11. fejezet), véletlen hatású
+    súlyokkal (w = 1/(v_i + τ²)) a metafor robust(fit, cluster = 1:k, adjust = TRUE).
+    R² (súlyozott, centrált; csak tengelymetszetes modellben), korrigált R², root MSE: a Stata
+    aweight-konvenciója (a súlyok k-ra normálva: root MSE = √(k/Σw · Σ w e² / (k − p)))."""
+    k, p = len(y), len(x[0])
+    df = k - p
+    meat = la.xtwx(x, [wi * wi * ei * ei for wi, ei in zip(w, e)])
+    vb = la.matmul(la.matmul(m, meat), m)
+    adj = k / float(df)
+    vb = [[adj * c for c in row] for row in vb]
+    crit = dist.t_ppf(0.5 + level / 2.0, df)
+    coefs = []
+    for j in range(p):
+        se = math.sqrt(max(vb[j][j], 0.0))
+        stat = ratio_stat(b[j], se)
+        try:
+            se_expb = math.exp(b[j]) * se
+        except OverflowError:
+            se_expb = math.inf
+        coefs.append({"name": names[j], "estimate": b[j], "se": se, "se_expb": se_expb, "t": stat,
+                      "p": dist.t_two_sided_p(stat, df),
+                      "ci_lower": b[j] - crit * se, "ci_upper": b[j] + crit * se})
+    f = f_p = None
+    if idx:
+        bsub = [b[i] for i in idx]
+        vsub = [[vb[i][j] for j in idx] for i in idx]
+        vinv = la.inverse(vsub)
+        q = len(idx)
+        f = sum(bsub[i] * sum(vinv[i][j] * bsub[j] for j in range(q)) for i in range(q)) / q
+        f_p = dist.f_sf(f, q, df)
+    sw = sum(w)
+    sse = sum(wi * ei * ei for wi, ei in zip(w, e))
+    r2 = r2_adj = None
+    if has_int:
+        ybar = sum(wi * yi for wi, yi in zip(w, y)) / sw
+        sst = sum(wi * (yi - ybar) ** 2 for wi, yi in zip(w, y))
+        if sst > 0:
+            r2 = max(0.0, 1.0 - sse / sst)
+            r2_adj = 1.0 - (1.0 - r2) * (k - 1) / float(df)
+    root_mse = math.sqrt(k / sw * sse / df)
+    return {
+        "type": "HC1", "df": df, "coefficients": coefs, "vcov": vb,
+        "F": f, "F_df1": len(idx) if idx else 0, "F_df2": df, "F_p": f_p,
+        "r2": r2, "r2_adj": r2_adj, "root_mse": root_mse, "sum_w": sw,
+        # Khan (2020, 248. o.) nem standard 'I²_model' = (F − df_r)/F a robusztus F-ből (0-nál csonkolva);
+        # csak a könyv reprodukálásához — heterogenitási mérőszámként nem ajánlott
+        "I2_model_pct": (100.0 * max(0.0, (f - df) / f)) if (f is not None and f > 0) else None,
+        "note": ("HC1 szendvics-SE (k/(k−p) korrekció), t(k−p) próbák; a súlyok a modell súlyai "
+                 "(τ² = 0 esetén 1/v_i: Stata regress [aw=1/v], robust)."),
+    }
+
+
+def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, robust=False):
     """Vegyes hatású meta-regresszió.
 
     x: a modellmátrix sorai (az első oszlop általában a tengelymetszet: 1.0).
-    test: 'z' (Wald, χ² omnibusz) vagy 'knha' (Knapp–Hartung: t és F).
+    test: 'z' (Wald, χ² omnibusz) vagy 'knha' (Knapp–Hartung: t és F); 'robust_hc1' a
+          test='z', robust=True rövidítése.
+    robust: True esetén az eredmény 'robust' mezője HC1 szendvics-SE-ket, t(k−p) próbákat és
+          CI-ket, robusztus F-et, súlyozott R²-et / korrigált R²-et / root MSE-t és Σw-t tartalmaz
+          (_robust_hc1; tau2_method='FE' mellett = Stata 'regress [aw=1/v], robust', Khan 2020
+          11. fejezet). A fő ('coefficients') blokk változatlanul a test szerinti modell-alapú SE.
     """
+    if test == "robust_hc1":
+        test, robust = "z", True
+    if test not in ("z", "knha"):
+        raise ModelError("meta-regresszió teszt: 'z', 'knha' vagy 'robust_hc1' (kapott: %r)" % (test,))
     k = len(yi)
     p = len(x[0])
     if k <= p:
         raise ModelError("meta-regresszió: k (%d) <= paraméterek száma (%d)" % (k, p))
-    method = tau2_method.upper()
+    method = (tau2_method or "REML").upper()
     if method not in MR_TAU2_METHODS:
         raise ModelError("meta-regresszió τ²-becslő: %s" % ", ".join(MR_TAU2_METHODS))
     tau2, tau2_info = _tau2_mr(x, yi, vi, method)
@@ -334,11 +414,18 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95):
     if k < 10 * max(1, len(idx)):
         warnings.append("Kevés vizsgálat moderátoronként (ökölszabály: >= 10 vizsgálat / "
                         "moderátor; Cochrane Handbook 10.11.4).")
+    rob = None
+    if robust:
+        rob = _robust_hc1(x, yi, w, b, m, e, names, level, idx, has_int)
+        if k < 20:
+            warnings.append("Robusztus (HC1) SE kevés vizsgálatnál (k = %d) alulbecsülheti a "
+                            "bizonytalanságot; kis mintás korrekció (pl. CR2, clubSandwich) "
+                            "megbízhatóbb." % k)
     return MetaResult(
         kind="meta_regression", tau2=tau2, tau2_method=method, tau2_info=tau2_info, test=test, k=k, p=p,
         coefficients=coefs, QM=qm, QM_df=len(idx), QM_p=qm_p, QM_type="F" if test == "knha" else "chi2",
         QE=qe, QE_df=df_res, QE_p=dist.chi2_sf(qe, df_res), I2_res=i2_res, R2=r2,
-        warnings=warnings, level=level,
+        robust=rob, warnings=warnings, level=level,
     )
 
 

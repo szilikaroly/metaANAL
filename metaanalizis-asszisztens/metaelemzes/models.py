@@ -2,7 +2,9 @@
 """Összesítő modellek: fix (közös) hatás, véletlen hatás, Mantel–Haenszel, Peto.
 
 τ²-becslők: DL, REML, ML, PM, HE, SJ.  CI: z (Wald), t, HKSJ, HKSJ ad hoc (max(1, q)).
-Heterogenitás: Q, I² (Higgins–Thompson), H², τ², τ, CI-k (Q-profile, Higgins–Thompson).
+Heterogenitás: Q, I² (Higgins–Thompson), H, H² (Q/df), módosított H² (Stata admetan), τ², τ,
+CI-k (Q-profile, Higgins–Thompson a meta:::calcH csonkolt középpontjával, Borenstein τ²-CI).
+IVhet: τ² alapértelmezésben DL (Doi et al. 2015), rögzített vagy más becslő is választható.
 Predikciós intervallum: t(k-2) (Higgins 2009 / Borenstein 17. fejezet), z vagy t(k-1).
 
 Források: Borenstein et al. 2009 (11–17. fejezet); Viechtbauer 2005, 2007;
@@ -415,8 +417,39 @@ def tau2_ci_qprofile(yi, vi, level=0.95):
     return solve(crit_hi), solve(crit_lo)
 
 
-def i2_ci_higgins_thompson(q, k, level=0.95):
-    """I² és H CI a Higgins–Thompson (2002) teszt-alapú módszerrel (Borenstein 16. fejezet)."""
+H_CENTRES = ("truncated", "untruncated")
+BHHR_SE_FORMS = ("borenstein", "higgins_thompson")
+
+
+def _check_h_centre(h_centre):
+    if h_centre not in H_CENTRES:
+        raise ModelError("ismeretlen h_centre: %r (lehetséges: %s)" % (h_centre, ", ".join(H_CENTRES)))
+
+
+def _ln_h_centre(q, df, h_centre):
+    """A Higgins–Thompson H-intervallum középpontja (ln H).
+
+    'truncated' (meta:::calcH; Higgins & Thompson 2002: H < 1 → 1): ln max(1, √(Q/df)) — Q < df
+    esetén (Q = 0-t is beleértve) a középpont ln 1 = 0, így az intervallum [1, exp(z·SE)] és nem
+    függ Q-tól. 'untruncated' (a motor korábbi viselkedése; Borenstein et al. 2009 16. fejezet
+    L/U-képlete betű szerint): ½·ln(Q/df), Q = 0 esetén -inf."""
+    if h_centre == "truncated":
+        return math.log(max(1.0, math.sqrt(q / df))) if q > 0 else 0.0
+    return 0.5 * math.log(q / df) if q > 0 else -math.inf
+
+
+def i2_ci_higgins_thompson(q, k, level=0.95, h_centre="truncated"):
+    """I² és H CI a Higgins–Thompson (2002) teszt-alapú módszerrel (Borenstein 16. fejezet).
+
+    SE(ln H): Q > k esetén ½(ln Q − ln(k−1)) / (√(2Q) − √(2k−3)), különben
+    √(1/(2(k−2)) · (1 − 1/(3(k−2)²))) (Higgins & Thompson 2002; = meta:::calcH; ez a
+    homogenitás melletti pontos ¼·ψ′(df/2) variancia sorfejtése).
+    h_centre: 'truncated' (alapértelmezés; meta::metagen / meta:::calcH konvenció: a középpont
+    ln max(1, H)) vagy 'untruncated' (½·ln(Q/df), a korábbi viselkedés). Csak Q < df esetén tér
+    el a kettő. A H-határok mindkét esetben 1-nél, az I²-határok 0-nál csonkoltak.
+    Visszaad: (I²_alsó, I²_felső, H_alsó, H_felső); k < 3 esetén csupa None.
+    """
+    _check_h_centre(h_centre)
     if k < 3:
         return None, None, None, None
     df = k - 1
@@ -425,34 +458,60 @@ def i2_ci_higgins_thompson(q, k, level=0.95):
         b = 0.5 * (math.log(q) - math.log(df)) / (math.sqrt(2 * q) - math.sqrt(2 * k - 3))
     else:
         b = math.sqrt(1.0 / (2 * (k - 2)) * (1 - 1.0 / (3 * (k - 2) ** 2)))
-    lnh = 0.5 * math.log(q / df) if q > 0 else -math.inf
-    h_lo = math.exp(lnh - z * b) if q > 0 else 0.0
-    h_hi = math.exp(lnh + z * b) if q > 0 else 0.0
+    lnh = _ln_h_centre(q, df, h_centre)
+    finite = math.isfinite(lnh)
+    h_lo = math.exp(lnh - z * b) if finite else 0.0
+    h_hi = math.exp(lnh + z * b) if finite else 0.0
     i2_lo = max(0.0, (h_lo ** 2 - 1) / h_lo ** 2) * 100 if h_lo > 0 else 0.0
     i2_hi = max(0.0, (h_hi ** 2 - 1) / h_hi ** 2) * 100 if h_hi > 0 else 0.0
     return i2_lo, i2_hi, max(1.0, h_lo), max(1.0, h_hi)
 
 
-def tau2_ci_bhhr(q, k, c, level=0.95):
-    """τ² CI Borenstein et al. (2009, 16.13–16.16) szerint (a Higgins–Thompson H-intervallumból)."""
+def tau2_ci_bhhr(q, k, c, level=0.95, h_centre="truncated", se_form="borenstein"):
+    """τ² CI Borenstein et al. (2009, 16. fejezet) szerint (a Higgins–Thompson H-intervallumból):
+    L, U = exp(ln H ∓ z·B), τ²-határok = df(L² − 1)/C és df(U² − 1)/C, 0-nál csonkolva.
+
+    B: Q > k esetén ½(ln Q − ln df) / (√(2Q) − √(2df − 1)) (16.14). Q <= k esetén
+    se_form='borenstein' (alapértelmezés, a korábbi viselkedés): a könyv 16.15 egyenlete
+    nyomtatott alakjában, B = √(1 / (2(df−1)(1 − 1/(3(df−1)²)))) — itt az (1 − 1/(3(df−1)²))
+    tényező a NEVEZŐBEN áll; se_form='higgins_thompson': B = √(1/(2(df−1)) · (1 − 1/(3(df−1)²)))
+    (Higgins & Thompson 2002; = i2_ci_higgins_thompson / meta:::calcH; ez a pontos
+    ¼·ψ′(df/2) variancia sorfejtése, k = 3-nál 0.577 vs. a könyvi alak 0.866). k >= 10 esetén a
+    különbség < 0,6%.
+    h_centre: ugyanaz a középpont-konvenció, mint az I²/H CI-nél (heterogeneity() ugyanazt adja
+    át, így a τ², I² és H intervallumok egymásba átszámolhatók). 'untruncated' = a könyv L/U-képlete
+    betű szerint (½·ln(Q/df)); 'truncated' (alapértelmezés) = ln max(1, √(Q/df)).
+    Csak Q < df esetén tér el: ekkor a csonkolt változat felső határa df(exp(2zB) − 1)/C.
+    """
+    _check_h_centre(h_centre)
+    if se_form not in BHHR_SE_FORMS:
+        raise ModelError("ismeretlen se_form: %r (lehetséges: %s)" % (se_form, ", ".join(BHHR_SE_FORMS)))
     if k < 3 or c <= 0:
         return None, None
     df = k - 1
     z = dist.norm_ppf(0.5 + level / 2.0)
     if q > df + 1:
         b = 0.5 * (math.log(q) - math.log(df)) / (math.sqrt(2 * q) - math.sqrt(2 * df - 1))
-    else:
+    elif se_form == "borenstein":
         b = math.sqrt(1.0 / (2 * (df - 1) * (1 - 1.0 / (3 * (df - 1) ** 2))))
-    if q <= 0:
+    else:
+        b = math.sqrt(1.0 / (2 * (df - 1)) * (1 - 1.0 / (3 * (df - 1) ** 2)))
+    lnh = _ln_h_centre(q, df, h_centre)
+    if not math.isfinite(lnh):
         return 0.0, 0.0
-    lnh = 0.5 * math.log(q / df)
     lo = math.exp(lnh - z * b)
     hi = math.exp(lnh + z * b)
     return max(0.0, df * (lo ** 2 - 1) / c), max(0.0, df * (hi ** 2 - 1) / c)
 
 
-def heterogeneity(yi, vi, tau2=None, level=0.95):
-    """Heterogenitási statisztikák (a modelltől független blokk)."""
+def heterogeneity(yi, vi, tau2=None, level=0.95, h_centre="truncated"):
+    """Heterogenitási statisztikák (a modelltől független blokk).
+
+    H = max(1, √(Q/df)) (meta:::calcH; Higgins & Thompson 2002), H2 = Q/df (metafor EE/FE
+    konvenció, nem csonkolt — visszafelé kompatibilis), H2_M = max(0, (Q − df)/df) (Stata
+    admetan 'modified H²' / Mittlböck & Heinzl 2006). h_centre: a Higgins–Thompson H/I²
+    intervallum és a Borenstein-féle τ²-intervallum középpontja (lásd i2_ci_higgins_thompson)."""
+    _check_h_centre(h_centre)
     k = len(yi)
     df = k - 1
     w = [1.0 / v for v in vi]
@@ -464,14 +523,17 @@ def heterogeneity(yi, vi, tau2=None, level=0.95):
         "p_Q": dist.chi2_sf(q, df) if df > 0 else None,
         "I2": (max(0.0, (q - df) / q) * 100.0) if (df > 0 and q > 0) else 0.0,
         "H2": (q / df) if df > 0 else None,
+        "H": max(1.0, math.sqrt(q / df)) if df > 0 else None,
+        "H2_M": max(0.0, (q - df) / df) if df > 0 else None,
         "C": c,
         "tau2_DL": tau2_dl(yi, vi),
         "s2_typical": typical_within_variance(vi),
+        "H_ci_centre": h_centre,
     }
-    lo, hi, hlo, hhi = i2_ci_higgins_thompson(q, k, level)
+    lo, hi, hlo, hhi = i2_ci_higgins_thompson(q, k, level, h_centre)
     out["I2_ci_HT"] = [lo, hi] if lo is not None else None
     out["H_ci_HT"] = [hlo, hhi] if hlo is not None else None
-    t_lo, t_hi = tau2_ci_bhhr(q, k, c, level)
+    t_lo, t_hi = tau2_ci_bhhr(q, k, c, level, h_centre)
     out["tau2_ci_BHHR"] = [t_lo, t_hi] if t_lo is not None else None
     if k >= 2:
         qlo, qhi = tau2_ci_qprofile(yi, vi, level)
@@ -487,16 +549,24 @@ def heterogeneity(yi, vi, tau2=None, level=0.95):
 
 
 # ------------------------------------------------------------------ fő modell
-def meta_analysis(yi, vi, model="random", tau2_method="REML", ci_method=None, level=0.95,
-                  pi_method="t_k-2", labels=None, tau2_fixed=None):
+def meta_analysis(yi, vi, model="random", tau2_method=None, ci_method=None, level=0.95,
+                  pi_method="t_k-2", labels=None, tau2_fixed=None, h_centre="truncated"):
     """Inverz-variancia súlyozott összesítés.
 
     model: 'fixed' (közös hatás), 'random', vagy 'ivhet' (Doi et al. 2015 inverz-variancia
-           heterogenitás modell: FE pontbecslés, Var = Σ (w_i/Σw)²·(v_i + τ²_DL); Khan 2020 4. fejezet).
+           heterogenitás modell: FE pontbecslés, Var = Σ (w_i/Σw)²·(v_i + τ²); Khan 2020 4. fejezet).
+    tau2_method: τ²-becslő; None = a modell alapértelmezése (random → 'REML', ivhet → 'DL' a
+           publikált IVhet szerint; ivhet-nél más becslő is választható, figyelmeztetéssel).
     ci_method: 'z' | 't' | 'hksj' | 'hksj_adhoc'; alapértelmezés: fixed→z, random→hksj.
-    tau2_fixed: ha megadott, ezt a τ²-t használja (pl. közös τ² alcsoportokhoz).
+           IVhet-nél a CI mindig z-alapú; z-től eltérő kérés figyelmeztetést ad.
+    tau2_fixed: ha megadott, ezt a τ²-t használja (pl. közös τ² alcsoportokhoz) — random és ivhet.
+    h_centre: a Higgins–Thompson H/I² (és a Borenstein-féle τ²) intervallum középpontja:
+           'truncated' (meta:::calcH, alapértelmezés) vagy 'untruncated' (lásd heterogeneity()).
+    Az eredményben weights_raw a nyers inverz-variancia súlyok (1/v_i, ill. 1/(v_i + τ²)),
+    sum_weights ezek összege; weights_pct = 100·weights_raw/sum_weights.
     """
     _check(yi, vi)
+    _check_h_centre(h_centre)
     yi = [float(y) for y in yi]
     vi = [float(v) for v in vi]
     k = len(yi)
@@ -506,9 +576,11 @@ def meta_analysis(yi, vi, model="random", tau2_method="REML", ci_method=None, le
     elif model in ("re", "random"):
         model = "random"
     elif model == "ivhet":
-        return _ivhet(yi, vi, level, labels)
+        return _ivhet(yi, vi, level, labels, tau2_method, tau2_fixed, ci_method, h_centre)
     else:
         raise ModelError("ismeretlen modell: %r" % model)
+    if tau2_method is None:
+        tau2_method = "REML"
     if ci_method is None:
         ci_method = "z" if model == "fixed" else "hksj"
     if ci_method not in CI_METHODS:
@@ -567,7 +639,7 @@ def meta_analysis(yi, vi, model="random", tau2_method="REML", ci_method=None, le
                             "z (Wald) CI-t.")
         p = dist.t_two_sided_p(stat, df_t)
         test = "t"
-    het = heterogeneity(yi, vi, tau2 if model == "random" else None, level)
+    het = heterogeneity(yi, vi, tau2 if model == "random" else None, level, h_centre)
     # predikciós intervallum (csak véletlen hatás)
     pi_lo = pi_hi = None
     pi_df = None
@@ -602,32 +674,59 @@ def meta_analysis(yi, vi, model="random", tau2_method="REML", ci_method=None, le
         pi_lower=pi_lo, pi_upper=pi_hi, pi_method=pi_method if model == "random" else None,
         pi_df=pi_df,
         Q=het["Q"], Q_df=het["df"], p_Q=het["p_Q"], I2=het["I2"], H2=het["H2"],
-        heterogeneity=het, weights_pct=weights_pct,
+        heterogeneity=het, weights_pct=weights_pct, weights_raw=list(w), sum_weights=sw,
         yi=yi, vi=vi, labels=list(labels) if labels else ["#%d" % (i + 1) for i in range(k)],
         warnings=warnings,
     )
     return res
 
 
-def _ivhet(yi, vi, level=0.95, labels=None):
+def _ivhet(yi, vi, level=0.95, labels=None, tau2_method=None, tau2_fixed=None, ci_method=None,
+           h_centre="truncated"):
+    """IVhet (Doi et al. 2015): FE (1/v_i) súlyok és pontbecslés, Var = Σ (w_i/Σw)²·(v_i + τ²), z-CI.
+
+    τ²: tau2_fixed, ha megadott; különben tau2_method (None → 'DL', mint a publikált IVhet-ben és a
+    MetaXL/admetan-ban; más becslő figyelmeztetéssel). ci_method: csak None/'z' érvényes
+    a modellben — más ismert érték figyelmeztetéssel figyelmen kívül marad (a CI mindig z)."""
     k = len(yi)
+    warnings = [] if k >= 2 else ["IVhet: k < 2."]
+    if ci_method is not None and ci_method not in CI_METHODS:
+        raise ModelError("ismeretlen CI-módszer: %r" % ci_method)
+    if ci_method not in (None, "z"):
+        warnings.append("IVhet: a kért '%s' CI-módszert figyelmen kívül hagytam — az IVhet-modell "
+                        "konfidenciaintervalluma mindig z-alapú (Doi et al. 2015)." % ci_method)
+    tau2_info = {}
+    if tau2_fixed is not None:
+        tau2 = float(tau2_fixed)
+        if not (tau2 >= 0) or math.isinf(tau2):
+            raise ModelError("tau2_fixed: nemnegatív, véges szám kell (kapott: %r)" % tau2_fixed)
+        tau2_method_used = "rögzített"
+    else:
+        method = (tau2_method or "DL").upper()
+        tau2, tau2_info = estimate_tau2(yi, vi, method)
+        tau2_method_used = method
+        warnings += tau2_info_warnings(method, tau2_info)
+        if method != "DL":
+            warnings.append("IVhet: a(z) %s τ²-becslő eltér a publikált IVhet-modelltől (Doi et al. 2015: "
+                            "DerSimonian–Laird); az eredmény nem vethető össze közvetlenül a MetaXL / "
+                            "Stata admetan IVhet-kimenetével." % method)
     w = [1.0 / v for v in vi]
     mu, sw = _wmean(yi, w)
-    tau2 = tau2_dl(yi, vi)
     var = sum((wi / sw) ** 2 * (v + tau2) for wi, v in zip(w, vi))
     se = math.sqrt(var)
     crit = dist.norm_ppf(0.5 + level / 2.0)
-    stat = mu / se
-    het = heterogeneity(yi, vi, tau2, level)
+    stat = ratio_stat(mu, se)
+    het = heterogeneity(yi, vi, tau2, level, h_centre)
     return MetaResult(
         model="ivhet", k=k, estimate=mu, se=se, se_wald=math.sqrt(1.0 / sw),
         ci_lower=mu - crit * se, ci_upper=mu + crit * se, level=level, test="z", stat=stat, df=None,
-        p=dist.z_two_sided_p(stat), ci_method="z", tau2=tau2, tau=math.sqrt(tau2), tau2_method="DL",
-        tau2_info={}, q_hksj=None, pi_lower=None, pi_upper=None, pi_method=None, pi_df=None,
+        p=dist.z_two_sided_p(stat), ci_method="z", tau2=tau2, tau=math.sqrt(tau2),
+        tau2_method=tau2_method_used,
+        tau2_info=tau2_info, q_hksj=None, pi_lower=None, pi_upper=None, pi_method=None, pi_df=None,
         Q=het["Q"], Q_df=het["df"], p_Q=het["p_Q"], I2=het["I2"], H2=het["H2"], heterogeneity=het,
-        weights_pct=[100.0 * wi / sw for wi in w],
+        weights_pct=[100.0 * wi / sw for wi in w], weights_raw=list(w), sum_weights=sw,
         yi=list(yi), vi=list(vi), labels=list(labels) if labels else ["#%d" % (i + 1) for i in range(k)],
-        warnings=[] if k >= 2 else ["IVhet: k < 2."],
+        warnings=warnings,
     )
 
 
@@ -775,7 +874,8 @@ def mantel_haenszel(e1, n1, e2, n2, measure="OR", level=0.95, labels=None, cc=0.
         Q=q, Q_df=df, p_Q=dist.chi2_sf(q, df) if df > 0 else None,
         I2=(max(0.0, (q - df) / q) * 100 if df > 0 and q > 0 else 0.0),
         H2=(q / df if df > 0 else None), heterogeneity=het,
-        weights_pct=None, weights_by_label=w_mh, yi=yi, vi=vi, labels=labs, excluded=excluded,
+        weights_pct=None, weights_by_label=w_mh, weights_raw_by_label=dict(mh_w), sum_weights=tot,
+        yi=yi, vi=vi, labels=labs, excluded=excluded,
         warnings=mh_warn,
     )
 
@@ -824,7 +924,7 @@ def peto(e1, n1, e2, n2, level=0.95, labels=None):
         Q=q, Q_df=df, p_Q=dist.chi2_sf(q, df) if df > 0 else None,
         I2=(max(0.0, (q - df) / q) * 100 if df > 0 and q > 0 else 0.0),
         H2=(q / df if df > 0 else None), heterogeneity=heterogeneity(yi, vi),
-        weights_pct=[100 * v / sv for v in var_list],
+        weights_pct=[100 * v / sv for v in var_list], weights_raw=list(var_list), sum_weights=sv,
         weights_by_label={lab: 100 * v / sv for lab, v in zip(labs, var_list)}, yi=yi, vi=vi, labels=labs,
         excluded=excluded, warnings=[],
     )

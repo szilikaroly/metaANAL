@@ -26,8 +26,13 @@ CI_NAMES_HU = {"z": "z", "t": "t", "hksj": "HKSJ", "hksj_adhoc": "HKSJ (ad hoc)"
 TAU2_NAMES_EN = {"DL": "the DerSimonian–Laird estimator", "REML": "restricted maximum likelihood (REML)",
                  "ML": "maximum likelihood", "PM": "the Paule–Mandel estimator", "HE": "the Hedges (HE) estimator",
                  "SJ": "the Sidik–Jonkman estimator"}
+TAU2_SHORT_EN = {"DL": "DerSimonian–Laird", "REML": "REML", "ML": "maximum-likelihood", "PM": "Paule–Mandel",
+                 "HE": "Hedges", "SJ": "Sidik–Jonkman", "rögzített": "fixed (pre-specified)"}
 MEASURE_EN = {"MD": "mean difference (MD)", "SMD": "standardised mean difference (Hedges' g)",
               "COHEN_D": "standardised mean difference (Cohen's d)", "ROM": "log ratio of means",
+              "SMD_GLASS": "standardised mean difference standardised by the control-group SD (Glass's Δ)",
+              "MC": "mean change (paired design; mean of the within-person differences)",
+              "SMCC": "standardised mean change (paired design; change-score standardisation, Hedges-corrected)",
               "OR": "odds ratio (OR)", "RR": "risk ratio (RR)", "RD": "risk difference (RD)",
               "PR": "raw proportion", "PLN": "log-transformed proportion", "PLO": "logit-transformed proportion",
               "PAS": "arcsine-transformed proportion", "PFT": "Freeman–Tukey double-arcsine transformed proportion",
@@ -40,7 +45,26 @@ SCALE_EN = {"OR": "Analyses were performed on the log scale and results were bac
             "PAS": "Proportions were analysed on the arcsine square-root scale and back-transformed for presentation.",
             "PFT": "Proportions were analysed on the Freeman–Tukey double-arcsine scale and back-transformed with "
                    "Miller's (1978) inversion formula using the harmonic mean of the sample sizes.",
+            "PFT_variance": "Proportions were analysed on the Freeman–Tukey double-arcsine scale and back-transformed "
+                            "with Miller's (1978) inversion formula using, for each pooled estimate and its CI, "
+                            "m = 1/Var(t) of that estimate (MetaXL convention; Barendregt et al. 2013); the "
+                            "prediction interval was back-transformed with the harmonic mean of the sample sizes.",
             "ZCOR": "Correlations were analysed as Fisher z values and back-transformed to r for presentation."}
+SMD_VTYPE_EN = {
+    "LS": "the large-sample variance formula (1/n1 + 1/n2 + y²/(2N))",
+    "LS2": "the Borenstein et al. (2009) variance formula",
+    "UB": "the unbiased variance estimator (Hedges 1983)",
+    "METAN_COHEN": "the Stata metan / MetaXL variance formula N/(n1·n2) + d²/(2(N − 2))",
+    "METAN_HEDGES": "the Stata metan / MetaXL variance formula N/(n1·n2) + g²/(2(N − 3.94)) with the approximate "
+                    "correction factor J = 1 − 3/(4N − 9)",
+}
+GLASS_VTYPE_EN = {
+    "METAN": "the Stata metan / MetaXL variance N/(n1·n2) + Δ²/(2(n2 − 1)) without small-sample correction",
+    "LS": "the large-sample variance (metafor SMD1, vtype LS)",
+    "LS2": "the metafor SMD1 variance (vtype LS2)",
+    "UB": "the unbiased variance with small-sample correction (metafor SMD1, vtype UB)",
+    "SMD1H": "the metafor SMD1H variance (heteroscedastic arms)",
+}
 PI_DF_EN = {"t_k-2": "a t-distribution with k − 2 = %s degrees of freedom",
             "t_k-1": "a t-distribution with k − 1 = %s degrees of freedom",
             "z": "the standard normal distribution%s"}
@@ -103,18 +127,25 @@ def _lv(o):
     return int(round(o["level"] * 100))
 
 
-def _bt(m, vals, nh=None):
-    """Visszatranszformálás az értelmezési skálára (PFT: harmonikus átlag n)."""
+def _bt(m, vals, nh=None, se=None, pft_n="harmonic"):
+    """Visszatranszformálás az értelmezési skálára. PFT: harmonikus átlag n, vagy
+    pft_n='variance' esetén (MetaXL) m = 1/(4·se²) az adott eredmény SE-jéből (ha ismert)."""
+    if m != "PFT" or pft_n != "variance" or not (se is not None and se > 0 and math.isfinite(se)):
+        pft_n, se = "harmonic", None
     out = []
     for x in vals:
         if x is None:
             out.append(None)
             continue
         try:
-            out.append(E.back_transform(m, x, nh))
+            out.append(E.back_transform(m, x, nh, pft_n, se))
         except E.EffectSizeError:
             out.append(None)
     return out
+
+
+def _pft(o):
+    return o.get("pft_backtransform") or "harmonic"
 
 
 def _nh(out):
@@ -134,7 +165,7 @@ def _model_hu(r, kind):
     if kind == "random":
         return "véletlen hatású (%s τ², %s CI)" % (r.tau2_method, CI_NAMES_HU.get(r.ci_method, r.ci_method))
     if kind == "ivhet":
-        return "IVhet (Doi 2015; DL τ²)"
+        return "IVhet (Doi 2015; %s τ²)" % (r.tau2_method or "DL")
     return "közös (fix) hatású" + ("" if r.ci_method == "z" else " (%s CI)" % CI_NAMES_HU.get(r.ci_method, r.ci_method))
 
 
@@ -219,6 +250,76 @@ def _zero_cell_sentences(out):
     return s
 
 
+def _es_method_sentences(o):
+    """A hatásméret-számítás konvenciói (variancia-képlet, korrekció) mértékenként."""
+    m = o["measure"]
+    vt = o.get("smd_vtype") or "LS"
+    jm = "exact" if (o.get("j_method") or "exact") == "exact" else "approximate (1 − 3/(4·df − 1))"
+    s = []
+    if m == "SMD":
+        if vt == "METAN_HEDGES":
+            s.append("Hedges' g was computed with %s." % SMD_VTYPE_EN[vt])
+        else:
+            s.append("Hedges' g was computed with the %s small-sample correction factor and %s."
+                     % (jm, SMD_VTYPE_EN.get(vt, vt)))
+    elif m == "COHEN_D":
+        cv = "LS" if vt == "UB" else vt
+        s.append("Cohen's d (without small-sample correction) was computed with %s." % SMD_VTYPE_EN.get(cv, cv))
+    elif m == "MD":
+        pooled = E.md_vtype_name(o.get("md_vtype") or "unequal") == "pooled"
+        s.append("Sampling variances of the mean differences were computed %s." % (
+            "assuming equal variances in the two groups (pooled SD; metafor vtype HO)" if pooled else
+            "without assuming equal variances (sd1²/n1 + sd2²/n2)"))
+    elif m == "SMD_GLASS":
+        gv = o.get("glass_vtype") or "METAN"
+        s.append("Glass's Δ was computed with %s." % GLASS_VTYPE_EN.get(gv, gv))
+    elif m in ("MC", "SMCC"):
+        s.append("Paired (before–after or matched) designs were analysed from the within-person differences; the SD of "
+                 "the differences was taken as reported, or derived from the arm SDs and the reported correlation, "
+                 "or from the reported sum of squared deviations.")
+        if m == "SMCC":
+            sv = vt if vt in ("LS", "LS2") else "LS"
+            s.append("The standardised mean change used the SD of the differences, the %s small-sample correction "
+                     "and the %s variance formula." % (jm, sv))
+    if m == "GEN" and o.get("gen_smd_vtype"):
+        s.append("For studies reporting only a standardised mean difference and the group sizes, the sampling "
+                 "variance was derived with %s." % SMD_VTYPE_EN.get(o["gen_smd_vtype"], o["gen_smd_vtype"]))
+    return s
+
+
+def _bias_test_names(o, b):
+    tests = []
+    if b.get("egger") is not None:
+        tests.append("Egger's regression test" + (
+            " (intercept CI with the normal quantile, as in dmetar)" if o.get("egger_ci_dist") == "norm" else ""))
+    if b.get("harbord") is not None:
+        tests.append("Harbord's score-based test")
+    if b.get("peters") is not None:
+        tests.append("Peters' test")
+    bg = b.get("begg")
+    if bg is not None:
+        meth = o.get("begg_method") or "auto"
+        if meth == "normal" or bg.get("method", "").startswith("normális"):
+            how = "normal approximation" + (" with continuity correction" if o.get("begg_continuity") else
+                                            " without continuity correction")
+        else:
+            how = "exact Kendall distribution"
+        tests.append("Begg's rank correlation test (%s)" % how)
+    tf = b.get("trimfill")
+    if tf is not None:
+        txt = "the trim-and-fill method (%s estimator" % o.get("trimfill_estimator")
+        if tf.get("trim_model") == "fixed" and o.get("model") != "fixed":
+            txt += "; trimming based on the common-effect model and the filled data pooled with the primary model, " \
+                   "as in meta::trimfill"
+        elif o.get("trimfill_trim_model") == "random":
+            txt += "; trimming based on the random-effects model"
+        tests.append(txt + ")")
+    if b.get("lfk") is not None:
+        tests.append("the Doi plot with the LFK index (Furuya-Kanamori et al. 2018; a heuristic with |LFK| ≤ 1, "
+                     "1–2 and > 2 read as no, minor and major asymmetry, interpreted as a sensitivity measure only)")
+    return tests
+
+
 def methods_text_en(out):
     """A TÉNYLEGESEN elvégzett elemzések leírása (nem a kért opcióké)."""
     o = out["options"]
@@ -234,7 +335,10 @@ def methods_text_en(out):
         parts.append(fs)
     parts.append("Effect sizes were expressed as the %s with %d%% confidence intervals (CIs)."
                  % (MEASURE_EN.get(m, m), lv))
-    if m in SCALE_EN:
+    parts += _es_method_sentences(o)
+    if m == "PFT" and _pft(o) == "variance":
+        parts.append(SCALE_EN["PFT_variance"])
+    elif m in SCALE_EN:
         parts.append(SCALE_EN[m])
     parts += _zero_cell_sentences(out)
     if pr is None:
@@ -243,9 +347,11 @@ def methods_text_en(out):
     rnd = out.get("random")
     fb = out.get("model_fallback")
     if pm == "ivhet":
+        tm = pr.tau2_method or "DL"
         parts.append("Studies were pooled with the inverse variance heterogeneity (IVhet) model (Doi et al., 2015), "
-                     "which uses inverse-variance weights and a variance inflated by the DerSimonian–Laird estimate "
-                     "of τ².")
+                     "which uses inverse-variance weights and a variance inflated by the %s estimate of τ²%s." % (
+                         TAU2_SHORT_EN.get(tm, tm),
+                         "" if tm == "DL" else " (the published IVhet model uses the DerSimonian–Laird estimator)"))
         if rnd is not None:
             parts.append("A random-effects model (%s; %s) and a common-effect model were fitted as sensitivity analyses."
                          % (TAU2_NAMES_EN.get(rnd.tau2_method, rnd.tau2_method),
@@ -274,7 +380,10 @@ def methods_text_en(out):
     if pm == "random" and out.get("fixed") is not None:
         parts.append("A common-effect (inverse-variance) model was fitted as a sensitivity analysis.")
     if out.get("mh") is not None:
-        parts.append("Mantel–Haenszel pooled estimates were additionally calculated.")
+        parts.append("Mantel–Haenszel pooled estimates were additionally calculated%s." % (
+            (" (variance of the risk difference: %s)" % (
+                "Greenland & Robins 1985" if o.get("rd_var") == "gr" else "Sato, Greenland & Robins 1989"))
+            if m == "RD" else ""))
     if out.get("peto") is not None:
         parts.append("Peto odds ratios were additionally calculated.")
     if k >= 2:
@@ -285,6 +394,14 @@ def methods_text_en(out):
         else:
             parts.append("Heterogeneity was assessed with Cochran's Q test and the Q-based I² statistic "
                          "(Higgins–Thompson CI).")
+        if k >= 3:
+            if (o.get("h_centre") or "truncated") == "truncated":
+                parts.append("H was reported as max(1, √(Q/df)), with the Higgins–Thompson CI of H and I² centred on "
+                             "ln max(1, H) as in the R package meta, together with the modified H² = max(0, (Q − df)/df).")
+            else:
+                parts.append("H was reported as max(1, √(Q/df)), with the Higgins–Thompson CI of H and I² centred on "
+                             "½·ln(Q/df) (untruncated, Borenstein et al. 2009), together with the modified "
+                             "H² = max(0, (Q − df)/df).")
     sg = out.get("subgroups")
     if sg is not None:
         if o.get("model") == "fixed":
@@ -306,6 +423,9 @@ def methods_text_en(out):
             TAU2_NAMES_EN.get(mr.tau2_method, mr.tau2_method),
             "Knapp–Hartung" if mr.test == "knha" else "Wald-type z",
             ", ".join(x for x in (_col(out, "moderators") or []) if x not in (out.get("metaregression_dropped") or []))))
+        if mr.get("robust"):
+            parts.append("Heteroscedasticity-robust (HC1 sandwich) standard errors with t(k − p) tests and a robust "
+                         "Wald F test were additionally reported (as Stata regress with vce(robust)).")
     sens = out.get("sensitivity") or {}
     if sens.get("leave_one_out"):
         parts.append("Influence was examined with leave-one-out analyses and influence diagnostics (externally "
@@ -314,14 +434,15 @@ def methods_text_en(out):
         parts.append("Leave-one-out and influence analyses were not performed (fewer than 3 studies).")
     if sens.get("cumulative"):
         parts.append("A cumulative meta-analysis ordered by %s was performed." % _col(out, "cumulative"))
+    ol = sens.get("outliers")
+    if ol is not None:
+        parts.append("Outlying studies were screened with the rule of dmetar::find.outliers (a study whose %d%% CI "
+                     "lies entirely outside the %d%% CI of the pooled estimate); %s" % (
+                         lv, lv, "the model was refitted without the %d flagged %s as a sensitivity analysis." % (
+                             ol.k_removed, "study" if ol.k_removed == 1 else "studies")
+                         if ol.refit is not None else "no study met this criterion."))
     b = out.get("bias") or {}
-    tests = []
-    if b.get("egger") is not None:
-        tests.append("Egger's regression test")
-    if b.get("begg") is not None:
-        tests.append("Begg's rank correlation test")
-    if b.get("trimfill") is not None:
-        tests.append("the trim-and-fill method (%s estimator)" % o.get("trimfill_estimator"))
+    tests = _bias_test_names(o, b)
     plot = "funnel plots" if m in E.PROPORTION else "contour-enhanced funnel plots"
     if not b.get("performed") or not tests:
         parts.append("Small-study effects were not assessed (fewer than 3 studies).")
@@ -330,6 +451,10 @@ def methods_text_en(out):
     else:
         parts.append("Because fewer than %d studies were available, funnel plot asymmetry (%s) was examined for "
                      "information only and was not interpreted." % (o["bias_min_k"], _join_en(tests)))
+    if b.get("harbord") is not None or b.get("peters") is not None:
+        parts.append("For the binary outcome, the Harbord and Peters tests (both based on the log odds ratio) were "
+                     "preferred to Egger's test, which is prone to false-positive results with odds ratios "
+                     "(Sterne et al. 2011).")
     if m in E.PROPORTION and b.get("performed"):
         parts.append("For single-group proportions there is no meaningful null value, so funnel plots were drawn "
                      "without significance contours and asymmetry is difficult to interpret.")
@@ -446,6 +571,7 @@ def build_report(out, title=None, date=None):
     pm = out["primary_model"]
     bt = out["back_transformed"]
     nh = _nh(out)
+    pft = _pft(o)
     d = bt["estimate_ci"]
     L.append("## Fő eredmény")
     L.append("")
@@ -476,6 +602,11 @@ def build_report(out, title=None, date=None):
         i2ht = h.get("I2_ci_HT")
         L.append("| I² (Q-alapú) [%d%% CI, Higgins–Thompson] | %.1f%% %s |" % (
             lv, pr.I2, ("[%.1f; %.1f]" % tuple(i2ht)) if i2ht else "(CI nem számolható)"))
+        if h.get("H") is not None:
+            hci = h.get("H_ci_HT")
+            L.append("| H (Q-alapú) [%d%% CI, Higgins–Thompson%s] ; módosított H² | %s %s ; %s |" % (
+                lv, "" if h.get("H_ci_centre", "truncated") == "truncated" else ", középpont ½·ln(Q/df)", _f(h["H"], 2),
+                ("[%s; %s]" % (_f(hci[0], 2), _f(hci[1], 2))) if hci else "(CI nem számolható)", _f(h.get("H2_M"), 3)))
         if pm in ("random", "ivhet"):
             i2t, i2qp = h.get("I2_from_tau2"), h.get("I2_ci_QP")
             if i2t is not None:
@@ -503,12 +634,13 @@ def build_report(out, title=None, date=None):
     L.append("")
     fx = out.get("fixed")
     if fx is not None and pm != "fixed":
-        L.append("Érzékenység — közös hatású modell [%d%% CI]: %s." % (lv, _tri(_bt(m, (fx.estimate, fx.ci_lower, fx.ci_upper), nh))))
+        L.append("Érzékenység — közös hatású modell [%d%% CI]: %s." % (
+            lv, _tri(_bt(m, (fx.estimate, fx.ci_lower, fx.ci_upper), nh, fx.se, pft))))
     rnd = out.get("random")
     if rnd is not None and pm in ("ivhet", "fixed"):
         L.append("Érzékenység — véletlen hatású modell (%s τ², %s CI) [%d%% CI]: %s." % (
             rnd.tau2_method, CI_NAMES_HU.get(rnd.ci_method, rnd.ci_method), lv,
-            _tri(_bt(m, (rnd.estimate, rnd.ci_lower, rnd.ci_upper), nh))))
+            _tri(_bt(m, (rnd.estimate, rnd.ci_lower, rnd.ci_upper), nh, rnd.se, pft))))
     for key, name in (("mh", "Mantel–Haenszel"), ("peto", "Peto")):
         r = out.get(key)
         if r is not None:
@@ -553,10 +685,24 @@ def build_report(out, title=None, date=None):
         L.append("| Alcsoport | k | Becslés [%d%% CI] | τ² | I² (Q-alapú) |" % lv)
         L.append("|---|---|---|---|---|")
         for g in sg.groups:
-            dd = g.get("display") or _bt(m, (g.estimate, g.ci_lower, g.ci_upper), g.get("n_harmonic") or nh)
+            dd = g.get("display") or _bt(m, (g.estimate, g.ci_lower, g.ci_upper), g.get("n_harmonic") or nh, g.se, pft)
             L.append("| %s | %d | %s | %s | %s |" % (_md(g.group), g.k, _tri(dd), _f(g.tau2, 4) if g.k > 1 else "–",
                                                    ("%.0f%%" % g.I2) if g.k > 1 else "–"))
         L.append("")
+        if any(g.get("weight_share_pct") is not None for g in sg.groups):
+            # külön táblázat: a fő alcsoport-táblázat oszlopszerkezete változatlan marad
+            L.append("| Alcsoport | Súlyrészesedés a teljes modellben² | Nyers súlyösszeg |")
+            L.append("|---|---|---|")
+            for g in sg.groups:
+                share, raw = g.get("weight_share_pct"), g.get("weight_share_raw")
+                L.append("| %s | %s | %s |" % (_md(g.group), ("%.1f%%" % share) if share is not None else "–",
+                                             ("%.4g" % raw) if raw is not None else "–"))
+            L.append("")
+            L.append("_² Az alcsoport vizsgálatainak összsúlya a teljes (alcsoportok nélküli) %s modellben, a teljes "
+                     "súly %%-ában (MetaXL / RevMan 'Subtotal' súly)._" % (
+                         "véletlen hatású" if o.get("model") == "random" else
+                         ("IVhet" if o.get("model") == "ivhet" else "közös hatású")))
+            L.append("")
         if sg.Q_between is not None:
             L.append("Alcsoport-különbség: Q_b = %.2f, df = %d, %s." % (sg.Q_between, sg.df_between, _p_eq(sg.p_between)))
         else:
@@ -584,6 +730,21 @@ def build_report(out, title=None, date=None):
         L.append("")
         L.append("Reziduális τ² = %s; QE(%d) = %s, %s; moderátor-teszt (%s) %s; R² = %s%%." % (
             _f(mr.tau2, 4), mr.QE_df, _f(mr.QE, 2), _p_eq(mr.QE_p), mr.QM_type, _p_eq(mr.QM_p), _f(mr.R2, 1)))
+        rb = mr.get("robust")
+        if rb:
+            L.append("")
+            L.append("**Robusztus (HC1 szendvics) standard hibák** — t(%d) próbák, mint a Stata `regress …, vce(robust)`:"
+                     % rb["df"])
+            L.append("")
+            L.append("| Együttható | Becslés | Robusztus SE | t | p | %d%% CI |" % lv)
+            L.append("|---|---|---|---|---|---|")
+            for c in rb["coefficients"]:
+                L.append("| %s | %.4f | %.4f | %.2f | %s | [%.4f; %.4f] |" % (
+                    _md(c["name"]), c["estimate"], c["se"], c["t"], _p(c["p"]), c["ci_lower"], c["ci_upper"]))
+            L.append("")
+            fpart = ("robusztus Wald F(%s, %s) = %s, %s; " % (rb["F_df1"], rb["F_df2"], _f(rb["F"], 2), _p_eq(rb["F_p"]))
+                     if rb.get("F") is not None else "")
+            L.append("%ssúlyozott R² = %s; root MSE = %s." % (fpart, _f(rb.get("r2"), 3), _f(rb.get("root_mse"), 4)))
         for w_ in mr.warnings:
             L.append("- %s" % _md(w_))
         L.append("")
@@ -594,19 +755,43 @@ def build_report(out, title=None, date=None):
     if b.get("note"):
         L.append("> %s" % b["note"])
         L.append("")
+    if b.get("binary_note"):
+        L.append("> %s" % _md(b["binary_note"]))
+        L.append("")
     if b.get("egger") is not None:
         eg = b["egger"]
-        L.append("- Egger-teszt: tengelymetszet = %s (SE %s), t(%d) = %s, %s" % (
-            _f(eg.intercept, 3), _f(eg.se_intercept, 3), eg.df, _f(eg.t, 2), _p_eq(eg.p)))
+        L.append("- Egger-teszt%s: tengelymetszet = %s (SE %s; %d%% CI %s, %s-kvantilis), t(%d) = %s, %s" % (
+            " (bináris kimenetnél csak tájékoztató)" if b.get("binary_note") else "",
+            _f(eg.intercept, 3), _f(eg.se_intercept, 3), int(round((eg.get("level") or o["level"]) * 100)),
+            "[%s; %s]" % (_f(eg.ci_lower, 3), _f(eg.ci_upper, 3)),
+            "z" if eg.get("ci_dist") == "norm" else "t(k−2)", eg.df, _f(eg.t, 2), _p_eq(eg.p)))
+    for key, name in (("harbord", "Harbord-teszt (pontszám-alapú, log OR)"), ("peters", "Peters-teszt (log OR ~ 1/N)")):
+        r = b.get(key)
+        if r is None:
+            continue
+        if key == "harbord":
+            L.append("- %s: tengelymetszet = %s (SE %s), t(%d) = %s, %s; k = %d" % (
+                name, _f(r.intercept, 3), _f(r.se_intercept, 3), r.df, _f(r.t, 2), _p_eq(r.p), r.k))
+        else:
+            L.append("- %s: meredekség = %s (SE %s), t(%d) = %s, %s; k = %d" % (
+                name, _f(r.slope, 3), _f(r.se_slope, 3), r.df, _f(r.t, 2), _p_eq(r.p), r.k))
     if b.get("begg") is not None:
         bg = b["begg"]
-        L.append("- Begg–Mazumdar: Kendall τ = %s, %s (%s)" % (_f(bg.kendall_tau, 3), _p_eq(bg.p), bg.method))
+        L.append("- Begg–Mazumdar: Kendall τ = %s, %s; módszer: %s" % (_f(bg.kendall_tau, 3), _p_eq(bg.p), bg.method))
     if b.get("trimfill") is not None:
         tf = b["trimfill"]
         a = tf.adjusted
-        L.append("- Trim-and-fill (%s): becsült hiányzó vizsgálat = %d (%s oldal); korrigált becslés [%d%% CI, %s]: %s" % (
-            tf.estimator, tf.k0, "bal" if tf.side == "left" else "jobb", int(round(a.level * 100)),
-            CI_NAMES_HU.get(a.ci_method, a.ci_method), _tri(_bt(m, (a.estimate, a.ci_lower, a.ci_upper), nh))))
+        trim_txt = ""
+        if tf.get("trim_model") and tf.get("trim_model") != a.model:
+            trim_txt = "; vágás a %s modellel" % ("közös hatású" if tf.trim_model == "fixed" else "véletlen hatású")
+        L.append("- Trim-and-fill (%s%s): becsült hiányzó vizsgálat = %d (%s oldal); korrigált becslés [%d%% CI, %s]: %s" % (
+            tf.estimator, trim_txt, tf.k0, "bal" if tf.side == "left" else "jobb", int(round(a.level * 100)),
+            CI_NAMES_HU.get(a.ci_method, a.ci_method), _tri(_bt(m, (a.estimate, a.ci_lower, a.ci_upper), nh, a.se, pft))))
+    if b.get("lfk") is not None:
+        lf = b["lfk"]
+        L.append("- Doi-plot, LFK-index (heurisztikus, érzékenységi jellegű mutató; nem szignifikancia-teszt): "
+                 "%s — %s (|LFK| ≤ 1: nincs, 1–2: kisebb, > 2: jelentős aszimmetria; `doi.svg`)" % (
+                     _f(lf.lfk, 2), lf.category))
     if m in E.PROPORTION and b.get("performed"):
         L.append("- Egycsoportos aránynál nincs nullhatás: a funnel plot kontúrok nélkül készült, az aszimmetria "
                  "nehezen értelmezhető.")
@@ -615,12 +800,12 @@ def build_report(out, title=None, date=None):
     L.append("")
     # érzékenység
     sens = out.get("sensitivity", {})
-    if sens.get("leave_one_out") or sens.get("cumulative"):
+    if sens.get("leave_one_out") or sens.get("cumulative") or sens.get("outliers") is not None:
         L.append("## Érzékenységi elemzés")
         L.append("")
     if sens.get("leave_one_out"):
         loo = sens["leave_one_out"]
-        ests = [x for x in _bt(m, [r["estimate"] for r in loo], nh) if x is not None]
+        ests = [x for x in (_bt(m, [r["estimate"]], nh, r.get("se"), pft)[0] for r in loo) if x is not None]
         if ests:
             nd = decimals((min(ests), max(ests)))
             L.append("Leave-one-out: az összesített becslés tartománya %s – %s." % (_f(min(ests), nd), _f(max(ests), nd)))
@@ -638,6 +823,26 @@ def build_report(out, title=None, date=None):
     elif out["effect_sizes"]["k"] < 3:
         L.append("_Leave-one-out és befolyás-elemzés nem készült (k < 3)._")
         L.append("")
+    ol = sens.get("outliers")
+    if ol is not None:
+        L.append("### Kiugró vizsgálatok szűrése (dmetar::find.outliers szabály)")
+        L.append("")
+        L.append("_Kiugró az a vizsgálat, amelynek %d%%-os CI-je teljesen az összesített %d%%-os CI-n kívül esik; "
+                 "egylépéses szűrés, majd újraillesztés ugyanazzal a modellel. Érzékenységi elemzés — a kiugró "
+                 "vizsgálatot nem szabad automatikusan kizárni._" % (lv, lv))
+        L.append("")
+        if not ol.flagged:
+            L.append("Nincs kiugró vizsgálat.")
+        else:
+            L.append(_sentence("Kiugró vizsgálat(ok) (%d): %s" % (ol.k_removed, ", ".join(_md(x) for x in ol.flagged))))
+            rf = ol.refit
+            if rf is not None:
+                L.append("Újraillesztés nélkülük (k = %d) [%d%% CI]: %s; τ² = %s; I² (Q-alapú) = %.1f%%." % (
+                    rf.k, lv, _tri(_bt(m, (rf.estimate, rf.ci_lower, rf.ci_upper), nh, rf.se, pft)),
+                    _f(rf.tau2, 4), rf.I2))
+        for w_ in ol.warnings or []:
+            L.append("- %s" % _md(w_))
+        L.append("")
     if sens.get("cumulative"):
         L.append("### Kumulatív metaanalízis (rendezés: %s)" % _md(_col(out, "cumulative")))
         L.append("")
@@ -647,7 +852,7 @@ def build_report(out, title=None, date=None):
             key = r.get("key")
             L.append("| %d | %s | %s | %s | %s | %s |" % (
                 r["k"], _md(r["added"]), _md(_int(key) if key is not None else "–"),
-                _tri(_bt(m, (r["estimate"], r["ci_lower"], r["ci_upper"]), nh)),
+                _tri(_bt(m, (r["estimate"], r["ci_lower"], r["ci_upper"]), nh, r.get("se"), pft)),
                 _f(r.get("tau2"), 4) if r["k"] > 1 else "–",
                 ("%.0f%%" % r["I2"]) if r.get("I2") is not None and r["k"] > 1 else "–"))
         L.append("")
@@ -658,7 +863,8 @@ def build_report(out, title=None, date=None):
     # vizsgálatok
     L.append("## Vizsgálatonkénti hatásméretek")
     L.append("")
-    L.append("Lásd: `effect_sizes.csv`, `forest.svg`.")
+    L.append("Lásd: `effect_sizes.csv`, `forest.svg`, `funnel.svg`%s." % (
+        ", `doi.svg`" if (out.get("bias") or {}).get("lfk") is not None else ""))
     if es["excluded"]:
         L.append("")
         L.append("Kizárt sorok:")

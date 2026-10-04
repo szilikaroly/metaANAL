@@ -6,14 +6,16 @@
   DFFITS, Cook-távolság, kovariancia-arány, hat-érték, DFBETAS; jelölés a metafor
   influence.rma.uni szabályai szerint
 - Kumulatív metaanalízis (pl. publikációs év szerint)
+- Kiugró vizsgálatok szűrése (dmetar::find.outliers szabály: a vizsgálat CI-je teljesen az
+  összesített CI-n kívül esik) és újraillesztés nélkülük
 """
 import math
 
 from . import distributions as dist
-from .models import meta_analysis, MetaResult
+from .models import meta_analysis, MetaResult, ModelError
 
 
-def leave_one_out(yi, vi, labels, model="random", tau2_method="REML", ci_method=None,
+def leave_one_out(yi, vi, labels, model="random", tau2_method=None, ci_method=None,
                   level=0.95):
     out = []
     k = len(yi)
@@ -29,7 +31,7 @@ def leave_one_out(yi, vi, labels, model="random", tau2_method="REML", ci_method=
     return out
 
 
-def influence(yi, vi, labels, model="random", tau2_method="REML", level=0.95):
+def influence(yi, vi, labels, model="random", tau2_method=None, level=0.95):
     k = len(yi)
     if k < 3:
         return []
@@ -95,7 +97,7 @@ def cumulative_order(order_key):
     return present + missing
 
 
-def cumulative(yi, vi, labels, order_key, model="random", tau2_method="REML", ci_method=None,
+def cumulative(yi, vi, labels, order_key, model="random", tau2_method=None, ci_method=None,
                level=0.95):
     """Kumulatív metaanalízis order_key szerint (hiányzó kulcs: a sor végére, mint a metafor
     cumul()-ban; vegyes típusú kulcsok: természetes rendezés)."""
@@ -113,3 +115,53 @@ def cumulative(yi, vi, labels, order_key, model="random", tau2_method="REML", ci
                     "estimate": r.estimate, "ci_lower": r.ci_lower, "ci_upper": r.ci_upper,
                     "tau2": r.tau2, "I2": r.I2})
     return out
+
+
+def outlier_screen(yi, vi, labels=None, model="random", tau2_method=None, level=0.95, ci_method=None,
+                   h_centre="truncated"):
+    """Kiugró vizsgálatok szűrése a dmetar::find.outliers szabálya szerint, újraillesztéssel.
+
+    Egy vizsgálat kiugró, ha a saját (1−α) CI-je (y_i ± z·√v_i) TELJESEN az összesített modell
+    (1−α) CI-jén kívül esik: felső határa < az összesített alsó határ, vagy alsó határa > az
+    összesített felső határ (Harrer et al. 2021, Doing Meta-Analysis with R, 5.4.1). A szűrés
+    egylépéses (nem iterált), és a kiugró vizsgálatok nélkül ugyanazzal a modellel (model,
+    tau2_method, ci_method, level) újraillesztünk.
+
+    Megjegyzés: a dmetar a meta-objektumon a vizsgálati CI-ket a level szerinti z-kvantilissel,
+    a metafor-objektumon fix 1,96-tal számolja; itt mindig a level szerinti pontos z-kvantilis
+    (95%-nál 1,959964). Az összesített CI a megadott ci_method szerint (None → a meta_analysis
+    alapértelmezése: random → HKSJ); a meta::metagen alapértelmezésének (klasszikus z-CI)
+    megfelelő eredményhez ci_method='z' kell.
+
+    Visszaad: MetaResult(kind='outliers', flagged (címkék), flagged_index, k, k_removed,
+    full (teljes modell), refit (újraillesztett modell vagy None, ha nincs kiugró / nem maradt
+    vizsgálat), study_ci (vizsgálatonkénti [alsó, felső]), rule, warnings).
+    A kiugró vizsgálat nem feltétlenül befolyásos (influence()), és automatikus kizárása nem
+    ajánlott — érzékenységi elemzésként jelentsd mindkét eredményt.
+    """
+    k = len(yi)
+    labels = list(labels) if labels else ["#%d" % (i + 1) for i in range(k)]
+    if len(labels) != k:
+        raise ModelError("a címkék száma eltér a vizsgálatok számától")
+    full = meta_analysis(yi, vi, model, tau2_method, ci_method, level, labels=labels, h_centre=h_centre)
+    z = dist.norm_ppf(0.5 + level / 2.0)
+    study_ci = [[y - z * math.sqrt(v), y + z * math.sqrt(v)] for y, v in zip(yi, vi)]
+    flagged_index = [i for i, (lo, hi) in enumerate(study_ci)
+                     if hi < full.ci_lower or lo > full.ci_upper]
+    warnings = []
+    refit = None
+    if flagged_index:
+        keep = [i for i in range(k) if i not in set(flagged_index)]
+        if keep:
+            refit = meta_analysis([yi[i] for i in keep], [vi[i] for i in keep], model, tau2_method,
+                                  ci_method, level, labels=[labels[i] for i in keep], h_centre=h_centre)
+        else:
+            warnings.append("Minden vizsgálat kiugrónak minősült; újraillesztés nem lehetséges.")
+    if k < 10:
+        warnings.append("k = %d: kevés vizsgálatnál a kiugró-szűrés bizonytalan; a kiugró vizsgálat "
+                        "nem feltétlenül befolyásos — vesd össze a befolyás-diagnosztikával." % k)
+    return MetaResult(kind="outliers", rule="dmetar::find.outliers (vizsgálati CI teljesen az összesített "
+                      "CI-n kívül)", k=k, k_removed=len(flagged_index),
+                      flagged=[labels[i] for i in flagged_index], flagged_index=flagged_index,
+                      study_ci=study_ci, full=full, refit=refit, model=full.model, level=level,
+                      warnings=warnings)

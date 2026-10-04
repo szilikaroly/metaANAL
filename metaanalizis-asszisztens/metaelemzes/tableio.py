@@ -25,6 +25,13 @@ ALIASES = {
     "x": ["x", "xi", "events", "esemeny", "esemény", "cases"],
     "n": ["n", "ni", "total", "osszes", "összes"],
     "r": ["r", "ri", "cor", "korrelacio", "korreláció"],
+    # párosított (előtte–utána) elrendezés: MC / SMCC
+    "sd_diff": ["sd_diff", "sddi", "sd_change", "sd_valtozas", "sd_változás", "sd_kulonbseg", "sd_különbség",
+                "szoras_valtozas", "szórás_változás"],
+    "mdiff": ["mdiff", "mean_change", "change_mean", "atlagos_valtozas", "átlagos_változás",
+              "valtozas_atlag", "változás_átlag"],
+    "sum_d": ["sum_d", "sumd", "d_osszeg", "d_összeg"],
+    "sum_sq_dev_d": ["sum_sq_dev_d", "ss_d", "ssd"],
     "yi": ["yi", "es", "effect", "hatas", "hatás", "te"],
     "vi": ["vi", "var", "variance", "variancia"],
     # a 'hiba' (magyarul 'error') szándékosan NEM álnév: a szabad szöveges megjegyzés-
@@ -41,7 +48,8 @@ ALIASES = {
 # (különben egy általános "CI" oszlopot sajátítanánk ki)
 _CONDITIONAL_ALIASES = {"ci": ("e2", "ai")}
 
-NUMERIC = {"m1", "sd1", "n1", "m2", "sd2", "n2", "e1", "e2", "x", "n", "r", "yi", "vi", "sei", "year"}
+NUMERIC = {"m1", "sd1", "n1", "m2", "sd2", "n2", "e1", "e2", "x", "n", "r", "yi", "vi", "sei", "year",
+           "sd_diff", "mdiff", "sum_d", "sum_sq_dev_d"}
 COUNT_COLUMNS = {"n1", "n2", "n", "e1", "e2", "x"}
 DECIMAL_ONLY = {"r"}          # |r| <= 1: ezres tagolás nem értelmezhető
 # azonosító/kategória oszlopok: mindig szövegként, pontosan úgy, ahogy a CSV-ben állnak

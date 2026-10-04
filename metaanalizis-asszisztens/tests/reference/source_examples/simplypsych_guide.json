@@ -78,7 +78,7 @@
       {"path": "duplicates_removed", "value": 0, "tol": 0, "transform": null, "note": "derived, not printed (verification.computed.duplicates_removed_implied)"},
       {"path": "qualitative_only_not_meta_analysed", "value": 2, "tol": 0, "transform": null, "note": "derived, not printed: 15 - 13 (reason not stated in the source)"}
     ],
-    "status": "known_gap",
-    "gap_reason": "Not a pooling-engine oracle and no matching engine function: these are review-level PRISMA 2009 flow counts (exact integers, internally consistent per the verifier). The metaelemzes package has no PRISMA flow-count consistency validator (only a PRISMA 2020 checklist in the knowledge base and a Markdown flow template in projekt.py), and tests/source_cases.py has no corresponding call ('prisma_flow' is a placeholder). Activate once a flow validator exists that derives duplicates removed, full texts assessed, qualitative and quantitative inclusions from the box counts and checks that quantitative <= qualitative. No per-reason breakdown of the 78 full-text exclusions is printed, so a 'reasons sum to total' rule cannot be tested from this example."
+    "status": "active",
+    "activation_note": "Activated: metaelemzes.prisma.check_flow (runner call 'prisma_flow' = 'prisma_check') derives the implied 0 duplicates and the qualitative-only count and checks quantitative <= qualitative; the missing per-reason breakdown of the 78 exclusions is reported as a P008 warning, not an error."
   }
 ]

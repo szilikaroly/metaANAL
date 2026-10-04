@@ -6,7 +6,8 @@ döntéseiknél ugyanarra a szabályra hivatkoznak, amit a kód ellenőriz.
 import math
 from collections import Counter
 
-from .effect_sizes import REQUIRED_COLUMNS, CONTINUOUS, BINARY, PROPORTION, CORRELATION
+from .effect_sizes import (REQUIRED_COLUMNS, CONTINUOUS, BINARY, PROPORTION, CORRELATION, PAIRED,
+                           PAIRED_INPUTS)
 from .tableio import values_equal
 
 # kód: (súlyosság, rövid cím, magyarázat/teendő, forrás)
@@ -117,7 +118,47 @@ def _median(vals):
     return v[n // 2] if n % 2 else 0.5 * (v[n // 2 - 1] + v[n // 2])
 
 
-_COMPUTE_OPTIONS = ("label_col", "smd_vtype", "j_method", "cc", "cc_to", "drop00")
+_COMPUTE_OPTIONS = ("label_col", "smd_vtype", "j_method", "cc", "cc_to", "drop00", "md_vtype",
+                    "glass_vtype", "gen_smd_vtype")
+
+
+def _alt_text(alts):
+    return " | ".join("+".join(a) for a in alts)
+
+
+def _first_complete(r, alts):
+    """A párosított bemenet első teljes oszlopkészlete a sorban (vagy None)."""
+    for cols in alts:
+        if all(r.get(c) is not None for c in cols):
+            return cols
+    return None
+
+
+def _paired_row_checks(out, lab, r, measure):
+    """Párosított (MC, SMCC) sor: V002 hiányzó készlet, V004 n, V005 SD, V010 r, V020 kis n."""
+    missing = []
+    for part, name in (("mean", "átlagos változás"), ("sd", "a változás SD-je")):
+        if _first_complete(r, PAIRED_INPUTS[part]) is None:
+            missing.append("%s (%s)" % (name, _alt_text(PAIRED_INPUTS[part])))
+    if missing:
+        out.append(_finding("V002", lab, "hiányzik: " + "; ".join(missing)))
+    n = r["n"]
+    n_min = 3 if measure == "SMCC" else 2
+    if n < n_min or not _is_int(n):
+        out.append(_finding("V004", lab, "n = %g (párosított adatnál egész n >= %d kell)" % (n, n_min)))
+    sd_cols = _first_complete(r, PAIRED_INPUTS["sd"])
+    if sd_cols == ("sd_diff",) and r["sd_diff"] <= 0:
+        out.append(_finding("V005", lab, "sd_diff = %g" % r["sd_diff"]))
+    elif sd_cols == ("sd1", "sd2", "r"):
+        for sc in ("sd1", "sd2"):
+            if r[sc] <= 0:
+                out.append(_finding("V005", lab, "%s = %g" % (sc, r[sc])))
+        if not -1 <= r["r"] <= 1:
+            out.append(_finding("V010", lab, "r = %g (a két mérés korrelációja: -1 <= r <= 1)" % r["r"]))
+    elif sd_cols == ("sum_sq_dev_d",) and r["sum_sq_dev_d"] <= 0:
+        out.append(_finding("V005", lab, "sum_sq_dev_d = %g (a változás SD-je nem pozitív)" % r["sum_sq_dev_d"]))
+    if n < 10:
+        out.append(_finding("V020", lab, "n=%g" % n))
 
 
 def _yes(v):
@@ -174,12 +215,24 @@ def validate(rows, measure, meta=None, options=None):
     missing_cols = [c for c in req if c not in present]
     for col in missing_cols:
         out.append(_finding("V001", None, "hiányzó oszlop: %s" % col))
-    gen_missing = measure == "GEN" and "vi" not in present and "sei" not in present
+    gen_n = bool(opts.get("gen_smd_vtype")) and "n1" in present and "n2" in present
+    gen_missing = measure == "GEN" and "vi" not in present and "sei" not in present and not gen_n
     if gen_missing:
-        out.append(_finding("V001", None, "GEN-hez vi vagy sei oszlop kell"))
+        out.append(_finding("V001", None, "GEN-hez vi vagy sei oszlop kell" +
+                            (" (vagy n1 és n2)" if opts.get("gen_smd_vtype") else "")))
+    if measure in PAIRED and not missing_cols:
+        for part, name in (("mean", "az átlagos változáshoz"), ("sd", "a változás SD-jéhez")):
+            if not any(all(c in present for c in cols) for cols in PAIRED_INPUTS[part]):
+                missing_cols.append(part)
+                out.append(_finding("V001", None, "%s oszlop(ok) kell(enek): %s" % (
+                    name, _alt_text(PAIRED_INPUTS[part]))))
     labels = [row_label(r, i, opts.get("label_col", "study")) for i, r in enumerate(rows)]
     by_line = {r.get("_line"): lab for lab, r in zip(labels, rows) if r.get("_line") is not None}
     needed = set(req) | ({"vi", "sei"} if measure == "GEN" else set())
+    if measure == "GEN" and opts.get("gen_smd_vtype"):
+        needed |= {"n1", "n2"}
+    if measure in PAIRED:
+        needed |= {c for part in PAIRED_INPUTS.values() for cols in part for c in cols}
     ragged = set()
     # a szűrővel (--exclude/--include) eltávolított sorok beolvasási hibái már nem érintik az elemzést
     filtered = meta is not None and len(rows) < (meta.get("n_rows") or 0)
@@ -216,13 +269,16 @@ def validate(rows, measure, meta=None, options=None):
         if lab in ragged:
             continue
         missing = [c for c in req if r.get(c) is None]
-        if measure == "GEN" and r.get("vi") is None and r.get("sei") is None:
-            missing.append("vi/sei")
+        if measure == "GEN" and r.get("vi") is None and r.get("sei") is None and not (
+                opts.get("gen_smd_vtype") and r.get("n1") is not None and r.get("n2") is not None):
+            missing.append("vi/sei" + (" (vagy n1 és n2)" if opts.get("gen_smd_vtype") else ""))
         if missing:
             out.append(_finding("V002", lab, "hiányzik: " + ", ".join(missing)))
         if any(r.get(c) is None for c in req):
             continue
-        if measure in CONTINUOUS:
+        if measure in PAIRED:
+            _paired_row_checks(out, lab, r, measure)
+        elif measure in CONTINUOUS:
             for nc in ("n1", "n2"):
                 if r[nc] < 2 or not _is_int(r[nc]):
                     out.append(_finding("V004", lab, "%s = %g (folytonos adatnál egész n >= 2 kell)" % (nc, r[nc])))
@@ -345,7 +401,7 @@ def check_effect_sizes(es):
     """Hatásméret-szintű ellenőrzés (V014) a kiszámolt yi-k alapján."""
     out = []
     for lab, y in zip(es.labels, es.yi):
-        if es.measure in ("SMD", "COHEN_D") and abs(y) > 3:
+        if es.measure in ("SMD", "COHEN_D", "SMD_GLASS", "SMCC") and abs(y) > 3:
             out.append(_finding("V014", lab, "%s = %.3f" % (es.measure, y)))
         if es.measure in ("OR", "RR") and abs(y) > math.log(20):
             out.append(_finding("V014", lab, "log %s = %.3f" % (es.measure, y)))

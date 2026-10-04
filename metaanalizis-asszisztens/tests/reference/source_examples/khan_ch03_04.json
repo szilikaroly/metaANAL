@@ -4054,22 +4054,22 @@
   },
   "expected": [
    {
-    "path": "groups.old.weight_pct_of_overall",
+    "path": "groups.old.weight_share_pct",
     "value": 67.8,
     "tol": 0.05,
     "transform": null,
     "note": "old studies weight 67.8% (Fig. 4.5) = 11.8 + 34.6 + 8.0 + 13.4"
    },
    {
-    "path": "groups.recent.weight_pct_of_overall",
+    "path": "groups.recent.weight_share_pct",
     "value": 32.2,
     "tol": 0.05,
     "transform": null,
     "note": "recent studies weight 32.2% (Fig. 4.5) = 10.6 + 2.4 + 19.2"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Missing output: moderators.subgroup_analysis does not expose a subgroup's share of the total weight (MetaXL/RevMan subtotal '% weight' column = sum of the member studies' weights in the overall analysis). The per-study overall-RE weights that sum to 67.8/32.2 are tested in khan_ch03_04__heartburn_subgroup_period_random (overall.weights_pct.*); the verifier reproduced 67.79/32.21. Activate once the group results carry e.g. 'weight_pct_of_overall'."
+  "status": "active",
+  "activation_note": "Activated: moderators.subgroup_analysis now returns weight_share_pct per subgroup (sum of the member studies' weights in the overall model, MetaXL/RevMan subtotal % weight); the placeholder path weight_pct_of_overall was renamed to it."
  },
  {
   "case_id": "khan_ch03_04__heartburn_lfk",

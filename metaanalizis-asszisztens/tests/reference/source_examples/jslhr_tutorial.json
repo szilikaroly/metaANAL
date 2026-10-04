@@ -1227,10 +1227,10 @@
   },
   "expected": [
    {
-    "path": "H2",
+    "path": "heterogeneity.H",
     "value": 1.0,
     "tol": 0.005,
-    "transform": "sqrt",
+    "transform": null,
     "note": "printed H = 1.00 = max(1, sqrt(Q/df)) (meta::calcH); engine H2 = Q/df = 0.964 is not truncated"
    },
    {
@@ -1262,8 +1262,8 @@
     "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (meta:::calcH, H truncated at 1)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Convention not implemented: meta:::calcH (used by meta::metagen, which printed this output) reports H = max(1, sqrt(Q/df)) and centres the Higgins-Thompson interval on ln(max(H, 1)), giving H 1.00 [1.00, 1.399] and I^2 upper 48.92%. The engine's i2_ci_higgins_thompson centres on the untruncated ln sqrt(Q/df) = ln 0.9819 (only the bounds are floored at 1), giving H CI upper 1.3739 and I^2 CI upper 47.02%, and its H2 = Q/df = 0.964 (H = 0.982) is not truncated although I2 is. Only matters when Q < df; the k = 22 and trim-and-fill cases (Q > k) agree exactly."
+  "status": "active",
+  "activation_note": "Activated: models.heterogeneity now reports H = max(1, sqrt(Q/df)) and centres the Higgins-Thompson H/I2 interval on ln max(1, H) by default (h_centre='truncated', the meta:::calcH convention). The H point estimate is read from heterogeneity.H (was the placeholder sqrt(H2), which is the untruncated Q/df)."
  },
  {
   "case_id": "jslhr_tutorial__egger_k22",
@@ -1590,7 +1590,9 @@
    }
   ],
   "call": "egger",
-  "call_args": {},
+  "call_args": {
+   "ci_dist": "norm"
+  },
   "expected": [
    {
     "path": "ci_lower",
@@ -1621,8 +1623,8 @@
     "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (normal-quantile CI)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Convention not implemented: dmetar::eggers.test prints the intercept CI with the normal quantile (1.96*SE -> [0.2708, 3.6426]) while its t and p use t(k-2). The engine's egger_test gives only the t(k-2)-based CI (crit 2.086 -> [0.1625, 3.7510]) and has no option for the normal-quantile interval. Intercept, SE, t, df and p are tested in jslhr_tutorial__egger_k22."
+  "status": "active",
+  "activation_note": "Activated: bias.egger_test(ci_dist='norm') gives the dmetar::eggers.test normal-quantile intercept CI (t, df and p stay on t(k-2))."
  },
  {
   "case_id": "jslhr_tutorial__trimfill_k22_fe_trimming",
@@ -2443,7 +2445,8 @@
    "tau2_method": "REML",
    "estimator": "L0",
    "side": "left",
-   "ci_method": "z"
+   "ci_method": "z",
+   "trim_model": "fixed"
   },
   "expected": [
    {
@@ -2482,8 +2485,8 @@
     "note": "printed tau^2 = 1.9256; verifier abs 0.002"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Convention not implemented: engine trim_and_fill uses the same model for the L0 trimming iterations and for the final pooled estimate (like metafor::trimfill on an rma fit). meta::trimfill's default (ma.common = TRUE) trims on the common-effect mean but reports the random-effects model of the filled data. With model = 'random' the REML-based iterations stop at k0 = 0 (metafor trimfill(rma(method='REML')) also gives 0, checked in R) instead of the printed 6. Covered in two steps by jslhr_tutorial__trimfill_k22_fe_trimming and jslhr_tutorial__trimfill_k22_filled_re_reml."
+  "status": "active",
+  "activation_note": "Activated: bias.trim_and_fill(trim_model='fixed') trims on the common-effect mean and pools the filled data with the reported random-effects model (meta::trimfill default, ma.common = TRUE)."
  },
  {
   "case_id": "jslhr_tutorial__metareg_training_length_k13",

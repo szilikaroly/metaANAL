@@ -18,13 +18,52 @@ from . import validate as V
 from . import plots as P
 
 DEFAULTS = {
-    "measure": "SMD", "model": "random", "tau2": "REML", "ci": None, "pi": "t_k-2",
+    # tau2: None = a modell alapértelmezése (random → REML, ivhet → DL; az érzékenységi és
+    # torzítás-elemzések is a modellét kapják); kifejezett érték minden modellre vonatkozik
+    "measure": "SMD", "model": "random", "tau2": None, "ci": None, "pi": "t_k-2",
     "level": 0.95, "smd_vtype": "LS", "j_method": "exact", "cc": 0.5, "cc_to": "only0",
     "drop00": None, "mh": False, "peto": False, "rd_var": "sato", "subgroup": None,
     "common_tau2": False, "moderators": [], "metareg_test": "knha", "cumulative": None,
     "title": None, "left_label": None, "right_label": None, "label_col": "study",
     "bias_min_k": 10, "trimfill_estimator": "L0",
+    # konvenció-opciók (az alapértékek a korábbi viselkedést adják)
+    "md_vtype": "unequal", "glass_vtype": "METAN", "gen_smd_vtype": None,
+    "pft_backtransform": "harmonic", "h_centre": "truncated", "trimfill_trim_model": None,
+    "egger_ci_dist": "t", "begg_method": "auto", "begg_continuity": False,
+    "metareg_robust": False, "outliers": False,
 }
+
+# az enumerált opciók megengedett értékei (a CLI choices-szal azonos; programból hívva is ellenőrizzük)
+OPTION_CHOICES = {
+    "model": ("random", "fixed", "ivhet"),
+    "smd_vtype": E.SMD_VTYPES,
+    "glass_vtype": E.GLASS_VTYPES,
+    "pft_backtransform": E.PFT_N_METHODS,
+    "h_centre": M.H_CENTRES,
+    "trimfill_trim_model": (None, "fixed", "random"),
+    "trimfill_estimator": ("L0", "R0"),
+    "egger_ci_dist": B.EGGER_CI_DISTS,
+    "begg_method": B.BEGG_METHODS,
+    "gen_smd_vtype": (None,) + tuple(E.SMD_VTYPES),
+}
+
+
+def check_options(opt):
+    """Az enumerált opciók ellenőrzése → ValueError az opció nevével és a lehetséges értékekkel
+    (még mielőtt bármi kimenet készülne)."""
+    for key, allowed in OPTION_CHOICES.items():
+        if opt.get(key) not in allowed:
+            raise ValueError("%s: érvénytelen érték %r (lehetséges: %s)" % (
+                key, opt.get(key), ", ".join("–" if a is None else str(a) for a in allowed)))
+    try:
+        E.md_vtype_name(opt.get("md_vtype"))
+    except E.EffectSizeError as exc:
+        raise ValueError("md_vtype: %s" % exc)
+    if opt.get("tau2") is not None:
+        t = str(opt["tau2"]).upper()
+        if t not in M.TAU2_METHODS:
+            raise ValueError("tau2: érvénytelen becslő %r (lehetséges: %s)" % (opt["tau2"], ", ".join(M.TAU2_METHODS)))
+        opt["tau2"] = t
 
 
 def to_jsonable(obj):
@@ -41,8 +80,28 @@ def to_jsonable(obj):
     return obj
 
 
-def _display(measure, est, lo, hi, nh=None):
-    return [E.back_transform(measure, v, nh) if v is not None else None for v in (est, lo, hi)]
+def _display(measure, est, lo, hi, nh=None, pft_n="harmonic", se=None):
+    """Becslés és CI az értelmezési skálán. PFT-nél pft_n='variance' (MetaXL / Barendregt 2013):
+    m = 1/(4·se²) az adott eredmény saját SE-jéből; ha az SE nem ismert, a harmonikus átlag n."""
+    if measure == "PFT" and pft_n == "variance" and not (se is not None and se > 0 and math.isfinite(se)):
+        pft_n = "harmonic"
+    if measure != "PFT":
+        pft_n = "harmonic"
+    return [E.back_transform(measure, v, nh, pft_n, se) if v is not None else None for v in (est, lo, hi)]
+
+
+def _row_se(row, ci_method, level, single_fixed=False):
+    """Egy sorrendi (kumulatív) sor SE-je a szimmetrikus CI-ből: (felső − alsó)/(2·krit), ahol krit
+    z (z-CI, IVhet, az első, egyvizsgálatos sor), különben t(k−1) (t / HKSJ)."""
+    from .distributions import norm_ppf, t_ppf
+    lo, hi, kk = row.get("ci_lower"), row.get("ci_upper"), row.get("k") or 1
+    if lo is None or hi is None:
+        return None
+    if single_fixed or kk < 2 or ci_method in (None, "z"):
+        crit = norm_ppf(0.5 + level / 2.0)
+    else:
+        crit = t_ppf(0.5 + level / 2.0, kk - 1)
+    return (hi - lo) / (2.0 * crit)
 
 
 def _level_str(v):
@@ -178,6 +237,7 @@ def run(rows, options=None, meta=None):
     measure = opt["measure"].upper()
     opt["measure"] = measure
     opt["level"] = normalize_level(opt["level"])
+    check_options(opt)
     cols = resolve_columns(opt, meta, rows)
     out = {"engine": {"name": "metaelemzes", "version": __version__}, "options": opt,
            "input": {k: v for k, v in (meta or {}).items() if k != "mapping"}, "warnings": [],
@@ -196,13 +256,16 @@ def run(rows, options=None, meta=None):
     # 2) hatásméretek
     es = E.compute(rows, measure, label_col=opt["label_col"], smd_vtype=opt["smd_vtype"],
                    j_method=opt["j_method"], cc=opt["cc"], cc_to=opt["cc_to"], drop00=opt["drop00"],
-                   skip_labels=blocking)
+                   skip_labels=blocking, md_vtype=opt["md_vtype"], glass_vtype=opt["glass_vtype"],
+                   gen_smd_vtype=opt["gen_smd_vtype"])
     findings += V.check_effect_sizes(es)
     out["validation"] = {"summary": V.summarize(findings), "findings": findings,
                          "blocked_studies": sorted(blocking)}
     out["kb_refs"] = sorted(set(f["code"] for f in findings))
     k = len(es)
     nh = E.harmonic_mean(es.ni) if measure == "PFT" else None
+    pft_n = opt["pft_backtransform"]
+    hc = opt["h_centre"]
     out["effect_sizes"] = {"measure": measure, "label": E.MEASURE_LABELS.get(measure, measure),
                            "k": k, "labels": list(es.labels), "ni": list(es.ni),
                            "row_index": list(getattr(es, "row_index", []) or []),
@@ -220,18 +283,21 @@ def run(rows, options=None, meta=None):
     # --ci a közös hatású ELSŐDLEGES modellre is vonatkozik (z/t; HKSJ: metafor-szerűen, figyelmeztetéssel);
     # a véletlen hatású elemzés mellé illesztett közös hatású érzékenységi modell Wald (z), mint a metaforban
     fixed_ci = (opt["ci"] or "z") if req == "fixed" else "z"
-    fixed = M.meta_analysis(es.yi, es.vi, "fixed", ci_method=fixed_ci, level=opt["level"], labels=es.labels)
+    fixed = M.meta_analysis(es.yi, es.vi, "fixed", ci_method=fixed_ci, level=opt["level"], labels=es.labels,
+                            h_centre=hc)
     if req == "fixed" and fixed_ci in ("hksj", "hksj_adhoc") and k >= 2:
         out["warnings"].append("A Knapp–Hartung (HKSJ) módszer nem közös hatású modellhez készült (a metafor "
                                "is figyelmeztet); értelmezd óvatosan, vagy használd a z / t CI-t.")
     random_ = M.meta_analysis(es.yi, es.vi, "random", opt["tau2"], opt["ci"] or "hksj", opt["level"],
-                              opt["pi"], es.labels) if k >= 2 else None
+                              opt["pi"], es.labels, h_centre=hc) if k >= 2 else None
     primary = random_ if (req == "random" and random_ is not None) else fixed
     out["fixed"] = fixed
     out["random"] = random_
     out["primary_model"] = "random" if primary is random_ else "fixed"
     if req == "ivhet" and k >= 2:
-        out["ivhet"] = M.meta_analysis(es.yi, es.vi, "ivhet", level=opt["level"], labels=es.labels)
+        # IVhet: τ² alapértelmezésben DL (Doi 2015); kifejezett --tau2 esetén az (a motor figyelmeztet)
+        out["ivhet"] = M.meta_analysis(es.yi, es.vi, "ivhet", opt["tau2"], level=opt["level"], labels=es.labels,
+                                       h_centre=hc)
         primary = out["ivhet"]
         out["primary_model"] = "ivhet"
     if req in ("random", "ivhet") and k < 2:
@@ -254,11 +320,16 @@ def run(rows, options=None, meta=None):
         except (M.ModelError, ArithmeticError, ValueError) as exc:
             out["warnings"].append("Peto: %s" % exc)
     out["back_transformed"] = {
-        "estimate_ci": _display(measure, primary.estimate, primary.ci_lower, primary.ci_upper, nh),
+        "estimate_ci": _display(measure, primary.estimate, primary.ci_lower, primary.ci_upper, nh, pft_n,
+                                primary.se),
+        # a PI-t mindig a harmonikus átlag n-nel (a MetaXL nem ad PI-t; metafor/meta konvenció)
         "pi": _display(measure, primary.pi_lower, primary.pi_lower, primary.pi_upper, nh)[1:]
         if primary.pi_lower is not None else None,
-        "scale_note": _scale_note(measure),
+        "scale_note": _scale_note(measure, pft_n),
         "n_harmonic": nh,
+        "pft_backtransform": pft_n if measure == "PFT" else None,
+        "pft_m": (1.0 / (4.0 * primary.se ** 2)) if (measure == "PFT" and pft_n == "variance"
+                                                   and primary.se and primary.se > 0) else None,
         "level": opt["level"],
     }
     out["totals"] = _totals(measure, es, out)
@@ -289,7 +360,7 @@ def run(rows, options=None, meta=None):
                 g.n_harmonic = E.harmonic_mean([es.ni[i] for i in g.indices]) if measure == "PFT" else None
                 if measure == "PFT" and g.n_harmonic is None:
                     g.n_harmonic = nh
-                g.display = _display(measure, g.estimate, g.ci_lower, g.ci_upper, g.n_harmonic)
+                g.display = _display(measure, g.estimate, g.ci_lower, g.ci_upper, g.n_harmonic, pft_n, g.se)
             if sg is not None:
                 out["subgroups"] = sg
     if opt["moderators"]:
@@ -310,22 +381,37 @@ def run(rows, options=None, meta=None):
             out["metaregression"] = MO.meta_regression(
                 es.yi, es.vi, x, names,
                 opt["tau2"] if opt["tau2"] in MO.MR_TAU2_METHODS else "REML",
-                opt["metareg_test"], opt["level"])
+                opt["metareg_test"], opt["level"], robust=bool(opt["metareg_robust"]))
         except (M.ModelError, ArithmeticError) as exc:
             out["warnings"].append("Meta-regresszió: %s" % exc)
-    # 5) kis-vizsgálat hatások
+    # 5) kis-vizsgálat hatások (minden teszt külön: egyik hibája nem viszi magával a többit)
     bias = {"performed": k >= 3, "k": k, "min_k_recommended": opt["bias_min_k"]}
-    if k >= 3:
+
+    def _bias(key, label, fn):
         try:
-            bias["egger"] = B.egger_test(es.yi, es.vi)
-            bias["begg"] = B.begg_test(es.yi, es.vi)
-            # a korrigált modell az elsődleges modell CI-módszerével és szintjével (k0 = 0 esetén
-            # így pontosan az elsődleges eredmény, mint a metafor trimfill-ben)
-            bias["trimfill"] = B.trim_and_fill(es.yi, es.vi, es.labels, opt["model"], opt["tau2"],
-                                               opt["trimfill_estimator"], ci_method=ci_eff or "z",
-                                               level=opt["level"])
-        except (M.ModelError, ArithmeticError) as exc:
-            out["warnings"].append("Torzítás-elemzés: %s" % exc)
+            bias[key] = fn()
+        except (M.ModelError, ArithmeticError, ValueError) as exc:
+            out["warnings"].append("Torzítás-elemzés (%s): %s" % (label, exc))
+
+    if k >= 3:
+        _bias("egger", "Egger", lambda: B.egger_test(es.yi, es.vi, opt["egger_ci_dist"], opt["level"]))
+        _bias("begg", "Begg", lambda: B.begg_test(es.yi, es.vi, opt["begg_method"], bool(opt["begg_continuity"])))
+        # a korrigált modell az elsődleges modell CI-módszerével és szintjével (k0 = 0 esetén
+        # így pontosan az elsődleges eredmény, mint a metafor trimfill-ben)
+        _bias("trimfill", "trim-and-fill", lambda: B.trim_and_fill(
+            es.yi, es.vi, es.labels, opt["model"], opt["tau2"], opt["trimfill_estimator"],
+            ci_method=ci_eff or "z", level=opt["level"], trim_model=opt["trimfill_trim_model"]))
+        # Doi-plot / LFK-index (heurisztikus, érzékenységi jellegű; Furuya-Kanamori et al. 2018)
+        _bias("lfk", "LFK-index", lambda: B.doi_plot_data(es.yi, es.vi))
+        # bináris kimenet 2×2 cellákkal: Harbord és Peters (log OR alapú; Sterne et al. 2011)
+        if measure in E.BINARY and _has_cells(es.rows):
+            cols4 = [[r.get(c) for r in es.rows] for c in ("e1", "n1", "e2", "n2")]
+            _bias("harbord", "Harbord", lambda: B.harbord_test(*cols4))
+            _bias("peters", "Peters", lambda: B.peters_test(*cols4, cc=opt["cc"] if opt["cc"] else 0.5))
+            bias["binary_note"] = ("Bináris kimenetnél a klasszikus Egger-teszt csak tájékoztató (a log OR és a "
+                                   "standard hibája nem független, ezért álpozitív eredményre hajlamos); a Harbord- "
+                                   "és a Peters-teszt az ajánlott (Sterne et al. 2011). Mindkettő log OR alapú%s."
+                                   % ("" if measure == "OR" else ", akkor is, ha az elemzés %s skálán történt" % measure))
     if k < opt["bias_min_k"]:
         bias["note"] = ("k = %d < %d: a funnel-aszimmetria tesztek eredménye csak tájékoztató, "
                         "nem értelmezhető (Sterne et al. 2011)." % (k, opt["bias_min_k"]))
@@ -336,6 +422,15 @@ def run(rows, options=None, meta=None):
         sens["leave_one_out"] = SE.leave_one_out(es.yi, es.vi, es.labels, opt["model"], opt["tau2"],
                                                  ci_eff, opt["level"])
         sens["influence"] = SE.influence(es.yi, es.vi, es.labels, opt["model"], opt["tau2"], opt["level"])
+    if opt["outliers"]:
+        if k >= 3:
+            try:
+                sens["outliers"] = SE.outlier_screen(es.yi, es.vi, es.labels, opt["model"], opt["tau2"], opt["level"],
+                                                     ci_eff, hc)
+            except (M.ModelError, ArithmeticError) as exc:
+                out["warnings"].append("Kiugró-szűrés: %s" % exc)
+        else:
+            out["warnings"].append("Kiugró-szűrés kihagyva: k = %d < 3." % k)
     if opt["cumulative"]:
         col = cols["cumulative"]
         keys = [r.get(col) for r in es.rows]
@@ -356,17 +451,34 @@ def run(rows, options=None, meta=None):
                                        % (out["column_labels"].get("cumulative") or opt["cumulative"], ", ".join(txt)))
             sens["cumulative"] = SE.cumulative(es.yi, es.vi, es.labels, keys, opt["model"], opt["tau2"],
                                                ci_eff, opt["level"])
+            for i, r in enumerate(sens["cumulative"]):
+                # a sor SE-je (a PFT MetaXL-visszatranszformáláshoz és a JSON-hoz)
+                r.setdefault("se", _row_se(r, ci_eff, opt["level"], single_fixed=(i == 0)))
     out["sensitivity"] = sens
     out["warnings"] += [w for w in (primary.warnings or []) if w not in out["warnings"]]
     return out, es
 
 
-def _scale_note(measure):
+def _has_cells(rows):
+    """Minden elemzett sorban van 2×2 cella (e1, n1, e2, n2 szám) → Harbord / Peters futtatható."""
+    for r in rows:
+        for c in ("e1", "n1", "e2", "n2"):
+            v = r.get(c)
+            if not isinstance(v, (int, float)) or isinstance(v, bool) or v != v:
+                return False
+    return bool(rows)
+
+
+def _scale_note(measure, pft_n="harmonic"):
     if measure in ("OR", "RR", "ROM"):
         return "Az elemzés log-skálán történt; a közölt értékek exponenciálisan visszatranszformáltak."
     if measure == "PLO":
         return "Logit-skálán elemezve; visszatranszformálva arányra."
     if measure == "PFT":
+        if pft_n == "variance":
+            return ("Freeman–Tukey skálán elemezve; visszatranszformálás Miller (1978) képletével a MetaXL-konvenció "
+                    "szerint (Barendregt et al. 2013): minden összesített becslés és CI-je a saját varianciájából "
+                    "számolt m = 1/Var(t) értékkel; a predikciós intervallum a harmonikus átlag n-nel.")
         return "Freeman–Tukey skálán elemezve; visszatranszformálás Miller (1978) képletével, harmonikus átlag n-nel."
     if measure == "ZCOR":
         return "Fisher z-skálán elemezve; visszatranszformálva r-re."
@@ -383,6 +495,7 @@ def make_plots(out, es, opt=None):
     measure = out["effect_sizes"]["measure"]
     primary = out["primary"]
     nh = E.harmonic_mean(es.ni) if measure == "PFT" else None
+    pft_n = opt.get("pft_backtransform") or "harmonic"
     lv = round(opt["level"] * 100)
     summaries = []
     for key, lab in (("ivhet", "IVhet modell (Doi 2015)"), ("random", "Véletlen hatású modell"),
@@ -395,7 +508,7 @@ def make_plots(out, es, opt=None):
         elif key == "fixed" and r.ci_method != "z":
             lab = "%s (%s)" % (lab, r.ci_method.upper())
         sm = {"label": lab, "estimate": r.estimate, "ci_lower": r.ci_lower, "ci_upper": r.ci_upper,
-              "display": _display(measure, r.estimate, r.ci_lower, r.ci_upper, nh),
+              "display": _display(measure, r.estimate, r.ci_lower, r.ci_upper, nh, pft_n, r.se),
               "pi_lower": r.pi_lower, "pi_upper": r.pi_upper}
         if r.pi_lower is not None:
             sm["pi_display"] = _display(measure, r.pi_lower, r.pi_lower, r.pi_upper, nh)[1:]
@@ -418,10 +531,13 @@ def make_plots(out, es, opt=None):
                              "row_index": list(g.get("row_index") or []), "summary": {
                 "label": "Alcsoport összesen (k = %d)" % g.k, "estimate": g.estimate,
                 "ci_lower": g.ci_lower, "ci_upper": g.ci_upper,
-                "display": g.get("display") or _display(measure, g.estimate, g.ci_lower, g.ci_upper, ng),
+                "display": g.get("display") or _display(measure, g.estimate, g.ci_lower, g.ci_upper, ng, pft_n, g.se),
                 "pi_lower": None, "pi_upper": None,
                 "note": ("τ² = %.3g; I² = %.0f%%" % (g.tau2, g.I2)) if g.k > 1 else None}})
     per_study_n = es.ni if measure == "PFT" else None
+    if measure == "PFT" and pft_n == "variance":
+        # MetaXL: a vizsgálati sor m-je is 1/Var(t) = 1/(4·v_i) = n_i + 0,5
+        per_study_n = [1.0 / (4.0 * v) for v in es.vi]
     data = P.forest_data(measure, es.labels, es.yi, es.vi, weights, summaries, opt["level"],
                          per_study_n, sections)
     footer = ["Heterogenitás: Q = %.2f (df = %d, p %s); I² (Q-alapú) = %.0f%%; τ² = %s" % (
@@ -459,7 +575,24 @@ def make_plots(out, es, opt=None):
                       "contour": contour, "contour_center": P.default_null(measure),
                       "filled_yi": tf.filled_yi if tf else [],
                       "filled_sei": [math.sqrt(v) for v in tf.filled_vi] if tf else []}
+    lf = out.get("bias", {}).get("lfk")
+    if lf is not None:
+        data["doi"] = {"points": [dict(p, label=es.labels[p["study_index"]]) for p in lf.points],
+                       "lfk": lf.lfk, "category": lf.category,
+                       "note": "x: hatás az elemzési skálán; y: |Z| (fordított tengely, 0 felül)"}
     return svg_forest, svg_funnel, data
+
+
+def make_doi_plot(out, es):
+    """Doi-plot SVG (|Z| a hatás függvényében, LFK-indexszel), vagy None, ha nincs LFK-eredmény."""
+    lf = (out.get("bias") or {}).get("lfk")
+    if lf is None:
+        return None
+    measure = out["effect_sizes"]["measure"]
+    nh = E.harmonic_mean(es.ni) if measure == "PFT" else None
+    return P.doi_svg(lf.points, lf.lfk, lf.category, measure, labels=list(es.labels),
+                     title="Doi-plot", n_harmonic=nh,
+                     axis_title=P.axis_label(measure, _short(measure)))
 
 
 def _p(p):
@@ -470,6 +603,7 @@ def _p(p):
 
 def _short(measure):
     return {"SMD": "Hedges g", "COHEN_D": "Cohen d", "MD": "MD", "OR": "OR", "RR": "RR", "RD": "RD",
+            "SMD_GLASS": "Glass Δ", "MC": "Átlagos változás", "SMCC": "Standardizált változás",
             "ROM": "Ratio of means", "PR": "Arány", "PLN": "Arány", "PLO": "Arány", "PAS": "Arány",
             "PFT": "Arány", "COR": "r", "ZCOR": "r", "GEN": "Hatás"}.get(measure, measure)
 
@@ -479,7 +613,11 @@ def write_outputs(out, es, outdir, report_md=None, plots=True):
     paths = {}
     if plots and out.get("primary") is not None:
         f_svg, fu_svg, data = make_plots(out, es)
-        for name, content in (("forest.svg", f_svg), ("funnel.svg", fu_svg)):
+        svgs = [("forest.svg", f_svg), ("funnel.svg", fu_svg)]
+        doi = make_doi_plot(out, es)
+        if doi is not None:
+            svgs.append(("doi.svg", doi))
+        for name, content in svgs:
             p = os.path.join(outdir, name)
             with open(p, "w", encoding="utf-8") as fh:
                 fh.write(content)

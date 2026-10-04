@@ -87,8 +87,8 @@
     "note": "printed (Fig. 1.1 and text p. 8 'only 6 of them ... were included in the meta-analysis'); must be <= qualitative (here equal)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Not a pooling-engine oracle and no matching engine function: these are review-level PRISMA 2009 flow counts (exact integers, internally consistent per the verifier: 28+1=29, 29-14=15, 5+4=9, 15-9=6, quantitative 6 = qualitative 6). The metaelemzes package has no PRISMA flow-count consistency validator (only a PRISMA 2020 checklist in the knowledge base and a Markdown flow template in projekt.py), and tests/source_cases.py has no corresponding call ('prisma_flow' is a placeholder, as in simplypsych_guide.json). Activate once a flow validator exists that derives identified total, duplicates removed (missing box -> 0), full texts assessed, the sum of exclusion reasons and the qualitative/quantitative inclusions from the box counts, and checks quantitative <= qualitative."
+  "status": "active",
+  "activation_note": "Activated: metaelemzes.prisma.check_flow (runner call 'prisma_flow' = 'prisma_check') validates the PRISMA 2009 flow and derives the identified total, the implied 0 duplicates, the sum of exclusion reasons and the qualitative/quantitative inclusions; the paths resolve directly on the FlowCheck result."
  },
  {
   "case_id": "khan_ch01_02__z_crit_95_unit_se_ci",

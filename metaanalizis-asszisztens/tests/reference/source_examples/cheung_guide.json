@@ -5470,14 +5470,15 @@
   },
   "expected": [
    {
-    "path": "I2_res",
+    "path": "I2_res_stata",
     "value": 38.44,
     "tol": 0.005,
     "transform": null,
-    "note": "I-squared_res = 38.44%, SUPPLEMENT stata/stata.log (20 Feb 2016)"
+    "note": "I-squared_res = 38.44%, SUPPLEMENT stata/stata.log (20 Feb 2016)",
+    "expr": "100*(QE-QE_df)/QE"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Convention not implemented: Stata metareg reports I2_res = (QE - (k-p))/QE = (77.970 - 48)/77.970 = 38.44% from the FE residual Q; for a REML fit the engine reports the metafor definition 100*tau2/(tau2 + s2_typical) = 36.82%. The QE ingredient is checked in cheung_guide__metareg_reml_kh_stata."
+  "status": "active",
+  "activation_note": "Activated with a derived quantity: Stata metareg's I-squared_res = (Q_res - (k-p))/Q_res uses the FE-weight residual Q, which the engine reports as QE (metafor convention) on the same REML/KH fit; the runner computes it with expr '100*(QE-QE_df)/QE' (the engine's own I2_res is the metafor tau2-based definition, checked elsewhere)."
  }
 ]

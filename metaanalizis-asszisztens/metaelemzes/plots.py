@@ -454,3 +454,62 @@ def funnel_svg(yi, vi, center, measure, title=None, filled_yi=None, filled_vi=No
                    'szignifikancia-kontúrok; az aszimmetria arányoknál nehezen értelmezhető.</text>' % (x0, y1 + 52, MUTED))
     out.append("</svg>")
     return "\n".join(out)
+
+
+def doi_svg(points, lfk, category, measure, labels=None, title=None, n_harmonic=None, axis_title=None):
+    """Doi-plot (Furuya-Kanamori, Barendregt & Doi 2018): x = hatás az elemzési skálán (a
+    tengelyfeliratok az értelmezési skálán), y = |Z| (a normális kvantilis a rangsorolt kumulatív
+    súly-percentilisből; bias.doi_plot_data). A |Z| tengely fordított (0 felül), így szimmetrikus
+    eloszlásnál a görbe egy szimmetrikus „hegy”, csúcsán a legkisebb |Z|-jű vizsgálattal; a pontok
+    hatás szerinti sorrendben összekötve. Az LFK-index és a kategória az ábrán (heurisztika:
+    |LFK| ≤ 1 nincs, 1–2 kisebb, > 2 jelentős aszimmetria).
+
+    points: [{"y", "abs_z", "study_index"}] a bias.doi_plot_data szerint (hatás szerint rendezve);
+    labels: a vizsgálatok címkéi (study_index szerint) — minden pont <title>-t kap (rámutatásra)."""
+    width, height = 640, 486
+    x0, x1, y0, y1 = 70, 610, 40, 400      # a fejlécsorban a cím (balra) és az LFK-index (jobbra)
+    ys = [p["y"] for p in points]
+    zs = [p["abs_z"] for p in points]
+    maxz = max(zs + [1.0]) * 1.08
+    axis = _Axis(min(ys), max(ys), x0, x1, measure in RATIO_MEASURES, measure, n_harmonic)
+
+    def ypx(z):
+        return y0 + z / maxz * (y1 - y0)       # 0 felül
+
+    out = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
+           'font-family="%s" font-size="12" role="img">' % (width, height, width, height, FONT),
+           '<title>Doi-plot, LFK-index = %s (%s)</title>' % (_fmt(lfk, 2), escape(category or "")),
+           '<rect width="100%" height="100%" fill="#ffffff"/>']
+    if title:
+        out.append('<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>' % (x0, INK, escape(title)))
+    out.append('<rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s"/>' % (x0, y0, x1 - x0, y1 - y0, GRID))
+    for t in _nice_ticks(0, maxz, 4):
+        yt = ypx(t)
+        out.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0, x1, yt, yt, GRID))
+        out.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0 - 5, x0, yt, yt, INK))
+        out.append('<text x="%d" y="%.1f" text-anchor="end" fill="%s">%g</text>' % (x0 - 8, yt + 4, INK, t))
+    pts = " ".join("%.1f,%.1f" % (axis.x(p["y"]), ypx(p["abs_z"])) for p in points)
+    out.append('<polyline points="%s" fill="none" stroke="%s" stroke-width="1.6"/>' % (pts, ACCENT))
+    for p in points:
+        i = p.get("study_index")
+        lab = labels[i] if (labels is not None and i is not None and 0 <= i < len(labels)) else None
+        out.append('<circle cx="%.1f" cy="%.1f" r="4" fill="%s"><title>%s</title></circle>' % (
+            axis.x(p["y"]), ypx(p["abs_z"]), ACCENT,
+            escape("%s: |Z| = %s" % (lab, _fmt(p["abs_z"], 2)) if lab else "|Z| = %s" % _fmt(p["abs_z"], 2))))
+    for pos, lab in axis.ticks():
+        xt = axis.x(pos)
+        out.append('<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>' % (xt, xt, y1, y1 + 5, INK))
+        out.append('<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>' % (xt, y1 + 19, INK, lab))
+    xlab = axis_title or axis_label(measure)
+    out.append('<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>' % ((x0 + x1) / 2, y1 + 38, INK, escape(xlab)))
+    out.append('<text x="18" y="%.1f" transform="rotate(-90 18 %.1f)" text-anchor="middle" fill="%s">|Z-pontszám| '
+               '(0 felül)</text>' % ((y0 + y1) / 2, (y0 + y1) / 2, INK))
+    out.append('<text x="%d" y="22" text-anchor="end" font-size="13" font-weight="bold" fill="%s">LFK-index: %s '
+               '(%s)</text>' % (x1, INK, _fmt(lfk, 2), escape(category or "")))
+    for i, line in enumerate(("Heurisztikus mutató (|LFK| ≤ 1 nincs, 1–2 kisebb, &gt; 2 jelentős aszimmetria) — "
+                              "érzékenységi jellegű,",
+                              "nem szignifikancia-teszt; a funnel plottal és az Egger/Harbord/Peters-teszttel "
+                              "együtt értelmezd.")):
+        out.append('<text x="%d" y="%d" fill="%s" font-size="10">%s</text>' % (x0 - 50, y1 + 56 + 13 * i, MUTED, line))
+    out.append("</svg>")
+    return "\n".join(out)

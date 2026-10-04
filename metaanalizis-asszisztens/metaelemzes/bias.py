@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """Kis-vizsgálat hatások és publikációs torzítás.
 
-- Egger-féle regressziós teszt (klasszikus: y/se ~ 1/se, OLS; Egger et al. 1997)
-- Begg–Mazumdar rangkorreláció (Kendall τ; Begg & Mazumdar 1994)
-- Trim-and-fill (Duval & Tweedie 2000; L0 és R0; a metafor::trimfill algoritmusát követi)
+- Egger-féle regressziós teszt (klasszikus: y/se ~ 1/se, OLS; Egger et al. 1997); a
+  tengelymetszet CI-je t(k−2) vagy (dmetar::eggers.test) normális kvantilissel
+- Begg–Mazumdar rangkorreláció (Kendall τ; Begg & Mazumdar 1994): pontos eloszlás (metafor) vagy
+  normális közelítés folytonossági korrekcióval / nélküle (Stata metabias)
+- Trim-and-fill (Duval & Tweedie 2000; L0 és R0; a metafor::trimfill algoritmusát követi; a
+  vágás külön modellel is végezhető, pl. közös hatással, mint a meta::trimfill alapértelmezése)
 - Rosenthal-féle fail-safe N (csak tájékoztató; nem ajánlott önálló bizonyítékként)
 
 Fontos (Sterne et al. 2011, BMJ; Cochrane Handbook 13. fejezet): a tesztek ereje k < 10
@@ -18,7 +21,18 @@ from .models import meta_analysis, ModelError, MetaResult, ratio_stat
 from .moderators import meta_regression, MR_TAU2_METHODS
 
 
-def egger_test(yi, vi):
+EGGER_CI_DISTS = ("t", "norm")
+BEGG_METHODS = ("auto", "exact", "normal")
+
+
+def egger_test(yi, vi, ci_dist="t", level=0.95):
+    """Egger-féle regressziós teszt: y_i/se_i = a + b·(1/se_i) + ε (OLS); H0: a = 0, t(k−2).
+
+    ci_dist: a tengelymetszet CI-jének kritikus értéke — 't' (alapértelmezés; t(k−2), a
+    teszttel konzisztens, = metafor regtest / R lm confint) vagy 'norm' (z-kvantilis, mint a
+    dmetar::eggers.test nyomtatott CI-je). A t-statisztika, a df és a p mindkét esetben t(k−2)."""
+    if ci_dist not in EGGER_CI_DISTS:
+        raise ValueError("egger_test: ci_dist 't' vagy 'norm' lehet (kapott: %r)" % (ci_dist,))
     k = len(yi)
     if k < 3:
         raise ModelError("Egger-teszt: k >= 3 szükséges")
@@ -52,12 +66,13 @@ def egger_test(yi, vi):
         warn.append("Egger-teszt: nulla reziduális variancia (azonos hatásméretek / tökéletes "
                     "illeszkedés) — a teszt nem értelmezhető.")
     p = dist.t_two_sided_p(t, df)
-    crit = dist.t_ppf(0.975, df)
+    crit = dist.t_ppf(0.5 + level / 2.0, df) if ci_dist == "t" else dist.norm_ppf(0.5 + level / 2.0)
     if k < 10:
         warn.append("k = %d < 10: az Egger-teszt ereje kicsi; ne értelmezd önmagában "
                     "(Sterne et al. 2011)." % k)
     return MetaResult(kind="egger", k=k, intercept=intercept, se_intercept=se_int, t=t, df=df, p=p,
                       ci_lower=intercept - crit * se_int, ci_upper=intercept + crit * se_int,
+                      ci_dist=ci_dist, ci_crit=crit, level=level,
                       slope=slope, se_slope=se_slope, warnings=warn)
 
 
@@ -107,7 +122,18 @@ def _kendall_var_s(x, y):
             + (v2 / (9.0 * n * (n - 1) * (n - 2)) if n > 2 else 0.0))
 
 
-def begg_test(yi, vi):
+def begg_test(yi, vi, method="auto", continuity=False):
+    """Begg–Mazumdar rangkorreláció: Kendall-τ a standardizált hatások (t*_i) és a v_i között.
+
+    method: 'auto' (alapértelmezés = metafor ranktest: pontos Kendall-eloszlás, ha nincs kötés és
+    k <= 170, különben normális közelítés a kötés-korrigált var(S)-sel); 'exact' (pontos eloszlás;
+    kötés vagy k > 170 esetén figyelmeztetéssel normális közelítésre vált); 'normal' (mindig
+    z = S/sd(S) — Stata metabias, metafor ranktest(exact=FALSE)).
+    continuity: csak a normális közelítésnél; True esetén z = (|S| − 1)/sd(S) (Stata metabias
+    'continuity corrected' sora). Az eredmény z és sd_S mezője a normális közelítés értéke
+    (pontos módszernél is tájékoztatásul)."""
+    if method not in BEGG_METHODS:
+        raise ValueError("begg_test: method 'auto', 'exact' vagy 'normal' lehet (kapott: %r)" % (method,))
     k = len(yi)
     if k < 3:
         raise ModelError("Begg-teszt: k >= 3 szükséges")
@@ -141,18 +167,31 @@ def begg_test(yi, vi):
     # eloszlás bármely k-ra (k > 170-nél az R is NaN-t ad, ott normális közelítés);
     # kötésekkel normális közelítés a teljes, kötés-korrigált varianciával, folytonossági
     # korrekció nélkül.
-    if not has_ties and k <= _KENDALL_EXACT_MAX_N:
-        p = _kendall_exact_sf(abs(s), k)
-        method = "pontos"
-    else:
-        var_s = _kendall_var_s(tstar, vi)
-        z = s / math.sqrt(var_s) if var_s > 0 else 0.0
-        p = dist.z_two_sided_p(z)
-        method = "normális közelítés"
     warn = []
+    exact_ok = not has_ties and k <= _KENDALL_EXACT_MAX_N
+    if method == "exact" and not exact_ok:
+        warn.append("Begg-teszt: a pontos Kendall-eloszlás nem használható (%s); normális közelítést "
+                    "alkalmaztam." % ("kötések vannak az adatokban" if has_ties else "k > %d" % _KENDALL_EXACT_MAX_N))
+    use_exact = exact_ok and method in ("auto", "exact")
+    var_s = _kendall_var_s(tstar, vi)
+    sd_s = math.sqrt(var_s) if var_s > 0 else 0.0
+    if continuity:
+        z = math.copysign(max(0.0, abs(s) - 1.0), s) / sd_s if sd_s > 0 else 0.0
+    else:
+        z = s / sd_s if sd_s > 0 else 0.0
+    if use_exact:
+        p = _kendall_exact_sf(abs(s), k)
+        method_used = "pontos"
+        if continuity:
+            warn.append("Begg-teszt: a folytonossági korrekció csak a normális közelítésre vonatkozik; "
+                        "a pontos p-értéket nem módosítja.")
+    else:
+        p = dist.z_two_sided_p(z)
+        method_used = "normális közelítés" + (" (folytonossági korrekcióval)" if continuity else "")
     if k < 10:
         warn.append("k < 10: a Begg-teszt ereje nagyon kicsi.")
-    return MetaResult(kind="begg", k=k, kendall_tau=tau, S=s, p=min(1.0, p), method=method,
+    return MetaResult(kind="begg", k=k, kendall_tau=tau, S=s, p=min(1.0, p), method=method_used,
+                      method_requested=method, continuity=bool(continuity), z=z, sd_S=sd_s,
                       warnings=warn)
 
 
@@ -170,12 +209,29 @@ def _rank_first(values):
     return ranks
 
 
-def trim_and_fill(yi, vi, labels=None, model="random", tau2_method="REML", estimator="L0",
-                  side=None, ci_method="z", level=0.95, maxiter=100):
-    """Duval–Tweedie trim-and-fill (a metafor::trimfill logikája szerint).
+_TRIM_MODELS = {"fixed": "fixed", "fe": "fixed", "common": "fixed", "ce": "fixed",
+                "random": "random", "re": "random"}
 
-    side: 'left' / 'right' / None (automatikus: y ~ se meta-regresszió meredekségének
-    előjele; pozitív → a hiányzó vizsgálatok bal oldalon).
+
+def trim_and_fill(yi, vi, labels=None, model="random", tau2_method=None, estimator="L0",
+                  side=None, ci_method="z", level=0.95, maxiter=100, trim_model=None):
+    """Duval–Tweedie trim-and-fill (a metafor::trimfill / meta::trimfill logikája szerint).
+
+    model / tau2_method / ci_method / level: a KORRIGÁLT (kitöltött) adatokra illesztett,
+    jelentett modell (tau2_method None → a modell alapértelmezése).
+    trim_model: a vágási (L0/R0) iterációkban használt modell.
+      None     — ugyanaz, mint a jelentett modell (metafor::trimfill egy rma-illesztésen);
+      'fixed'  — a vágás a közös (fix) hatású átlaggal történik, a kitöltött adatokat pedig a
+                 jelentett modellel összesítjük (meta::trimfill alapértelmezése, ma.common = TRUE:
+                 'common-random' eljárás, Duval & Tweedie 2000 ajánlása szerint jobban viselkedik);
+      'random' — véletlen hatású átlag a megadott τ²-becslővel (meta: ma.common = FALSE).
+    side: 'left' / 'right' / None (automatikus). Automatikus választásnál a vágási modell
+    y_i ~ √v_i meta-regressziójának meredeksége dönt (pozitív → a hiányzó vizsgálatok bal
+    oldalon): trim_model=None esetén a jelentett modell τ²-becslőjével (metafor), trim_model='fixed'
+    esetén 1/v_i súlyokkal — ez a meredekség pontosan a klasszikus Egger-tengelymetszet, vagyis a
+    meta::trimfill szabálya (left = Egger-tengelymetszet > 0). A meta a vágási modelltől
+    függetlenül mindig az Egger-előjelet használja; trim_model='random' mellett a pontos egyezéshez
+    add meg kifejezetten a side-ot.
 
     A korrigált (kitöltött) modell a megadott ci_method-dal és level-lel illeszkedik (a
     pipeline az elsődleges modellét adja át). k0 = 0 esetén ez pontosan az elsődleges
@@ -186,20 +242,31 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method="REML", estim
     k = len(yi)
     if k < 3:
         raise ModelError("trim-and-fill: k >= 3 szükséges")
+    if trim_model is not None:
+        tkey = str(trim_model).lower()
+        if tkey not in _TRIM_MODELS:
+            raise ModelError("trim-and-fill: trim_model None, 'fixed' vagy 'random' lehet (kapott: %r)"
+                             % (trim_model,))
+        trim_m = _TRIM_MODELS[tkey]
+    else:
+        trim_m = model
     labels = list(labels) if labels else ["#%d" % (i + 1) for i in range(k)]
     # metafor::trimfill: az oldal-regresszió (y ~ √v) a modell saját τ²-becslőjével fut
-    # (method = x$method), PM/HE/SJ esetén is
+    # (method = x$method), PM/HE/SJ esetén is; itt a VÁGÁSI modellé
     tm = (tau2_method or "REML").upper()
-    if model == "fixed":
+    if trim_m in ("fixed", "fe", "common", "ce"):
         mr_method = "FE"
-    elif model == "random" and tm in MR_TAU2_METHODS:
+    elif trim_m in ("random", "re") and tm in MR_TAU2_METHODS:
         mr_method = tm
     else:
         mr_method = "REML"
+    side_rule = None
     if side is None:
         x = [[1.0, math.sqrt(v)] for v in vi]
         mr = meta_regression(yi, vi, x, ["intercept", "sei"], mr_method)
         side = "right" if mr.coefficients[1]["estimate"] < 0 else "left"
+        side_rule = ("Egger-tengelymetszet előjele (y ~ √v, 1/v súlyokkal; meta::trimfill)" if mr_method == "FE"
+                     else "y ~ √v meta-regresszió meredekségének előjele (%s; metafor::trimfill)" % mr_method)
     sign = -1.0 if side == "right" else 1.0
     y = [sign * a for a in yi]
     order = sorted(range(k), key=lambda i: (y[i], i))
@@ -213,7 +280,7 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method="REML", estim
         it += 1
         if it > maxiter:
             raise ModelError("trim-and-fill nem konvergált")
-        fit = meta_analysis(ys[:k - k0], vs[:k - k0], model, tau2_method, "z", level)
+        fit = meta_analysis(ys[:k - k0], vs[:k - k0], trim_m, tau2_method, "z", level)
         beta = fit.estimate
         yc = [a - beta for a in ys]
         r = _rank_first([abs(a) for a in yc])
@@ -239,7 +306,8 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method="REML", estim
     all_v = list(vi) + filled_v
     adjusted = meta_analysis(all_y, all_v, model, tau2_method, ci_method, level,
                              labels=list(labels) + filled_labels)
-    return MetaResult(kind="trimfill", side=side, estimator=estimator, k0=k0, se_k0=se_k0,
+    return MetaResult(kind="trimfill", side=side, side_rule=side_rule, estimator=estimator, k0=k0,
+                      se_k0=se_k0, trim_model=trim_m, trim_estimate=sign * beta,
                       iterations=it, filled_yi=filled_y, filled_vi=filled_v,
                       filled_labels=filled_labels, adjusted=adjusted,
                       warnings=["A trim-and-fill korrigált becslése érzékenységi elemzés, nem "

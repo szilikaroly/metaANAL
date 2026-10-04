@@ -1449,26 +1449,29 @@
     "value": 0.59,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.1 p. 126"
+    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.1 p. 126",
+    "pft_n": "variance"
    },
    {
     "path": "ci_lower",
     "value": 0.57,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed CI lower (2 dp), Ch6 Fig. 6.1 p. 126"
+    "note": "printed CI lower (2 dp), Ch6 Fig. 6.1 p. 126",
+    "pft_n": "variance"
    },
    {
     "path": "ci_upper",
     "value": 0.6,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed CI upper (2 dp), Ch6 Fig. 6.1 p. 126"
+    "note": "printed CI upper (2 dp), Ch6 Fig. 6.1 p. 126",
+    "pft_n": "variance"
    }
   ],
   "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
-  "status": "known_gap",
-  "gap_reason": "MetaXL-specific double-arcsine back-transformation not implemented: MetaXL back-transforms the pooled t and its CI limits with Miller's (1978) inverse using m = 1/Var(pooled t) (the verifier reproduces every printed value this way: 0.5866 (0.5734, 0.5998)). The engine (pipeline.back_transform) and the case runner (transform 'pft_hm') use m = harmonic mean of n (23.95; metafor/R meta convention), which gives 0.5902 (0.5764, 0.6038), i.e. lower 0.5764 -> 0.58 vs printed 0.57."
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.back_transform(pft_n='variance') implements the MetaXL/Barendregt 2013 inversion with m = 1/Var(pooled t) (= 1/(4 se^2) on the engine's half-sum scale); the runner's Freeman-Tukey transform applies it (transform 'pft_hm' with \"pft_n\": \"variance\") with the se of the same result."
  },
  {
   "case_id": "khan_ch06_07__schizophrenia_metaxl_random_backtransformed",
@@ -1522,26 +1525,29 @@
     "value": 0.59,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.2 p. 130"
+    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.2 p. 130",
+    "pft_n": "variance"
    },
    {
     "path": "ci_lower",
     "value": 0.51,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed CI lower (2 dp), Ch6 Fig. 6.2 p. 130"
+    "note": "printed CI lower (2 dp), Ch6 Fig. 6.2 p. 130",
+    "pft_n": "variance"
    },
    {
     "path": "ci_upper",
     "value": 0.66,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed CI upper (2 dp), Ch6 Fig. 6.2 p. 130"
+    "note": "printed CI upper (2 dp), Ch6 Fig. 6.2 p. 130",
+    "pft_n": "variance"
    }
   ],
   "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
-  "status": "known_gap",
-  "gap_reason": "MetaXL-specific double-arcsine back-transformation not implemented: MetaXL back-transforms the pooled t and its CI limits with Miller's (1978) inverse using m = 1/Var(pooled t) (the verifier reproduces every printed value this way: 0.5875 (0.5098, 0.6632)). The engine (pipeline.back_transform) and the case runner (transform 'pft_hm') use m = harmonic mean of n (23.95; metafor/R meta convention), which gives 0.5905 (0.5101, 0.6688), i.e. upper 0.6688 -> 0.67 vs printed 0.66."
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.back_transform(pft_n='variance') implements the MetaXL/Barendregt 2013 inversion with m = 1/Var(pooled t) (= 1/(4 se^2) on the engine's half-sum scale); the runner's Freeman-Tukey transform applies it (transform 'pft_hm' with \"pft_n\": \"variance\") with the se of the same result."
  },
  {
   "case_id": "khan_ch06_07__schizophrenia_metaxl_ivhet_backtransformed",
@@ -1593,26 +1599,29 @@
     "value": 0.59,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.3 p. 133"
+    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.3 p. 133",
+    "pft_n": "variance"
    },
    {
     "path": "ci_lower",
     "value": 0.48,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed CI lower (2 dp), Ch6 Fig. 6.3 p. 133"
+    "note": "printed CI lower (2 dp), Ch6 Fig. 6.3 p. 133",
+    "pft_n": "variance"
    },
    {
     "path": "ci_upper",
     "value": 0.69,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed CI upper (2 dp), Ch6 Fig. 6.3 p. 133"
+    "note": "printed CI upper (2 dp), Ch6 Fig. 6.3 p. 133",
+    "pft_n": "variance"
    }
   ],
   "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
-  "status": "known_gap",
-  "gap_reason": "MetaXL-specific double-arcsine back-transformation not implemented: MetaXL back-transforms the pooled t and its CI limits with Miller's (1978) inverse using m = 1/Var(pooled t) (the verifier reproduces every printed value this way: 0.5877 (0.4792, 0.6920)). The engine (pipeline.back_transform) and the case runner (transform 'pft_hm') use m = harmonic mean of n (23.95; metafor/R meta convention), which gives 0.5902 (0.4786, 0.6975), i.e. upper 0.6975 -> 0.70 vs printed 0.69."
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.back_transform(pft_n='variance') implements the MetaXL/Barendregt 2013 inversion with m = 1/Var(pooled t) (= 1/(4 se^2) on the engine's half-sum scale); the runner's Freeman-Tukey transform applies it (transform 'pft_hm' with \"pft_n\": \"variance\") with the IVhet se."
  },
  {
   "case_id": "khan_ch06_07__schizophrenia_metaxl_study_row_bondestam",
@@ -2124,73 +2133,82 @@
     "value": 0.63,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed High-income prevalence, Fig. 6.4"
+    "note": "printed High-income prevalence, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "groups.High income.ci_lower",
     "value": 0.61,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed High-income CI lower, Fig. 6.4"
+    "note": "printed High-income CI lower, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "groups.High income.ci_upper",
     "value": 0.64,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed High-income CI upper, Fig. 6.4"
+    "note": "printed High-income CI upper, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "groups.Low/middle income.estimate",
     "value": 0.5,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed Low/middle prevalence, Fig. 6.4"
+    "note": "printed Low/middle prevalence, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "groups.Low/middle income.ci_lower",
     "value": 0.48,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed Low/middle CI lower, Fig. 6.4"
+    "note": "printed Low/middle CI lower, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "groups.Low/middle income.ci_upper",
     "value": 0.53,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed Low/middle CI upper, Fig. 6.4"
+    "note": "printed Low/middle CI upper, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "overall.estimate",
     "value": 0.59,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed overall prevalence, Fig. 6.4"
+    "note": "printed overall prevalence, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "overall.ci_lower",
     "value": 0.57,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed overall CI lower, Fig. 6.4"
+    "note": "printed overall CI lower, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
     "path": "overall.ci_upper",
     "value": 0.6,
     "tol": 0.005,
     "transform": "pft_hm",
-    "note": "printed overall CI upper, Fig. 6.4"
+    "note": "printed overall CI upper, Fig. 6.4",
+    "pft_n": "variance"
    },
    {
-    "path": "groups.High income.weight_pct",
+    "path": "groups.High income.weight_share_pct",
     "value": 67.6,
     "tol": 0.05,
     "transform": null,
     "note": "printed High-income subgroup weight 67.6%, Fig. 6.4"
    },
    {
-    "path": "groups.Low/middle income.weight_pct",
+    "path": "groups.Low/middle income.weight_share_pct",
     "value": 32.4,
     "tol": 0.05,
     "transform": null,
@@ -2198,8 +2216,8 @@
    }
   ],
   "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
-  "status": "known_gap",
-  "gap_reason": "(1) MetaXL-specific double-arcsine back-transformation not implemented (m = 1/Var(pooled t); verifier reproduces High 0.6262 (0.6104, 0.6418), Low 0.5026 (0.4791, 0.5261), overall 0.5866 (0.5734, 0.5998)); the runner's 'pft_hm' uses the harmonic mean of ALL six n (23.95), giving High 0.6313 (0.6148, 0.6476) -> upper 0.65 vs printed 0.64, and overall lower 0.5764 -> 0.58 vs 0.57. (2) Missing feature: the subgroup result has no subgroup weight share (MetaXL prints each subgroup's share of the total FE weight: 67.61% / 32.39%)."
+  "status": "active",
+  "activation_note": "Activated: (1) MetaXL double-arcsine back-transformation via the runner transform 'pft_hm' with \"pft_n\": \"variance\" (m = 1/(4 se^2) with each subgroup's / the overall result's own se; effect_sizes.back_transform(pft_n='variance')); (2) subgroup share of the overall weight via weight_share_pct (placeholder path weight_pct renamed)."
  },
  {
   "case_id": "khan_ch06_07__rd_single_study_wald",

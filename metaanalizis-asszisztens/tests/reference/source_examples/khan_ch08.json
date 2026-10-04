@@ -74,7 +74,9 @@
   "location": "Ch8 §8.1(a): Example 8.1 p. 162",
   "description": "Raw MD with the equal-variance (pooled-SD) variance (n1+n2)/(n1 n2) * Sp^2: Sp^2 = 16.303, Var = 1.261542, SE = 1.1232.",
   "measure": "MD",
-  "options": {},
+  "options": {
+   "md_vtype": "pooled"
+  },
   "rows": [
    {
     "study": "Ginkgo vs Placebo (hypothetical)",
@@ -118,8 +120,8 @@
     "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine) (SE)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Convention option missing: effect_sizes.md() always uses the unequal-variance Var = sd1^2/n1 + sd2^2/n2 (metafor escalc MD vtype='LS'); there is no option for the homoscedastic pooled-SD variance (n1+n2)/(n1 n2) * Sp^2 (metafor vtype='HO'). The engine returns vi = 1.286131 (SE 1.1341), i.e. the book's unequal-variance result (tested in khan_ch08__ginkgo_md_unequal_var), not 1.261542/1.1232. The pooled variance Sp^2 = 16.303 (p. 162) has no result path either."
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.compute(md_vtype='pooled') gives the homoscedastic pooled-SD MD variance (metafor escalc MD vtype='HO')."
  },
  {
   "case_id": "khan_ch08__cholesterol_paired_mean_difference",
@@ -127,7 +129,7 @@
   "source_id": "khan2020",
   "location": "Ch8 §8.1(b): Example 8.2 p. 163",
   "description": "Matched-pairs (pre/post) mean difference from n = 15, sum D = 254, sum (D - Dbar)^2 = 2808.9333: Dbar, Var(Dbar) = S_D^2/n and SE.",
-  "measure": "other",
+  "measure": "MC",
   "options": {},
   "rows": [
    {
@@ -176,8 +178,8 @@
     "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Missing feature: single-group / matched-pairs designs are not implemented. All continuous measures of effect_sizes (MD, SMD, COHEN_D, ROM) are two-independent-group measures; there is no measure for the mean of paired differences with Var = S_D^2/n (metafor escalc 'MN' applied to the differences, or 'MC'), and no input format for the summary sums n, sum D, sum (D - Dbar)^2. The printed S_D^2 = 200.6381 has no path."
+  "status": "active",
+  "activation_note": "Activated: new paired measure 'MC' (mean change; v = S_D^2/n) reads n, sum_d and sum_sq_dev_d directly (effect_sizes.paired_inputs)."
  },
  {
   "case_id": "khan_ch08__quant_ability_study1_wald_ci_ztest",
@@ -248,7 +250,9 @@
   "location": "Ch8 Table 8.2 p. 168; Example 8.3 p. 167",
   "description": "Var(g) = (n1+n2)/(n1 n2) + g^2/(2(n1+n2-2)) for a reported g = 0.72 with N = 76 split 38/38: Var 0.056134, SE 0.236927.",
   "measure": "GEN",
-  "options": {},
+  "options": {
+   "gen_smd_vtype": "METAN_COHEN"
+  },
   "rows": [
    {
     "study": "Study 1 (Hedges 1985, sex differences in quantitative ability)",
@@ -282,8 +286,8 @@
     "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Missing feature: the engine cannot derive an SMD sampling variance from a reported SMD and arm sizes (GEN requires vi or sei; SMD/COHEN_D need raw means/SDs, which Table 8.2 does not give). Even with such an input, none of the SMD variance options uses the book's 2(N-2) denominator: LS and LS2 use 2N, giving 0.056042 (SE 0.236732) instead of 0.056134."
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.compute(gen_smd_vtype=...) derives a GEN row's variance from the reported SMD and the arm sizes; 'METAN_COHEN' is the Stata metan / MetaXL 2(N-2) denominator used by the book."
  },
  {
   "case_id": "khan_ch08__open_education_fe",
@@ -1090,7 +1094,9 @@
   "location": "Ch8 Ex 8.5 p. 170; Table 8.4 p. 171",
   "description": "Per-study SMD variances from the reported theta and equal arm sizes: v = 2/n + theta^2/(4n) (Table 8.4 Var and SE, 6 dp).",
   "measure": "GEN",
-  "options": {},
+  "options": {
+   "gen_smd_vtype": "LS"
+  },
   "rows": [
    {
     "study": "Study 1",
@@ -1217,8 +1223,8 @@
     "note": "Study 6 SE, Table 8.4 (6 dp)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Missing feature: the engine cannot derive an SMD variance from a reported SMD (theta) and arm sizes; GEN requires vi or sei, and SMD/COHEN_D need raw means and SDs, which Hedges (1985)/Table 8.3 does not give. The formula itself, (nE+nC)/(nE nC) + theta^2/(2(nE+nC)), equals the engine's SMD vtype 'LS' with y = theta, so only the input path is missing. The pooled analyses use the printed Var as input instead."
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.compute(gen_smd_vtype='LS') derives each GEN row's variance from the reported theta and the arm sizes, (nE+nC)/(nE nC) + theta^2/(2(nE+nC)) (= SMD vtype LS)."
  },
  {
   "case_id": "khan_ch08__open_education_re_dl",
@@ -3502,7 +3508,9 @@
   "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Fig. 8.4a p. 186",
   "description": "Operative time: FE pooling of Cohen's d computed natively from the arm data with the engine's own SMD variance (MetaXL convention not available).",
   "measure": "COHEN_D",
-  "options": {},
+  "options": {
+   "smd_vtype": "METAN_COHEN"
+  },
   "rows": [
    {
     "study": "Bonjer et al. (2015)",
@@ -3691,8 +3699,8 @@
     "note": "Zhou et al. (2004) FE % weight (1 dp), Fig. 8.4a"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Convention option missing: the engine's COHEN_D variance is 1/n1 + 1/n2 + d^2/(2N) (LS; LS2 is identical without J), whereas MetaXL/Stata metan 'Cohen' uses N/(n1 n2) + d^2/(2(N-2)). With the native variance the engine gives Q = 163.948 (printed 163.89, outside +-0.005) and, under DL RE, a Bonjer weight of 11.7497 -> 11.7 (printed 11.8, Fig. 8.5a); the FE estimate/CI, I^2, FE % weights, per-study CIs, RE/IVhet estimates and CIs still round to the printed values. No smd_vtype reproduces the MetaXL/metan denominator. The same printed numbers pass with MetaXL-derived inputs (khan_ch08__optime_cohen_*_metaxl_var)."
+  "status": "active",
+  "activation_note": "Activated: smd_vtype='METAN_COHEN' gives the Stata metan / MetaXL Cohen variance N/(n1 n2) + d^2/(2(N-2)) natively."
  },
  {
   "case_id": "khan_ch08__optime_hedges_per_study_es",
@@ -5266,7 +5274,8 @@
   "description": "Operative time: FE pooling of Hedges' g computed natively from the arm data with the engine's own SMD variance (MetaXL convention not available).",
   "measure": "SMD",
   "options": {
-   "j_method": "approx"
+   "j_method": "approx",
+   "smd_vtype": "METAN_HEDGES"
   },
   "rows": [
    {
@@ -5456,8 +5465,8 @@
     "note": "Zhou et al. (2004) FE % weight (1 dp), Fig. 8.4b"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Convention option missing: MetaXL/Stata metan 'Hedges' uses Var = N/(n1 n2) + g^2/(2(N-3.94)); the engine's SMD variances are LS = 1/n1 + 1/n2 + g^2/(2N) and LS2 = J^2 (N/(n1 n2) + d^2/(2N)), and no smd_vtype gives the metan denominator. Native LS (used here): Q = 163.712 (printed 163.59), FE Bonjer weight 25.948 -> 25.9 (printed 26.0), per-study CIs Ng 2014 LL 0.7462 -> 0.75 (printed 0.74) and Ng 2008 UL 1.5243 -> 1.52 (printed 1.53). Native LS2: Q = 164.131, Bonjer 25.87, the same two CI mismatches. The FE estimate/CI and I^2 round to the printed values either way. The same printed numbers pass with MetaXL-derived inputs (khan_ch08__optime_hedges_*_metaxl_var)."
+  "status": "active",
+  "activation_note": "Activated: smd_vtype='METAN_HEDGES' gives the Stata metan / MetaXL Hedges variance N/(n1 n2) + g^2/(2(N-3.94)) with the approximate J natively."
  },
  {
   "case_id": "khan_ch08__optime_hedges_ivhet_text_ci_lower",
@@ -5599,7 +5608,7 @@
   "source_id": "khan2020",
   "location": "Ch8 Ex 8.12: Table 8.10 p. 185; Figs. 8.4c/8.5c/8.6c pp. 186-189 (ES column)",
   "description": "Operative time LARR vs ORR (9 studies): per-study Glass's Delta = (m1 - m2)/SD_control.",
-  "measure": "GLASS",
+  "measure": "SMD_GLASS",
   "options": {},
   "rows": [
    {
@@ -5814,8 +5823,8 @@
     "note": "tight check vs the verifier's independent full-precision recomputation (same method as the engine)"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Missing feature: Glass's Delta (SMD standardized by the control-group SD, variance N/(n1 n2) + Delta^2/(2(n2-1)); metafor escalc 'SMD1') is not implemented - effect_sizes has no such measure ('GLASS' here is a placeholder name). The pooled Glass analyses are tested with derived yi/vi (khan_ch08__optime_glass_*_metaxl_var)."
+  "status": "active",
+  "activation_note": "Activated: new measure 'SMD_GLASS' (Glass's Delta standardised by the control-group SD; default glass_vtype='METAN', v = N/(n1 n2) + Delta^2/(2(n2-1))); the placeholder measure name 'GLASS' was replaced by it."
  },
  {
   "case_id": "khan_ch08__optime_glass_per_study_ci_metaxl_var",

@@ -3052,22 +3052,22 @@
   },
   "expected": [
    {
-    "path": "groups.Old studies.weight_pct",
+    "path": "groups.Old studies.weight_share_pct",
     "value": 64.4,
     "tol": 0.05,
     "transform": null,
     "note": "Old studies subgroup weight, Fig. 5.5 (= 14.7+23.3+11.3+15.1)"
    },
    {
-    "path": "groups.Recent studies.weight_pct",
+    "path": "groups.Recent studies.weight_share_pct",
     "value": 35.6,
     "tol": 0.05,
     "transform": null,
     "note": "Recent studies subgroup weight, Fig. 5.5"
    }
   ],
-  "status": "known_gap",
-  "gap_reason": "Missing feature: the engine's subgroup result has no subgroup weight share. MetaXL prints, per subgroup, the sum of the OVERALL random-effects % weights of its studies (64.429/35.571 with DL tau^2 0.185173). The per-study overall weights themselves are checked in khan_ch05__heartburn_subgroup_period_re (overall.weights_pct.*)."
+  "status": "active",
+  "activation_note": "Activated: moderators.subgroup_analysis now returns weight_share_pct per subgroup (MetaXL '% Weight' of the subgroup = sum of its studies' overall RE weights); the placeholder path weight_pct was renamed to it."
  },
  {
   "case_id": "khan_ch05__heartburn_doi_plot_lfk",
