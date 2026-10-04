@@ -498,7 +498,91 @@ def run(rows, options=None, meta=None):
                 r.setdefault("se", _row_se(r, ci_eff, opt["level"], single_fixed=(i == 0)))
     out["sensitivity"] = sens
     out["warnings"] += [w for w in (primary.warnings or []) if w not in out["warnings"]]
+    if measure == "PR":
+        _pr_bound_warning(out, es, opt["level"])
+    elif measure == "PFT" and k >= 2:
+        _pft_range_warning(out, es, nh, pft_n)
     return out, es
+
+
+def _pr_bound_warning(out, es, level):
+    """Nyers arány (PR): a [0, 1]-en kívülre nyúló Wald-intervallumok (lehetetlen értékek) jelzése
+    (D-S07-018, D-S07-019); csonkolás nincs, a számok a metaforéval egyeznek."""
+    from .distributions import norm_ppf
+    z = norm_ppf(0.5 + level / 2)
+
+    def out_of(vals):
+        return any(v is not None and (v < -1e-12 or v > 1 + 1e-12) for v in vals)
+
+    where = []
+    n_st = sum(1 for y, v in zip(es.yi, es.vi) if out_of((y - z * math.sqrt(v), y + z * math.sqrt(v))))
+    if n_st:
+        where.append("%d vizsgálat CI-je" % n_st)
+    bt = out.get("back_transformed") or {}
+    if out_of(bt.get("estimate_ci") or []):
+        where.append("az összesített becslés CI-je")
+    if out_of(bt.get("pi") or []):
+        where.append("a predikciós intervallum")
+    for key, lab in (("fixed", "a közös hatású"), ("random", "a véletlen hatású")):
+        r = out.get(key)
+        if r is not None and r is not out.get("primary") and out_of((r.ci_lower, r.ci_upper)):
+            where.append("%s érzékenységi modell CI-je" % lab)
+    sg = out.get("subgroups")
+    bad_g = [str(g.group) for g in (sg.groups if sg is not None else []) if out_of((g.ci_lower, g.ci_upper))]
+    if bad_g:
+        where.append("az alcsoport(ok) CI-je (%s)" % ", ".join(bad_g))
+    if where:
+        out["warnings"].append(
+            "Nyers arány (PR): %s 0 alá vagy 1 fölé nyúlik — lehetetlen érték (a Wald-intervallum a [0, 1] határ "
+            "közelében torz). Elsődleges skálaként logit (--measure PLO) vagy binomiális GLMM (R: metafor "
+            "rma.glmm / meta metaprop) ajánlott; a Freeman–Tukey (PFT) legfeljebb érzékenységi elemzés "
+            "(D-S07-018, D-S07-019)." % ", ".join(where))
+
+
+def _pft_range_warning(out, es, nh, pft_n):
+    """PFT: a visszatranszformált összesített pontbecslés a saját vizsgálatai megfigyelt arányainak
+    tartományán kívül (nagyon eltérő mintanagyságoknál a Miller-inverz félrevezető; Schwarzer et al. 2019)."""
+    p = []
+    for r in es.rows:
+        try:
+            p.append(float(r["x"]) / float(r["n"]))
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            p.append(None)
+    if any(v is None for v in p):
+        return
+
+    def outside(est, idx):
+        ps = [p[i] for i in idx]
+        return est is not None and (est < min(ps) - 1e-9 or est > max(ps) + 1e-9), (min(ps), max(ps))
+
+    allix = list(range(len(p)))
+    bad = []
+    for key, lab in (("ivhet", "IVhet"), ("random", "véletlen hatású"), ("fixed", "közös hatású")):
+        r = out.get(key)
+        if r is None:
+            continue
+        est = _display("PFT", r.estimate, None, None, nh, pft_n, r.se)[0]
+        if outside(est, allix)[0]:
+            bad.append("%s %s" % (lab, _fmt4(est)))
+    sg = out.get("subgroups")
+    for g in (sg.groups if sg is not None else []):
+        idx = g.get("indices") or []
+        if g.k >= 2 and idx and outside((g.get("display") or [None])[0], idx)[0]:
+            bad.append("alcsoport '%s' %s" % (g.group, _fmt4(g.display[0])))
+    if bad:
+        out["warnings"].append(
+            "Freeman–Tukey-visszatranszformálás (%s): az összesített becslés (%s) a megfigyelt arányok "
+            "tartományán ([%s; %s]) kívül esik — nagyon eltérő mintanagyságoknál a Miller-inverz félrevezető "
+            "(Schwarzer et al. 2019; K-KHN0607-079). Elsődleges elemzésként logit (--measure PLO) vagy binomiális "
+            "GLMM (R: metafor rma.glmm / meta metaprop) ajánlott; érzékenységi elemzésként a másik "
+            "visszatranszformálás (--pft-backtransform %s)." % (
+                "harmonikus átlag n = %.4g" % nh if pft_n != "variance" else "m = 1/Var(t)",
+                "; ".join(bad), _fmt4(min(p)), _fmt4(max(p)),
+                "variance" if pft_n != "variance" else "harmonic"))
+
+
+def _fmt4(v):
+    return "%.4f" % v if v is not None else "–"
 
 
 def _has_cells(rows):

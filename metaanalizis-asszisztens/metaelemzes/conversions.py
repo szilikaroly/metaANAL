@@ -141,8 +141,19 @@ def sd_from_median(n, q1=None, q3=None, minimum=None, maximum=None, median=None)
 
 
 # ----------------------------------------------------- csoportok, változás
+def _check_sd(sd, name="SD"):
+    if sd is None or sd < 0:
+        raise ConversionError("%s >= 0 szükséges, kapott: %r" % (name, sd))
+
+
 def combine_groups(n1, m1, sd1, n2, m2, sd2):
     """Két alcsoport összevonása egy csoporttá (Cochrane Handbook Table 6.5.a)."""
+    _check_n(n1, 1)
+    _check_n(n2, 1)
+    if m1 is None or m2 is None:
+        raise ConversionError("mindkét alcsoport átlaga kötelező")
+    _check_sd(sd1, "sd1")
+    _check_sd(sd2, "sd2")
     n = n1 + n2
     m = (n1 * m1 + n2 * m2) / n
     var = ((n1 - 1) * sd1 ** 2 + (n2 - 1) * sd2 ** 2 + n1 * n2 / n * (m1 ** 2 + m2 ** 2 - 2 * m1 * m2)) / (n - 1)
@@ -151,7 +162,9 @@ def combine_groups(n1, m1, sd1, n2, m2, sd2):
 
 def sd_change(sd_baseline, sd_final, corr):
     """A változás SD-je imputált korrelációval (Cochrane 6.5.2.8)."""
-    if not -1 <= corr <= 1:
+    _check_sd(sd_baseline, "a kiindulási SD")
+    _check_sd(sd_final, "a végponti SD")
+    if corr is None or not -1 <= corr <= 1:
         raise ConversionError("a korreláció -1 és 1 közé esik")
     v = sd_baseline ** 2 + sd_final ** 2 - 2 * corr * sd_baseline * sd_final
     if v < 0:
@@ -172,6 +185,10 @@ def paired_from_sums(n, sum_d, sum_sq_dev):
 
 def corr_from_change(sd_baseline, sd_final, sd_change_):
     """A kiindulás–végpont korreláció visszaszámolása egy teljesen közölt vizsgálatból."""
+    for name, sd in (("a kiindulási SD", sd_baseline), ("a végponti SD", sd_final)):
+        if sd is None or not sd > 0:
+            raise ConversionError("%s > 0 szükséges, kapott: %r" % (name, sd))
+    _check_sd(sd_change_, "a változás SD-je")
     return (sd_baseline ** 2 + sd_final ** 2 - sd_change_ ** 2) / (2 * sd_baseline * sd_final)
 
 
