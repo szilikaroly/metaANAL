@@ -1,0 +1,802 @@
+[
+ {
+  "k_id": "K-BOR07-001",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "A forrás terjedelme: csak az FE vs RE fejezet",
+  "body": "This file is a July 2007 pre-publication draft of Introduction to Meta-Analysis and contains only the title page, dedication, full table of contents and the section 'Fixed effect vs. random effects models' (book pp. 86–115). Chapters listed in the TOC (effect-size indices pp. 50–84, heterogeneity and I² pp. 116–140, subgroups and meta-regression pp. 142–189, publication bias pp. 243–263, Mantel–Haenszel/Peto, forest plots, software) are NOT in the file, so use it only for FE/RE pooling, the method-of-moments tau² and model choice. [note: the published book (Borenstein, Hedges, Higgins & Rothstein, Wiley 2009, chapters 10–13) covers the same material with different equation numbers and some corrected typos; cite the 2007 draft page numbers when quoting this file.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "title page p. 1; TOC pp. 2–7; section pp. 86–115",
+  "tags": "scope source draft Borenstein 2007 fixed effect random effects terjedelem forrás kézirat vázlat fix hatás véletlen hatás table of contents tartalomjegyzék"
+ },
+ {
+  "k_id": "K-BOR07-002",
+  "stage_id": "S01",
+  "kind": "concept",
+  "title": "Az összevonás feltétele: elég közös vonás, nem azonosság",
+  "body": "Deciding to pool a set of studies presumes that they have enough in common for a synthesis to make sense, but it does not presume that their true effects are identical. The eligibility criteria and the planned pooling model should therefore agree: eligibility that admits varied populations, doses or settings implies an analysis that allows true effects to vary (random effects). [note: the source only says pooling presumes enough in common, not identity; tying the eligibility criteria to the choice of model is an inference drawn from that point, not a statement in the source.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 94",
+  "tags": "eligibility pooling synthesis beválasztási kritériumok összevonás szintézis random effects véletlen hatás identical studies azonos vizsgálatok PICO"
+ },
+ {
+  "k_id": "K-BOR07-003",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Modellválasztás előre, a protokollban",
+  "body": "Choose the pooling model (fixed effect vs random effects) in the protocol, before seeing the data, on the basis of what the included studies are like and what the inference is meant to cover (a single population vs a range of populations). The choice must not depend on the observed results or on a heterogeneity test. [note: the source grounds the choice in the nature of the studies and the goal of inference (p. 114) and rejects switching on the Q test (p. 115); recording the choice in the protocol follows Cochrane Handbook v6 (ch. 10) and PRISMA-P rather than this excerpt.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 114–115",
+  "tags": "protocol pre-specification model choice protokoll előzetes rögzítés modellválasztás fixed effect random effects fix hatás véletlen hatás analysis plan elemzési terv"
+ },
+ {
+  "k_id": "K-BOR07-004",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Ismeretlen hatásmódosítók → véletlen hatású modell tervezése",
+  "body": "Factors that can modify the effect, such as participant age, education, health, natural immunity, intervention intensity, class size or other available resources, usually differ between studies and are often unmeasured or not even known. Because experience says such factors exist, true effects should be expected to vary across studies, which is the reason to plan a random-effects analysis.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 86, 94, 105",
+  "tags": "effect modifiers covariates hatásmódosítók kovariátok random effects véletlen hatás heterogeneity heterogenitás planning tervezés"
+ },
+ {
+  "k_id": "K-BOR07-005",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Szükséges adatok vizsgálatonként az inverz-variancia számításhoz",
+  "body": "For generic inverse-variance pooling each study must supply an effect size T_i and its within-study variance v_i (or its standard error SE_i, with v_i = SE_i^2). The source spreadsheet needs only three inputs per study: study name, effect size and variance (columns A–C).",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 88–89; p. 92 (columns A–C)",
+  "tags": "data extraction effect size variance standard error adatkinyerés hatásméret variancia standard hiba inverse variance inverz variancia input bemenet"
+ },
+ {
+  "k_id": "K-BOR07-006",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Metrika-független általános hatásméret (T_i, v_i)",
+  "body": "Every formula in this excerpt works on a generic effect size T_i with within-study variance v_i and SE_i = sqrt(v_i), so it applies to any index once T_i and v_i are available. The excerpt itself gives no bias corrections, metric conversions, zero-cell handling or transformations (the TOC places these on pp. 50–84, which are not included). [note: ratio measures such as odds ratios are pooled on the log scale; that is standard practice, not stated in this excerpt.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 88–89; TOC pp. 50–84 (not included)",
+  "tags": "generic effect size általános hatásméret metric mérőszám variance variancia standard error standard hiba inverse variance inverz variancia log scale log skála"
+ },
+ {
+  "k_id": "K-BOR07-007",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Olvasási pontszám példa: Hedges' g bemeneti adatok",
+  "body": "The running example is a fictional meta-analysis of an intervention on children's reading scores, with six studies reported as Hedges's g and variance: Carroll 0.10/0.03, Grant 0.30/0.03, Peck 0.35/0.05, Donat 0.65/0.01, Stewart 0.45/0.05, Young 0.15/0.02. The standard error is printed as the square root of the variance, e.g. sqrt(0.03) = 0.173 for Carroll. Donat (the most precise study) has the largest effect, which drives the FE vs RE differences in this example.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 90 (forest plot); p. 92 (spreadsheet); p. 100",
+  "tags": "worked example reading scores Hedges g kidolgozott példa olvasási pontszám Carroll Donat Peck test data tesztadat SMD standardizált átlagkülönbség"
+ },
+ {
+  "k_id": "K-BOR07-008",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Cohen-d variancia (következtetett, nem a forrásban)",
+  "body": "The CMA screenshots use 'Std diff in means' with total N per study but the excerpt does not print a variance formula. The printed SEs, variances and relative weights are reproduced exactly by the standard Cohen's d variance v_d = (n1 + n2)/(n1*n2) + d^2/(2*(n1 + n2)) with equal arms (n1 = n2 = N/2). [note: this formula is inferred by recomputation, not stated in this excerpt; in the engine it is effect_sizes.smd with correct=False, vtype='LS'.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 106–108 (CMA screenshots; formula inferred)",
+  "tags": "Cohen d variance SMD standardized mean difference standardizált átlagkülönbség variancia CMA std diff in means sample size mintaméret inferred következtetett"
+ },
+ {
+  "k_id": "K-BOR07-009",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Inverz-variancia súlyozás a mintaméret helyett",
+  "body": "Studies are weighted by the inverse of their within-study variance, not by sample size. Inverse variance is roughly proportional to N but more nuanced: the variance of a mean difference reflects how participants are split between the groups, and the variance of an odds ratio reflects the count in each cell. Inverse-variance weights also give the combined estimate with the smallest variance.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 89, 93",
+  "tags": "inverse variance weighting inverz variancia súlyozás sample size mintaméret weights súlyok minimum variance minimális variancia odds ratio mean difference"
+ },
+ {
+  "k_id": "K-BOR07-010",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Súlyozott átlag: miért nem egyszerű átlag",
+  "body": "If all studies were equally precise the combined effect could be a simple mean, but because precision differs the meta-analysis computes a weighted mean that gives more weight to studies carrying more information. How the weights are assigned depends on what 'combined effect' is taken to mean, which is exactly what distinguishes the fixed-effect from the random-effects model.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 86",
+  "tags": "weighted mean súlyozott átlag combined effect összesített hatás pooled estimate fixed effect random effects fix hatás véletlen hatás precision pontosság"
+ },
+ {
+  "k_id": "K-BOR07-011",
+  "stage_id": "S08",
+  "kind": "definition",
+  "title": "Fix hatású (közös hatású) modell definíciója",
+  "body": "The fixed-effect model assumes that one true effect size, mu, is shared by all included studies, i.e. every factor that could influence the effect is the same in all study populations. Observed effects differ only by within-study sampling error: T_i = mu + e_i (eq. 2.2), with one level of sampling and one source of error. The combined effect is the estimate of that common value.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 86, 88, 105",
+  "tags": "fixed effect model common effect fix hatású modell közös hatás definition definíció sampling error mintavételi hiba mu true effect valódi hatás"
+ },
+ {
+  "k_id": "K-BOR07-012",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "FE összesítés: súly, átlag, variancia, SE",
+  "body": "Fixed-effect weights are w_i = 1/v_i (2.3); the pooled estimate is T_bar = sum(w_i*T_i)/sum(w_i) (2.4); its variance is v_bar = 1/sum(w_i) (2.5) and SE(T_bar) = sqrt(v_bar) (2.6).",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 89",
+  "tags": "fixed effect pooled estimate weight variance standard error fix hatás összesített becslés súly variancia standard hiba inverse variance inverz variancia formula képlet"
+ },
+ {
+  "k_id": "K-BOR07-013",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "FE konfidencia-intervallum, Z-próba és p-érték",
+  "body": "The 95% CI of the fixed-effect estimate is T_bar ± 1.96*SE(T_bar) (2.7, 2.8), a Wald/z interval with a fixed 1.96 multiplier. The test statistic is Z = T_bar/SE(T_bar) (2.9); the one-tailed p = 1 − Phi(|Z|) (2.10) is valid only if the effect lies in the hypothesised direction, and the two-tailed p = 2[1 − Phi(|Z|)] (2.11), where Phi is the standard normal CDF.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 89–90",
+  "tags": "confidence interval Wald z test p-value konfidencia-intervallum z-próba p-érték fixed effect fix hatás 1.96 normal distribution normális eloszlás one-tailed two-tailed egyoldalú kétoldalú"
+ },
+ {
+  "k_id": "K-BOR07-014",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "FE pontosság: csak az összes N számít",
+  "body": "With a fixed-effect model, within-study sampling error is the sole component of the pooled estimate's uncertainty, so the error shrinks toward zero once the total sample is large enough. It makes no difference whether those participants sit in a single study or are spread across many.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 87, 110–111",
+  "tags": "precision pontosság fixed effect fix hatás total sample size teljes mintaméret standard error standard hiba within-study error vizsgálaton belüli hiba"
+ },
+ {
+  "k_id": "K-BOR07-015",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "FE kidolgozott példa (olvasási pontszámok)",
+  "body": "For the reading-scores data the Carroll weight is 1/0.03 = 33.333; sum(w) = 256.667 and sum(w*T) = 101.833, giving T_bar = 0.3968, variance 0.0039, SE 0.0624, 95% CI 0.2744 to 0.5191, Z = 6.3563 and one- and two-tailed p < .0001. The forest plot shows the pooled row as 0.397, SE 0.062, variance 0.004.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 90 (forest plot); p. 91 (hand calculation); p. 92 (spreadsheet F13–F20)",
+  "tags": "worked example fixed effect kidolgozott példa fix hatás reading scores olvasási pontszám 0.3968 regression test regressziós teszt validation validálás"
+ },
+ {
+  "k_id": "K-BOR07-016",
+  "stage_id": "S08",
+  "kind": "definition",
+  "title": "Véletlen hatású modell definíciója",
+  "body": "The random-effects model allows the true effect to differ from study to study because the study populations differ in ways that affect the result (e.g. intervention intensity, participant age). Each observed effect is T_i = theta_i + e_i = mu + epsilon_i + e_i (eq. 3.1), where theta_i is the study's true effect, epsilon_i its deviation from the mean mu (between-study variance tau^2) and e_i the within-study error (variance v_i). There are two levels of sampling and two sources of error.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 94–95, 105",
+  "tags": "random effects model véletlen hatású modell definition definíció tau2 between-study variance vizsgálatok közötti variancia two levels of sampling két szintű mintavétel theta true effect"
+ },
+ {
+  "k_id": "K-BOR07-017",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "A véletlen hatású becslés jelentése: valódi hatások átlaga",
+  "body": "Under the random-effects model there is no single true effect but a distribution of true effects; the included studies are treated as a random sample from it. The pooled estimate is therefore the mean of that distribution, not an estimate of one common effect. [note: the 'random sample of studies' premise is an idealisation, since included studies are rarely sampled at random. Current guidance (Cochrane Handbook v6, ch. 10; Riley et al. 2011 BMJ; IntHout et al. 2016) recommends reporting a prediction interval alongside the RE mean to describe the spread of true effects; this excerpt does not cover prediction intervals.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 86, 94, 105–106",
+  "tags": "interpretation random effects mean of true effects értelmezés véletlen hatás valódi hatások átlaga distribution of effects hatáseloszlás pooled estimate összesített becslés"
+ },
+ {
+  "k_id": "K-BOR07-018",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "RE összesítés: v_i* = v_i + tau², súly, átlag, SE, CI, Z",
+  "body": "Random-effects quantities are marked with an asterisk: v_i* = v_i + tau^2 and w_i* = 1/v_i* (3.7); T_bar* = sum(w_i*·T_i)/sum(w_i*) (3.8); v_bar* = 1/sum(w_i*) (3.9); SE(T_bar*) = sqrt(v_bar*) (3.10). The 95% CI is T_bar* ± 1.96*SE(T_bar*) (3.11, 3.12), Z* = T_bar*/SE(T_bar*) (3.13), one-tailed p* = 1 − Phi(|Z*|) (3.14) and two-tailed p* = 2[1 − Phi(|Z*|)] (3.15).",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 99–100",
+  "tags": "random effects pooled estimate weight variance véletlen hatás összesített becslés súly variancia tau2 confidence interval konfidencia-intervallum z test inverse variance formula képlet"
+ },
+ {
+  "k_id": "K-BOR07-019",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "FE és RE képletei csak a variancia definíciójában térnek el",
+  "body": "The fixed-effect and random-effects computations are identical except for how each study's variance is defined: within-study variance v_i under FE versus v_i + tau^2 under RE. In the spreadsheet this is the difference between D3 = C3 and K3 = I3 + J3.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 102",
+  "tags": "fixed effect random effects difference fix hatás véletlen hatás különbség variance definition variancia definíció tau2 spreadsheet táblázat"
+ },
+ {
+  "k_id": "K-BOR07-020",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "RE kidolgozott példa (olvasási pontszámok, DL)",
+  "body": "For the reading-scores data the method-of-moments estimate is tau^2 = 0.0398 (Q = 12.8056, df = 5, C = 196.1905). The Carroll RE weight is 14.330; sum(w*) = 87.747 and sum(w*·T) = 30.207, giving T_bar* = 0.3442, variance 0.0114, SE 0.1068, 95% CI 0.1350 to 0.5535, Z* = 3.2247, one-tailed p = 0.0006 and two-tailed p = 0.0013. The RE forest plot rounds the pooled row to 0.344, SE 0.107 and variance 0.011. [note: to reproduce these numbers in the engine, call models.meta_analysis(model='random', tau2_method='DL', ci_method='z'); the default REML + HKSJ setting gives different results.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 98 (Q, C, tau²); p. 100 (forest plot); p. 101 (hand calculation); p. 102 (spreadsheet values); pp. 103–104 (spreadsheet formulas)",
+  "tags": "worked example random effects kidolgozott példa véletlen hatás DerSimonian Laird tau2 0.3442 regression test regressziós teszt validation validálás reading scores olvasási pontszám"
+ },
+ {
+  "k_id": "K-BOR07-021",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Súlyeltolódás FE→RE az olvasási példában",
+  "body": "Switching the reading-scores analysis from FE to RE makes the weights more balanced: the square for the large Donat study shrinks and the square for the small Peck study grows. The combined effect moves left from 0.40 to 0.34 because the influence of Donat (the large study on the right) is reduced, and the CI becomes wider.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 100–101",
+  "tags": "weights shift súlyeltolódás fixed effect random effects fix hatás véletlen hatás forest plot erdődiagram Donat Peck balanced weights kiegyensúlyozott súlyok"
+ },
+ {
+  "k_id": "K-BOR07-022",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "RE súlyok kiegyensúlyozottabbak",
+  "body": "Because each study informs about a different population, the random-effects model cannot largely ignore a small study (it holds information on a population no other study captured) nor let one large study dominate. As a result RE weights are more balanced than FE weights: as one moves from FE to RE, large studies lose relative weight and small studies gain it.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 87, 100, 106, 109",
+  "tags": "random effects weights balanced véletlen hatás súlyok kiegyensúlyozott small studies large studies kis vizsgálatok nagy vizsgálatok relative weight relatív súly"
+ },
+ {
+  "k_id": "K-BOR07-023",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Szélsőséges hatás egy nagy vizsgálatban: FE vs RE",
+  "body": "Five small studies (100 subjects each, effects 0.40–0.80) and one large study F (1000 subjects, effect 0.20): under FE study F takes 68% of the weight and each small study about 6%, pulling the pooled SMD down to 0.34. Under RE study F gets 23% and each small study about 15%, and the pooled estimate is 0.55, closer to the small studies.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 106–108 (CMA screenshot p. 107)",
+  "tags": "extreme effect large study szélsőséges hatás nagy vizsgálat influence befolyás relative weight relatív súly fixed effect random effects 68% 23% CMA example példa"
+ },
+ {
+  "k_id": "K-BOR07-024",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Szélsőséges hatás egy kis vizsgálatban: FE vs RE",
+  "body": "Same effect sizes but five large studies (1000 subjects each) and one small study F (100 subjects, effect 0.20): under FE each large study gets about 20% and study F about 2% of the weight, with a pooled estimate of 0.64. Under RE each large study gets about 18% and study F 8%, and the pooled estimate becomes 0.61, i.e. 0.03 closer to study F. [note: the source says F's 8% is '50%' of a large study's weight; with the printed CMA weights it is 8.15/18.35, about 44%, so treat that sentence as loose wording.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 108–109 (CMA screenshot p. 108)",
+  "tags": "extreme effect small study szélsőséges hatás kis vizsgálat influence befolyás relative weight relatív súly fixed effect random effects 2% 8% CMA example példa"
+ },
+ {
+  "k_id": "K-BOR07-025",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "RE variancia soha nem kisebb az FE varianciánál",
+  "body": "The random-effects variance contains all the within-study error of the fixed-effect model plus the between-study component, so it cannot be smaller than the FE variance. Whenever tau^2 > 0, the variance, standard error and confidence interval of the pooled estimate are strictly larger under RE.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 113",
+  "tags": "random effects variance larger véletlen hatás nagyobb variancia standard error standard hiba confidence interval width konfidencia-intervallum szélesség tau2 fixed effect fix hatás"
+ },
+ {
+  "k_id": "K-BOR07-026",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Végtelen N határeset: FE vs RE CI-szélesség",
+  "body": "If every study had infinite size, under FE all observed effects would coincide and the CI of the combined effect would shrink to zero (figure: five studies at 0.400, pooled SE 0.000). Under RE the study effects would be known exactly but still differ (0.35–0.45), and the pooled SE stays above zero (0.022) because the CI width tends to zero only as the number of studies tends to infinity, unless tau^2 = 0. Under FE a single sufficiently large study can make the CI approach zero even with finitely many studies.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 110–113 (figures p. 111 and p. 113)",
+  "tags": "huge sample size végtelen mintaméret confidence interval width konfidencia-intervallum szélesség number of studies vizsgálatok száma random effects fixed effect precision pontosság asymptotic aszimptotikus"
+ },
+ {
+  "k_id": "K-BOR07-027",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "RE pontosság: vizsgálatonkénti N és a vizsgálatok száma",
+  "body": "Under the random-effects model the precision of the pooled mean depends on both the number of subjects per study (first level of error) and the number of studies (second level). The spread of the true effects around mu is called error because it adds uncertainty to the estimate of mu; it is small when observed studies cluster closely and/or there are many studies, and large when they are dispersed and/or few.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 87, 112",
+  "tags": "precision pontosság number of studies vizsgálatok száma k sample size mintaméret between-study error vizsgálatok közötti hiba random effects véletlen hatás"
+ },
+ {
+  "k_id": "K-BOR07-028",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "tau² = 0 esetén a RE azonos az FE-vel",
+  "body": "When the estimated tau^2 is zero (Q ≤ df), the random-effects computation reduces exactly to the fixed-effect one. The source uses this to argue that there is no 'cost' to using RE when the observed dispersion is trivial. [note: the 'no cost' claim is contested. (1) When tau^2 > 0, RE gives small studies relatively more weight, which can amplify small-study effects (Cochrane Handbook v6, chs 10 and 13). (2) With few studies, an estimate of tau^2 = 0 does not demonstrate homogeneity. (3) The exact RE = FE identity holds only for the DL point estimate with a Wald/z CI. With HKSJ or t-based intervals (this engine's RE default) the RE CI differs from the FE CI even when tau^2 = 0.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 115",
+  "tags": "random effects reduces to fixed effect véletlen hatás fix hatásra egyszerűsödik tau2 zero nulla no cost Q df model choice modellválasztás"
+ },
+ {
+  "k_id": "K-BOR07-029",
+  "stage_id": "S08",
+  "kind": "guidance",
+  "title": "Mikor indokolt a fix hatású modell",
+  "body": "A fixed-effect model makes sense only if (a) there is reason to believe all studies are functionally identical and (b) the goal is to estimate the common effect for that same population. The source's example is a sponsor running five studies with identical recruitment, researchers and dose, analysed for a regulator interested only in that one population, as if it were one large study run in cohorts. [note: an alternative view (Rice, Higgins & Lumley 2018, JRSS A) reads the FE estimate as the inverse-variance weighted average of the included studies' true effects. On that reading FE does not require identical effects, but its inference is restricted to the included studies. Current guidance still favours RE as the primary model when generalising.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "fixed effect justification fix hatás indoklás functionally identical funkcionálisan azonos model choice modellválasztás common effect közös hatás regulatory hatósági"
+ },
+ {
+  "k_id": "K-BOR07-030",
+  "stage_id": "S08",
+  "kind": "guidance",
+  "title": "Mikor indokolt a véletlen hatású modell",
+  "body": "When the data are accumulated from studies performed by other researchers, it is very unlikely that they are functionally equivalent; subjects or interventions almost always differed in ways that affect the results, so a common effect should not be assumed. Such analyses usually aim to generalise to a range of populations, which an FE analysis restricted to one narrow population cannot support, so RE is more easily justified in most common cases.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "random effects justification véletlen hatás indoklás generalisation általánosítás model choice modellválasztás published studies publikált vizsgálatok different populations eltérő populációk"
+ },
+ {
+  "k_id": "K-BOR07-031",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "A forrás CI- és p-konvenciója: z, 1,96",
+  "body": "All confidence intervals in the source use the normal quantile 1.96 and all p-values come from the standard normal distribution (Excel NORMDIST), never from a t-distribution, for both FE and RE. [note: for random effects this Wald/z interval is known to under-cover when k is small; Cochrane Handbook v6 and later literature recommend considering Hartung–Knapp–Sidik–Jonkman (t-based) intervals; this engine's random-effects default is ci_method='hksj', so use ci_method='z' to reproduce the source.] [note: the source uses 1.96 exactly; the engine uses the exact quantile norm_ppf(0.975) = 1.959964, so CI limits can differ in the 5th decimal (FE reading-scores LL 0.274415 vs 0.274412). Both round to the printed 4 decimals.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 89, 92, 99, 104",
+  "tags": "confidence interval method Wald z 1.96 CI módszer konfidencia-intervallum normal distribution normális eloszlás HKSJ Hartung Knapp t-distribution t-eloszlás convention konvenció"
+ },
+ {
+  "k_id": "K-BOR07-032",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "tau²-becslő: momentum-módszer (DerSimonian–Laird)",
+  "body": "The source's tau^2 is the method-of-moments estimator truncated at zero, i.e. the DerSimonian–Laird estimator, although the excerpt never uses that name; the Comprehensive Meta-Analysis output in its screenshots matches DL with z-based CIs (checked by recomputation). No other estimator (REML, PM, ML, HE, SJ), no CI for tau^2 and no prediction interval appear in the excerpt. [note: later guidance (e.g. Veroniki et al. 2016; Cochrane Handbook v6) favours REML or Paule–Mandel over DL, especially with few studies; this engine defaults to REML, so set tau2_method='DL' to reproduce the source.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 98, 103, 107–108",
+  "tags": "tau2 estimator DerSimonian Laird method of moments becslő momentum módszer REML Paule Mandel DL CMA default alapértelmezés between-study variance vizsgálatok közötti variancia"
+ },
+ {
+  "k_id": "K-BOR07-033",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "A variancia felbontása: vizsgálaton belüli és vizsgálatok közötti",
+  "body": "A random-effects analysis splits the observed variance into within-study and between-study parts: it computes the total observed dispersion, isolates the part expected from within-study error, and the remainder is the between-study variance tau^2. The source's figure shows (A) studies lined up, tau^2 near zero; (B) spread fully explained by wide within-study CIs, tau^2 near zero; (C) spread with tight within-study CIs, tau^2 high.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 96–97",
+  "tags": "variance decomposition variancia felbontás tau2 between-study within-study vizsgálatok közötti vizsgálaton belüli heterogeneity heterogenitás dispersion szóródás"
+ },
+ {
+  "k_id": "K-BOR07-034",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-féle Q statisztika",
+  "body": "Q is the inverse-variance-weighted sum of squared deviations of the study effects from the FE mean: Q = sum(w_i*(T_i − T_bar)^2) (3.2), computed equivalently as Q = sum(w_i*T_i^2) − (sum(w_i*T_i))^2/sum(w_i) (3.3), with FE weights w_i = 1/v_i. Because each deviation is weighted, a large study far from the mean raises Q more than a small study at the same distance.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 97",
+  "tags": "Cochran Q statistic heterogeneity heterogenitás weighted sum of squares súlyozott négyzetösszeg formula képlet dispersion szóródás"
+ },
+ {
+  "k_id": "K-BOR07-035",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Q várható értéke homogenitásnál: df = k − 1",
+  "body": "If within-study error were the only source of variance, the expected value of Q would equal its degrees of freedom, df = k − 1 (3.4). Q − df is therefore the excess (observed minus expected) dispersion; dividing it by the scaling factor C (needed because Q is a weighted sum of squares) puts tau^2 on the same metric as the within-study variances.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 97–98",
+  "tags": "expected value Q degrees of freedom várható érték szabadságfok df excess dispersion többlet szóródás scaling factor C skálázó tényező tau2 heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-BOR07-036",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "DL tau²-becslő képlete: max(0, Q − df)/C",
+  "body": "tau^2 = (Q − df)/C if Q > df and 0 if Q ≤ df (3.5), with C = sum(w_i) − sum(w_i^2)/sum(w_i) (3.6); the spreadsheet implements it as MAX(Q − df, 0)/C. tau^2 rises when the observed dispersion rises and/or the within-study variances fall.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 97–98; p. 103",
+  "tags": "tau2 DerSimonian Laird formula képlet between-study variance vizsgálatok közötti variancia truncation csonkolás C scaling factor skálázó tényező method of moments momentum módszer"
+ },
+ {
+  "k_id": "K-BOR07-037",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "Heterogenitás az olvasási példában (Q, C, tau²)",
+  "body": "Reading-scores data: sum(w*T^2) = 53.208, so Q = 53.208 − 101.833^2/256.667 = 12.8056 with df = 6 − 1 = 5; sum(w^2) = 15522.222, so C = 256.667 − 15522.222/256.667 = 196.1905; tau^2 = (12.8056 − 5)/196.1905 = 0.0398. [note: derived by recomputation, not printed in the source: p_Q ≈ 0.0253 (chi-square, 5 df) and I^2 = (Q − df)/Q ≈ 60.95%; full-precision tau^2 = 0.039786.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 98",
+  "tags": "worked example heterogeneity kidolgozott példa heterogenitás Q 12.8056 tau2 0.0398 C 196.1905 I2 regression test regressziós teszt"
+ },
+ {
+  "k_id": "K-BOR07-038",
+  "stage_id": "S09",
+  "kind": "convention",
+  "title": "Hiányzó heterogenitási mutatók ebben a részletben",
+  "body": "This excerpt reports only Q, df and tau^2; it gives no p-value for Q, no I^2 or H^2, no confidence intervals for heterogeneity measures and no prediction interval. The TOC places I^2 benchmarks, limitations and CIs on pp. 116–140, which are not included, so take those from other sources. [note: when I^2 is taken from other sources, do not apply fixed cut-offs. Cochrane Handbook v6 §10.10.2 gives overlapping, rough bands (0–40%, 30–60%, 50–90%, 75–100%), and I^2 depends on study precision, so it must be read together with tau^2, its CI and a prediction interval.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "TOC pp. 116–140 (not included)",
+  "tags": "I2 H2 prediction interval predikciós intervallum heterogeneity heterogenitás missing hiányzó scope terjedelem Q p-value"
+ },
+ {
+  "k_id": "K-BOR07-039",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "tau²-érzékenységi elemzés kevés vizsgálatnál",
+  "body": "When k is so small that tau^2 cannot be estimated reliably, the source suggests a sensitivity analysis that re-runs the random-effects pooling with several plausible plugged-in values of tau^2 (or, as a last resort, FE). In the engine a fixed tau^2 can be supplied through models.meta_analysis(tau2_fixed=...). [note: current guidance does not endorse falling back to FE just because k is small. Prefer RE with an HKSJ/t-based CI or a Bayesian model with an informative tau^2 prior (see K-BOR07-058). To mirror the source's plug-in sensitivity analysis exactly, pass tau2_fixed=... together with ci_method='z'.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "sensitivity analysis érzékenységi elemzés tau2 plug-in rögzített few studies kevés vizsgálat robustness robusztusság random effects véletlen hatás"
+ },
+ {
+  "k_id": "K-BOR07-040",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "FE vs RE súlyok összevetése mint befolyás-diagnosztika",
+  "body": "Comparing relative weights and pooled estimates under both models is a quick influence diagnostic: in the source example one very large study takes about 68% of the FE weight but about 23% of the RE weight and the estimate moves from 0.34 to 0.55, while a small outlying study rises from about 2% to 8% of the weight. Report the relative weights under both models when one study dominates. Leave-one-out and cumulative methods are not in this excerpt (TOC lists cumulative MA p. 192 and sensitivity analyses p. 243).",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 106–109",
+  "tags": "influence analysis befolyás-elemzés relative weights relatív súlyok fixed vs random dominant study domináns vizsgálat sensitivity érzékenységi elemzés outlier kiugró"
+ },
+ {
+  "k_id": "K-BOR07-041",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "RE több súlyt ad a kis vizsgálatoknak (kis-vizsgálat hatás)",
+  "body": "Because RE weights are more balanced, small studies gain relative weight compared with FE (e.g. from about 2% to 8% in the source example). If small studies are systematically biased (small-study effects, publication bias), an RE estimate will be pulled toward them more than an FE estimate. [note: the source shows only the weighting mechanism and does not draw this conclusion; its publication-bias chapters (TOC pp. 243–263) are not included. Cochrane Handbook v6 (ch. 13) suggests comparing FE and RE estimates when small-study effects are suspected.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 106–109; TOC pp. 243–263 (not included)",
+  "tags": "small-study effects kis-vizsgálat hatás publication bias publikációs torzítás random effects weights véletlen hatás súlyok funnel plot tölcsérdiagram"
+ },
+ {
+  "k_id": "K-BOR07-042",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Forest plot konvenciók (Borenstein-ábrák)",
+  "body": "In the source's forest plots each study is drawn as a box sized by its weight under the chosen model, with a horizontal line for its 95% CI. The pooled effect is a diamond whose width is the 95% CI. Columns show study name, effect size, standard error and variance. The axis runs from −1.00 to 1.00 with the no-effect line at 0, labelled 'Favours Control'/'Favours Intervention' (or 'Favours A'/'Favours B'). Box sizes change when the analysis switches from FE to RE (Donat shrinks, Peck grows, p. 100). [note: conventionally the box area is proportional to the weight; the text says only that boxes grow or shrink with the weight.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 90, 100, 107–108, 111, 113",
+  "tags": "forest plot erdődiagram square size weight négyzet méret súly diamond rombusz confidence interval konfidencia-intervallum reporting jelentés figure ábra"
+ },
+ {
+  "k_id": "K-BOR07-043",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "FE és RE sor egymás alatt, relatív súlyokkal",
+  "body": "The CMA output in the source lists the 'Fixed' and 'Random' summary rows one under the other and gives a 'Relative weight' (%) column for each model. This is a useful reporting format for showing readers how the model choice changes the weights and the pooled estimate.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 107–108",
+  "tags": "reporting jelentés relative weight relatív súly fixed random summary rows összesítő sorok CMA table táblázat forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-BOR07-044",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Mit kell jelenteni a szintézisről",
+  "body": "Based on this source, report: the model and why it was chosen a priori; the per-study weights; Q, df and tau^2 with the estimator named; the pooled estimate with its SE, 95% CI, Z and p. For a random-effects analysis state explicitly that the estimate is the mean of a distribution of true effects. [note: PRISMA 2020 item 13d requires the model, the methods for detecting and quantifying heterogeneity and the software. Item 20b requires each summary estimate with its CI and heterogeneity measures. Current practice also names the CI method (z vs HKSJ) and reports I^2 and a prediction interval, neither of which is in this excerpt.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 98–105",
+  "tags": "reporting jelentés methods módszertan model choice modellválasztás tau2 estimator becslő Q confidence interval konfidencia-intervallum PRISMA weights súlyok"
+ },
+ {
+  "k_id": "K-BOR07-045",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Kijelzési pontosság és kerekítés a forrásban",
+  "body": "The spreadsheet shows inputs to 2 decimals, weights and products to 3, and pooled statistics, Q, C and tau^2 to 4; a p below 0.00005 displays as '0.0000' while the text writes '< .0001'. Forest plots show 3 decimals; CMA shows effect, SE and variance to 3 decimals and relative weights to 2 decimals (%). Displayed rounding hides precision: tau^2 = 0.0398 (full 0.039786) appears as '0.040' in the between-study variance column.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 90–92, 100, 102, 107–108, 111, 113",
+  "tags": "rounding kerekítés decimals tizedesjegyek display precision megjelenítési pontosság p-value p-érték reporting jelentés tolerance tolerancia"
+ },
+ {
+  "k_id": "K-BOR07-046",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "A 2007-es vázlat hivatkozása",
+  "body": "Cite this file as: Borenstein M, Hedges L, Rothstein H. Introduction to Meta-Analysis (draft manuscript), section 'Fixed effect vs. random effects models', pp. 86–115; www.Meta-Analysis.com; July 1, 2007. Equation numbers such as (2.4) and (3.5) are the draft's own and differ from the 2009 book.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "title page p. 1; pp. 86–115",
+  "tags": "citation hivatkozás Borenstein 2007 draft vázlat equation numbers egyenletszámok reference irodalomjegyzék"
+ },
+ {
+  "k_id": "K-BOR07-047",
+  "stage_id": "S08",
+  "kind": "tool",
+  "title": "Excel-táblázat FE és RE számításhoz",
+  "body": "The source provides an Excel spreadsheet that implements both models: rows 3–8 hold six studies and row 9 the column sums; columns A–C are inputs, D–F the FE weights and products, G–H the sums needed for Q and C, H13–H17 compute Q, df, MAX(Q − df, 0), C and tau^2, I–M the RE variances and weights, with pooled blocks in F13–F20 (FE) and M13–M20 (RE). p-values use NORMDIST(ABS(Z),0,1,TRUE). [note: in current Excel NORMDIST(x,0,1,TRUE) corresponds to NORM.S.DIST(x,TRUE).]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 92, 102–104",
+  "tags": "Excel spreadsheet táblázatkezelő NORMDIST implementation implementáció fixed effect random effects tau2 calculation számítás tool eszköz"
+ },
+ {
+  "k_id": "K-BOR07-048",
+  "stage_id": "S08",
+  "kind": "tool",
+  "title": "A Comprehensive Meta-Analysis (CMA) program kimenete",
+  "body": "The worked comparisons use screenshots of the Comprehensive Meta-Analysis Windows program (effect measure 'Std diff in means', 'Fixed' and 'Random' summary rows, relative-weight columns per model); the forest-plot footers also look like CMA output. Its random-effects results in these figures match DerSimonian–Laird tau^2 with z-based CIs (checked by recomputation). The source does not state the access model.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 90, 100, 107–108, 111, 113",
+  "tags": "CMA Comprehensive Meta-Analysis software szoftver DerSimonian Laird z CI output kimenet commercial kereskedelmi tool eszköz"
+ },
+ {
+  "k_id": "K-BOR07-049",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Modellválasztás a Q-próba alapján",
+  "body": "A common practice is to start with FE and switch to RE only if Q is statistically significant; the source says this should be discouraged. Detect it from methods text such as 'random effects was used because heterogeneity was significant' or 'FE because p_Q > 0.10'. Fix: choose the model a priori from the nature of the studies and the inference goal; whether Q reaches significance is simply not relevant, and RE costs nothing when tau^2 = 0. [note: this agrees with current consensus: Cochrane Handbook v6 (ch. 10) also advises against choosing the model from a heterogeneity test. For the limits of the 'no cost' argument, see K-BOR07-028.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 115",
+  "tags": "pitfall hiba model choice Q test modellválasztás Q-próba significance szignifikancia heterogeneity heterogenitás fixed effect random effects conditional choice"
+ },
+ {
+  "k_id": "K-BOR07-050",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "FE független kutatócsoportok eltérő vizsgálataira",
+  "body": "Using FE for studies run independently by different teams in different populations is a mistake when conclusions are generalised beyond one population. Detect: included studies differ in population, dose or setting yet FE was used and conclusions are broad. Fix: use RE, and reserve FE for functionally identical studies (e.g. one sponsor's identical protocol) with inference limited to that population.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "pitfall hiba fixed effect misuse fix hatás helytelen használat generalisation általánosítás different populations eltérő populációk random effects véletlen hatás"
+ },
+ {
+  "k_id": "K-BOR07-051",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Az RE becslés félreértelmezése „a” valódi hatásként",
+  "body": "After a random-effects analysis, wording such as 'the effect of X is ...' misreads the pooled value as a single true effect. Fix: describe it as the mean of the distribution of true effects and report tau^2 (between-study variability) alongside it.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 94, 105–106",
+  "tags": "pitfall hiba interpretation értelmezés random effects mean véletlen hatás átlag tau2 wording megfogalmazás true effect valódi hatás"
+ },
+ {
+  "k_id": "K-BOR07-052",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Mintaméret szerinti súlyozás inverz variancia helyett",
+  "body": "Detect: study weights proportional to N (or to N per arm) instead of 1/v_i. Fix: use w_i = 1/v_i (FE) or 1/(v_i + tau^2) (RE), because the variance also reflects group allocation (mean differences) and cell counts (odds ratios) and inverse-variance weights minimise the variance of the pooled estimate. [note: sample-size weighting is used deliberately in Hunter–Schmidt psychometric meta-analysis (listed in the TOC p. 293, not included). Within the inverse-variance framework used here it is an error.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 89, 93",
+  "tags": "pitfall hiba sample size weighting mintaméret súlyozás inverse variance inverz variancia weights súlyok"
+ },
+ {
+  "k_id": "K-BOR07-053",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "A tau² nullánál történő csonkolásának elmulasztása",
+  "body": "The moment estimator (Q − df)/C is negative whenever Q < df; it must be truncated at zero. Detect: a negative tau^2 or a negative total variance v_i* in the output. Fix: set tau^2 = 0 when Q ≤ df, as in eq. (3.5) and the spreadsheet's MAX(Q − df, 0).",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 98 (eq. 3.5); p. 103 (MAX())",
+  "tags": "pitfall hiba tau2 negative negatív truncation csonkolás DerSimonian Laird Q df MAX"
+ },
+ {
+  "k_id": "K-BOR07-054",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "tau² kerekítése a RE súlyok számítása előtt",
+  "body": "The text computes the Carroll RE weight as 1/(0.030 + 0.040) = 1/0.070 = '14.330', but 1/0.070 = 14.286; 14.330 comes from the unrounded tau^2 = 0.039786, which the spreadsheet merely displays as 0.040. Detect: recompute the weights from full-precision tau^2. Fix: carry full precision through every intermediate step and round only for display.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 101 vs p. 102",
+  "tags": "pitfall hiba rounding kerekítés tau2 precision pontosság random effects weights véletlen hatás súlyok intermediate köztes számítás"
+ },
+ {
+  "k_id": "K-BOR07-055",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Elírások a forrás CI-képleteiben",
+  "body": "The worked CI upper limits contain sign/term typos: FE 'Upper Limit = 0.3968 − 1.96*0.0624 = 0.5191' should use '+', and RE 'Upper Limit* = 0.3968 − 1.96*0.1068 = 0.5535' should read 0.3442 + 1.96*0.1068. The printed results 0.5191 and 0.5535 are correct. Fix: always compute UL = estimate + 1.96*SE and do not copy the printed expressions.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 91; p. 101",
+  "tags": "pitfall hiba typo elírás confidence interval upper limit konfidencia-intervallum felső határ source error forráshiba"
+ },
+ {
+  "k_id": "K-BOR07-056",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Jelölésütközés: epsilon és e",
+  "body": "The source's description of the random-effects schematic writes theta_1 = mu + xi_1 and T_1 = theta_1 + epsilon_1, using epsilon for within-study error. Eq. (3.1) and the following text instead use epsilon for the between-study deviation and e for within-study error. The FE schematic likewise writes epsilon where eq. (2.2) has e, and the figures call the within-study variance sigma^2 where the formulas use v_i. Fix: in code and documentation, use distinct, explicit names (e.g. e_within, zeta_between).",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 88 (figure vs eq. 2.2); p. 95 (figure vs eq. 3.1)",
+  "tags": "pitfall hiba notation jelölés epsilon error term hibatag within-study between-study vizsgálaton belüli vizsgálatok közötti random effects model"
+ },
+ {
+  "k_id": "K-BOR07-057",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "A Q-próba alacsony ereje kevés vizsgálatnál",
+  "body": "With few studies and large within-study variances, the Q test may have low power even when the between-study variance is substantial, so a non-significant Q does not demonstrate homogeneity and could wrongly license an FE analysis. Fix: never use p_Q as a gate; report tau^2 and, from other sources, I^2 with its CI or a prediction interval. [note: the reverse also holds. With many large studies Q can flag clinically trivial heterogeneity, so p_Q measures neither the amount nor the importance of heterogeneity (Cochrane Handbook v6 §10.10.2).]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 115",
+  "tags": "pitfall hiba Q test power próba erő few studies kevés vizsgálat homogeneity homogenitás heterogeneity heterogenitás non-significant nem szignifikáns"
+ },
+ {
+  "k_id": "K-BOR07-058",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Nagyon kevés vizsgálat: pontatlan tau²",
+  "body": "With a very small number of studies tau^2 may be impossible to estimate with any precision; the source gives no numeric threshold for 'very small'. Its options are FE as possibly the only viable choice, or a sensitivity analysis plugging in several values of tau^2. [note: newer guidance (e.g. Cochrane Handbook v6, IntHout et al. 2014) prefers keeping a random-effects model with a Hartung–Knapp–Sidik–Jonkman or t-based CI, or a Bayesian model with an informative heterogeneity prior, rather than switching to FE; flag this decision to the planner and document it.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "pitfall hiba few studies kevés vizsgálat small k tau2 imprecise pontatlan HKSJ Bayesian bayesi sensitivity analysis érzékenységi elemzés fixed effect fallback"
+ },
+ {
+  "k_id": "K-BOR07-059",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "„Az SE fordítottan arányos a vizsgálatok számával” – pontatlan",
+  "body": "The source's summary says the SE of the combined effect is inversely proportional to the number of studies; this is loose wording, since with roughly equal weights the SE scales about as 1/sqrt(k), not 1/k. Do not encode it as a rule; compute SEs from the formulas.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 113",
+  "tags": "pitfall hiba standard error number of studies standard hiba vizsgálatok száma sqrt k scaling skálázás source wording forrás megfogalmazás"
+ },
+ {
+  "k_id": "K-BOR07-060",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Egyoldalú p-értékek",
+  "body": "The source gives one-tailed p-values (2.10, 3.14) that are valid only if the direction was specified in advance and the observed effect lies in that direction. Default to two-tailed p-values unless a one-sided hypothesis was pre-registered.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 90, 100",
+  "tags": "pitfall hiba one-tailed p-value egyoldalú p-érték two-tailed kétoldalú hypothesis hipotézis pre-registration előzetes regisztráció"
+ },
+ {
+  "k_id": "K-BOR07-061",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Ellenőrzés kerekített kijelzett értékekkel szemben",
+  "body": "The printed SEs and variances (e.g. '0.004', '0.001') are rounded, so recomputing pooled values and weights from them gives slightly different numbers. Fix: rebuild full-precision inputs (e.g. from N for the d variance) or compare with tolerances matched to the printed number of decimals.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 90, 107–108, 111, 113",
+  "tags": "pitfall hiba rounding kerekítés validation validálás tolerance tolerancia regression test regressziós teszt printed values nyomtatott értékek"
+ },
+ {
+  "k_id": "K-BOR07-062",
+  "stage_id": "S02",
+  "kind": "check",
+  "title": "Ellenőrzés: a modell előre rögzített, nem p_Q-tól függ",
+  "body": "Verify that the protocol or analysis plan states the model (FE or RE) and its rationale before the data were seen, and that the choice is not conditional on the p-value of Q.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 114–115",
+  "tags": "reviewer check ellenőrzés protocol protokoll model choice modellválasztás a priori előzetes Q test"
+ },
+ {
+  "k_id": "K-BOR07-063",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: FE-nél explicit azonossági indoklás",
+  "body": "If a fixed-effect model is used, check that the text argues explicitly that the studies are functionally identical and that the inference is confined to that single population.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "reviewer check ellenőrzés fixed effect justification fix hatás indoklás functionally identical funkcionálisan azonos inference következtetés"
+ },
+ {
+  "k_id": "K-BOR07-064",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: v_i > 0 és helyes súlyok",
+  "body": "Check that every study has an effect T_i and a variance v_i > 0, and that weights equal 1/v_i under FE or 1/(v_i + tau^2) under RE, not sample size.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 89, 99",
+  "tags": "reviewer check ellenőrzés variance positive pozitív variancia weights súlyok inverse variance inverz variancia data validation adatvalidálás"
+ },
+ {
+  "k_id": "K-BOR07-065",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzés: Q kétféle képlettel, df = k − 1",
+  "body": "Recompute Q with both the definitional (3.2) and computational (3.3) formulas; they must agree. Check that df equals the number of effect sizes minus 1.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 97",
+  "tags": "reviewer check ellenőrzés Cochran Q recomputation újraszámolás degrees of freedom szabadságfok"
+ },
+ {
+  "k_id": "K-BOR07-066",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzés: tau² képlete és a becslő megnevezése",
+  "body": "Check that tau^2 = max(0, Q − df)/C with C = sum(w) − sum(w^2)/sum(w) when DL is claimed, and that the tau^2 estimator is named in the methods (DL in this source).",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 98",
+  "tags": "reviewer check ellenőrzés tau2 DerSimonian Laird estimator becslő C methods módszertan reporting jelentés"
+ },
+ {
+  "k_id": "K-BOR07-067",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: RE SE ≥ FE SE, tau² = 0 → azonos eredmény",
+  "body": "Check that the random-effects Wald SE is at least as large as the fixed-effect SE, with equality only when tau^2 = 0. When tau^2 = 0 and a z-based CI is used, the RE estimate, SE and CI must equal the FE results exactly. [note: this holds only for Wald/z intervals. An HKSJ SE is rescaled by q and can be smaller than the FE SE when q < 1. With the engine's RE default (ci_method='hksj'), RE and FE intervals differ even at tau^2 = 0, so run this check with ci_method='z'.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 113, 115",
+  "tags": "reviewer check ellenőrzés standard error random effects fixed effect consistency konzisztencia tau2 zero nulla"
+ },
+ {
+  "k_id": "K-BOR07-068",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: CI = becslés ± 1,96·SE",
+  "body": "Check that the reported CI equals estimate ± 1.96·SE when a Wald/z interval is stated (or that another CI method is named), that the upper limit exceeds the lower limit, and that the interval is symmetric about the estimate on the analysis scale.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 89, 99",
+  "tags": "reviewer check ellenőrzés confidence interval konfidencia-intervallum symmetric szimmetrikus Wald z 1.96 analysis scale elemzési skála"
+ },
+ {
+  "k_id": "K-BOR07-069",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: Z = becslés/SE és kétoldalú p",
+  "body": "Check that Z = estimate/SE and that the two-tailed p equals 2(1 − Phi(|Z|)) when a z-test is reported.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 90, 100",
+  "tags": "reviewer check ellenőrzés z statistic p-value p-érték two-tailed kétoldalú normal normális"
+ },
+ {
+  "k_id": "K-BOR07-070",
+  "stage_id": "S12",
+  "kind": "check",
+  "title": "Ellenőrzés: relatív súlyok és domináns vizsgálat",
+  "body": "Check that relative weights (%) under each model sum to 100, and whether one study takes most of the FE weight; if so, compare with its RE weight and the RE estimate. [note: the 'above 50%' flag used in the extraction notes is a heuristic, not a threshold from the source.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 106–109",
+  "tags": "reviewer check ellenőrzés relative weights relatív súlyok dominant study domináns vizsgálat influence befolyás 100%"
+ },
+ {
+  "k_id": "K-BOR07-071",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: forest plot a ténylegesen használt modell súlyaival",
+  "body": "Check that forest-plot squares are sized by the weights of the model actually used for the reported estimate and that the diamond spans the pooled 95% CI.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 90, 100",
+  "tags": "reviewer check ellenőrzés forest plot erdődiagram weights súlyok diamond rombusz model modell"
+ },
+ {
+  "k_id": "K-BOR07-072",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Motor regressziós teszt a forrás példáival",
+  "body": "Engine regression tests should reproduce the reading-scores example (FE 0.3968, SE 0.0624; Q 12.8056; C 196.1905; tau^2 0.0398; RE 0.3442, SE 0.1068, CI 0.1350–0.5535) and both CMA extreme-study tables to the printed decimals, using tau2_method='DL' and ci_method='z'. The two huge-N figures also serve as tests: an FE SE of 0.000 and an RE SE of 0.022 with sei = 0.001. [note: for the CMA tables, rebuild each variance from N with equal arms (K-BOR07-008), not from the 3-decimal printed SEs. Allow for the engine's 1.959964 quantile against the source's 1.96 by comparing at the printed decimals.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 91–102, 107–108, 111, 113",
+  "tags": "regression test regressziós teszt engine motor validation validálás DerSimonian Laird reading scores olvasási pontszám CMA reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-BOR07-073",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: nincs köztes kerekítés",
+  "body": "Check that tau^2 and the weights are not rounded before being used in later steps; recompute with full precision and compare.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 101 vs p. 102",
+  "tags": "reviewer check ellenőrzés rounding kerekítés intermediate köztes tau2 weights súlyok precision pontosság"
+ },
+ {
+  "k_id": "K-BOR07-074",
+  "stage_id": "S12",
+  "kind": "check",
+  "title": "Ellenőrzés: kevés vizsgálatnál tau²-érzékenységi elemzés",
+  "body": "With very small k, check that a tau^2 sensitivity analysis (several plugged-in values) or another stated alternative is reported. [note: under current guidance an RE analysis with an HKSJ/t-based CI or a Bayesian tau^2 prior is an acceptable stated alternative, but an unexplained fallback to FE is not.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "reviewer check ellenőrzés few studies kevés vizsgálat sensitivity analysis érzékenységi elemzés tau2"
+ },
+ {
+  "k_id": "K-BOR07-075",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: a modell illeszkedik a kérdéshez",
+  "body": "If the review pools studies from different teams or populations and aims to generalise, a random-effects (or equivalent heterogeneity-aware) analysis is required; fixed-effect conclusions must be confined to the single shared population.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "p. 114",
+  "tags": "evaluator criterion értékelési szempont model choice modellválasztás generalisation általánosítás random effects fixed effect"
+ },
+ {
+  "k_id": "K-BOR07-076",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: helyes értelmezés (átlagos vs közös hatás)",
+  "body": "The RE result should be reported as an average effect with between-study variability (tau^2) made explicit; an FE result may be presented as a common effect only if homogeneity is plausible on design grounds. [note: current guidance (Cochrane Handbook v6, ch. 10) also expects a prediction interval when an RE mean is interpreted.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 105–106",
+  "tags": "evaluator criterion értékelési szempont interpretation értelmezés average effect átlagos hatás common effect közös hatás tau2"
+ },
+ {
+  "k_id": "K-BOR07-077",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: robusztusság befolyásos vizsgálatokkal szemben",
+  "body": "Check whether the conclusion changes between FE and RE; a large shift (such as 0.34 to 0.55 in the source example) signals that one or a few studies drive the result and that heterogeneity matters for interpretation.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 106–109",
+  "tags": "evaluator criterion értékelési szempont robustness robusztusság influential study befolyásos vizsgálat fixed vs random sensitivity érzékenység"
+ },
+ {
+  "k_id": "K-BOR07-078",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: pontossági állítások",
+  "body": "A narrow FE CI produced by one huge study does not by itself show that the effect is precisely known across populations; under RE a precise mean requires many studies, not just large ones.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 110–113",
+  "tags": "evaluator criterion értékelési szempont precision pontosság confidence interval konfidencia-intervallum number of studies vizsgálatok száma imprecision pontatlanság GRADE"
+ },
+ {
+  "k_id": "K-BOR07-079",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: a heterogenitás kezelése",
+  "body": "A non-significant Q with few studies is not evidence of homogeneity. Downgrade confidence when tau^2 is large relative to the effect, or when tau^2 cannot be estimated (very small k) and no sensitivity analysis was done. [note: the downgrading rule comes from GRADE (Guyatt et al. 2011, inconsistency), not from this source. GRADE judges inconsistency from how far the point estimates spread, how well the CIs overlap, I^2/tau^2 and the prediction interval, set against the decision thresholds and after trying to explain heterogeneity.]",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 114–115",
+  "tags": "evaluator criterion értékelési szempont heterogeneity heterogenitás inconsistency inkonzisztencia GRADE downgrade leminősítés tau2 Q test"
+ },
+ {
+  "k_id": "K-BOR07-080",
+  "stage_id": "S14",
+  "kind": "criterion",
+  "title": "Értékelés: reprodukálhatóság",
+  "body": "The pooled estimates, SEs and CIs should be recomputable from the reported T_i and v_i using the stated model and tau^2 estimator.",
+  "source_id": "borenstein2007_fe_re",
+  "locator": "pp. 92, 102–104",
+  "tags": "evaluator criterion értékelési szempont reproducibility reprodukálhatóság recomputation újraszámolás data sharing adatmegosztás transparency átláthatóság"
+ }
+]

@@ -1,0 +1,211 @@
+[
+ {
+  "formula_id": "F-KHN10-001",
+  "name": "Fisher z transformation of a correlation",
+  "expression": "z = zeta_hat = 0.5 * ln((1 + r)/(1 - r)) = arctanh(r);  population: zeta = 0.5 * ln((1 + rho)/(1 - rho)) = arctanh(rho)",
+  "variables": "r = sample Pearson correlation; rho = population correlation; zeta = Fisher-transformed population correlation (theta in the model sections); z = zeta_hat = its estimate; ln = natural logarithm.",
+  "engine_ref": "effect_sizes.correlation",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 pp. 218–219",
+  "notes": "Worked: Moore r = 0.56 -> (1+r)/(1-r) = 3.54545, ln = 1.26567, z = 0.6328. Reconstructed from garbled DOCX fragments. effect_sizes.correlation('ZCOR', r, n) returns (atanh(r), 1/(n-3)) and raises for |r| >= 1 or n <= 3; the source has no such guard."
+ },
+ {
+  "formula_id": "F-KHN10-002",
+  "name": "Variance and standard error of Fisher z",
+  "expression": "Var(z) ≈ 1/(n - 3);  SE(z) = 1/sqrt(n - 3)",
+  "variables": "n = sample size (number of paired observations); z = Fisher-transformed sample correlation.",
+  "engine_ref": "effect_sizes.correlation",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 pp. 218–219",
+  "notes": "Approximation assumes X and Y are bivariate normal; the variance does not depend on r. Worked: Moore 1/130 = 0.00769, SE = 0.08771. Undefined for n <= 3."
+ },
+ {
+  "formula_id": "F-KHN10-003",
+  "name": "Back-transformation from Fisher z to r",
+  "expression": "r = (exp(2z) - 1)/(exp(2z) + 1) = tanh(z)",
+  "variables": "z = value on the Fisher z scale (study estimate, pooled estimate or a CI limit); r = corresponding correlation.",
+  "engine_ref": "effect_sizes.back_transform",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 p. 218",
+  "notes": "The source misprints this as tanh(r); it should be tanh(zeta_hat). Apply to point estimates and CI limits only, never to the SE. effect_sizes.back_transform('ZCOR', value) returns tanh(value)."
+ },
+ {
+  "formula_id": "F-KHN10-004",
+  "name": "Approximate variance and standard error of raw r",
+  "expression": "Var(r) ≈ (1 - rho^2)^2/(n - 1);  SE(r) = (1 - r^2)/sqrt(n - 1)",
+  "variables": "rho = population correlation; r = sample correlation (plugged in for rho in the SE); n = number of paired observations.",
+  "engine_ref": "effect_sizes.correlation",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 pp. 218–219",
+  "notes": "[R] reconstruction from garbled fragments. The variance depends on rho, so the chapter does not pool raw r. effect_sizes.correlation('COR', r, n) returns (r, (1 - r^2)^2/(n - 1))."
+ },
+ {
+  "formula_id": "F-KHN10-005",
+  "name": "Large-sample z statistic for raw r",
+  "expression": "Z1 = r * sqrt(n - 1)/(1 - r^2)  ~  N(0, 1) approximately",
+  "variables": "r = sample correlation; n = number of paired observations; Z1 = test statistic for H0: rho = 0 on the raw r scale.",
+  "engine_ref": null,
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 p. 219",
+  "notes": "[R] reconstruction. Equivalent to r/SE(r). Not used further in the chapter, which works on the Fisher z scale."
+ },
+ {
+  "formula_id": "F-KHN10-006",
+  "name": "z test of H0: rho = 0 on the Fisher z scale",
+  "expression": "Z2 = z/SE(z) = z * sqrt(n - 3)  ~  N(0, 1) under H0;  reject two-sided at level alpha if |z0| >= z_{alpha/2};  p = 2 * (1 - Phi(|z0|))",
+  "variables": "z = Fisher-transformed r; n = sample size; z0 = observed value of the statistic; z_{alpha/2} = upper alpha/2 standard normal quantile (1.96 for alpha = 0.05); Phi = standard normal CDF.",
+  "engine_ref": "distributions.z_two_sided_p",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.3 p. 222; Ex 10.2 p. 222",
+  "notes": "Worked: Moore z0 = 0.6328/0.08771 = 7.215408, p ≈ 0. distributions.z_two_sided_p only gives the p-value; the statistic itself is z/SE."
+ },
+ {
+  "formula_id": "F-KHN10-007",
+  "name": "Single-study confidence interval for rho via Fisher z",
+  "expression": "LL* = z - z_{alpha/2} * SE(z);  UL* = z + z_{alpha/2} * SE(z);  LL = tanh(LL*) = (exp(2*LL*) - 1)/(exp(2*LL*) + 1);  UL = tanh(UL*) = (exp(2*UL*) - 1)/(exp(2*UL*) + 1)",
+  "variables": "z = Fisher-transformed r; SE(z) = 1/sqrt(n - 3); z_{alpha/2} = upper alpha/2 standard normal quantile; LL*, UL* = limits on the z scale; LL, UL = limits on the r scale.",
+  "engine_ref": "effect_sizes.study_ci",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 p. 219; Ex 10.1 pp. 220–221",
+  "notes": "Worked: Moore LL* = 0.46093, UL* = 0.80474 -> LL = 0.43084, UL = 0.66668. The source labels the second limit 'LL', writes the generic UL with exp(2*LL*) and also uses 'LU' for UL. effect_sizes.study_ci returns the z-scale limits; apply effect_sizes.back_transform('ZCOR', ...) to each. The r-scale CI is asymmetric around r."
+ },
+ {
+  "formula_id": "F-KHN10-008",
+  "name": "Fixed-effect inverse-variance weight for Fisher z",
+  "expression": "v_i = 1/(n_i - 3);  w_i = 1/v_i = n_i - 3",
+  "variables": "n_i = sample size of study i; v_i = variance of theta_hat_i = arctanh(r_i); w_i = fixed-effect weight.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.4 p. 223; Table 10.3 p. 224",
+  "notes": "Worked: Σw = 954 for the 8 studies. models.meta_analysis(yi, vi, model='fixed') uses w_i = 1/v_i."
+ },
+ {
+  "formula_id": "F-KHN10-009",
+  "name": "Fixed-effect pooled estimate and standard error",
+  "expression": "theta_hat_FE = Σ w_i * theta_hat_i / Σ w_i;  Var(theta_hat_FE) = 1/Σ w_i;  SE(theta_hat_FE) = sqrt(1/Σ w_i)",
+  "variables": "theta_hat_i = arctanh(r_i); w_i = n_i - 3; k = number of studies (sums over i = 1..k).",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.4 pp. 222–225; Ex 10.3",
+  "notes": "Worked: 517.663/954 = 0.542623; SE = sqrt(1/954) = 0.03238; rho_FE = tanh(0.542623) = 0.494971. MetaXL model code 'IV'."
+ },
+ {
+  "formula_id": "F-KHN10-010",
+  "name": "Pooled Wald confidence interval on the z scale with tanh back-transformation",
+  "expression": "LL* = theta_hat - z_{alpha/2} * SE(theta_hat);  UL* = theta_hat + z_{alpha/2} * SE(theta_hat);  rho_hat = tanh(theta_hat);  LL = tanh(LL*);  UL = tanh(UL*)",
+  "variables": "theta_hat = pooled estimate on the Fisher z scale (FE, RE or IVhet); SE(theta_hat) = its standard error; z_{alpha/2} = 1.96 for a 95% CI; rho_hat, LL, UL = pooled correlation and CI limits on the r scale.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 223, 228, 232–233",
+  "notes": "Worked: FE z-scale 0.47917–0.60608 -> r 0.44558–0.54136 (printed 0.54236, a typo); RE 0.449943–0.632157 -> 0.42185–0.55954; IVhet 0.451061–0.63419 -> 0.422771–0.56093. Use ci_method='z' in models.meta_analysis to match the source, then effect_sizes.back_transform('ZCOR', ...). The SE is never back-transformed."
+ },
+ {
+  "formula_id": "F-KHN10-011",
+  "name": "Percentage study weight",
+  "expression": "%W_i = 100 * w_i / Σ_j w_j;  fixed effect: %W_i = 100 * (n_i - 3)/Σ_j (n_j - 3)",
+  "variables": "w_i = study weight under the chosen model (FE: n_i - 3; RE: 1/(v_i + tau2_hat)); n_i = sample size of study i.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 Table 10.3 p. 224; Figs 10.1–10.3",
+  "notes": "Worked: Moore FE 130/954 = 13.6%; Baker FE 6.0% vs RE 8.3%. MetaXL's IVhet plot shows the FE % weights. Returned as weights_pct by models.meta_analysis."
+ },
+ {
+  "formula_id": "F-KHN10-012",
+  "name": "Cochran's Q (computational form) and its chi-squared test",
+  "expression": "Q = Σ w_i * theta_hat_i^2 - (Σ w_i * theta_hat_i)^2 / Σ w_i;  Q ~ chi2(k - 1) under H0;  E(Q) = k - 1;  p = P(chi2_{k-1} >= Q)",
+  "variables": "w_i = fixed-effect weight n_i - 3; theta_hat_i = arctanh(r_i); k = number of studies; df = k - 1; H0: theta_1 = ... = theta_k.",
+  "engine_ref": "models.cochran_q",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 226; Ex 10.4 p. 227",
+  "notes": "Worked: 295.05 - 517.663^2/954 = 14.15, df = 7; book p 'between 0.025 and 0.05' (critical value 14.067); exact p = 0.0485. The source writes 'Cochrane's Q'. p-value: distributions.chi2_sf(Q, k - 1). [note: the Q test has low power with few studies; do not choose FE vs RE from it (Cochrane Handbook v6 §10.10.2).]"
+ },
+ {
+  "formula_id": "F-KHN10-013",
+  "name": "I-squared",
+  "expression": "I2 = (Q - df)/Q * 100%,  df = k - 1",
+  "variables": "Q = Cochran's Q; k = number of studies; df = degrees of freedom.",
+  "engine_ref": "models.heterogeneity",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 226; Ex 10.4 p. 227",
+  "notes": "Worked: 7.15/14.15 = 0.5054 -> 51%. The source states no truncation at 0; models.heterogeneity truncates negative values at 0. [note: I² depends on study precision; the Cochrane Handbook v6 bands (0–40, 30–60, 50–90, 75–100%) overlap and are only a rough guide, not absolute thresholds.]"
+ },
+ {
+  "formula_id": "F-KHN10-014",
+  "name": "DerSimonian–Laird scaling constant C",
+  "expression": "C = Σ w_i - Σ w_i^2 / Σ w_i",
+  "variables": "w_i = fixed-effect weight (n_i - 3 for Fisher z).",
+  "engine_ref": "models.heterogeneity",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.5 pp. 228–229; Ex 10.5 p. 229",
+  "notes": "Worked: 954 - 119564/954 = 828.6709. Returned as key 'C' by models.heterogeneity."
+ },
+ {
+  "formula_id": "F-KHN10-015",
+  "name": "DerSimonian–Laird between-study variance",
+  "expression": "tau2_hat = (Q - df)/C,  set to 0 if Q < df",
+  "variables": "Q = Cochran's Q; df = k - 1; C = Σ w_i - Σ w_i^2/Σ w_i.",
+  "engine_ref": "models.tau2_dl",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.5 pp. 228–229; Ex 10.5 p. 229",
+  "notes": "Worked: (14.15 - 7)/828.6709 = 0.008633 (tau ≈ 0.0929, not printed). The source does not name the estimator as DL and does not mention truncation at 0; models.tau2_dl truncates. [note: DL is the source's and MetaXL's estimator but not the preferred default today; Cochrane Handbook v6 favours REML or Paule–Mandel (engine: models.estimate_tau2).]"
+ },
+ {
+  "formula_id": "F-KHN10-016",
+  "name": "Random-effects combined variance and weight",
+  "expression": "v*_i = v_i + tau2_hat;  w*_i = 1/(v_i + tau2_hat)",
+  "variables": "v_i = 1/(n_i - 3) = within-study variance of the Fisher z; tau2_hat = DL between-study variance; w*_i = random-effects weight.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.5 p. 228; Ex 10.6 pp. 229–230; Table 10.5",
+  "notes": "Worked: Moore 0.0077 + 0.0086 = 0.01633, W* = 61.255. The book rounds tau2 before computing W*, so its W* values are about 0.001 below full precision. Use models.meta_analysis(model='random', tau2_method='DL')."
+ },
+ {
+  "formula_id": "F-KHN10-017",
+  "name": "Random-effects pooled estimate and standard error",
+  "expression": "theta_hat_RE = Σ w*_i * theta_hat_i / Σ w*_i;  SE(theta_hat_RE) = sqrt(1/Σ w*_i);  rho_hat_RE = tanh(theta_hat_RE)",
+  "variables": "w*_i = 1/(v_i + tau2_hat); theta_hat_i = arctanh(r_i).",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.5 pp. 228–231; Ex 10.6",
+  "notes": "Worked: 250.41/462.82 = 0.5411, SE = 0.0465, rho_RE = 0.49382. To reproduce the source call models.meta_analysis(yi, vi, model='random', tau2_method='DL', ci_method='z'); the engine default (REML + HKSJ) differs. MetaXL model code 'RE'."
+ },
+ {
+  "formula_id": "F-KHN10-018",
+  "name": "IVhet pooled estimate",
+  "expression": "theta_hat_IVhet = Σ w_i * theta_hat_i / Σ w_i,  w_i = 1/v_i  (= theta_hat_FE)",
+  "variables": "w_i = fixed-effect weight n_i - 3; theta_hat_i = arctanh(r_i).",
+  "engine_ref": "models._ivhet",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.6 pp. 232–234; Ex 10.7",
+  "notes": "Worked: 517.66/954 = 0.5426; rho = tanh(0.5426) = 0.495. Call through models.meta_analysis(yi, vi, model='ivhet'). MetaXL model code 'IVhet'. [note: IVhet is a model from the author's own group (Doi, Barendregt, Khan) and is not described in the Cochrane Handbook v6; use it as a justified sensitivity analysis rather than as the primary model.]"
+ },
+ {
+  "formula_id": "F-KHN10-019",
+  "name": "IVhet variance of the pooled estimate",
+  "expression": "Var(theta_hat_IVhet) = Σ_i (w_i / Σ_j w_j)^2 * (v_i + tau2_hat);  SE = sqrt(Var)",
+  "variables": "w_i = 1/v_i = fixed-effect weight; v_i = 1/(n_i - 3); tau2_hat = DerSimonian–Laird between-study variance.",
+  "engine_ref": "models._ivhet",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.6 p. 232; Ex 10.7 pp. 233–234; Table 10.6",
+  "notes": "[R] reconstruction. Worked: Var = 0.0022 (unrounded 0.0021823), SE = 0.046716 (the book's 'sqrt(0.0022) = 0.046716' uses the unrounded variance). Table 10.6's 'W*' column is the per-study term (w_i/Σw)^2 (v_i + tau2), e.g. Moore (130/954)^2 x 0.01633 = 0.0003, not a weight (Doi et al. 2015). [note: author-group model, not consensus; see F-KHN10-018.]"
+ }
+]

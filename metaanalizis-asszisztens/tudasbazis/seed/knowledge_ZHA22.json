@@ -1,0 +1,902 @@
+[
+ {
+  "k_id": "K-ZHA22-001",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "R-alapú eszközlánc a tutorialban",
+  "body": "All analyses in the tutorial run in free R (R Core Team, 2021) with four main packages: metafor (named as the primary package; its rma() runs the meta-regressions), meta (metagen() for the main random-effects pooling, forest(), contour-enhanced funnel(), trimfill()), dmetar (power.analysis(), find.outliers(), InfluenceAnalysis(), eggers.test()) and MAd (agg() for aggregating dependent effect sizes); esc::esc_f() converts F statistics to effect sizes. The data set and R scripts are shared on OSF (https://osf.io/e9bkf/). [note: dmetar is installed from GitHub rather than CRAN and MAd has been archived on CRAN, so pin package versions when reproducing; the engine re-implements the core steps in pure Python (models.meta_analysis, moderators.meta_regression, bias.egger_test, bias.trim_and_fill, sensitivity.influence).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 1, p. 2, p. 5, pp. 8–12, pp. 14–15",
+  "tags": "R metafor meta dmetar MAd esc software szoftver eszköz toolchain eszközlánc reproducibility reprodukálhatóság OSF R package R csomag"
+ },
+ {
+  "k_id": "K-ZHA22-002",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Alternatív metaanalízis-szoftverek",
+  "body": "Besides R, the source lists the commercial programs Comprehensive Meta-Analysis and MetaWin, RevMan from Cochrane (described as freely available), the Excel add-ins MIX and MetaEasy, and meta-analysis macros for Stata, SPSS and SAS; the CRAN Task View 'MetaAnalysis' gives an overview of R packages. The tutorial picks metafor as the most popular and comprehensive package and meta for its convenient forest plots. [note: RevMan Web now requires a Cochrane account and non-Cochrane use may need a licence; this is background, not from the source.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10",
+  "tags": "software szoftver CMA Comprehensive Meta-Analysis MetaWin RevMan MIX MetaEasy Excel Stata SPSS SAS CRAN Task View metaanalízis program"
+ },
+ {
+  "k_id": "K-ZHA22-003",
+  "stage_id": "S00",
+  "kind": "convention",
+  "title": "A forrás hatóköre és korlátai orvosi felhasználásra",
+  "body": "Zhang, Cheng & Zhang (2022, JSLHR, doi:10.1044/2022_JSLHR-21-00607) is a step-by-step SR/MA tutorial for speech, language and hearing sciences and the behavioural and social sciences; its running example is talker variability (multiple-talker vs single-talker training) in L2 phonetic learning, built from 17 articles yielding 22 independent samples. For medical reviews use it with care: its effect-size benchmarks come from L2 research, it follows PRISMA 2009 rather than PRISMA 2020, and its risk-of-bias coverage is minimal. It gives no formulas for binary outcomes, correlations, zero cells or transformations.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 1, p. 2, p. 3, p. 7, pp. 20–22",
+  "tags": "scope hatókör source forrás tutorial oktatóanyag JSLHR L2 second language második nyelv talker variability limitations korlátok PRISMA 2009 medical orvosi"
+ },
+ {
+  "k_id": "K-ZHA22-004",
+  "stage_id": "S01",
+  "kind": "definition",
+  "title": "Szisztematikus áttekintés vs. metaanalízis",
+  "body": "A systematic review (SR) is an objective, comprehensive literature search driven by predefined search strategies and eligibility criteria, whereas a meta-analysis (MA) is the statistical synthesis of the results. An MA without prespecified eligibility criteria is not an SR, and an SR need not include an MA, for example when too few studies are available.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 2",
+  "tags": "systematic review szisztematikus áttekintés meta-analysis metaanalízis definition definíció eligibility criteria beválasztási kritériumok synthesis szintézis"
+ },
+ {
+  "k_id": "K-ZHA22-005",
+  "stage_id": "S01",
+  "kind": "concept",
+  "title": "Mire jó a metaanalízis, és mikor nem alkalmas",
+  "body": "MA answers three questions: whether an effect is real (more power than single small studies), whether it is consistent across studies (moderators can be examined), and how large it is (a precise magnitude estimate that informs cost–benefit decisions). The source warns that MA is not appropriate when the available literature consists mostly of poorly designed studies.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 3–4",
+  "tags": "purpose cél power statisztikai erő consistency konzisztencia magnitude hatásnagyság moderators moderátorok poorly designed studies rossz minőségű vizsgálatok appropriateness alkalmasság"
+ },
+ {
+  "k_id": "K-ZHA22-006",
+  "stage_id": "S01",
+  "kind": "concept",
+  "title": "Hétlépéses, PRISMA-alapú munkafolyamat",
+  "body": "The tutorial organises SR/MA into seven PRISMA-based steps: (1) formulate the research question, (2) plan and register the protocol, (3) search the literature, (4) code and extract data, (5) compute study effect sizes, (6) synthesise and assess heterogeneity, (7) interpret and report. Table 1 shows SR/MA articles increasing in JSLHR, AJSLP and AJA over 2017–2021 (JSLHR: 4 in 2017 to 13 in 2021).",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 2, p. 3",
+  "tags": "workflow munkafolyamat steps lépések PRISMA process folyamat planning tervezés overview áttekintés"
+ },
+ {
+  "k_id": "K-ZHA22-007",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "Kutatási kérdés megfogalmazása (Cooper három feladata)",
+  "body": "Write the questions before the review starts and follow Cooper's (2007) three tasks: give conceptual and operational definitions of the variables, state whether the relationship sought is causal or correlational, and set the problem in its theoretical, practical and historical context. In the example, 'talker variability' conceptually excludes other acoustic variability such as phonetic context, 'phonetic learning' excludes vocabulary outcomes, and the operational definition is the number of training talkers. The relationship type follows from primary-study design: training (intervention) studies support causal claims, personality–achievement studies only correlational ones.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 4",
+  "tags": "research question kutatási kérdés conceptual definition fogalmi definíció operational definition operacionális definíció causal oksági correlational korrelációs Cooper construct konstruktum"
+ },
+ {
+  "k_id": "K-ZHA22-008",
+  "stage_id": "S01",
+  "kind": "pitfall",
+  "title": "„Almák és körték”: eltérő konstruktumok összevonása",
+  "body": "Pooling conceptually different constructs threatens construct validity; Glass's reply is that this is acceptable only if the question really concerns the broader category (the 'fruit'). Detect: compare each included study's conceptual and operational definitions with the review's. Fix: narrow the construct or model construct differences as moderators, and do not generalise beyond the defined scope.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 4",
+  "tags": "apples and oranges almák és körték construct validity konstruktumvaliditás pooling összevonás generalisation általánosítás moderator moderátor scope"
+ },
+ {
+  "k_id": "K-ZHA22-009",
+  "stage_id": "S01",
+  "kind": "convention",
+  "title": "PICOS/PICOTS a forrásban",
+  "body": "The tutorial does not build its question around PICO: PICOS (participants, interventions, comparisons, outcomes, study design) appears only through the PRISMA 2009 checklist (item 4 objectives, item 6 eligibility), and PICOTS (population, intervention, comparator, outcomes, timing, setting) is named as an appraisal framework for intervention studies. [note: for clinical reviews state the question explicitly in PICO(S) form at protocol stage, as PRISMA 2020 and the Cochrane Handbook expect.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 7, p. 20",
+  "tags": "PICO PICOS PICOTS question kérdés population populáció intervention intervenció comparator összehasonlítás outcome kimenet eligibility beválasztás"
+ },
+ {
+  "k_id": "K-ZHA22-010",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Prospektív erőelemzés a metaanalízis előtt",
+  "body": "Run a prospective power analysis before the review, because meta-analyses of few studies can mislead (methods: Hedges & Pigott, 2001, 2004). A random-effects power analysis needs the expected effect size, the expected number of studies k, the average per-group sample size n, alpha (usually .05) and the between-study variance tau^2, set by assuming small, moderate or high heterogeneity via I^2 = 25/50/75% (Higgins et al., 2003). Apart from tau^2, these inputs can be roughly estimated from familiarity with the literature. [note: the engine has no power-analysis function; the source uses dmetar::power.analysis.] [note: the 25/50/75% I^2 levels are rough conventions, not absolute rules; I^2 depends on the precision of the included studies, so where prior meta-analyses exist specify tau^2 directly (Cochrane Handbook v6 uses overlapping I^2 bands).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 4–5",
+  "tags": "power analysis erőelemzés statisztikai erő prospective prospektív number of studies vizsgálatszám k sample size mintanagyság tau2 heterogeneity heterogenitás planning tervezés"
+ },
+ {
+  "k_id": "K-ZHA22-011",
+  "stage_id": "S02",
+  "kind": "example",
+  "title": "Erőelemzési példa: d = 0,7, k = 18, n = 15/15",
+  "body": "Example call: dmetar power.analysis(d = 0.7, k = 18, n1 = 15, n2 = 15, p = .05, heterogeneity = 'moderate') gives power above 90% for detecting a moderate-to-large effect; d = 0.7 is a 'medium' L2 effect (Plonsky & Oswald, 2014), and n = 15 per condition and k = 18 come from preliminary searches. If prospective power is low, the source (after Valentine et al., 2010) still recommends doing the MA: the assumptions may be wrong (more studies or a larger effect than expected), and MA beats less transparent alternatives. [note: with dmetar's formula this scenario gives a power of about 100% (lambda about 6.1), so 'above 90%' understates it; prospective power for a meta-analysis rests on guessed k, n and tau^2 and is only a planning aid (recomputed, not printed in the source).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 5",
+  "tags": "power analysis erőelemzés example példa dmetar power.analysis low power alacsony erő moderate heterogeneity mérsékelt heterogenitás"
+ },
+ {
+  "k_id": "K-ZHA22-012",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Protokoll-regisztráció és protokoll-útmutatók",
+  "body": "Develop and register a protocol before starting, to avoid duplication and ensure transparency. Options in the source: PROSPERO (health and social care; free, with no prior title registration needed), the Cochrane Library (the question must first be registered with a review group, which can be hard for some reviewers), the Campbell Collaboration (social sciences), or publishing the protocol in journals such as Systematic Reviews or BMJ Open. For protocol content use PRISMA-P guidance and Cochrane's methodological expectations (Higgins et al., 2016). [note: register before screening and data extraction start, and report the registration ID, where the protocol can be accessed and any amendments (PRISMA 2020 item 24). The tutorial's own worked-example review marks protocol and registration as 'N/A' in its PRISMA checklist (Appendix A, item 5), i.e. it was not registered.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 3, p. 5, p. 20",
+  "tags": "protocol protokoll registration regisztráció PROSPERO Cochrane Campbell PRISMA-P MECIR transparency átláthatóság preregistration előzetes regisztráció"
+ },
+ {
+  "k_id": "K-ZHA22-013",
+  "stage_id": "S02",
+  "kind": "check",
+  "title": "Ellenőrzés: kérdés, protokoll, erőelemzés",
+  "body": "Reviewer checks: (1) the question gives explicit conceptual and operational definitions of intervention/exposure and outcome and states whether the relationship is causal or correlational; (2) a protocol is registered (PROSPERO, Cochrane or Campbell), its ID is reported and deviations are explained (PRISMA 2009 item 5); (3) a prospective power analysis is documented with the assumed effect, k, n per arm, alpha and heterogeneity level.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 4, p. 5, p. 15, pp. 20–21",
+  "tags": "reviewer check bírálói ellenőrzés protocol protokoll registration regisztráció power analysis erőelemzés research question kutatási kérdés definition definíció"
+ },
+ {
+  "k_id": "K-ZHA22-014",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Keresési stratégia: Boole, közelség, csonkolás, mezők, szinonimák",
+  "body": "Build the search with Boolean operators (AND, OR, NOT), proximity ('fuzzy') operators such as 'Adults' within three words of 'Training', truncation or wildcard symbols such as meditat$ (meditating, meditation, meditative), and deliberate field placement (title/abstract vs full text). Enter as many synonyms as possible, because authors name the same construct differently, and run a preliminary search to harvest additional terms. [note: for health topics report every database search in full following PRISMA-S and consider peer review of the strategy (PRESS checklist).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 5–6",
+  "tags": "search strategy keresési stratégia Boolean Boole-operátor proximity közelségi operátor truncation csonkolás wildcard helyettesítő karakter synonyms szinonimák field mező title abstract"
+ },
+ {
+  "k_id": "K-ZHA22-015",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Adatbázisok és források a kereséshez",
+  "body": "The databases most used in L2 reviews are ERIC, LLBA and PsycINFO; the source also suggests Academic Search Premier, EBSCO, Elsevier, Linguistics Abstracts, MEDLINE, MLA International Bibliography, PsycArticles, Scopus, Web of Science and Wiley Online Library, plus Google and Google Scholar, ProQuest for dissertations, Psych File Drawer for unpublished and replication studies, journal websites and experts in the field. [note: for clinical topics MEDLINE/PubMed, Embase, CENTRAL and trial registries are the usual core; the source's list is discipline-specific.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 6",
+  "tags": "databases adatbázisok ERIC LLBA PsycINFO MEDLINE Scopus Web of Science Google Scholar ProQuest Psych File Drawer grey literature szürke irodalom search keresés"
+ },
+ {
+  "k_id": "K-ZHA22-016",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Beválasztási kritériumok előre, indoklással",
+  "body": "Before searching, specify detailed eligibility criteria with their rationale (Table 2): relevance and participants (e.g. age range), time frame, design (pre–post or control designs, between- vs within-participants), outcome, availability of data for computing effect sizes, and language and publication source (e.g. peer-reviewed only; dissertations yes or no). List every study found, whether included or excluded.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 6, Table 2",
+  "tags": "eligibility criteria beválasztási kritériumok inclusion exclusion bevonás kizárás rationale indoklás design elrendezés time frame időtartam language nyelv peer review"
+ },
+ {
+  "k_id": "K-ZHA22-017",
+  "stage_id": "S04",
+  "kind": "guidance",
+  "title": "Szűrés: duplikátumok, két független bíráló, hivatkozáskövetés",
+  "body": "Import records into a reference manager (EndNote, Mendeley, BibTeX), remove duplicates, then screen titles and abstracts. Following Cochrane guidance, at least two reviewers screen independently; when in doubt include the record, decide by discussion and consensus, and record a reason for every exclusion. Supplement database searching with backward citation chasing (reference lists) and forward citation tracking, done by two or more reviewers applying the same criteria; this is critical when few studies are found.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 6",
+  "tags": "screening szűrés deduplication duplikátum-szűrés reference manager hivatkozáskezelő two reviewers két bíráló consensus konszenzus citation chasing hivatkozáskövetés backward forward snowballing"
+ },
+ {
+  "k_id": "K-ZHA22-018",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Szürke irodalom kizárása → publikációs torzítás",
+  "body": "Excluding unpublished studies invites publication bias: positive results are about 7 times more likely to be published (Coursol & Wagner, 1986), the 'file drawer' problem (Rosenthal, 1979). Peer-reviewed-only sets offer more quality assurance, while including unpublished work gives more power and less bias; Oswald & Plonsky (2010) accept both. Detect: compare published with unpublished studies and use the funnel plot and Egger test. Fix: search dissertations (ProQuest) and repositories (Psych File Drawer), and check quality or code publication status as a moderator. [note: the sevenfold figure comes from a 1986 survey; current guidance (Cochrane Handbook v6 ch. 13) also asks reviewers to search trial registries and to assess missing results (reporting bias) explicitly, which feeds the GRADE publication-bias domain.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 6–7",
+  "tags": "grey literature szürke irodalom unpublished nem publikált publication bias publikációs torzítás file drawer fiókprobléma dissertation disszertáció moderator moderátor"
+ },
+ {
+  "k_id": "K-ZHA22-019",
+  "stage_id": "S04",
+  "kind": "example",
+  "title": "PRISMA-folyamatábra a mintapéldában",
+  "body": "Worked-example flow (Figure 1): 229 database records plus 7 from other sources; 233 after duplicate removal; 233 screened and 207 excluded on the inclusion criteria; 26 full texts assessed and 12 excluded (repeated original data 2, phonetic context number not controlled 4, domain not relevant 3, insufficient data for effect size 1, no accuracy data 1, production component in training 1); 14 articles included in the MA. The tutorial later adds 3 newer articles, giving 17 articles and 22 independent samples.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 3, p. 7, pp. 21–22",
+  "tags": "PRISMA flow diagram folyamatábra example példa records rekordok full text teljes szöveg exclusion reasons kizárási okok included bevont"
+ },
+ {
+  "k_id": "K-ZHA22-020",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Ellenőrzés: keresés és szűrés",
+  "body": "Reviewer checks: eligibility criteria cover participants, time frame, design, outcome, data availability, language and publication type with rationale and were fixed before the search; several databases (the source recommends multiple databases to reduce bias) plus grey literature were searched with Boolean, proximity and truncation logic, and the full strategy for at least one database is reported (PRISMA 2009 item 8); deduplication, dual independent title/abstract and full-text screening with consensus, a reason for each exclusion, and backward and forward citation searching are documented. Verify the flow arithmetic at every stage, e.g. 229 + 7 = 236 then 233 after dedup, 233 − 207 = 26, 26 − 12 = 14, and that the exclusion reasons sum to 12. [note: for clinical intervention reviews Cochrane MECIR expects at least MEDLINE, Embase and CENTRAL plus trial registries.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 3, 5–6",
+  "tags": "reviewer check bírálói ellenőrzés search keresés screening szűrés PRISMA flow folyamatábra arithmetic számtani ellenőrzés eligibility beválasztás grey literature"
+ },
+ {
+  "k_id": "K-ZHA22-021",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Kódolás és adatkivonatolás szabályai",
+  "body": "Extract study-level information, participant characteristics, design, outcome measures, summary statistics and other question-relevant variables (Lipsey & Wilson, 2001); effect sizes need per-group n, means with SD or SE, and test statistics (t, F, d, p). Use a coding checklist, have at least two coders code every study independently, and check inter-coder agreement with the intraclass correlation for continuous and kappa for categorical variables; if agreement is inadequate, retrain the coders or refine the scheme.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 7",
+  "tags": "data extraction adatkivonatolás coding kódolás checklist ellenőrzőlista double coding kettős kódolás inter-rater reliability egyetértés ICC kappa coding scheme kódolási séma"
+ },
+ {
+  "k_id": "K-ZHA22-022",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Hiányzó összesítő adatok pótlása",
+  "body": "When summary statistics are missing: contact the authors; convert t, F or p values to effect sizes (formulas in Lipsey & Wilson, 2001 and Thalheimer & Cook, 2002; D. B. Wilson's online calculator; esc::esc_f in R); or digitise means and SDs from graphs with WebPlotDigitizer or Origin. Flag every converted or digitised value per study so its influence can be checked. Engine helpers include conversions.d_from_t, conversions.sd_from_se and conversions.se_from_p.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 9",
+  "tags": "missing data hiányzó adat conversion átváltás t statistic F statistic p value digitise digitalizálás WebPlotDigitizer contact authors szerzők megkeresése esc"
+ },
+ {
+  "k_id": "K-ZHA22-023",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Függő hatásméretek egy vizsgálaton belül; alminták",
+  "body": "Several outcomes from the same participants (e.g. perception and production, identification and discrimination tasks) are not independent; entering them separately inflates N and distorts standard errors, while picking one or averaging loses information. The tutorial aggregates them into one study-level composite with Borenstein et al.'s (2009) method via MAd::agg, imputing r = .5 among outcomes, and checks robustness for r = .25 to .75; the source also points to multivariate meta-analysis for related outcomes. Independent subgroups or cohorts within one article are treated as separate studies (17 articles gave 22 samples). [note: three-level models or robust variance estimation are current alternatives when the within-study correlation is unknown. Cohorts from one article count as independent only if they share no participants, including a common control group. The engine has no composite-aggregation function, so compute composites before input.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 7–9, pp. 13–14",
+  "tags": "dependent effect sizes függő hatásméretek multiple outcomes több kimenet composite összetett aggregation aggregálás MAd agg correlation korreláció independence függetlenség subgroups alcsoportok unit of analysis elemzési egység"
+ },
+ {
+  "k_id": "K-ZHA22-024",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Közös kontrollcsoport többszörös számolása",
+  "body": "When several treatment arms share one control group, entering each comparison separately double-counts the control participants. Detect: the same control n (and means) appears in several rows. Fix (most common): merge the relevant treatment groups into one and the control groups into one, or keep only one pair; more advanced options are network meta-analysis, multivariate meta-analysis or Bayesian methods. Engine helpers: conversions.combine_groups (merge arms) and conversions.split_shared_control (split the control n).",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 9",
+  "tags": "shared control közös kontroll multi-arm többkarú double counting kettős számolás unit of analysis error elemzési egység hiba merge groups csoportok összevonása network meta-analysis hálózati metaanalízis"
+ },
+ {
+  "k_id": "K-ZHA22-025",
+  "stage_id": "S05",
+  "kind": "convention",
+  "title": "Nem közölt pre–post korreláció: r = 0,7 imputálás",
+  "body": "Pre- and posttest scores are correlated, but primary studies rarely report the correlation, so the tutorial imputes a conservative r = .7 following Rosenthal (1993) when computing pretest–posttest–control effect sizes. Because the value affects the variances, state it and vary it in a sensitivity analysis. [note: whether .7 is 'conservative' depends on the metric: in the change-score variances used here a higher r gives a smaller variance, more weight and narrower CIs, so a lower r is the cautious choice for precision; test a range. The Cochrane Handbook suggests deriving the correlation from studies that report full data (engine: conversions.corr_from_change) before falling back on an assumed value.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 8",
+  "tags": "pre-post correlation pre-post korreláció imputation imputálás r 0.7 Rosenthal change score változás pretest posttest sensitivity érzékenységi elemzés"
+ },
+ {
+  "k_id": "K-ZHA22-026",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Adatkivonatolási hibák SMD-metaanalízisekben",
+  "body": "The source cites Gøtzsche et al. (2007), a study of data-extraction errors in meta-analyses of standardised mean differences, when it notes that SR/MA is technically demanding. Detect: recompute each study's effect size from the extracted means, SDs and n and compare it with the analysed value. Fix: extract independently in duplicate with piloted forms, and confirm data with investigators where needed (PRISMA 2009 item 10).",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 1, p. 17, p. 20",
+  "tags": "data extraction error adatkivonatolási hiba SMD standardised mean difference standardizált átlagkülönbség double extraction kettős kivonatolás Gøtzsche recompute újraszámolás"
+ },
+ {
+  "k_id": "K-ZHA22-027",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: kivonatolás",
+  "body": "Reviewer checks: extraction used a coding checklist and was done in duplicate; inter-coder reliability (ICC for continuous, kappa for categorical variables) is reported and adequate; every statistic obtained by conversion from t, F or p, or by digitising figures, is flagged per study.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 7, p. 9",
+  "tags": "reviewer check bírálói ellenőrzés data extraction adatkivonatolás ICC kappa inter-coder reliability conversion átváltás digitised digitalizált"
+ },
+ {
+  "k_id": "K-ZHA22-028",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "„Garbage in, garbage out”: alacsony minőségű vizsgálatok",
+  "body": "There is no consensus metric of study quality (Lipsey & Wilson, 2001), so the source prefers testing whether quality explains variation in effect sizes over silently dropping low-quality studies. Detect: appraise quality with an established scheme. Fix: code quality as a moderator or run a sensitivity analysis with and without low-quality (or unpublished) studies. [note: in health reviews assess risk of bias domain by domain with RoB 2 (randomised trials) or ROBINS-I (non-randomised studies) rather than summary quality scores, which Cochrane advises against; use the judgements in sensitivity analyses and in GRADE.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 7",
+  "tags": "garbage in garbage out study quality vizsgálati minőség risk of bias torzítási kockázat moderator moderátor sensitivity analysis érzékenységi elemzés exclusion kizárás"
+ },
+ {
+  "k_id": "K-ZHA22-029",
+  "stage_id": "S06",
+  "kind": "tool",
+  "title": "Minőségértékelő eszközök a forrásban",
+  "body": "The source only names appraisal tools: the Standard Quality Assessment Criteria (Kmet et al., 2004), GRADE (Balshem et al., 2011), the Newcastle–Ottawa Scale (Wells et al., 2011) for non-randomised studies, and PICOTS for intervention studies; Luchini et al. (2021) compare their advantages and disadvantages. [note: RoB 2, ROBINS-I, Jadad and AMSTAR are not mentioned; for medical reviews use RoB 2 for randomised trials, ROBINS-I for non-randomised interventions, and GRADE for certainty of evidence.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 7",
+  "tags": "quality appraisal minőségértékelés risk of bias torzítási kockázat Newcastle-Ottawa NOS Kmet GRADE PICOTS RoB 2 ROBINS-I tool eszköz"
+ },
+ {
+  "k_id": "K-ZHA22-030",
+  "stage_id": "S06",
+  "kind": "convention",
+  "title": "Torzítási kockázat a PRISMA 2009 tételeiben",
+  "body": "PRISMA 2009 items 12 and 19 cover risk of bias in individual studies (at study or outcome level, and how it is used in the synthesis), and items 15 and 22 cover risk of bias across studies, such as publication bias and selective reporting. In the 2021 example review, per-study risk of bias was reported in a supplemental table.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 20",
+  "tags": "risk of bias torzítási kockázat PRISMA 2009 item tétel selective reporting szelektív közlés publication bias publikációs torzítás reporting jelentés"
+ },
+ {
+  "k_id": "K-ZHA22-031",
+  "stage_id": "S06",
+  "kind": "criterion",
+  "title": "Értékelés: vizsgálati minőség",
+  "body": "Evaluator criterion: was quality or risk of bias assessed with a recognised tool (NOS, GRADE, Kmet criteria; for medical reviews preferably RoB 2 or ROBINS-I), and was the assessment actually used in the synthesis, as a moderator or in a sensitivity analysis, rather than only tabulated?",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 7",
+  "tags": "evaluator criterion értékelési szempont study quality vizsgálati minőség risk of bias torzítási kockázat RoB 2 ROBINS-I NOS sensitivity analysis moderator"
+ },
+ {
+  "k_id": "K-ZHA22-032",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Hatásméret-típusok és a példa iránya",
+  "body": "Common effect sizes are the odds ratio, risk ratio, risk difference, Cohen's d (standardised mean difference), Hedges' g (bias-corrected d) and correlations. The worked example uses Hedges' g for multiple-talker (MT) relative to single-talker (ST) training, so positive g means MT training is better. The tutorial gives formulas only for continuous between-group and pretest–posttest–control designs.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 7",
+  "tags": "effect size hatásméret odds ratio esélyhányados risk ratio kockázati arány Cohen d Hedges g SMD standardizált átlagkülönbség correlation korreláció direction irány"
+ },
+ {
+  "k_id": "K-ZHA22-033",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Hedges-g csak utóteszt (kétcsoportos) elrendezésben",
+  "body": "Posttest-only design: d = (Mean_MT − Mean_ST)/SD_pooled with SD_pooled = sqrt{[(n_MT − 1)SD_MT^2 + (n_ST − 1)SD_ST^2]/(n_MT + n_ST − 2)} (Eqs. 3–4). The small-sample correction is approximated as c(df) = 1 − 3/(4df − 1) with df = n_MT + n_ST − 2 (Hedges, 1981; Eq. 5), and g = d × c(df) (Eq. 6). Engine: effect_sizes.smd(correct=True); its default j_method='exact' uses the gamma-function correction, while j_method='approx' reproduces Eq. 5.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 8, Eqs. 3–6",
+  "tags": "Hedges g Cohen d SMD pooled SD összevont szórás small-sample correction kis minta korrekció c(df) J factor between-group csoportok közötti posttest formula képlet"
+ },
+ {
+  "k_id": "K-ZHA22-034",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "A 7. egyenlet valójában d varianciája, nem g-é",
+  "body": "Eq. 7 prints sigma^2 = (1/ñ)((N − 2)/(N − 4))(1 + ñg^2) − g^2/[c(df)]^2 as the variance of Hedges' g, with N = n_MT + n_ST and ñ = n_MT·n_ST/N called 'the harmonic mean'. ñ is actually half the harmonic mean (1/ñ = 1/n_MT + 1/n_ST), and the expression is Hedges' (1981) exact variance of uncorrected d evaluated at g; the exact variance of g is c(df)^2 times it, a 5–10% difference at typical small n (extraction notes' recomputation). Neither is the common large-sample formula 1/n1 + 1/n2 + g^2/(2(n1 + n2)) (engine default effect_sizes.smd vtype='LS'), so state which variance was used and apply it consistently.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 8, Eq. 7",
+  "tags": "variance variancia Hedges g sampling variance mintavételi variancia harmonic mean harmonikus átlag typo elírás source error forráshiba exact variance pontos variancia large-sample approximation"
+ },
+ {
+  "k_id": "K-ZHA22-035",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Morris-féle pretest–posttest–kontroll g",
+  "body": "For pretest–posttest–control designs the tutorial follows Morris (2008): g = {[(Mean_post,MT − Mean_pre,MT) − (Mean_post,ST − Mean_pre,ST)]/SD_pre,pooled} × c(df) (Eq. 8), where SD_pre,pooled pools the two groups' pretest SDs (Eq. 9). Pretest SDs are used because they are unaffected by the treatment and more consistent across studies (Becker, 1988). df is not redefined; in Morris's d_ppc2 it is n_MT + n_ST − 2. [note: the engine has no pretest–posttest–control estimator; compute it outside and input yi and vi.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 8, Eqs. 8–9",
+  "tags": "Morris pretest posttest control pre-post kontroll d_ppc2 change score változás pooled pretest SD összevont kiindulási szórás Becker Hedges g formula képlet"
+ },
+ {
+  "k_id": "K-ZHA22-036",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "A 10. egyenlet varianciája nem illik a Morris-becslőhöz",
+  "body": "Eq. 10 gives the variance as the sum of two Becker (1988) single-group change-score variances, [2(1 − ρ)/n]((n − 1)/(n − 3))(1 + n/(2(1 − ρ))·g^2) − g^2/[c(n − 1)]^2 for each group, where ρ (printed as 'p') is the pre–post correlation. g_MT and g_ST are not defined in the source (presumably within-group standardised mean changes), and this variance does not belong to the Morris d_ppc2 point estimate of Eq. 8. Flag the mismatch and, where possible, use the variance that matches the estimator.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 8, Eq. 10",
+  "tags": "variance variancia Morris Becker pre-post correlation korreláció mismatch eltérés source error forráshiba change score d_ppc2 standardised mean change"
+ },
+ {
+  "k_id": "K-ZHA22-037",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Pre–post és csak utóteszt elrendezések keverése",
+  "body": "Within-subject (pre–post) designs usually yield larger effects than experimental–control designs, so analyse designs separately or test design as a moderator. Combining is acceptable only under the Morris & DeShon (2002) conditions: all estimates in the same metric (here the raw-score metric, i.e. SD of raw scores, not of change scores), all estimating the same treatment effect (random assignment implies zero selection bias), and precision differences handled by inverse-variance weights. Detect: tabulate designs; in the example the design moderator test gave Q_M(1) = 0.58, p = .45. [note: a non-significant design moderator test with few studies has low power and does not show that the designs give equivalent effects; report design-specific estimates as well.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 9",
+  "tags": "mixed designs vegyes elrendezések pre-post within-subject alanyon belüli between-group csoportok közötti metric metrika raw score nyers pontszám Morris DeShon design moderator"
+ },
+ {
+  "k_id": "K-ZHA22-038",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Ellenőrzés: hatásméret-számítás",
+  "body": "Reviewer checks: for every study recompute d, c(df), g and Var(g) from the extracted means, SDs and n, and confirm which variance formula was used (Eq. 7 or a large-sample approximation) and that it was applied consistently; for pretest–posttest–control studies confirm the pooled pretest SD (Eq. 9), the stated imputed pre–post r (default .7) and the stated variance formula.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 8",
+  "tags": "reviewer check bírálói ellenőrzés effect size hatásméret recompute újraszámolás Hedges g variance variancia pretest SD pre-post correlation"
+ },
+ {
+  "k_id": "K-ZHA22-039",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Ellenőrzés: függőség, kettős számolás, elrendezések",
+  "body": "Reviewer checks: each independent sample contributes exactly one effect size per analysis, or the dependence is modelled, with the aggregation correlation stated (.5) and varied (.25–.75); no control group is counted twice; with mixed designs all effects are in the same metric and a design moderator test or a separate analysis is reported.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 8–9, pp. 13–14",
+  "tags": "reviewer check bírálói ellenőrzés dependence függőség double counting kettős számolás shared control közös kontroll design elrendezés metric metrika"
+ },
+ {
+  "k_id": "K-ZHA22-040",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Inverz-variancia súlyozás; fix és véletlen hatás",
+  "body": "The summary effect is an inverse-variance weighted average of study effects (weight = 1/variance). In the source's terms, a fixed-effects model assumes studies differ only through sampling error and identifiable variables, whereas a random-effects model adds unidentified sources and treats studies as a random sample from a population of studies; random effects is preferred in most cases and whenever in doubt. [note: choose the model in advance on conceptual grounds (are the studies estimating one common effect?), not by the result of a heterogeneity test (Cochrane Handbook v6 ch. 10); the source's remark that the choice rests on 'statistical and theoretical grounds' should not be read as a Q-test switch. Cochrane terminology calls the single-true-effect model 'common-effect'; the source's mention of identifiable variables corresponds to fixed-effects meta-regression.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 4, p. 9",
+  "tags": "inverse variance inverz variancia weight súly fixed effect fix hatás random effects véletlen hatás common effect közös hatás model choice modellválasztás"
+ },
+ {
+  "k_id": "K-ZHA22-041",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Fix hatású modell heterogenitás mellett",
+  "body": "Fixed-effects models give misleadingly narrow confidence intervals and inflated Type I error when true effects vary (Field & Gillett, 2010; Schmidt et al., 2009), and some methodological variation between studies is always present. Detect: a fixed-effect model used for studies that differ in populations, interventions or methods, or conclusions generalised beyond the included studies. Fix: default to random effects. [note: a significant Q or high I^2 makes the problem obvious, but a non-significant Q does not justify a fixed-effect model, because the test has low power with few studies; decide the model a priori. Under small-study effects random effects gives relatively more weight to small studies, so compare with the fixed-effect result as a sensitivity check.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 4, p. 9",
+  "tags": "fixed effect fix hatás random effects véletlen hatás heterogeneity heterogenitás narrow confidence interval szűk konfidenciaintervallum Type I error elsőfajú hiba model choice modellválasztás"
+ },
+ {
+  "k_id": "K-ZHA22-042",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "tau²-becslők: DL, REML, ML",
+  "body": "The source names three between-study variance estimators, DerSimonian–Laird (DL; 1986), restricted maximum likelihood (REML; Raudenbush & Bryk, 1985) and maximum likelihood (ML; Hardy & Thompson, 1996), noting that random-effects methods differ mainly in how they estimate tau^2 (Thorlund et al., 2011). PM, HE, SJ, IVhet and quality-effects models are not discussed. [note: Cochrane Handbook v6 prefers REML or Paule–Mandel over DL; engine: models.estimate_tau2 with models.tau2_reml, models.tau2_dl, models.tau2_ml, models.tau2_pm.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 9",
+  "tags": "tau2 estimator tau2-becslő DerSimonian-Laird DL REML ML maximum likelihood between-study variance vizsgálatok közötti variancia Paule-Mandel"
+ },
+ {
+  "k_id": "K-ZHA22-043",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "A mintapélda modellbeállításai",
+  "body": "Main pooling used meta::metagen with random effects, inverse-variance weights, REML tau^2, a Q-profile CI for tau^2 and tau, and a Wald z-based CI and test for the mean; the meta-regressions used metafor::rma with DL tau^2 and t/F tests (Knapp–Hartung-type, df = k − p). [note: mixing REML and DL across analyses is inconsistent, and Cochrane Handbook v6 recommends considering Hartung–Knapp–Sidik–Jonkman CIs for the mean (engine default ci_method='hksj'); to reproduce the source use tau2_method='REML', ci_method='z'. In meta 5.0 and later comb.random was renamed random and REML became the default (earlier versions used DL); metafor rma() defaults to REML with z tests.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10, pp. 14–15",
+  "tags": "settings beállítások metagen rma REML DL Q-profile Wald z Knapp-Hartung HKSJ confidence interval konfidenciaintervallum software default alapértelmezés meta package"
+ },
+ {
+  "k_id": "K-ZHA22-044",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Összesített eredmény a mintapéldában",
+  "body": "With k = 22 studies the random-effects summary was g = 0.468, 95% CI [0.038, 0.898], z = 2.13, p = .0329, which the authors call a small effect by L2 benchmarks (Plonsky & Oswald, 2014). Because Q was significant (p < .01) and I^2 = 75.0%, they say the summary must be interpreted with caution. [note: the source reports no prediction interval. From the printed values (tau^2 = 0.8240, SE of the mean about 0.219) a 95% prediction interval with t(20) is roughly -1.48 to 2.42, so true effects in some settings may be negative (recomputed). The Wald z interval also ignores uncertainty in tau^2; Cochrane Handbook v6 suggests considering the Hartung-Knapp-Sidik-Jonkman interval.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10",
+  "tags": "pooled effect összesített hatás example példa random effects véletlen hatás Hedges g confidence interval konfidenciaintervallum talker variability"
+ },
+ {
+  "k_id": "K-ZHA22-045",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: a szintézis módszerei és reprodukálása",
+  "body": "Reviewer checks: the pooled analysis states the model (RE or FE), the tau^2 estimator, the CI method for the mean and the CI method for tau^2, and reports I^2, tau^2 and tau with CIs. Re-running from the per-study yi and SE should reproduce the estimate, CI, z, p, tau^2, Q and I^2 within rounding: for the JSLHR data, REML gives tau^2 = 0.8240, its Q-profile CI [0.4601, 2.7124] and the weights exactly, but because TE is printed to 2 decimals mu matches only to about ±0.0015 (0.4666 vs 0.468), Q to about ±0.05 (83.81 vs 83.85) and the Egger intercept to about ±0.003 (extraction notes' recomputation). Unit tests should use tolerances of this size.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10, pp. 10–11",
+  "tags": "reviewer check bírálói ellenőrzés reproducibility reprodukálhatóság recompute újraszámolás tolerance tűréshatár REML tau2 Q-profile unit test egységteszt rounding kerekítés"
+ },
+ {
+  "k_id": "K-ZHA22-046",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-Q és I²",
+  "body": "Cochran's Q = Σ w_i(ES_i − ES_bar)^2 (Eq. 2; Hedges & Olkin, 1985), with w_i the inverse-variance weight and ES_bar the weighted mean; under homogeneity Q follows a chi-square distribution with k − 1 df, and p below alpha means true effects vary. I^2 = [(Q − (k − 1))/Q] × 100 (Eq. 1), truncated at 0, is the percentage of total variability due to between-study heterogeneity rather than chance. Engine: models.cochran_q and models.heterogeneity. [note: the Q test has low power with few studies and excessive power with many, so a non-significant Q does not show homogeneity; use Q to describe heterogeneity, never to choose between fixed- and random-effects models.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 5, pp. 9–10, Eqs. 1–2",
+  "tags": "Cochran Q I2 heterogeneity heterogenitás chi-square khi-négyzet inconsistency inkonzisztencia formula képlet homogeneity test homogenitásvizsgálat"
+ },
+ {
+  "k_id": "K-ZHA22-047",
+  "stage_id": "S09",
+  "kind": "threshold",
+  "title": "I² küszöbök: 25/50/75%",
+  "body": "Following Higgins et al. (2003), I^2 values of 25%, 50% and 75% indicate small, moderate and high heterogeneity; the tutorial also uses these levels to choose tau^2 for random-effects power analysis. [note: the Cochrane Handbook uses overlapping bands (0–40% might not be important, 30–60% moderate, 50–90% substantial, 75–100% considerable) and stresses that I^2 depends on study precision.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 5",
+  "tags": "I2 threshold küszöbérték heterogeneity heterogenitás small kicsi moderate mérsékelt high nagy Higgins 25 50 75 interpretation értelmezés"
+ },
+ {
+  "k_id": "K-ZHA22-048",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Az I² nem abszolút heterogenitásmérték",
+  "body": "I^2 is a proportion, not an absolute measure of how much true effects vary (Borenstein et al., 2017), so it should not be read as the amount of heterogeneity. Fix: report I^2 with its confidence interval together with tau^2 and tau, each with CIs.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10",
+  "tags": "I2 proportion arány absolute heterogeneity abszolút heterogenitás tau2 tau confidence interval konfidenciaintervallum Borenstein misinterpretation félreértelmezés"
+ },
+ {
+  "k_id": "K-ZHA22-049",
+  "stage_id": "S09",
+  "kind": "definition",
+  "title": "τ², τ, T², H és H²",
+  "body": "tau^2 is the variance of true effect sizes across an infinite population of studies and tau its square root (in effect-size units); because only a sample of studies is available, its estimate is sometimes denoted T^2. meta reports H = sqrt(Q/df), and metafor's meta-regression output reports H^2 as unaccounted (residual) variability divided by sampling variability (H^2 = 1/(1 − I^2), here with the residual I^2).",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10, p. 14",
+  "tags": "tau2 tau T2 between-study variance vizsgálatok közötti variancia H H2 heterogeneity heterogenitás definition definíció true effects valódi hatások"
+ },
+ {
+  "k_id": "K-ZHA22-050",
+  "stage_id": "S09",
+  "kind": "convention",
+  "title": "Konfidenciaintervallumok τ²-re, I²-re és H-ra",
+  "body": "In the example the CIs for tau^2 and tau use the Q-profile method, as the output states. The CI method for I^2 and H is not stated, but the printed values reproduce exactly with the Higgins & Thompson (2002) test-based method (extraction notes' recomputation): SE(ln H) from Q and k, CI_H = exp(ln(max(H, 1)) ± 1.96·SE), and I^2 = (H^2 − 1)/H^2. Engine: models.tau2_ci_qprofile and models.i2_ci_higgins_thompson. [note: when H < 1 meta centres the CI at ln 1 = 0, which reproduces the k = 19 output I^2 [0.0, 48.9], H [1.00, 1.40]; the engine centres at ln H and gives 47.3% and 1.38 there.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10",
+  "tags": "confidence interval konfidenciaintervallum Q-profile tau2 I2 H Higgins Thompson test-based teszt-alapú heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-ZHA22-051",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "Heterogenitás a mintapéldában (k = 22 és k = 19)",
+  "body": "With k = 22: Q = 83.85, df = 21, p < .0001; I^2 = 75.0% [62.1, 83.5]; H = 2.00 [1.62, 2.46]; tau^2 = 0.8240 [0.4601, 2.7124]; tau = 0.9077 [0.6783, 1.6469], so about 75% of the variability reflects real between-study differences. The forest plot shows it too: three studies' CIs do not overlap the summary estimate. After removing three outliers (k = 19): Q = 17.45, df = 18, p = .4926; I^2 = 0.0% [0.0, 48.9]; tau^2 = 0 [0.0000, 0.1585].",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 10–11",
+  "tags": "heterogeneity heterogenitás example példa Q I2 tau2 H outliers kiugró értékek forest plot erdődiagram worked example"
+ },
+ {
+  "k_id": "K-ZHA22-052",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Összesített átlag nagy heterogenitás mellett; hiányzó predikciós intervallum",
+  "body": "Reporting a pooled mean as if it applied everywhere despite large heterogeneity (here I^2 = 75%) is misleading. Fix: interpret it with caution and look for outliers, influential studies and moderators. [note: the source never reports a prediction interval; current guidance (Cochrane Handbook v6, IntHout et al., 2016) recommends a prediction interval for random-effects analyses, which the engine provides via models.meta_analysis(pi_method=...).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10",
+  "tags": "heterogeneity heterogenitás pooled mean összesített átlag prediction interval predikciós intervallum interpretation értelmezés caution óvatosság outliers moderators"
+ },
+ {
+  "k_id": "K-ZHA22-053",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzés: belső konzisztencia",
+  "body": "Check that every reported number is internally consistent: I^2 = (Q − df)/Q; H = sqrt(Q/df); H^2 = 1/(1 − I^2); forest-plot weights sum to 100%; each CI equals estimate ± 1.96·SE (z-based) or ± t·SE (Knapp–Hartung); and in a single-moderator meta-regression F(1, df) = t^2. Also check that the text quotes the same numbers as the software output, with their CIs (the source quotes only 'I2 < 0.1%' where the output gives 0.0% [0.0, 48.9]).",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 10–11, pp. 14–15",
+  "tags": "reviewer check bírálói ellenőrzés internal consistency belső konzisztencia I2 Q H weights súlyok confidence interval konfidenciaintervallum F t text output mismatch eltérés"
+ },
+ {
+  "k_id": "K-ZHA22-054",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Metaregresszió: vegyes hatású modell és megjelenítés",
+  "body": "When effects are heterogeneous, look for study characteristics that explain the variation with a mixed-effects meta-regression (metafor::rma(yi, vi, mods = ~ x); categorical moderators through factor()). Visualise with a bubble or scatter plot of g against a continuous moderator with the fitted line, and a boxplot by category (Figure 5). The example regressions were run although residual heterogeneity was already small and non-significant after outlier removal, purely for illustration; subgroup Q-between tests, permutation tests and multiple-testing control are not covered. Engine: moderators.meta_regression (test='knha' for t/F) and moderators.subgroup_analysis.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 14–15, Figure 5",
+  "tags": "meta-regression metaregresszió mixed-effects vegyes hatású moderator moderátor bubble plot buborékdiagram boxplot subgroup alcsoport rma mods factor"
+ },
+ {
+  "k_id": "K-ZHA22-055",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Moderátor-halászat (data dredging)",
+  "body": "Testing many moderators without prespecification capitalises on chance (Type I error) and yields spurious moderators (Hunter & Schmidt, 2004). Detect: many moderators tested, none listed in the protocol. Fix: test only moderators with a strong theoretical basis and prespecify them (PRISMA 2009 item 16 asks which additional analyses were prespecified).",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 14, p. 20",
+  "tags": "data dredging adathalászat moderator moderátor prespecification előzetes meghatározás Type I error elsőfajú hiba spurious látszólagos multiple testing többszörös tesztelés theory elmélet"
+ },
+ {
+  "k_id": "K-ZHA22-056",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Folytonos moderátor: tréning hossza (k = 13)",
+  "body": "Training length in hours, k = 13, DL tau^2 with t/F tests: intercept 0.033 (SE 0.156, t = 0.212, p = .836); slope 0.052 per hour (SE 0.036, t = 1.434, p = .179, 95% CI [−0.028, 0.132]); F(1, 11) = 2.055, p = .179; QE(11) = 11.947, p = .368; residual tau^2 = 0.008, I^2_res = 7.93%, H^2 = 1.09, R^2 = 39.14%. The slope reads like an OLS coefficient (g rises by 0.052 per additional training hour), but the moderator is not significant.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 14",
+  "tags": "meta-regression metaregresszió continuous moderator folytonos moderátor slope meredekség intercept tengelymetszet example példa R2 QE training length"
+ },
+ {
+  "k_id": "K-ZHA22-057",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Centrálatlan folytonos moderátor: értelmetlen tengelymetszet",
+  "body": "With an uncentred continuous moderator the intercept is the predicted effect at x = 0 (here 0 training hours, g = 0.033), which is meaningless. Fix: centre the moderator at its mean so that the intercept becomes the expected effect for a study with typical training length; the slope is unchanged.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 14",
+  "tags": "centering centrálás intercept tengelymetszet continuous moderator folytonos moderátor meta-regression metaregresszió interpretation értelmezés"
+ },
+ {
+  "k_id": "K-ZHA22-058",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Kategoriális moderátor: blokkolt vs. kevert bemutatás (k = 15)",
+  "body": "Talker presentation format, blocked as reference vs intermixed, k = 15, DL: intercept (blocked) 0.289 (SE 0.107, p = .018); intermixed coefficient −0.091 (SE 0.175, p = .613), so the predicted g for intermixed = 0.289 − 0.091 = 0.198; F(1, 13) = 0.269, p = .613; QE(13) = 15.130, p = .299; tau^2_res = 0.015, I^2_res = 14.08%, H^2 = 1.16, R^2 = 0.00%. Always state the reference level, because coefficients are differences from it.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 15",
+  "tags": "categorical moderator kategoriális moderátor reference level referenciaszint dummy coding factor meta-regression metaregresszió example példa"
+ },
+ {
+  "k_id": "K-ZHA22-059",
+  "stage_id": "S10",
+  "kind": "definition",
+  "title": "R², QE és QM a metaregresszióban",
+  "body": "R^2 is the amount of heterogeneity accounted for, i.e. the proportional reduction of tau^2 relative to the intercept-only model, shown as 0% when the moderator does not reduce tau^2 (the source prints no formula). QE tests residual heterogeneity, and Q_M (or F under Knapp–Hartung) is the omnibus test of the moderators. Engine: moderators.meta_regression returns R2, QE and QM. [note: with few studies R^2 is very imprecise and is often truncated at 0% or 100%, so do not over-interpret it (the source's text even quotes R2 = 100% against 39.14% in the output).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 9, pp. 14–15",
+  "tags": "R2 explained heterogeneity magyarázott heterogenitás QE residual heterogeneity reziduális heterogenitás QM omnibus test moderator moderátor meta-regression metaregresszió"
+ },
+ {
+  "k_id": "K-ZHA22-060",
+  "stage_id": "S10",
+  "kind": "threshold",
+  "title": "Legalább 8 vizsgálat moderátorelemzéshez",
+  "body": "The source cites a minimum of eight studies as sufficient for moderator analysis (Borenstein et al., 2009), adding that more studies give more convincing results. [note: the Cochrane Handbook advises at least 10 studies per examined characteristic; the engine warns when k < 10 per moderator.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 14",
+  "tags": "minimum studies minimális vizsgálatszám moderator analysis moderátorelemzés meta-regression metaregresszió threshold küszöb 8 10 per covariate"
+ },
+ {
+  "k_id": "K-ZHA22-061",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Nem szignifikáns moderátor ≠ nincs összefüggés",
+  "body": "A non-significant moderator does not prove there is no relationship between the study characteristic and effect size (Hedges & Pigott, 2004), especially with few studies. Fix: report the coefficient's CI, consider the power of the moderator test, and present moderator findings as observational between-study associations.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 14",
+  "tags": "non-significant nem szignifikáns moderator moderátor power erő absence of evidence bizonyíték hiánya observational megfigyeléses meta-regression metaregresszió"
+ },
+ {
+  "k_id": "K-ZHA22-062",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Ellenőrzés: metaregresszió",
+  "body": "Reviewer checks: moderators were prespecified and theory-based; k per model is at least 8 (preferably 10 per moderator); continuous moderators are centred or the intercept is interpreted appropriately; the categorical reference level is stated; and the text quotes the same statistics, df and R^2 as the output. Test case: for training length the source's text first gives F(1, 11) = 2.06, p = .18, R2 = 39.14%, matching the output, but then also states 'F(1, 9) = 4.15, p = .07, R2 = 100%', which matches nothing in the output, and it cites the intercept's p = .836 as if it belonged to the moderator.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 14–15",
+  "tags": "reviewer check bírálói ellenőrzés meta-regression metaregresszió moderator moderátor prespecified előre meghatározott centering reference level text output mismatch"
+ },
+ {
+  "k_id": "K-ZHA22-063",
+  "stage_id": "S11",
+  "kind": "definition",
+  "title": "Publikációs torzítás és vizsgálati módszerei",
+  "body": "Publication bias exists when the published literature on a topic differs systematically from all studies conducted, and there is no single standard method to assess it. The source uses the funnel plot, Egger's test and trim-and-fill and mentions fail-safe N only by name, noting that methods rest on different assumptions and target different types of publication bias (Rothstein et al., 2005); Begg's test, Doi plot/LFK, p-curve, selection models and PET-PEESE are not covered. [note: the Cochrane Handbook discourages fail-safe N; engine: bias.egger_test, bias.begg_test, bias.trim_and_fill, bias.failsafe_n_rosenthal.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 11–12",
+  "tags": "publication bias publikációs torzítás small-study effects kis vizsgálatok hatása funnel plot tölcsérdiagram Egger trim-and-fill fail-safe N definition definíció"
+ },
+ {
+  "k_id": "K-ZHA22-064",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "Kontúr-kiemelt tölcsérdiagram olvasása",
+  "body": "Plot effect size (x) against standard error (y, inverted so precise studies sit at the top), with a vertical dotted line at the summary estimate; the tutorial uses a contour-enhanced funnel (meta::funnel) with significance contours at p < .05, .025 and .01. Without bias, points scatter symmetrically and smaller studies spread more; bias is suspected when small studies are missing from the non-significant region. In the example, small studies fall in the significant (grey) contours while large ones are non-significant, suggesting missing small null studies. [note: the significance levels in the legend (p < .05, .025, .01) are as printed in Figure 4; the more usual choice is .10/.05/.01, so always state the levels used. With standardised mean differences the SE depends partly on g itself, which can create funnel asymmetry without any bias (Pustejovsky & Rodgers, 2019).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 12–13, Figure 4",
+  "tags": "funnel plot tölcsérdiagram contour-enhanced kontúr-kiemelt asymmetry aszimmetria standard error standard hiba significance szignifikancia publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-ZHA22-065",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Tölcsér-aszimmetria ≠ bizonyított publikációs torzítás",
+  "body": "Funnel asymmetry can also come from between-study heterogeneity or genuine small-study effects (Sterne et al., 2001), so it is not proof of publication bias. Fix: use contour-enhanced funnels to see whether the missing studies would lie in non-significant regions, and investigate study-level covariates under a random-effects model when exploring asymmetry. [note: for SMDs part of the apparent asymmetry may be an artefact of the correlation between g and its SE; plot against a precision measure based only on sample sizes, e.g. sqrt(1/n1 + 1/n2) (Pustejovsky & Rodgers, 2019).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 12",
+  "tags": "funnel asymmetry tölcsér-aszimmetria heterogeneity heterogenitás small-study effects kis vizsgálatok hatása publication bias publikációs torzítás misinterpretation félreértelmezés"
+ },
+ {
+  "k_id": "K-ZHA22-066",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "Egger-teszt és a példa eredménye",
+  "body": "Egger's regression test (Egger et al., 1997; dmetar::eggers.test) has an expected intercept of 0, and a significant deviation indicates funnel asymmetry. Example: intercept 1.959, 95% CI [0.27, 3.64], t = 2.277, p = .0339, so asymmetry is present. The printed CI uses ±1.96·SE while t and p use a t distribution with k − 2 df (extraction notes' recomputation). [note: engine bias.egger_test uses the t(k − 2) quantile for the CI, giving a slightly wider interval than dmetar; Sterne et al. (2011) advise the test only with at least 10 studies. The source's text calls the significant result evidence of 'publication bias', but it shows only small-study asymmetry. For SMDs the classic Egger test has inflated Type I error because g and its SE are correlated; a modified test using sqrt((n1 + n2)/(n1 n2)) as the SE is preferable (Pustejovsky & Rodgers, 2019).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 12",
+  "tags": "Egger test Egger-teszt regression regresszió intercept tengelymetszet funnel asymmetry tölcsér-aszimmetria publication bias publikációs torzítás dmetar"
+ },
+ {
+  "k_id": "K-ZHA22-067",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Nem szignifikáns Egger-teszt ≠ nincs torzítás",
+  "body": "Egger's test is generally low-powered, so a non-significant result must not be read as absence of publication bias. Fix: interpret it together with the funnel plot, trim-and-fill and other evidence.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 12",
+  "tags": "Egger test Egger-teszt low power alacsony erő non-significant nem szignifikáns publication bias publikációs torzítás triangulation"
+ },
+ {
+  "k_id": "K-ZHA22-068",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "Trim-and-fill módszer és eredménye",
+  "body": "Duval & Tweedie's (2000) trim-and-fill (meta::trimfill) iteratively removes the most extreme small studies until the funnel is roughly symmetric and re-estimates the centre, then restores them and imputes their mirror images about the adjusted mean, which also avoids an artificially low between-study variance. Example: 6 studies added (k = 28); adjusted g = 0.0634 [−0.4924, 0.6191], z = 0.22, p = .8232; tau^2 = 1.9256 [1.1602, 4.5574]; I^2 = 82.3%; Q = 152.50, df = 27; the authors conclude the literature probably overstates the immediate benefit of talker variability. The result reproduces with the L0 estimator, fixed-effect trimming and left-side imputation (extraction notes' recomputation). [note: engine bias.trim_and_fill uses one model for trimming and pooling; to mimic the source, trim with model='fixed', estimator='L0', side='left' and re-pool the augmented data with models.meta_analysis(model='random', tau2_method='REML', ci_method='z'). This fixed-effect trimming followed by random-effects pooling is also meta::trimfill's default.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 12",
+  "tags": "trim-and-fill Duval Tweedie publication bias publikációs torzítás imputation imputálás funnel tölcsér L0 estimator adjusted estimate korrigált becslés"
+ },
+ {
+  "k_id": "K-ZHA22-069",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "A trim-and-fill nem „javított igazság”",
+  "body": "Trim-and-fill depends on strong assumptions (that asymmetry is caused by suppressed small studies), so report it as a sensitivity analysis rather than as the corrected true effect. [note: it performs poorly under substantial heterogeneity, as here (I^2 = 75%), which is another reason to treat the adjusted g = 0.06 as indicative only.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 12",
+  "tags": "trim-and-fill sensitivity analysis érzékenységi elemzés assumptions feltevések corrected effect korrigált hatás heterogeneity heterogenitás publication bias"
+ },
+ {
+  "k_id": "K-ZHA22-070",
+  "stage_id": "S11",
+  "kind": "check",
+  "title": "Ellenőrzés: publikációs torzítás",
+  "body": "Reviewer checks: a funnel plot is present (contour-enhanced preferred); Egger's test is reported with intercept, CI, t and p and its low power is acknowledged; trim-and-fill or another adjustment is reported as a sensitivity analysis; heterogeneity is considered as an alternative explanation for asymmetry; and grey literature was searched to prevent bias.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 6, p. 12",
+  "tags": "reviewer check bírálói ellenőrzés publication bias publikációs torzítás funnel plot tölcsérdiagram Egger trim-and-fill grey literature szürke irodalom"
+ },
+ {
+  "k_id": "K-ZHA22-071",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Kiugró értékek szűrése (find.outliers)",
+  "body": "The source notes that the CIs of three studies do not overlap the summary estimate in the forest plot and confirms them as outliers with dmetar::find.outliers: Davis_2015(1), Davis_2015(2) and Shehata_2013. Re-pooling without them gave g = 0.1756 [0.0373, 0.3139], z = 2.49, p = .0128, with non-significant heterogeneity (Q(18) = 17.45, p = .49, I^2 about 0). [note: find.outliers' rule, that a study's 95% CI lies entirely outside the pooled 95% CI, comes from the dmetar documentation and is not stated in the source; it is a heuristic. Removing studies because they are extreme is a post hoc choice that lowers heterogeneity by construction, so report it as a sensitivity analysis next to the full analysis, not as the main result. The engine flags outliers by studentised deleted residual |rstudent| > 1.96 in sensitivity.influence, and effect_sizes.study_ci gives study CIs for the overlap rule.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 10–11",
+  "tags": "outlier kiugró érték find.outliers confidence interval overlap konfidenciaintervallum átfedés sensitivity analysis érzékenységi elemzés re-pooling újraösszesítés"
+ },
+ {
+  "k_id": "K-ZHA22-072",
+  "stage_id": "S12",
+  "kind": "pitfall",
+  "title": "Kiugró érték ≠ befolyásos vizsgálat",
+  "body": "An outlier is not necessarily influential: it counts as influential only if removing it substantially changes the model or the summary estimate. Fix: confirm with influence diagnostics (DFFITS, Cook's distance, leave-one-out estimates) before drawing conclusions, and report results with and without the flagged studies.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 11",
+  "tags": "outlier kiugró érték influential befolyásos influence diagnostics befolyás-diagnosztika leave-one-out egy kihagyásos DFFITS Cook distance"
+ },
+ {
+  "k_id": "K-ZHA22-073",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Befolyás-diagnosztika (Viechtbauer & Cheung)",
+  "body": "Viechtbauer & Cheung (2010) diagnostics, run with dmetar::InfluenceAnalysis, include standardised residuals, DFFITS, Cook's distance, covariance ratio, leave-one-out tau^2 and Q, hat values and weights; in the example Shehata_2013 was flagged as influential (Figure 3). The source prints no numeric cut-offs. [note: metafor flags a study as influential if |DFFITS| > 3·sqrt(p/(k − p)), Cook's D exceeds the chi-square(p) median, hat > 3p/k, or any |DFBETAS| > 1; a covariance ratio below 1 means removal improves precision. The engine's sensitivity.influence and sensitivity.leave_one_out implement these.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 11, p. 13, Figure 3",
+  "tags": "influence analysis befolyáselemzés DFFITS Cook distance covariance ratio hat value leave-one-out Viechtbauer Cheung InfluenceAnalysis cut-off határérték"
+ },
+ {
+  "k_id": "K-ZHA22-074",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Érzékenységi elemzés a döntési pontokra",
+  "body": "Results depend on judgement calls, so report how sensitive they are: the tutorial varies the within-study correlation used to aggregate dependent outcomes from .25 to .75 around the default .5, and calls the results robust if they do not change materially. The same logic applies to the imputed pre–post r = .7 and to including or excluding unpublished or low-quality studies. Sensitivity to the tau^2 estimator is not discussed explicitly, although the source notes that DL, REML and ML differ. [note: also re-run with an alternative tau^2 estimator and CI method, e.g. REML vs DL vs PM and z vs HKSJ. This matters in the example: from the printed per-study data DL gives tau^2 of about 0.33 against REML's 0.82 (recomputed, not in the source).]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 6–9, pp. 13–14",
+  "tags": "sensitivity analysis érzékenységi elemzés robustness robusztusság correlation korreláció imputation imputálás judgement calls döntési pontok tau2 estimator unpublished studies"
+ },
+ {
+  "k_id": "K-ZHA22-075",
+  "stage_id": "S12",
+  "kind": "check",
+  "title": "Ellenőrzés: kiugró értékek és befolyás",
+  "body": "Reviewer checks: outlier and influence analyses were done; results with and without outliers are reported side by side; influential studies are named; and the conclusions say whether they survive removal of influential studies.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 11",
+  "tags": "reviewer check bírálói ellenőrzés outlier kiugró érték influence befolyás sensitivity érzékenység leave-one-out"
+ },
+ {
+  "k_id": "K-ZHA22-076",
+  "stage_id": "S13",
+  "kind": "threshold",
+  "title": "Hatásméret-referenciaértékek: L2 vs. Cohen",
+  "body": "The tutorial interprets effect sizes with L2 benchmarks (Plonsky & Oswald, 2014): about 0.4 small, 0.7 medium and 1.0 large, larger than Cohen's (1988) 0.2/0.5/0.8, which may underestimate typical L2 effects. Use benchmarks appropriate to the field and outcome, and distinguish statistical from practical significance. [note: generic benchmarks such as Cohen's or Plonsky & Oswald's are context-free; for clinical outcomes judge importance against a minimal important difference or decision threshold, as GRADE does, and consider back-transforming the SMD to a familiar scale.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 5, p. 10",
+  "tags": "effect size benchmarks hatásméret referenciaértékek Cohen Plonsky Oswald small kicsi medium közepes large nagy interpretation értelmezés practical significance gyakorlati jelentőség"
+ },
+ {
+  "k_id": "K-ZHA22-077",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: szigor, átláthatóság, reprodukálhatóság",
+  "body": "Evaluator criteria: is the review systematic (prespecified question, protocol, eligibility criteria and reproducible search) and registered; are the data set and analysis code public, and can an independent re-run reproduce the pooled results; is the PRISMA checklist complete, with every departure from common practice justified? The source cites Chow et al. (2021) as showing that speech-language pathology meta-analyses still need better transparency and reproducibility.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 2–6, p. 1, p. 15, p. 16",
+  "tags": "evaluator criterion értékelési szempont rigor szigor transparency átláthatóság reproducibility reprodukálhatóság open data nyílt adat code kód registration regisztráció PRISMA"
+ },
+ {
+  "k_id": "K-ZHA22-078",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: a bizonyítékbázis elégségessége",
+  "body": "Evaluator criteria: count the independent studies (k), since k below about 8 limits moderator analyses; check prospective or post hoc power; and check per-study sample sizes, because small-n studies (around 15 per group) dominate this field.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 4–5, p. 14",
+  "tags": "evaluator criterion értékelési szempont evidence base bizonyítékbázis number of studies vizsgálatszám power erő sample size mintanagyság small studies kis vizsgálatok"
+ },
+ {
+  "k_id": "K-ZHA22-079",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: hatásméretek érvényessége",
+  "body": "Evaluator criteria: correct formulas with the small-sample correction applied; dependence handled and no double-counting of participants; design compatibility addressed (same metric, design moderator or separate analyses); and imputed values (pre–post r = .7, between-outcome r = .5) tested in sensitivity analyses.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 8–9",
+  "tags": "evaluator criterion értékelési szempont effect size validity hatásméret érvényesség dependence függőség double counting kettős számolás imputation imputálás design elrendezés"
+ },
+ {
+  "k_id": "K-ZHA22-080",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: modellválasztás és heterogenitás",
+  "body": "Evaluator criteria: is random effects justified, and are the tau^2 estimator and CI methods reported; how large is heterogeneity (I^2 with CI, tau) and is it explained by moderators; is the pooled effect interpreted with heterogeneity in mind (in the example, I^2 = 75% means the pooled g = 0.47 needs caution); and are conclusions robust to outlier and influence analyses?",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 9–11",
+  "tags": "evaluator criterion értékelési szempont model choice modellválasztás heterogeneity heterogenitás random effects véletlen hatás I2 tau robustness robusztusság"
+ },
+ {
+  "k_id": "K-ZHA22-081",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: kis-vizsgálat hatások és robusztusság",
+  "body": "Consistent signals across funnel plot, Egger's test and trim-and-fill lower confidence. In the example, g fell from 0.47 to 0.18 after removing outliers (still significant) and to 0.06 (non-significant) after trim-and-fill, with Egger p = .034, so the evaluator should judge the evidence for a benefit fragile; if results flip under sensitivity analyses, certainty should be downgraded. [note: in GRADE terms these map to the inconsistency and publication-bias domains; the source only names GRADE.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 10–12, p. 7",
+  "tags": "evaluator criterion értékelési szempont small-study effects kis vizsgálatok hatása publication bias publikációs torzítás robustness robusztusság GRADE certainty bizonyosság downgrade leminősítés fragile törékeny"
+ },
+ {
+  "k_id": "K-ZHA22-082",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelés: értelmezés",
+  "body": "Evaluator criteria: are the effect-size benchmarks appropriate to the field (Plonsky & Oswald for L2, Cohen's otherwise); are statistical and practical significance distinguished; are moderator findings presented as observational between-study associations; and is a non-significant moderator not over-interpreted as showing no effect?",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 5, p. 10, p. 14",
+  "tags": "evaluator criterion értékelési szempont interpretation értelmezés benchmarks referenciaértékek practical significance gyakorlati jelentőség moderator moderátor observational megfigyeléses"
+ },
+ {
+  "k_id": "K-ZHA22-083",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Jelentési standardok: PRISMA 2009 és mások",
+  "body": "The tutorial follows PRISMA 2009 (Moher et al., 2009), reproducing its 27-item checklist (Appendix A) and flow diagram, and also points to the APA Meta-Analysis Reporting Standards (MARS, APA Publication Manual 6th ed.), Campbell's MEC2IR standards and Rosenthal (1995) on writing meta-analytic reviews. [note: PRISMA 2009 is superseded by PRISMA 2020 (Page et al., 2021), which has a revised 27-item checklist with sub-items and an updated flow diagram; new reviews should report against PRISMA 2020.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 2, p. 15, pp. 20–21",
+  "tags": "reporting jelentés PRISMA 2009 PRISMA 2020 MARS APA MEC2IR Campbell reporting guideline jelentési útmutató checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-ZHA22-084",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "A PRISMA 2009 tételei és folyamatábrája",
+  "body": "PRISMA 2009 items: 1 title; 2 structured abstract with registration number; 3 rationale; 4 objectives with PICOS; 5 protocol and registration; 6 eligibility with rationale; 7 information sources with dates; 8 full search for at least one database; 9 study selection; 10 data collection; 11 data items and assumptions; 12 risk-of-bias methods; 13 summary measures; 14 synthesis methods including consistency (e.g. I^2); 15 bias across studies; 16 additional analyses (stating which were prespecified); 17 selection numbers with flow diagram; 18 study characteristics; 19 within-study risk of bias; 20 per-study data and estimates, ideally in a forest plot; 21 synthesis results with CIs and consistency; 22 bias across studies; 23 additional analyses; 24 summary of evidence; 25 limitations; 26 conclusions; 27 funding. The flow diagram runs identification, screening, eligibility, included, with n at each stage and reasons for full-text exclusion. [note: PRISMA 2020 reorganises these items into a revised 27-item checklist with sub-items, adding for example the certainty-of-evidence assessment, reporting-bias assessment, registration and protocol amendments, and the availability of data and code; use it for new reviews. In the tutorial's Appendix A the page numbers refer to the 2021 example review, which reports item 5 (protocol and registration) as 'N/A'.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 3, pp. 20–21",
+  "tags": "PRISMA 2009 checklist ellenőrzőlista items tételek flow diagram folyamatábra reporting jelentés abstract absztrakt registration regisztráció"
+ },
+ {
+  "k_id": "K-ZHA22-085",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Forest plot konvenciók",
+  "body": "The example forest plot (Figure 2) shows study ID, TE (effect), SE_TE, the plot, SMD with 95% CI and weight %; squares are sized by weight, whiskers show the 95% CI, a diamond shows the pooled estimate, and a footer gives I^2, tau^2 and the heterogeneity p. Decimals: TE and SMD 2, SE_TE 4, CI 2, weight 1 (%), footer tau^2 4 and I^2 0.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 10–11, Figure 2",
+  "tags": "forest plot erdődiagram weight súly diamond rombusz confidence interval konfidenciaintervallum decimals tizedesjegyek figure ábra reporting jelentés"
+ },
+ {
+  "k_id": "K-ZHA22-086",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Mit kell közölni az összesített eredményről",
+  "body": "For the pooled result report k, the estimate with 95% CI, z and p; tau^2 and tau with CIs, I^2 with CI, H with CI, and Q with df and p; and the estimation methods (inverse variance, tau^2 estimator, CI method for tau^2). Funnel plots should show SE on an inverted y-axis, a vertical line at the summary estimate and significance contours. [note: current guidance (Cochrane Handbook v6, PRISMA 2020) also expects a prediction interval for random-effects results, the certainty of the evidence (GRADE) and, where relevant, the reporting-bias assessment.]",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 10, p. 13",
+  "tags": "reporting jelentés pooled result összesített eredmény confidence interval konfidenciaintervallum tau2 I2 H Q methods módszerek funnel plot tölcsérdiagram"
+ },
+ {
+  "k_id": "K-ZHA22-087",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Átláthatóság: eltérések indoklása, adat- és kódmegosztás",
+  "body": "Report explicitly what was done and justify any departure from common practice or expert recommendations, because several meta-analytic procedures are controversial. Share data and code openly (the tutorial uses OSF, https://osf.io/e9bkf/) for reproducibility; the source cites Chow et al. (2021) on the continued need to improve the transparency and reproducibility of speech-language pathology meta-analyses.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 1, p. 2, p. 15, p. 16",
+  "tags": "transparency átláthatóság open data nyílt adat code sharing kódmegosztás OSF reproducibility reprodukálhatóság deviations eltérések justification indoklás"
+ },
+ {
+  "k_id": "K-ZHA22-088",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Kiírt tizedesjegyek a szoftverkimenetekben",
+  "body": "meta printouts: estimate and CI 3 decimals in the main box and 4 in the outlier and trim-and-fill boxes, z 2, p 4 (very small p printed as '< .0001'), tau^2 and tau with CIs 4, I^2 1 (%), H 2, Q 2. metafor rma printouts: estimates, SE, t, p and CI 3; I^2 and R^2 2 (%); H^2 2; QE and F 3. dmetar Egger output: intercept 3, CI 2, t 3, p 8 decimals.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 10–15",
+  "tags": "decimals tizedesjegyek rounding kerekítés output kimenet meta metafor dmetar p-value p-érték reporting jelentés format formátum"
+ },
+ {
+  "k_id": "K-ZHA22-089",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Hibák magában a tutorialban (bírálói tesztesetek)",
+  "body": "Errors and inconsistencies in the tutorial, usable as reviewer test cases: on p. 8, ñ is mislabelled 'harmonic mean' (it is half of it), Eq. 7 is Var(d) evaluated at g rather than Var(g), and Eq. 10 leaves g_MT and g_ST undefined and uses a Becker variance that does not match the Morris d_ppc2 estimator of Eq. 8; on p. 11 the text quotes only 'I2 < 0.1%' where the output gives 0.0% [0.0, 48.9]; on p. 12 a significant Egger test is described as showing publication bias, although it only shows small-study asymmetry; on p. 14 the text gives both F(1, 11) = 2.06, p = .18, R2 = 39.14% (matching the output) and F(1, 9) = 4.15, p = .07, R2 = 100% (matching nothing), and cites the intercept's p = .836 for the moderator; the worked-example review was not registered (Appendix A, item 5 'N/A'); and the tutorial cites PRISMA 2009, now superseded by PRISMA 2020.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "p. 2, p. 8, pp. 11–12, p. 14, pp. 20–21",
+  "tags": "source errors forráshibák test cases tesztesetek typo elírás inconsistency ellentmondás text output mismatch reviewer bíráló variance variancia PRISMA 2020"
+ },
+ {
+  "k_id": "K-ZHA22-090",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: jelentés",
+  "body": "Reviewer checks: all 27 PRISMA items are addressed with page locators (PRISMA 2020 preferred over the source's PRISMA 2009); the flow diagram numbers are consistent; per-study data and a forest plot are given; and data and analysis code are shared, for example on OSF.",
+  "source_id": "zhang2022_jslhr",
+  "locator": "pp. 20–21, p. 1",
+  "tags": "reviewer check bírálói ellenőrzés reporting jelentés PRISMA checklist ellenőrzőlista forest plot data sharing adatmegosztás OSF"
+ }
+]

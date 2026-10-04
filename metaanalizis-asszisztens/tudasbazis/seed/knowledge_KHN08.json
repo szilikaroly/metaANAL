@@ -1,0 +1,822 @@
+[
+ {
+  "k_id": "K-KHN08-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A fejezet hatóköre: SMD-metaanalízis (Khan 2020, 8. fejezet)",
+  "body": "Khan (2020) Ch 8 (pp. 159–194) covers meta-analysis of a continuous outcome compared between two groups using the standardized mean difference (Cohen's d, Hedges' g, Glass's Δ), after introducing the raw mean difference for independent and matched-pairs designs. The SMDs are pooled under fixed effect, DerSimonian–Laird random effects and IVhet, followed by funnel and Doi plots; every method is shown as a column-by-column hand calculation, then run in MetaXL, with Stata admetan code in Appendix 8. The chapter has no tau² estimator other than DL, no t-based or HKSJ CIs, no prediction intervals, no subgroup analysis or meta-regression, no Egger/Begg/trim-and-fill, and nothing on risk of bias, GRADE or PRISMA. [note: the DOCX conversion lost the equation objects, so every formula from this chapter in the KB is a reconstruction checked against the book's worked numbers.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 abstract p. 159; §8.1; Appendix 8 pp. 192–193",
+  "tags": "scope hatókör standardized mean difference standardizált átlagkülönbség SMD Cohen d Hedges g Glass delta continuous outcome folytonos kimenet MetaXL Stata admetan Khan 2020"
+ },
+ {
+  "k_id": "K-KHN08-002",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Adatkivonatolás SMD-metaanalízishez",
+  "body": "For SMD meta-analysis from raw data, extract per arm the sample size, mean and SD (n1, mean1, SD1 for the experimental arm; n2, mean2, SD2 for the control arm), as in the operative-time dataset (Table 8.10, A8.3). If only precomputed effects are available, extract per study the effect size (d or g) and its SE, which is the layout MetaXL's \"ContSE\" input expects (columns: study, ES, SE).",
+  "source_id": "khan2020",
+  "locator": "Ch8 Table 8.10 p. 185; A8.1 p. 192; A8.3 p. 193; p. 177",
+  "tags": "data extraction adatkivonatolás per-arm karonkénti n mean SD átlag szórás effect size SE standard error standard hiba ContSE MetaXL input"
+ },
+ {
+  "k_id": "K-KHN08-003",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "A vizsgálati elrendezés kódolása: független vs párosított",
+  "body": "Code each study's design as independent groups or matched pairs (pre/post on the same patients, siblings, or patients matched on disease stage), because the mean difference and especially its variance differ between the two designs. Matched-pair data are dependent within pairs, so paired studies must not be run through the independent-group formulas.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.1 p. 160; §8.1(b) p. 162",
+  "tags": "study design vizsgálati elrendezés independent groups független csoportok matched pairs párosított minta paired pre-post előtte-utána crossover dependence függőség coding kódolás"
+ },
+ {
+  "k_id": "K-KHN08-004",
+  "stage_id": "S05",
+  "kind": "convention",
+  "title": "Előjel- és irány-konvenció (kezelés − kontroll)",
+  "body": "The chapter's convention is group 1 = treatment/experimental and group 2 = control/placebo, with the effect computed as mean1 − mean2; in Ex 8.12 this is LARR − ORR, so a positive SMD means a longer operative time with LARR. In the paired cholesterol example the difference is baseline − follow-up, so a positive value means a reduction. Record the direction per study, check it against each paper's narrative, and state it in the forest-plot labels.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 160, 164; Ex 8.2 p. 163; Ex 8.12 pp. 185–189",
+  "tags": "sign convention előjel-konvenció direction of effect hatásirány treatment minus control kezelés mínusz kontroll baseline minus follow-up forest plot label címke"
+ },
+ {
+  "k_id": "K-KHN08-005",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Csak teljes N ismert: egyenlő karméret feltételezése",
+  "body": "The SMD variance needs the two arm sizes, but Table 8.2 (Hedges 1985 data) gives only the total N, so the book assumes equal arms (N = 76 split 38/38 in Ex 8.3). Detect: the dataset has a single N column. Fix: extract n1 and n2 from the primary reports; if they are truly unavailable, flag the equal-split assumption and consider it in sensitivity analysis.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.3 p. 167; Table 8.2 p. 168",
+  "tags": "total sample size teljes mintanagyság equal arms egyenlő karok assumption feltételezés n1 n2 variance variancia missing data hiányzó adat"
+ },
+ {
+  "k_id": "K-KHN08-006",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Elírások a fejezet tábláiban (tesztadatként használva)",
+  "body": "Table 8.3 prints Study 6 as θ = −0.24, but all later tables (and A8.1) use −0.234, and the SE 0.200683 only reproduces with −0.234. Table 8.7 labels as \"wd\" a column that actually holds (d − 0.21)², its Sum row also totals meaningless columns (n, d, Var), and its weights come from rounded variances, giving Σw = 69.55719 instead of 69.55727 (Table 8.6). Table 8.8 prints d rounded (−0.18, −0.23) while its products use −0.178 and −0.234. When the book's data serve as engine test fixtures, use the unrounded values.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Table 8.3 p. 170; Table 8.7 p. 176; Table 8.8 p. 179",
+  "tags": "typo elírás table táblázat test fixture tesztadat rounding kerekítés open education nyitott oktatás data check adatellenőrzés"
+ },
+ {
+  "k_id": "K-KHN08-007",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzőlista: adatkivonatolás (SMD)",
+  "body": "Reviewer checks for extraction: (1) n1, mean1, SD1, n2, mean2 and SD2 are extracted per arm, with group 1 the experimental arm and the direction of the difference documented; (2) if only the total N is available, the equal-split assumption is flagged; (3) the design is coded as independent or paired, and paired studies are not run through independent-group formulas.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.3 p. 167; pp. 160–163; Table 8.10 p. 185",
+  "tags": "reviewer check ellenőrzés extraction adatkivonatolás per-arm karonkénti direction irány paired párosított equal split egyenlő felosztás checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-KHN08-008",
+  "stage_id": "S06",
+  "kind": "concept",
+  "title": "Torzításkockázat: csak a randomizáció említése",
+  "body": "The only design-quality remark in the chapter is that patients should be randomly allocated to the treatment and placebo groups to avoid selection bias. The chapter has no risk-of-bias or quality appraisal; the quality-effects model (Doi et al. 2015b, 2015c) is only cited. [note: use RoB 2 for randomized trials and ROBINS-I for non-randomized studies, and draw the guidance from other sources.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 159; p. 169",
+  "tags": "risk of bias torzításkockázat randomization randomizáció selection bias szelekciós torzítás quality effects model minőségi hatás modell Doi 2015"
+ },
+ {
+  "k_id": "K-KHN08-009",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "A fejezet adatkészletei (tesztadatok)",
+  "body": "The chapter's datasets are: Ginkgo biloba memory toy data (Table 8.1: Ginkgo n = 28, mean 58.4, SD 3.8; placebo n = 24, mean 56.8, SD 4.3); paired cholesterol toy data (n = 15, ΣD = 254, Σ(D − D̄)² = 2808.9333); sex differences in quantitative ability, 7 studies with N, g and g* (Hedges 1985 p. 17; Table 8.2); Open Education vs attitude toward school, 6 studies with n_E = n_C = 22, 10, 10, 10, 39, 50 and θ̂ = 0.563, 0.308, 0.081, 0.598, −0.178, −0.234 (Hedges 1985 p. 121; Table 8.3); and operative time for laparoscopic-assisted (LARR) vs open (ORR) rectal resection, 9 studies with per-arm n, mean and SD (Memon et al. 2018; Table 8.10). Memon et al. 2018 is cited but missing from the chapter's reference list.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Table 8.1 p. 161; Ex 8.2 p. 163; Table 8.2 p. 168; Table 8.3 p. 170; Table 8.10 p. 185",
+  "tags": "dataset adatkészlet worked example kidolgozott példa test fixture tesztadat Ginkgo biloba cholesterol koleszterin open education nyitott oktatás operative time műtéti idő Hedges 1985 Memon 2018"
+ },
+ {
+  "k_id": "K-KHN08-010",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Műtéti idő adatkészlet (LARR vs ORR, 9 vizsgálat)",
+  "body": "Per-arm data (n, mean, SD; LARR then ORR): Bonjer 2015 699, 241, 33.6 vs 345, 191.5, 26.2; Fleshman 2015 240, 266.2, 101.9 vs 222, 220.6, 92.4; Stevenson 2015 238, 210, 66.7 vs 235, 190, 59.2; Jeong 2014 170, 244.9, 75.4 vs 170, 197, 62.9; Ng 2014 40, 211.6, 53 vs 40, 153, 41.1. Liang 2011 169, 138.08, 23.79 vs 174, 118.53, 21.99; Lujan 2009 101, 193.7, 45.1 vs 103, 172.9, 59.4; Ng 2008 51, 213.5, 46.2 vs 48, 163.7, 43.4; Zhou 2004 82, 120, 18 vs 89, 106, 25. All nine studies report the same outcome (operative time) on the same scale; the book does not state the unit, though the values are consistent with minutes. These data drive Ex 8.12 and Figs 8.4–8.10.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Table 8.10 p. 185; A8.3 p. 193",
+  "tags": "operative time műtéti idő laparoscopic laparoszkópos rectal resection rektumreszekció LARR ORR dataset adatkészlet per-arm karonkénti Memon 2018 test fixture tesztadat"
+ },
+ {
+  "k_id": "K-KHN08-011",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Miért SMD? Eltérő skálák és mértékegységek",
+  "body": "When studies record the same outcome in different units or on different scales, raw mean differences cannot be compared, so the chapter divides the difference by an SD to get a unit-free SMD, read as the number of SDs separating the treatment and control means. The book states that in this situation meta-analysis must use the SMD. [note: the book's own examples (cm vs inch, kg vs lb) are pure unit changes that can be converted to a common unit and pooled as a raw MD, which keeps the clinical scale; Cochrane Handbook v6 reserves the SMD for outcomes measured with different instruments or scales. The SMD also mixes the effect with between-study differences in SD (population spread, instrument reliability), so it is not automatically the better choice.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.1 p. 160",
+  "tags": "standardized mean difference standardizált átlagkülönbség SMD rationale indoklás different scales eltérő skálák units mértékegység unit-free mértékegység nélküli raw mean difference nyers átlagkülönbség MD"
+ },
+ {
+  "k_id": "K-KHN08-012",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Nyers átlagkülönbség független csoportokra (egyenlő és eltérő variancia)",
+  "body": "The raw MD is Ȳ1 − Ȳ2. Assuming equal variances, its variance is (n1 + n2)/(n1·n2) × Sp², with Sp² the (n − 1)-weighted pooled variance; without that assumption it is S1²/n1 + S2²/n2. Ex 8.1 (Ginkgo 28/58.4/3.8 vs placebo 24/56.8/4.3) gives MD = 1.6, Sp² = 16.303, V = 1.261542 and SE = 1.1232 under equal variances, or V = 1.286131 and SE = 1.1341 under unequal variances. The book defers unequal-variance handling to the MD chapter (Ch 9).",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.1(a) pp. 160–161; Ex 8.1 pp. 161–162; p. 164",
+  "tags": "mean difference átlagkülönbség MD independent groups független csoportok pooled variance összevont variancia equal variances egyenlő varianciák unequal variances eltérő varianciák Welch standard error standard hiba"
+ },
+ {
+  "k_id": "K-KHN08-013",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Párosított átlagkülönbség és varianciája",
+  "body": "For n matched pairs, D_i = Y1i − Y2i, D̄ = ΣD_i/n, S_D² = Σ(D_i − D̄)²/(n − 1), and Var(D̄) = S_D²/n. Ex 8.2 (cholesterol, n = 15, ΣD = 254, Σ(D − D̄)² = 2808.9333, D = baseline − 6-week value) gives D̄ = 16.9333, S_D² = 200.6381, Var = 13.3759 and SE = 3.6573. A positive D̄ here means a reduction in cholesterol.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.1(b) pp. 162–163; Ex 8.2 p. 163",
+  "tags": "paired mean difference párosított átlagkülönbség matched pairs párosított minta pre-post előtte-utána difference score különbség variance variancia cholesterol koleszterin"
+ },
+ {
+  "k_id": "K-KHN08-014",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Nem tárgyalt SMD-változatok és konverziók",
+  "body": "The chapter gives no SMD for paired designs (no d_z, d_av or pre/post correlation), no change-score SMD, no conversions between the SMD and the OR or r, and no heteroscedastic SMD variants (unequal variances are deferred to Ch 9); zero cells do not apply to continuous outcomes. Agents must take these methods from other sources rather than forcing paired or change data through the independent-group formulas here. [note: the engine has conversions.d_to_logor, conversions.logor_to_d, conversions.d_to_r, conversions.r_to_d, conversions.sd_change and conversions.corr_from_change for these needs.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.1(b) pp. 162–163; p. 164",
+  "tags": "not covered nem tárgyalt paired SMD párosított SMD change score változás-pontszám pre-post correlation korreláció conversion konverzió odds ratio correlation r heteroscedastic heteroszkedasztikus"
+ },
+ {
+  "k_id": "K-KHN08-015",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Populációs SMD",
+  "body": "The population SMD is θ = (μ1 − μ2)/σ, which assumes a common SD (σ1 = σ2 = σ) in the two populations. The sample SMDs (d, g, Δ) differ only in how σ is estimated.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 p. 164",
+  "tags": "population SMD populációs SMD theta common standard deviation közös szórás equal variances egyenlő varianciák definition definíció"
+ },
+ {
+  "k_id": "K-KHN08-016",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Cohen-féle d a könyv definíciója szerint",
+  "body": "As printed, Cohen's d = (X̄1 − X̄2)/s with s = sqrt[(n1·S1² + n2·S2²)/(n1 + n2)], an n-denominator pooled SD that the book calls a biased estimator of σ. The software the book uses does not compute d this way: MetaXL/admetan \"Cohen\" uses the usual (n − 1) pooled SD. The book also says this s was defined assuming unequal population variances. [note: that remark is not standard: both pooled SDs assume a common σ and differ only in the n versus n − 1 divisor. Many texts, including Borenstein et al. 2009, also define d with the (n − 1) pooled SD; terminology for d versus g is inconsistent across sources, so always state the SD used.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 p. 164",
+  "tags": "Cohen's d Cohen-féle d definition definíció pooled SD összevont szórás n denominator n nevező biased torzított Cohen 1969 1987"
+ },
+ {
+  "k_id": "K-KHN08-017",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Hedges-féle g a könyv szövege szerint (J nélkül)",
+  "body": "The text defines Hedges' g = (X̄1 − X̄2)/s* with s* = sqrt{[(n1 − 1)S1² + (n2 − 1)S2²]/(n1 + n2 − 2)}, the usual pooled SD, and does not apply the small-sample correction factor J. Table 8.2 nevertheless reports g alongside an \"unbiased\" g* (Study 1: g = 0.72, g* = 0.71), consistent with J = 1 − 3/(4N − 9) = 0.98983 at N = 76, but the chapter never prints J. [note: the book calls s* an unbiased estimator of σ; strictly s*² is unbiased for σ², and most current sources (Borenstein 2009, Cochrane v6) reserve \"Hedges' g\" for the J-corrected SMD. The book's labels follow the older Hedges (1981)/Hedges & Olkin (1985) notation, in which g is uncorrected and the J-corrected value is the 'unbiased' estimator (here g*).]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 p. 165; Table 8.2 p. 168",
+  "tags": "Hedges g Hedges-féle g pooled SD összevont szórás small sample correction kismintás korrekció J factor torzítatlan unbiased g* Hedges 1981 1982"
+ },
+ {
+  "k_id": "K-KHN08-018",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Kismintás korrekciós tényező J",
+  "body": "The \"unbiased\" g* = J·g with J = 1 − 3/(4N − 9), N = n1 + n2; this is the approximation MetaXL \"Hedges\" uses and the one that reproduces Table 8.2 (0.72 × 0.98983 ≈ 0.71 at N = 76). It is equivalent to 1 − 3/(4·df − 1) with df = N − 2, so in the engine it is effect_sizes.hedges_j(N − 2, method=\"approx\"); the engine's default is the exact gamma-function J. For large N the correction is negligible: in Ex 8.12 the pooled d and g agree to 2 decimals under FE and RE, but the smallest studies still differ by up to 0.02 (Ng 2014, N = 80: d 1.24 vs g 1.22; Ng 2008, N = 99: 1.11 vs 1.10).",
+  "source_id": "khan2020",
+  "locator": "Ch8 Table 8.2 p. 168; Figs 8.4–8.6 pp. 186–189",
+  "tags": "Hedges J correction korrekció small sample kismintás bias correction torzításkorrekció unbiased torzítatlan g* approximation közelítés exact gamma"
+ },
+ {
+  "k_id": "K-KHN08-019",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Glass-féle Δ: a kontrollcsoport szórásával",
+  "body": "Glass's Δ = (X̄1 − X̄2)/s2, where s2 is the SD of the control group only (Glass, McGaw & Smith 1981). Its variance uses the control-arm size: Var(Δ) = (n1 + n2)/(n1·n2) + Δ²/(2(n2 − 1)).",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 p. 165; pp. 165–166",
+  "tags": "Glass delta Glass-féle delta control group SD kontrollcsoport szórása standardized mean difference standardizált átlagkülönbség Glass 1981"
+ },
+ {
+  "k_id": "K-KHN08-020",
+  "stage_id": "S07",
+  "kind": "threshold",
+  "title": "Cohen-féle küszöbök: 0,2 / 0,5 / 0,8",
+  "body": "The book quotes Cohen's interpretation of d: 0.2 = small (1/5 SD), 0.5 = moderate (1/2 SD), 0.8 = large (8/10 SD), and says calculated values usually lie between −3.0 and 3.0. It adds that the meaning of an effect size varies by context. [note: Cohen's benchmarks are generic conventions; Cochrane Handbook v6 advises re-expressing a pooled SMD on a familiar instrument's scale rather than relying on them.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 p. 165",
+  "tags": "Cohen benchmarks küszöbértékek small kicsi moderate közepes large nagy 0.2 0.5 0.8 interpretation értelmezés effect size hatásméret"
+ },
+ {
+  "k_id": "K-KHN08-021",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Nagy mintánál d és g alig tér el",
+  "body": "For large samples d and g are practically identical. In Ex 8.12 (arm sizes 40–699) the pooled d and g coincide to 2 decimals under FE (0.84; 0.77, 0.92) and RE (0.80; 0.45, 1.15). Under IVhet the text claims the same CI for both, but Fig. 8.6 prints (0.44, 1.25) for d and (0.43, 1.25) for g. Per study, the two smallest trials differ by 0.01–0.02 (Ng 2014: 1.24 vs 1.22; Ng 2008: 1.11 vs 1.10). The small-sample correction matters only when arms are small.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 p. 165; Ex 8.12 pp. 185–189",
+  "tags": "Cohen d Hedges g large sample nagy minta small sample correction kismintás korrekció difference különbség negligible elhanyagolható"
+ },
+ {
+  "k_id": "K-KHN08-022",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "SMD-varianciák a könyv nyomtatásában",
+  "body": "As printed: Var(d) = [(n1 + n2)/(n1·n2) + d²/(2(n1 + n2 − 2))] × (n1 + n2)/(n1 + n2 − 2); Var(g) = (n1 + n2)/(n1·n2) + g²/(2(n1 + n2 − 2)); Var(Δ) = (n1 + n2)/(n1·n2) + Δ²/(2(n2 − 1)); and SE = sqrt(Var). The population versions replace the estimate by θ, and the sample versions plug in the estimate. Ex 8.3 (g = 0.72, N = 76, assumed 38/38) gives Var = 0.056134 and SE = 0.236927, which reproduces only with the 2(N − 2) denominator.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 165–166; Ex 8.3 p. 167",
+  "tags": "variance variancia SMD Cohen d Hedges g Glass delta standard error standard hiba formula képlet sampling variance mintavételi variancia"
+ },
+ {
+  "k_id": "K-KHN08-023",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Három különböző Var(g)-nevező egy fejezeten belül",
+  "body": "Three variance denominators for the SMD appear in one chapter: 2(N − 2) in the text and Ex 8.3; 2N in the Hedges (1985) open-education example, i.e. Var = 2/n + θ²/(4n) for equal arms n (Study 1: n = 22, θ = 0.563, Var = 0.094511); and 2(N − 3.94) in MetaXL \"Hedges\". Var(Δ) is printed both with 2(n2 − 1) and, in the SE paragraph on p. 166, with 2(n2 − 2), a typo since the software matches n2 − 1. Detect: recompute v_i from n and the ES. Fix: document which formula is used and expect differences in the 3rd–4th decimal between software.",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 166; Ex 8.3 p. 167; Ex 8.5 p. 170; Figs 8.4–8.6",
+  "tags": "variance formula varianciaképlet denominator nevező inconsistency következetlenség Hedges g Glass delta 2(N-2) 2N 3.94 MetaXL typo elírás"
+ },
+ {
+  "k_id": "K-KHN08-024",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "A könyv d/g-definíciója eltér a szoftverétől",
+  "body": "The text defines Cohen's d with an n-denominator SD and \"Hedges' g\" as the (n − 1) pooled-SD SMD without J, but MetaXL/admetan \"Cohen\" is the (n − 1) pooled-SD SMD (the book's \"g\") and \"Hedges\" multiplies it by J = 1 − 3/(4N − 9). Detect: recompute the printed Q for the operative-time data (163.89 for Cohen, 163.59 for Hedges) under each definition; the book's own n-denominator d gives 163.29 and does not match. Fix: state which SD, which J (approximate or exact) and which variance formula were used.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 164–165 vs Figs 8.4–8.6 pp. 186–189",
+  "tags": "Cohen d Hedges g definition definíció software szoftver MetaXL admetan mismatch eltérés pooled SD összevont szórás J correction korrekció reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-KHN08-025",
+  "stage_id": "S07",
+  "kind": "convention",
+  "title": "Mit számol ténylegesen a MetaXL / admetan (Cohen, Hedges, Glass)",
+  "body": "Reverse-engineered from Ex 8.12 (all forest-plot numbers, Q, weights and FE/RE/IVhet CIs reproduce to 2 decimals): \"Cohen\" d = (m1 − m2)/Sp with the (n − 1) pooled SD and Var = N/(n1·n2) + d²/(2(N − 2)), giving Q = 163.885; \"Hedges\" g = J·d with J = 1 − 3/(4N − 9) and Var = N/(n1·n2) + g²/(2(N − 3.94)), giving Q = 163.590, a Bonjer FE weight of 26.0% and an Ng 2008 CI of (0.68, 1.53); \"Glass\" Δ = (m1 − m2)/SD_control and Var = N/(n1·n2) + Δ²/(2(n2 − 1)), giving Q = 179.401. Using 2(N − 2) for Hedges instead gives Q = 163.65, a 25.9% weight and an upper limit of 1.52, which do not match. [note: these definitions come from the note-taker's verification and agree with the Stata metan/admetan documentation; the book does not print them.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.12 pp. 185–189; Figs 8.4–8.6",
+  "tags": "MetaXL admetan metan Cohen Hedges Glass variance variancia 3.94 software convention szoftver-konvenció reproduction reprodukció operative time műtéti idő Q statistic"
+ },
+ {
+  "k_id": "K-KHN08-026",
+  "stage_id": "S07",
+  "kind": "convention",
+  "title": "Motor és metafor eltérése a könyv számaitól",
+  "body": "R metafor's escalc(\"SMD\") uses the exact J and vi = 1/n1 + 1/n2 + g²/(2N), which gives Q = 163.71 for the operative-time data instead of the book's 163.59. The engine's effect_sizes.smd default (vtype=\"LS\", exact J) is the same as metafor's, so its per-study variances, weights and Q will differ from the printed MetaXL values in the 3rd–4th decimal. The MetaXL variances (2(N − 2), 2(N − 3.94)) are not implemented in the engine. [note: this comparison comes from the note-taker's metafor cross-check; it is not in the book.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.12 pp. 185–189 (note-taker's cross-check)",
+  "tags": "metafor escalc engine motor effect_sizes.smd variance variancia discrepancy eltérés reproducibility reprodukálhatóság MetaXL Q 163.71 163.59 tolerance tolerancia"
+ },
+ {
+  "k_id": "K-KHN08-027",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Egy vizsgálat CI-je és z-próbája; Ex 8.3–8.4",
+  "body": "For one study (or a pooled estimate) the 95% Wald CI is θ̂ ± 1.96·SE, and H0: θ = 0 is tested with Z = θ̂/SE ~ N(0, 1), two-sided P = 2·P(Z > |z0|), rejecting if |z0| ≥ z_{α/2} or P ≤ α. Ex 8.3–8.4 (g = 0.72, N = 76, assumed 38/38, SE = 0.236927) gives the 95% CI (0.256, 1.184), z = 3.039 and P = 2 × 0.0012 = 0.0024; using g* = 0.71 leads to the same conclusion.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 166–168; Ex 8.3–8.4 pp. 167–168",
+  "tags": "confidence interval konfidenciaintervallum Wald z test z-próba p-value p-érték hypothesis test hipotézisvizsgálat single study egyedi vizsgálat 1.96"
+ },
+ {
+  "k_id": "K-KHN08-028",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Nyitott oktatás, 1. vizsgálat: variancia, CI, z-próba",
+  "body": "Open Education Study 1 (n_E = n_C = 22, θ̂ = 0.563) has Var = 0.094511 and SE = 0.307426 under the 2N variance formula, a 95% CI of 0.56 (−0.04, 1.17), z = 1.83 and P = 2 × 0.0336 = 0.0672, so it is not significant at 5%. The other five studies' SEs are in Table 8.4 and A8.1 (e.g. Study 6: θ̂ = −0.234, SE = 0.200683 in Table 8.4, 0.200684 in A8.1).",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.5 p. 170; Ex 8.6 Table 8.5; Ex 8.8 pp. 173–174; A8.1 p. 192",
+  "tags": "open education nyitott oktatás worked example kidolgozott példa variance variancia confidence interval konfidenciaintervallum z test z-próba Hedges 1985"
+ },
+ {
+  "k_id": "K-KHN08-029",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Hibás állítás: „az SMD standard normális eloszlású”",
+  "body": "A remark claims that the SMD follows a standard normal distribution, so no transformation is needed for its CI or test. Only the standardised statistic Z = θ̂/SE is approximately N(0, 1); the SMD itself is approximately normal in large samples with the variance given above. The practical conclusion stands: unlike the OR or RR, the SMD is pooled and its CI computed on its own scale, without a log transformation.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Remark p. 166",
+  "tags": "standard normal distribution standard normális eloszlás SMD sampling distribution mintavételi eloszlás transformation transzformáció log scale log skála misconception tévhit"
+ },
+ {
+  "k_id": "K-KHN08-030",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Glass-féle Δ: indokolt kontroll-SD kell",
+  "body": "Using the control-group SD changes both the estimates and the weights: in Ex 8.12 Glass's Δ moves Bonjer from 1.58 to 1.89 and its FE weight from 25.9% to 17.7%, and Q rises from 163.89 (d) and 163.59 (g) to 179.40. State which SD is used as the denominator. [note: the book gives no rule for choosing Δ; the conventional advice (Glass et al. 1981; Borenstein et al. 2009) is to use it only when the intervention plausibly changes the outcome's variance, otherwise the pooled SD is more precise.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.12 pp. 186–188; Figs 8.4–8.6",
+  "tags": "Glass delta control SD kontroll szórás denominator nevező choice választás weights súlyok variance heterogeneity variancia-heterogenitás justification indoklás"
+ },
+ {
+  "k_id": "K-KHN08-031",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Fix hatású (inverz-variancia) modell",
+  "body": "Under the fixed-effect model (MetaXL \"IV\") with w_i = 1/v_i, θ̂_FE = Σw_iθ̂_i/Σw_i, Var(θ̂_FE) = 1/Σw_i, SE = sqrt(1/Σw_i), the 95% CI is θ̂_FE ± 1.96·SE and the test is Z = θ̂_FE/SE. The book says the FE model is appropriate when between-study variation is insignificant, i.e. when the effect is homogeneous across studies. [note: choosing FE because a heterogeneity test is non-significant is outdated; Cochrane Handbook v6 says the FE/RE choice must not rest on a heterogeneity test and should be set a priori from the assumed model and the inference intended (see K-KHN08-033).]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.4 pp. 169–172",
+  "tags": "fixed effect fix hatás common effect közös hatás inverse variance inverz variancia weights súlyok pooled estimate összesített becslés MetaXL IV"
+ },
+ {
+  "k_id": "K-KHN08-032",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "FE-példa: nyitott oktatás (Ex 8.7–8.8)",
+  "body": "For the six Open Education studies, Σw = 69.55727 and Σwθ = 1.478124, giving θ̂_FE = 0.02125, Var = 0.014377 and SE = 0.119903, a 95% CI of (−0.21, 0.26), z = 0.177 and P = 0.857 (Fig. 8.1). The book reports P = 0.8572 from a normal table at z = 0.18; the exact value is 0.8593.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.7 pp. 171–172; Ex 8.8 p. 174; Fig. 8.1 p. 173",
+  "tags": "fixed effect fix hatás worked example kidolgozott példa open education nyitott oktatás pooled estimate összesített becslés confidence interval konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN08-033",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Modellválasztás heterogenitás-próba alapján",
+  "body": "The book recommends the FE model when between-study variation is \"insignificant\", yet it also warns that the Q test has low power, so a non-significant Q cannot establish homogeneity. Fix: choose the model a priori from the inference intended, and report a heterogeneity-robust model (RE or IVhet) alongside the FE result. [note: Cochrane Handbook v6 and Borenstein et al. (2009) both advise against selecting FE vs RE from a heterogeneity test.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 169; p. 175",
+  "tags": "model selection modellválasztás fixed effect fix hatás random effects véletlen hatás heterogeneity test heterogenitás-próba low power alacsony erő a priori előzetes"
+ },
+ {
+  "k_id": "K-KHN08-034",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Véletlen hatású modell: két variancia-forrás",
+  "body": "The random-effects model has two sources of variation: within-study sampling error, and between-study variation of the true study effects θ_i around the common θ, with variance τ². Each study's total variance is v_i + τ̂², so the weights are w_i* = 1/(v_i + τ̂²).",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.5 pp. 177–178",
+  "tags": "random effects véletlen hatás between-study variance vizsgálatok közötti variancia tau squared tau-négyzet within-study vizsgálaton belüli sampling error mintavételi hiba total variance teljes variancia"
+ },
+ {
+  "k_id": "K-KHN08-035",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "RE (DerSimonian–Laird): τ², súlyok, összesített becslés",
+  "body": "The chapter uses only the DerSimonian–Laird (method-of-moments) estimator: τ̂² = (Q − df)/C with C = Σw_i − Σw_i²/Σw_i and df = k − 1; then θ̂_RE = Σw_i*θ̂_i/Σw_i* with w_i* = 1/(v_i + τ̂²), SE = sqrt(1/Σw_i*), and a Wald z CI (MetaXL \"RE\"). The book does not state that τ̂² is truncated at 0 when Q < df. [note: truncate at 0 (the engine's models.tau2_dl does); Cochrane Handbook v6 prefers REML or Paule–Mandel over DL and suggests considering Hartung–Knapp–Sidik–Jonkman CIs and a prediction interval, none of which this chapter covers.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.5 pp. 177–178",
+  "tags": "random effects véletlen hatás DerSimonian Laird DL tau squared tau-négyzet method of moments momentumok módszere estimator becslő REML Paule-Mandel HKSJ truncation csonkolás"
+ },
+ {
+  "k_id": "K-KHN08-036",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "RE-példa: nyitott oktatás (Ex 8.10)",
+  "body": "For the Open Education data, Q = 7.5104, C = 52.62122, τ̂² = 0.047707, Σw* = 40.4085 and Σw*θ = 3.39399, giving θ̂_RE = 0.083967, SE = 0.157313 and a 95% CI of (−0.2244, 0.3923), reported as (−0.22, 0.39) in Fig. 8.2. [note: metafor's DL fit reproduces these values and gives τ = 0.2184. A prediction interval is not printed in the book: the z-based PI (metafor's default) is (−0.44, 0.61), while the t(k − 2) PI recommended by Higgins et al. (2009) and Cochrane v6 (the engine's default) is (−0.66, 0.83), showing how far true effects may spread even though the CI is narrow.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.10 pp. 178–181; Fig. 8.2 p. 181",
+  "tags": "random effects véletlen hatás worked example kidolgozott példa DerSimonian Laird tau squared tau-négyzet open education nyitott oktatás prediction interval predikciós intervallum"
+ },
+ {
+  "k_id": "K-KHN08-037",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "RE-súlyok: csak a normalizált súlyok összege 1",
+  "body": "The text says the RE weights w* add up to 1, but only the normalised weights w** = w*/Σw* do. Fix: report percentage weights as 100·w_i*/Σw_j*, and check that each weight column sums to 100.",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 178",
+  "tags": "random effects weights véletlen hatású súlyok normalized normalizált percentage weight százalékos súly sum to one összeg 1"
+ },
+ {
+  "k_id": "K-KHN08-038",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "IVhet modell (Doi et al. 2015a)",
+  "body": "The inverse-variance heterogeneity (IVhet) model keeps the FE point estimate θ̂ = Σw_iθ̂_i/Σw_i with w_i = 1/v_i, but inflates its variance to Var = Σ_i (w_i/Σ_j w_j)²·(v_i + τ̂²), with τ̂² the DL estimate; SE = sqrt(Var) and the CI is Wald z (MetaXL \"IVhet\"). Its percentage weights are therefore identical to the FE weights (Fig. 8.3 vs Fig. 8.1). [note: IVhet is promoted mainly by its developers, and Khan is a co-author of Doi et al. 2015a–c, so the chapter presents an author-group position. Cochrane Handbook v6 does not include IVhet; its default under heterogeneity is a random-effects model (REML or Paule–Mandel τ², optionally HKSJ CI) with a prediction interval. The engine implements IVhet as models.meta_analysis(model=\"ivhet\").]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.6 pp. 182–185; Table 8.9 p. 183",
+  "tags": "IVhet inverse variance heterogeneity inverz-variancia heterogenitás Doi 2015 quasi-likelihood weights súlyok fixed effect weights fix hatású súlyok robust variance robusztus variancia"
+ },
+ {
+  "k_id": "K-KHN08-039",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "IVhet-példa: nyitott oktatás (Ex 8.11)",
+  "body": "For the Open Education data, θ̂_IVhet = 0.021251 (the FE estimate), ΣW* = 0.02599 and SE = 0.16122, giving a 95% CI of (−0.294744, 0.33725), reported as (−0.29, 0.34) in Fig. 8.3. Each summand of the W* column in Table 8.9 is (w_i/Σw)²(v_i + τ̂²); for Study 1, (10.581/69.557)² × 0.14222 = 0.00329. [note: Table 8.9 calls W* a 'modified weight', but each W* is the study's contribution to Var(θ̂_IVhet); the IVhet weights themselves are the FE weights.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.11 pp. 183–185; Table 8.9 p. 183; Fig. 8.3 p. 184",
+  "tags": "IVhet worked example kidolgozott példa open education nyitott oktatás variance variancia confidence interval konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN08-040",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Modellek összevetése: műtéti idő (Ex 8.12)",
+  "body": "Pooled SMD (95% CI) for operative time, LARR vs ORR: Cohen's d gives FE 0.84 (0.77, 0.92), RE 0.80 (0.45, 1.15) and IVhet 0.84 (0.44, 1.25); Hedges' g gives FE 0.84 (0.77, 0.92), RE 0.80 (0.45, 1.15) and IVhet 0.84 (0.43, 1.25); Glass's Δ gives FE 0.82 (0.74, 0.90), RE 0.86 (0.47, 1.25) and IVhet 0.82 (0.38, 1.26). The book concludes that LARR has a much longer mean operative time, significant under every measure and model since no CI includes 0. For Hedges' IVhet, the text prints (0.44, 1.25) while Fig. 8.6b prints (0.43, 1.25); recomputation gives a lower limit of 0.4342.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.12 pp. 185–189; Figs 8.4–8.6",
+  "tags": "model comparison modell-összehasonlítás fixed effect fix hatás random effects véletlen hatás IVhet operative time műtéti idő Cohen d Hedges g Glass delta laparoscopic laparoszkópos"
+ },
+ {
+  "k_id": "K-KHN08-041",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Erős heterogenitásnál: IVhet CI széles, RE-súlyok kiegyenlítődnek",
+  "body": "In Ex 8.12 (Q P ≈ 0), FE and IVhet share the point estimate but the IVhet CI is much wider and close to the RE CI, which the book says reflects the heterogeneity rather than the overly narrow FE margin. Under such heavy heterogeneity the RE weights become almost equal (9.7–11.8%), whereas the FE/IVhet weights range from 2.2% to 26%. [note: the DL τ² values (not printed; recomputed) are 0.2652 (d), 0.2647 (g) and 0.3368 (Δ). The claim that the IVhet margin reflects the true state of nature is the IVhet developers' position, not consensus: IVhet keeps FE weights (Bonjer 26%) and answers a different question from RE. Near-equal RE weights under large τ² are an expected property of the RE model. Cochrane v6 would report the RE estimate with a prediction interval here.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 188; Figs 8.4–8.6 pp. 186–189",
+  "tags": "heterogeneity heterogenitás IVhet confidence interval width CI-szélesség random effects weights véletlen hatású súlyok equal weights egyenlő súlyok fixed effect fix hatás tau squared tau-négyzet"
+ },
+ {
+  "k_id": "K-KHN08-042",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Alapbeállítások: MetaXL RE = DL, Wald-z CI minden modellnél",
+  "body": "In this chapter and in MetaXL, \"RE\" means DerSimonian–Laird τ², every model's CI is a Wald z interval with z_{0.025} = 1.96, and Q and I² always come from the FE inverse-variance weights. [note: the engine's models.meta_analysis defaults differ (REML τ² and HKSJ CIs for random effects); to reproduce the book use model=\"random\", tau2_method=\"DL\", ci_method=\"z\".]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §§8.4–8.6 pp. 169–185",
+  "tags": "default alapbeállítás MetaXL DerSimonian Laird Wald z confidence interval konfidenciaintervallum engine motor REML HKSJ reproduction reprodukció"
+ },
+ {
+  "k_id": "K-KHN08-043",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Közbülső összegek és tesztelési tolerancia",
+  "body": "Printed intermediate sums for the Open Education data: Σw = 69.55727 (Table 8.6) or 69.55719 (Table 8.7, from rounded v); Σwθ = 1.478124; Σwθ² = 7.541822 (table) or 7.541828 (text); Σw² = 1178.018 or 1178.0185 (exact 1178.023); C = 52.62122; τ̂² = 0.047707; Σw* = 40.4085. Unit tests built on these rounded inputs should use a tolerance of about 1e-3.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Tables 8.6–8.8 pp. 172–179",
+  "tags": "intermediate sums közbülső összegek unit test egységteszt tolerance tolerancia rounding kerekítés open education nyitott oktatás validation validálás"
+ },
+ {
+  "k_id": "K-KHN08-044",
+  "stage_id": "S09",
+  "kind": "definition",
+  "title": "Heterogenitás definíciója",
+  "body": "Heterogeneity means that the variation among study effect sizes exceeds what random (sampling) error alone would produce. The book adds that, in practice, observed variation often mixes true heterogeneity with study biases, and that heterogeneity must be identified and handled for the results to be valid.",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 174",
+  "tags": "heterogeneity heterogenitás definition definíció random error véletlen hiba study bias vizsgálati torzítás between-study variation vizsgálatok közötti variabilitás"
+ },
+ {
+  "k_id": "K-KHN08-045",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-féle Q és a homogenitás-próba",
+  "body": "Q = Σw_i(θ̂_i − θ̂_FE)², equivalently the sum of squared standardised deviations Σ((θ̂_i − θ̂_FE)/s_i)² with s_i = sqrt(v_i), or computationally Σw_iθ̂_i² − (Σw_iθ̂_i)²/Σw_i. Under H0: θ_1 = … = θ_k, Q ~ χ² with k − 1 df and E(Q) = df, so Q − df is the excess variation. Reject homogeneity if Q ≥ χ²_{k−1, 1−α}, or if P = P(χ²_{k−1} ≥ Q) ≤ α.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 174–175",
+  "tags": "Cochran Q heterogeneity test heterogenitás-próba chi-squared khi-négyzet weighted sum of squares súlyozott négyzetösszeg degrees of freedom szabadsági fok excess variation többlet-variabilitás"
+ },
+ {
+  "k_id": "K-KHN08-046",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "A Q-próba korlátai",
+  "body": "A significant Q indicates true differences among effects, but a non-significant P does not prove homogeneity because the test has low power. Q should not be the only gauge of how large the differences are, and its value grows with the number of studies k, which is why I² was introduced. [note: with few studies, some authors use α = 0.10 for Q; the chapter quotes the χ²₅ 10% critical value 9.236.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 175; Ex 8.9 p. 176",
+  "tags": "Cochran Q limitations korlátok low power alacsony statisztikai erő non-significant nem szignifikáns number of studies vizsgálatszám pitfall buktató"
+ },
+ {
+  "k_id": "K-KHN08-047",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "I²-mutató (Higgins et al. 2003)",
+  "body": "I² = (Q − df)/Q × 100%, read as the percentage of total variation across studies that is due to real heterogeneity rather than chance. The chapter neither states truncation at 0 nor gives numeric thresholds; it reads I² = 33% with P = 0.19 as no significant heterogeneity. It also does not cover H², reporting τ itself, or CIs for τ² and I². [note: truncate I² at 0 (the engine's models.heterogeneity does); Cochrane Handbook v6 gives overlapping bands (0–40% might not be important, 30–60% moderate, 50–90% substantial, 75–100% considerable) and advises also reporting τ² with a CI and a prediction interval. I² is a relative measure: it rises with the precision of the included studies, so it is not an absolute gauge of how much true effects vary.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 175; Ex 8.9 p. 176; p. 177",
+  "tags": "I squared I-négyzet Higgins 2003 heterogeneity heterogenitás proportion arány thresholds küszöbértékek truncation csonkolás tau squared confidence interval tau-négyzet konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN08-048",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "Heterogenitás-példa: nyitott oktatás (Ex 8.9)",
+  "body": "For the six Open Education studies Q = 7.51041 ≈ 7.51 with df = 5, P = 0.19 and I² = 0.334257 → 33% (Fig. 8.1); the book notes that the χ²₅ 10% critical value is 9.236 and concludes there is no significant heterogeneity. The chapter takes P from a χ² table (P > 0.10); MetaXL prints the exact P = 0.19. [note: the note-taker's metafor run gives H² = 1.50, an I² CI of (0, 87.7%) and a τ² CI of (0, 0.677), which show how uncertain heterogeneity estimates are with k = 6.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.9 p. 176; p. 177; Fig. 8.1 p. 173",
+  "tags": "Cochran Q I squared I-négyzet worked example kidolgozott példa open education nyitott oktatás uncertainty bizonytalanság few studies kevés vizsgálat"
+ },
+ {
+  "k_id": "K-KHN08-049",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "Heterogenitás-példa: műtéti idő (Ex 8.12)",
+  "body": "For operative time Q = 163.89 (Cohen's d), 163.59 (Hedges' g) and 179.40 (Glass's Δ), all with P = 0.00, and I² = 95%, 95% and 96%. Q differs by SMD type because the per-study variances differ between the three measures.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Figs 8.4–8.6 pp. 186–189",
+  "tags": "heterogeneity heterogenitás Cochran Q I squared I-négyzet operative time műtéti idő Cohen Hedges Glass high heterogeneity magas heterogenitás"
+ },
+ {
+  "k_id": "K-KHN08-050",
+  "stage_id": "S09",
+  "kind": "convention",
+  "title": "Q, P és I² modelltől független (FE-súlyokból)",
+  "body": "Q, its P and I² are printed identically in the FE, RE and IVhet forest plots, because they are always computed with the FE inverse-variance weights and do not depend on the pooling model. A different value across model outputs signals a computation error.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Figs 8.1–8.6",
+  "tags": "Cochran Q I squared I-négyzet model-independent modelltől független fixed effect weights fix hatású súlyok forest plot erdődiagram consistency check konzisztencia-ellenőrzés"
+ },
+ {
+  "k_id": "K-KHN08-051",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzőlista: heterogenitás",
+  "body": "Reviewer checks: Q = Σwθ² − (Σwθ)²/Σw with FE weights, df = k − 1, and P from χ²_{k−1}; I² = max(0, (Q − df)/Q); and Q, P and I² identical across the FE, RE and IVhet outputs.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 174–177; Figs 8.1–8.6",
+  "tags": "reviewer check ellenőrzés Cochran Q I squared I-négyzet degrees of freedom szabadsági fok chi-squared khi-négyzet checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-KHN08-052",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Ígért, de hiányzó alcsoport-elemzés",
+  "body": "The chapter abstract says subgroup analysis is covered, but Ch 8 contains no subgroup analysis and no meta-regression. Agents needing these methods for SMD data must take them from other chapters or sources.",
+  "source_id": "khan2020",
+  "locator": "Ch8 abstract p. 159",
+  "tags": "subgroup analysis alcsoport-elemzés meta-regression metaregresszió not covered nem tárgyalt abstract mismatch absztrakt-eltérés"
+ },
+ {
+  "k_id": "K-KHN08-053",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Tölcsérdiagram (funnel plot)",
+  "body": "The funnel plot shows each study's SE on the y axis (0.08–0.26 here) against its effect size on the x axis; the chapter draws it for the operative-time data with Cohen's d (Fig. 8.7) and Hedges' g (Fig. 8.9), labelled \"Operative Time Cohen FE\" and \"Hedges FE\". The book reads it as roughly symmetrical.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.8 p. 189; Figs 8.7, 8.9 pp. 190–191",
+  "tags": "funnel plot tölcsérdiagram standard error standard hiba symmetry szimmetria publication bias publikációs torzítás small-study effects kisvizsgálat-hatás"
+ },
+ {
+  "k_id": "K-KHN08-054",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Doi-diagram",
+  "body": "A Doi plot plots each study's absolute Z-score against its effect size (or transformed effect size) and joins the points with a curve; MetaXL draws the |Z| axis inverted and adds a vertical line at the study with the smallest |Z| (Doi 2018; Furuya-Kanamori et al. 2018). The chapter gives no formula for Z. The Furuya-Kanamori algorithm (sort by effect size, convert each study's cumulative inverse-variance rank percentile to a normal quantile; see F-KHN08-026) reproduces the plotted points for Cohen's d: |Z| = 1.38, 0.83, 0.47, 0.18, 0.04 (Jeong, the apex), 0.33, 0.53, 0.61 and 1.13. The engine implements it as bias.doi_plot_data. [note: the Doi plot and LFK index were developed by the same author group (Doi, Furuya-Kanamori, Barendregt, Khan); Cochrane Handbook v6 does not include them, so use them alongside a funnel plot and, with k ≥ 10, Egger's test, not instead of them.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 190; Figs 8.8, 8.10 pp. 191–192",
+  "tags": "Doi plot Doi-diagram Z-score Z-érték asymmetry aszimmetria publication bias publikációs torzítás Furuya-Kanamori 2018 Doi 2018 LFK"
+ },
+ {
+  "k_id": "K-KHN08-055",
+  "stage_id": "S11",
+  "kind": "threshold",
+  "title": "LFK-index: értékek és küszöbök",
+  "body": "The LFK index is printed only inside the Doi-plot images: 0.53 \"(No asymmetry)\" for Cohen's d (Fig. 8.8) and 0.52 \"(No asymmetry)\" for Hedges' g (Fig. 8.10). This chapter gives neither the LFK formula nor thresholds; Ch 12 (p. 260) gives |LFK| ≤ 1 as symmetry, 1–2 as minor asymmetry and > 2 as major asymmetry. The Furuya-Kanamori et al. (2018) algorithm in the engine (bias.doi_plot_data, F-KHN08-027) reproduces 0.531 (d) and 0.522 (g) from the MetaXL variances. [note: the thresholds are the developers' heuristics, not validated decision limits, and the LFK index is not part of Cochrane Handbook v6 guidance. With k = 9 and I² = 95% any asymmetry verdict is fragile: recomputing on the same data with Glass's Δ gives LFK ≈ 1.73 (minor asymmetry), so the verdict is not robust to the SMD denominator.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Figs 8.8, 8.10 pp. 191–192; Ch12 p. 260 (thresholds)",
+  "tags": "LFK index LFK-index Doi plot Doi-diagram asymmetry aszimmetria threshold küszöb minor major kisebb nagyobb publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-KHN08-056",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Tölcsér/Doi-diagramot heterogenitásként értelmezni",
+  "body": "For the operative-time data the book concludes from the funnel and Doi plots that there is \"no heterogeneity\", although Q = 163.89 and I² = 95% for the same data, and Fig. 8.7's caption even says the plot indicates heterogeneity. Funnel plots, Doi plots and the LFK index assess small-study effects and publication bias, not heterogeneity, which must be judged from Q, I² and τ². Under I² = 95%, plot asymmetry (or its absence) is hard to interpret.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 190–191; Fig. 8.7 p. 190",
+  "tags": "funnel plot tölcsérdiagram Doi plot Doi-diagram misinterpretation félreértelmezés heterogeneity heterogenitás small-study effects kisvizsgálat-hatás publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-KHN08-057",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "„A publikációs torzítás vizsgálata nem modellfüggő”",
+  "body": "The book remarks that the study of publication bias is not based on any statistical model, and the funnel and Doi plots it shows are the same whichever pooling model is chosen. [note: this holds for the plots, but some bias methods do depend on a model, e.g. trim-and-fill (engine bias.trim_and_fill, model=\"random\" by default) and the centre line drawn on a funnel plot.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Remark p. 190",
+  "tags": "publication bias publikációs torzítás model-independent modelltől független funnel plot tölcsérdiagram Doi plot trim and fill"
+ },
+ {
+  "k_id": "K-KHN08-058",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "Nem tárgyalt torzítás-tesztek; kevés vizsgálat",
+  "body": "The chapter does not cover Egger's or Begg's test, trim-and-fill, fail-safe N or p-curve; its only tools are visual (funnel and Doi plots) plus the LFK index. [note: Cochrane Handbook v6 advises that funnel-plot asymmetry tests are generally not used with fewer than 10 studies (Ex 8.12 has k = 9), and that asymmetry has causes other than publication bias, including heterogeneity; the engine provides bias.egger_test, bias.begg_test, bias.trim_and_fill, bias.doi_plot_data and bias.failsafe_n_rosenthal. Fail-safe N is discouraged by Cochrane v6 and must not be read as evidence against publication bias.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.8 pp. 189–191",
+  "tags": "Egger test Begg test trim and fill fail-safe N p-curve not covered nem tárgyalt small number of studies kevés vizsgálat k<10 publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-KHN08-059",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Implicit érzékenységi elemzés: 3 SMD × 3 modell",
+  "body": "The chapter's only robustness check is implicit: the same data are analysed with three SMD estimators (d, g, Δ) and three models (FE, RE, IVhet), and the conclusion stays the same. There is no leave-one-out or influence diagnostic. [note: the engine provides sensitivity.leave_one_out, sensitivity.influence and sensitivity.cumulative for these analyses.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.7 pp. 185–189",
+  "tags": "sensitivity analysis érzékenységi elemzés robustness robusztusság triangulation trianguláció fixed effect random effects IVhet leave-one-out influence befolyás Cohen Hedges Glass"
+ },
+ {
+  "k_id": "K-KHN08-060",
+  "stage_id": "S12",
+  "kind": "concept",
+  "title": "Az SMD nevezője többet számít, mint a J-korrekció",
+  "body": "The choice of SMD denominator matters more than the d-versus-g bias correction: Glass's Δ moves Bonjer from 1.58 to 1.89 and changes its FE weight from 25.9% to 17.7%, whereas d and g agree to two decimals when N is large. A sensitivity analysis on the SMD type should therefore vary the standardising SD, not only the J correction.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 186–188",
+  "tags": "denominator nevező standardizing SD standardizáló szórás Glass delta Hedges correction korrekció sensitivity érzékenység weights súlyok"
+ },
+ {
+  "k_id": "K-KHN08-061",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: indokolt-e az SMD",
+  "body": "An SMD is justified only when studies measure the outcome on different scales or units; when every study uses the same unit, as with operative time in Ex 8.12, a raw MD is more interpretable. [note: this criterion is the checker's application of the book's own rationale (p. 160) and of Cochrane Handbook v6; the book itself does not criticise its SMD choice in Ex 8.12.] An evaluator should penalise an unexplained SMD on a common scale.",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 160; Ex 8.12 pp. 185–189",
+  "tags": "evaluator criterion értékelési szempont SMD justification indoklás mean difference átlagkülönbség common scale közös skála interpretability értelmezhetőség"
+ },
+ {
+  "k_id": "K-KHN08-062",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: az SMD-változat és képlete megadva",
+  "body": "The review should state the SMD variant and its formula (denominator SD, J correction, variance formula), prefer g for small samples, use Δ only with a stated reason, and show that the results are robust to d versus g.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 pp. 164–166; §8.7",
+  "tags": "evaluator criterion értékelési szempont SMD variant változat Hedges g Cohen d Glass delta formula képlet reporting jelentés robustness robusztusság"
+ },
+ {
+  "k_id": "K-KHN08-063",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: heterogenitás-tudatos következtetés",
+  "body": "Q (df, P), I² and τ² should be reported, and when I² is high the conclusion should rest on RE or IVhet CIs rather than FE; in Ex 8.12 the FE CI (0.77, 0.92) is far narrower than the IVhet CI (0.44, 1.25). [note: the ≥ ~50% cut-off for \"high\" is a general convention, not from this source. Cochrane v6 would base the conclusion on a random-effects model with a prediction interval; IVhet is an alternative advocated by its developers.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.12 pp. 185–189",
+  "tags": "evaluator criterion értékelési szempont heterogeneity heterogenitás I squared I-négyzet random effects véletlen hatás IVhet fixed effect fix hatás confidence interval konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN08-064",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: modell- és mértékrobusztusság",
+  "body": "Check whether the conclusion, both significance and direction, holds across FE, RE and IVhet and across d, g and Δ; the book uses this triangulation in §8.7, where every combination gives a significant positive SMD for LARR vs ORR.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.7 pp. 185–189",
+  "tags": "evaluator criterion értékelési szempont robustness robusztusság model choice modellválasztás triangulation trianguláció significance szignifikancia direction irány"
+ },
+ {
+  "k_id": "K-KHN08-065",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: értelmezhetőség",
+  "body": "Translate the SMD magnitude with Cohen's benchmarks (0.2/0.5/0.8) and their caveats, or better, back-translate it to a familiar scale. A pooled SMD of 0.8 under I² = 95% should be described as an average with wide dispersion. [note: a prediction interval is recommended here as general methodology; this source does not give one.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.2 p. 165; Ex 8.12",
+  "tags": "evaluator criterion értékelési szempont interpretation értelmezés Cohen benchmarks küszöbök back-translation visszaszámítás prediction interval predikciós intervallum dispersion szóródás"
+ },
+ {
+  "k_id": "K-KHN08-066",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: kisvizsgálat-hatások",
+  "body": "A funnel plot and a Doi plot with its LFK index should be present and interpreted correctly, as evidence on small-study effects or publication bias rather than on heterogeneity. [note: the book does not discuss when these tools become unreliable; per Cochrane v6, conclusions should be hedged when k < 10 or heterogeneity is extreme, and the LFK index is a developer-proposed tool with heuristic thresholds.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 §8.8 pp. 189–191",
+  "tags": "evaluator criterion értékelési szempont small-study effects kisvizsgálat-hatás funnel plot tölcsérdiagram Doi plot LFK publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-KHN08-067",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: numerikus integritás",
+  "body": "Spot-check two or three per-study SMDs, the pooled estimate and Q against the raw data; any discrepancy beyond rounding is a red flag. This chapter itself contains several printed slips, so book values should not be trusted without recomputation.",
+  "source_id": "khan2020",
+  "locator": "Ch8 throughout; see pitfalls pp. 172–189",
+  "tags": "evaluator criterion értékelési szempont numerical integrity numerikus integritás recomputation újraszámolás spot check szúrópróba red flag figyelmeztető jel"
+ },
+ {
+  "k_id": "K-KHN08-068",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Erdődiagram-konvenciók (MetaXL)",
+  "body": "The MetaXL forest plots list study, a CI bar, ES (95% CI) to 2 decimals and % weight to 1 decimal. The last row, \"Overall\", is a diamond with \"Q=…, p=…, I2=…%\", there is a null line at 0, and the ES header names the measure (\"d\", \"g\", \"delta\"). Per-study ES and CIs are the same under every model; only the weights and the overall row change.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Figs 8.1–8.6 pp. 173–189",
+  "tags": "forest plot erdődiagram MetaXL convention konvenció weight súly diamond rombusz null line nullvonal reporting jelentés decimals tizedesjegy"
+ },
+ {
+  "k_id": "K-KHN08-069",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Mit kell modellenként közölni",
+  "body": "For each model, report the pooled estimate with SE and 95% CI, z and the two-sided P, Q (df, P) and I², and τ² for the random-effects model. Report both the funnel plot and the Doi plot; the Doi plot carries the LFK index and its verbal category in the subtitle. [note: PRISMA 2020 (item 13d) expects the τ² estimator and the CI method to be named, and Cochrane v6 recommends a prediction interval for random-effects results; the chapter reports neither.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.7, 8.10, 8.11; Figs 8.7–8.10",
+  "tags": "reporting jelentés pooled estimate összesített becslés standard error confidence interval konfidenciaintervallum p-value p-érték Cochran Q I squared tau squared funnel plot Doi plot LFK"
+ },
+ {
+  "k_id": "K-KHN08-070",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Kerekítési konvenciók",
+  "body": "Hand calculations are carried to 4–6 decimals and reported to 2 (e.g. 0.083967 → 0.08; (−0.2244, 0.3923) → (−0.22, 0.39)), with z_{0.025} = 1.96 and P-values read from normal and χ² tables. MetaXL prints ES and CIs to 2 decimals, % weight to 1, Q to 2, P to 2 (\"p=0.00\") and I² as a whole-number percent (95.54 → 96%).",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 168, 176; Figs 8.1–8.6",
+  "tags": "rounding kerekítés decimals tizedesjegy convention konvenció MetaXL output kimenet p-value p-érték I squared reporting jelentés"
+ },
+ {
+  "k_id": "K-KHN08-071",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Számolási és kerekítési hibák a kidolgozott példákban",
+  "body": "The worked examples contain slips: Ex 8.7 calls the FE estimate \"(–0.02)\" though it is +0.02, and p. 177 prints the FE CI as (–0.21, 0.20) instead of (–0.21, 0.26). Ex 8.8 follows z0 = 0.177227 with \"= 1.77\" (should be 0.18), and its P = 0.8572 uses the table value at 0.18 (exact 0.8593). Ex 8.9's Q line shows 1.478142 (digits of 1.478124 transposed) with no visible square, and writes P(χ²₅ ≥ 7.536) for 7.51; Ex 8.10 swaps the two Q terms; Ex 8.11 plugs in 0.083967 (the RE estimate), though the printed limits correspond to the correct 0.021251. Fix: never round intermediates, and take z and P from software.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Ex 8.7 p. 172; p. 177; Ex 8.8 p. 174; Ex 8.9 p. 176; Ex 8.10 p. 180; Ex 8.11 p. 184",
+  "tags": "typo elírás arithmetic error számolási hiba rounding kerekítés worked example kidolgozott példa sign error előjelhiba p-value p-érték verification ellenőrzés"
+ },
+ {
+  "k_id": "K-KHN08-072",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Kód- és ábra-eltérések, hiányzó hivatkozás",
+  "body": "The MetaXL call for the FE operative-time analysis passes \"RE\" as the model, =MAInputTable(\"Operative Time Cohen FE\",\"Cohen\",\"RE\",B5:H13); the plot title says FE, so the model slot should be \"IV\". The text gives the Hedges IVhet CI as (0.44, 1.25) while Fig. 8.6b prints (0.43, 1.25). Memon et al. 2018 is cited but missing from the references, and the comment line in A8.2 misprints RE models as \"RRs\".",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 185; pp. 188–189; Appendix 8 p. 192",
+  "tags": "MetaXL code kód typo elírás model slot modell paraméter forest plot erdődiagram mismatch eltérés reference hivatkozás reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-KHN08-073",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzőlista: hatásméretek vizsgálatonként",
+  "body": "Reviewer checks: the SMD type is declared (Cohen/Hedges/Glass) together with the denominator SD (n or n − 1 pooled, or control SD), the J correction (1 − 3/(4N − 9) or exact gamma) and the variance formula (2(N − 2), 2N, 2(N − 3.94), or 2(n2 − 1) for Δ). Every SMD and v_i is recomputed from the arm data and matches the forest-plot rows to 2 decimals. Each per-study 95% CI equals ES ± 1.96·sqrt(v_i) and is identical across the FE, RE and IVhet outputs.",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 164–166; Figs 8.4–8.6",
+  "tags": "reviewer check ellenőrzés effect size hatásméret SMD recomputation újraszámolás variance variancia confidence interval konfidenciaintervallum checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-KHN08-074",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzőlista: súlyok és összesített becslések",
+  "body": "Reviewer checks: FE weight % = (1/v_i)/Σ(1/v) × 100, and IVhet % weights equal the FE weights. RE weight % = 1/(v_i + τ²) normalised, and every weight column sums to 100 ± 0.1. FE pooled = Σwθ/Σw with SE = 1/sqrt(Σw), DL τ² = max(0, (Q − df)/C) with C = Σw − Σw²/Σw, and IVhet Var = Σ(w_i/Σw)²(v_i + τ²), with SE_IVhet ≥ SE_FE whenever τ² > 0.",
+  "source_id": "khan2020",
+  "locator": "Ch8 §§8.4–8.6 pp. 169–185",
+  "tags": "reviewer check ellenőrzés weights súlyok pooled estimate összesített becslés fixed effect fix hatás random effects véletlen hatás IVhet DerSimonian Laird checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-KHN08-075",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzőlista: számolás és szöveges értelmezés",
+  "body": "Reviewer checks: no intermediate rounding, with the CI recomputed from the unrounded estimate and SE and z and P taken from software, not tables. Every narrative sentence is checked against the numbers (sign of the estimate, CI limits, P vs α, whether the CI includes 0). Publication-bias wording speaks of asymmetry and small-study effects, never \"heterogeneity\", and the LFK value is quoted with its category (|LFK| ≤ 1 none, 1–2 minor, > 2 major). [note: these LFK categories are heuristics from the Doi group (Khan 2020 Ch 12), not a Cochrane-endorsed test.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 172–191",
+  "tags": "reviewer check ellenőrzés rounding kerekítés narrative szöveg consistency konzisztencia publication bias publikációs torzítás LFK wording megfogalmazás checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-KHN08-076",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzőlista: reprodukálhatóság (szoftverhívás = szándékolt modell)",
+  "body": "Reviewer check: the software call matches the intended model. The MetaXL model slot \"IV\"/\"RE\"/\"IVhet\" must match the plot title, and the admetan options cohen|hedges|glass and re|ivhet must match the reported measure and model; the book's own FE example breaks this rule.",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 185; Appendix 8 pp. 192–193",
+  "tags": "reviewer check ellenőrzés reproducibility reprodukálhatóság MetaXL admetan software call szoftverhívás model option modell-opció checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-KHN08-077",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "MetaXL: MAInputTable szintaxis SMD-hez",
+  "body": "MetaXL (EpiGear) is an Excel add-in called as =MAInputTable(\"title\", \"input type\", \"model\", range). For precomputed SMDs, e.g. =MAInputTable(\"Open Education FE\",\"ContSE\",\"IV\",B23:D28), \"ContSE\" means a continuous outcome with study, ES and SE columns. For raw arm data the input type \"Cohen\", \"Hedges\" or \"Glass\" selects the SMD and the range has 7 columns (study, then n, mean, SD for the treatment arm and for the control arm), e.g. =MAInputTable(\"Operative Time Cohen RE\",\"Cohen\",\"RE\",B5:H13). The model slot takes \"IV\" (FE), \"RE\" (DerSimonian–Laird) or \"IVhet\".",
+  "source_id": "khan2020",
+  "locator": "Ch8 pp. 177, 181, 184, 185–188",
+  "tags": "MetaXL Excel add-in bővítmény MAInputTable syntax szintaxis ContSE Cohen Hedges Glass IV RE IVhet software szoftver"
+ },
+ {
+  "k_id": "K-KHN08-078",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Stata admetan parancsok SMD-hez",
+  "body": "Install with ssc install admetan. For precomputed ES and SE: admetan d se, iv (FE); admetan d se, re; admetan d se, ivhet. For raw arm data: admetan n_larr mean_larr sd_larr n_orr mean_orr sd_orr, cohen (or hedges or glass), adding re or ivhet for the other models. [note: admetan was later merged into metan v4 (2020), so current syntax may use model(re) or model(ivhet); check the help file.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 Appendix 8 A8.2, A8.4 pp. 192–193",
+  "tags": "Stata admetan metan SSC command parancs Cohen Hedges Glass random effects véletlen hatás IVhet fixed effect fix hatás software szoftver"
+ },
+ {
+  "k_id": "K-KHN08-079",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Nemi különbségek kvantitatív képességben: Table 8.2 (tesztadat)",
+  "body": "Table 8.2 (Hedges 1985 p. 17) lists seven studies of sex differences in quantitative ability with total N, g and the bias-corrected g*: N = 76, 6167, 355, 1050, 136, 2925, 45222; g = 0.72, 0.06, 0.59, 0.43, 0.27, 0.89, 0.35; g* = 0.71, 0.06, 0.59, 0.43, 0.27, 0.89, 0.35. Only Study 1 (N = 76) changes after the J correction at 2 decimals, which shows that J matters only for small N. Per-arm sizes are not given, so Ex 8.3 assumes a 38/38 split.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Table 8.2 p. 168; Ex 8.3 p. 167",
+  "tags": "dataset adatkészlet test fixture tesztadat sex differences nemi különbségek quantitative ability kvantitatív képesség Hedges 1985 g g* small sample correction kismintás korrekció"
+ },
+ {
+  "k_id": "K-KHN08-080",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Nyitott oktatás: vizsgálatonkénti SE, CI és súlyok (tesztadat)",
+  "body": "Per-study results for the Open Education data (Tables 8.4–8.5, Figs 8.1–8.3), studies 1–6: SE = 0.307426, 0.449857, 0.447397, 0.457100, 0.226903, 0.200683; 95% CI (−0.0395, 1.1655), (−0.5737, 1.1897), (−0.7959, 0.9578), (−0.2979, 1.4939), (−0.6227, 0.2667), (−0.6273, 0.1593). FE and IVhet % weights are 15.2, 7.1, 7.2, 6.9, 27.9 and 35.7; RE (DL) % weights are 17.4, 9.9, 10.0, 9.6, 24.9 and 28.1. The RE weights move towards equality because τ̂² = 0.0477 is added to every variance. All values reproduce with the engine to within the book's rounding (variance 2/n + θ²/(4n), model=\"random\", tau2_method=\"DL\", ci_method=\"z\").",
+  "source_id": "khan2020",
+  "locator": "Ch8 Tables 8.4–8.5 p. 171; Figs 8.1–8.3 pp. 173, 181, 184",
+  "tags": "open education nyitott oktatás test fixture tesztadat standard error standard hiba confidence interval konfidenciaintervallum weights súlyok fixed effect fix hatás random effects véletlen hatás IVhet"
+ },
+ {
+  "k_id": "K-KHN08-081",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Műtéti idő: vizsgálatonkénti SMD-k és súlyok (Figs 8.4–8.6, tesztadat)",
+  "body": "Forest-plot rows for Ex 8.12 (study order Bonjer, Fleshman, Stevenson, Jeong, Ng 2014, Liang, Lujan, Ng 2008, Zhou). Cohen's d: 1.58, 0.47, 0.32, 0.69, 1.24, 0.85, 0.39, 1.11, 0.64, with FE/IVhet % weights 25.9, 16.1, 16.7, 11.5, 2.4, 11.3, 7.2, 3.1, 5.8 and RE % weights 11.8, 11.6, 11.6, 11.5, 9.8, 11.4, 11.2, 10.2, 11.0. Hedges' g differs only for Ng 2014 (1.22; 0.74, 1.70), Ng 2008 (1.10; 0.68, 1.53), the Liang and Zhou upper limits (1.07, 0.94) and the Bonjer FE weight (26.0). Glass's Δ: 1.89, 0.49, 0.34, 0.76, 1.43, 0.89, 0.35, 1.15, 0.56, with FE weights 17.7, 18.2, 19.3, 12.5, 2.2, 12.0, 8.3, 3.1, 6.7. These rows reproduce only with the MetaXL/admetan variance formulas (K-KHN08-025), not with the engine's default SMD variance.",
+  "source_id": "khan2020",
+  "locator": "Ch8 Figs 8.4–8.6 pp. 186–189",
+  "tags": "operative time műtéti idő test fixture tesztadat forest plot erdődiagram Cohen d Hedges g Glass delta weights súlyok per-study vizsgálatonkénti MetaXL reproduction reprodukció"
+ },
+ {
+  "k_id": "K-KHN08-082",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "SMD közös mértékegységű kimenetnél (Ex 8.12)",
+  "body": "Ex 8.12 pools operative time, which every study reports on the same scale, as an SMD. By the chapter's own rationale (p. 160) the SMD is needed only when scales or units differ, and the raw MD would keep the clinically meaningful time difference. The SMD here also depends on each trial's SD: dividing by the control SD (Glass's Δ) instead of the pooled SD moves Bonjer from 1.58 to 1.89. Detect: all studies share one instrument or unit. Fix: pool the MD (Ch 9) and use the SMD only as a sensitivity analysis or for cross-scale comparison. [note: this follows Cochrane Handbook v6 guidance on choosing MD vs SMD; the book does not flag it.]",
+  "source_id": "khan2020",
+  "locator": "Ch8 p. 160; Ex 8.12 pp. 185–189",
+  "tags": "SMD standardizált átlagkülönbség mean difference átlagkülönbség MD common scale közös skála same unit azonos mértékegység effect measure choice hatásmérték-választás operative time műtéti idő pitfall buktató"
+ }
+]

@@ -1,0 +1,211 @@
+[
+ {
+  "formula_id": "F-KHN0304-001",
+  "name": "Probability (risk) and odds of an event",
+  "expression": "P = events / (events + non-events);  Odds = events / non-events;  Odds(no event) = 1 / Odds(event);  P(event) + P(no event) = 1",
+  "variables": "events = number with the outcome; non-events = number without it; P = probability (risk), in [0,1]; Odds = odds, in (0, infinity)",
+  "engine_ref": null,
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 40–43; Table 3.1, p. 43",
+  "notes": "Table 3.1: 20 events, 60 non-events gives P = 0.25, odds = 0.33. Odds = 1 means one event per non-event."
+ },
+ {
+  "formula_id": "F-KHN0304-002",
+  "name": "Risk in each arm",
+  "expression": "R_T = a / (a + b);  R_C = c / (c + d)",
+  "variables": "a = events in treatment/exposed arm; b = non-events in treatment arm; c = events in control/unexposed arm; d = non-events in control arm; R_T, R_C = risk in treatment and control arm",
+  "engine_ref": null,
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.3, p. 44",
+  "notes": "Table 3.2 (a=20, b=60, c=80, d=20): R_T = 0.25, R_C = 0.8."
+ },
+ {
+  "formula_id": "F-KHN0304-003",
+  "name": "Risk ratio (relative risk)",
+  "expression": "RR = R_T / R_C = [a / (a + b)] / [c / (c + d)]",
+  "variables": "a = events in treatment/exposed arm; b = non-events in treatment arm; c = events in control/unexposed arm; d = non-events in control arm; RR = risk ratio",
+  "engine_ref": "effect_sizes.two_by_two",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.3, p. 45; Ch4 p. 57",
+  "notes": "Table 3.2 gives RR = 0.3125 (= 5/16). Engine: two_by_two('RR', e1, n1, e2, n2) returns ln RR and its variance."
+ },
+ {
+  "formula_id": "F-KHN0304-004",
+  "name": "Variance and SE of the log risk ratio (delta method)",
+  "expression": "Var[ln RR] = 1/a - 1/(a + b) + 1/c - 1/(c + d);  SE[ln RR] = sqrt(Var[ln RR])",
+  "variables": "a = events in treatment/exposed arm; b = non-events in treatment arm; c = events in control/unexposed arm; d = non-events in control arm",
+  "engine_ref": "effect_sizes.two_by_two",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.3.1, p. 46; Ch4 §4.2, p. 56",
+  "notes": "Reconstructed from garbled fractions in the conversion; verified: 1/20 - 1/80 + 1/80 - 1/100 = 0.04, SE = 0.2 as printed."
+ },
+ {
+  "formula_id": "F-KHN0304-005",
+  "name": "Odds in each arm and odds ratio",
+  "expression": "OD_T = a / b;  OD_C = c / d;  OR = OD_T / OD_C = (a * d) / (b * c)",
+  "variables": "a = events in treatment/exposed arm; b = non-events in treatment arm; c = events in control/unexposed arm; d = non-events in control arm; OD_T, OD_C = odds in treatment and control arm; OR = odds ratio",
+  "engine_ref": "effect_sizes.two_by_two",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.4, p. 46",
+  "notes": "Table 3.2: OR = (20*20)/(60*80) = 1/12 = 0.0833. OR is symmetric in the coding of outcome levels; RR is not."
+ },
+ {
+  "formula_id": "F-KHN0304-006",
+  "name": "Woolf variance of the log odds ratio",
+  "expression": "Var[ln OR] = 1/a + 1/b + 1/c + 1/d;  SE[ln OR] = sqrt(Var[ln OR])",
+  "variables": "a = events in treatment/exposed arm; b = non-events in treatment arm; c = events in control/unexposed arm; d = non-events in control arm",
+  "engine_ref": "effect_sizes.two_by_two",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.4.1, p. 47",
+  "notes": "Table 3.2: Var = 0.129167, SE = 0.359398."
+ },
+ {
+  "formula_id": "F-KHN0304-007",
+  "name": "Continuity-corrected odds ratio",
+  "expression": "OR* = [(a + 0.5) / (b + 0.5)] / [(c + 0.5) / (d + 0.5)]",
+  "variables": "a = events in treatment/exposed arm; b = non-events in treatment arm; c = events in control/unexposed arm; d = non-events in control arm; 0.5 = constant added to every cell",
+  "engine_ref": "effect_sizes.two_by_two",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 47–48",
+  "notes": "Agresti 1996 p. 25; 'Soukri' 1999 p. 49. The book applies it to a table with no zero cells (OR 0.0833 -> 0.0863) to show the shift. MetaXL allows other constants. No corrected variance or double-zero handling is given. Engine default cc=0.5 with cc_to='only0' (only studies with a zero cell) and drops double-zero studies for OR/RR; use cc_to='all' to reproduce the book's illustration."
+ },
+ {
+  "formula_id": "F-KHN0304-008",
+  "name": "Wald confidence interval for a ratio measure (log scale, back-transformed)",
+  "expression": "LL* = ln(theta_hat) - z_(alpha/2) * SE[ln(theta_hat)];  UL* = ln(theta_hat) + z_(alpha/2) * SE[ln(theta_hat)];  LL = exp(LL*);  UL = exp(UL*)",
+  "variables": "theta_hat = estimated RR or OR; SE = standard error of ln(theta_hat); z_(alpha/2) = standard normal quantile (1.96 for 95%); LL*, UL* = limits on log scale; LL, UL = limits on ratio scale",
+  "engine_ref": "effect_sizes.study_ci",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.2, pp. 56–58; Example 4.1, pp. 57–58",
+  "notes": "Generic form theta_hat +/- z*SE applied on the log scale. Vaccine example: ln RR -1.16315, SE 0.2 gives (-1.55515, -0.77115) -> RR CI 0.21116 to 0.46248 (book prints 0.2111, truncated). Back-transform with effect_sizes.back_transform."
+ },
+ {
+  "formula_id": "F-KHN0304-009",
+  "name": "Single-study z-test for a ratio measure",
+  "expression": "H0: ln(theta) = 0 (theta = 1);  Z = ln(theta_hat) / SE[ln(theta_hat)] ~ N(0,1);  p = 2 * P(Z > |z0|)",
+  "variables": "theta_hat = estimated RR or OR; SE = standard error of ln(theta_hat); z0 = observed Z; p = two-sided p-value",
+  "engine_ref": "distributions.z_two_sided_p",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.3, p. 58",
+  "notes": "The book writes H0 as 'theta = 0' (pp. 60, 62), which is wrong on the RR scale; the null is RR = 1, ln RR = 0. Vaccine example z = -5.8157; p printed as 0 (exact about 6e-9). Reject H0 if |z0| >= z_(alpha/2) or p <= alpha."
+ },
+ {
+  "formula_id": "F-KHN0304-010",
+  "name": "Conversion of odds ratio to risk ratio (Greenland-Holland / Zhang-Yu)",
+  "expression": "RR = OR / (1 - I_C + I_C * OR);  I_C = c / (c + d);  I_C^0 = 1 - I_C = d / (c + d);  I_E = a / (a + b);  I_E^0 = 1 - I_E = b / (a + b)",
+  "variables": "a = events in treatment/exposed arm; b = non-events in treatment arm; c = events in control/unexposed arm; d = non-events in control arm; OR = odds ratio; I_C = incidence (risk) in control/unexposed group; I_C^0 = non-incidence in control group; I_E, I_E^0 = incidence and non-incidence in exposed/treatment group",
+  "engine_ref": null,
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.6, pp. 50–51",
+  "notes": "Reconstructed: the conversion prints it in scrambled order. Check: OR = 1/12, I_C = 0.8 gives RR = 0.3125, the direct RR of Table 3.2. The author says conversion is unnecessary if OR is interpreted properly. Known limitation (outside the source): McNutt et al. 2003 showed it is biased with too-narrow CIs when applied to confounder-adjusted ORs. Not implemented in the engine."
+ },
+ {
+  "formula_id": "F-KHN0304-011",
+  "name": "Relative risk reduction or increase (percentage wording)",
+  "expression": "if RR < 1: RRR(%) = (1 - RR) * 100;  if RR > 1: risk increase(%) = (RR - 1) * 100",
+  "variables": "RR = risk ratio (numerator arm vs denominator arm); RRR = percentage lower risk in the numerator arm; risk increase = percentage higher risk in the numerator arm",
+  "engine_ref": null,
+  "stage_id": "S13",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.3.1, p. 45; Ch4 p. 64; pp. 72, 78",
+  "notes": "Examples: RR 0.87 -> 13% lower risk (p. 64); RR 1.72 -> 72% higher (p. 72); RR 1.76 -> 76% higher (p. 78). Always name the numerator arm: the book attaches the heartburn increases to the wrong arm. Alternative wording: 'RR times the risk' / 'times as high as'."
+ },
+ {
+  "formula_id": "F-KHN0304-012",
+  "name": "Fixed-effect (inverse-variance) pooled estimate and variance",
+  "expression": "w_i = 1 / v_i;  theta*_FE = sum(w_i * y_i) / sum(w_i);  Var(theta*_FE) = 1 / sum(w_i);  SE = sqrt(1 / sum(w_i));  CI = exp(theta*_FE +/- z_(alpha/2) * SE);  %weight_i = 100 * w_i / sum(w_i)",
+  "variables": "y_i = ln RR_i of study i; v_i = Var(ln RR_i); w_i = inverse-variance weight; k = number of studies; theta*_FE = pooled log effect; z_(alpha/2) = 1.96 for 95%",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.4, pp. 59–60, Eqs. 4.1–4.2",
+  "notes": "MetaXL model code 'IV'. Engine: meta_analysis(yi, vi, model='fixed') (z-based CI by default). Thyroid: ln RR -0.1377, SE 0.06787, RR 0.8714 (0.7628, 0.9954); heartburn: RR 1.76 (1.19, 2.59)."
+ },
+ {
+  "formula_id": "F-KHN0304-013",
+  "name": "Fixed-effect z-test of the pooled effect",
+  "expression": "Z = theta*_FE / SE(theta*_FE);  reject H0 if |z0| >= z_(alpha/2) or p <= alpha",
+  "variables": "theta*_FE = pooled log effect; SE = sqrt(1/sum(w_i)); z0 = observed Z; alpha = significance level",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.4, p. 60",
+  "notes": "Thyroid: z -2.0289 printed (exact -2.0282); p = 0.0424 printed from the rounded z via a normal table (exact 0.0425)."
+ },
+ {
+  "formula_id": "F-KHN0304-014",
+  "name": "Random-effects (DerSimonian-Laird) pooled estimate",
+  "expression": "v*_i = v_i + tau2_hat;  w*_i = 1 / (v_i + tau2_hat);  theta*_RE = sum(w*_i * y_i) / sum(w*_i);  SE = sqrt(1 / sum(w*_i));  CI = exp(theta*_RE +/- 1.96 * SE)",
+  "variables": "y_i = ln RR_i; v_i = within-study variance; tau2_hat = DL between-study variance; w*_i = random-effects weight; theta*_RE = pooled log effect",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.5, pp. 66–67",
+  "notes": "MetaXL code 'RE'. Engine default is REML + HKSJ; reproduce the book with meta_analysis(yi, vi, model='random', tau2_method='DL', ci_method='z'). Heartburn: tau2 0.0399, RR 1.7162 (1.1189, 2.6322) as printed from the rounded ln RR 0.54 (exact 1.7161). The Cochrane Handbook v6 prefers REML/PM with an HKSJ interval; on the heartburn data REML+HKSJ gives 1.69 (0.99, 2.88), p about 0.052 (recomputed)."
+ },
+ {
+  "formula_id": "F-KHN0304-015",
+  "name": "DerSimonian-Laird between-study variance",
+  "expression": "tau2_hat = max(0, (Q - df) / C);  C = sum(w_i) - sum(w_i^2) / sum(w_i);  df = k - 1",
+  "variables": "Q = Cochran's Q; df = degrees of freedom; k = number of studies; w_i = 1/v_i (fixed-effect weights); C = scaling constant",
+  "engine_ref": "models.tau2_dl",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 67",
+  "notes": "Truncation at 0 is standard but not stated explicitly in the chunk. Heartburn: Q 6.7854, C 19.6887, tau2 0.0399 (p. 69). Thyroid: Q 4.45 < df 6, so tau2 = 0 and RE = FE (derived). Cochrane Handbook v6 prefers REML/PM over DL."
+ },
+ {
+  "formula_id": "F-KHN0304-016",
+  "name": "IVhet pooled estimate and variance",
+  "expression": "theta*_IVhet = sum(w_i * y_i) / sum(w_i), w_i = 1/v_i;  Var(theta*_IVhet) = sum_i [ (w_i / sum_j w_j)^2 * (v_i + tau2_hat) ];  SE = sqrt(Var);  CI = exp(theta*_IVhet +/- 1.96 * SE)",
+  "variables": "y_i = ln RR_i; v_i = within-study variance; w_i = fixed-effect weight; tau2_hat = DerSimonian-Laird estimate; k = number of studies",
+  "engine_ref": "models._ivhet",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.6, p. 73; Table 4.9, p. 74",
+  "notes": "Doi et al. 2015a; MetaXL code 'IVhet'. Reconstructed from garbled matrix-like fragments; verified: heartburn Var = 0.048241, SE 0.219638, ln RR 0.56366, RR 1.757 (1.1425, 2.7025). The book's 'W*(IVhet)' column holds the per-study variance contribution (w_i/sum w)^2(v_i + tau2), not a weight. Engine: meta_analysis(yi, vi, model='ivhet') dispatches to _ivhet. IVhet is a proposal from the author's group, not a Cochrane-recommended default; use it only as a sensitivity analysis."
+ },
+ {
+  "formula_id": "F-KHN0304-017",
+  "name": "Cochran's Q (computational form)",
+  "expression": "Q = sum(w_i * y_i^2) - (sum(w_i * y_i))^2 / sum(w_i);  under H0: Q ~ chi2(k - 1)",
+  "variables": "y_i = ln RR_i; w_i = 1/v_i (fixed-effect weights); k = number of studies; H0: theta_1 = ... = theta_k",
+  "engine_ref": "models.cochran_q",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.4.1, p. 65",
+  "notes": "Equivalent to sum(w_i * (y_i - theta*_FE)^2). Thyroid: 8.567264 - (-29.8827)^2/217.0852 = 4.4538, df 6, p 0.62. Heartburn: 14.9508 - 14.4863^2/25.7003 = 6.7854, p 0.34. Model-independent."
+ },
+ {
+  "formula_id": "F-KHN0304-018",
+  "name": "I-squared (Higgins et al. 2003)",
+  "expression": "I2 = max(0, (Q - df) / Q) * 100%",
+  "variables": "Q = Cochran's Q; df = k - 1",
+  "engine_ref": "models.heterogeneity",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 65–66",
+  "notes": "Negative values truncated to 0. The book prints the thyroid value as '-0.35%'; the correct untruncated value is -34.8% (x100 dropped). Heartburn I2 about 12% (engine 11.6%). Bands 25/50/75% = low/moderate/high. The bands are descriptive only; the Cochrane Handbook v6 uses overlapping ranges (0-40%, 30-60%, 50-90%, 75-100%) and stresses that I2 depends on precision."
+ },
+ {
+  "formula_id": "F-KHN0304-019",
+  "name": "Subgroup percentage weight in MetaXL subgroup plots",
+  "expression": "%W_g = sum_{i in g} %W_i(overall RE)",
+  "variables": "%W_i(overall RE) = study i's percentage weight from the overall random-effects analysis; g = subgroup",
+  "engine_ref": null,
+  "stage_id": "S10",
+  "source_id": "khan2020",
+  "locator": "Ch4 Fig. 4.5, p. 79",
+  "notes": "Inferred by recomputation, not stated in the source: old studies 11.8 + 34.6 + 8.0 + 13.4 = 67.8%; recent studies 32.2%. MetaXL estimates a separate DL tau2 within each subgroup (old about 0.1155, recent 0)."
+ }
+]

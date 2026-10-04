@@ -78,7 +78,12 @@ class _SeedTmp(_Tmp):
     def setUp(self):
         super().setUp()
         self.seed = os.path.join(self.tmp, "seed")
-        shutil.copytree(kb.SEED_DIR, self.seed)
+        # csak a minimális alap (források, szakaszok) — a tesztek így függetlenek a repó
+        # mindenkori tudás-, szabály- és ellenőrzőlista-seedjeitől
+        os.makedirs(self.seed)
+        for f in glob.glob(os.path.join(kb.SEED_DIR, "sources*.json")) + \
+                glob.glob(os.path.join(kb.SEED_DIR, "stages*.json")):
+            shutil.copy(f, self.seed)
         self.schema = os.path.join(self.tmp, "schema.sql")
         shutil.copyfile(kb.SCHEMA, self.schema)
         for target, value in (("SEED_DIR", self.seed), ("SCHEMA", self.schema)):

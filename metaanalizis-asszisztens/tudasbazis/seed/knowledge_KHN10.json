@@ -1,0 +1,662 @@
+[
+ {
+  "k_id": "K-KHN10-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A fejezet hatóköre: korrelációs együttható metaanalízise (Khan 2020, 10. fejezet)",
+  "body": "Khan (2020) Ch 10 (pp. 217–239) covers meta-analysis of the Pearson correlation coefficient. One 8-study data set is analysed on the Fisher z scale under fixed effect (inverse variance), random effects (DerSimonian–Laird tau², though the estimator is not named) and IVhet, with tanh back-transformation to r; each method is shown as a hand calculation, then in MetaXL, with Stata metan/admetan code in Appendix 10. Subgroup analysis and publication bias are only referred to earlier chapters (§9.7, §8.8); there is no meta-regression, no tau² estimator other than DL, no t-based or HKSJ CI, no prediction interval, no leave-one-out analysis, and nothing on risk of bias, GRADE or PRISMA. [note: the DOCX conversion lost the equation objects, so every formula from this chapter in the KB is a reconstruction checked against the book's worked numbers.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 217–239; §§10.2–10.9; Appendix 10 pp. 236–239",
+  "tags": "scope hatókör correlation coefficient korrelációs együttható Pearson r Fisher z fixed effect fix hatás random effects véletlen hatás IVhet MetaXL Stata Khan 2020 chapter 10 fejezet"
+ },
+ {
+  "k_id": "K-KHN10-002",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "MetaXL korrelációs metaanalízishez: MAInputTable-hívások",
+  "body": "In MetaXL a correlation meta-analysis is run with =MAInputTable(\"title\",\"numcorr\",\"model\",range): the arguments are the forest-plot title, the effect type (\"numcorr\" = numeric correlation; \"Numcorr\" is also used, so case seems not to matter), the model (\"IV\" = fixed effect, \"RE\" = random effects, \"IVhet\" = inverse variance heterogeneity) and the worksheet range holding the study data (B7:D14 in the example, three columns, presumably study label, r and n; the chapter does not show the column order). MetaXL applies the Fisher z transformation internally and plots in r units, and its output matches the hand calculations, so its RE model uses the DL tau². The source tells readers who dislike the mathematics that they may rely on the software for the transformation.",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 225, 231, 234; Remark p. 219",
+  "tags": "MetaXL MAInputTable numcorr Numcorr IV RE IVhet Excel add-in bővítmény software szoftver correlation korreláció forest plot erdődiagram model code modellkód"
+ },
+ {
+  "k_id": "K-KHN10-003",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Stata metan/admetan kód korrelációkhoz (10. függelék)",
+  "body": "Appendix 10 prepares the columns Study, n, r, Z (= atanh r) and seZ (= 1/sqrt(n − 3)) and pools Z with its SE: `metan Z seZ, fixed lcols(Study) ...` or `metan Z seZ, random lcols(Study) ...` (the two plots are joined with `graph combine`), or `admetan Z seZ, model(fixed|random|ivhet) study(Study)`, optionally with `forestplot(effect(\"Pooled Effect Size\") xlabel(...))`. These outputs are on the z scale, not in r units. The word \"or\" printed between two variants of each admetan command means \"alternatively\" and is not part of the syntax. [note: metan's random option uses the DerSimonian–Laird estimator by default; this is general knowledge, not stated in the source.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 Appendix 10 pp. 236–239; Table A10.1",
+  "tags": "Stata metan admetan model(fixed) model(random) model(ivhet) seZ Fisher z code kód appendix függelék graph combine software szoftver"
+ },
+ {
+  "k_id": "K-KHN10-004",
+  "stage_id": "S01",
+  "kind": "definition",
+  "title": "Pearson-féle korrelációs együttható mint hatásméret",
+  "body": "The Pearson correlation coefficient measures the strength (magnitude) and direction (sign) of the linear association between two continuous variables, for example age vs systolic blood pressure in adults or height vs weight in infants. rho denotes the population correlation and r its sample estimate (rho_hat = r). It is unit-free and lies between −1 and 1; ±1 means a perfect positive/negative linear relationship, and values nearer ±1 mean a stronger linear relationship.",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.1 p. 217",
+  "tags": "Pearson correlation korreláció effect size hatásméret linear association lineáris összefüggés continuous variables folytonos változók rho r definition definíció PICO"
+ },
+ {
+  "k_id": "K-KHN10-005",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Adatkivonatolás korrelációs metaanalízishez: n és r",
+  "body": "For each study extract n, the number of subjects (i.e. of paired X, Y observations), and the Pearson correlation r between the same two variables; the chapter's input layout is study, n, r (Table 10.1). It assumes k independent studies, each reporting r and n. For Stata, add the derived columns Z = atanh(r) and seZ = 1/sqrt(n − 3) (Table A10.1).",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 218; §10.4 p. 223; Table 10.1 p. 220; Table A10.1 p. 236",
+  "tags": "data extraction adatkivonatolás sample size mintanagyság n pairs párok Pearson r correlation korreláció input layout bemeneti tábla"
+ },
+ {
+  "k_id": "K-KHN10-006",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Hiba: rossz n (csoportlétszám a párok száma helyett)",
+  "body": "In the variance 1/(n − 3), n is the number of paired observations; the source's wording about \"two samples of size n each\" invites confusion with per-group sizes. Detect: check that the fixed-effect weights equal n_i − 3, i.e. Σw = Σ(n_i − 3) (954 in the example). Fix: re-extract n as the number of subjects contributing both measurements.",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 218; Table 10.3 p. 224",
+  "tags": "pitfall hiba sample size mintanagyság n pairs párok wrong n rossz n weights súlyok data extraction adatkivonatolás Fisher z variance variancia"
+ },
+ {
+  "k_id": "K-KHN10-007",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: azonos korrelációtípus, változópár és előjel-irány",
+  "body": "Reviewer check: every study must supply the same type of correlation (Pearson r) between the same pair of variables, with the same orientation of sign, and n must be the number of paired observations. Pooling correlations of different variable pairs or with reversed coding mixes different estimands. [note: a derived check; the chapter only defines r for one pair of variables and does not discuss sign alignment.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 217–218",
+  "tags": "check ellenőrzés reviewer bíráló correlation type korrelációtípus Pearson same variables azonos változók sign orientation előjel irány coding kódolás data extraction adatkivonatolás"
+ },
+ {
+  "k_id": "K-KHN10-008",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: |r| = 1 vagy n ≤ 3 kizárása",
+  "body": "Check that no study has |r| = 1 (arctanh is infinite) or n ≤ 3 (the variance 1/(n − 3) is undefined or negative). The source mentions neither guard, so it must be enforced in software. [note: the engine's effect_sizes.correlation rejects r outside (−1, 1) and, for ZCOR, n ≤ 3; validate.validate flags such rows (codes V010 and V004).]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 pp. 218–219 (guard absent from source)",
+  "tags": "check ellenőrzés guard védőfeltétel r = 1 perfect correlation tökéletes korreláció n <= 3 arctanh infinite végtelen variance undefined data check adatellenőrzés validation validálás"
+ },
+ {
+  "k_id": "K-KHN10-009",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Mintaadatsor: 8 vizsgálat n és r értékei (Table 10.1)",
+  "body": "The worked data set (8 studies said to come from the MedCalc website; apparently a teaching or fictitious example) is, as n / r: Moore 2006 133/0.56, Davis 2008 149/0.43, Thomas 1999 131/0.53, Miller 2012 120/0.51, Williams 2012 111/0.66, Young 2013 152/0.46, Baker 2009 60/0.33, Adams 2006 122/0.38. It serves as a regression-test fixture for Fisher z pooling under FE, RE and IVhet.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.1 p. 219; Table 10.1 p. 220",
+  "tags": "example példa dataset adatsor MedCalc correlation korreláció test fixture tesztadat Moore Davis Thomas Miller Williams Young Baker Adams worked example kidolgozott példa"
+ },
+ {
+  "k_id": "K-KHN10-010",
+  "stage_id": "S13",
+  "kind": "threshold",
+  "title": "Hinkle-féle ökölszabály a korreláció erősségére",
+  "body": "Rule of thumb for |r| (Hinkle 2003): 0.90–1.00 very high, 0.70–0.90 high, 0.50–0.70 moderate, 0.30–0.50 low, 0.00–0.30 negligible; the same bands apply to negative values (e.g. −0.70 to −0.90 high negative). The bands are printed with overlapping endpoints, so a value exactly on a boundary (e.g. 0.50) is ambiguous. [note: generic cut-offs are discipline-dependent; judge strength in the substantive context as well.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 Table p. 218",
+  "tags": "threshold küszöb rule of thumb ökölszabály Hinkle correlation strength korreláció erőssége very high high moderate low negligible nagyon erős erős közepes gyenge elhanyagolható interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN10-011",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "A nyers r varianciája függ ρ-tól",
+  "body": "The approximate variance of the sample correlation is Var(r) ≈ (1 − rho²)²/(n − 1), estimated by SE(r) = (1 − r²)/sqrt(n − 1). Because it depends on the unknown rho and changes with it, this variance is not constant across studies, which is why the chapter does not pool raw r. A large-sample test statistic for raw r is Z1 = r·sqrt(n − 1)/(1 − r²), approximately standard normal.",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 pp. 218–219",
+  "tags": "raw correlation nyers korreláció variance variancia standard error standard hiba rho dependence függés non-constant variance nem állandó variancia test statistic próbastatisztika"
+ },
+ {
+  "k_id": "K-KHN10-012",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Fisher-féle z-transzformáció (varianciastabilizálás)",
+  "body": "Fisher's (1915) transformation z = ½·ln[(1 + r)/(1 − r)] = arctanh(r) estimates zeta = arctanh(rho). Its variance is approximately 1/(n − 3), which does not depend on r, so SE(z) = 1/sqrt(n − 3) and Z2 = z·sqrt(n − 3) is approximately N(0, 1). The approximation assumes that X and Y follow a bivariate normal distribution. The back-transformation is r = (e^{2z} − 1)/(e^{2z} + 1) = tanh(z).",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 pp. 218–219",
+  "tags": "Fisher z transformation transzformáció arctanh tanh variance stabilizing varianciastabilizáló 1/(n-3) bivariate normal kétváltozós normális back-transformation visszatranszformálás ZCOR"
+ },
+ {
+  "k_id": "K-KHN10-013",
+  "stage_id": "S07",
+  "kind": "convention",
+  "title": "A szoftverek Fisher z-skálán összesítenek",
+  "body": "Most statistical packages, MetaXL included, meta-analyse correlations on the Fisher z scale. The chapter adopts this option because the variance of z stays constant when r changes from study to study, and so that its results match popular software. CI limits are therefore computed on the arctanh scale and converted to r with tanh.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Remark p. 219",
+  "tags": "convention konvenció software szoftver MetaXL Fisher z scale skála correlation korreláció pooling összesítés arctanh tanh back-transform visszatranszformálás"
+ },
+ {
+  "k_id": "K-KHN10-014",
+  "stage_id": "S07",
+  "kind": "guidance",
+  "title": "Egyedi vizsgálat CI-je: z-skálán számolva, tanh-val visszaalakítva",
+  "body": "For a (1 − alpha) CI for rho from one study, compute LL* = z − z_{alpha/2}·SE(z) and UL* = z + z_{alpha/2}·SE(z) on the z scale, then LL = tanh(LL*) and UL = tanh(UL*). The resulting interval is asymmetric around r, with the side towards ±1 shorter, e.g. Moore r = 0.56 with CI (0.4308, 0.6667).",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 p. 219; Table 10.2 p. 220",
+  "tags": "confidence interval konfidenciaintervallum single study egyedi vizsgálat Fisher z tanh back-transform visszatranszformálás asymmetric aszimmetrikus correlation korreláció"
+ },
+ {
+  "k_id": "K-KHN10-015",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "ρ = 0 próbája Fisher z-vel",
+  "body": "To test H0: rho = 0 against Ha: rho ≠ 0, use Z = z/SE(z) = z·sqrt(n − 3), standard normal under H0, and reject two-sided at level alpha when |z0| ≥ z_{alpha/2}. Worked (Moore 2006): z0 = 0.6328/0.08771 = 7.215408 ≈ 7.22, two-sided p ≈ 0, so rho = 0 is rejected at the 5% level.",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.3 p. 222; Ex 10.2 p. 222",
+  "tags": "hypothesis test hipotézisvizsgálat z test z-próba rho = 0 significance szignifikancia Fisher z p-value p-érték single study egyedi vizsgálat"
+ },
+ {
+  "k_id": "K-KHN10-016",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Kidolgozott példa: Moore 2006 (n = 133, r = 0.56)",
+  "body": "Moore 2006: (1 + r)/(1 − r) = 3.54545, its natural log = 1.26567, z = 0.6328; Var = 1/130 = 0.00769, SE = 0.08771; z-scale 95% CI 0.46093 to 0.80474; r-scale CI 0.43084 to 0.66668, shown as (0.43, 0.67) in the forest plot.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.1 pp. 220–221; Table 10.2",
+  "tags": "worked example kidolgozott példa Moore Fisher z confidence interval konfidenciaintervallum spot check szúrópróba test value tesztérték correlation korreláció"
+ },
+ {
+  "k_id": "K-KHN10-017",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Vizsgálatonkénti z-értékek és r-skálás CI-k (Table 10.2)",
+  "body": "Fisher z and r-scale 95% CI per study: Moore 0.6328 (0.4308, 0.6667); Davis 0.4599 (0.2892, 0.5526); Thomas 0.5901 (0.3943, 0.6431); Miller 0.5627 (0.364, 0.6315); Williams 0.7928 (0.54, 0.7537); Young 0.4973 (0.3246, 0.577); Baker 0.3428 (0.083, 0.5388); Adams 0.4001 (0.2169, 0.5225). Trailing zeros are dropped as in the Excel display.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Table 10.2 p. 220",
+  "tags": "worked example kidolgozott példa per-study vizsgálatonkénti Fisher z confidence interval konfidenciaintervallum test values tesztértékek Table 10.2"
+ },
+ {
+  "k_id": "K-KHN10-018",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Hiba: nyers r összesítése r-függő varianciával",
+  "body": "Pooling raw r with variance (1 − r²)²/(n − 1) gives weights that depend on r itself, so the variance is not stable across studies. Detect: the study weights change with r rather than only with n. Fix: pool z = arctanh(r) with v = 1/(n − 3), then back-transform the pooled estimate and CI limits with tanh. [note: Fisher z pooling is the usual default (e.g. Borenstein et al. 2009) but a convention, not a rule: Hunter–Schmidt-type pooling of raw r (sample-size weights, variance from the mean r) is an accepted alternative, and under random effects tanh of the pooled z estimates the median rather than the mean true correlation; pre-specify the metric.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 218; p. 219",
+  "tags": "pitfall hiba raw r nyers korreláció pooling összesítés weights súlyok variance variancia Fisher z transformation transzformáció"
+ },
+ {
+  "k_id": "K-KHN10-019",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Ami hiányzik: torzításkorrekció és mértékek közötti átváltás",
+  "body": "The chapter discusses no small-sample bias correction for r or z (e.g. Olkin–Pratt), no Hunter–Schmidt pooling of raw r, and no conversion from other metrics (d, OR) to r; these must come from other sources. [note: the engine provides conversions.r_to_d and conversions.d_to_r for mixed-metric data sets.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 pp. 218–219 (not covered)",
+  "tags": "not covered hiányzik bias correction torzításkorrekció Olkin-Pratt Hunter-Schmidt conversion átváltás d to r OR to r effect size conversion hatásméret-átváltás"
+ },
+ {
+  "k_id": "K-KHN10-020",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Nyomdahibák: egyedi vizsgálat és transzformáció",
+  "body": "Ignore these misprints when building tests: a comment gives Moore's CI as (0.34, 0.67) but it is (0.43, 0.67); the second limit in the worked example is labelled \"LL\" instead of \"UL\"; the generic upper-limit formulas use e^{2·LL*} instead of e^{2·UL*}; and the back-transformation is written tanh(r) instead of tanh(zeta_hat).",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 218; p. 221; pp. 223, 228, 233",
+  "tags": "typo nyomdahiba erratum misprint Moore confidence interval konfidenciaintervallum upper limit felső határ tanh back-transformation visszatranszformálás test tesztelés"
+ },
+ {
+  "k_id": "K-KHN10-021",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Összesítés Fisher z-skálán, majd tanh-visszaalakítás",
+  "body": "All pooling uses theta_i = arctanh(r_i) with v_i = 1/(n_i − 3). The pooled point estimate and both CI limits are back-transformed with tanh, while the SE is never back-transformed. This holds for fixed effect, random effects and IVhet alike.",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 219, 223, 228, 233",
+  "tags": "pooling összesítés Fisher z scale skála tanh back-transform visszatranszformálás standard error standard hiba fixed effect fix hatás random effects véletlen hatás IVhet"
+ },
+ {
+  "k_id": "K-KHN10-022",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Fix hatású (inverz variancia) modell korrelációkra",
+  "body": "Under the fixed effect model (MetaXL \"IV\"), w_i = 1/v_i = n_i − 3, theta_FE = Σw_i·theta_i/Σw_i, Var(theta_FE) = 1/Σw_i, and the CI is theta_FE ± z_{alpha/2}·SE on the z scale. Then rho_FE = tanh(theta_FE), and each CI limit is tanh-transformed.",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.4 pp. 222–225",
+  "tags": "fixed effect fix hatás inverse variance inverz variancia weights súlyok n-3 pooled estimate összesített becslés Fisher z MetaXL IV"
+ },
+ {
+  "k_id": "K-KHN10-023",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Kidolgozott FE-eredmények (Ex 10.3, Fig. 10.1)",
+  "body": "Σw = 954, Σwz = 517.663, theta_FE = 0.542623, SE = sqrt(1/954) = 0.03238; z-scale CI 0.47917 to 0.60608; rho_FE = tanh(0.542623) = 0.494971; forest plot 0.49 (0.45, 0.54). FE % weights: Moore 13.6, Davis 15.3, Thomas 13.4, Miller 12.3, Williams 11.3, Young 15.6, Baker 6.0, Adams 12.5.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.3 pp. 224–225; Table 10.3; Fig. 10.1 p. 221",
+  "tags": "worked example kidolgozott példa fixed effect fix hatás pooled correlation összesített korreláció weights súlyok test values tesztértékek forest plot"
+ },
+ {
+  "k_id": "K-KHN10-024",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Véletlen hatású modell korrelációkra (DL τ²)",
+  "body": "The random-effects model has two variance components: within-study sigma² (estimated by v_i) and between-study tau². The combined variance v*_i = v_i + tau² gives weights w*_i = 1/(v_i + tau²), theta_RE = Σw*_i·theta_i/Σw*_i, SE = sqrt(1/Σw*_i), a Wald z CI and rho_RE = tanh(theta_RE). tau² is the DerSimonian–Laird moment estimator, though the chapter does not name it, and MetaXL's RE output matches it. [note: current Cochrane guidance (Handbook v6) favours REML or Paule–Mandel over DL and suggests considering Hartung–Knapp–Sidik–Jonkman CIs; the engine defaults to REML + HKSJ, so reproducing Khan needs tau2_method=\"DL\" and ci_method=\"z\".]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.5 pp. 228–232",
+  "tags": "random effects véletlen hatás DerSimonian-Laird DL tau2 between-study variance vizsgálatok közötti variancia weights súlyok REML Paule-Mandel HKSJ Wald CI"
+ },
+ {
+  "k_id": "K-KHN10-025",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Kidolgozott RE-eredmények (Ex 10.6, Fig. 10.2)",
+  "body": "With tau² = 0.008633: Σw* = 462.82, Σw*z = 250.41, theta_RE = 0.5411, SE = 0.0465, z-scale CI 0.449943 to 0.632157, r-scale CI 0.42185 to 0.55954, rho_RE = 0.49382; forest plot 0.49 (0.42, 0.56). RE % weights: Moore 13.2, Davis 14.0, Thomas 13.1, Miller 12.6, Williams 12.1, Young 14.1, Baker 8.3, Adams 12.7. The RE CI is wider than the FE CI.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.5–10.6 pp. 229–231; Table 10.5; Fig. 10.2; p. 232",
+  "tags": "worked example kidolgozott példa random effects véletlen hatás DerSimonian-Laird pooled correlation összesített korreláció weights súlyok test values tesztértékek forest plot"
+ },
+ {
+  "k_id": "K-KHN10-026",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "IVhet modell (Doi et al. 2015) korrelációkra",
+  "body": "Like RE, IVhet is meant for heterogeneous studies but, according to the source, without some of the unrealistic assumptions of the RE model. Its point estimate equals the fixed-effect estimate (weights w_i = 1/v_i), while its variance is Var = Σ(w_i/Σw)²·(v_i + tau²) with the DL tau²; a Wald z CI is formed and tanh-transformed. [note: IVhet comes from the author's own group (Doi, Barendregt, Khan et al. 2015) and its claimed advantage over RE is that group's position, not consensus; the Cochrane Handbook v6 does not describe it. Pre-specify a standard RE analysis (REML or Paule–Mandel tau², HKSJ CI, prediction interval) as the primary model and use IVhet at most as a justified sensitivity analysis.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.6 pp. 232–235",
+  "tags": "IVhet inverse variance heterogeneity inverz variancia heterogenitás Doi 2015 quasi-likelihood fixed effect weights fix hatású súlyok heterogeneity heterogenitás model choice modellválasztás"
+ },
+ {
+  "k_id": "K-KHN10-027",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Kidolgozott IVhet-eredmények (Ex 10.7, Fig. 10.3)",
+  "body": "theta_IVhet = 517.66/954 = 0.5426; Var = 0.0022 (unrounded 0.0021823), SE = 0.046716; z-scale CI 0.451061 to 0.63419; r-scale CI 0.422771 to 0.56093; rho_IVhet = 0.495; forest plot 0.49 (0.42, 0.56). The IVhet forest plot shows the FE % weights (e.g. Baker 6.0%).",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.7 pp. 233–234; Table 10.6; Fig. 10.3 p. 235",
+  "tags": "worked example kidolgozott példa IVhet pooled correlation összesített korreláció test values tesztértékek forest plot weights súlyok"
+ },
+ {
+  "k_id": "K-KHN10-028",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Hiba: az IVhet-tábla „W*” oszlopa nem súly",
+  "body": "In Table 10.6 the column labelled W* is each study's variance contribution (w_i/Σw)²·(v_i + tau²), e.g. Moore (130/954)² × 0.01633 = 0.0003, not a weight. Detect: its column sum (0.0022) is the pooled variance, not a total weight. The IVhet weights shown in the forest plot are the FE weights.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Table 10.6 p. 233",
+  "tags": "pitfall hiba IVhet W* weight súly variance contribution varianciahozzájárulás table táblázat mislabel félrecímkézés"
+ },
+ {
+  "k_id": "K-KHN10-029",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "CI-módszer: Wald z (1,96) mindenhol",
+  "body": "Every CI in the chapter, single-study and pooled, is a Wald/normal interval with z_{0.025} = 1.96; there is no t-based CI, no Hartung–Knapp–Sidik–Jonkman adjustment and no prediction interval. [note: for RE analyses current guidance often recommends HKSJ CIs and a prediction interval. For the example, the note-taker's DL 95% prediction interval on the r scale is 0.325 to 0.632 with the z quantile (as metafor computes it) or 0.279 to 0.661 with t_{k−2} (Higgins form); these are not in the source.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 219, 224, 230, 234",
+  "tags": "confidence interval konfidenciaintervallum Wald z 1.96 normal approximation normális közelítés HKSJ t-distribution prediction interval predikciós intervallum convention konvenció"
+ },
+ {
+  "k_id": "K-KHN10-030",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Hiba: „minden modell ugyanazt az r-t adja”",
+  "body": "The claim that the pooled estimate is the same (0.49) under all three models holds only at 2 dp: on the z scale FE and IVhet give 0.5426 and RE 0.5411. When comparing models, report 3–4 dp on the z scale rather than concluding that the models agree.",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.7 p. 236",
+  "tags": "pitfall hiba model comparison modellek összehasonlítása rounding kerekítés decimals tizedesjegyek fixed effect random effects IVhet pooled estimate összesített becslés"
+ },
+ {
+  "k_id": "K-KHN10-031",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Nyomdahibák: összesített eredmények és hivatkozások",
+  "body": "The FE upper limit on the r scale is printed as 0.54236 (correct 0.54136); the FE lower limit is printed as ≈ 0.44 although 0.44558 rounds to 0.45, as in the forest plot; Example 10.4 cites \"Table 8.1\" instead of Table 10.1; the IVhet example says \"under the REs model\"; and Table A10.1 lists \"Adams (20067)\" for Adams (2006).",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 224–225; p. 226; p. 234; Table A10.1 p. 237",
+  "tags": "typo nyomdahiba erratum misprint fixed effect confidence interval konfidenciaintervallum IVhet table reference táblázathivatkozás test tesztelés"
+ },
+ {
+  "k_id": "K-KHN10-032",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Hiba: kerekített részeredményekkel számolás",
+  "body": "The source shows √0.0022 = 0.046716, but 0.046716 comes from the unrounded variance 0.0021823 (√0.0022 is 0.0469); likewise LL* and UL* are computed from unrounded estimates. It also rounds tau² to 0.008633 before computing the RE weights, so its W* values are about 0.001 below full precision. Fix: carry full precision in the engine and compare with the book using tolerances (about 1e-3 for the W* columns of Table 10.5).",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 234; Table 10.5 p. 230",
+  "tags": "pitfall hiba rounding kerekítés intermediate results részeredmények precision pontosság tolerance tolerancia test tesztelés IVhet random effects weights súlyok"
+ },
+ {
+  "k_id": "K-KHN10-033",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: FE-súlyok = n_i − 3",
+  "body": "Reviewer check: the FE weights must equal n_i − 3, so Σw = Σ(n_i − 3), and the FE % weights must equal 100·(n_i − 3)/Σ(n_j − 3); in the example Σw = 954 and Moore has 130/954 = 13.6%.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Table 10.3 p. 224; Fig. 10.1",
+  "tags": "check ellenőrzés reviewer bíráló fixed effect weights fix hatású súlyok n-3 percentage weight százalékos súly Fisher z"
+ },
+ {
+  "k_id": "K-KHN10-034",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: minden számítás z-skálán, kézi szúrópróbával",
+  "body": "Reviewer check: z_i = arctanh(r_i) and v_i = 1/(n_i − 3) for every study (spot-check one by hand, e.g. Moore z = 0.6328, v = 0.00769); pooling, Q, tau² and the CIs are computed on the z scale, and only the final point estimate and CI limits are tanh-transformed. The r-scale CIs should be asymmetric around the pooled r.",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 219, 221, 223",
+  "tags": "check ellenőrzés reviewer bíráló Fisher z scale skála spot check szúrópróba tanh back-transform visszatranszformálás asymmetric CI aszimmetrikus konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN10-035",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: az RE és az IVhet viszonya az FE-hez",
+  "body": "When tau² > 0: the RE weights 1/(v_i + tau²) are more even than the FE weights, so the smallest study gains weight (Baker 6.0% → 8.3%); the IVhet point estimate equals the FE estimate; the IVhet SE is at least the FE SE; and the RE and IVhet CIs are at least as wide as the FE CI. [note: the width ordering holds for Wald z CIs as used in the chapter; an HKSJ CI can be narrower than the Wald CI when the studies are very homogeneous.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.6; pp. 232, 236; Figs 10.1–10.2",
+  "tags": "check ellenőrzés reviewer bíráló random effects véletlen hatás IVhet fixed effect fix hatás weights súlyok CI width CI-szélesség consistency konzisztencia"
+ },
+ {
+  "k_id": "K-KHN10-036",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: a szoftverhívás a szándékolt modellt futtatja",
+  "body": "Check that the software call matches the intended model: in MetaXL \"IV\" = fixed effect, \"RE\" = DL random effects and \"IVhet\" = IVhet; in Stata admetan use model(fixed), model(random) or model(ivhet). A wrong model code silently produces a different analysis.",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 225, 231, 234; Appendix 10",
+  "tags": "check ellenőrzés reviewer bíráló software szoftver MetaXL IV RE IVhet Stata admetan model code modellkód model choice modellválasztás"
+ },
+ {
+  "k_id": "K-KHN10-037",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Reprodukció R metafor-ral és a motorral",
+  "body": "The note-taker reproduced the book with R metafor: escalc(\"ZCOR\") + rma(method=\"FE\") gives 0.5426 (SE 0.0324), and rma(method=\"DL\") gives 0.5411 (SE 0.0465) with tau² = 0.0086; predict(..., transf=transf.ztor) gives 0.49497 (0.44558, 0.54136) for FE and 0.49378 (0.42185, 0.55953) for RE; Q = 14.1536 (p = 0.0485), I² = 50.54%. [note: the engine gives the same values with effect_sizes.correlation(\"ZCOR\", ...) and models.meta_analysis with model=\"fixed\" or \"ivhet\", or model=\"random\" with tau2_method=\"DL\" and ci_method=\"z\"; its default random-effects settings (REML + HKSJ) give different CIs.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.3–10.7 (verification, not in source)",
+  "tags": "reproduction reprodukció R metafor escalc ZCOR rma transf.ztor engine motor validation validálás test tesztelés DerSimonian-Laird fixed effect"
+ },
+ {
+  "k_id": "K-KHN10-038",
+  "stage_id": "S09",
+  "kind": "guidance",
+  "title": "Heterogenitás vizsgálata a modellválasztáshoz",
+  "body": "The source stresses that heterogeneity is common, makes analyses harder, and should be investigated in every meta-analysis so that an appropriate model can be used; it presents the RE model as the one to use when effect sizes are heterogeneous. [note: debatable — current guidance advises choosing FE vs RE a priori from the assumed nature of the effects, not from a heterogeneity test.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 225–226; §10.5 p. 228",
+  "tags": "heterogeneity heterogenitás model choice modellválasztás fixed effect fix hatás random effects véletlen hatás a priori előzetes test-based choice tesztalapú választás"
+ },
+ {
+  "k_id": "K-KHN10-039",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-féle Q korrelációkra",
+  "body": "Q = Σw_i·theta_i² − (Σw_i·theta_i)²/Σw_i with the FE weights w_i = n_i − 3. Under H0 (theta_1 = … = theta_k) Q follows a chi-squared distribution with df = k − 1, so E(Q) = k − 1; the alternative is that at least one theta_i differs. The source spells it \"Cochrane's Q\" (Cochran 1973).",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 226",
+  "tags": "Cochran Q heterogeneity test heterogenitás próba chi-squared khi-négyzet degrees of freedom szabadságfok fixed effect weights fix hatású súlyok Fisher z"
+ },
+ {
+  "k_id": "K-KHN10-040",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Hiba: nem szignifikáns Q-ból homogenitásra következtetni",
+  "body": "A small Q p-value indicates real between-study differences, but a non-significant p does not prove homogeneity because the test has low power. Q should not be used alone to measure how large the dispersion is, and it grows with the number of studies. Fix: always report I² and tau² alongside Q and its p. [note: Cochrane Handbook v6 (§10.10.2) mentions a 0.10 level if the test is used at all, and the FE vs RE choice should not be based on this test.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 226",
+  "tags": "pitfall hiba Cochran Q low power alacsony erő homogeneity homogenitás non-significant nem szignifikáns I2 tau2 heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN10-041",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "I² statisztika (Higgins et al. 2003)",
+  "body": "I² = (Q − df)/Q × 100% is the share of total variation (within plus between studies) that is due to between-study variation; it was introduced because Q increases with the number of studies. The chapter states no truncation at 0 and no thresholds for low, moderate or high I², and reads I² = 51% as reflecting heterogeneity. [note: truncate negative values at 0. I² depends on study precision and is not an absolute measure of heterogeneity; the Cochrane Handbook v6 bands (0–40%, 30–60%, 50–90%, 75–100%) deliberately overlap and are only a rough guide, so report tau² (or tau) too.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 226; p. 225",
+  "tags": "I2 I-squared inconsistency inkonzisztencia Higgins heterogeneity heterogenitás proportion arány truncation csonkolás threshold küszöb"
+ },
+ {
+  "k_id": "K-KHN10-042",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Q és I² modelltől független — de FE-súlyokkal számolva",
+  "body": "The source states that Q and I² come from the summary data and do not depend on the statistical model. In practice they always use the FE weights, and MetaXL prints the same Q, p and I² under FE, RE and IVhet.",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 227; Figs 10.1–10.3",
+  "tags": "Cochran Q I2 model independence modellfüggetlenség fixed effect weights fix hatású súlyok MetaXL heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN10-043",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "Kidolgozott heterogenitás: Q = 14,15, I² = 51%",
+  "body": "From Table 10.4: Σw = 954, Σwz = 517.663, Σw² = 119564 and Σwz² = 295.05, so Q = 295.05 − 517.663²/954 = 14.15 with df = 7. The book reads p from a chi-squared table as between 0.025 and 0.05 (the 5% critical value for df = 7 is 14.067); the exact p is 0.0485 and the forest plot prints p = 0.05. I² = 7.15/14.15 = 0.5054, i.e. 51%. [note: the book treats p < 0.05 as significant heterogeneity; this should not by itself drive the FE vs RE choice (see K-KHN10-038, K-KHN10-040).]",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.4 pp. 226–227; Table 10.4 p. 227",
+  "tags": "worked example kidolgozott példa Cochran Q I2 chi-squared khi-négyzet critical value kritikus érték p-value p-érték heterogeneity heterogenitás test values tesztértékek"
+ },
+ {
+  "k_id": "K-KHN10-044",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "DL τ²-becslés: (Q − df)/C",
+  "body": "tau² = (Q − df)/C with C = Σw_i − Σw_i²/Σw_i (FE weights) and df = k − 1. Worked: C = 954 − 119564/954 = 828.6709 and tau² = (14.15 − 7)/828.6709 = 0.008633. The chapter does not mention truncating tau² at 0 when Q < df; an implementation must do so (engine models.tau2_dl does).",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.5 pp. 228–229; Ex 10.5 p. 229",
+  "tags": "tau2 between-study variance vizsgálatok közötti variancia DerSimonian-Laird DL moment estimator momentum-becslő C scaling truncation csonkolás"
+ },
+ {
+  "k_id": "K-KHN10-045",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Nem közölt heterogenitás-mutatók: τ, H², CI-k, PI",
+  "body": "The chapter prints tau² (0.008633) but not tau (0.0929), H² (2.02), CIs for tau² or I², or a prediction interval. [note: tau and H² here are the note-taker's computations. Current reporting guidance favours giving tau² (or tau) with a CI and a prediction interval for RE models; the engine's models.heterogeneity returns H² and CIs for I² and tau².]",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.5 p. 229 (tau² only)",
+  "tags": "tau H2 confidence interval konfidenciaintervallum prediction interval predikciós intervallum heterogeneity heterogenitás reporting gap hiányzó közlés"
+ },
+ {
+  "k_id": "K-KHN10-046",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzés: Q, I² és DL τ² számítása",
+  "body": "Reviewer check: Q = Σwz² − (Σwz)²/Σw with df = k − 1 and p from chi-squared with k − 1 df; I² = (Q − df)/Q, truncated at 0; DL tau² = (Q − df)/C with C = Σw − Σw²/Σw, truncated at 0.",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 227, 229",
+  "tags": "check ellenőrzés reviewer bíráló Cochran Q I2 tau2 DerSimonian-Laird truncation csonkolás chi-squared khi-négyzet heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN10-047",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Alcsoport-elemzés korrelációkra: utalás a 9.7. alfejezetre",
+  "body": "Subgroup analysis for correlations is said to be very similar to the WMD case (§9.7) and is not worked; meta-regression is not covered. Implied rather than stated: compute subgroup estimates and Q-between on the Fisher z scale, as for pooling, and back-transform only for display. [note: the engine's moderators.subgroup_analysis and moderators.meta_regression accept the z-scale yi/vi produced by effect_sizes.correlation(\"ZCOR\", ...).]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.8 p. 236",
+  "tags": "subgroup analysis alcsoport-elemzés meta-regression metaregresszió Q-between csoportok közötti Q Fisher z WMD correlation korreláció"
+ },
+ {
+  "k_id": "K-KHN10-048",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "Publikációs torzítás korrelációknál: utalás a 8.8. alfejezetre",
+  "body": "Publication bias for correlations is referred to the SMD chapter (§8.8: funnel plot, Doi plot and their interpretation) and not worked here. Implied, not stated: the plots use z_i and SE_i = 1/sqrt(n_i − 3), and since this SE depends only on n, a z-scale funnel plot is essentially effect vs sample size. [note: for the same reason, Egger-type tests on Fisher z avoid the artefactual effect–SE correlation seen with SMDs. The Doi plot and LFK index come from the author's own group and are not among the methods the Cochrane Handbook v6 recommends; it advises funnel-plot asymmetry tests only with at least 10 studies, which this 8-study example does not reach. The engine provides bias.egger_test and bias.doi_plot_data.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.9 p. 236",
+  "tags": "publication bias publikációs torzítás small-study effects kisvizsgálat-hatás funnel plot tölcsérdiagram Doi plot LFK Egger Fisher z sample size mintanagyság"
+ },
+ {
+  "k_id": "K-KHN10-049",
+  "stage_id": "S12",
+  "kind": "concept",
+  "title": "Modellek összehasonlítása mint érzékenységvizsgálat (FE, RE, IVhet)",
+  "body": "Running FE, RE and IVhet on the same data is the chapter's only sensitivity device: all three give a pooled r of 0.49, the FE CI is (0.45, 0.54), and RE and IVhet both give (0.42, 0.56). Even when the RE and IVhet CIs agree, the two models redistribute study weights very differently (RE evens them out; IVhet keeps the FE weights). No leave-one-out or influence analysis is given. [note: the engine offers sensitivity.leave_one_out and sensitivity.influence.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.7 pp. 235–236",
+  "tags": "sensitivity analysis érzékenységvizsgálat model comparison modellek összehasonlítása fixed effect random effects IVhet weights súlyok leave-one-out influence befolyás"
+ },
+ {
+  "k_id": "K-KHN10-050",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Hiba: r = 0 értelmezése „nincs összefüggés”-ként",
+  "body": "A correlation of 0 (or near 0) rules out only a linear relationship; a strong non-linear relationship can still exist. Detect: the conclusions claim \"no association\" although only Pearson r was pooled. Fix: state \"no linear association\" and note that non-linear relationships were not assessed.",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.1 p. 217",
+  "tags": "pitfall hiba r = 0 zero correlation nulla korreláció linear lineáris non-linear nemlineáris no association nincs összefüggés interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN10-051",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a pooled r erőssége Hinkle-sávokkal",
+  "body": "Evaluator: is the pooled r interpreted with the Hinkle bands (0.9–1 very high, 0.7–0.9 high, 0.5–0.7 moderate, 0.3–0.5 low, < 0.3 negligible), and does the interpretation acknowledge that a CI spanning two bands leaves the strength uncertain? In the example the RE/IVhet CI 0.42–0.56 spans \"low\" and \"moderate\". [note: the Hinkle bands are one behavioural-science convention, not a universal standard; judge strength in the substantive context as well (see K-KHN10-010).]",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 218",
+  "tags": "criterion értékelési szempont evaluator értékelő correlation strength korreláció erőssége Hinkle bands sávok confidence interval konfidenciaintervallum interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN10-052",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: kizárja-e a 95% CI a 0-t",
+  "body": "The source's criterion for statistical significance of the pooled correlation is whether its 95% CI excludes 0; in the example all three models give CIs well above 0, which the source calls highly significant. [note: significance says nothing about the strength of the association; pair it with the magnitude interpretation.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 225, 232, 235",
+  "tags": "criterion értékelési szempont evaluator értékelő statistical significance statisztikai szignifikancia confidence interval konfidenciaintervallum excludes zero nullát kizárja"
+ },
+ {
+  "k_id": "K-KHN10-053",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: heterogenitás közlése és modellválasztás",
+  "body": "Evaluator: was Q reported with its p and the low-power caveat, alongside I² and tau², and was a heterogeneity-aware model (RE or IVhet) used when heterogeneity is present (here I² = 51% and p < 0.05)? [note: switching models because Q or I² is 'significant' is the source's approach; current guidance (Cochrane Handbook v6 §10.10.4) is to pre-specify the model from the assumed nature of the effects, with RE the usual choice when studies differ in design or population, and IVhet is an author-group model rather than a standard alternative.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 225–227, 236",
+  "tags": "criterion értékelési szempont evaluator értékelő heterogeneity heterogenitás Cochran Q I2 tau2 random effects véletlen hatás IVhet model choice modellválasztás"
+ },
+ {
+  "k_id": "K-KHN10-054",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: robusztusság a modellek között",
+  "body": "Evaluator: do FE, RE and IVhet agree, and is the more conservative (wider) CI used for inference when heterogeneity is present? [note: picking whichever model gives the wider CI after seeing the results is not standard practice; pre-specify the primary model and report the others as sensitivity analyses.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.7 pp. 235–236",
+  "tags": "criterion értékelési szempont evaluator értékelő robustness robusztusság model comparison modellek összehasonlítása conservative konzervatív confidence interval konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN10-055",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a linearitási korlát a következtetésekben",
+  "body": "Evaluator: do the conclusions avoid claiming \"no association\" from a pooled r near 0, acknowledging that only linear association was measured and that a non-linear association is possible?",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 217",
+  "tags": "criterion értékelési szempont evaluator értékelő linearity linearitás non-linear nemlineáris conclusions következtetések correlation korreláció"
+ },
+ {
+  "k_id": "K-KHN10-056",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: módszertani átláthatóság",
+  "body": "Evaluator: does the review state the transformation (Fisher z), the variance formula 1/(n − 3), the tau² estimator, and the back-transformation (tanh) applied to the point estimate and CI limits?",
+  "source_id": "khan2020",
+  "locator": "Ch10 p. 219",
+  "tags": "criterion értékelési szempont evaluator értékelő transparency átláthatóság methods módszerek Fisher z tau2 estimator becslő back-transformation visszatranszformálás reporting közlés"
+ },
+ {
+  "k_id": "K-KHN10-057",
+  "stage_id": "S13",
+  "kind": "concept",
+  "title": "Torzításkockázat, GRADE és PRISMA nincs a fejezetben",
+  "body": "The chapter does not cover risk of bias, quality appraisal or certainty grading, so the evaluator must draw such criteria from other sources (e.g. GRADE); PRISMA reporting is not covered either.",
+  "source_id": "khan2020",
+  "locator": "Ch10 (not covered)",
+  "tags": "risk of bias torzításkockázat quality appraisal minőségértékelés GRADE certainty bizonyosság PRISMA not covered hiányzik"
+ },
+ {
+  "k_id": "K-KHN10-058",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "MetaXL forest plot konvenciók korrelációkhoz",
+  "body": "MetaXL forest plots show the study label, \"Corr (95% CI)\" on the r scale to 2 dp and the % weight to 1 dp; the overall row is a diamond labelled \"Overall Q=…, p=…, I2=…%\"; the x-axis is labelled \"Correlation\" with ticks at 0.2, 0.4 and 0.6; and the model name appears in the title (\"Correlation FE\", \"Correlation RE\", \"Correlation IVhet\").",
+  "source_id": "khan2020",
+  "locator": "Ch10 Figs 10.1–10.3 pp. 221, 231, 235",
+  "tags": "forest plot erdődiagram MetaXL convention konvenció r scale r-skála weights súlyok diamond rombusz axis tengely title cím reporting közlés"
+ },
+ {
+  "k_id": "K-KHN10-059",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Mit kell közölni korrelációs metaanalízisnél",
+  "body": "Following the chapter's interpretation paragraphs, report the pooled r and its 95% CI on the r scale, whether the CI excludes 0, Q with its p and I², the model used and a comparison across models, and, for RE and IVhet, that the CI is wider than under FE. [note: PRISMA 2020 (items 13d and 20b) also asks for the model, the tau² estimator, the CI method and the software, together with the summary estimate, its CI and heterogeneity measures; for RE models also report tau² (or tau) and preferably a prediction interval rather than relying on whether the CI excludes 0.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 225, 232, 235",
+  "tags": "reporting közlés pooled correlation összesített korreláció confidence interval konfidenciaintervallum Cochran Q I2 model modell interpretation értelmezés results eredmények"
+ },
+ {
+  "k_id": "K-KHN10-060",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: forest plot r-egységben, modellnévvel",
+  "body": "Reviewer check: the forest plot axis and labels are in r units, not Fisher z, and the title or caption names the model. Stata metan/admetan output is on the z scale by default, so a manual tanh back-transformation is needed before plotting.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Figs 10.1–10.3; Appendix 10",
+  "tags": "check ellenőrzés reviewer bíráló forest plot erdődiagram r units r-egység Fisher z axis tengely model name modellnév Stata back-transform visszatranszformálás"
+ },
+ {
+  "k_id": "K-KHN10-061",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: Q p-értéke legalább 3 tizedesjeggyel",
+  "body": "Report the p-value for Q with at least 3 decimals (0.049, not \"0.05\") so that readers can tell which side of 0.05 it falls on; MetaXL's plot prints p = 0.05 while the exact value is 0.0485.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Fig. 10.1 vs p. 227",
+  "tags": "check ellenőrzés reviewer bíráló p-value p-érték decimals tizedesjegyek Cochran Q reporting közlés rounding kerekítés MetaXL"
+ },
+ {
+  "k_id": "K-KHN10-062",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Tizedesjegy-konvenciók a fejezetben",
+  "body": "Printed precision: Fisher z 4 dp; variance 5 dp (Table 10.2) or 4 dp (Tables 10.4–10.6); SE 5 dp; CI limits 5 dp on the z scale and 4 dp on the r scale (Table 10.2), with trailing zeros dropped (Excel display); weights as integers (n − 3); tau² 6 dp in the text and 4 dp (0.0086) in tables; forest plot r and CI 2 dp, % weight 1 dp, Q 2 dp, p 2 dp, I² as an integer %.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Tables 10.2–10.6; Figs 10.1–10.3",
+  "tags": "decimals tizedesjegyek rounding kerekítés convention konvenció precision pontosság reporting közlés forest plot tables táblázatok"
+ },
+ {
+  "k_id": "K-KHN10-063",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Stata: visszatranszformálás r-skálára és forest plot",
+  "body": "To plot in r units, run admetan (which creates _ES, _seES, _LCI, _UCI, _WT and _rsample), generate tanh() of _ES, _LCI and _UCI, append an \"Overall\" row with tanh(r(eff)) and tanh(r(eff) ± 1.96·r(se_eff)), then call `forestplot r lb ub, nonull effect(\"Correlation\") rcol(n) leftjustify`. Caveats: the printed code plots the original r column rather than the generated es, which works only because tanh(_ES) equals r for each study, and the DOCX conversion runs several commands together on one line.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Appendix 10 A10.2.2 pp. 237–239",
+  "tags": "Stata admetan forestplot back-transform visszatranszformálás tanh r scale r-skála forest plot erdődiagram code kód overall row összesítő sor"
+ },
+ {
+  "k_id": "K-KHN10-064",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Hiba: az SE visszatranszformálása vagy szimmetrikus CI az r-skálán",
+  "body": "Applying tanh to the standard error, or forming r ± 1.96·SE directly on the r scale, is wrong for a Fisher z analysis: the chapter builds every interval on the z scale and back-transforms only the point estimate and each CI limit. Detect: a reported CI that is symmetric around the pooled r, whereas the correct one is asymmetric (FE 0.4950 with limits 0.4456 and 0.5414, i.e. 0.049 below and 0.046 above). Fix: compute LL* and UL* on the z scale, then take tanh of each.",
+  "source_id": "khan2020",
+  "locator": "Ch10 pp. 219, 223, 228, 233; Ex 10.3 pp. 224–225",
+  "tags": "pitfall hiba standard error standard hiba back-transform visszatranszformálás tanh symmetric CI szimmetrikus konfidenciaintervallum Fisher z r scale r-skála asymmetric aszimmetrikus"
+ },
+ {
+  "k_id": "K-KHN10-065",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Hiba: a p-érték „0”-ként közlése",
+  "body": "In Example 10.2 the two-sided p for z0 = 7.22 is written as 2 × 0 = 0, an artefact of reading a printed normal table. A p-value is never exactly 0 (here about 5.4e-13, computed by the checker, not printed in the source). Report it as p < 0.001, or give the exact small value from software.",
+  "source_id": "khan2020",
+  "locator": "Ch10 Ex 10.2 p. 222",
+  "tags": "pitfall hiba p-value p-érték zero nulla reporting közlés p < 0.001 normal table normális táblázat z test z-próba rounding kerekítés"
+ },
+ {
+  "k_id": "K-KHN10-066",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Hiba: a kétváltozós normalitási feltevés figyelmen kívül hagyása",
+  "body": "The chapter ties the 1/(n − 3) variance of Fisher z to X and Y being bivariate normal. With markedly non-normal variables, or when a study reports Spearman, point-biserial or another non-Pearson coefficient, the nominal variance, and therefore the weights and CIs, may be off. Detect: extraction notes showing skewed variables or a different correlation type. [note: the source states only the assumption; flag such studies and consider a sensitivity analysis without them.]",
+  "source_id": "khan2020",
+  "locator": "Ch10 §10.2 p. 219",
+  "tags": "pitfall hiba bivariate normal kétváltozós normális assumption feltevés Fisher z variance variancia Spearman point-biserial non-Pearson nem Pearson sensitivity érzékenységvizsgálat"
+ }
+]

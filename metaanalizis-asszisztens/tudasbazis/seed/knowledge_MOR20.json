@@ -1,0 +1,822 @@
+[
+ {
+  "k_id": "K-MOR20-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A forrás jellege és korlátai: alkalmazott SMD-metaanalízis",
+  "body": "Morvaridzadeh et al. (2020, Food Research International 137:109578) is an applied meta-analysis of 24 nutrition RCTs on soy products/isoflavones and oxidative-stress biomarkers, not a methods paper, and it prints no formulas. Its value for the knowledge base is (1) a template of a typical DerSimonian-Laird random-effects SMD review run in Stata, (2) a pooled-results table (no study-level data) for consistency checks, and (3) a catalogue of reporting and methodological shortcomings that the reviewer and evaluator should learn to detect. Appendices 1 (search syntax, excluded articles), 2 a-g (forest plots, subgroup results), 4 (funnel plots) and 'Appendix A' are online-only; the PDF contains only Appendix 3 (risk of bias), so per-study effects, subgroup results and funnel plots cannot be verified from the article. Funding: none; competing interests: none declared; the ethics statement cites the Declaration of Helsinki.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 1; p. 8; p. 9",
+  "tags": "scope hatókör applied example alkalmazott példa soy szója oxidative stress oxidatív stressz SMD supplementary material online melléklet reproducibility reprodukálhatóság funding finanszírozás"
+ },
+ {
+  "k_id": "K-MOR20-002",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Stata 11 és a valószínűleg használt felhasználói csomagok",
+  "body": "All analyses were run in Stata version 11 (StataCorp, College Station, TX), a paid licence; no commands are given. [EXTERNAL, not in source] Stata 11 (2009) had no official meta-analysis suite (built-in meta commands arrived with Stata 16 in 2019), so the authors almost certainly used free user-written SSC packages: metan (DL random effects), metabias (Egger/Begg tests), metafunnel (funnel plot) and metaninf (leave-one-out influence). The engine covers the same steps with models.meta_analysis, bias.egger_test, bias.begg_test and sensitivity.leave_one_out.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "Stata metan metabias metafunnel metaninf SSC software szoftver tool eszköz reproduce reprodukálás user-written package felhasználói csomag"
+ },
+ {
+  "k_id": "K-MOR20-003",
+  "stage_id": "S01",
+  "kind": "example",
+  "title": "Rekonstruált PICO: szója és oxidatív stressz",
+  "body": "Question: in adults, does oral intake of soy products or soy isoflavones, compared with a control, change oxidative-stress (OS) biomarkers? PICO reconstructed from the eligibility criteria: P = adults over 18 years; I = soy product, soy protein, soy milk or isoflavone-containing soy supplement with a clearly stated isoflavone dose, taken orally; C = placebo, cow's milk, an isocaloric control diet or similar; O = TAC, TBARS, TRAP, FRAP, MDA, GSH, NO, GPx, SOD or CAT measured at baseline and end in both arms, or reported as net change; S = RCTs.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 1 abstract; p. 2 §1 last paragraph; p. 2 §2.2",
+  "tags": "PICO review question kutatási kérdés population intervention comparator outcome RCT soy szója isoflavone izoflavon oxidative stress oxidatív stressz nutrition táplálkozás"
+ },
+ {
+  "k_id": "K-MOR20-004",
+  "stage_id": "S01",
+  "kind": "pitfall",
+  "title": "A PICO csak említve, nincs kifejtve",
+  "body": "The authors say the PICO components were determined but never set them out as a block, so the reader must reconstruct them from the inclusion and exclusion lists. Detect: look for an explicit P/I/C/O/S statement in the methods or protocol. Fix: state the review question as an explicit PICO(S) block and make sure the eligibility criteria follow it consistently. Check: the PICO block exists and the inclusion and exclusion criteria do not contradict each other.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.2",
+  "tags": "PICO pitfall hiba review question kutatási kérdés eligibility criteria beválasztási kritériumok explicit reporting jelentés"
+ },
+ {
+  "k_id": "K-MOR20-005",
+  "stage_id": "S01",
+  "kind": "example",
+  "title": "Választható vs. ténylegesen összesített kimenetek",
+  "body": "Ten outcomes were eligible (TAC, TBARS, TRAP, FRAP, MDA, GSH, NO, GPx, SOD, CAT), but only seven were pooled in Table 2: MDA, GSH, NO, SOD activity, TAC, TBARS and TRAP. FRAP, GPx and CAT were eligible but not pooled, and no reason is given. [note: a reviewer should require every eligible outcome either to be reported (pooled or narratively) or its omission explained, e.g. too few studies; silent omission is a selective-reporting risk.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.2; p. 7 Table 2",
+  "tags": "outcomes kimenetek eligible outcomes választható kimenetek not pooled nem összesített selective reporting szelektív közlés MDA GSH NO SOD TAC TBARS TRAP FRAP GPx CAT"
+ },
+ {
+  "k_id": "K-MOR20-006",
+  "stage_id": "S02",
+  "kind": "pitfall",
+  "title": "Nincs protokoll és regisztráció",
+  "body": "No protocol or registration (e.g. no PROSPERO number) is mentioned anywhere in the article. Detect: search the full text for 'PROSPERO', 'protocol' or 'registered'. Fix: register the protocol on PROSPERO or OSF before screening and report any deviations from it. PRISMA 2020 items 24a-c require the registration and protocol details, or an explicit statement that none exist; the article gives neither. Under AMSTAR 2 the missing protocol is a flaw in critical item 2.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "whole text",
+  "tags": "protocol protokoll registration regisztráció PROSPERO OSF pitfall hiba AMSTAR 2 PRISMA 2020 24a"
+ },
+ {
+  "k_id": "K-MOR20-007",
+  "stage_id": "S02",
+  "kind": "check",
+  "title": "Ellenőrzés: regisztrált protokoll",
+  "body": "Reviewer check: a protocol registration ID (PROSPERO or OSF) is present and dated before screening began, and deviations from the protocol are listed with reasons. If no ID is found, flag a critical AMSTAR 2 weakness and treat all subgroup and sensitivity choices as potentially post hoc.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "whole text",
+  "tags": "check ellenőrzés protocol protokoll registration regisztráció PROSPERO OSF deviations eltérések post hoc utólagos"
+ },
+ {
+  "k_id": "K-MOR20-008",
+  "stage_id": "S03",
+  "kind": "example",
+  "title": "Keresés: öt adatbázis, korlátozás nélkül",
+  "body": "PubMed, Embase, Web of Science, Scopus and the Cochrane Library were searched up to April 2020 (the abstract calls the Cochrane source 'Cochrane clinical trial center'), with no limits on publication date, language or sample size. Reference lists of relevant studies and reviews were also checked. The printed strategy has three concept blocks (soy terms, OS terms, RCT terms), each OR-combined and joined with AND; the full database-specific syntax and the list of excluded articles are only in online Appendix 1.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 1; p. 2 §2.1; p. 2 §2.2",
+  "tags": "search keresés databases adatbázisok PubMed Embase Web of Science Scopus Cochrane Library no language limits nyelvi korlátozás nélkül reference lists hivatkozáslisták"
+ },
+ {
+  "k_id": "K-MOR20-009",
+  "stage_id": "S03",
+  "kind": "pitfall",
+  "title": "Zárójelek nélküli Boole-keresőkifejezés",
+  "body": "The printed search string mixes OR and AND across three concept blocks without any parentheses. [EXTERNAL] Operator precedence differs between interfaces: PubMed processes operators left to right, while many other platforms give AND precedence over OR. Either way, the string as printed would not retrieve what was intended. Detect: parse the reported string for mixed AND/OR without grouping. Fix: parenthesise each concept block and report the full per-database syntax with run dates and hit counts.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.1",
+  "tags": "Boolean Boole search string keresőkifejezés parentheses zárójelek operator precedence operátor-precedencia PubMed pitfall hiba reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-MOR20-010",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Ellenőrzés: keresőkifejezések és adatbázisonkénti jelentés",
+  "body": "Reviewer check: every database search string is grouped with parentheses by concept block; the run date and number of hits are reported per database; the full strings are available (a supplement is acceptable) and cover all databases named in the methods.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.1",
+  "tags": "check ellenőrzés search string keresőkifejezés parentheses zárójelek hit count találatszám search date keresés dátuma database adatbázis"
+ },
+ {
+  "k_id": "K-MOR20-011",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Az adatbázisok hozzáférési modellje",
+  "body": "Of the five databases searched, PubMed is free; Embase, Web of Science and Scopus require a subscription or institutional access; in the Cochrane Library, CENTRAL is partly free while full access is by subscription or national licence. The planner should confirm access to subscription databases during preflight and, if missing, document the gap as a search limitation. (Access models are from the extraction notes, not printed in the source.)",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.1",
+  "tags": "database adatbázis access hozzáférés subscription előfizetés institutional intézményi PubMed Embase Web of Science Scopus Cochrane Library CENTRAL preflight"
+ },
+ {
+  "k_id": "K-MOR20-012",
+  "stage_id": "S04",
+  "kind": "example",
+  "title": "Beválasztási és kizárási kritériumok",
+  "body": "Inclusion: (1) adults over 18 years; (2) a soy intervention with an explicitly described isoflavone dose; (3) at least one relevant between-arm comparison (e.g. isoflavone vs placebo, soy milk vs cow's milk, soy-added diet vs isocaloric control diet); (4) at least one OS outcome reported at baseline and end in both groups, or as net change. Exclusion: (1) only postprandial or acute effects under 1 week; (2) RCTs not reporting mean (SD) changes per arm; (3) reviews; (4) animal or in-vitro studies; (5) soy combined with other supplements; (6) a control that could itself affect OS; (7) non-oral administration. Of several reports from one study only the most informative and related was kept. [note: PRISMA 2020 separates reports from studies; linking all reports of a study is preferable to silently discarding them.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.2",
+  "tags": "eligibility criteria beválasztási kritériumok exclusion criteria kizárási kritériumok inclusion duplicate publication kettős közlés co-intervention társintervenció control group kontrollcsoport"
+ },
+ {
+  "k_id": "K-MOR20-013",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Egymásnak ellentmondó beválasztási és kizárási feltételek",
+  "body": "Inclusion criterion 4 accepts trials that report OS outcomes at baseline and end, but exclusion criterion 2 removes trials that do not report mean (SD) changes in each arm, so the two rules conflict. Detect: cross-read the inclusion and exclusion lists for incompatible data requirements. Fix: settle on one rule and, if baseline/end data are accepted, describe exactly how change-score SDs were derived (imputed correlation plus sensitivity analysis).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.2",
+  "tags": "eligibility criteria beválasztási kritériumok contradiction ellentmondás change score változás baseline kiindulási érték pitfall hiba exclusion kizárás"
+ },
+ {
+  "k_id": "K-MOR20-014",
+  "stage_id": "S04",
+  "kind": "example",
+  "title": "Szűrés: két független bíráló, két lépésben",
+  "body": "Two reviewers with subject experience (JH, MM) screened independently, first titles and abstracts and then full texts. The methods do not describe how screening disagreements were resolved (a consensus procedure is described only for risk of bias). [note: PRISMA 2020 item 8 asks how many reviewers screened, whether independently, and how disagreements were resolved.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.2; p. 2 §3",
+  "tags": "screening szűrés two reviewers két bíráló independent független title abstract cím absztrakt full text teljes szöveg disagreement nézeteltérés PRISMA 2020 item 8"
+ },
+ {
+  "k_id": "K-MOR20-015",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Hiányzó adatok: szerzők megkeresése",
+  "body": "Study authors were evidently contacted by e-mail for missing data; eight full texts were excluded because data were insufficient and the e-mail request went unanswered. [note: excluding trials for missing statistics can bias the result if missingness relates to the findings; prefer documented imputation (SD from CI, SE or p; change SD with an imputed correlation) followed by a sensitivity analysis, and list the excluded trials.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 3 Fig. 1",
+  "tags": "missing data hiányzó adatok contact authors szerzők megkeresése email imputation imputálás exclusion kizárás bias torzítás"
+ },
+ {
+  "k_id": "K-MOR20-016",
+  "stage_id": "S05",
+  "kind": "example",
+  "title": "Adatkinyerési tételek és a ténylegesen összesített adat",
+  "body": "Extracted items: first author, year, country, n per arm, duration, age, sex, BMI, and intervention and control type and dose. The extraction section does not say extraction was done in duplicate; only the author-contribution note says three authors (JH, SHA, MR) took part in the database searches, data extraction and independent reviewing. Section 3.2 says that mean net changes and their SDs were available for MDA in 19 studies. Together with the eligibility rules, this implies that change-score data were pooled, but the article never says so for every outcome.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.4; p. 9 Author contributions; p. 3 §3.2",
+  "tags": "data extraction adatkinyerés duplicate extraction kettős adatkinyerés extraction form adatlap net change nettó változás mean SD átlag szórás"
+ },
+ {
+  "k_id": "K-MOR20-017",
+  "stage_id": "S05",
+  "kind": "example",
+  "title": "Vizsgálati jellemzők táblázata (1. táblázat) mint sablon",
+  "body": "Table 1 columns: first author and year, country, design, population, duration (weeks), n intervention and n control, soy type, control, soy dose (mg), % women, age and BMI as mean +/- SD per arm, and main results coded with up/down/no-change arrows. This is a usable layout for a characteristics table, but arrow-coded results are no substitute for per-study effect estimates with CIs.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "pp. 4–6 Table 1",
+  "tags": "study characteristics table vizsgálati jellemzők táblázata Table 1 template sablon design elrendezés per-arm n karonkénti létszám dose dózis BMI"
+ },
+ {
+  "k_id": "K-MOR20-018",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Adatbeviteli anomáliák az 1. táblázatban",
+  "body": "The 'Dose of soy (mg)' column mixes units: mg of isoflavone (e.g. 60, 80, 100), mg of soy food (35,000; 60,000; 240,000), '35% total protein', 'A cup 3 days in a week', '1 glass' and '3 servings'. Inclusion criterion 2 required a clearly stated isoflavone dose, yet only about nine trials show an isoflavone dose in mg. Reimann 2006 (soy isoflavones vs fruit cereal bars) lists 50,000 mg, which is implausible as an isoflavone dose. Miraghajani 2012 has BMI '28 +/- 64' in both arms (likely 6.4). The 'NR' marker is defined in the footnote but printed as '_'. TRAP is expanded as 'total reactive antioxidant potential' in §2.2 but as 'Total Plasma Antioxidant Capacity' in the Table 1 and Table 2 footnotes. Detect: range, unit and abbreviation checks during extraction. Fix: harmonise dose to isoflavone mg/day and query outliers against the original papers.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "pp. 4–6 Table 1; p. 2 §2.2; p. 7 Table 2 footnote",
+  "tags": "data entry error adatbeviteli hiba units mértékegység dose harmonisation dózis harmonizálás implausible value valószerűtlen érték outlier kiugró BMI isoflavone dose izoflavon-dózis abbreviation rövidítés TRAP pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-019",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: dózis-harmonizálás és lehetetlen értékek",
+  "body": "Reviewer check: doses are converted to one common unit (e.g. isoflavone mg/day) before any dose-based subgrouping or meta-regression, and physiologically impossible values (e.g. a BMI SD of 64, 50,000 mg isoflavones) are queried against the source papers and corrected or flagged. [note: the engine's validation rules V012 (unit mismatch) and V014 (extreme effect size) catch some, not all, such errors.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "pp. 4–6 Table 1",
+  "tags": "check ellenőrzés dose dózis unit mértékegység harmonisation harmonizálás range check tartomány-ellenőrzés validation validálás V012 V014"
+ },
+ {
+  "k_id": "K-MOR20-020",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "A résztvevők összlétszáma nem egyezik az 1. táblázattal",
+  "body": "The abstract and text report 1,852 participants (931 treatment, 921 control), but the per-arm n values in Table 1 sum to 1,690 (849 + 841). Detect: sum the per-arm n from the characteristics table and compare with the reported total. Fix: report the number of unique randomised participants. Check: crossover participants are counted once and a control group shared by several comparisons is counted once.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 1; p. 2 §3.1; pp. 4–6 Table 1",
+  "tags": "participants résztvevők sample size mintanagyság total összlétszám inconsistency ellentmondás crossover keresztezett double counting kettős számolás pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-021",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Kezelési karok vizsgálatként számolva (közös kontroll)",
+  "body": "GSH results come from 'seven treatment arms', SOD from 'ten treatment arms' and TRAP from 'three treatment arms', yet Table 2 heads the column 'Number of included studies'. Table 1 lists SOD as a main result in only 7 trials and TRAP in only one (de Santana 2008). Multi-arm trials compared with one shared control double-count that control (unit-of-analysis error). Detect: k for an outcome exceeds the number of distinct trials measuring it. Fix: combine the experimental arms or split the shared control's n across comparisons (Cochrane Handbook §23.3.4); engine: conversions.combine_groups, conversions.split_shared_control (validation rule V017 flags reused control arms). Check: each outcome's k counts independent comparisons and the column header says what is counted.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 3; p. 7; p. 7 Table 2; pp. 4–6 Table 1",
+  "tags": "multi-arm trial többkarú vizsgálat shared control közös kontroll unit of analysis egységelemzési hiba treatment arms kezelési karok k independent comparisons független összehasonlítások pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-022",
+  "stage_id": "S05",
+  "kind": "formula",
+  "title": "SD visszaszámolása 95%-os CI-ből",
+  "body": "The source only says that SDs or SEs not reported directly were calculated from 95% CIs. [EXTERNAL] For a single-arm mean with sample size n: SE = (UL - LL)/(2 x 1.96) and SD = SE x sqrt(n); for small n (below about 60) replace 1.96 by t(0.975, n-1). For a CI of a between-arm difference: SE_diff = (UL - LL)/(2 x 1.96), or with t(0.975, n1+n2-2) for small trials, and the pooled arm SD is then SD_pooled = SE_diff/sqrt(1/n1 + 1/n2), assuming equal SDs in the two arms (Cochrane Handbook §6.5.2.3). Engine: conversions.sd_from_ci (t-based by default), conversions.sd_from_se, conversions.se_from_ci.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "confidence interval konfidenciaintervallum SD from CI SD a CI-ből standard error standard hiba conversion átváltás t distribution t-eloszlás small sample kis minta"
+ },
+ {
+  "k_id": "K-MOR20-023",
+  "stage_id": "S05",
+  "kind": "formula",
+  "title": "Medián és terjedelem átváltása átlagra/SD-re (Hozo 2005)",
+  "body": "The source cites Hozo, Djulbegovic & Hozo (2005) for medians. [EXTERNAL] With a = minimum, m = median, b = maximum, n = sample size: mean ~ (a + 2m + b)/4 for small samples, and for n > 25 Hozo recommends the median itself; variance ~ (1/12)[(a - 2m + b)^2/4 + (b - a)^2] for n <= 15; SD ~ (b - a)/4 for 15 < n <= 70; SD ~ (b - a)/6 for n > 70. [note: Wan 2014, Luo 2018 and Shi 2020 estimators outperform Hozo; the engine's conversions.mean_from_median defaults to Luo (method='hozo' available) and conversions.sd_from_median implements Wan 2014.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "median medián range terjedelem Hozo 2005 mean átlag SD szórás conversion átváltás skewed data ferde eloszlás Wan Luo Shi"
+ },
+ {
+  "k_id": "K-MOR20-024",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Hibás hivatkozás az IQR-átváltáshoz és 'átlag és SE' elírás",
+  "body": "The paper cites Hozo 2005 for converting both median/range and median/IQR, and says it estimated the 'mean and SE' (evidently mean and SD). Hozo covers only median with range, not the IQR. Detect: match each conversion with its reference. Fix: use Hozo only for median/range; for median/IQR use Wan 2014 or Luo 2018 / Shi 2020 (under normality SD ~ IQR/1.35, with an n-dependent refinement in Wan 2014); flag studies with imputed values and test them in a sensitivity analysis.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "IQR interkvartilis terjedelem Hozo Wan 2014 Luo 2018 Shi 2020 citation error hivatkozási hiba conversion átváltás pitfall hiba imputed imputált"
+ },
+ {
+  "k_id": "K-MOR20-025",
+  "stage_id": "S05",
+  "kind": "formula",
+  "title": "Változás-SD imputált pre-post korrelációval",
+  "body": "[EXTERNAL] When only the baseline SD (SD_pre) and end SD (SD_post) are reported: SD_change = sqrt(SD_pre^2 + SD_post^2 - 2 r SD_pre SD_post), where r is the pre-post correlation. Preferably r is estimated from included trials that report baseline, final and change SDs (Cochrane Handbook §6.5.2.8); otherwise a value such as 0.5 is imputed, with a sensitivity analysis over about 0.2-0.8. The source reports neither the r used nor any sensitivity analysis, although inclusion criterion 4 admits baseline/end-only trials. Engine: conversions.sd_change; conversions.corr_from_change back-calculates r from a fully reported trial.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.2; p. 2 §2.5",
+  "tags": "change score változás SD_change pre-post correlation korreláció imputation imputálás 0.5 sensitivity analysis érzékenységi elemzés baseline kiindulás"
+ },
+ {
+  "k_id": "K-MOR20-026",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: átváltási napló vizsgálatonként",
+  "body": "Reviewer check: every data conversion (CI to SD, SE to SD, median/range or IQR to mean/SD, baseline/end to change) is logged per study with the method used and its correct citation, and studies with imputed values are flagged for a sensitivity analysis that excludes them. [note: the engine's validation rule V018 marks imputed values.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "check ellenőrzés conversion log átváltási napló imputed imputált citation hivatkozás sensitivity analysis érzékenységi elemzés V018"
+ },
+ {
+  "k_id": "K-MOR20-027",
+  "stage_id": "S06",
+  "kind": "example",
+  "title": "RoB 1 eszköz és alkalmazása",
+  "body": "Risk of bias was assessed with the original Cochrane tool (RoB 1, cited via the Handbook, Higgins & Green 2011) by two independent reviewers; disagreements were settled by consensus of all researchers. All trials were included whatever their RoB, and RoB was not used in sensitivity or subgroup analyses. Appendix 3 covers 24 trials x 7 domains: random sequence generation, allocation concealment, blinding of participants and personnel, blinding of outcome assessment, incomplete outcome data, selective reporting and other bias. [note: RoB 2 has superseded RoB 1 for randomized trials in Cochrane reviews.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.3; p. 9 Appendix 3",
+  "tags": "risk of bias torzítási kockázat RoB 1 RoB 2 Cochrane tool eszköz allocation concealment besorolás elrejtése blinding vakítás domains domének two reviewers két bíráló"
+ },
+ {
+  "k_id": "K-MOR20-028",
+  "stage_id": "S06",
+  "kind": "example",
+  "title": "RoB-összesítés a szövegben vs. a 3. mellékletben",
+  "body": "Narrative counts checked against Appendix 3 (n = 24): random sequence generation 12 adequate (50%; table: low 12, high 1, unclear 11); allocation concealment only 2 low, 7 unclear (printed 29.16%) and 15 high (printed 60%, actually 62.5%); attrition high 8 (33.33%); blinding of participants and personnel high 11 (45.83%); blinding of outcome assessment low 14 (58.33%); selective reporting low 18 (75%); other bias low in 23, with Maleki 2019 high. All counts agree; only the allocation-concealment percentages are wrong or truncated.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 §3.3; p. 9 Appendix 3",
+  "tags": "risk of bias torzítási kockázat summary összesítés percentages százalékok allocation concealment besorolás elrejtése attrition lemorzsolódás blinding vakítás consistency check konzisztencia-ellenőrzés"
+ },
+ {
+  "k_id": "K-MOR20-029",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "Fordított RoB-jelmagyarázat és százalékhiba",
+  "body": "The Appendix 3 legend reads '+: High risk, -: Low risk, ?: Unclear', the reverse of the usual Cochrane convention where + (green) means low risk; and 15/24 is printed as 60% instead of 62.5% (7/24 is truncated to 29.16% instead of 29.17%). Detect: check the legend convention and recompute every domain percentage from the per-study table. Fix: use standard robvis colours and symbols and generate percentages from the data programmatically. Check: the legend follows the standard convention and recomputed percentages match the text.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 9 Appendix 3; p. 7 §3.3",
+  "tags": "risk of bias torzítási kockázat legend jelmagyarázat convention konvenció robvis traffic light percentage százalék rounding kerekítés pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-030",
+  "stage_id": "S06",
+  "kind": "concept",
+  "title": "A kimenetmérés validitása: MDA/TBARS-mérések",
+  "body": "The authors concede that serum or plasma MDA/TBARS measured spectrophotometrically or fluorimetrically (as in most included trials) is error-prone and not a valid OS marker; serum MDA is partly generated by thromboxane A2 activity during clotting; isoprostanes are the preferred lipid-peroxidation marker in plasma; and plasma must be handled carefully to avoid artefactual peroxidation, a precaution none of the included trials took. This should feed the outcome-measurement domain of RoB 2 (domain 4) and GRADE indirectness and imprecision judgements.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 8",
+  "tags": "outcome measurement kimenetmérés validity validitás biomarker MDA TBARS isoprostanes izoprosztánok assay mérési módszer surrogate surrogát RoB 2 domain 4 indirectness közvetettség"
+ },
+ {
+  "k_id": "K-MOR20-031",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Hatásmérték: a nettó változás SMD-je",
+  "body": "The effect measure was the standardized mean difference (SMD) of net change (post minus pre) between soy and control; the paper mislabels it 'standard mean difference'. It does not state whether Cohen's d or Hedges' g (small-sample corrected) was used, how change-score SDs were obtained when trials reported only baseline and end values, or how crossover trials were analysed.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; p. 3 §3.2; p. 7 Table 2 footnote",
+  "tags": "SMD standardized mean difference standardizált átlagkülönbség net change nettó változás change score Cohen d Hedges g effect size hatásméret"
+ },
+ {
+  "k_id": "K-MOR20-032",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Az SMD-változat és a változás-SD kezelése nincs megadva",
+  "body": "Detect: the methods never mention 'Hedges' or 'Cohen' and give no pre-post correlation. Fix: name the estimator (prefer Hedges' g for small trials) with its variance formula, describe how change SDs were derived (imputed r plus sensitivity analysis), and do not mix change-score and final-value SMDs in one analysis (Cochrane Handbook §10.5.2). [note: the smallest parallel trial here (Beavers 2009, 16 + 15, N = 31) gives J = 1 - 3/115 ~ 0.974, so g is about 2.6% smaller than d; the choice matters little for large trials but should still be stated.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "SMD variant SMD-változat Hedges g Cohen d small sample bias kis minta torzítás change score változás final value végérték mixing keverés pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-033",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Cohen d, Hedges g és varianciájuk",
+  "body": "[EXTERNAL] Pooled SD s_p = sqrt(((n1-1)sd1^2 + (n2-1)sd2^2)/(N-2)); Cohen's d = (m1 - m2)/s_p with Var(d) = N/(n1 n2) + d^2/(2N); Hedges' g = J d with J = 1 - 3/(4(N-2) - 1) = 1 - 3/(4N - 9); Var(g) = J^2 Var(d), or approximately N/(n1 n2) + g^2/(2N). Stata metan uses d^2/(2(N-2)) and g^2/(2(N-3.94)) as the second variance term, so its results differ slightly from metafor-style formulas. Engine: effect_sizes.smd (correct=True/False; vtype LS, LS2, UB) and effect_sizes.hedges_j.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5 (measure named only; formulas [EXTERNAL])",
+  "tags": "Cohen d Hedges g SMD variance variancia pooled SD összevont szórás small sample correction kis minta korrekció J factor metan metafor formula képlet"
+ },
+ {
+  "k_id": "K-MOR20-034",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Keresztezett (crossover) vizsgálatok párhuzamosként összesítve",
+  "body": "Five crossover trials (Mohammad-Shahi 2016, Miraghajani 2012, Zemel 2010, Reimann 2006, Nikander 2003) appear in Table 1 with the same people in both 'arms', and their analysis method is not stated. Treating them as parallel trials over-counts n and ignores the within-person correlation, giving wrong variances (unit-of-analysis error). Detect: 'crossover' in the design column; four of the five also show identical n in both arms, while Zemel 2010 lists 19 vs 18. Fix: use paired analyses (Elbourne et al. 2002; Cochrane Handbook ch. 23) or first-period data. Check: the crossover method is stated and a sensitivity analysis without crossover trials exists.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "pp. 4–6 Table 1; p. 2 §3.1",
+  "tags": "crossover keresztezett vizsgálat parallel párhuzamos unit of analysis egységelemzési hiba within-person correlation személyen belüli korreláció paired analysis páros elemzés first period első periódus pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-035",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Ellenőrzés: SMD-változat és változás-pontszámok",
+  "body": "Reviewer check: the methods state the SMD variant (Hedges' g preferred) together with its variance formula; for change scores the derivation of SD_change and the imputed pre-post correlation are stated; change-score and final-value SMDs are not combined in one analysis.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "check ellenőrzés SMD Hedges g variance variancia change score változás SD_change correlation korreláció final value végérték"
+ },
+ {
+  "k_id": "K-MOR20-036",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Modell: DerSimonian-Laird véletlen hatás Stata 11-ben",
+  "body": "All outcomes were pooled with a random-effects model using the DerSimonian & Laird (1986) tau^2 estimator in Stata version 11; no fixed-effect analysis is reported. The CI method is not stated, and HKSJ, prediction intervals, REML or other tau^2 estimators, tau^2 values, IVhet and quality-effects models were not used or not reported. [note: Cochrane Handbook v6 now prefers REML or Paule-Mandel over DL, and with few studies (here k = 3-19) an HKSJ-type CI and a prediction interval are advisable; the engine defaults to REML with HKSJ in models.meta_analysis.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 1 abstract; p. 2 §2.5",
+  "tags": "random effects véletlen hatás DerSimonian Laird DL tau2 estimator becslő REML Paule-Mandel HKSJ Stata model choice modellválasztás superseded elavult"
+ },
+ {
+  "k_id": "K-MOR20-037",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "A DerSimonian-Laird véletlen hatású algoritmus",
+  "body": "[EXTERNAL] With inputs y_i, v_i (i = 1..k), the fixed-effect step is w_i = 1/v_i, y_FE = sum(w_i y_i)/sum(w_i); heterogeneity: Q = sum w_i (y_i - y_FE)^2, df = k - 1, C = sum w_i - sum w_i^2/sum w_i. tau^2_DL = max(0, (Q - df)/C). Random-effects weights w*_i = 1/(v_i + tau^2); mu = sum(w*_i y_i)/sum(w*_i), SE(mu) = 1/sqrt(sum w*_i); 95% CI mu +/- 1.96 SE; prediction interval (not in source) mu +/- t(k-2, 0.975) sqrt(tau^2 + SE^2). To reproduce the source use models.meta_analysis(model='random', tau2_method='DL', ci_method='z'). [note: use DL with a Wald CI only to reproduce older analyses; for new work the Cochrane Handbook v6 favours REML or Paule-Mandel, and an HKSJ-type CI is advisable with few studies.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5 (model named only; algorithm [EXTERNAL])",
+  "tags": "DerSimonian Laird DL algorithm algoritmus tau2 Q C weights súlyok random effects véletlen hatás Wald CI prediction interval predikciós intervallum formula képlet"
+ },
+ {
+  "k_id": "K-MOR20-038",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Wald-típusú CI a szimmetriából következtetve",
+  "body": "The printed 95% CIs are symmetric around the SMDs within rounding (e.g. MDA -0.53 with CI -0.86 to -0.19, midpoint -0.525), consistent with Wald-type intervals, estimate +/- 1.96 SE, the Stata metan default. Midpoints agree with all seven printed estimates to within 0.005. For SOD (0.535 vs 0.53), TAC (0.545 vs 0.54) and TBARS (-0.335 vs -0.33) the printed estimate is rounded toward zero from the midpoint. Rounding each limit to 2 decimals already moves the midpoint by up to 0.005, so these gaps are compatible with an exactly symmetric interval. [note: t- or HKSJ-based CIs are also symmetric, so symmetry alone does not prove a z interval; the implied SE would differ by the critical value.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2",
+  "tags": "confidence interval konfidenciaintervallum Wald z symmetry szimmetria midpoint középpont rounding kerekítés CI method CI-módszer inference következtetés metan"
+ },
+ {
+  "k_id": "K-MOR20-039",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Összesített eredmények (2. táblázat)",
+  "body": "Table 2 (k as printed; SMD; 95% CI; I^2): MDA 19, -0.53 (-0.86, -0.19), 88.3%; GSH 7, 0.51 (0.13, 0.88), 72.4%; NO 6, 0.21 (-0.02, 0.44), 52.9%; SOD activity 10, 0.53 (0.08, 0.99), 84.1%; TAC 7, 0.54 (0.27, 0.82), 49.3%; TBARS 3, -0.33 (-0.72, 0.05), 00.0%; TRAP 3, 1.74 (0.82, 2.65), 81.3%. Subgroup in the text: NO in trials under 10 weeks 0.43 (0.08, 0.79), I^2 51.4%. Only pooled results are given (no study-level data), so these values serve as consistency checks, not as reproducible inputs.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2; p. 1 abstract; p. 3",
+  "tags": "pooled results összesített eredmények Table 2 SMD confidence interval konfidenciaintervallum I2 MDA GSH NO SOD TAC TBARS TRAP worked example kidolgozott példa"
+ },
+ {
+  "k_id": "K-MOR20-040",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Visszaszámolt SE, z és p értékek (ellenőrzéshez)",
+  "body": "Derived, not printed, with SE = (UL - LL)/3.919928, z = SMD/SE and p = 2(1 - Phi(|z|)), assuming a Wald z interval: MDA SE 0.1709, z -3.10, p 0.0019; GSH 0.1913, 2.67, 0.0077; NO 0.1173, 1.79, 0.074; SOD 0.2321, 2.28, 0.022; TAC 0.1403, 3.85, 0.0001; TBARS 0.1964, -1.68, 0.093; TRAP 0.4668, 3.73, 0.0002; NO under 10 weeks 0.1811, 2.37, 0.018. Because each CI limit is rounded to 2 decimals, the back-calculated SE can be off by up to about 0.003 (0.01/3.92). These confirm the stated pattern: NO and TBARS are non-significant at 0.05, the other five are significant.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2; p. 3 (derived values)",
+  "tags": "back-calculation visszaszámolás standard error standard hiba z score p-value p-érték sanity check ellenőrzés tolerance tolerancia engine test motor teszt"
+ },
+ {
+  "k_id": "K-MOR20-041",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: CI-szimmetria és szignifikancia újraszámolása",
+  "body": "Reviewer check: each pooled CI should be symmetric around its estimate on the analysis scale; recompute SE = (UL - LL)/3.92, z and the two-sided p to confirm every claim of significance. Asymmetry beyond rounding points to a back-transformed scale, a non-Wald interval (e.g. profile likelihood) or a typo. Engine: conversions.se_from_ci and distributions.z_two_sided_p.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2",
+  "tags": "check ellenőrzés confidence interval konfidenciaintervallum symmetry szimmetria recompute újraszámolás significance szignifikancia p-value p-érték typo elírás"
+ },
+ {
+  "k_id": "K-MOR20-042",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Stata metan alapbeállításai",
+  "body": "[EXTERNAL] In Stata's user-written metan (the probable software here) the random option means DerSimonian-Laird; the default standardized difference is Cohen's d, with hedges and glass options available; CIs are z-based (Wald); I^2 is computed from Q, and neither a tau^2 CI nor a prediction interval is shown unless rfdist is requested. Reproducing a metan-based review therefore needs tau2_method='DL', ci_method='z' and the matching SMD variant. [note: these defaults are outdated for new analyses; prefer REML or Paule-Mandel for tau^2, Hedges' g, an HKSJ-type CI with few studies, and always a prediction interval.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5 (software named only; defaults [EXTERNAL])",
+  "tags": "Stata metan default alapbeállítás DerSimonian Laird Cohen d Hedges rfdist prediction interval predikciós intervallum Wald CI reproduction reprodukálás convention konvenció"
+ },
+ {
+  "k_id": "K-MOR20-043",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "A heterogenitás csak I²-vel jellemezve",
+  "body": "The methods say I^2 and the Q test were used (citing Egger, Davey Smith & Altman 2008), but only I^2 is printed: MDA 88.3%, GSH 72.4%, NO 52.9%, SOD 84.1%, TAC 49.3%, TBARS 00.0%, TRAP 81.3%, and 51.4% for NO in trials under 10 weeks; Q, df, p_Q, tau^2, tau, H^2 and CIs for I^2 are absent. Detect: these fields are missing from the results. Fix: report tau^2 and its estimator, Q with df and p, I^2 with a CI, and a 95% prediction interval.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; p. 7 Table 2; p. 3",
+  "tags": "heterogeneity heterogenitás I2 Q test Q-próba tau2 prediction interval predikciós intervallum incomplete reporting hiányos közlés pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-044",
+  "stage_id": "S09",
+  "kind": "threshold",
+  "title": "Nincs előre megadott heterogenitási küszöb",
+  "body": "No I^2 threshold is defined; the authors describe heterogeneity as 'great' or 'significant' and say conclusions should be drawn with caution. Suggested sources: soy type, control groups, regimens, doses, duration, centre settings and populations. [note: when the source gives no threshold, apply a pre-specified one, e.g. the Cochrane Handbook's overlapping bands (0-40% might not be important, 30-60% moderate, 50-90% substantial, 75-100% considerable), and interpret I^2 together with tau^2 and the prediction interval.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 §4; p. 8",
+  "tags": "heterogeneity heterogenitás threshold küszöb I2 interpretation értelmezés Cochrane bands sávok sources of heterogeneity heterogenitás forrásai caution óvatosság"
+ },
+ {
+  "k_id": "K-MOR20-045",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "I², H² és az I²-ből visszaszámolt Q",
+  "body": "[EXTERNAL] I^2 = max(0, (Q - df)/Q) x 100%; H^2 = Q/df; hence a printed I^2 implies Q = df/(1 - I^2/100), which lets the reviewer cross-check a printed I^2 against a printed Q or reconstruct an unreported Q. Implied Q here (k as printed): MDA 153.8 (df 18), GSH 21.7 (df 6), NO 10.6 (df 5), SOD 56.6 (df 9), TAC 11.8 (df 6), TBARS <= 2 (df 2), TRAP 10.7 (df 2). Engine: models.heterogeneity, models.cochran_q.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2 (derived values; formulas [EXTERNAL])",
+  "tags": "I2 H2 Cochran Q implied Q visszaszámolt Q heterogeneity heterogenitás cross-check keresztellenőrzés formula képlet degrees of freedom szabadsági fok"
+ },
+ {
+  "k_id": "K-MOR20-046",
+  "stage_id": "S09",
+  "kind": "guidance",
+  "title": "Az I² pontatlan kevés vizsgálatnál",
+  "body": "[EXTERNAL] With k = 3-19 per outcome, I^2 is very imprecise and should be reported with a confidence interval and alongside tau^2 (with its estimator) and a 95% prediction interval. For example, TRAP's I^2 of 81.3% rests on only 3 comparisons, and TBARS' I^2 of 0% from 3 comparisons does not show that the effects are homogeneous. Engine: models.heterogeneity returns Higgins-Thompson and Q-profile CIs for I^2 and CIs for tau^2.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2",
+  "tags": "I2 confidence interval konfidenciaintervallum imprecision pontatlanság few studies kevés vizsgálat tau2 Q-profile Higgins-Thompson prediction interval predikciós intervallum zero I2 nulla I2 homogeneity homogenitás"
+ },
+ {
+  "k_id": "K-MOR20-047",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzés: a véletlen hatású modell teljes jelentése",
+  "body": "Reviewer check: random-effects reporting includes the tau^2 estimator, tau^2, Q with df and p, I^2 (ideally with a CI), the CI method and a 95% prediction interval for every pooled outcome.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2",
+  "tags": "check ellenőrzés random effects véletlen hatás reporting jelentés tau2 Q I2 CI method CI-módszer prediction interval predikciós intervallum"
+ },
+ {
+  "k_id": "K-MOR20-048",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Előre tervezett alcsoportok (moderátor-kódolás)",
+  "body": "Six moderators were planned 'to investigate the source of heterogeneity': health status (healthy / metabolic disease / non-metabolic disease); duration split at its median (under 10 vs 10 weeks or more); soy type (isoflavones / soy protein / soy milk / soybeans); control type (placebo / control diet / dairy / other proteins); age (described as a median split but coded young / middle-aged / senior); sex (male / female / both).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "subgroup alcsoport moderator moderátor coding kódolás health status egészségi állapot duration időtartam soy type szójatípus control type kontrolltípus age életkor sex nem"
+ },
+ {
+  "k_id": "K-MOR20-049",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Alcsoport-eredmények: többnyire csak mellékletben",
+  "body": "Subgroup results are only in online Appendix 2 a-g. Main-text examples: NO rose significantly only in trials under 10 weeks (SMD 0.43, 95% CI 0.08 to 0.79, I^2 51.4%); no sex subgroup was run for GSH because all GSH trials were in women; TAC results did not change when stratified by health status, duration and sex. The authors acknowledge there were few studies per subgroup.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 3; p. 7; p. 8",
+  "tags": "subgroup results alcsoport-eredmények supplementary melléklet NO GSH TAC duration időtartam few studies kevés vizsgálat"
+ },
+ {
+  "k_id": "K-MOR20-050",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Alcsoporton belüli szignifikancia mint alcsoport-különbség",
+  "body": "The Discussion presents within-subgroup significance as between-subgroup differences: MDA fell 'more' in metabolic disease, in trials over 10 weeks, with isoflavones, in young and senior adults and in women; GSH, SOD and TAC claims follow the same pattern, yet no test for subgroup differences (Q_between with p) is reported. Detect: wording such as 'more efficient' or 'significantly compared to' with no Q_between or interaction p. Fix: report the test for subgroup differences and, with few studies per subgroup, interpret the results as hypothesis-generating.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "pp. 7–8",
+  "tags": "subgroup alcsoport within-subgroup significance alcsoporton belüli szignifikancia interaction test interakciós teszt Q_between subgroup difference alcsoport-különbség pitfall hiba hypothesis-generating hipotézisgeneráló"
+ },
+ {
+  "k_id": "K-MOR20-051",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Következetlen alcsoport-kódolás (medián három csoportra)",
+  "body": "Age is described as split at the median of participants' age yet coded into three classes (young / middle-aged / senior). Detect: a median split must yield exactly two groups. Fix: pre-specify cut-points in the protocol, preferably clinically meaningful ones, and report them.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "subgroup coding alcsoport-kódolás median split mediánvágás cut-point vágópont age életkor pre-specification előzetes meghatározás pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-052",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Dózis és időtartam: meta-regresszió hiányzik",
+  "body": "No meta-regression on continuous moderators such as dose or duration and no dose-response analysis were done, although doses ranged widely; duration was only dichotomised at 10 weeks. [note: with enough studies (roughly 10 per moderator), a continuous moderator is better analysed by meta-regression than by dichotomising, and dose must first be harmonised to one unit; engine: moderators.meta_regression.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; pp. 4–6 Table 1",
+  "tags": "meta-regression metaregresszió dose-response dózis-hatás continuous moderator folytonos moderátor dichotomisation dichotomizálás duration időtartam dose dózis"
+ },
+ {
+  "k_id": "K-MOR20-053",
+  "stage_id": "S10",
+  "kind": "formula",
+  "title": "Alcsoport-különbség teszt (Q_between)",
+  "body": "[EXTERNAL] Treat the G subgroup summaries as 'studies': Q_between = sum_g W_g (mu_g - mu_w)^2, where mu_g is the pooled estimate in subgroup g, W_g = 1/SE(mu_g)^2 (= the sum of the w*_i in g for a Wald SE) and mu_w = sum(W_g mu_g)/sum(W_g); df = G - 1. Under a common-effect model mu_w equals the overall pooled estimate. Under random effects, state whether tau^2 is pooled across subgroups or estimated separately in each. With fewer than about 10 studies per moderator, treat subgroup findings as exploratory. Engine: moderators.subgroup_analysis (common_tau2 option; pass ci_method='z' to use Wald SEs).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5 (subgroups planned; test [EXTERNAL])",
+  "tags": "Q_between subgroup difference alcsoport-különbség test teszt common tau2 közös tau2 random effects véletlen hatás exploratory feltáró formula képlet"
+ },
+ {
+  "k_id": "K-MOR20-054",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Ellenőrzés: alcsoport-elemzés jelentése",
+  "body": "Reviewer check: subgroup analyses report Q_between with df and p; cut-points match their stated definition (a median split gives two groups); every claim that the intervention is 'more effective in X' is backed by a subgroup-difference or interaction test.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; pp. 7–8",
+  "tags": "check ellenőrzés subgroup alcsoport Q_between interaction interakció cut-point vágópont claims állítások"
+ },
+ {
+  "k_id": "K-MOR20-055",
+  "stage_id": "S11",
+  "kind": "example",
+  "title": "Publikációs torzítás: a módszer és az eredmény eltér",
+  "body": "The methods list Egger's regression asymmetry test and funnel plots. The results cite Begg's and Egger's tests plus visual inspection of funnel plots and conclude there was no publication bias, with no p-values or intercepts printed (funnel plots only in online Appendix 4). The article does not say which outcomes were tested; if all were, this includes k = 3 (TBARS, TRAP) and k = 6-7. Trim-and-fill, fail-safe N, contour-enhanced funnels and Doi plot/LFK were not used. [note: the Cochrane Handbook advises against fail-safe N as evidence about publication bias, and trim-and-fill is only a sensitivity analysis; contour-enhanced funnel plots and, with k >= 10, regression tests are the preferred tools.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; p. 7 §3.3",
+  "tags": "publication bias publikációs torzítás Egger test Begg test funnel plot tölcsérdiagram trim and fill fail-safe N contour-enhanced kontúrozott Doi LFK small-study effects kis-vizsgálat hatás"
+ },
+ {
+  "k_id": "K-MOR20-056",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Alulerőzött vagy hiányosan közölt publikációs torzítás tesztek",
+  "body": "Egger's test (and Begg's, which appears in the results but not in the methods) was reported without naming the outcomes tested, apparently across outcomes with k = 3-19, and 'no publication bias' was concluded without any test statistics. Detect: an outcome with k < 10 was tested, or the tested outcomes are not named; methods and results list different tests; no statistics are given. Fix: test only when k >= 10, report the intercept with its CI and p, and write 'no evidence of small-study effects' rather than 'no publication bias'.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; p. 7 §3.3",
+  "tags": "publication bias publikációs torzítás underpowered alulerőzött Egger Begg k < 10 test statistic tesztstatisztika small-study effects kis-vizsgálat hatás wording megfogalmazás pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-057",
+  "stage_id": "S11",
+  "kind": "formula",
+  "title": "Egger-teszt és a módosított SE SMD-nél",
+  "body": "[EXTERNAL] Regress y_i/SE_i on 1/SE_i by OLS; the intercept b0 measures funnel asymmetry; test H0: b0 = 0, conventionally two-sided at p < 0.10. Power is low below about 10 studies (Cochrane Handbook). For SMDs the SE depends on d itself, which can produce spurious asymmetry; the Pustejovsky & Rodgers (2019) modified SE, sqrt(N/(n1 n2)), is the preferred predictor. Engine: bias.egger_test (warns when k < 10).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5 (test named only; formula [EXTERNAL])",
+  "tags": "Egger regression test regressziós teszt intercept tengelymetszet funnel asymmetry tölcsér-aszimmetria modified SE módosított SE Pustejovsky Rodgers SMD power erő formula képlet"
+ },
+ {
+  "k_id": "K-MOR20-058",
+  "stage_id": "S11",
+  "kind": "formula",
+  "title": "Begg-Mazumdar rangkorrelációs teszt",
+  "body": "[EXTERNAL] Kendall's tau between the standardized effects (y_i - y_FE)/sqrt(v_i - 1/sum w) and the variances v_i; it is less powerful than Egger's test. The source reports Begg's test in the results without listing it in the methods. Engine: bias.begg_test (exact p for small k without ties).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 §3.3 (test named only; formula [EXTERNAL])",
+  "tags": "Begg Mazumdar rank correlation rangkorreláció Kendall tau publication bias publikációs torzítás power erő formula képlet"
+ },
+ {
+  "k_id": "K-MOR20-059",
+  "stage_id": "S11",
+  "kind": "check",
+  "title": "Ellenőrzés: kis-vizsgálat hatás tesztjei",
+  "body": "Reviewer check: small-study tests are run only for outcomes with k >= 10; the intercept (or Kendall's tau), its CI or p and the exact method are reported; the methods and results name the same tests; and the conclusion is phrased as evidence about small-study effects, not as proof that publication bias is absent.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; p. 7 §3.3",
+  "tags": "check ellenőrzés small-study effects kis-vizsgálat hatás Egger Begg k >= 10 reporting jelentés publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-MOR20-060",
+  "stage_id": "S12",
+  "kind": "pitfall",
+  "title": "Bejelentett, de nem közölt érzékenységi elemzés",
+  "body": "A leave-one-out style analysis assessing each trial's impact on the pooled estimate was planned, but no results are reported anywhere in the main text. Detect: a sensitivity analysis named in the methods has no matching result. Fix: report a leave-one-out table (estimate, CI and I^2 with each study omitted) and name any omission that changes significance or direction. Check: leave-one-out results are actually reported, not just announced. Engine: sensitivity.leave_one_out.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5",
+  "tags": "sensitivity analysis érzékenységi elemzés leave-one-out egy kihagyásos influence befolyás unreported nem közölt pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-061",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Elmaradt érzékenységi elemzések",
+  "body": "Sensitivity analyses this review should have run but did not: excluding high-RoB trials; excluding crossover trials; excluding trials with imputed SDs (from CIs or median/range); varying the pre-post correlation used for change SDs; and changing the tau^2 estimator or CI method. [EXTERNAL] Influence diagnostics (studentized residuals, Cook's distance, Baujat plot) are a common addition; the engine provides sensitivity.influence (residuals, Cook's distance, DFFITS, hat values).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; p. 2 §2.3",
+  "tags": "sensitivity analysis érzékenységi elemzés risk of bias torzítási kockázat crossover keresztezett imputed imputált correlation korreláció tau2 estimator becslő influence diagnostics befolyás-diagnosztika Cook distance"
+ },
+ {
+  "k_id": "K-MOR20-062",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "A RoB nincs beépítve a szintézisbe, nincs GRADE",
+  "body": "All trials were pooled whatever their RoB, and no certainty assessment was made; the Discussion only remarks informally that, because some effects rest on very few studies, the supporting evidence is low. Detect: no RoB-based sensitivity analysis and no GRADE or Summary of Findings table. Fix: run a sensitivity analysis restricted to low-RoB trials (e.g. adequate allocation concealment) and produce a GRADE Summary of Findings covering RoB, inconsistency, indirectness, imprecision and publication bias. Check: RoB is used in the synthesis and feeds the GRADE rating.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.3; p. 8; whole text",
+  "tags": "GRADE certainty of evidence bizonyosság risk of bias torzítási kockázat summary of findings sensitivity analysis érzékenységi elemzés low risk alacsony kockázat pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-063",
+  "stage_id": "S13",
+  "kind": "example",
+  "title": "A szerzők által elismert korlátok",
+  "body": "The authors list as severe limitations: most trials come from Eastern countries, so extrapolation to Western populations needs caution; significant heterogeneity, perhaps due to soy types, controls, regimens, doses, duration, centre settings and populations; several trials with significant sources of bias; many effects assessed by very few studies; and OS markers (MDA, TBARS) that are not valid as measured. Despite these, the conclusions are stated firmly, which is the mismatch the evaluator should flag.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 8",
+  "tags": "limitations korlátok heterogeneity heterogenitás generalisability általánosíthatóság risk of bias torzítási kockázat few studies kevés vizsgálat biomarker validity validitás"
+ },
+ {
+  "k_id": "K-MOR20-064",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "GRADE: leminősítés inkonzisztencia miatt",
+  "body": "Evaluator criterion: consider downgrading an outcome for inconsistency when I^2 is high (here above about 75%) or the prediction interval crosses the null. Here MDA (88.3%), SOD (84.1%) and TRAP (81.3%) meet the I^2 condition. No prediction intervals were reported, so they must be computed or the downgrade judged from I^2 and the spread of the forest plot. [note: GRADE sets no fixed I^2 cut-off; judge inconsistency from the spread and overlap of the study estimates, I^2 with its CI (Cochrane bands overlap), tau^2 and whether the prediction interval spans the decision threshold. The 75% figure here is a heuristic, not a rule.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2",
+  "tags": "GRADE inconsistency inkonzisztencia I2 heuristic heurisztika prediction interval predikciós intervallum downgrade leminősítés certainty bizonyosság criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-065",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "GRADE: leminősítés pontatlanság miatt",
+  "body": "Evaluator criterion: downgrade for imprecision when the CI crosses the null or the decision threshold (NO -0.02 to 0.44; TBARS -0.72 to 0.05), or when the total sample is small; TBARS and TRAP rest on k = 3 each. [note: GRADE judges imprecision from the CI relative to the decision threshold (null or minimal important difference) and the optimal information size, not from k itself; with k = 3 the total n and the width of the CI should be checked. Here per-outcome n is not reported, so the optimal information size cannot be checked from the article.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2",
+  "tags": "GRADE imprecision pontatlanság confidence interval konfidenciaintervallum crosses null nullát átlépi few studies kevés vizsgálat downgrade leminősítés criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-066",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "GRADE: leminősítés torzítási kockázat miatt",
+  "body": "Evaluator criterion: downgrade for risk of bias when most weight comes from trials at unclear or high risk on key domains; here allocation concealment was high risk in 15/24 trials (only 2 low) and blinding of participants and personnel high risk in 11/24.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 §3.3; p. 9 Appendix 3",
+  "tags": "GRADE risk of bias torzítási kockázat allocation concealment besorolás elrejtése blinding vakítás downgrade leminősítés criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-067",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "GRADE: közvetettség és kimenet-validitás",
+  "body": "Evaluator criterion: downgrade for indirectness (outcome validity) when the outcomes are surrogate oxidative-stress biomarkers with known assay problems, such as spectrophotometric MDA/TBARS and serum MDA, which the authors themselves call invalid; surrogate biomarker changes do not establish clinical benefit.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 8",
+  "tags": "GRADE indirectness közvetettség surrogate outcome surrogát kimenet biomarker MDA TBARS assay validity mérési validitás downgrade leminősítés criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-068",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "A következtetések erősebbek a bizonyítéknál",
+  "body": "The paper concludes that soy significantly increases GSH, SOD, TAC and TRAP and suggests use in 'individualized nutritional protocols', despite I^2 of 72-88% for most outcomes, k = 3 for TRAP, mostly unclear or high RoB and outcome markers the authors call invalid. Detect: compare the strength of the claims with heterogeneity, k and RoB. Fix: temper the wording, report prediction intervals and rate certainty. Evaluator criterion: claims of clinical or public-health use must be hedged in proportion to the certainty rating.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 8",
+  "tags": "conclusions következtetések overstatement túlzás spin evidence-to-claim bizonyíték és állítás certainty bizonyosság heterogeneity heterogenitás surrogate surrogát pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-069",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "AMSTAR 2-szerű módszertani teljesség",
+  "body": "Evaluator criterion (AMSTAR 2 items): a protocol (item 2, critical); a comprehensive search (item 4, critical); duplicate selection (item 5) and extraction (item 6); a list of excluded studies with reasons (item 7, critical); RoB assessed with a satisfactory tool (item 9, critical; RoB 2 now preferred over RoB 1); appropriate statistical combination, including crossover and multi-arm designs (item 11, critical); the impact of RoB on the pooled results assessed (item 12) and considered in interpretation (item 13, critical); heterogeneity explained and discussed (item 14), with subgroup differences tested formally; publication bias investigated with adequate power and discussed (item 15, critical); and funding of the included studies reported (item 10).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "whole text",
+  "tags": "AMSTAR 2 methodological quality módszertani minőség protocol protokoll duplicate screening kettős szűrés excluded studies kizárt vizsgálatok RoB 2 crossover multi-arm criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-070",
+  "stage_id": "S13",
+  "kind": "example",
+  "title": "AMSTAR 2 szerinti értékelés (példa)",
+  "body": "Applying AMSTAR 2 [EXTERNAL criteria] to this review: no protocol (critical item 2, flaw); the list of excluded studies is said to be in online Appendix 1 (critical item 7, likely met but not verifiable from the PDF); crossover and multi-arm handling not described (critical item 11, concern); RoB not used in the synthesis (item 12, not met) and mentioned only in passing in the limitations (critical item 13, at best partial); publication bias tested but with k < 10 for most outcomes and no statistics (critical item 15, weak); funding of included studies not reported (item 10). With at least one critical flaw, the overall rating is low, or critically low if items 11 or 13 are also judged flawed. [note: AMSTAR 2's critical domains are items 2, 4, 7, 9, 11, 13 and 15, so item 12 is not critical, although the extraction notes called it critical.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "whole text; p. 9",
+  "tags": "AMSTAR 2 appraisal értékelés critical domain kritikus tétel protocol protokoll excluded studies kizárt vizsgálatok publication bias publikációs torzítás funding finanszírozás overall rating összesített minősítés"
+ },
+ {
+  "k_id": "K-MOR20-071",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Átláthatóság és reprodukálhatóság",
+  "body": "Evaluator criterion: per-study effect sizes, variances and data conversions should be available (appendix or data file) so the analysis can be reproduced, and the software and commands should be named. Here only Stata 11 is named, with no commands, and per-study estimates exist only in online forest plots.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §2.5; p. 9",
+  "tags": "transparency átláthatóság reproducibility reprodukálhatóság per-study data vizsgálatonkénti adatok software szoftver commands parancsok data file adatfájl criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-072",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Általánosíthatóság",
+  "body": "Evaluator criterion: state explicitly where the evidence comes from. Here 12 of 24 trials were done in Iran (four Brazil, two China, two US, one South Korea, one Indonesia, two Europe), and 13 trials were female-only, 10 included both sexes and 1 was male-only; the authors themselves caution against extrapolating to Western populations.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §3.1; p. 8",
+  "tags": "generalisability általánosíthatóság external validity külső validitás country ország Iran women nők population populáció applicability alkalmazhatóság criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-073",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "A hatásméret értelmezhetősége",
+  "body": "Evaluator criterion: SMDs should be translated back to a natural unit or judged against a minimal important difference before any clinical interpretation. An SMD of 1.74 from k = 3 (TRAP) calls for an outlier and data-entry check before it is interpreted.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2",
+  "tags": "effect size interpretation hatásméret értelmezése SMD natural units természetes egységek minimal important difference minimális fontos különbség outlier kiugró érték criterion kritérium"
+ },
+ {
+  "k_id": "K-MOR20-074",
+  "stage_id": "S14",
+  "kind": "example",
+  "title": "PRISMA 2009 folyamatábra számai",
+  "body": "Flow diagram (PRISMA 2009 template): 2,229 records from databases and 0 from other sources; 1,161 after duplicates were removed, all screened; 1,040 excluded at screening; 114 full texts assessed; 90 excluded with reasons (58 no relevant variable, 10 inappropriate control, 8 insufficient data and no reply to e-mail, 5 combined with other interventions, 3 not RCT, 3 animal study, 1 saliva rather than serum, 1 short-term evaluation, 1 repeated results; sum 90); 0 in qualitative synthesis; 24 in quantitative synthesis. The text repeats 1,161 / 1,040 / 114 / 90 / 24. [note: new reviews should use the PRISMA 2020 flow template, which separates reports from studies and lists other search sources separately.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 3 Fig. 1; p. 2 §3",
+  "tags": "PRISMA flow diagram folyamatábra records rekordok screening szűrés full text teljes szöveg exclusion reasons kizárási okok included beválasztott"
+ },
+ {
+  "k_id": "K-MOR20-075",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "PRISMA-számtani hibák",
+  "body": "1,161 - 1,040 = 121, not 114, so seven records are unaccounted for, and 'qualitative synthesis (n = 0)' contradicts the 24 included trials (it should be 24). Detect: check every box automatically (identified - duplicates = screened; screened - excluded = full texts; full texts - excluded = included). Fix: reconcile the counts and use the PRISMA 2020 template, which also separates reports from studies.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 3 Fig. 1; p. 2 §3",
+  "tags": "PRISMA flow diagram folyamatábra arithmetic számtan inconsistency ellentmondás PRISMA 2020 reports studies jelentések vizsgálatok pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-076",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: a PRISMA-folyamatábra aritmetikája",
+  "body": "Reviewer check: identified - duplicates = screened; screened - excluded = full texts assessed; full texts - excluded (with reasons that sum correctly) = included; no box is zero or contradictory (e.g. qualitative synthesis n = 0 while trials are included).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 3 Fig. 1",
+  "tags": "check ellenőrzés PRISMA flow diagram folyamatábra arithmetic számtan counts számok reconcile egyeztetés"
+ },
+ {
+  "k_id": "K-MOR20-077",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Hiányzó PRISMA 2020 elemek",
+  "body": "Not reported although PRISMA 2020 expects them: registration or protocol (items 24a-c); tau^2 and the Q statistic with p (items 13d, 20b); prediction intervals; per-study effect estimates in the main text (item 19; only online forest plots); SMD variant and per-study conversion details (items 12, 13b); sensitivity-analysis results (item 20d); test statistics for publication-bias tests (item 21); certainty of evidence (items 15 and 22); and data or code availability (item 27). Funding of the included trials is also missing; AMSTAR 2 item 10 asks for it, and PRISMA 2020 item 10b lists funding as an example data item.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "whole text; p. 7 Table 2",
+  "tags": "PRISMA 2020 reporting jelentés checklist ellenőrzőlista missing items hiányzó tételek registration regisztráció certainty bizonyosság sensitivity érzékenységi publication bias publikációs torzítás pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-078",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Az összefoglaló csak a szignifikáns kimeneteket közli",
+  "body": "The abstract reports only the significant outcomes (MDA, GSH, SOD, TAC, TRAP) and leaves out the null NO and TBARS results, a selective-emphasis reporting issue (PRISMA for Abstracts asks for the main outcomes). Detect: compare the outcomes in the abstract with the results table. Fix: report every pre-specified outcome, including null results, in the abstract. Check: each pre-specified outcome appears in the abstract with its estimate and CI.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 1; p. 7 Table 2",
+  "tags": "abstract összefoglaló selective reporting szelektív közlés null results nem szignifikáns eredmények PRISMA for Abstracts spin pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-079",
+  "stage_id": "S14",
+  "kind": "example",
+  "title": "Táblázatok és ábrák szerkezete",
+  "body": "Table 1 gives study characteristics (pp. 4-6); Table 2 pooled results by outcome with k, SMD, 95% CI and I^2 (p. 7); Table 3 a qualitative summary of proposed mechanisms (p. 7); Appendix 3 the RoB table (p. 9). Forest plots (Appendix 2) and funnel plots (Appendix 4) are supplementary only. A complete results table should add tau^2, Q (df, p) and the prediction interval.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "pp. 4–6 Table 1; p. 7 Table 2; p. 7 Table 3; p. 9 Appendix 3",
+  "tags": "tables táblázatok figures ábrák forest plot erdődiagram funnel plot tölcsérdiagram results table eredménytábla layout elrendezés reporting jelentés"
+ },
+ {
+  "k_id": "K-MOR20-080",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Számformátum és kerekítés",
+  "body": "Pooled SMDs and CI limits are printed to 2 decimals; I^2 to 1 decimal with a % sign, with TBARS printed as '00.0%'; RoB percentages to 2 decimals but truncated rather than rounded (7/24 printed as 29.16% instead of 29.17%). [note: generate percentages programmatically with proper rounding and print a zero I^2 as 0.0%.]",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 7 Table 2; p. 7 §3.3",
+  "tags": "rounding kerekítés decimals tizedesjegyek number format számformátum truncation csonkolás I2 percentage százalék convention konvenció"
+ },
+ {
+  "k_id": "K-MOR20-081",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "A kimenetenkénti k nem vezethető vissza az 1. táblázatra",
+  "body": "The Table 1 'main results' column names MDA for 17 trials, GSH for 5, SOD for 7, TAC for 6, NO/NOx for 6, TRAP for 1 (de Santana 2008) and TBARS for none. Table 2 pools 19, 7, 10, 7, 6, 3 and 3 comparisons. Because forest plots are online only, the article does not show which trials or arms were pooled for each outcome. The three TRAP 'treatment arms' may be arms of a single multi-arm trial, and the six NO trials in Table 1 include two that measured NOx. Detect: tabulate outcome by study from the characteristics table and compare with each k. Fix: give a study-by-outcome matrix or labelled forest plots and say how multi-arm trials and related measures (NO vs NOx) were handled. Check: every pooled comparison traces to a row of the characteristics table.",
+  "source_id": "morvaridzadeh2020",
+  "locator": "pp. 4–6 Table 1; p. 7 Table 2; p. 3; p. 7",
+  "tags": "traceability visszakereshetőség study by outcome matrix vizsgálat-kimenet mátrix k count vizsgálatszám multi-arm többkarú NOx NO TRAP TBARS characteristics table jellemzők táblázata reproducibility reprodukálhatóság pitfall hiba"
+ },
+ {
+  "k_id": "K-MOR20-082",
+  "stage_id": "S14",
+  "kind": "example",
+  "title": "A beválasztott vizsgálatok összefoglaló jellemzői",
+  "body": "The 24 RCTs were run between 2003 and 2019 (19 parallel, 5 crossover). Countries: 12 Iran, 4 Brazil, 2 China, 2 US, 1 South Korea, 1 Indonesia, 2 Europe. Populations: 8 trials in postmenopausal women, 3 in T2DM, 2 each in PCOS, NAFLD and metabolic syndrome, and 1 each in burns, ischemic cardiomyopathy, GDM, rheumatoid arthritis, hypertension, overweight/obesity and dyslipidaemia. Interventions: 10 isoflavones, 5 soy protein, 5 soybeans or soy nuts, 4 soy milk. Duration 3-52 weeks; arm sizes 15-92; mean age 25-64 years; 13 female-only, 10 mixed-sex and 1 male-only trials. This is a usable template for the narrative summary of study characteristics (PRISMA 2020 item 17), but the reported total of 1,852 participants does not match the 1,690 in Table 1 (see K-MOR20-020).",
+  "source_id": "morvaridzadeh2020",
+  "locator": "p. 2 §3.1; p. 3; pp. 4–6 Table 1",
+  "tags": "study characteristics vizsgálati jellemzők included trials beválasztott vizsgálatok population populáció duration időtartam crossover keresztezett country ország PRISMA 2020 item 17 narrative summary szöveges összefoglaló"
+ }
+]
