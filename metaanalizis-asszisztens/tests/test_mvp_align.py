@@ -669,5 +669,20 @@ class TestFixtures(unittest.TestCase):
                 self.assertEqual(data[key], json.loads(json.dumps(live[key])))
 
 
+
+class TestPiNoteColourNeutral(unittest.TestCase):
+    def test_ux03_pi_note_names_no_colour_and_no_raw_token(self):
+        """UX-03: a PI-megjegyzés nem állít színt (a motor SVG-je és a munkapad ábrája mást használ), és a
+        módszer olvasható alakban áll (t(k-2), angolul U+2212), nem nyers 't_k-2' tokenként."""
+        primary = type("P", (), {"pi_lower": -1.0, "pi_method": "t_k-2"})()
+        hu = pipeline._footer_notes(primary, "RR", 95, "hu")[0]
+        en = pipeline._footer_notes(primary, "RR", 95, "en")[0]
+        self.assertEqual(hu, "Külön sor a forest alján: 95%-os predikciós intervallum, t(k-2).")
+        self.assertEqual(en, "Separate row at the bottom of the forest plot: 95% prediction interval, t(k" + MINUS + "2).")
+        for txt in (hu, en):
+            self.assertNotRegex(txt.lower(), r"piros|vörös|narancs|red\b|orange|t_k-")
+        self.assertEqual(pipeline.pi_method_text("z", "hu"), "z")
+        self.assertEqual(pipeline.pi_method_text("ismeretlen", "en"), "ismeretlen")
+
 if __name__ == "__main__":
     unittest.main()

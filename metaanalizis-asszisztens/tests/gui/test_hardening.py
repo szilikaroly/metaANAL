@@ -1082,5 +1082,50 @@ class KbRetryTests(unittest.TestCase):
                 srv.stop()
 
 
+class CtrlCNotSwallowedTests(unittest.TestCase):
+    """A Ctrl-C (KeyboardInterrupt), ami a kérés-szál indítása (t.start() várakozása) közben érkezik, nem nyelődhet
+    el: a szál már fut és maga adja vissza a kapcsolat-helyét; a kétszeres elengedés ValueError-ja korábban
+    lecserélte a KeyboardInterruptot, a socketserver naplózta, és a `ma.py gui` nem állt le (terhelés alatt
+    véletlenszerűen akadó test_cli_gui)."""
+
+    def test_keyboard_interrupt_during_thread_start_propagates_and_slot_is_released_once(self):
+        httpd = server.MunkapadHTTPServer.__new__(server.MunkapadHTTPServer)
+        httpd.max_connections = 2
+        httpd._slots = threading.BoundedSemaphore(2)
+        done = threading.Event()
+
+        def fake_mixin_process_request(self_, request, client_address):
+            t = threading.Thread(target=self_.process_request_thread, args=(request, client_address))
+            t.start()
+            t.join(5)                                  # a szál lefutott és visszaadta a helyét …
+            raise KeyboardInterrupt()                  # … mire a főszálban megjött a Ctrl-C
+
+        def fake_thread_body(self_, request, client_address):
+            done.set()
+
+        with mock.patch("socketserver.ThreadingMixIn.process_request", fake_mixin_process_request), \
+                mock.patch("socketserver.ThreadingMixIn.process_request_thread", fake_thread_body):
+            with self.assertRaises(KeyboardInterrupt):
+                httpd.process_request(object(), ("127.0.0.1", 1))
+        self.assertTrue(done.is_set())
+        # pontosan egyszer adták vissza: mindkét hely szabad, és nincs harmadik
+        self.assertTrue(httpd._slots.acquire(blocking=False))
+        self.assertTrue(httpd._slots.acquire(blocking=False))
+        self.assertFalse(httpd._slots.acquire(blocking=False))
+
+    def test_thread_start_failure_still_releases_slot(self):
+        httpd = server.MunkapadHTTPServer.__new__(server.MunkapadHTTPServer)
+        httpd.max_connections = 1
+        httpd._slots = threading.BoundedSemaphore(1)
+
+        def boom(self_, request, client_address):
+            raise RuntimeError("can't start new thread")
+
+        with mock.patch("socketserver.ThreadingMixIn.process_request", boom):
+            with self.assertRaises(RuntimeError):
+                httpd.process_request(object(), ("127.0.0.1", 1))
+        self.assertTrue(httpd._slots.acquire(blocking=False), "a szál nem indult: a hely visszajár")
+
+
 if __name__ == "__main__":
     unittest.main()

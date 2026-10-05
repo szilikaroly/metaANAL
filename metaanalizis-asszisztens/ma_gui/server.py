@@ -142,6 +142,11 @@ class MunkapadHTTPServer(ThreadingHTTPServer):
                 return
         try:
             super().process_request(request, client_address)
+        except (KeyboardInterrupt, SystemExit):
+            # a Ctrl-C a t.start() várakozása közben érkezett: a szál már fut, és a saját helyét maga adja
+            # vissza — itt NEM szabad még egyszer elengedni (a BoundedSemaphore ValueError-ja elnyelné a
+            # KeyboardInterruptot, és a szerver nem állna le)
+            raise
         except BaseException:
             self._slots.release()
             raise
@@ -1038,26 +1043,27 @@ def cli_main(argv=None, out=None):
             _say(out, "HIBA: %s" % exc)
             return 1
         break
-    url = app.launch_url()
-    _say(out, "MA-munkapad %s fut — projekt: %s" % (__version__, app.project_root))
-    _say(out, "  Cím: %s" % url)
-    _say(out, "  Az indítókód egyszer használható és 60 másodpercig érvényes; új kódot a parancs újbóli "
-              "futtatása ad.")
-    _say(out, "  Leállítás: Ctrl-C (tétlenség esetén %s)." % (
-        "%.4g óra után magától" % a.idle_hours if a.idle_hours else "nincs automatikus leállás"))
-    if not a.no_browser:
-        runtime.open_browser(url)
 
+    # a jelkezelők a cím kiírása ELŐTT: a háttérben indított folyamat SIG_IGN-t örökölhet, és aki a kiírt cím
+    # után azonnal Ctrl-C-t (SIGINT) küld, annak is tiszta leállás jár (nem némán elnyelt jel)
     def _term(_signum, _frame):
         raise KeyboardInterrupt()
 
     for sig, handler in ((signal.SIGINT, signal.default_int_handler), (signal.SIGTERM, _term)):
         try:
-            # a háttérben indított folyamat SIG_IGN-t örökölhet: a Ctrl-C mindig tiszta leállást adjon
             signal.signal(sig, handler)
         except (ValueError, OSError, AttributeError):
             pass
     try:
+        url = app.launch_url()
+        _say(out, "MA-munkapad %s fut — projekt: %s" % (__version__, app.project_root))
+        _say(out, "  Cím: %s" % url)
+        _say(out, "  Az indítókód egyszer használható és 60 másodpercig érvényes; új kódot a parancs újbóli "
+                  "futtatása ad.")
+        _say(out, "  Leállítás: Ctrl-C (tétlenség esetén %s)." % (
+            "%.4g óra után magától" % a.idle_hours if a.idle_hours else "nincs automatikus leállás"))
+        if not a.no_browser:
+            runtime.open_browser(url)
         app.serve_forever()
     except KeyboardInterrupt:
         _say(out, "Leállítás…")
