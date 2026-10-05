@@ -699,10 +699,10 @@ class TestKbDefaultDb(unittest.TestCase):
         # másik plugin hook-környezete (CLAUDE_PLUGIN_ROOT máshová mutat): nem a mi adatmappánk
         self.assertEqual(kb._default_db({"CLAUDE_PLUGIN_DATA": "/x", "CLAUDE_PLUGIN_ROOT": "/mas/plugin"}, repo),
                          os.path.join(kb.KB_DIR, "tudasbazis.sqlite"))
-        cache = os.path.join(os.sep, "h", ".claude", "plugins", "cache", "anamnezis-asszisztens", "metaanalizis",
+        cache = os.path.join(os.sep, "h", ".claude", "plugins", "cache", "metaanal", "metaanalizis",
                              "0.1.0")
         self.assertEqual(kb._default_db({}, cache), os.path.join(
-            os.sep, "h", ".claude", "plugins", "data", "metaanalizis-anamnezis-asszisztens", "tudasbazis.sqlite"))
+            os.sep, "h", ".claude", "plugins", "data", "metaanalizis-metaanal", "tudasbazis.sqlite"))
 
 
 if __name__ == "__main__":

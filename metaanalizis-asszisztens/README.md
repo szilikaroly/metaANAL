@@ -49,8 +49,8 @@ claude --agent metaanalizis-asszisztens          # az orkesztrátor a fő szál
 GitHub-meghívót kell elfogadni, és a gépen a git-azonosításnak működnie kell — lásd [TELEPITES.md](TELEPITES.md)):
 
 ```
-/plugin marketplace add szilikaroly/anamnezis-asszisztens
-/plugin install metaanalizis@anamnezis-asszisztens
+/plugin marketplace add szilikaroly/metaANAL
+/plugin install metaanalizis@metaanal
 ```
 
 Indítás pluginból: `claude --agent metaanalizis:metaanalizis-asszisztens`, vagy egy munkamenetben
@@ -225,7 +225,7 @@ rögzíti a felhasználó döntéseit.
 
 ## Claude Code-plugin (`.claude-plugin/`, `agents/`, `skills/`)
 
-A repó gyökerében lévő `.claude-plugin/marketplace.json` a marketplace (`anamnezis-asszisztens`), a plugin maga ez a
+A repó gyökerében lévő `.claude-plugin/marketplace.json` a marketplace (`metaanal`), a plugin maga ez a
 mappa (`metaanalizis-asszisztens/.claude-plugin/plugin.json`, név: `metaanalizis`, verzió: a `metaelemzes.__version__`).
 A plugin `agents/` és `skills/` mappája **generált**: egyetlen forrása a repó `.claude/agents/` és
 `.claude/skills/` változata. Szerkesztés után futtasd:
@@ -239,7 +239,7 @@ A generátor az utakat a plugin telepítési helyére írja át (`"${CLAUDE_PLUG
 skillneveket névtérbe teszi (`metaanalizis:ma-ellenorzo`, `skills: metaanalizis:metaanalizis`), és kihagyja a
 plugin-ágensnél figyelmen kívül hagyott frontmatter-mezőket. Plugin-szintű `settings.json` szándékosan nincs (a plugin
 engedélyt nem adhat). Pluginként a tudásbázis-adatbázis a plugin adatmappájában (`${CLAUDE_PLUGIN_DATA}`, ennek
-hiányában a plugin-gyorsítótár elrendezéséből: `<plugins>/data/metaanalizis-anamnezis-asszisztens/`) van, mert a
+hiányában a plugin-gyorsítótár elrendezéséből: `<plugins>/data/metaanalizis-metaanal/`) van, mert a
 telepítési mappa frissítéskor cserélődik; a `METAELEMZES_KB` környezeti változó mindkét változatban felülírja.
 Új kiadás: a `metaelemzes/__init__.py` verziójának növelése, majd újragenerálás — a plugin-felhasználók csak
 verzióváltáskor kapják meg a változást.

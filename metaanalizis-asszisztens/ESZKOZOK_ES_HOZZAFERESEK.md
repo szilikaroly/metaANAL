@@ -28,7 +28,7 @@ az ágensek gyakran futtatnak:
 
 Ha ezt nem szeretnéd, töröld a fájlt: ekkor minden ilyen műveletnél rákérdez.
 
-**Pluginként telepítve** (`metaanalizis@anamnezis-asszisztens`) ez a fájl nem érvényes, és a plugin maga nem adhat
+**Pluginként telepítve** (`metaanalizis@metaanal`) ez a fájl nem érvényes, és a plugin maga nem adhat
 engedélyt (a plugin `settings.json`-jából a Claude Code csak az `agent` és a `subagentStatusLine` kulcsot olvassa). A
 javasolt engedélylistát — a plugin telepítési útjára illeszkedő `Bash(python "…/ma.py" *)` szabályokkal és a
 `_privat/` mappát tiltó `deny` sorokkal — a [TELEPITES.md](TELEPITES.md) 5. pontja adja; a saját

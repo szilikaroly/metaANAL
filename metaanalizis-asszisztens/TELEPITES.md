@@ -47,8 +47,8 @@ github.com → *Notifications* oldalon fogadd el (ehhez GitHub-fiók kell). Ezut
 **A) git-tel (ajánlott — a frissítés egyetlen parancs):**
 
 ```bash
-git clone https://github.com/szilikaroly/anamnezis-asszisztens.git
-cd anamnezis-asszisztens
+git clone https://github.com/szilikaroly/metaANAL.git
+cd metaANAL
 ```
 
 Ha a git jelszót kér: a GitHub a jelszót itt nem fogadja el. A legegyszerűbb a GitHub CLI (`gh`, cli.github.com):
@@ -58,13 +58,13 @@ Frissítés később: a repó mappájában `git pull`.
 **B) ZIP-ként:** a repó GitHub-oldalán *Code* → *Download ZIP*, majd csomagold ki (pl. a `Dokumentumok` mappába).
 Frissítéshez újra le kell töltened.
 
-A metaanalízis-eszköz a repó `metaanalizis-asszisztens/` mappájában van (a repó többi része egy másik alkalmazás).
+A metaanalízis-eszköz a repó `metaanalizis-asszisztens/` mappájában van.
 A kódot bárhová teheted; a **projektjeid** helyére a [9. pont](#9-adatvédelem) vonatkozik.
 
 ## 3. Első futtatás
 
 ```bash
-cd anamnezis-asszisztens/metaanalizis-asszisztens
+cd metaANAL/metaanalizis-asszisztens
 python ma.py selftest
 python ma.py kb build
 python ma.py kb stats
@@ -87,12 +87,12 @@ Pluginként az ágensek és a skill **bármelyik mappában** elérhetők, nem cs
 Egy Claude Code-munkamenetben (indítsd: `claude`) írd be:
 
 ```
-/plugin marketplace add szilikaroly/anamnezis-asszisztens
-/plugin install metaanalizis@anamnezis-asszisztens
+/plugin marketplace add szilikaroly/metaANAL
+/plugin install metaanalizis@metaanal
 ```
 
-Ugyanez a terminálból: `claude plugin marketplace add szilikaroly/anamnezis-asszisztens`, majd
-`claude plugin install metaanalizis@anamnezis-asszisztens`. Utána indítsd újra a Claude Code-ot (vagy a munkamenetben:
+Ugyanez a terminálból: `claude plugin marketplace add szilikaroly/metaANAL`, majd
+`claude plugin install metaanalizis@metaanal`. Utána indítsd újra a Claude Code-ot (vagy a munkamenetben:
 `/reload-plugins`). Ellenőrzés: `claude plugin details metaanalizis` — öt ágenst (az orkesztrátor + négy alágens: ma-tervezo,
 ma-ellenorzo, ma-ertekelo, ma-metaheadhunter) és egy skillt kell mutatnia.
 
@@ -100,20 +100,20 @@ ma-ellenorzo, ma-ertekelo, ma-metaheadhunter) és egy skillt kell mutatnia.
   hibát ad, futtasd a `gh auth login` és a `gh auth setup-git` parancsot (2. pont), majd próbáld újra. Ha nincs GitHub
   SSH-kulcsod és mégis SSH-val próbálkozik, állítsd be a `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` környezeti változót.
 - **ZIP-ből:** a kicsomagolt mappát is felveheted marketplace-ként: `/plugin marketplace add <a kicsomagolt
-  anamnezis-asszisztens mappa teljes útja>`, majd ugyanaz a `/plugin install …` parancs. **Ilyenkor a plugin helyben,
+  metaANAL mappa teljes útja>`, majd ugyanaz a `/plugin install …` parancs. **Ilyenkor a plugin helyben,
   a kicsomagolt mappából fut** (`claude plugin list`: „Read from: <kicsomagolt mappa>/metaanalizis-asszisztens”), nem a
   lenti gyorsítótárból: a parancsok a `<kicsomagolt mappa>/metaanalizis-asszisztens/ma.py`-t hívják, a tudásbázis a
   `<kicsomagolt mappa>/metaanalizis-asszisztens/tudasbazis/tudasbazis.sqlite` (egy új ZIP kicsomagolása felülírja — ha
   meg akarod tartani, állítsd be a `METAELEMZES_KB` változót, lásd lent), és az engedélylistába ennek a mappának a
   `ma.py`-ja kell (5. pont). A mappát ne töröld és ne nevezd át, amíg a plugin telepítve van.
-- **Frissítés:** `/plugin marketplace update anamnezis-asszisztens` (új változat akkor érkezik, ha a verziószám
-  nőtt). Automatikus frissítés: `/plugin` → *Marketplaces* → *anamnezis-asszisztens* → *Enable auto-update*.
+- **Frissítés:** `/plugin marketplace update metaanal` (új változat akkor érkezik, ha a verziószám
+  nőtt). Automatikus frissítés: `/plugin` → *Marketplaces* → *metaanal* → *Enable auto-update*.
 - **Tudásbázis pluginként** (GitHub-marketplace; a ZIP-útnál lásd fent): a plugin saját mappája frissítéskor
-  cserélődik, ezért a tudásbázis-adatbázis a plugin adatmappájában van: `~/.claude/plugins/data/metaanalizis-anamnezis-asszisztens/tudasbazis.sqlite` (frissítéskor
+  cserélődik, ezért a tudásbázis-adatbázis a plugin adatmappájában van: `~/.claude/plugins/data/metaanalizis-metaanal/tudasbazis.sqlite` (frissítéskor
   megmarad; eltávolításkor törlődik). Más helyet a `METAELEMZES_KB` környezeti változóval adhatsz meg (a teljes
   fájlútvonal, pl. `METAELEMZES_KB=D:/ma/tudasbazis.sqlite`).
 - A plugin parancsai GitHub-marketplace-ből telepítve a telepítési mappából futnak
-  (`~/.claude/plugins/cache/anamnezis-asszisztens/metaanalizis/<verzió>/`), ZIP-ből a kicsomagolt mappából (fent);
+  (`~/.claude/plugins/cache/metaanal/metaanalizis/<verzió>/`), ZIP-ből a kicsomagolt mappából (fent);
   kézi futtatáshoz egyszerűbb a 2. pontban letöltött példány.
 
 ## 5. Javasolt engedélylista
@@ -133,8 +133,8 @@ már van `permissions` rész, a sorokat abba fűzd be.
       "Bash(py -3 ma.py *)",
       "Bash(python metaanalizis-asszisztens/ma.py *)",
       "Bash(python3 metaanalizis-asszisztens/ma.py *)",
-      "Bash(python \"*/.claude/plugins/cache/anamnezis-asszisztens/metaanalizis/*/ma.py\" *)",
-      "Bash(python3 \"*/.claude/plugins/cache/anamnezis-asszisztens/metaanalizis/*/ma.py\" *)",
+      "Bash(python \"*/.claude/plugins/cache/metaanal/metaanalizis/*/ma.py\" *)",
+      "Bash(python3 \"*/.claude/plugins/cache/metaanal/metaanalizis/*/ma.py\" *)",
       "WebFetch(domain:eutils.ncbi.nlm.nih.gov)",
       "WebFetch(domain:pubmed.ncbi.nlm.nih.gov)",
       "WebFetch(domain:www.ncbi.nlm.nih.gov)",
@@ -163,7 +163,7 @@ már van `permissions` rész, a sorokat abba fűzd be.
 - Az első öt `Bash` sor a motort engedi a repóból futtatva, a következő kettő a GitHub-marketplace-ből telepített
   pluginból (a `*` a saját mappádat és a plugin verzióját helyettesíti). Ha a Claude Code induláskor figyelmeztet a `*`
   helye miatt, írd be helyette a teljes utat, pl.
-  `Bash(python "C:/Users/<név>/.claude/plugins/cache/anamnezis-asszisztens/metaanalizis/*/ma.py" *)`.
+  `Bash(python "C:/Users/<név>/.claude/plugins/cache/metaanal/metaanalizis/*/ma.py" *)`.
 - **ZIP-ből telepített pluginnál** a parancsok a kicsomagolt mappából futnak, ezért ezt a két sort is vedd fel (a
   saját kicsomagolt mappád teljes útjával): `Bash(python "<kicsomagolt mappa>/metaanalizis-asszisztens/ma.py" *)` és
   `Bash(python3 "<kicsomagolt mappa>/metaanalizis-asszisztens/ma.py" *)` — a gyorsítótáras sorok erre nem illeszkednek.
@@ -184,7 +184,7 @@ claude --agent metaanalizis:metaanalizis-asszisztens
 
 vagy egy szokásos `claude` munkamenetben: `/metaanalizis:metaanalizis <projektmappa> "<kutatási kérdés>"`.
 
-**A repóból** (plugin nélkül; a repó gyökerében, azaz az `anamnezis-asszisztens` mappában):
+**A repóból** (plugin nélkül; a repó gyökerében, azaz a `metaANAL` mappában):
 
 ```bash
 claude --agent metaanalizis-asszisztens
@@ -196,7 +196,7 @@ Az első üzenetben írd le a kutatási kérdést, és ha van, a projektmappa ne
 alágenssel elkészítteti a protokollt, minden szakasz végén az ellenőrzővel átnézeti a munkát, a végén az értékelővel
 GRADE-et és AMSTAR 2-t készíttet. Új projektmappát kézzel is létrehozhatsz — a `ma.py` parancsokat (itt és a 7.
 pontban) a `metaanalizis-asszisztens` mappában futtasd (lásd [3. pont](#3-első-futtatás)); a repó gyökeréből
-(`anamnezis-asszisztens`) írd elé a mappát: `python metaanalizis-asszisztens/ma.py …`.
+(`metaANAL`) írd elé a mappát: `python metaanalizis-asszisztens/ma.py …`.
 
 ```bash
 python ma.py project init <projektmappa> --title "<cím>" --question "<kutatási kérdés>"

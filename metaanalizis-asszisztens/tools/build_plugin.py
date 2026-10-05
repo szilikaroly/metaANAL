@@ -41,9 +41,9 @@ DEFAULT_REPO_ROOT = os.path.dirname(os.path.dirname(HERE))
 
 PLUGIN_DIRNAME = "metaanalizis-asszisztens"
 PLUGIN_NAME = "metaanalizis"
-MARKETPLACE_NAME = "anamnezis-asszisztens"
+MARKETPLACE_NAME = "metaanal"
 AUTHOR = "Szili Károly"
-REPOSITORY = "https://github.com/szilikaroly/anamnezis-asszisztens"
+REPOSITORY = "https://github.com/szilikaroly/metaANAL"
 DISPLAY_NAME = "Metaanalízis-asszisztens"
 DESCRIPTION = ("Szisztematikus áttekintés és metaanalízis Claude Code-ban: orkesztrátor és négy alágens (tervező, "
                "ellenőrző, értékelő, Metaheadhunter — meglévő metaanalízisek bányászata), metafor-ral validált "

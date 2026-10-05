@@ -1,0 +1,27 @@
+# soha ne kerüljön be beteg-azonosítót tartalmazó forrás: a fájl- vagy mappanévben a PHI (kis- vagy
+# nagybetűvel) önálló, elválasztott tag (x_PHI, x_PHI.csv, x_PHI_v2, x_PHI-v2, PHI_x, x.phi.csv) vagy
+# beteg_adat — a puszta 'phi' betűsor (morphine, delphi, neutrophil, dengue_philippines, smith_phillips)
+# nem, különben egész projektmappák maradnának ki a verziókövetésből
+*_[Pp][Hh][Ii]
+*_[Pp][Hh][Ii][._-]*
+[Pp][Hh][Ii]_*
+*.[Pp][Hh][Ii].*
+*beteg_adat*
+# a munkapad C osztályú (betegszintű, anonimizált) és B osztályú adatainak helye — soha nem kerül a repóba
+_privat/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# metaanalízis-asszisztens: a felépített tudásbázis (teljes szöveggel) és a helyi
+# forrásdokumentumok szerzői jogvédettek — csak helyben, a repóba nem kerülnek
+metaanalizis-asszisztens/tudasbazis/*.sqlite
+metaanalizis-asszisztens/tudasbazis/*.sqlite-journal
+metaanalizis-asszisztens/tudasbazis/forrasok/
+metaanalizis-asszisztens/eredmeny/
+metaanalizis-asszisztens/peldak/eredmeny/
+# Metaheadhunter: a projekt API-gyorsítótára és a futás-naplók gépállapot (a döntésnapló, a state.json és a
+# PRISMA-folyam a repóba kerülhet; a teljes szövegek gyorsítótára amúgy is a projekten kívül él)
+**/01_kereses/headhunter/cache/
+**/01_kereses/headhunter/runs/

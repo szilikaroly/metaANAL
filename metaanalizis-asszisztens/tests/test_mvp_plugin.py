@@ -428,7 +428,7 @@ class DocsTest(unittest.TestCase):
     def test_install_commands_match_manifests(self):
         mp = _load(MARKETPLACE_JSON)
         install = "/plugin install %s@%s" % (mp["plugins"][0]["name"], mp["name"])
-        add = "/plugin marketplace add szilikaroly/anamnezis-asszisztens"
+        add = "/plugin marketplace add szilikaroly/metaANAL"
         orch = "claude --agent %s:metaanalizis-asszisztens" % mp["plugins"][0]["name"]
         telepites = _text(os.path.join(ROOT, "TELEPITES.md"))
         readme = _text(os.path.join(ROOT, "README.md"))

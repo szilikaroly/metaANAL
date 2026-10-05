@@ -166,7 +166,7 @@ pid-et és a portot, token nélkül; a második indítás a meglévő példányr
 
 **Leállás:** Ctrl-C, vagy 4 óra tétlenség után magától. A token nem kerül lemezre.
 
-### 2.3 Kódelrendezés (minden új kód a motor repójában: `szilikaroly/anamnezis-asszisztens`)
+### 2.3 Kódelrendezés (minden új kód a motor repójában: `szilikaroly/metaANAL`)
 
 ```
 metaanalizis-asszisztens/
