@@ -128,8 +128,9 @@ OUTCOME_RE = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
 FIELD_RE = re.compile(r"^[A-Za-z0-9_.-]{1,40}$")
 EV_RE = re.compile(r"^ev-[a-z0-9][a-z0-9#.-]{2,120}$")
 REASON_CODE_RE = re.compile(r"^[A-Za-z0-9_.-]{1,16}$")
-VALUE_RE = re.compile(r"^(accept|reject|include|exclude|not_retrieved|awaiting|pmid:\d{1,9}|option:\d{1,2}|"
-                      r"doi:10\.\d{3,9}/[^\s]{1,200})$")
+VALUE_RE = re.compile(r"^(accept|reject|include|exclude|not_retrieved|awaiting|no_identifier|keep_retracted|"
+                      r"pmid:\d{1,9}|option:\d{1,2}|doi:10\.\d{3,9}/[^\s]{1,200}|pmcid:PMC\d{1,9}|nct:NCT\d{8}|"
+                      r"eid:2-s2\.0-\d{5,20}|openalex:W\d{1,12})$")
 _CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 _ACTOR_SAFE = re.compile(r"[^A-Za-z0-9_.@-]")
 
@@ -1077,8 +1078,9 @@ def build_decide_argv(app, body):
         if not target:
             raise ApiError("BAD_REQUEST", "Hiányzó mező: target (rv-…, rv-…#c…, p-…, rec-…, st-…).")
         if not VALUE_RE.match(value):
-            raise ApiError("BAD_REQUEST", "A value: accept | reject | include | exclude | not_retrieved | awaiting "
-                                          "(feloldási javaslatnál: pmid:<szám>, doi:10.… vagy option:<N>).")
+            raise ApiError("BAD_REQUEST", "A value: accept | reject | include | exclude | not_retrieved | awaiting | "
+                                          "no_identifier | keep_retracted (feloldásnál: pmid:<szám>, doi:10.…, "
+                                          "pmcid:PMC…, nct:NCT…, eid:2-s2.0-…, openalex:W… vagy option:<N>).")
         rel = _target_file(target)
         argv = _base_argv(app, "decide") + ["--target=" + target, "--value=" + value]
         details.update({"target_type": target.split("-", 1)[0] + ("#c" if "#" in target else ""), "value": value})

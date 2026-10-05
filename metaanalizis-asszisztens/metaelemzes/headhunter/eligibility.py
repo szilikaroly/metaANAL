@@ -394,10 +394,11 @@ def record_screen_decision(project_dir, rec_id, level, value, actor, reason_code
                               quote=quote, kb_refs=KB_SCREEN, supersedes=supersedes, evidence_ids=evidence_ids)
 
 
-def import_screening_csv(project_dir, text_or_path, now=None):
+def import_screening_csv(project_dir, text_or_path, now=None, default_actor=None):
     """Szűrési döntések visszatöltése (Rayyan/Covidence után): ``rec_id;level;decision;reason_code;actor``
-    (fejléc kötelező; az ``actor`` ``user:`` előtagú). Visszaad: ``{imported: [decision_id…], errors: [...]}``;
-    hibás sor nem kerül be (a többi igen)."""
+    (fejléc kötelező; az ``actor`` ``user:`` előtagú). ``default_actor``: az importot végző ember (``user:…``) — az
+    üres ``actor`` cellájú sorok döntéshozója (kettős szűrésnél a sorok saját szűrőjüket nevezik meg). Visszaad:
+    ``{imported: [decision_id…], errors: [...]}``; hibás sor nem kerül be (a többi igen)."""
     if os.path.exists(str(text_or_path)):
         with open(text_or_path, encoding="utf-8-sig") as fh:
             text = fh.read()
@@ -417,6 +418,7 @@ def import_screening_csv(project_dir, text_or_path, now=None):
             continue
         row = (row + [""] * 5)[:5]
         rid, level, dec, rc, actor = [x.strip() for x in row]
+        actor = actor or (default_actor or "")
         try:
             d = record_screen_decision(project_dir, rid, level, dec, actor, reason_code=rc or None, now=now)
             out["imported"].append(d["decision_id"])

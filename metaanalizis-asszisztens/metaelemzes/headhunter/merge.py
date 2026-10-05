@@ -357,8 +357,9 @@ def _study_status(rep_status):
     return "awaiting"
 
 
-#: az EP6 (másodlagos adat ellenőrzése) mezői — a lezárás (EP5) UTÁN jönnek, ezért nem részei az ujjlenyomatnak
-_EP6_FIELDS = ("status", "verified_decision", "primary_locator", "primary_value")
+#: az EP6 (másodlagos adat ellenőrzése) mezői — a lezárás (EP5) UTÁN jönnek, ezért nem részei az ujjlenyomatnak (a
+#: ``status`` az ujjlenyomatban egységesen ``unverified`` — így a korábbi, EP6 előtti lezárások ujjlenyomata változatlan)
+_EP6_FIELDS = ("verified_decision", "primary_locator", "primary_value")
 
 
 def _content_hash(studies):
@@ -371,7 +372,8 @@ def _content_hash(studies):
         x = dict((k, v) for k, v in s.items() if k not in ("final",))
         if x.get("secondary_data"):
             x["secondary_data"] = [{"review_id": blk.get("review_id"),
-                                    "values": [dict((k, v) for k, v in val.items() if k not in _EP6_FIELDS)
+                                    "values": [dict([(k, v) for k, v in val.items() if k not in _EP6_FIELDS
+                                                     and k != "status"] + [("status", "unverified")])
                                                for val in blk.get("values") or []]}
                                    for blk in x["secondary_data"]]
         body.append(x)
@@ -1191,8 +1193,8 @@ def run_export(project_dir, outcome=None, to_project=False, prisma=False, for_an
     # az exportot mindig a FRISS döntésekből számoljuk (felülvizsgálat: a tárolt merged.json elavult lehetett — pl. a
     # lezárás utáni döntések vagy az EP6-ellenőrzések nem jelentek meg az elemzési exportban)
     merged, _mw = build_merged(state, reviews, studies, decisions, update_doc, now=now)
-    if merged.get("content_sha256") != stored.get("content_sha256") or bool(merged.get("final")) != \
-            bool(stored.get("final")):
+    if json.dumps(merged.get("studies"), sort_keys=True) != json.dumps(stored.get("studies"), sort_keys=True) or \
+            bool(merged.get("final")) != bool(stored.get("final")):
         warnings.append(_warn("H017", "A merged.json elavult volt (azóta új döntés született) — az export a friss "
                                       "állapotból készült; futtasd a merge lépést is a PRISMA-számok frissítéséhez.",
                               "merged.json was stale — the export uses the current decisions; run merge too."))

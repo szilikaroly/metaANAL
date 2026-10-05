@@ -121,3 +121,16 @@ python3 -m unittest discover -s tests/gui -p 'test_headhunter*'
 node tests/gui/ui/headhunter.spec.js        # előtte: python3 ma_gui/web/build_gui.py --dev
 python3 metaanalizis-asszisztens/tools/build_plugin.py --check
 ```
+
+## 8. A független felülvizsgálat (2026-10-05) utáni teendők
+
+- **Plugin**: az ágensfájl (`.claude/agents/ma-metaheadhunter.md`) ismét változott (keep_retracted, jelölt-szintű
+  azonosító-javítás, L1-bib-mismatch, EP6 a lezárás után) → `python metaanalizis-asszisztens/tools/build_plugin.py`.
+- **Munkapad (a GUI tulajdonosa, `dist/` újraépítéssel)**: a Kinyerés képernyő „Az összes javasolt megerősítése ({n})"
+  gombja (`screens/headhunter_reviews.js`) minden javasolt jelöltet számol, de a háttér az ismeretlen szerepű
+  (csak irodalomjegyzékből ismert) tételeket már nem erősíti meg tömegesen (W-UNKNOWN-ROLE): a számlálót
+  `c.status === 'proposed' && c.role_in_review !== 'unknown'`-ra, a `hh.ex.guide`/`hh.ex.batchBody` szöveget pedig
+  arra kell igazítani, hogy az ismeretlen szerepű tétel megerősítése = „az áttekintés BEVONTA". A `dist/index.html`
+  közös, követett build-termék (900 KB-os korlát), ezért ezt a felülvizsgálat nem építette újra.
+- **Munkapad döntés-értékek**: a `routes/headhunter.py` `VALUE_RE` már elfogadja a `keep_retracted`,
+  `no_identifier`, `pmcid:`, `nct:`, `eid:`, `openalex:` értékeket (a felületen még nincs hozzájuk gomb).

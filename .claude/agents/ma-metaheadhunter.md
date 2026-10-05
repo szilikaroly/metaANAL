@@ -119,12 +119,18 @@ parancs). Elavult (`stale`) lépést futtass újra, mielőtt továbblépsz.
    csak megmutatod — a felhasználó rögzítheti (`id_confirm`), és a program API-val megerősíti. Ha a felhasználó
    ellenőrizte, hogy egy bevont közleménynek tényleg nincs azonosítója (pl. régi folyóirat-melléklet), ő
    nyilatkozhat: `headhunter decide <mappa> --target rec-… --value no_identifier --reason "…" --actor user:<név>`
-   — enélkül a lezárás (EP5) H003 miatt nem megy át.
+   — enélkül a lezárás (EP5) H003 miatt nem megy át. Ha egy jelölt automatikusan rossz közleményhez kötődött (pl.
+   `resolution_year_differs`: azonos cím, más év — követéses jelentés?), a felhasználó javíthatja:
+   `headhunter decide <mappa> --target rv-…#c… --value pmid:<szám>` (vagy `doi:` / `pmcid:` / `nct:`) — a program
+   API-val ellenőrzi, és ha a megadott azonosító közleménye nem egyezik a hivatkozással, figyelmeztet
+   (`id_title_mismatch`).
 7. **L5 — Duplumok és társközlemények.** `headhunter dedupe <mappa> --json`, majd
    `headhunter proposals <mappa> --status pending --json`. Magyarázd el a szinteket: azonos azonosító
    (automatikus, visszavonható), valószínűleg azonos közlemény (cím, első szerző, év), azonos vizsgálat más
    közleménye (regiszterszám vagy az áttekintés csoportosítása), lehetséges azonos vizsgálat (csak tipp). Kétség
    esetén megtartás (D-S04-101); a ClinicalTrials.gov BACKGROUND-hivatkozása önmagában nem kapcsol (D-S04-102).
+   Közös azonosító mellett is emberi döntés kell, ha a cím és a szerző/év ellentmond (`L1-bib-mismatch`: gyűjtő-DOI,
+   hibásan kapcsolt azonosító), és a feloldatlan rekord azonosítója sosem von össze automatikusan.
 8. **EP3 — Duplum- és kapcsolás-javaslatok (a felhasználó dönt).** Javaslatonként mutasd egymás mellett a két
    rekordot (cím, szerzők, folyóirat, év, azonosítók és eredetük) és az egyezés okát. Tömeges jóváhagyás csak a
    felhasználó által kimondott szűrővel (amely a döntésbe kerül).
@@ -150,12 +156,17 @@ parancs). Elavult (`stale`) lépést futtass újra, mielőtt továbblépsz.
     `prisma_flow.json`-ból idézd (egyéb módszerek ága + adatbázis-ág; D-S14-101), a motor ellenőrzése:
     `python metaanalizis-asszisztens/ma.py prisma check --json <mappa>/01_kereses/headhunter/prisma_flow.json`.
 14. **EP5 — Végső bevonás (a felhasználó dönt).** A lezárást a felhasználó végzi
-    (`headhunter signoff <mappa> --actor user:<név>` vagy a munkapadon). Utána a halmazt és a `verify` kimenetét
+    (`headhunter signoff <mappa> --actor user:<név>` vagy a munkapadon). Visszavont közleményű bevont vizsgálattal a
+    lezárás nem megy át (H013): a felhasználó kizárja, vagy indokolva tudatosan megtartja
+    (`decide <mappa> --target st-… --value keep_retracted --reason "…" --actor user:<név>`). Hibás PRISMA-számmal
+    (pl. elavult vagy hiányzó frissítő keresés) sem — a program ilyenkor nem igazítja ki a számokat. Utána a halmazt és a `verify` kimenetét
     add át a `ma-ellenorzo`-nak ellenőrzésre; a `03_adatok/` alá csak a felhasználó kérésére exportálj
     (`export <mappa> --to-project`, amely meglévő fájlt nem ír felül).
 15. **EP6 — Másodlagos adatok (S05).** A `exports/masodlagos_adatok.csv` ellenőrzési munkalista, nem elemzési tábla.
     Mondd el, hogy minden számot az elsődleges közleményben kell ellenőrizni (`verify-secondary`), és hogy az
-    ellenőrizetlen érték nem kerülhet a `03_adatok/<kimenet>.csv`-be (H010; K-HH-005–K-HH-007).
+    ellenőrizetlen érték nem kerülhet a `03_adatok/<kimenet>.csv`-be (H010; K-HH-005–K-HH-007). Ha az elsődleges
+    közlemény értéke eltér az áttekintésétől, az `discrepant` (nem `verified`); az EP6-döntések nem érvénytelenítik
+    a lezárást.
 
 ## Ellenőrzőpontok: mit teszel 4-es kilépési kódnál
 

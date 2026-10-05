@@ -636,8 +636,19 @@ def _validate_targets(project, targets, value, reason, reason_code, level, raw_v
     if reason_code is not None and codes and reason_code not in codes:
         raise UsageError("Ismeretlen kizárási ok: %s (a szótárban: %s)." % (reason_code, ", ".join(codes)))
     studies = None
+    rv_low = str(raw_value or "").strip().lower()
+    id_value = rv_low.startswith(_RESOLUTION_PREFIXES)
     for t in targets:
         m_c = _CAND.match(t)
+        if id_value and not (m_c or _PROP.match(t)):
+            # felülvizsgálat: a „decide --target rec-… --value pmid:…" korábban SZŰRÉSI bevonásként (EP4) rögzült
+            raise UsageError("Azonosítót (%s) csak jelöltre (rv-…#c…) vagy feloldási javaslatra (p-res-…) adhatsz meg; "
+                             "a %s célra ez szűrési döntés lenne. Feloldatlan rekordnál keresd meg a jelöltjét (list "
+                             "<projekt> candidates), vagy ha nincs azonosítója: --value no_identifier."
+                             % (raw_value, t), "Identifiers can only be given for a candidate or a resolution proposal.")
+        if m_c and rv_low.startswith("option:"):
+            raise UsageError("Az option:N csak feloldási javaslatra (p-res-…) adható; jelöltre add meg az azonosítót "
+                             "(pmid:… / doi:… / pmcid:… / nct:…).", "option:N is only valid for a resolution proposal.")
         if m_c:
             rv = S.load_review(project, m_c.group(1))
             if not any(c.get("cand_id") == m_c.group(2) for c in rv.get("candidates") or []):
@@ -708,10 +719,33 @@ def _apply_targets(a, value):
         if not a.review:
             raise UsageError("A --all-candidates mellé add meg az áttekintést: --review rv-….")
         rv = S.load_review(project, a.review)
+        skipped_unknown = 0
         for c in rv.get("candidates") or []:
-            if c.get("status") == "proposed":
-                targets.append("%s#%s" % (rv["review_id"], c["cand_id"]))
-        batch = S.batch_label({"review": a.review, "status": "proposed", "value": value})
+            if c.get("status") != "proposed":
+                continue
+            if value == "include" and (c.get("role_in_review") or "unknown") == "unknown":
+                # irodalomjegyzék-tétel: a megerősítés azt állítaná, hogy az áttekintés BEVONTA — ezt tömegesen nem
+                # lehet (felülvizsgálat: egy kattintás egy 297 tételes irodalomjegyzéket „bevont vizsgálattá" tett)
+                skipped_unknown += 1
+                continue
+            targets.append("%s#%s" % (rv["review_id"], c["cand_id"]))
+        if skipped_unknown and not targets:
+            raise UsageError("Nincs tömegesen megerősíthető jelölt: a(z) %d javasolt tétel mind ismeretlen szerepű (csak az "
+                             "irodalomjegyzékből ismert). A megerősítés azt jelentené, hogy az áttekintés BEVONTA a "
+                             "vizsgálatot — ezeket egyenként döntsd el, vagy előbb az ágens-osztályozással (show-text → "
+                             "agent-classify import)." % skipped_unknown,
+                             "All proposed candidates have an unknown role (reference list only) — decide them one by "
+                             "one.")
+        if skipped_unknown:
+            warnings.append({"code": "W-UNKNOWN-ROLE",
+                             "hu": "%d ismeretlen szerepű (csak az irodalomjegyzékből ismert) jelöltet NEM erősítettem meg "
+                                   "tömegesen: a megerősítés azt jelenti, hogy az áttekintés BEVONTA a vizsgálatot. "
+                                   "Ezeket egyenként döntsd el (az áttekintés bevont-vizsgálat táblázata/listája alapján), "
+                                   "vagy az ágens-osztályozás (show-text → agent-classify import) után." % skipped_unknown,
+                             "en": "%d unknown-role (reference-list-only) candidates were NOT bulk-confirmed: confirming "
+                                   "means the review INCLUDED the study — decide them one by one." % skipped_unknown})
+        batch = S.batch_label({"review": a.review, "status": "proposed", "value": value,
+                               "role": "known" if value == "include" else None})
     if getattr(a, "all_proposals", False):
         from . import dedup
         filters = {"kind": a.kind, "min_score": a.min_score, "certainty": a.certainty}
@@ -1243,7 +1277,9 @@ def cmd_screen(a):
         if not a.file:
             raise UsageError("Add meg a CSV-t: screen <projekt> import <fájl.csv> (rec_id;level;decision;"
                              "reason_code;actor).")
-        res = E.import_screening_csv(project, a.file)
+        # az importot ember végzi és vállalja (N3): --actor kötelező; az üres actor-cellás sorok az övéi
+        importer = _actor(a)
+        res = E.import_screening_csv(project, a.file, default_actor=importer)
         _after_decisions(project, {"screen"})
         errs = [dict(e, code="CSV") for e in res.get("errors") or []]
         return _env(not errs, {"imported": res.get("imported"), "n": len(res.get("imported") or [])},

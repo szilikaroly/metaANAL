@@ -1454,12 +1454,13 @@ def rob_summary(appraisals, tool, outcome=None, plot=None, studies=None, paths=N
 
 
 def rob_sync_proposal(appraisals, header, rows, tool, row_uids=None, studies=None, column=None, paths=None,
-                      instrument=None):
+                      instrument=None, outcome=None):
     """szk.ma.rob-sync-proposal/v1: a kinyerési tábla rob oszlopának javasolt cellái a végső összítéletekből
-    (eredet: 'calculated'). Projektből: project_rob_sync."""
+    (eredet: 'calculated'). outcome: a tábla kimenete — csak az erre (vagy kimenet nélkül) szóló értékelések
+    számítanak, mint a rob_summary-ben és az X003-ban; None: minden értékelés. Projektből: project_rob_sync."""
     return _jsonable(_appraisal().rob_sync_proposal(appraisals, header, rows, tool, row_uids=row_uids,
                                                     studies=studies, column=column, paths=paths,
-                                                    instrument=instrument))
+                                                    instrument=instrument, outcome=outcome))
 
 
 def project_rob_summary(project_dir, outcome, tool=None, plot=None):

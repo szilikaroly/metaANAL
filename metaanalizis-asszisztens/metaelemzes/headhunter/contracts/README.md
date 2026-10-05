@@ -68,6 +68,27 @@ A sémák nem változtak (a mezők a meglévő objektumokba additívan kerülnek
 - **resolution notes**: `accepted_author_form_differs`, `accepted_year_differs` (a cím szó szerint egyezik, a
   szerzőalak/év eltérése tűrt — azonosító-ellenőrzésnél).
 
+## Additív bővítések (független felülvizsgálat, 2026-10-05)
+
+A sémák nem változtak (minden új érték a meglévő mezőkben, additívan):
+
+- **studies**: új javaslat-szabály `L1-bib-mismatch` (`kind: id_conflict`, `pending`) — közös megbízható azonosító,
+  de a cím-hasonlóság < 0,50 és az első szerző/év sem egyezik: nincs automatikus összevonás, ember dönt. A
+  `resolution.status` `unresolved`/`ambiguous` rekord azonosítói nem L1-kulcsok (`dedup.trusted_ids` üres), és nem
+  kerülnek a vizsgálat `registry_ids`-ébe.
+- **decision**: `final_inclusion` + `value: keep_retracted` (cél: `study`, indoklás kötelező) — visszavont
+  közleményű vizsgálat tudatos megtartása (H013); `id_confirm` célja lehet `candidate` (`rv-…#c…`) a CLI-ből is
+  (`decide --target rv-…#c… --value pmid:|doi:|pmcid:|nct:|eid:|openalex:…`).
+- **merged**: `studies[].flags` új értéke `retracted_retention_documented`; a `content_sha256` ujjlenyomatban a
+  másodlagos adat EP6-mezői (`status` → egységesen `unverified`, `verified_decision`, `primary_locator`,
+  `primary_value`) nem számítanak — az EP6 a lezárás (EP5) után jön, és nem érvényteleníti azt.
+- **resolution notes**: `human_choice_bib_mismatch` (a felhasználó által megadott azonosító közleménye nem egyezik a
+  hivatkozással — a döntés érvényes, figyelmeztetéssel).
+- **figyelmeztetés-kódok** (CLI/`resolve`): `id_title_mismatch`, `resolution_year_differs`.
+- **prisma_flow.json**: elavult vagy hiányzó `update_search.json` mellett a program NEM igazítja ki az azonosított
+  számot (korábban: A1 megemelése / A1 = B) — a motor P002-t jelez (H011), és a lezárás nem lehetséges;
+  `hh.no_database_branch` csak akkor igaz, ha nincs adatbázis-ági rekord.
+
 ## Elvek, amelyeket a sémák kikényszerítenek
 
 - **N1 — nincs kitalált azonosító**: minden azonosító `idval` (`value`, `source`, `via`, `at`); a `review`/`user`
