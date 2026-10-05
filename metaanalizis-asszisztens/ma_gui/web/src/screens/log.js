@@ -400,7 +400,7 @@
       h('form', { 'class': 'pf-row', onsubmit: function (ev) { ev.preventDefault(); gateSubmit(); } },
         P.field(t('log.f.stage'), L.els.gStage), P.field(t('log.f.verdict'), L.els.gVerdict), P.field(t('log.f.summary'), L.els.gSummary),
         h('div', { 'class': 'pf-field' }, L.els.gSubmit)),
-      L.els.gPre, L.els.gResult, h('p', { 'class': 'muted', i18n: 'log.gate.note' }));
+      L.els.gPre, L.els.gResult, h('p', { 'class': 'muted pf-note', i18n: 'log.gate.note' }));
   }
 
   // ---------------------------------------------------------------- KB-kereső
@@ -418,7 +418,7 @@
         var id = sc === 'chunk' ? (r.ref || r.id) : r.id;
         out.push(h('li', { 'class': 'item kb-hit', dataset: { scope: sc, id: id } },
           MA.ui.badge('neutral', String(id)),
-          sc === 'rule' && r.strength ? MA.ui.badge(r.strength === 'must' ? 'error' : 'info', t('why.strength.' + r.strength)) : null,
+          sc === 'rule' ? MA.why.strength(r.strength) : null,
           sc === 'knowledge' && r.kind ? MA.ui.badge('info', r.kind) : null,
           sc === 'chunk' ? MA.ui.badge('warning', pick(d.note) || t('kb.localOnly'), { title: t('kb.localOnlyTitle') }) : null,
           h('span', { 'class': 'item-title' }, sc === 'rule' ? r.condition : (sc === 'knowledge' ? r.title : r.source_id + (r.locator ? ' · ' + r.locator : ''))),
@@ -458,7 +458,7 @@
       h('form', { role: 'search', 'class': 'pf-row', onsubmit: function (ev) { ev.preventDefault(); L.kbDeb.cancel(); search(); } },
         P.field(t('kb.query'), input),
         h('fieldset', { 'class': 'log-radios' }, h('legend', { i18n: 'kb.scope' }), radios)),
-      h('p', { 'class': 'muted', i18n: 'kb.copyright' }),
+      h('p', { 'class': 'muted pf-note', i18n: 'kb.copyright' }),
       host);
   }
 

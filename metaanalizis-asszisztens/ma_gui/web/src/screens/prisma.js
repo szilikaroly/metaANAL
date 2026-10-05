@@ -396,6 +396,8 @@
               if (S.dirty) { MA.ui.confirm({ title: t('prisma.unsavedTitle'), message: t('prisma.unsavedBody'), danger: true }).then(function (ok) { if (ok) { reload(ctx, true); } }); } else { reload(ctx, true); }
             } }, t('prisma.refresh')),
             S.els.sum, S.els.status),
+          d.override && d.override.reason ? h('p', { 'class': 'pf-override' }, MA.ui.badge('info', t('prisma.overrideOn')), ' ', d.override.reason,
+            d.override.decision_id ? h('span', { 'class': 'muted' }, ' (#' + String(d.override.decision_id) + ')') : null) : null,
           h('p', { 'class': 'pf-incl' },
             t('prisma.incl', { i: st.studies === undefined ? '—' : String(st.studies), j: st.reports === undefined ? '—' : String(st.reports), path: st.path || '03_adatok/studies.json' }),
             meta.map(function (m) { return h('span', { 'class': 'pf-meta' }, ' · ', t('prisma.inMeta', { k: typeof m.k === 'number' ? String(m.k) : '—', outcome: m.outcome_id || '' })); })),

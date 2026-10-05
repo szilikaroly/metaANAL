@@ -3,7 +3,7 @@
 /* ---- közös űrlap-elemek ---- */
 .pf-field { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pf-field label { font-size: var(--fs-xs); color: var(--muted); font-weight: 600; }
-.pf-hint { font-size: var(--fs-xs); }
+.pf-hint, .pf-note { font-size: var(--fs-xs); }
 .pf-row { display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: flex-end; }
 .pf-row > .pf-field { flex: 1 1 160px; }
 .pf-err { color: var(--crit); font-weight: 600; margin: var(--sp-1) 0; }

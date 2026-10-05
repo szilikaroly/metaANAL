@@ -12,6 +12,7 @@
  *   item(id) → Promise<item|null>             KB-tétel (gyorsítótárazva; ismeretlen azonosító → null)
  *   openItem(id) → modal                      a KB-tétel minden mezője (szövegrésznél „helyi forrás — nem exportálható”)
  *   kbButton(id) → <button>                   „ⓚ ID” → openItem
+ *   strength(s) → jelvény                     KB-szabály erőssége (must | should | consider | avoid)
  *   close()                                   a nyitott buborék bezárása
  *   spec = {kb?: id | [id…], code?, title?, detail?, advice?, source?,
  *           plain?: {asks?, because?, change?, uncertain?},     ← AI-vázlat / egyszerű nyelvű indoklás (6. döntés)
@@ -53,8 +54,10 @@
     return s ? h('div', { 'class': ['why-sec', cls] }, h('h4', { i18n: key }), h('p', null, s)) : null;
   }
 
+  /** a KB-szabály erőssége jelvényként: kötelező (!), kerülendő (⊘), ajánlott / mérlegelendő (ℹ) */
   function strengthBadge(s) {
-    return STRENGTH[s] ? MA.ui.badge(s === 'must' ? 'error' : (s === 'avoid' ? 'warning' : 'info'), t('why.strength.' + s)) : null;
+    if (!STRENGTH[s]) { return null; }
+    return MA.ui.badge(s === 'must' || s === 'avoid' ? 'warning' : 'info', t('why.strength.' + s), s === 'must' ? { symbol: '!' } : (s === 'avoid' ? { symbol: '⊘' } : null));
   }
 
   /** A KB-tétel magyarázó részei (a hívó motor-szövegei elsőbbséget kapnak). */
@@ -132,7 +135,7 @@
     var title = [spec.code || (ids[0] || ''), pick(spec.title)].filter(function (x) { return !!x; }).join(' — ');
     var pop = h('div', { 'class': 'why-pop', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': tid, id: MA.dom.uid('why') },
       h('div', { 'class': 'why-head' },
-        h('h3', { id: tid, tabindex: '-1', 'class': 'why-title' }, h('span', { 'class': 'why-q', 'aria-hidden': 'true' }, '? '), title || t('why.title')),
+        h('h3', { id: tid, tabindex: '-1', 'class': 'why-title' }, h('span', { 'class': 'why-q', 'aria-hidden': 'true' }, '?'), ' ', title || t('why.title')),
         h('button', { type: 'button', 'class': 'btn-icon why-x', 'aria-label': t('common.close'), onclick: function () { close(true); } }, '×')),
       panel(spec),
       h('div', { 'class': 'why-foot' },
@@ -205,7 +208,7 @@
       h('span', { 'aria-hidden': 'true' }, 'ⓚ'), id);
   }
 
-  MA.why = { button: button, open: open, panel: panel, item: item, openItem: openItem, kbButton: kbButton, close: function () { close(false); } };
+  MA.why = { button: button, open: open, panel: panel, item: item, openItem: openItem, kbButton: kbButton, strength: strengthBadge, close: function () { close(false); } };
 
   MA.selftest.register('why: a magyarázat szövegként épül; KB-hivatkozások bontása', function (tt) {
     var el = panel({ detail: '<img src=x onerror=alert(1)>', advice: 'a & b', plain: { asks: '<b>?</b>' } });

@@ -139,7 +139,7 @@ async function waitCheck(page) {
     const o = await openPage('#/overview');
     const r = await o.page.evaluate(() => ({
       screens: window.MA.app.screens().filter((s) => !s.placeholder).map((s) => s.id + ':' + String(s.tab)),
-      why: ['button', 'open', 'panel', 'item', 'openItem', 'kbButton', 'close'].every((k) => typeof window.MA.why[k] === 'function')
+      why: ['button', 'open', 'panel', 'item', 'openItem', 'kbButton', 'strength', 'close'].every((k) => typeof window.MA.why[k] === 'function')
     }));
     ['overview:overview', 'prisma:prisma', 'studies:prisma', 'log:log', 'capabilities:null', 'export:export'].forEach((x) => check(r.screens.indexOf(x) >= 0, 'regisztrált: ' + x));
     check(r.why, 'MA.why API (button, open, panel, item, openItem, kbButton, close)');
