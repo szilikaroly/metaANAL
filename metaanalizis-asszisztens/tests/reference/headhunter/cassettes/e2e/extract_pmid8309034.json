@@ -1,0 +1,2303 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "e2e-extract_pmid8309034",
+  "recorded_at": "2026-10-05T14:13:40Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "extract_review(rv-pmid-8309034) — élő próba hibamódja; OpenAlex-korlát: 12 hivatkozás",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=1&query=EXT_ID%3A8309034+AND+SRC%3AMED&resultType=core",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 1,
+          "request": {
+            "queryString": "EXT_ID:8309034 AND SRC:MED",
+            "internalQuery": "EXT_ID:8309034 AND SRC:MED",
+            "resultType": "CORE",
+            "cursorMark": "*",
+            "pageSize": 1,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "8309034",
+                "source": "MED",
+                "pmid": "8309034",
+                "doi": "10.1001/jama.1994.03510330076038",
+                "title": "Efficacy of BCG vaccine in the prevention of tuberculosis. Meta-analysis of the published literature.",
+                "authorString": "Colditz GA, Brewer TF, Berkey CS, Wilson ME, Burdick E, Fineberg HV, Mosteller F.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Colditz GA",
+                      "lastName": "Colditz",
+                      "firstName": "G A",
+                      "initials": "GA",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-7307-0291"
+                      }
+                    },
+                    {
+                      "fullName": "Brewer TF",
+                      "lastName": "Brewer",
+                      "firstName": "T F",
+                      "initials": "TF",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-5615-1639"
+                      }
+                    },
+                    {
+                      "fullName": "Berkey CS",
+                      "lastName": "Berkey",
+                      "firstName": "C S",
+                      "initials": "CS"
+                    },
+                    {
+                      "fullName": "Wilson ME",
+                      "lastName": "Wilson",
+                      "firstName": "M E",
+                      "initials": "ME"
+                    },
+                    {
+                      "fullName": "Burdick E",
+                      "lastName": "Burdick",
+                      "firstName": "E",
+                      "initials": "E"
+                    },
+                    {
+                      "fullName": "Fineberg HV",
+                      "lastName": "Fineberg",
+                      "firstName": "H V",
+                      "initials": "HV"
+                    },
+                    {
+                      "fullName": "Mosteller F",
+                      "lastName": "Mosteller",
+                      "firstName": "F",
+                      "initials": "F"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics",
+                    "wikipedia",
+                    "outdated_data"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "9",
+                  "volume": "271",
+                  "journalIssueId": 761957,
+                  "dateOfPublication": "1994 Mar",
+                  "monthOfPublication": 3,
+                  "yearOfPublication": 1994,
+                  "journal": {
+                    "medlineAbbreviation": "JAMA",
+                    "title": "JAMA",
+                    "essn": "1538-3598",
+                    "issn": "0098-7484",
+                    "nlmid": "7501160",
+                    "isoabbreviation": "JAMA"
+                  },
+                  "printPublicationDate": "1994-03-01"
+                },
+                "pubYear": "1994",
+                "pageInfo": "698-702",
+                "abstractText": "«redacted»",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Research Support, U.S. Gov't, P.H.S.",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "Y",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Research Design"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "MEDLINE"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "United States"
+                    }
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "commentCorrectionList": {
+                  "commentCorrection": [
+                    {
+                      "source": "MED",
+                      "reference": "ACP J Club. 1994 Jul-Aug;121 Suppl 1:22",
+                      "type": "Comment in",
+                      "orderIn": 1
+                    },
+                    {
+                      "source": "MED",
+                      "id": "8078130",
+                      "reference": "JAMA. 1994 Sep 14;272(10):765; author reply 766. doi: 10.1001/jama.272.10.765b",
+                      "type": "Comment in",
+                      "orderIn": 2
+                    },
+                    {
+                      "source": "MED",
+                      "id": "8078131",
+                      "reference": "JAMA. 1994 Sep 14;272(10):765-6. doi: 10.1001/jama.1994.03520100029015",
+                      "type": "Comment in",
+                      "orderIn": 3
+                    },
+                    {
+                      "source": "MED",
+                      "id": "8078132",
+                      "reference": "JAMA. 1994 Sep 14;272(10):766.",
+                      "type": "Comment in",
+                      "orderIn": 4
+                    }
+                  ]
+                },
+                "extCommentList": {
+                  "extComment": [
+                    {
+                      "extCommentSource": "CRD",
+                      "info1": "11995003437",
+                      "info2": "DARE"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 1263,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasData": "N",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "1994-03-16",
+                "dateOfCreation": "1994-03-02",
+                "dateOfRevision": "2024-01-09",
+                "firstPublicationDate": "1994-03-01",
+                "firstIndexDate": "2010-03-25",
+                "hasEvaluations": "N"
+              }
+            ]
+          }
+        },
+        "redactions": [
+          "abstractText",
+          "slim:authorAffiliationDetailsList",
+          "slim:authorIdList",
+          "slim:affiliation",
+          "slim:fullTextUrlList"
+        ]
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/8309034/references?format=json&page=1&pageSize=1000",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 0,
+          "request": {
+            "id": "8309034",
+            "source": "MED",
+            "offSet": 1,
+            "pageSize": 1000
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/pmid:8309034?select=id%2Creferenced_works",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35184"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W2075477269",
+          "referenced_works": [
+            "https://openalex.org/W47866061",
+            "https://openalex.org/W99589845",
+            "https://openalex.org/W148027347",
+            "https://openalex.org/W1505488207",
+            "https://openalex.org/W1525724796",
+            "https://openalex.org/W1561900460",
+            "https://openalex.org/W1599621040",
+            "https://openalex.org/W1775406031",
+            "https://openalex.org/W1862202521",
+            "https://openalex.org/W1868650262",
+            "https://openalex.org/W1945493388",
+            "https://openalex.org/W1977833494",
+            "https://openalex.org/W1983607152",
+            "https://openalex.org/W1989119609",
+            "https://openalex.org/W1994436043",
+            "https://openalex.org/W2005769920",
+            "https://openalex.org/W2026673721",
+            "https://openalex.org/W2028868711",
+            "https://openalex.org/W2052777148",
+            "https://openalex.org/W2067550511",
+            "https://openalex.org/W2075830613",
+            "https://openalex.org/W2076965495",
+            "https://openalex.org/W2077802476",
+            "https://openalex.org/W2087010421",
+            "https://openalex.org/W2103026252",
+            "https://openalex.org/W2107328434",
+            "https://openalex.org/W2108096268",
+            "https://openalex.org/W2112566069",
+            "https://openalex.org/W2116446898",
+            "https://openalex.org/W2126562933",
+            "https://openalex.org/W2136806802",
+            "https://openalex.org/W2143400844",
+            "https://openalex.org/W2144045544",
+            "https://openalex.org/W2144802046",
+            "https://openalex.org/W2147316565",
+            "https://openalex.org/W2228980639",
+            "https://openalex.org/W2253186775",
+            "https://openalex.org/W2276739175",
+            "https://openalex.org/W2294123752",
+            "https://openalex.org/W2299250842",
+            "https://openalex.org/W2310906429",
+            "https://openalex.org/W2338213273",
+            "https://openalex.org/W2370212299",
+            "https://openalex.org/W2410941264",
+            "https://openalex.org/W2416156283",
+            "https://openalex.org/W2418150095",
+            "https://openalex.org/W2440472675",
+            "https://openalex.org/W2440531979",
+            "https://openalex.org/W2466455535",
+            "https://openalex.org/W2725889512",
+            "https://openalex.org/W3024999629",
+            "https://openalex.org/W4235671691",
+            "https://openalex.org/W4285719527"
+          ]
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works?cursor=%2A&filter=openalex%3AW47866061%7CW99589845%7CW148027347%7CW1505488207%7CW1525724796%7CW1561900460%7CW1599621040%7CW1775406031%7CW1862202521%7CW1868650262%7CW1945493388%7CW1977833494&per_page=12&select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "application/json",
+          "retry-after": "35184",
+          "x-ratelimit-cost-required-usd": "0.0001",
+          "x-ratelimit-credits-required": "1",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35184"
+        },
+        "body_json": {
+          "error": "Rate limit exceeded",
+          "message": "Insufficient budget. This request has no API key, so it counts against the free daily budget shared by everyone on your network's IP address, and that budget is used up ($0 remaining; resets at midnight UTC). Use your own key instead: add ?api_key=«redacted» to the URL, or send it as an \"Authorization: «redacted»\" header. Keys are free and have their own budget: https://help.openalex.org/api/authentication/",
+          "retryAfter": 35184,
+          "costUsd": 0.0001,
+          "dailyRemainingUsd": 0,
+          "prepaidRemainingUsd": 0,
+          "creditsRequired": 1,
+          "creditsRemaining": 0,
+          "onetimeCreditsRemaining": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W47866061?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35183"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W47866061",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W47866061",
+            "mag": "47866061",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/6433675"
+          },
+          "display_name": "Research on BCG vaccination.",
+          "publication_year": 1984,
+          "publication_date": "1984-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:6433675",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/6433675",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Advances in tuberculosis research. Fortschritte der Tuberkuloseforschung. Progres de l'exploration de la tuberculose",
+            "raw_type": "Clinical Trial"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5005225580",
+                "display_name": "Huyen Dam",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": true,
+              "raw_author_name": "H G ten Dam",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "21",
+            "issue": null,
+            "first_page": "79",
+            "last_page": "106"
+          },
+          "cited_by_count": 83,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W99589845?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35182"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W99589845",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W99589845",
+            "mag": "99589845",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/818671"
+          },
+          "display_name": "Tuberculosis studies in Muscogee County, Georgia. Twenty-year evaluation of a community trial of BCG vaccination.",
+          "publication_year": 1976,
+          "publication_date": "1976-08-02",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:818671",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/818671",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Public health reports (Washington, D.C. : 1974)",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5111760086",
+                "display_name": "George W. Comstock",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "G W Comstock",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5013444787",
+                "display_name": "Shirley Ferebee Woolpert",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S F Woolpert",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5066764833",
+                "display_name": "Verna T. Livesay",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "V T Livesay",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "91",
+            "issue": "3",
+            "first_page": "276",
+            "last_page": "80"
+          },
+          "cited_by_count": 75,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": true,
+            "oa_status": "green",
+            "oa_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/1439003",
+            "any_repository_has_fulltext": true
+          },
+          "referenced_works_count": 16
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W148027347?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35182"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W148027347",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W148027347",
+            "mag": "148027347",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/798638"
+          },
+          "display_name": "Present knowledge of immunization against tuberculosis.",
+          "publication_year": 1976,
+          "publication_date": "1976-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:798638",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/798638",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Bulletin of the World Health Organization",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5005225580",
+                "display_name": "Huyen Dam",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "H G Dam",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5052334188",
+                "display_name": "K Toman",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "K Toman",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5031482670",
+                "display_name": "K L Hitze",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "K L Hitze",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5084979920",
+                "display_name": "J Guld",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "J Guld",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "54",
+            "issue": "3",
+            "first_page": "255",
+            "last_page": "69"
+          },
+          "cited_by_count": 50,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": true,
+            "oa_status": "green",
+            "oa_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/2366573",
+            "any_repository_has_fulltext": true
+          },
+          "referenced_works_count": 22
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1505488207?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35182"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1505488207",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W1505488207",
+            "mag": "1505488207"
+          },
+          "display_name": "Recurrent Japanese encephalitis epidemics in West Bengal.",
+          "publication_year": 1980,
+          "publication_date": "1980-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "mag:1505488207",
+            "is_oa": false,
+            "landing_page_url": "https://www.cabdirect.org/abstracts/19812900757.html",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S147245081",
+              "display_name": "The Indian Journal of Medical Research",
+              "issn_l": "0971-5916",
+              "issn": [
+                "0971-5916"
+              ],
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": true,
+              "listed_in": [
+                "cwts-core",
+                "jufo-1",
+                "ki-jl-1",
+                "medline",
+                "norway-1"
+              ],
+              "host_organization": "https://openalex.org/P4310320448",
+              "host_organization_name": "Medknow",
+              "host_organization_lineage": [
+                "https://openalex.org/P4310320448",
+                "https://openalex.org/P4310318547"
+              ],
+              "host_organization_lineage_names": [
+                "Medknow",
+                "Wolters Kluwer"
+              ],
+              "type": "journal"
+            },
+            "license": null,
+            "license_id": null,
+            "version": null,
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": "The Indian Journal of Medical Research",
+            "raw_type": null
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": null,
+                "display_name": "Meenakshi Chakraborty",
+                "orcid": "https://orcid.org/0000-0001-8985-7219",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-8985-7219"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "Meenakshi Chakraborty",
+              "raw_affiliation_strings": [],
+              "raw_orcid": "https://orcid.org/0000-0001-8985-7219",
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": null,
+                "display_name": "Swarnendu Kumar Chakraborty",
+                "orcid": "https://orcid.org/0000-0002-6223-9362",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-6223-9362"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "Swarnendu Kumar Chakraborty",
+              "raw_affiliation_strings": [],
+              "raw_orcid": "https://orcid.org/0000-0002-6223-9362",
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": null,
+                "display_name": "K. K. Mukherjee",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "K. K. Mukherjee",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5066699162",
+                "display_name": "Anindya Mitra",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "Anindya Mitra",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5109851792",
+                "display_name": "K. Mitra",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "K. Mitra",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": null,
+                "display_name": "BP Gupta",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "BP Gupta",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5067054198",
+                "display_name": "Jayanta Sarkar",
+                "orcid": "https://orcid.org/0000-0002-9905-7722",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-9905-7722"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "Jayanta Sarkar",
+              "raw_affiliation_strings": [],
+              "raw_orcid": "https://orcid.org/0000-0002-9905-7722",
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "72",
+            "issue": null,
+            "first_page": "1",
+            "last_page": "6"
+          },
+          "cited_by_count": 140,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1525724796?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35182"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1525724796",
+          "doi": "https://doi.org/10.7326/0003-4819-33-4-941",
+          "ids": {
+            "openalex": "https://openalex.org/W1525724796",
+            "doi": "https://doi.org/10.7326/0003-4819-33-4-941",
+            "mag": "1525724796",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/14771762"
+          },
+          "display_name": "TUBERCULOSIS IN STUDENT NURSES AND MEDICAL STUDENTS AT THE UNIVERSITY OF WISCONSIN",
+          "publication_year": 1950,
+          "publication_date": "1950-10-01",
+          "type": "article",
+          "primary_location": {
+            "id": "doi:10.7326/0003-4819-33-4-941",
+            "is_oa": false,
+            "landing_page_url": "https://doi.org/10.7326/0003-4819-33-4-941",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S119722071",
+              "display_name": "Annals of Internal Medicine",
+              "issn_l": "0003-4819",
+              "issn": [
+                "0003-4819",
+                "1539-3704"
+              ],
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": true,
+              "listed_in": [
+                "cwts-core",
+                "doyens",
+                "jufo-3",
+                "ki-jl-3",
+                "medline",
+                "norway-2"
+              ],
+              "host_organization": "https://openalex.org/P4310316812",
+              "host_organization_name": "American College of Physicians",
+              "host_organization_lineage": [
+                "https://openalex.org/P4310316812"
+              ],
+              "host_organization_lineage_names": [
+                "American College of Physicians"
+              ],
+              "type": "journal"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Annals of Internal Medicine",
+            "raw_type": "journal-article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5052398848",
+                "display_name": "Helen A. Dickie",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": true,
+              "raw_author_name": "HELEN A. DICKIE",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "33",
+            "issue": "4",
+            "first_page": "941",
+            "last_page": "959"
+          },
+          "cited_by_count": 29,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 8
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1561900460?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35181"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1561900460",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W1561900460",
+            "mag": "1561900460",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/14494079"
+          },
+          "display_name": "BCG vaccination against tuberculosis in Chicago. A twenty-year study statistically analyzed.",
+          "publication_year": 1961,
+          "publication_date": "1961-10-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:14494079",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/14494079",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Pediatrics",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5105402787",
+                "display_name": "Rosenthal",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S R ROSENTHAL",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5008660585",
+                "display_name": "Loewinsohne",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "LOEWINSOHNE",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": null,
+                "display_name": "M L GRAHAM",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M L GRAHAM",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5055779032",
+                "display_name": "Dorothy Liveright",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "D LIVERIGHT",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5002399583",
+                "display_name": "G Thorne",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "G THORNE",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5105452235",
+                "display_name": "J R Johnson",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "V JOHNSON",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "28",
+            "issue": null,
+            "first_page": "622",
+            "last_page": "41"
+          },
+          "cited_by_count": 119,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1599621040?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35181"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1599621040",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W1599621040",
+            "mag": "1599621040"
+          },
+          "display_name": "Epidemiology in Medicine",
+          "publication_year": 1987,
+          "publication_date": "1987-01-15",
+          "type": "book",
+          "primary_location": {
+            "id": "mag:1599621040",
+            "is_oa": false,
+            "landing_page_url": "https://ci.nii.ac.jp/ncid/BA1964815X",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4210197683",
+              "display_name": "Medical Entomology and Zoology",
+              "issn_l": "0424-7086",
+              "issn": [
+                "0424-7086",
+                "2185-5609"
+              ],
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": true,
+              "listed_in": [
+                "cwts-core"
+              ],
+              "host_organization": "https://openalex.org/P4310319750",
+              "host_organization_name": "Japan Society of Medical Entomology and Zoology",
+              "host_organization_lineage": [
+                "https://openalex.org/P4310319750"
+              ],
+              "host_organization_lineage_names": [
+                "Japan Society of Medical Entomology and Zoology"
+              ],
+              "type": "journal"
+            },
+            "license": null,
+            "license_id": null,
+            "version": null,
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": null,
+            "raw_type": null
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5006554574",
+                "display_name": "Charles H. Hennekens",
+                "orcid": "https://orcid.org/0000-0003-1214-1663",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0003-1214-1663"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "Charles H. Hennekens",
+              "raw_affiliation_strings": [],
+              "raw_orcid": "https://orcid.org/0000-0003-1214-1663",
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5090744975",
+                "display_name": "Julie E. Buring",
+                "orcid": "https://orcid.org/0000-0003-2648-8692",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0003-2648-8692"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "Julie E. Buring",
+              "raw_affiliation_strings": [],
+              "raw_orcid": "https://orcid.org/0000-0003-2648-8692",
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5007150327",
+                "display_name": "Sherry L. Mayrent",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "Sherry L. Mayrent",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": null,
+            "issue": null,
+            "first_page": null,
+            "last_page": null
+          },
+          "cited_by_count": 2105,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1775406031?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35181"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1775406031",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W1775406031",
+            "mag": "1775406031",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/1934236"
+          },
+          "display_name": "Case-control evaluation of a school-age BCG vaccination programme in subtropical Australia.",
+          "publication_year": 1991,
+          "publication_date": "1991-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:1934236",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/1934236",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Bulletin of the World Health Organization",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5082538730",
+                "display_name": "Abhishek Patel",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "A Patel",
+              "raw_affiliation_strings": [
+                "Department of Health, Brisbane, Australia"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Department of Health, Brisbane, Australia",
+                  "institution_ids": []
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5108379193",
+                "display_name": "F. D. Schofield",
+                "orcid": "https://orcid.org/0009-0008-0481-8658",
+                "observed_orcids": [
+                  "https://orcid.org/0009-0008-0481-8658"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "F Schofield",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5003226234",
+                "display_name": "Victor Siskind",
+                "orcid": "https://orcid.org/0000-0001-6155-5884",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-6155-5884"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "V Siskind",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5020840888",
+                "display_name": "E. W. Abrahams",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "E Abrahams",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": null,
+                "display_name": "J Parker",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "J Parker",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "69",
+            "issue": "4",
+            "first_page": "425",
+            "last_page": "33"
+          },
+          "cited_by_count": 32,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": true,
+            "oa_status": "green",
+            "oa_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/2393242",
+            "any_repository_has_fulltext": true
+          },
+          "referenced_works_count": 10
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1862202521?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35181"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1862202521",
+          "doi": "https://doi.org/10.1016/s0041-3879(49)80055-9",
+          "ids": {
+            "openalex": "https://openalex.org/W1862202521",
+            "doi": "https://doi.org/10.1016/s0041-3879(49)80055-9",
+            "mag": "1862202521",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/18102809"
+          },
+          "display_name": "BCG vaccination of Indian infants in Saskatchewan",
+          "publication_year": 1949,
+          "publication_date": "1949-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "doi:10.1016/s0041-3879(49)80055-9",
+            "is_oa": false,
+            "landing_page_url": "https://doi.org/10.1016/s0041-3879(49)80055-9",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S42132354",
+              "display_name": "Tubercle",
+              "issn_l": "0041-3879",
+              "issn": [
+                "0041-3879",
+                "1878-6006"
+              ],
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/P4310321208",
+              "host_organization_name": "Churchill Livingstone",
+              "host_organization_lineage": [
+                "https://openalex.org/P4310321208",
+                "https://openalex.org/P4310320990"
+              ],
+              "host_organization_lineage_names": [
+                "Churchill Livingstone",
+                "Elsevier BV"
+              ],
+              "type": "journal"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Tubercle",
+            "raw_type": "journal-article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5033244875",
+                "display_name": "Ferguson Rg",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "RG Ferguson",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5082366735",
+                "display_name": "A.B. Simes",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "AB Simes",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "30",
+            "issue": "1",
+            "first_page": "5",
+            "last_page": "11"
+          },
+          "cited_by_count": 124,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1868650262?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35180"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1868650262",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W1868650262",
+            "mag": "1868650262",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/3965065"
+          },
+          "display_name": "Tuberculosis in female nurses in British Columbia: implications for control programs.",
+          "publication_year": 1985,
+          "publication_date": "1985-01-15",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:3965065",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/3965065",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Canadian Medical Association journal",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5006574976",
+                "display_name": "Dan Y. Burrill",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "D Burrill",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5109906400",
+                "display_name": "D. A. Enarson",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "D A Enarson",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5103465262",
+                "display_name": "Elizabeth A. Allen",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "E A Allen",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5051750666",
+                "display_name": "Stefan Grzybowski",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S Grzybowski",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "132",
+            "issue": "2",
+            "first_page": "137",
+            "last_page": "40"
+          },
+          "cited_by_count": 24,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": true,
+            "oa_status": "green",
+            "oa_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/1346741",
+            "any_repository_has_fulltext": true
+          },
+          "referenced_works_count": 2
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1945493388?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35180"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1945493388",
+          "doi": "https://doi.org/10.1093/oxfordjournals.epirev.a036046",
+          "ids": {
+            "openalex": "https://openalex.org/W1945493388",
+            "doi": "https://doi.org/10.1093/oxfordjournals.epirev.a036046",
+            "mag": "1945493388",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/2680563"
+          },
+          "display_name": "EPIDEMIOLOGY OF TUBERCULOSIS IN THE UNITED STATES",
+          "publication_year": 1989,
+          "publication_date": "1989-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "doi:10.1093/oxfordjournals.epirev.a036046",
+            "is_oa": false,
+            "landing_page_url": "https://doi.org/10.1093/oxfordjournals.epirev.a036046",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S136459416",
+              "display_name": "Epidemiologic Reviews",
+              "issn_l": "0193-936X",
+              "issn": [
+                "0193-936X",
+                "1478-6729"
+              ],
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": true,
+              "listed_in": [
+                "cwts-core",
+                "doyens",
+                "jufo-2",
+                "ki-jl-1",
+                "medline",
+                "norway-1"
+              ],
+              "host_organization": "https://openalex.org/P4310311648",
+              "host_organization_name": "Oxford University Press",
+              "host_organization_lineage": [
+                "https://openalex.org/P4310311648",
+                "https://openalex.org/P4310311647"
+              ],
+              "host_organization_lineage_names": [
+                "Oxford University Press",
+                "University of Oxford"
+              ],
+              "type": "journal"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Epidemiologic Reviews",
+            "raw_type": "journal-article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5080925841",
+                "display_name": "Hans L. Rieder",
+                "orcid": "https://orcid.org/0000-0003-1298-5559",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0003-1298-5559"
+                ]
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I1289490764",
+                  "display_name": "Centers for Disease Control and Prevention",
+                  "ror": "https://ror.org/042twtr12",
+                  "country_code": "US",
+                  "type": "government",
+                  "lineage": [
+                    "https://openalex.org/I1289490764",
+                    "https://openalex.org/I1299022934"
+                  ]
+                }
+              ],
+              "countries": [
+                "US"
+              ],
+              "is_corresponding": true,
+              "raw_author_name": "HANS L. RIEDER",
+              "raw_affiliation_strings": [
+                "Division of Tuberculosis Control, Centers for Disease Control, Atlanta, GA 30333",
+                "Division of Tuberculosis Control, Centers for Disease Control, Atlanta, Ga 30333"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Division of Tuberculosis Control, Centers for Disease Control, Atlanta, GA 30333",
+                  "institution_ids": [
+                    "https://openalex.org/I1289490764"
+                  ]
+                },
+                {
+                  "raw_affiliation_string": "Division of Tuberculosis Control, Centers for Disease Control, Atlanta, Ga 30333",
+                  "institution_ids": [
+                    "https://openalex.org/I1289490764"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5036553121",
+                "display_name": "George M. Cauthen",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I1289490764",
+                  "display_name": "Centers for Disease Control and Prevention",
+                  "ror": "https://ror.org/042twtr12",
+                  "country_code": "US",
+                  "type": "government",
+                  "lineage": [
+                    "https://openalex.org/I1289490764",
+                    "https://openalex.org/I1299022934"
+                  ]
+                }
+              ],
+              "countries": [
+                "US"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "GEORGE M. CAUTHEN",
+              "raw_affiliation_strings": [
+                "Division of Tuberculosis Control, Centers for Disease Control Atlanta, GA",
+                "Division of Tuberculosis Control, Centers for Disease ControlAtlanta, GA"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Division of Tuberculosis Control, Centers for Disease Control Atlanta, GA",
+                  "institution_ids": [
+                    "https://openalex.org/I1289490764"
+                  ]
+                },
+                {
+                  "raw_affiliation_string": "Division of Tuberculosis Control, Centers for Disease ControlAtlanta, GA",
+                  "institution_ids": [
+                    "https://openalex.org/I1289490764"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5111760086",
+                "display_name": "George W. Comstock",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I145311948",
+                  "display_name": "Johns Hopkins University",
+                  "ror": "https://ror.org/00za53h95",
+                  "country_code": "US",
+                  "type": "education",
+                  "lineage": [
+                    "https://openalex.org/I145311948"
+                  ]
+                }
+              ],
+              "countries": [
+                "US"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "GEORGE W. COMSTOCK",
+              "raw_affiliation_strings": [
+                "Department of Epidemiology, The Johns Hopkins University School of Hygiene and Public Health Baltimore, MD",
+                "Department of Epidemiology The Johns Hopkins University School of Hygiene and Public HealthBaltimore, MD"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Department of Epidemiology, The Johns Hopkins University School of Hygiene and Public Health Baltimore, MD",
+                  "institution_ids": [
+                    "https://openalex.org/I145311948"
+                  ]
+                },
+                {
+                  "raw_affiliation_string": "Department of Epidemiology The Johns Hopkins University School of Hygiene and Public HealthBaltimore, MD",
+                  "institution_ids": [
+                    "https://openalex.org/I145311948"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5111445322",
+                "display_name": "Dixie E. Snider",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I1289490764",
+                  "display_name": "Centers for Disease Control and Prevention",
+                  "ror": "https://ror.org/042twtr12",
+                  "country_code": "US",
+                  "type": "government",
+                  "lineage": [
+                    "https://openalex.org/I1289490764",
+                    "https://openalex.org/I1299022934"
+                  ]
+                }
+              ],
+              "countries": [
+                "US"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "DIXIE E. SNIDER",
+              "raw_affiliation_strings": [
+                "Division of Tuberculosis Control, Centers for Disease Control Atlanta, GA",
+                "Division of Tuberculosis Control, Centers for Disease ControlAtlanta, GA"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Division of Tuberculosis Control, Centers for Disease Control Atlanta, GA",
+                  "institution_ids": [
+                    "https://openalex.org/I1289490764"
+                  ]
+                },
+                {
+                  "raw_affiliation_string": "Division of Tuberculosis Control, Centers for Disease ControlAtlanta, GA",
+                  "institution_ids": [
+                    "https://openalex.org/I1289490764"
+                  ]
+                }
+              ]
+            }
+          ],
+          "biblio": {
+            "volume": "11",
+            "issue": "1",
+            "first_page": "79",
+            "last_page": "98"
+          },
+          "cited_by_count": 450,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W1977833494?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35180"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W1977833494",
+          "doi": "https://doi.org/10.1016/s0140-6736(80)90820-x",
+          "ids": {
+            "openalex": "https://openalex.org/W1977833494",
+            "doi": "https://doi.org/10.1016/s0140-6736(80)90820-x",
+            "mag": "1977833494",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/6101775"
+          },
+          "display_name": "BCG: BAD NEWS FROM INDIA",
+          "publication_year": 1980,
+          "publication_date": "1980-02-01",
+          "type": "article",
+          "primary_location": {
+            "id": "doi:10.1016/s0140-6736(80)90820-x",
+            "is_oa": false,
+            "landing_page_url": "https://doi.org/10.1016/s0140-6736(80)90820-x",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S49861241",
+              "display_name": "The Lancet",
+              "issn_l": "0099-5355",
+              "issn": [
+                "0099-5355",
+                "0140-6736",
+                "1474-547X"
+              ],
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": true,
+              "listed_in": [
+                "cwts-core",
+                "doyens",
+                "jufo-3",
+                "ki-jl-3",
+                "medline",
+                "norway-2"
+              ],
+              "host_organization": "https://openalex.org/P4310320990",
+              "host_organization_name": "Elsevier BV",
+              "host_organization_lineage": [
+                "https://openalex.org/P4310320990"
+              ],
+              "host_organization_lineage_names": [
+                "Elsevier BV"
+              ],
+              "type": "journal"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The Lancet",
+            "raw_type": "journal-article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5112423750",
+                "display_name": "GA MacGregor",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": true,
+              "raw_author_name": "G MACGREGOR",
+              "raw_affiliation_strings": [
+                "St Luke's Hospital, Guildford, Surrey GU1 3NT, United Kingdom"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "St Luke's Hospital, Guildford, Surrey GU1 3NT, United Kingdom",
+                  "institution_ids": []
+                }
+              ]
+            }
+          ],
+          "biblio": {
+            "volume": "315",
+            "issue": "8163",
+            "first_page": "318",
+            "last_page": "318"
+          },
+          "cited_by_count": 23,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 11
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

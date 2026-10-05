@@ -305,6 +305,13 @@
               "rating",
               "start"
             ]
+          },
+          "severity": {
+            "enum": [
+              "some",
+              "high"
+            ],
+            "description": "a problémás válasz saját szintje (ROBINS-E „gyenge nem”: some)"
           }
         }
       }
@@ -437,6 +444,26 @@
             "additionalProperties": {
               "type": "integer"
             }
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/rule"
+            }
+          },
+          "verdict_labels": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                }
+              ]
+            },
+            "description": "doménenkénti ítéletfelirat (ROBINS-E D1: alacsony, kivéve a nem kontrollált zavarást)"
           }
         }
       }
@@ -554,6 +581,56 @@
           },
           "kb": {
             "type": "string"
+          },
+          "ask_if": {
+            "$ref": "#/$defs/condition"
+          },
+          "official_id": {
+            "type": "string",
+            "pattern": "^[0-9A-Za-z.\\-]+$",
+            "description": "a hivatalos tételszám, ha a kulcs eltér (NOS eset-kontroll, QUIPS a–g)"
+          },
+          "parts": {
+            "type": "array",
+            "description": "külön ítélt résztételek (AMSTAR 2 9., 11.: RCT / NRSI)",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]+$"
+                },
+                "label": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                    }
+                  ]
+                },
+                "answers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "na_label": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -720,6 +797,102 @@
               }
             ]
           }
+        }
+      }
+    },
+    "validator_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "a validator referenciafájljának tételazonosítói, ha a definíció a publikált eszközt követi helyette (sodródás-őr)"
+    }
+  },
+  "$defs": {
+    "condition": {
+      "type": "object",
+      "description": "gépi feltétel (ask_if, rules[].if): {item, in} | {all: [...]} | {any: [...]} | {not: …} | {always: true}; háromértékű kiértékelés (hiányzó válasz: ismeretlen)",
+      "properties": {
+        "item": {
+          "type": "string",
+          "pattern": "^((development|evaluation)/)?[0-9A-Za-z.\\-]+$"
+        },
+        "in": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "all": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "any": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          }
+        },
+        "not": {
+          "$ref": "#/$defs/condition"
+        },
+        "always": {
+          "type": "boolean"
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "required": [
+        "if",
+        "tier"
+      ],
+      "description": "doménszabály: részenként (part) az első igaz 'if' dönt; tier: low | some | high (a rollup.tiers szerint ítéletté); because: a kiváltó tételek; kind 'unknown': csak 'Nincs információ' váltja ki",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "part": {
+          "type": "string"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "if": {
+          "$ref": "#/$defs/condition"
+        },
+        "tier": {
+          "enum": [
+            "low",
+            "some",
+            "high"
+          ]
+        },
+        "because": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "kind": {
+          "enum": [
+            "unknown"
+          ]
+        },
+        "text": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
         }
       }
     }

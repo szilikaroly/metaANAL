@@ -14,16 +14,24 @@ Számítás (a felület nem számol):
                                  AMSTAR 2 (mindkét konvenció), GRADE (feloldatlan publikációs torzítás), NOS-csillagok,
                                  TRIPOD+AI jelentési teljesség
     validate(doc)              → szerkezeti és tartalmi hibák (magyarul)
-    agreement(párok)           → szk.ma.appraisal-agreement/v1: Cohen-féle κ CI-vel (Fleiss–Cohen–Everitt 1969),
-                                 eltérések; appraisal_consensus(a, b) ugyanez egy párra
+    agreement(párok)           → szk.ma.appraisal-agreement/v1: elsődlegesen a doménítéletek Cohen-féle κ-ja
+                                 (doménenként, összevonva, összítélet), másodlagosan a tételszintű κ CI-vel
+                                 (Fleiss–Cohen–Everitt 1969; a kettős NA kimarad), eltérések; appraisal_consensus(a,
+                                 b) ugyanez egy párra
     build_consensus(a, b, …)   → konszenzus-dokumentum (status: consensus)
     rob_summary(docs, tool, …) → szk.rob-summary/v1 (forgalmi lámpa + súlyarány egy futásból)
     rob_sync_proposal(…)       → szk.ma.rob-sync-proposal/v1 (javasolt rob-cellák, 'calculated' eredet)
 
-Implikált ítélet: RoB 2, ROBINS-I/E, QUADAS-2, QUIPS — 'conservative' (validátor-kompatibilis szabály: amit a
-válaszok kikényszerítenek; NEM a hivatalos folyamatábra); AMSTAR 2, GRADE — 'published'; NOS — 'count' (küszöb nincs);
-PROBAST+AI, JBI, TRIPOD+AI — 'none' (emberi ítélet). Az AI-vázlat (origin: ai_draft) soha nem értékelő: a κ és a
-konszenzus elutasítja (6. döntés)."""
+Implikált ítélet: RoB 2, ROBINS-I/E, QUADAS-2, QUIPS — 'conservative' (NEM a hivatalos algoritmus címkéjével). A RoB 2
+gépi doménszabályai a 2019-es folyamatábra ágait követik (az ellenőrizhetetlen ágon a szigorúbb ítélettel, így sosem
+enyhébb a hivatalosnál), a ROBINS-I (2016) és a ROBINS-E (2023) szabályai a táblázatos kritériumokat és az
+útválasztást; a QUADAS-2 és a QUIPS a polaritás-alapú szabályt (amit a válaszok kikényszerítenek). Az útválasztás
+(ask_if) mindenhol érvényes: a nem kérdezett tétel válasza nem számít, a kérdezendő tételen adott 'Nem alkalmazható'
+'Nincs információ'-ként számít. AMSTAR 2, GRADE — 'published'; NOS — 'count' (küszöb nincs); PROBAST+AI, JBI,
+TRIPOD+AI — 'none' (emberi ítélet). A GRADE számított bizonyossága csak javaslat: lezárt GRADE-értékeléshez emberi
+bizonyosság (overall.judgement) és feloldott „gyanított” publikációs torzítás kell (4. döntés). Az AI-vázlat (origin:
+ai_draft) soha nem értékelő: a κ és a konszenzus elutasítja (6. döntés); a konszenzus-vázlat sem értékelő, és a saját
+.consensus.json fájljába kerül."""
 import collections
 import copy
 import datetime
@@ -65,6 +73,15 @@ Z95 = 1.959963984540054
 MAX_TEXT = 4000
 MAX_QUOTE = 1000
 GRADE_LEVELS = ("very_low", "low", "moderate", "high")
+GRADE_VOCABULARY = "szk.ma.grade/v1"
+
+
+def grade_token(value):
+    """Az eszköz-definíció GRADE-tokenje (very_low, not_serious, strongly_suspected, very_large …) → a
+    szk.ma.grade/v1 és szk.ma.sof/v1 szerződés kanonikus tokenje (very low, not serious, strongly suspected …). A
+    GRADE-blokk (appraisal-result 'grade') ezt adja, hogy a GRADE / SoF homlokzat (api.grade_put, api.sof)
+    közvetlenül átvehesse (m2)."""
+    return value.replace("_", " ") if isinstance(value, str) else value
 GRADE_DOWN = {"not_serious": 0, "serious": -1, "very_serious": -2}
 GRADE_UP = {"no": 0, "yes": 1, "very_large": 2}
 AMSTAR2_CONVENTIONS = ("meets", "weakness")
@@ -119,10 +136,44 @@ def unit_of(doc):
     return u if isinstance(u, str) and u.strip() else None
 
 
+_KEY_FALLBACK = {"result": ("outcome", "result"), "outcome": ("outcome",), "model": ("model",),
+                 "index_test": ("index_test",)}
+
+
+def _key_slug(v):
+    if not isinstance(v, str) or not v.strip():
+        return None
+    v = v.strip()
+    if TARGET_RE.match(v):
+        return v
+    s = _SLUG_BAD.sub("_", v).strip("_")[:64]
+    return s if s and TARGET_RE.match(s) else None
+
+
+def derived_target_key(doc):
+    """A cél (target.key) hiányában a fájlnév cél-része az eszköz egységéből: eredmény- és kimenet-szintű eszköznél
+    (RoB 2, ROBINS-I/E, QUIPS, GRADE) a target.outcome (majd target.result), modellnél a target.model, indextesztnél a
+    target.index_test — így két kimenet értékelése nem ütközik egy fájlon. → kulcs vagy None."""
+    tg = doc.get("target") if isinstance(doc.get("target"), dict) else {}
+    tool = doc.get("tool")
+    try:
+        unit = _I.load(tool).unit if isinstance(tool, str) and tool in _I.available() else None
+    except _I.InstrumentError:
+        unit = None
+    for field in _KEY_FALLBACK.get(unit, ()):
+        k = _key_slug(tg.get(field))
+        if k:
+            return k
+    return None
+
+
 def target_key(doc):
+    """A fájlnév cél-része: target.key, ennek hiányában a derived_target_key (kimenet / eredmény / modell)."""
     tg = doc.get("target") if isinstance(doc.get("target"), dict) else {}
     k = tg.get("key")
-    return k if isinstance(k, str) and k else None
+    if isinstance(k, str) and k:
+        return k
+    return derived_target_key(doc)
 
 
 def slug(unit):
@@ -133,9 +184,20 @@ def slug(unit):
     return s
 
 
+def is_consensus_doc(doc):
+    """Konszenzus-dokumentum-e (lezárt VAGY még feloldatlan tételekkel 'draft' státuszú): status 'consensus', vagy
+    van consensus_of (két független értékelés egyeztetése). A konszenzus-vázlat sem független értékelés, és soha nem
+    kerülhet egy értékelő saját fájljába (C1)."""
+    if not isinstance(doc, dict):
+        return False
+    return doc.get("status") == "consensus" or (isinstance(doc.get("consensus_of"), list) and
+                                                bool(doc["consensus_of"]))
+
+
 def rater_of(doc):
-    """A fájlnév értékelő-része: 'consensus' a konszenzus-változatnál, 'ai' az AI-vázlatnál, különben az értékelő."""
-    if doc.get("status") == "consensus":
+    """A fájlnév értékelő-része: 'consensus' a konszenzus-változatnál (vázlatnál is), 'ai' az AI-vázlatnál, különben
+    az értékelő."""
+    if is_consensus_doc(doc):
         return RATER_CONSENSUS
     if doc.get("origin") == "ai_draft":
         return RATER_AI
@@ -168,7 +230,7 @@ def parse_name(name):
 
 def is_rater(doc):
     """Független emberi értékelés-e (a κ és a konszenzus csak ezt fogadja el; 6. döntés)."""
-    return (isinstance(doc, dict) and doc.get("origin", "human") == "human" and doc.get("status") != "consensus"
+    return (isinstance(doc, dict) and doc.get("origin", "human") == "human" and not is_consensus_doc(doc)
             and isinstance(doc.get("assessor"), str) and doc["assessor"].lower() not in RESERVED_RATERS)
 
 
@@ -187,9 +249,19 @@ def normalize(doc, instrument=None):
         if isinstance(a, str):
             a = {"value": a}
             answers[key] = a
+        it = inst.item(key) if isinstance(key, str) else None
+        if isinstance(a, dict) and it is not None and inst.parts(it) and isinstance(a.get("parts"), dict):
+            for pid, pv in list(a["parts"].items()):
+                cv = inst.canonical(pv) if isinstance(pv, str) else None
+                if cv is not None and cv in inst.part_allowed(it, pid) and cv != pv:
+                    changes.append(("%s/%s" % (key, pid), pv, cv))
+                    a["parts"][pid] = cv
+            combined, conflict = _raw_answer(inst, it, a)
+            if conflict is None and combined is not None and a.get("value") is None:
+                a["value"] = combined
+                changes.append((key, None, combined))
         if not isinstance(a, dict) or not isinstance(a.get("value"), str):
             continue
-        it = inst.item(key)
         v = inst.canonical(a["value"], it) if it is not None else None
         if v is not None and v != a["value"]:
             changes.append((key, a["value"], v))
@@ -204,6 +276,22 @@ def _text_problem(v, where, out, limit=MAX_TEXT):
         out.append("%s: szöveg vagy null kell" % where)
     elif len(v) > limit:
         out.append("%s: legfeljebb %d karakter" % (where, limit))
+
+
+def shape_errors(doc):
+    """A szerződés (szk.appraisal/v1) TÍPUS-hibái — amelyek mellett a számolás nem értelmezhető (pl. lista a válasz
+    értéke helyén). A többi szerződés-hiba (hiányzó mező, minta) nem akadálya a check()-nek; azokat a validate adja."""
+    if not isinstance(doc, dict):
+        return ["$: típus object kell"]
+    return [e for e in _I.contract_errors(doc, "appraisal", 1)
+            if ": típus " in e or re.search(r"\.pass: ", e)]
+
+
+def _require_shape(doc):
+    errs = shape_errors(doc)
+    if errs:
+        raise AppraisalError("Az értékelés nem felel meg a szerződésnek (szk.appraisal/v1): %s" % "; ".join(errs[:5]),
+                             errs)
 
 
 def problems(doc, instrument=None, project_dir=None):
@@ -247,6 +335,11 @@ def problems(doc, instrument=None, project_dir=None):
             errors.append("%s: objektum kell ({value, evidence?, rationale?})" % where)
             continue
         v = a.get("value")
+        if v is not None and not isinstance(v, str):
+            errors.append("%s.value: szöveg vagy null kell (kapott: %s)" % (where, type(v).__name__))
+            continue
+        if inst.parts(it):
+            _parts_problems(inst, it, a, where, errors)
         if v is not None:
             if key not in in_scope:
                 warnings.append("%s: a tétel a választott hatókörön (%s) kívül esik, nem számít" % (where, scope))
@@ -272,6 +365,7 @@ def problems(doc, instrument=None, project_dir=None):
         if ai and v is not None:
             errors.extend(_ai_item_problems(a, where))
     _judgement_problems(doc, inst, errors)
+    errors.extend(_grade_final_problems(inst, doc))
     status, origin = doc.get("status"), doc.get("origin")
     if origin == "ai_draft":
         if status == "consensus":
@@ -288,7 +382,10 @@ def problems(doc, instrument=None, project_dir=None):
     elif isinstance(doc.get("assessor"), str) and doc["assessor"].lower() in RESERVED_RATERS:
         errors.append("assessor: %r fenntartott azonosító (konszenzus / AI-vázlat); emberi értékelőnél a "
                       "monogramot add meg" % doc["assessor"])
-    if status == "consensus":
+    if is_consensus_doc(doc) and status == "complete":
+        errors.append("status: a konszenzus-dokumentum státusza 'draft' (feloldatlan tételekkel) vagy 'consensus' "
+                      "lehet, 'complete' nem")
+    if is_consensus_doc(doc):
         a2 = doc.get("second_assessor")
         if not (isinstance(a2, str) and RATER_RE.match(a2) and a2.lower() not in RESERVED_RATERS):
             errors.append("second_assessor: a konszenzushoz a második (emberi) értékelő monogramja kell")
@@ -308,6 +405,28 @@ def problems(doc, instrument=None, project_dir=None):
             errors.append("origin: C osztályú (betegszintű adatot tartalmazó) projektben AI-vázlat nem menthető "
                           "(6. döntés, 7.4)")
     return {"errors": errors, "warnings": warnings}
+
+
+def _grade_final_problems(inst, doc):
+    """GRADE-értékelés (tool: grade) lezárt státusza (complete, consensus) — 11. fejezet 4. döntés és a „számított
+    bizonyosság soha nem végleges emberi döntés nélkül” szabály: (1) a „gyanított” publikációs torzítás feloldatlan
+    (nincs 0 / −1 lépés indoklással) → nem zárható le; (2) a bizonyosságot (overall.judgement) embernek kell
+    rögzítenie — a motor számítása (overall.implied) csak javaslat."""
+    if inst.key != "grade" or doc.get("status") not in FINAL_STATUSES or shape_errors(doc):
+        return []
+    out = []
+    sc = inst.scope_of(doc.get("scope")) or inst.default_scope
+    slots = inst.slots(sc)
+    blk = _grade_block(inst, doc, slots, _values(doc, inst, slots)[0])
+    if blk["unresolved"]:
+        out.append("status: a GRADE-értékelés nem lehet lezárt (%s), amíg a publikációs torzítás „gyanított” ítélete "
+                   "FELOLDATLAN — rögzítsd a 0 vagy −1 lépést indoklással (answers[5.1].resolution; 11. fejezet 4. "
+                   "döntés, X019)" % doc.get("status"))
+    ov = doc.get("overall") if isinstance(doc.get("overall"), dict) else {}
+    if not _nonempty(ov.get("judgement")):
+        out.append("overall.judgement: lezárt GRADE-értékelésnél a bizonyosságot embernek kell rögzítenie; a motor "
+                   "számítása (overall.implied) csak javaslat, végleges ítélet emberi döntés nélkül nem lehet")
+    return out
 
 
 def validate(doc, instrument=None, project_dir=None):
@@ -362,6 +481,12 @@ def _judgement_problems(doc, inst, errors):
             if not isinstance(dj, dict):
                 continue
             did, ps = str(dj.get("domain")), dj.get("pass")
+            if ps is not None and not isinstance(ps, str):
+                errors.append("%s.pass: szöveg vagy null kell" % pre)
+                continue
+            if dj.get("judgement") is not None and not isinstance(dj.get("judgement"), str):
+                errors.append("%s.judgement: szöveg vagy null kell" % pre)
+                continue
             if coll != "overall_passes" and inst.domain(did) is None:
                 errors.append("%s.domain: ismeretlen domén %r" % (pre, did))
                 continue
@@ -383,7 +508,9 @@ def _judgement_problems(doc, inst, errors):
     ov = doc.get("overall")
     if isinstance(ov, dict):
         j = ov.get("judgement")
-        if j is not None and j not in inst.verdicts:
+        if j is not None and not isinstance(j, str):
+            errors.append("overall.judgement: szöveg vagy null kell")
+        elif j is not None and j not in inst.verdicts:
             errors.append("overall.judgement: %r nem az eszköz ítéletskálája (%s)" % (j, " | ".join(inst.verdicts)
                                                                                     or "nincs ítélet"))
         for f in ("rationale", "override_reason"):
@@ -391,16 +518,69 @@ def _judgement_problems(doc, inst, errors):
 
 
 # ------------------------------------------------------------------ értékelés-ellenőrzés (appraisal-result)
+def _part_values(inst, it, a):
+    """Résztételes tétel (AMSTAR 2 9. és 11.: RCT / NRSI) → ({rész: kanonikus érték}, [hibák]) a válasz 'parts'
+    mezőjéből; nincs 'parts' → ({}, [])."""
+    parts = a.get("parts") if isinstance(a, dict) else None
+    if parts is None or not inst.parts(it):
+        return {}, []
+    if not isinstance(parts, dict):
+        return {}, ["parts: objektum kell ({%s: érték})" % ", ".join(p["id"] for p in inst.parts(it))]
+    out, errs = {}, []
+    known = [p["id"] for p in inst.parts(it)]
+    for pid, raw in parts.items():
+        if pid not in known:
+            errs.append("parts.%s: ismeretlen rész (lehet: %s)" % (pid, ", ".join(known)))
+            continue
+        if raw is None:
+            continue
+        v = inst.canonical(raw) if isinstance(raw, str) else None
+        if v is None or v not in inst.part_allowed(it, pid):
+            errs.append("parts.%s: %r nem adható (lehet: %s)" % (pid, raw, ", ".join(inst.part_allowed(it, pid))))
+            continue
+        out[pid] = v
+    return out, errs
+
+
+def _raw_answer(inst, it, a):
+    """A válasz nyers értéke; résztételes tételnél a részekből adódó érték (bármelyik rész 'Nem' → 'Nem'). →
+    (érték | None, ellentmondás-üzenet | None)"""
+    raw = a.get("value") if isinstance(a, dict) else (a if isinstance(a, str) else None)
+    if it is None or not inst.parts(it):
+        return raw, None
+    pv, errs = _part_values(inst, it, a)
+    if errs or not pv:
+        return raw, ("; ".join(errs) if errs else None)
+    if len(pv) < len(inst.parts(it)):
+        return raw, None                    # félkész részek: az explicit érték (ha van) számít, különben hiányzik
+    combined = inst.combine_parts(it, [pv[p["id"]] for p in inst.parts(it)])
+    if combined is None:
+        return raw, "a részekből nem adódik érvényes érték (legalább az egyik rész ítélete kell)"
+    if raw is not None and inst.canonical(raw, it) != combined:
+        return raw, "a tétel értéke (%s) ellentmond a részeknek (→ %s)" % (raw, combined)
+    return combined, None
+
+
+def _parts_problems(inst, it, a, where, errors):
+    _v, msg = _raw_answer(inst, it, a)
+    if msg:
+        errors.append("%s.%s" % (where, msg) if msg.startswith("parts") else "%s: %s" % (where, msg))
+
+
 def _values(doc, inst, slots):
     """(kulcs → kanonikus érték, érvénytelenek, normalizáltak, hatókörön kívüliek)."""
     keys = {it["key"] for it in slots}
     vals, invalid, normalized, outside = {}, [], [], []
     answers = doc.get("answers") if isinstance(doc.get("answers"), dict) else {}
     for key, a in answers.items():
-        raw = a.get("value") if isinstance(a, dict) else (a if isinstance(a, str) else None)
+        it = inst.item(key) if isinstance(key, str) else None
+        raw, conflict = _raw_answer(inst, it, a)
+        if conflict and it is not None and key in keys:
+            invalid.append({"item": it["id"], "pass": it.get("pass"), "key": key,
+                            "value": raw if isinstance(raw, str) else None, "reason": _t(conflict, conflict)})
+            continue
         if raw is None or (isinstance(raw, str) and not raw.strip()):
             continue
-        it = inst.item(key) if isinstance(key, str) else None
         if it is None:
             invalid.append({"item": str(key), "pass": None, "key": str(key), "value": raw if isinstance(raw, str)
                             else None, "reason": _t("ismeretlen tétel", "unknown item")})
@@ -439,82 +619,209 @@ def _domain_rows(inst, slots, ps_list):
     return out
 
 
+class _Routing(object):
+    """Útválasztás egy értékelésben: kérdezik-e a tételt (ask_if), és mi a tétel effektív értéke. A 'Nem
+    alkalmazható' válasz olyan tételnél, amelyet az útválasztás szerint kérdezni kell, útválasztási ellentmondás: a
+    szabályok 'Nincs információ'-ként kezelik (konzervatív), és a kimenet 'routing_conflicts' listája megnevezi."""
+
+    def __init__(self, inst, slots, vals):
+        self.inst = inst
+        self.vals = vals
+        self.keys = {it["key"] for it in slots}
+        self._asked = {}
+        self.conflicts = []
+
+    def asked(self, key):
+        if key not in self._asked:
+            it = self.inst.item(key)
+            cond = it.get("ask_if") if isinstance(it, dict) else None
+            self._asked[key] = None                     # önhivatkozás ellen
+            self._asked[key] = True if cond is None else _I.evaluate(cond, self.value)
+        return self._asked[key]
+
+    def value(self, key):
+        if key not in self.keys:
+            return None
+        v = self.vals.get(key)
+        if v == "not_applicable" and self.asked(key) is True:
+            if key not in self.conflicts:
+                self.conflicts.append(key)
+            return "no_information"
+        return v
+
+
+def _tier_worst(tiers):
+    if "high" in tiers:
+        return "high"
+    if None in tiers or not tiers:
+        return None
+    return "some" if "some" in tiers else "low"
+
+
+def _rule_domain(inst, rules, its, route):
+    """Gépi szabályok egy doménre: részenként (part) az első igaz szabály; ismeretlen (hiányzó válasz) feltételnél a
+    rész nem dönthető el. → (tier | None, forced_by, unknown_at, hit-szabályok, szöveg)"""
+    parts = collections.OrderedDict()
+    for r in rules:
+        parts.setdefault(r.get("part") or "main", []).append(r)
+    tiers, hits, forced, unknown = [], [], [], []
+    for _part, rs in parts.items():
+        hit = None
+        for r in rs:
+            res = _I.evaluate(r.get("if"), route.value)
+            if res is True:
+                hit = r
+                break
+            if res is None:
+                break
+        tiers.append(hit.get("tier") if hit else None)
+        if hit is None:
+            continue
+        hits.append(hit)
+        if hit.get("tier") == "low":
+            continue
+        for key in hit.get("because") or _I.condition_items(hit.get("if")):
+            v = route.value(key)
+            it = inst.item(key)
+            if v is None or v == "not_applicable" or it is None:
+                continue
+            if inst.kind(v) == "unknown":
+                if it["id"] not in unknown:
+                    unknown.append(it["id"])
+            elif hit.get("kind") != "unknown" and (it.get("polarity") == "router" or inst.signal(it, v) in (
+                    "problem", "partial")):
+                if it["id"] not in forced:
+                    forced.append(it["id"])
+    tier = _tier_worst(tiers)
+    return tier, forced, unknown, hits
+
+
 def _conservative(inst, doc, slots, vals):
+    """A konzervatív implikált ítélet. Ha a doménnek gépi szabályai vannak (rules), azok döntenek (RoB 2: a 2019-es
+    folyamatábra ágai; ROBINS-I/E: a táblázatos kritériumok), különben a polaritás-alapú szabály: amit a válaszok
+    kikényszerítenek. Mindkettő tiszteli az útválasztást (ask_if): a nem kérdezett tétel válasza nem számít."""
     tiers = inst.rollup.get("tiers") or {}
+    scope = inst.scope_of(doc.get("scope"))
+    route = _Routing(inst, slots, vals)
     domains, lines = [], []
     tiers_seen = []
     for did, ps, its in _domain_rows(inst, slots, [None] + inst.passes):
-        forced, forced_some, unknown, partial, routers, missing = [], [], [], [], [], []
+        forced, forced_some, unknown, partial, routers, missing, not_asked = [], [], [], [], [], [], []
+        rules = inst.rules(did, scope) if ps is None else []
         for it in its:
-            v = vals.get(it["key"])
-            if it.get("polarity") == "router":
-                if v is not None:
-                    routers.append(it["id"])
-                continue
-            if v is None:
+            router = it.get("polarity") == "router"
+            if route.asked(it["key"]) is False:
+                not_asked.append(it["id"])
+            elif it["key"] not in vals and (rules or not router):
                 missing.append(it["id"])
-                continue
-            sig = inst.signal(it, v)
-            if sig == "problem":
-                (forced_some if it.get("severity") == "some" else forced).append(it["id"])
-            elif sig == "unknown":
-                unknown.append(it["id"])
-            elif sig == "partial":
-                partial.append(it["id"])
-        if forced:
-            tier = "high"
-            why = _t("„Nem”/„Valószínűleg nem” (fordított kérdésnél „Igen”) itt: %s" % ", ".join(forced),
-                     "'No'/'Probably no' (or 'Yes' on a reverse question) at %s" % ", ".join(forced))
-        elif missing:
-            tier = None
-            why = _t("hiányzó válasz: %s — a domén implikált ítélete még nem számolható" % ", ".join(missing),
-                     "unanswered: %s — no implied judgement yet" % ", ".join(missing))
-        elif forced_some or unknown or partial:
-            tier = "some"
-            bits_hu, bits_en = [], []
-            if forced_some:
-                bits_hu.append("legalább a középső szintet kikényszeríti: %s" % ", ".join(forced_some))
-                bits_en.append("forces at least the middle level: %s" % ", ".join(forced_some))
-            if unknown:
-                bits_hu.append("nincs információ: %s" % ", ".join(unknown))
-                bits_en.append("no information at %s" % ", ".join(unknown))
-            if partial:
-                bits_hu.append("részleges válasz: %s" % ", ".join(partial))
-                bits_en.append("partial answer at %s" % ", ".join(partial))
-            why = _t("; ".join(bits_hu), "; ".join(bits_en))
+            if router and it["key"] in vals:
+                routers.append(it["id"])
+        path = []
+        if rules:
+            tier, forced, unknown, hits = _rule_domain(inst, rules, its, route)
+            path = [h.get("id") for h in hits if h.get("id")]
+            if tier is None:
+                why = _t("hiányzó válasz: %s — a domén implikált ítélete még nem számolható" % (
+                    ", ".join(missing) or "—"), "unanswered: %s — no implied judgement yet" % (
+                    ", ".join(missing) or "—"))
+            else:
+                texts = [h.get("text") for h in hits if isinstance(h.get("text"), dict) and h.get("tier") != "low"]
+                if not texts:
+                    texts = [h.get("text") for h in hits if isinstance(h.get("text"), dict)]
+                if texts:
+                    why = _t("; ".join(_I._i18n_text(x, "hu") for x in texts),
+                             "; ".join(_I._i18n_text(x, "en") for x in texts))
+                elif tier == "low":
+                    why = _t("a folyamatábra az alacsony ágra vezet", "the flowchart leads to the low branch")
+                else:
+                    why = _t("a kiváltó kérdések: %s" % ", ".join(forced + unknown),
+                             "triggered by %s" % ", ".join(forced + unknown))
         else:
-            tier = "low"
-            why = _t("egyik jelző-kérdés sem jelez problémát", "no signalling question flags a problem")
+            for it in its:
+                key = it["key"]
+                if it.get("polarity") == "router" or route.asked(key) is False:
+                    continue
+                v = route.value(key)
+                if v is None:
+                    continue
+                sig = inst.signal(it, v)
+                if sig == "problem":
+                    sev = inst.answer_severity(v) or it.get("severity")
+                    (forced_some if sev == "some" else forced).append(it["id"])
+                elif sig == "unknown":
+                    unknown.append(it["id"])
+                elif sig == "partial":
+                    partial.append(it["id"])
+            if forced:
+                tier = "high"
+                why = _t("„Nem”/„Valószínűleg nem” (fordított kérdésnél „Igen”) itt: %s" % ", ".join(forced),
+                         "'No'/'Probably no' (or 'Yes' on a reverse question) at %s" % ", ".join(forced))
+            elif missing:
+                tier = None
+                why = _t("hiányzó válasz: %s — a domén implikált ítélete még nem számolható" % ", ".join(missing),
+                         "unanswered: %s — no implied judgement yet" % ", ".join(missing))
+            elif forced_some or unknown or partial:
+                tier = "some"
+                bits_hu, bits_en = [], []
+                if forced_some:
+                    bits_hu.append("legalább a középső szintet kikényszeríti: %s" % ", ".join(forced_some))
+                    bits_en.append("forces at least the middle level: %s" % ", ".join(forced_some))
+                if unknown:
+                    bits_hu.append("nincs információ: %s" % ", ".join(unknown))
+                    bits_en.append("no information at %s" % ", ".join(unknown))
+                if partial:
+                    bits_hu.append("részleges válasz: %s" % ", ".join(partial))
+                    bits_en.append("partial answer at %s" % ", ".join(partial))
+                why = _t("; ".join(bits_hu), "; ".join(bits_en))
+            else:
+                tier = "low"
+                why = _t("egyik jelző-kérdés sem jelez problémát", "no signalling question flags a problem")
+        conflicts = [inst.item(k)["id"] for k in route.conflicts if inst.item(k) and str(inst.item(k)["domain"]) == did
+                     and inst.item(k).get("pass") == ps]
+        if conflicts:
+            why = _t(why["hu"] + " (útválasztási ellentmondás: 'Nem alkalmazható' kérdezendő tételen — %s; 'Nincs "
+                                  "információ'-ként számolva)" % ", ".join(conflicts),
+                     why["en"] + " (routing conflict: 'Not applicable' on an applicable question — %s; counted as "
+                                 "'No information')" % ", ".join(conflicts))
         implied = tiers.get(tier) if tier else None
         dj = _judgement_of(doc, "domain_judgements", did, ps)
         domains.append({"domain": did, "pass": ps, "implied": implied, "algorithm": "conservative",
                         "forced_by": forced + forced_some, "unknown_at": unknown, "partial_at": partial,
-                        "routers": routers, "missing": missing, "judgement": dj.get("judgement") if dj else None,
-                        "level": inst.level(implied) if implied else None, "text": why})
+                        "routers": routers, "missing": missing, "not_asked": not_asked,
+                        "routing_conflicts": conflicts, "rule_path": path,
+                        "judgement": dj.get("judgement") if dj else None,
+                        "level": inst.level(implied) if implied else None,
+                        "label": _t(inst.verdict_label(implied, "hu", did), inst.verdict_label(implied, "en", did))
+                        if implied else None, "text": why})
         tiers_seen.append(tier)
         title = inst.domain_title(did)
-        lines.append(_t("%s. domén (%s): %s — %s" % (did, title, inst.verdict_label(implied) if implied else "—",
-                                                     why["hu"]),
+        lines.append(_t("%s. domén (%s): %s — %s" % (did, title, inst.verdict_label(implied, "hu", did) if implied
+                                                     else "—", why["hu"]),
                         "Domain %s (%s): %s — %s" % (did, inst.domain_title(did, "en"),
-                                                     inst.verdict_label(implied, "en") if implied else "—",
+                                                     inst.verdict_label(implied, "en", did) if implied else "—",
                                                      why["en"])))
-    if "high" in tiers_seen:
-        otier = "high"
-    elif None in tiers_seen or not tiers_seen:
-        otier = None
-    elif "some" in tiers_seen:
-        otier = "some"
-    else:
-        otier = "low"
+    otier = _tier_worst(tiers_seen)
     overall = tiers.get(otier) if otier else None
     lines.append(_t("Implikált összítélet: %s — a legrosszabb domén szerint." % (
         inst.verdict_label(overall) if overall else "— (hiányos domén)"),
         "Implied overall: %s — set by the worst domain." % (inst.verdict_label(overall, "en") if overall
                                                             else "— (incomplete domain)")))
-    lines.append(_t("Ez NEM a hivatalos %s folyamatábra: azt mutatja, amit a válaszok kikényszerítenek. Határesetben "
-                    "vesd össze a hivatalos algoritmussal, és ha eltérsz, indokold." % inst.name,
-                    "This is NOT the official %s flowchart: it shows what the answers force. Check borderline "
-                    "domains against the official algorithm and give a reason if you override." % inst.name))
+    if any(inst.rules(d["id"], scope) for d in inst.domains):
+        lines.append(_t("Konzervatív szabály (%s) — NEM a hivatalos %s algoritmus: a publikált folyamatábra / "
+                        "kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb "
+                        "szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben "
+                        "vesd össze a hivatalos eszközzel, és ha eltérsz, indokold." % (
+                            inst.rollup.get("basis") or "conservative", inst.name),
+                        "Conservative rule (%s) — NOT the official %s algorithm: it follows the published "
+                        "flowchart / criteria branches but takes the stricter level where a branch could not be "
+                        "checked against the source, and follows the 'No information' branch on a routing conflict. "
+                        "Check borderline domains against the official tool and give a reason if you override." % (
+                            inst.rollup.get("basis") or "conservative", inst.name)))
+    else:
+        lines.append(_t("Ez NEM a hivatalos %s folyamatábra: azt mutatja, amit a válaszok kikényszerítenek. "
+                        "Határesetben vesd össze a hivatalos algoritmussal, és ha eltérsz, indokold." % inst.name,
+                        "This is NOT the official %s flowchart: it shows what the answers force. Check borderline "
+                        "domains against the official algorithm and give a reason if you override." % inst.name))
     return domains, overall, lines
 
 
@@ -556,8 +863,8 @@ def amstar2_rating(answers, convention="meets", instrument=None):
     vals = {}
     for it in inst.items:
         raw = answers.get(it["key"]) if isinstance(answers, dict) else None
-        raw = raw.get("value") if isinstance(raw, dict) else raw
-        v = inst.canonical(raw, it) if raw is not None else None
+        raw, conflict = _raw_answer(inst, it, raw) if isinstance(raw, dict) else (raw, None)
+        v = inst.canonical(raw, it) if raw is not None and not conflict else None
         if v is not None:
             vals[it["key"]] = v
     return _amstar2_block(inst, inst.slots(), vals, convention)
@@ -620,7 +927,8 @@ def _grade_block(inst, doc, slots, vals):
         if it is None or role == "start":
             continue
         v = vals.get(it["key"])
-        entry = {"rating": v, "step": None, "status": "answered" if v is not None else "missing"}
+        entry = {"rating": grade_token(v), "value": v, "step": None,
+                 "status": "answered" if v is not None else "missing"}
         if v is None:
             missing.append(gk)
         elif role == "downgrade":
@@ -654,6 +962,8 @@ def _grade_block(inst, doc, slots, vals):
     if start in ("high", "low") and not missing and not unresolved:
         idx = GRADE_LEVELS.index(start) + down_total + (up_total if down_total == 0 else 0)
         certainty = GRADE_LEVELS[max(0, min(3, idx))]
+    certainty_value = certainty
+    certainty = grade_token(certainty)
     lines = []
     if unresolved:
         lines.append(_t("A publikációs torzítás „gyanított” ítélete FELOLDATLAN: dönts 0 vagy −1 között, és indokold "
@@ -663,8 +973,14 @@ def _grade_block(inst, doc, slots, vals):
     if up_total and down_total:
         lines.append(_t("Felminősítés leminősítés mellett NEM alkalmazva: a GRADE csak le nem minősített bizonyítékot "
                         "minősít fel.", "Upgrades recorded alongside downgrades were NOT applied."))
+    if certainty is not None:
+        lines.append(_t("A számított bizonyosság (%s) csak javaslat: végleges bizonyosság csak emberi döntéssel "
+                        "(overall.judgement) rögzíthető." % grade_token(certainty),
+                        "The computed certainty (%s) is a suggestion only: a final certainty is recorded only by a "
+                        "human decision (overall.judgement)." % grade_token(certainty)))
     return {"start": start, "domains": domains, "downgrade_total": down_total, "upgrade_total": up_total,
-            "upgrades_applied": upgrades_applied, "certainty": certainty, "unresolved": unresolved,
+            "upgrades_applied": upgrades_applied, "certainty": certainty, "certainty_value": certainty_value,
+            "vocabulary": GRADE_VOCABULARY, "computed": True, "unresolved": unresolved,
             "missing": missing, "provisional": provisional, "lines": lines,
             "note": _t("A bizonyosság KIMENETENKÉNT érvényes, nem vizsgálatonként és nem az áttekintésre.",
                        "Certainty is rated PER OUTCOME, never per study or per review.")}
@@ -773,6 +1089,7 @@ def check(doc, instrument=None, conventions=None, project_dir=None):
     'conventions'; alap: amstar2_partial_yes_critical = meets)."""
     if not isinstance(doc, dict):
         raise AppraisalError("Az értékelés JSON-objektum legyen.")
+    _require_shape(doc)
     inst = instrument_for(doc, instrument)
     if conventions is None and project_dir:
         try:
@@ -788,7 +1105,8 @@ def check(doc, instrument=None, conventions=None, project_dir=None):
                            "Unknown scope (%r); allowed: %s." % (doc.get("scope"), ", ".join(inst.scope_ids))))
     slots = inst.slots(scope) if scope else []
     vals, invalid, normalized, outside = _values(doc, inst, slots)
-    missing = [{"item": it["id"], "pass": it.get("pass"), "key": it["key"]} for it in slots if it["key"] not in vals]
+    missing = [{"item": it["id"], "pass": it.get("pass"), "key": it["key"], "official_id": inst.display_id(it)}
+               for it in slots if it["key"] not in vals]
     expected, answered = len(slots), len(slots) - len(missing)
     per_pass = None
     if inst.passes:
@@ -818,6 +1136,24 @@ def check(doc, instrument=None, conventions=None, project_dir=None):
         conv = conventions.get("amstar2_partial_yes_critical", "meets")
         conv = conv if conv in AMSTAR2_CONVENTIONS else "meets"
         blk = _amstar2_block(inst, slots, vals, conv)
+        answers = doc.get("answers") if isinstance(doc.get("answers"), dict) else {}
+        parts_out, parts_missing = {}, []
+        for it in slots:
+            if not inst.parts(it):
+                continue
+            pv, _errs = _part_values(inst, it, answers.get(it["key"]))
+            parts_out[it["key"]] = {p["id"]: pv.get(p["id"]) for p in inst.parts(it)}
+            if it["key"] in vals and len(pv) < len(inst.parts(it)):
+                parts_missing.append(it["id"])
+        blk["parts"] = parts_out
+        blk["parts_missing"] = parts_missing
+        if parts_missing:
+            warnings.append(_t("AMSTAR 2: a(z) %s tételt a hivatalos űrlap RCT-re és NRSI-re KÜLÖN ítélteti — add meg "
+                               "a részeket (parts.RCT, parts.NRSI; „csak NRSI / csak RCT” = Nem alkalmazható); "
+                               "bármelyik rész „Nem” → a tétel „Nem” (kritikus hiba)." % ", ".join(parts_missing),
+                               "AMSTAR 2: item(s) %s are rated SEPARATELY for RCTs and NRSI on the official form — "
+                               "give the parts (parts.RCT, parts.NRSI; 'only NRSI / only RCTs' = Not applicable); "
+                               "'No' on either part makes the item 'No' (critical flaw)." % ", ".join(parts_missing)))
         blocks["amstar2"] = blk
         overall_implied, provisional = blk["rating"], blk["provisional"]
         conv_out["amstar2.partial_yes_critical"] = blk["convention"]
@@ -825,7 +1161,7 @@ def check(doc, instrument=None, conventions=None, project_dir=None):
     elif inst.key == "grade":
         blk = _grade_block(inst, doc, slots, vals)
         blocks["grade"] = blk
-        overall_implied, provisional = blk["certainty"], blk["provisional"] or bool(blk["unresolved"])
+        overall_implied, provisional = blk["certainty_value"], blk["provisional"] or bool(blk["unresolved"])
         conv_out["grade.publication_bias_suspected"] = "unresolved"
         for d in inst.domains:
             gk = d.get("grade_key")
@@ -983,7 +1319,9 @@ def approve_ai_draft(doc, approver, now=None, instrument=None):
     out["approved_at"] = now or now_iso()
     res = check(out, instrument)
     if res["complete"]:
-        out["status"] = "complete"
+        trial = dict(out, status="complete")
+        if not _grade_final_problems(instrument_for(out, instrument), trial):
+            out["status"] = "complete"
     return out, res
 
 
@@ -1027,6 +1365,13 @@ def save(project_dir, doc, instrument=None, now=None, expect_sha256=None):
     out["updated"] = ts
     if out.get("scope") in (None, ""):
         out["scope"] = inst.default_scope
+    tg = out.get("target")
+    if isinstance(tg, dict) and not (isinstance(tg.get("key"), str) and tg.get("key")):
+        derived = derived_target_key(out)
+        if derived:
+            tg["key"] = derived                     # a fájlnév célja a dokumentumban is (M5): a munkapad ezt olvassa
+    if project_dir and is_consensus_doc(out):
+        _fill_consensus_paths(project_dir, out)
     res = check(out, inst, project_dir=project_dir)
     out = fill_implied(out, res, inst)
     errs = list(problems(out, inst, project_dir)["errors"])
@@ -1050,9 +1395,74 @@ def save(project_dir, doc, instrument=None, now=None, expect_sha256=None):
                 have = hashlib.sha256(fh.read()).hexdigest()
         if (have or "") != (expect_sha256 or ""):
             raise AppraisalError("Az értékelés-fájl időközben megváltozott (%s); töltsd be újra." % rel)
+    elif os.path.exists(path):
+        try:
+            cur = load(path)
+        except AppraisalError:
+            cur = None
+        why = _identity_conflict(cur, out) if cur is not None else None
+        if why:
+            raise AppraisalError(
+                "Az értékelés-fájl (%s) már létezik, és MÁSIK értékelésé (%s): nem írom felül. Adj meg egyedi "
+                "célt (target.key, pl. a kimenet azonosítóját), vagy ha valóban ezt a fájlt cserélnéd, a meglévő "
+                "hash-ével (expect_sha256) mentsd." % (rel, why), [why])
     data = _canonical_bytes(out)
     _atomic_write(path, data)
     return {"path": rel, "sha256": hashlib.sha256(data).hexdigest(), "doc": out, "check": res}
+
+
+_TARGET_FIELDS = ("outcome", "result", "model", "index_test", "factor")
+
+
+def _identity_conflict(cur, new):
+    """Ugyanarra az útra kerülne-e két KÜLÖNBÖZŐ értékelés? → az eltérés leírása, vagy None. Eltérés: más egység,
+    eszköz, cél (target.key vagy a kimenet / eredmény / modell / indexteszt), más értékelő-szerep (független
+    értékelés ↔ konszenzus ↔ AI-vázlat), vagy más értékelő."""
+    if not isinstance(cur, dict):
+        return None
+    if _fold(unit_of(cur) or "") != _fold(unit_of(new) or ""):
+        return "más értékelési egység: %s ≠ %s" % (unit_of(cur), unit_of(new))
+    if cur.get("tool") != new.get("tool"):
+        return "más eszköz: %s ≠ %s" % (cur.get("tool"), new.get("tool"))
+    if (target_key(cur) or "") != (target_key(new) or ""):
+        return "más cél (target.key): %s ≠ %s" % (target_key(cur), target_key(new))
+    ta = cur.get("target") if isinstance(cur.get("target"), dict) else {}
+    tb = new.get("target") if isinstance(new.get("target"), dict) else {}
+    for f in _TARGET_FIELDS:
+        a, b = ta.get(f), tb.get(f)
+        if isinstance(a, str) and a.strip() and isinstance(b, str) and b.strip() and _fold(a) != _fold(b):
+            return "más target.%s: %s ≠ %s" % (f, a, b)
+    if is_consensus_doc(cur) != is_consensus_doc(new):
+        return ("a meglévő fájl egy értékelő független értékelése, az új egy konszenzus(-vázlat)"
+                if is_consensus_doc(new) else "a meglévő fájl konszenzus, az új egy független értékelés")
+    if (cur.get("origin") == "ai_draft") != (new.get("origin") == "ai_draft"):
+        return "AI-vázlat ↔ emberi értékelés"
+    if not is_consensus_doc(new) and new.get("origin") != "ai_draft" and cur.get("assessor") != new.get("assessor"):
+        return "más értékelő: %s ≠ %s" % (cur.get("assessor"), new.get("assessor"))
+    return None
+
+
+def _fill_consensus_paths(project_dir, doc):
+    """A konszenzus forrásai (consensus_of[].path, .sha256): ha az útvonal hiányzik, a projektben a két értékelő
+    saját fájlja (<egység>.<eszköz>[.<cél>].<értékelő>.json), ha létezik — így látszik, mely változatok egyeztek
+    (m4)."""
+    unit, tool, key = unit_of(doc), doc.get("tool"), target_key(doc)
+    for entry in doc.get("consensus_of") or ():
+        if not isinstance(entry, dict) or not isinstance(entry.get("assessor"), str):
+            continue
+        rel = entry.get("path")
+        if not (isinstance(rel, str) and rel):
+            try:
+                rel = relpath(unit, tool, key, entry["assessor"])
+            except AppraisalError:
+                continue
+        full = os.path.join(project_dir, *rel.split("/"))
+        if os.path.isfile(full):
+            if not entry.get("path"):
+                entry["path"] = rel
+            if not entry.get("sha256"):
+                with open(full, "rb") as fh:
+                    entry["sha256"] = hashlib.sha256(fh.read()).hexdigest()
 
 
 def load(path):
@@ -1147,24 +1557,49 @@ def _require_rater(doc, side):
         raise AppraisalError("Az %s értékelés JSON-objektum legyen." % side)
     if doc.get("origin") == "ai_draft":
         raise AppraisalError("AI-vázlat nem értékelő: sem a κ-ban, sem a konszenzusban nem szerepelhet (6. döntés).")
-    if doc.get("status") == "consensus":
-        raise AppraisalError("A konszenzus-változat nem független értékelés.")
+    if is_consensus_doc(doc):
+        raise AppraisalError("A konszenzus-változat (a feloldatlan tételű konszenzus-vázlat is) nem független "
+                             "értékelés.")
     if not is_rater(doc):
         raise AppraisalError("Az %s értékelésnek emberi értékelője kell (assessor: monogram)." % side)
 
 
+def _kappa_entry(pairs, level, **head):
+    """κ-bejegyzés egy ítélet-típusra; egyetlen párnál (n < 2) a κ nem értelmezhető (None)."""
+    k = cohen_kappa(pairs, level)
+    agree = sum(1 for a, b in pairs if a == b)
+    out = dict(head)
+    if k["n"] < 2:
+        k = dict(k, kappa=None, se=None, ci=None)
+        text = _t("κ nem számolható (egyetlen ítélet-pár)", "κ not estimable (a single pair of judgements)")
+    else:
+        text = _kappa_text(k)
+    out.update({"n": k["n"], "agree": agree, "disagree": k["n"] - agree, "kappa": k["kappa"], "kappa_se": k["se"],
+                "kappa_ci": k["ci"], "kappa_text": text, "categories": k["categories"]})
+    return out
+
+
 def agreement(pairs, instrument=None, level=0.95):
-    """Tételszintű egyezés több (A, B) értékelés-páron összevonva → szk.ma.appraisal-agreement/v1. Csak független
-    emberi értékelés (origin: human, nem konszenzus); az AI-vázlatot elutasítja."""
+    """Egyezés több (A, B) értékelés-páron összevonva → szk.ma.appraisal-agreement/v1. Csak független emberi
+    értékelés (origin: human, nem konszenzus); az AI-vázlatot elutasítja.
+
+    Az elsődleges megbízhatósági mérték (terv 5.4) a DOMÉNÍTÉLETEK κ-ja: doménenként a vizsgálatokon (párokon)
+    összevonva ('domain_kappa'), az összes doménítéleten összevonva ('judgement_kappa') és az összítéleten
+    ('overall_kappa'). A felső szintű 'kappa' másodlagos, TÉTELSZINTŰ κ a jelző-kérdések válaszain ('kappa_level':
+    'item'); az útválasztás miatti kettős 'Nem alkalmazható' párok kimaradnak (nem független egyezések; 'excluded')."""
     pairs = list(pairs)
     if not pairs:
         raise AppraisalError("Legalább egy értékelés-pár kell.")
     inst = instrument_for(pairs[0][0], instrument)
     raters_a, raters_b = set(), set()
-    cat_pairs, items, domains = [], [], []
+    cat_pairs, items, domains, excluded = [], [], [], []
+    by_domain = collections.OrderedDict()
+    overall_pairs = []
     for doc_a, doc_b in pairs:
         _require_rater(doc_a, "A")
         _require_rater(doc_b, "B")
+        _require_shape(doc_a)
+        _require_shape(doc_b)
         if doc_a.get("tool") != inst.key or doc_b.get("tool") != inst.key:
             raise AppraisalError("A két értékelés eszköze eltér (%s, %s)." % (doc_a.get("tool"), doc_b.get("tool")))
         if doc_a.get("assessor") == doc_b.get("assessor"):
@@ -1185,7 +1620,11 @@ def agreement(pairs, instrument=None, level=0.95):
             a, b = va.get(it["key"]), vb.get(it["key"])
             items.append({"key": it["key"], "unit": unit, "domain": str(it["domain"]), "pass": it.get("pass"),
                           "a": a, "b": b, "agree": a is not None and a == b})
-            if a is not None and b is not None:
+            if a == "not_applicable" and b == "not_applicable":
+                excluded.append({"key": it["key"], "unit": unit, "reason": _t(
+                    "mindkét értékelőnél 'Nem alkalmazható' (útválasztás) — nem független egyezés",
+                    "'Not applicable' for both raters (routing) — not an independent agreement")})
+            elif a is not None and b is not None:
                 cat_pairs.append((a, b))
         for coll in ("domain_judgements", "applicability"):
             keys = []
@@ -1199,6 +1638,12 @@ def agreement(pairs, instrument=None, level=0.95):
                 jb = (_judgement_of(doc_b, coll, did, ps) or {}).get("judgement")
                 domains.append({"domain": did, "pass": ps, "unit": unit, "kind": coll, "a": ja, "b": jb,
                                 "agree": ja is not None and ja == jb})
+                if ja in inst.verdicts and jb in inst.verdicts:
+                    by_domain.setdefault((coll, did, ps), []).append((ja, jb))
+        oa_ = (doc_a.get("overall") or {}) if isinstance(doc_a.get("overall"), dict) else {}
+        ob_ = (doc_b.get("overall") or {}) if isinstance(doc_b.get("overall"), dict) else {}
+        if oa_.get("judgement") in inst.verdicts and ob_.get("judgement") in inst.verdicts:
+            overall_pairs.append((oa_["judgement"], ob_["judgement"]))
     k = cohen_kappa(cat_pairs, level)
     agree = sum(1 for a, b in cat_pairs if a == b)
     pct = 100.0 * agree / len(cat_pairs) if cat_pairs else None
@@ -1208,18 +1653,34 @@ def agreement(pairs, instrument=None, level=0.95):
             "judgement")
         ob = ((pairs[0][1].get("overall") or {}) if isinstance(pairs[0][1].get("overall"), dict) else {}).get(
             "judgement")
+    domain_kappa = [_kappa_entry(v, level, kind=coll, domain=did, **{"pass": ps})
+                    for (coll, did, ps), v in by_domain.items()]
+    judgement_pairs = [p for (coll, _d, _p), v in by_domain.items() if coll == "domain_judgements" for p in v]
+    judgement_kappa = _kappa_entry(judgement_pairs, level, kind="domain_judgements") if judgement_pairs else None
+    overall_kappa = _kappa_entry(overall_pairs, level, kind="overall") if overall_pairs else None
+    notes = [_t("Csak a mindkét értékelőnél megválaszolt tételek számítanak; az AI-vázlat sosem értékelő.",
+                "Only items answered by both raters count; an AI draft is never a rater."),
+             _t("Elsődleges mérték a doménítéletek κ-ja (domain_kappa, judgement_kappa, overall_kappa; terv 5.4). A "
+                "felső szintű κ másodlagos, tételszintű (jelző-kérdések); a kettős 'Nem alkalmazható' (útválasztás) "
+                "párok kimaradnak (%d).%s" % (len(excluded), " Egy párnál (egy vizsgálat) a doménenkénti κ nem "
+                                                             "számolható; az egyezés doménenként látszik." if len(
+                                                                 pairs) == 1 else ""),
+                "The primary statistic is κ on the domain judgements (domain_kappa, judgement_kappa, overall_kappa; "
+                "plan 5.4). The top-level κ is secondary and item-level (signalling questions); double 'Not "
+                "applicable' (routing) pairs are excluded (%d).%s" % (len(excluded), " With one pair (one study) "
+                                                                      "per-domain κ is not estimable; agreement is "
+                                                                      "shown per domain." if len(pairs) == 1 else ""))]
     return {"schema": AGREEMENT_SCHEMA, "tool": inst.key, "a": ", ".join(sorted(raters_a)),
             "b": ", ".join(sorted(raters_b)), "pairs": len(pairs), "items_compared": len(cat_pairs), "agree": agree,
             "disagree": len(cat_pairs) - agree, "agreement_pct": pct,
             "agreement_pct_text": ("%.1f%%" % pct) if pct is not None else "—",
-            "kappa": k["kappa"], "kappa_se": k["se"], "kappa_ci": k["ci"], "level": level,
+            "kappa": k["kappa"], "kappa_se": k["se"], "kappa_ci": k["ci"], "level": level, "kappa_level": "item",
             "kappa_method": "Cohen 1960; aszimptotikus SE: Fleiss, Cohen & Everitt 1969; normál CI",
             "kappa_text": _kappa_text(k), "categories": k["categories"], "table": k["table"], "items": items,
             "disagreements": [x for x in items if x["a"] is not None and x["b"] is not None and not x["agree"]],
             "domains": domains, "overall": {"a": oa, "b": ob, "agree": oa is not None and oa == ob} if len(pairs) == 1
-            else None, "excluded": [],
-            "notes": [_t("Csak a mindkét értékelőnél megválaszolt tételek számítanak; az AI-vázlat sosem értékelő.",
-                         "Only items answered by both raters count; an AI draft is never a rater.")]}
+            else None, "primary": "domain", "domain_kappa": domain_kappa, "judgement_kappa": judgement_kappa,
+            "overall_kappa": overall_kappa, "excluded": excluded, "notes": notes}
 
 
 def appraisal_consensus(doc_a, doc_b, instrument=None):
@@ -1473,11 +1934,13 @@ appraisal_rob_summary = rob_summary
 
 
 def rob_sync_proposal(appraisals, header, rows, tool, row_uids=None, studies=None, column=None, paths=None,
-                      instrument=None):
+                      instrument=None, outcome=None):
     """szk.ma.rob-sync-proposal/v1: a kinyerési tábla rob oszlopának javasolt cellái a végső összítéletből (az X003
     audit párosításával: study_id, study-címke, studies.json címke → study_id). Csak eltérő kategória vált
     változássá (a 'High risk of bias' és a 'high' egy kategória). A javasolt értékek eszközönként: low / some /
-    high / critical (ROBINS-I 'nincs információ': 'no information'). A cellák eredete 'calculated'."""
+    high / critical (ROBINS-I 'nincs információ': 'no information'). A cellák eredete 'calculated'.
+    outcome: a tábla kimenete — csak az erre (vagy kimenet nélkül) szóló értékelések számítanak, ahogy a
+    rob_summary és az X003 is szűr (M1); None: minden értékelés (kimenet-független hívás)."""
     from . import tableio
     inst = instrument_for(tool, instrument)
     header = [("" if h is None else str(h)) for h in (header or [])]
@@ -1490,6 +1953,8 @@ def rob_sync_proposal(appraisals, header, rows, tool, row_uids=None, studies=Non
     col = rob_name or column or "rob"
     out = {"schema": SYNC_SCHEMA, "tool": inst.key, "column": col, "column_exists": rob_i is not None,
            "changes": [], "unchanged": 0, "unmatched": [], "conflicts": [], "skipped": [], "warnings": []}
+    if outcome is not None:
+        out["outcome"] = outcome
     if not inst.rob_column:
         out["warnings"].append(_t("A(z) %s nem torzításikockázat-eszköz: a rob oszlop nem szinkronizálható." %
                                   inst.name, "%s is not a risk-of-bias tool: no rob sync." % inst.name))
@@ -1500,7 +1965,7 @@ def rob_sync_proposal(appraisals, header, rows, tool, row_uids=None, studies=Non
             row_uids = tableio.row_uids(parsed, meta)
         except Exception:                                   # noqa: BLE001 — azonosító nélkül is javasolható
             row_uids = [None] * len(rows)
-    finals = _finals(_pair_docs(appraisals, paths), inst)
+    finals = _finals(_pair_docs(appraisals, paths), inst, outcome)
     l2i, _i2l = _studies_maps(studies)
     seen_studies = set()
     for i, cells in enumerate(rows):
@@ -1629,7 +2094,7 @@ def project_rob_sync(project_dir, outcome, tool=None, column=None):
     uids = tableio.row_uids(parsed, meta)
     studies = _load_json(os.path.join(project_dir, *STUDIES_FILE.split("/")))
     prop = rob_sync_proposal(_project_docs(project_dir, tool), header, rows, tool, row_uids=uids, studies=studies,
-                             column=column, instrument=None)
+                             column=column, instrument=None, outcome=outcome)
     prop["table"] = data
     prop["table_sha256"] = fmt.get("sha256")
     prop["outcome"] = outcome
@@ -1703,6 +2168,10 @@ def apply_rob_sync(project_dir, proposal, actor=None, now=None):
 
 
 # ------------------------------------------------------------------ eszköz-javaslat (a validator --route mintájára)
+_NONRANDOM_RE = (r"\b(non[\s-]?randomi[sz]ed|non[\s-]?randomi[sz]ation|not[\s-]randomi[sz]ed|quasi[\s-]?randomi[sz]ed|"
+                 r"nem[\s-]?randomiz[aá]lt|kv[aá]zi[\s-]?randomiz[aá]lt)")
+_CASE_CONTROL_RE = r"\b(case[\s-]?control|eset[\s-]?kontroll)"
+_RCT_VARIANT_RE = r"\b(cluster[\s-]?randomi[sz]|klaszter[\s-]?randomiz|cross[\s-]?over|keresztezett)"
 _ROUTES = (
     (r"\b(prediction model|prognostic model|risk score|nomogram|machine learning model|ai model|algorithm "
      r"validation|diagnostic model|predikci[oó]s modell|kock[aá]zati pontsz[aá]m)", "probast-ai",
@@ -1714,13 +2183,14 @@ _ROUTES = (
     (r"\b(prognostic factor|prognostic marker|prognosztikai t[eé]nyez)", "quips",
      _t("prognosztikai tényezős vizsgálat", "prognostic factor study")),
     (r"\b(umbrella review|overview of reviews|systematic review|meta-analys|szisztematikus [aá]ttekint|metaanal)",
-     "amstar2", _t("szisztematikus áttekintés — módszertani minőség", "systematic review — methodological quality")),
-    (r"\b(rct|randomi[sz]ed|randomiz[aá]lt|cluster.?randomi|crossover)", "rob2",
+     "amstar2", _t("szisztematikus áttekintés — módszertani minősége", "systematic review — methodological quality")),
+    (r"\b(rct|randomi[sz]ed|randomi[sz]ation|randomiz[aá]lt|cluster.?randomi|crossover|cross-over)", "rob2",
      _t("randomizált vizsgálat", "randomised trial")),
-    (r"\b(non.?randomi[sz]ed|nrsi|quasi.?experimental|interrupted time series|before.?after|nem randomiz[aá]lt)",
-     "robins-i", _t("nem randomizált beavatkozásos vizsgálat", "non-randomised study of an intervention")),
+    (_NONRANDOM_RE[:-1] + r"|nrsi|quasi.?experimental|interrupted time series|before.?after)", "robins-i",
+     _t("nem randomizált beavatkozásos vizsgálat", "non-randomised study of an intervention")),
     (r"\b(exposure|environmental|occupational|expoz[ií]ci[oó]|k[oö]rnyezeti|foglalkoz[aá]si)", "robins-e",
-     _t("expozíciós megfigyeléses vizsgálat", "observational study of an exposure")),
+     _t("expozíciós megfigyeléses (követéses / kohorsz) vizsgálat", "observational (follow-up / cohort) study of an "
+        "exposure")),
     (r"\b(cohort|case.?control|kohorsz|eset.?kontroll)", "nos",
      _t("kohorsz vagy eset-kontroll vizsgálat (csillagrendszer; ha lehet, inkább ROBINS-I / ROBINS-E)",
         "cohort or case-control study (star system; prefer ROBINS-I / ROBINS-E)")),
@@ -1735,23 +2205,53 @@ _DESIGN_CODES = {"rct": "rob2", "rct_parallel": "rob2", "rct_cluster": "rob2", "
                  "diagnostic": "quadas2", "dta": "quadas2", "prognostic_factor": "quips",
                  "prediction_model": "probast-ai", "cross_sectional": "jbi", "case_series": "jbi",
                  "case_report": "jbi", "prevalence": "jbi", "qualitative": "jbi", "systematic_review": "amstar2"}
+_RCT_VARIANT_WARNING = _t(
+    "A natív RoB 2 definíció az egyénenként randomizált, párhuzamos csoportos változat (a besorolás hatása). A klaszter-"
+    "randomizált (1b. domén: a résztvevők toborzása a klaszterek besorolása után) és a keresztezett (periódus- és "
+    "átviteli hatás) változat doménjei nincsenek benne: ezekhez a hivatalos RoB 2 változat-sablont használd "
+    "(riskofbias.info), és az eltérést rögzítsd.",
+    "The native RoB 2 definition is the individually randomised, parallel-group variant (effect of assignment). The "
+    "domains of the cluster-randomised (domain 1b: recruitment after cluster allocation) and crossover (period and "
+    "carry-over effects) variants are not included: use the official RoB 2 variant template (riskofbias.info) and "
+    "record the deviation.")
 
 
 def instrument_route(design):
     """Eszköz-javaslat a vizsgálati elrendezésből (szabad szöveg magyarul/angolul, vagy studies.json design-kód) →
-    [{tool, name, why}]. Több találat normális (pl. PROBAST+AI és TRIPOD+AI); a választás a kérdésé."""
+    [{tool, name, why, warning?}]. Több találat normális (pl. PROBAST+AI és TRIPOD+AI); a választás a kérdésé.
+    A „nem randomizált” szöveg nem javasol RoB 2-t (csak ROBINS-I-t); a klaszter- és keresztezett elrendezésnél a
+    RoB 2 javaslat figyelmeztetést visz (a változat doménjei hiányoznak); eset-kontroll elrendezésre nincs ROBINS-E
+    (a ROBINS-E 2023 csak követéses vizsgálatokra vonatkozik)."""
     text = str(design or "")
     hits, seen = [], set()
     code = _fold(text).replace(" ", "_")
+    nonrandom = re.search(_NONRANDOM_RE, text, re.I) is not None
+    case_control = re.search(_CASE_CONTROL_RE, text, re.I) is not None or code == "case_control"
+    variant = re.search(_RCT_VARIANT_RE, text, re.I) is not None or code in ("rct_cluster", "rct_crossover")
+    # a „non-randomised” szövegrészt a RoB 2 mintája nem láthatja (a 'randomised' szó benne van)
+    rob2_text = re.sub(_NONRANDOM_RE, " ", text, flags=re.I)
+
+    def add(tool, why):
+        entry = {"tool": tool, "name": _I.load(tool).name, "why": why}
+        if tool == "rob2" and variant:
+            entry["warning"] = _RCT_VARIANT_WARNING
+        hits.append(entry)
+
     if code in _DESIGN_CODES:
         t = _DESIGN_CODES[code]
         seen.add(t)
-        hits.append({"tool": t, "name": _I.load(t).name, "why": _t("elrendezés-kód: %s" % code,
-                                                                     "design code: %s" % code)})
+        add(t, _t("elrendezés-kód: %s" % code, "design code: %s" % code))
     for pattern, tool, why in _ROUTES:
-        if tool not in seen and re.search(pattern, text, re.I):
+        if tool in seen:
+            continue
+        hay = rob2_text if tool == "rob2" else text
+        if tool == "robins-e" and case_control:
+            continue
+        if re.search(pattern, hay, re.I):
             seen.add(tool)
-            hits.append({"tool": tool, "name": _I.load(tool).name, "why": why})
+            add(tool, why)
+    if nonrandom and "rob2" in seen and not re.search(r"\b(rct|randomi[sz]ed|randomiz[aá]lt)", rob2_text, re.I):
+        hits = [h for h in hits if h["tool"] != "rob2"]
     return hits
 
 

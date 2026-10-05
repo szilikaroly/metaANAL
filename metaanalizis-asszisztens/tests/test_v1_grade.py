@@ -690,7 +690,12 @@ class TestProjectFlow(_Project):
         self.assertEqual((s2["certainty"], s2["certainty_source"]), ("moderate", "computed"))
         self.assertEqual(s2["domains"]["publication_bias"]["status"], "resolved")
         self.assertEqual(G.unresolved_publication_bias(self.root), [])
-        rec = P.record_grade_doc(self.root, s2, actor="user:SzK")
+        # methodology:M5 — a számolt szint csak előtöltés: rögzítés emberi megerősítéssel
+        with self.assertRaises(P.GradeRecordError) as cm:
+            P.record_grade_doc(self.root, s2, actor="user:SzK")
+        self.assertTrue(cm.exception.needs_certainty)
+        self.assertEqual(cm.exception.computed_certainty, "moderate")
+        rec = P.record_grade_doc(self.root, s2, actor="user:SzK", certainty="moderate")
         self.assertEqual(rec["warnings"], [])
         self.assertEqual(rec["doc"]["status"], "recorded")
         self.assertEqual(rec["doc"]["journal_id"], rec["id"])
@@ -745,7 +750,7 @@ class TestProjectFlow(_Project):
             P.record_grade_doc(self.root, s)
         self.assertIn("AI-vázlat", str(cm.exception))
         s["approved_by"] = "user:SzK"
-        self.assertTrue(P.record_grade_doc(self.root, s)["id"] >= 1)
+        self.assertTrue(P.record_grade_doc(self.root, s, certainty=s["certainty"])["id"] >= 1)   # emberi megerősítés
         draft = G.advice(explore(BCG, "RR"), outcome_id="o1", start="high")
         for dom in draft["domains"].values():
             dom.update(rating="not serious" if dom is not draft["domains"]["publication_bias"] else "undetected",
@@ -761,7 +766,8 @@ class TestProjectFlow(_Project):
         d["upgrade_details"] = {"large_effect": {"step": 2, "rationale": "RR 0.19, konzisztens"}}
         s = P.save_grade_doc(self.root, d)
         self.assertEqual(P.grade_upgrade_steps(s), {"large_effect": 2})
-        self.assertEqual(s["certainty"], "moderate")                        # alacsony − 1 + 2
+        # methodology:M5 — egy szabály: felminősítés leminősítés mellett nem számít (alacsony − 1, a +2 nem)
+        self.assertEqual(s["certainty"], "very low")
         self.assertTrue(P.grade_doc_texts(s)["upgrades"].startswith("+2 large_effect (+2)"))
         self.assertIn(("upgrade_with_downgrade", None), [(w["code"], w["domain"]) for w in s["override_warnings"]])
         bad = copy.deepcopy(d)

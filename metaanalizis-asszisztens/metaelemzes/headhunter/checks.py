@@ -271,10 +271,13 @@ def _merged_checks(project_dir, merged, for_analysis=False):
         if s.get("conflicts"):
             out.append(finding("H018", "%s (%s): %d adat-ellentmondás az áttekintések között." % (
                 sid, label, len(s["conflicts"])), "%s: data conflicts between reviews." % sid, artifacts=[art]))
-        if s.get("status") == "included" and "retracted" in flags:
+        if s.get("status") == "included" and "retracted" in flags and \
+                "retracted_retention_documented" not in flags:
             out.append(finding("H013", "%s (%s): visszavont közlemény a bevont halmazban." % (sid, label),
                                "%s: retracted publication included." % sid, artifacts=[art],
-                               suggested=["exclude %s --target %s --reason-code …" % (project_dir, sid)]))
+                               suggested=["exclude %s --target %s --reason-code …" % (project_dir, sid),
+                                          "decide %s --target %s --value keep_retracted --reason \"…\" "
+                                          "--actor user:<név>" % (project_dir, sid)]))
         if s.get("status") == "included" and "unresolved_ids" in flags:
             out.append(finding("H003", "%s (%s): API-val meg nem erősített azonosító." % (sid, label),
                                "%s: identifier not confirmed by an API." % sid, artifacts=[art],

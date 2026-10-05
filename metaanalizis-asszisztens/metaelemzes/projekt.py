@@ -514,15 +514,63 @@ def _grade_step(text):
     return 0 if (_ZERO.match(str(text)) or _NONE.match(str(text))) else None
 
 
+# a szk.ma.grade/v1 (és szk.ma.sof/v1) kanonikus szavai szóközzel; az értékelés-oldal (szk.appraisal/v1 GRADE-eszköz)
+# korábbi, aláhúzásos alakjai bemeneten álnévként elfogadottak (contracts:m2 — egy GRADE-szótár a motorban)
+GRADE_TOKEN_ALIASES = {"very_low": "very low", "not_serious": "not serious", "very_serious": "very serious",
+                       "strongly_suspected": "strongly suspected", "not_important": "not important"}
+_GRADE_CANON = frozenset(_GRADE_LEVELS + ("not serious", "serious", "very serious", "undetected", "suspected",
+                                          "strongly suspected", "critical", "important", "limited", "not important"))
+
+
+def grade_token(value):
+    """A GRADE-szótár kanonikus (szk.ma.grade/v1) alakja: az aláhúzásos vagy más kis-/nagybetűs álnév ('very_low',
+    'Not_Serious', 'strongly_suspected') → 'very low', 'not serious', 'strongly suspected'. Minden más érték
+    változatlan marad (a hibát az ellenőrzés jelzi)."""
+    if not isinstance(value, str):
+        return value
+    key = re.sub(r"[\s_]+", "_", value.strip().lower())
+    if key in GRADE_TOKEN_ALIASES:
+        return GRADE_TOKEN_ALIASES[key]
+    canon = key.replace("_", " ")
+    return canon if canon in _GRADE_CANON else value
+
+
+def _grade_index(start_idx, down, up):
+    """A közös szabály indexalakja (1 = very low … 4 = high): kiindulás − Σ|le| + fel, a felminősítés csak
+    leminősítés nélkül számít; 1–4 közé vágva."""
+    return max(1, min(4, start_idx - down + (up if down == 0 else 0)))
+
+
+def grade_arithmetic(start, downgrades, upgrades=0):
+    """A GRADE-szint EGYETLEN motor-szabálya (projekt.grade_doc_certainty, grade_consistency, grade_help tanács és
+    — az értékelés-oldalon — az appraisal GRADE-blokkja ugyanezt számolja): kiindulás (high | low) − Σ|leminősítés|
+    + felminősítés, ahol a felminősítés CSAK akkor számít, ha nincs leminősítés (GRADE 9: Guyatt et al. J Clin
+    Epidemiol 2011;64:1311; GRADE Handbook 5.3; D-S13-009 — felminősíteni a le nem minősített bizonyítékot szokás).
+    'very low'–'high' közé vágva. downgrades: lépések (−2…0 vagy abszolút értékük); None elem → nincs szint.
+    → {certainty | None, downgrade_total (≥ 0), upgrade_total, upgrades_applied}. Csak tájékoztató előtöltés: a
+    végső bizonyosság emberi ítélet (GRADE-09) — a rögzítéshez ember erősíti meg (record_grade_doc)."""
+    steps = list(downgrades or ())
+    up = upgrades if isinstance(upgrades, int) and not isinstance(upgrades, bool) and upgrades > 0 else 0
+    known = [abs(x) for x in steps if isinstance(x, int) and not isinstance(x, bool)]
+    down = sum(known)
+    out = {"certainty": None, "downgrade_total": down, "upgrade_total": up, "upgrades_applied": bool(up) and down == 0}
+    if start not in ("high", "low") or len(known) != len(steps):
+        return out
+    out["certainty"] = _GRADE_LEVELS[_grade_index(4 if start == "high" else 2, down, up) - 1]
+    return out
+
+
 def grade_consistency(certainty, **domains):
     """A GRADE-bizonyosság és a domén-lépések összhangja. A kiindulás magas (RCT, ROBINS-I) vagy
     alacsony (megfigyeléses); L: a leminősítések összege, F: a felminősítéseké ('very low'–'high' közé
-    vágva). Ha mind az öt leminősítési domén előjeles lépés (és a felminősítés is az, vagy nincs megadva),
+    vágva; a közös szabály szerint — grade_arithmetic — F csak L = 0 mellett számít, GRADE 9 / D-S13-009).
+    Ha mind az öt leminősítési domén előjeles lépés (és a felminősítés is az, vagy nincs megadva),
     csak a két kiindulásból elérhető szint fogadható el: magas − L + F vagy alacsony − L + F. Egyébként
     a [alacsony − L + F, magas − L + F] tartomány, ahol a szabad szövegű (nem pontozott) domén lefelé, a
     szabad szövegű felminősítés felfelé nyitja a tartományt (nem találgatunk); a meg nem adott és a „nincs”
     jelentésű ('nincs', 'none', '–', 'n/a') domén 0.
     Ellentmondásnál figyelmeztető szöveg, különben None."""
+    certainty = grade_token(certainty)
     if certainty not in _GRADE_LEVELS:
         return None
     steps = {d: _grade_step(domains.get(d)) for d in _GRADE_DOWN + ("upgrades",)}
@@ -540,7 +588,9 @@ def grade_consistency(certainty, **domains):
     down = sum(abs(steps[d]) for d in _GRADE_DOWN if steps[d] is not None)
     up = steps["upgrades"] or 0
     c = _GRADE_LEVELS.index(certainty) + 1
-    rct, obs = max(1, min(4, 4 - down + up)), max(1, min(4, 2 - down + up))
+    rct, obs = _grade_index(4, down, up), _grade_index(2, down, up)      # a közös szabály (grade_arithmetic)
+    note = (" A felminősítés (+%d) leminősítés mellett a motor szabálya szerint nem számít (GRADE 9; D-S13-009): ha "
+            "mégis alkalmazod, a globális ítéletet indokold." % up) if up and down else ""
     if all(steps[d] is not None for d in _GRADE_DOWN) and not up_unknown:
         if c in (rct, obs):
             return None
@@ -556,8 +606,8 @@ def grade_consistency(certainty, **domains):
             ("'%s'–'%s'" % (_GRADE_LEVELS[lo - 1], _GRADE_LEVELS[hi - 1]))
     return ("A bizonyosság ('%s') nem egyeztethető össze a megadott lépésekkel (leminősítés összesen %s, "
             "felminősítés összesen %s): a kiindulástól (RCT: magas; megfigyeléses: alacsony) függően %s lehet. "
-            "Ellenőrizd a domének értékét vagy a végső ítéletet."
-            % (certainty, ("−%d" % down) if down else "0", ("+%d" % up) if up else "0", rng))
+            "Ellenőrizd a domének értékét vagy a végső ítéletet.%s"
+            % (certainty, ("−%d" % down) if down else "0", ("+%d" % up) if up else "0", rng, note))
 
 
 # publikációs torzítás (11. döntés, 4. pont): a „suspected” (gyanított) előjeles lépés nélkül FELOLDATLAN — a rögzítés
@@ -603,6 +653,7 @@ def add_grade(project_dir, outcome, certainty, kb_db=None, strict=False, warning
               **kw):
     cols = ["k", "participants", "effect", "risk_of_bias", "inconsistency", "indirectness", "imprecision",
             "publication_bias", "upgrades", "rationale", "kb_refs", "kb_unverified", "actor"]
+    certainty = grade_token(certainty)
     kw["actor"] = check_actor(actor)
     pb_error, pb_warning = publication_bias_check(kw.get("publication_bias"))
     if pb_error:
@@ -642,6 +693,22 @@ GRADE_UPGRADE_STEPS = {"large_effect": (1, 2), "dose_response": (1,), "opposing_
 GRADE_CERTAINTY_SOURCES = ("computed", "human")
 GRADE_DOC_STATUSES = ("draft", "recorded")
 GRADE_ORIGINS = ("human", "ai_draft")
+# a bizonyíték elrendezése (SoF „Résztvevők (vizsgálatok)” cellája, felminősítési tanács) — NEM a kiindulásból
+# következtetve: NRSI ROBINS-I-gyel magasról indul (GRADE 18), mégsem RCT (methodology:M9)
+GRADE_DESIGNS = ("RCT", "NRSI", "observational", "mixed")
+_GRADE_DESIGN_ALIASES = {"rct": "RCT", "randomised": "RCT", "randomized": "RCT", "nrsi": "NRSI",
+                         "non-randomised": "NRSI", "non-randomized": "NRSI", "observational": "observational",
+                         "mixed": "mixed"}
+
+
+def grade_design(value):
+    """Az elrendezés kanonikus alakja (RCT | NRSI | observational | mixed; kis-/nagybetű mindegy); más érték
+    változatlan (a hibát az ellenőrzés jelzi)."""
+    if not isinstance(value, str):
+        return value
+    return _GRADE_DESIGN_ALIASES.get(value.strip().lower(), value)
+
+
 GRADE_DOMAIN_LABELS = {"risk_of_bias": ("Torzítási kockázat", "Risk of bias"),
                        "inconsistency": ("Inkonzisztencia", "Inconsistency"),
                        "indirectness": ("Indirektség", "Indirectness"),
@@ -760,6 +827,17 @@ def validate_grade_doc(doc):
     except (TypeError, ValueError):
         return doc, ["a tartalom nem JSON-képes (vagy NaN/végtelen számot tartalmaz)"]
     errors = []
+    # egy GRADE-szótár (contracts:m2): az értékelés-oldal aláhúzásos alakjai ('very_low', 'not_serious',
+    # 'strongly_suspected') bemeneten álnevek — a mentett dokumentumban a szk.ma.grade/v1 kanonikus alakja áll
+    for key in ("certainty", "importance"):
+        if key in d:
+            d[key] = grade_token(d[key])
+    if "design" in d:
+        d["design"] = grade_design(d["design"])
+    if isinstance(d.get("domains"), dict):
+        for dom in d["domains"].values():
+            if isinstance(dom, dict) and "rating" in dom:
+                dom["rating"] = grade_token(dom["rating"])
     if d.get("schema", GRADE_SCHEMA) != GRADE_SCHEMA:
         errors.append("schema: csak %s lehet (kapott: %r)" % (GRADE_SCHEMA, d.get("schema")))
     d["schema"] = GRADE_SCHEMA
@@ -772,6 +850,8 @@ def validate_grade_doc(doc):
         errors.append("run_id: commit-futás azonosítója (20261004T211200Z-a1f3c2) vagy null: %r" % (d["run_id"],))
     if d["start"] not in ("high", "low", None):
         errors.append("start: high, low vagy null lehet (kapott: %r)" % (d["start"],))
+    if d.get("design") not in GRADE_DESIGNS + (None,):
+        errors.append("design: %s vagy null lehet (kapott: %r)" % (" | ".join(GRADE_DESIGNS), d.get("design")))
     if d.get("importance") not in GRADE_IMPORTANCE + (None,):
         errors.append("importance: %s vagy null lehet (kapott: %r)" % (
             " | ".join(GRADE_IMPORTANCE), d.get("importance")))
@@ -871,17 +951,13 @@ def _upgrade_total(doc):
 
 
 def grade_doc_certainty(doc):
-    """A kiindulásból és az előjeles lépésekből adódó szint (kiindulás − Σ|lépés| + felminősítés, 'very low'–'high'
-    közé vágva); None, ha a kiindulás vagy bármely domén lépése hiányzik (pl. feloldatlan publikációs torzítás).
-    Csak tájékoztató előtöltés: a végső bizonyosság emberi ítélet (GRADE-09)."""
-    if doc.get("start") not in ("high", "low"):
-        return None
+    """A kiindulásból és az előjeles lépésekből adódó szint a közös szabállyal (grade_arithmetic: kiindulás −
+    Σ|lépés|, a felminősítés csak leminősítés nélkül; 'very low'–'high' közé vágva); None, ha a kiindulás vagy bármely
+    domén lépése hiányzik (pl. feloldatlan publikációs torzítás). Csak tájékoztató előtöltés: a végső bizonyosság
+    emberi ítélet (GRADE-09)."""
     doms = doc.get("domains") or {}
-    steps = [(doms.get(d) or {}).get("step") for d in GRADE_DOMAINS]
-    if any(s is None for s in steps):
-        return None
-    idx = (3 if doc["start"] == "high" else 1) - sum(abs(s) for s in steps) + _upgrade_total(doc)
-    return _GRADE_LEVELS[max(0, min(3, idx))]
+    steps = [(doms.get(d) or {}).get("step") if isinstance(doms.get(d), dict) else None for d in GRADE_DOMAINS]
+    return grade_arithmetic(doc.get("start"), steps, _upgrade_total(doc))["certainty"]
 
 
 def grade_doc_open(doc):
@@ -1015,9 +1091,15 @@ def _grade_doc_error(errors):
     return ValueError("Érvénytelen GRADE-dokumentum (%s): %s." % (GRADE_SCHEMA, "; ".join(errors)))
 
 
+def _unapproved_ai(doc):
+    return isinstance(doc, dict) and doc.get("origin") == "ai_draft" and _grade_blank(doc.get("approved_by"))
+
+
 def _human_certainty(doc):
-    """Az ember adta-e meg a bizonyosságot (nem a korábbi mentés számolta)."""
-    return isinstance(doc, dict) and doc.get("certainty") is not None and doc.get("certainty_source") != "computed"
+    """Az ember adta-e meg a bizonyosságot (nem a korábbi mentés számolta, és nem jóvá nem hagyott AI-vázlat írta —
+    6. döntés: az AI-vázlat szintje nem emberi ítélet)."""
+    return (isinstance(doc, dict) and doc.get("certainty") is not None and doc.get("certainty_source") != "computed"
+            and not _unapproved_ai(doc))
 
 
 def _settle_certainty(norm, given):
@@ -1099,18 +1181,39 @@ def list_grade_docs(project_dir):
     return out
 
 
-def record_grade_doc(project_dir, doc, actor=None, kb_db=None, strict=False, check_kb=True):
+class GradeRecordError(ValueError):
+    """A GRADE-rögzítés elutasítása (ValueError). problems: az okok; computed_certainty: a lépésekből adódó szint
+    (a megerősítő mező előtöltése) vagy None; needs_certainty: True, ha a rögzítéshez (egyebek közt) az emberi
+    bizonyosság-megerősítés hiányzik."""
+
+    def __init__(self, message, problems=(), computed_certainty=None, needs_certainty=False):
+        ValueError.__init__(self, message)
+        self.problems = list(problems)
+        self.computed_certainty = computed_certainty
+        self.needs_certainty = needs_certainty
+
+
+def record_grade_doc(project_dir, doc, actor=None, kb_db=None, strict=False, check_kb=True, certainty=None):
     """A GRADE-ítélet rögzítése: a projektnaplóba (add_grade, előjeles lépés-szövegekkel, k / résztvevők / hatás a
     dokumentum run_summary-jéből) és a 06_kezirat/grade/<kimenet>.grade.json-ba (status 'recorded', journal_id).
-    Tiltott (ValueError, minden okkal): érvénytelen dokumentum; commit-futás (run_id) nélkül; kiindulás nélkül;
-    ítélet nélküli domén; feloldatlan publikációs torzítás („suspected” 0 / −1 döntés nélkül; 11. döntés, 4. pont);
-    bizonyosság nélkül; jóvá nem hagyott AI-vázlat (origin 'ai_draft', approved_by nélkül; 11. döntés, 6. pont).
-    → {id, doc, warnings, path}"""
+    A végső bizonyosság EMBERI ítélet (GRADE-09; methodology:M5): a lépésekből számolt szint (certainty_source
+    'computed') csak előtöltés — a rögzítéshez ember erősíti meg vagy írja át: certainty=<szint> (vagy a dokumentum
+    certainty mezője certainty_source 'human'-nel). Tiltott (GradeRecordError ⊂ ValueError, minden okkal):
+    érvénytelen dokumentum; commit-futás (run_id) nélkül; kiindulás nélkül; ítélet nélküli domén; feloldatlan
+    publikációs torzítás („suspected” 0 / −1 döntés nélkül; 11. döntés, 4. pont); bizonyosság nélkül; csak számolt
+    (meg nem erősített) bizonyosság; jóvá nem hagyott AI-vázlat (origin 'ai_draft', approved_by nélkül; 11. döntés,
+    6. pont). → {id, doc, warnings, path}"""
     norm, errors = validate_grade_doc(doc)
     if errors:
         raise _grade_doc_error(errors)
     actor = check_actor(actor)
-    _settle_certainty(norm, _human_certainty(doc))
+    human = _human_certainty(doc)
+    if certainty is not None:
+        certainty = grade_token(certainty)
+        if certainty not in _GRADE_LEVELS:
+            raise ValueError("certainty: %s lehet (kapott: %r)" % (" | ".join(_GRADE_LEVELS), certainty))
+        norm["certainty"], human = certainty, True
+    _settle_certainty(norm, human)
     problems = []
     if norm.get("run_id") is None:
         problems.append("nincs commit-futás (run_id): GRADE csak rögzített futásra hivatkozhat")
@@ -1122,13 +1225,20 @@ def record_grade_doc(project_dir, doc, actor=None, kb_db=None, strict=False, che
     if state["unresolved"]:
         problems.append("a publikációs torzítás „gyanított” (suspected) ítélete feloldatlan: válassz 0-t vagy −1-et "
                         "indoklással (11. döntés, 4. pont; X019)")
+    computed = grade_doc_certainty(norm)
+    needs = False
     if norm.get("certainty") is None:
         problems.append("hiányzik a bizonyosság (certainty)")
+    elif norm.get("certainty_source") == "computed":
+        needs = True
+        problems.append("a bizonyosság ('%s') csak a lépésekből számolt előtöltés: a végső bizonyosság emberi ítélet "
+                        "(GRADE-09) — erősítsd meg vagy írd át (certainty: <szint>, certainty_source: human)"
+                        % norm["certainty"])
     if norm.get("origin") == "ai_draft" and _grade_blank(norm.get("approved_by")):
         problems.append("AI-vázlat emberi jóváhagyás nélkül (approved_by): az AI-vázlat nem rögzíthető "
                         "(11. döntés, 6. pont)")
     if problems:
-        raise ValueError("A GRADE-ítélet nem rögzíthető: %s." % "; ".join(problems))
+        raise GradeRecordError("A GRADE-ítélet nem rögzíthető: %s." % "; ".join(problems), problems, computed, needs)
     texts = grade_doc_texts(norm)
     summ = norm.get("run_summary") if isinstance(norm.get("run_summary"), dict) else {}
     part = summ.get("participants")

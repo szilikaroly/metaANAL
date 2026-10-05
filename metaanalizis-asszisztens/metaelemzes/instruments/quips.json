@@ -9,7 +9,7 @@
   "full_name": "Quality In Prognosis Studies",
   "family": "rob",
   "tool_version": "2013",
-  "definition_version": 1,
+  "definition_version": 2,
   "validator_version": "1.0.0",
   "reference_sha256": "0eaa166f1bd1ccb792b48d19735efaf4f42bef1740e9f772be54b6e68ea78f53",
   "source": {
@@ -20,8 +20,8 @@
     "licence": "MIT",
     "copyright": "Copyright (c) 2026 Dr. Szili Károly",
     "derived": {
-      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
-      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+      "hu": "A tételek a publikált QUIPS prompting itemjei (a–g betűjellel); a domén-súgó részben a validator referenciafájljából; a magyar szöveg saját. A validator 1.0.0 eltérő tételazonosítói a 'validator_ids' mezőben.",
+      "en": "Items are the published QUIPS prompting items (lettered a–g); domain help partly from the validator reference file; Hungarian texts are this project's own. Validator 1.0.0's differing ids are in 'validator_ids'."
     }
   },
   "citation": "Hayden JA, van der Windt DA, Cartwright JL, Côté P, Bombardier C. Assessing bias in studies of prognostic factors. Ann Intern Med 2013;158:280-6.",
@@ -31,8 +31,8 @@
     "text_kind": "paraphrase",
     "checked": false,
     "note": {
-      "hu": "Rövid parafrázis a validator munkalistája alapján; a hat domén és az ítéletskála a publikált eszköz, a domének alatti kérdések adaptációk (a tételszám ezé a fájlé, nem a QUIPS-é). Kéziratban a publikált listát használd, és írd le, hogy doménszinten értékeltél.",
-      "en": "Short paraphrases of the validator's working list; the six domains and rating scheme are the published tool, the prompting items are an adaptation (the item count is this file's, not QUIPS's)."
+      "hu": "A hat domén, az ítéletskála és a doménenkénti prompting itemek (a–g betűjellel) a publikált QUIPS-é (Hayden és mtsai, Ann Intern Med 2013;158:280-6; a 2006-os változat alapján) — rövid parafrázisban. A korábbi, a validatorból átvett nem-QUIPS kérdéseket (a tényező a kimenet kezdete után mérve; vakított értékelők; szignifikancia-alapú változó-szelekció; EPV) eltávolítottuk; tartalmuk a kapcsolódó hivatalos tétel súgójába került. Kéziratban a publikált listát idézd, és írd le, hogy doménszinten értékeltél.",
+      "en": "The six domains, the rating scheme and the per-domain prompting items (lettered a–g) are the published QUIPS (Hayden et al., Ann Intern Med 2013;158:280-6; based on the 2006 version), as short paraphrases. The former non-QUIPS questions taken from the validator (factor measured after outcome onset; blinded assessors; significance-based selection; EPV) were removed; their content moved into the help of the related official item. Quote the published list in a manuscript and state that you rated at domain level."
     }
   },
   "intro": {
@@ -231,13 +231,13 @@
   ],
   "items": [
     {
-      "id": "1.1",
-      "key": "1.1",
+      "id": "1a",
+      "key": "1a",
       "domain": "1",
       "pass": null,
       "text": {
-        "hu": "Megfelelően leírták-e a forráspopulációt?",
-        "en": "Is the source population adequately described?"
+        "hu": "Megfelelő volt-e a jogosult személyek részvétele a vizsgálatban?",
+        "en": "Adequate participation in the study by eligible persons."
       },
       "tags": [
         "all"
@@ -247,16 +247,57 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "official_id": "1a"
     },
     {
-      "id": "1.2",
-      "key": "1.2",
+      "id": "1b",
+      "key": "1b",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Leírták-e a forráspopulációt (a vizsgálni kívánt populációt)?",
+        "en": "Description of the source population or population of interest."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "1b"
+    },
+    {
+      "id": "1c",
+      "key": "1c",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Leírták-e a kiinduló vizsgálati mintát?",
+        "en": "Description of the baseline study sample."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "1c"
+    },
+    {
+      "id": "1d",
+      "key": "1d",
       "domain": "1",
       "pass": null,
       "text": {
         "hu": "Megfelelően leírták-e a mintavételi keretet és a toborzást?",
-        "en": "Are the sampling frame and recruitment adequately described?"
+        "en": "Adequate description of the sampling frame and recruitment."
       },
       "tags": [
         "all"
@@ -266,16 +307,17 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "official_id": "1d"
     },
     {
-      "id": "1.3",
-      "key": "1.3",
+      "id": "1e",
+      "key": "1e",
       "domain": "1",
       "pass": null,
       "text": {
         "hu": "Megfelelően leírták-e a toborzás idejét és helyét?",
-        "en": "Is the period and place of recruitment adequately described?"
+        "en": "Adequate description of the period and place of recruitment."
       },
       "tags": [
         "all"
@@ -285,16 +327,17 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "official_id": "1e"
     },
     {
-      "id": "1.4",
-      "key": "1.4",
+      "id": "1f",
+      "key": "1f",
       "domain": "1",
       "pass": null,
       "text": {
         "hu": "Megfelelően leírták-e a be- és kizárási kritériumokat?",
-        "en": "Are inclusion and exclusion criteria adequately described?"
+        "en": "Adequate description of inclusion and exclusion criteria."
       },
       "tags": [
         "all"
@@ -304,54 +347,17 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "official_id": "1f"
     },
     {
-      "id": "1.5",
-      "key": "1.5",
-      "domain": "1",
-      "pass": null,
-      "text": {
-        "hu": "Megfelelő volt-e a jogosult személyek részvételi aránya?",
-        "en": "Is there adequate participation by eligible people?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "1.6",
-      "key": "1.6",
-      "domain": "1",
-      "pass": null,
-      "text": {
-        "hu": "Megfelelően leírták-e a minta kiindulási jellemzőit?",
-        "en": "Are the baseline characteristics of the study sample adequately described?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "2.1",
-      "key": "2.1",
+      "id": "2a",
+      "key": "2a",
       "domain": "2",
       "pass": null,
       "text": {
-        "hu": "Megfelelően leírták-e a vizsgálatot befejező résztvevők arányát?",
-        "en": "Is the proportion of participants completing the study adequately described?"
+        "hu": "Megfelelő volt-e a résztvevők válaszadási (követési) aránya?",
+        "en": "Adequate response rate for study participants."
       },
       "tags": [
         "all"
@@ -361,16 +367,37 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "official_id": "2a"
     },
     {
-      "id": "2.2",
-      "key": "2.2",
+      "id": "2b",
+      "key": "2b",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Leírták-e, hogyan próbáltak adatot gyűjteni a kiesett résztvevőkről?",
+        "en": "Description of attempts to collect information on participants who dropped out."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "2b"
+    },
+    {
+      "id": "2c",
+      "key": "2c",
       "domain": "2",
       "pass": null,
       "text": {
         "hu": "Megadták-e a követésből való kiesés okait?",
-        "en": "Are the reasons for loss to follow-up provided?"
+        "en": "Reasons for loss to follow-up are provided."
       },
       "tags": [
         "all"
@@ -380,449 +407,465 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "official_id": "2c"
     },
     {
-      "id": "2.3",
-      "key": "2.3",
+      "id": "2d",
+      "key": "2d",
       "domain": "2",
       "pass": null,
       "text": {
         "hu": "Megfelelően leírták-e a követésből kiesett résztvevőket?",
-        "en": "Are participants lost to follow-up adequately described?"
+        "en": "Adequate description of participants lost to follow-up."
       },
       "tags": [
         "all"
       ],
       "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "2.4",
-      "key": "2.4",
-      "domain": "2",
-      "pass": null,
-      "text": {
-        "hu": "Hasonlóak-e a kiesettek a befejezőkhöz a prognosztikai tényező tekintetében?",
-        "en": "Are participants lost to follow-up similar to those who completed, with respect to the prognostic factor?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "2.5",
-      "key": "2.5",
-      "domain": "2",
-      "pass": null,
-      "text": {
-        "hu": "Nincs-e lényeges különbség a befejezők és a kiesettek között a kimenetben vagy a fő jellemzőkben?",
-        "en": "Are there no important differences between completers and those lost, in outcome or key characteristics?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "3.1",
-      "key": "3.1",
-      "domain": "3",
-      "pass": null,
-      "text": {
-        "hu": "Egyértelműen definiálták-e a prognosztikai tényezőt?",
-        "en": "Is the prognostic factor clearly defined?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "3.2",
-      "key": "3.2",
-      "domain": "3",
-      "pass": null,
-      "text": {
-        "hu": "Érvényes és megbízható-e a tényező mérési módszere?",
-        "en": "Is the method of measurement valid and reliable?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "3.3",
-      "key": "3.3",
-      "domain": "3",
-      "pass": null,
-      "text": {
-        "hu": "Minden résztvevőnél ugyanaz volt-e a tényező mérési módszere?",
-        "en": "Is the measurement method the same for all participants?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "3.4",
-      "key": "3.4",
-      "domain": "3",
-      "pass": null,
-      "text": {
-        "hu": "Elfogadható-e a tényezőre vonatkozó hiányzó adatok aránya?",
-        "en": "Is the proportion of missing data on the factor acceptable?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "3.5",
-      "key": "3.5",
-      "domain": "3",
-      "pass": null,
-      "text": {
-        "hu": "Megfelelő-e a tényező hiányzó adatainak kezelése?",
-        "en": "Is the method for handling missing factor data appropriate?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "3.6",
-      "key": "3.6",
-      "domain": "3",
-      "pass": null,
-      "text": {
-        "hu": "A tényezőt azután mérték-e, hogy a kimenet már elkezdett kialakulni?",
-        "en": "Was the factor measured after the outcome had begun to occur?"
-      },
-      "tags": [
-        "all",
-        "reverse"
-      ],
-      "polarity": "reverse",
       "critical": false,
       "scopes": [
         "all"
       ],
       "applies_to": null,
+      "official_id": "2d"
+    },
+    {
+      "id": "2e",
+      "key": "2e",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Nincs-e lényeges különbség a vizsgálatot befejezők és a kiesettek között?",
+        "en": "There are no important differences between participants who completed the study and those who did not."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "2e",
       "help": {
-        "hu": "Fordított kérdés: az „Igen” a probléma.",
-        "en": "Reverse-polarity."
+        "hu": "A prognosztikai tényezővel vagy a kimenettel összefüggő lemorzsolódás a fő veszély; az összesített lemorzsolódási arány a legkevésbé informatív szám.",
+        "en": "Attrition related to the prognostic factor or the outcome is the main threat; the overall attrition rate is the least informative number."
       }
     },
     {
-      "id": "4.1",
-      "key": "4.1",
+      "id": "3a",
+      "key": "3a",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen definiálták vagy leírták-e a prognosztikai tényezőt?",
+        "en": "A clear definition or description of the prognostic factor is provided."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "3a"
+    },
+    {
+      "id": "3b",
+      "key": "3b",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Kellően érvényes és megbízható-e a prognosztikai tényező mérési módszere?",
+        "en": "Method of prognostic factor measurement is adequately valid and reliable."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "3b"
+    },
+    {
+      "id": "3c",
+      "key": "3c",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Folytonos változóként közölték-e a tényezőt, vagy megfelelő (nem adatvezérelt) vágópontot használtak?",
+        "en": "Continuous variables are reported or appropriate cut-points (not data-dependent) are used."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "3c",
+      "help": {
+        "hu": "Az adatvezérelt („optimális”) vágóponton dichotomizált folytonos tényező felfújja a társulást, és nem replikálható — ilyenkor a válasz Nem.",
+        "en": "A continuous factor dichotomised at a data-driven ('optimal') cut-point inflates the association and does not replicate — answer No."
+      }
+    },
+    {
+      "id": "3d",
+      "key": "3d",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Minden résztvevőnél ugyanaz volt-e a tényező mérésének módja és körülménye?",
+        "en": "The method and setting of measurement of the prognostic factor is the same for all study participants."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "3d"
+    },
+    {
+      "id": "3e",
+      "key": "3e",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "A minta megfelelő hányadánál teljes-e a tényező adata?",
+        "en": "Adequate proportion of the study sample has complete data for the prognostic factor."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "3e"
+    },
+    {
+      "id": "3f",
+      "key": "3f",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő imputálási módszert használtak-e a tényező hiányzó adataira?",
+        "en": "Appropriate methods of imputation are used for missing prognostic factor data."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "3f"
+    },
+    {
+      "id": "4a",
+      "key": "4a",
       "domain": "4",
       "pass": null,
       "text": {
         "hu": "Egyértelműen definiálták-e a kimenetet?",
-        "en": "Is the outcome clearly defined?"
+        "en": "A clear definition of the outcome is provided."
       },
       "tags": [
         "all"
       ],
       "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "4.2",
-      "key": "4.2",
-      "domain": "4",
-      "pass": null,
-      "text": {
-        "hu": "Érvényes és megbízható-e a kimenet mérési módszere?",
-        "en": "Is the method of outcome measurement valid and reliable?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "4.3",
-      "key": "4.3",
-      "domain": "4",
-      "pass": null,
-      "text": {
-        "hu": "Minden résztvevőnél ugyanaz volt-e a kimenet mérési módszere?",
-        "en": "Is the measurement method the same for all participants?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "4.4",
-      "key": "4.4",
-      "domain": "4",
-      "pass": null,
-      "text": {
-        "hu": "Tudtak-e a kimenet értékelői a prognosztikai tényező státuszáról?",
-        "en": "Were outcome assessors aware of the prognostic factor status?"
-      },
-      "tags": [
-        "all",
-        "reverse"
-      ],
-      "polarity": "reverse",
       "critical": false,
       "scopes": [
         "all"
       ],
       "applies_to": null,
+      "official_id": "4a",
       "help": {
-        "hu": "Fordított kérdés: az „Igen” a probléma.",
-        "en": "Reverse-polarity."
+        "hu": "Beleértve a követés időtartamát és a kimenet szintjét / kiterjedését.",
+        "en": "Including the duration of follow-up and the level and extent of the outcome."
       }
     },
     {
-      "id": "5.1",
-      "key": "5.1",
+      "id": "4b",
+      "key": "4b",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Kellően érvényes és megbízható-e a kimenet mérési módszere?",
+        "en": "Method of outcome measurement used is adequately valid and reliable."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "4b",
+      "help": {
+        "hu": "A vak értékelés (a tényező ismerete nélkül) a megbízhatóság része.",
+        "en": "Blinded assessment (without knowledge of the factor) is part of reliability."
+      }
+    },
+    {
+      "id": "4c",
+      "key": "4c",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Minden résztvevőnél ugyanaz volt-e a kimenet mérésének módja és körülménye?",
+        "en": "The method and setting of outcome measurement is the same for all study participants."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "4c"
+    },
+    {
+      "id": "5a",
+      "key": "5a",
       "domain": "5",
       "pass": null,
       "text": {
         "hu": "Megmérték-e az összes fontos zavaró tényezőt?",
-        "en": "Are all important confounders measured?"
+        "en": "All important confounders are measured."
       },
       "tags": [
         "all"
       ],
       "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "5.2",
-      "key": "5.2",
-      "domain": "5",
-      "pass": null,
-      "text": {
-        "hu": "Egyértelműen definiálták-e a zavaró tényezőket?",
-        "en": "Are the confounders clearly defined?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "5.3",
-      "key": "5.3",
-      "domain": "5",
-      "pass": null,
-      "text": {
-        "hu": "Érvényes és megbízható-e a zavaró tényezők mérési módszere?",
-        "en": "Is the method of confounder measurement valid and reliable?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "5.4",
-      "key": "5.4",
-      "domain": "5",
-      "pass": null,
-      "text": {
-        "hu": "Minden résztvevőnél ugyanaz volt-e a zavaró tényezők mérési módszere?",
-        "en": "Is the measurement method the same for all participants?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "5.5",
-      "key": "5.5",
-      "domain": "5",
-      "pass": null,
-      "text": {
-        "hu": "Elfogadható-e a zavaró tényezők hiányzó adatainak aránya, és megfelelő-e a kezelésük?",
-        "en": "Is the proportion of missing confounder data acceptable, and handled appropriately?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "5.6",
-      "key": "5.6",
-      "domain": "5",
-      "pass": null,
-      "text": {
-        "hu": "Megfelelő módszerekkel vették-e figyelembe a zavaró tényezőket?",
-        "en": "Were appropriate methods used to account for confounding?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "6.1",
-      "key": "6.1",
-      "domain": "6",
-      "pass": null,
-      "text": {
-        "hu": "Elegendő adatot közöltek-e az elemzés megítéléséhez?",
-        "en": "Is there sufficient presentation of data to assess the analysis?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "6.2",
-      "key": "6.2",
-      "domain": "6",
-      "pass": null,
-      "text": {
-        "hu": "Megfelelő és világosan leírt-e a modellépítési stratégia?",
-        "en": "Is the model development strategy appropriate and clearly described?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
-    },
-    {
-      "id": "6.3",
-      "key": "6.3",
-      "domain": "6",
-      "pass": null,
-      "text": {
-        "hu": "Statisztikai szignifikancia alapján választották-e ki a modell változóit?",
-        "en": "Was the model developed by selecting variables on the basis of statistical significance?"
-      },
-      "tags": [
-        "all",
-        "reverse"
-      ],
-      "polarity": "reverse",
       "critical": false,
       "scopes": [
         "all"
       ],
       "applies_to": null,
+      "official_id": "5a",
       "help": {
-        "hu": "Fordított kérdés. A p-érték alapú lépésenkénti szelekció optimista, instabil modellt ad.",
-        "en": "Reverse-polarity. Stepwise selection on p-values produces optimistic, unstable models."
+        "hu": "A prognosztikai PREDIKCIÓHOZ nem kell zavaró tényezőkre korrigálni, a prognosztikai MAGYARÁZATHOZ igen. Előbb döntsd el, melyiket állítja a cikk.",
+        "en": "Prognostic PREDICTION does not require adjustment for confounders; prognostic EXPLANATION does. Decide first which one the paper claims."
       }
     },
     {
-      "id": "6.4",
-      "key": "6.4",
+      "id": "5b",
+      "key": "5b",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen definiálták-e a mért fontos zavaró tényezőket?",
+        "en": "Clear definitions of the important confounders measured are provided."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "5b"
+    },
+    {
+      "id": "5c",
+      "key": "5c",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Kellően érvényes és megbízható-e az összes fontos zavaró tényező mérése?",
+        "en": "Measurement of all important confounders is adequately valid and reliable."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "5c"
+    },
+    {
+      "id": "5d",
+      "key": "5d",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Minden résztvevőnél ugyanaz volt-e a zavaró tényezők mérésének módja és körülménye?",
+        "en": "The method and setting of confounding measurement are the same for all study participants."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "5d"
+    },
+    {
+      "id": "5e",
+      "key": "5e",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Ha imputáltak, megfelelő módszerrel pótolták-e a zavaró tényezők hiányzó adatait?",
+        "en": "Appropriate methods are used if imputation is used for missing confounder data."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "5e"
+    },
+    {
+      "id": "5f",
+      "key": "5f",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Figyelembe vették-e a fontos lehetséges zavaró tényezőket a vizsgálati elrendezésben (pl. illesztés, rétegzés)?",
+        "en": "Important potential confounders are accounted for in the study design."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "5f"
+    },
+    {
+      "id": "5g",
+      "key": "5g",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Figyelembe vették-e a fontos lehetséges zavaró tényezőket az elemzésben (megfelelő korrekció)?",
+        "en": "Important potential confounders are accounted for in the analysis."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "5g"
+    },
+    {
+      "id": "6a",
+      "key": "6a",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Elegendő adatot közöltek-e az elemzési stratégia megítéléséhez?",
+        "en": "Sufficient presentation of data to assess the adequacy of the analytic strategy."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "6a"
+    },
+    {
+      "id": "6b",
+      "key": "6b",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő-e a modellépítési stratégia, és fogalmi keretre / modellre épül-e?",
+        "en": "Strategy for model building is appropriate and is based on a conceptual framework or model."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "6b",
+      "help": {
+        "hu": "A p-érték alapú lépésenkénti változó-szelekció optimista, instabil modellt ad — ez itt Nem vagy Részben.",
+        "en": "Stepwise variable selection on p-values gives optimistic, unstable models — No or Partly here."
+      }
+    },
+    {
+      "id": "6c",
+      "key": "6c",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Megfelel-e a választott statisztikai modell a vizsgálati elrendezésnek?",
+        "en": "The selected statistical model is adequate for the design of the study."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "official_id": "6c",
+      "help": {
+        "hu": "Kevés esemény jelölt változónként (alacsony EPV) túlillesztéshez vezet — a modell ilyenkor nem megfelelő.",
+        "en": "Few events per candidate variable (low EPV) leads to overfitting — the model is then not adequate."
+      }
+    },
+    {
+      "id": "6d",
+      "key": "6d",
       "domain": "6",
       "pass": null,
       "text": {
         "hu": "Nincs-e szelektív eredményközlés?",
-        "en": "Is there no selective reporting of results?"
+        "en": "There is no selective reporting of results."
       },
       "tags": [
         "all"
@@ -832,26 +875,8 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
-    },
-    {
-      "id": "6.5",
-      "key": "6.5",
-      "domain": "6",
-      "pass": null,
-      "text": {
-        "hu": "Elegendő volt-e az eseményszám jelölt változónként?",
-        "en": "Was the number of events per candidate variable adequate?"
-      },
-      "tags": [
-        "all"
-      ],
-      "polarity": "normal",
-      "critical": false,
-      "scopes": [
-        "all"
-      ],
-      "applies_to": null
+      "applies_to": null,
+      "official_id": "6d"
     }
   ],
   "rollup": {
@@ -889,13 +914,57 @@
     "high": "high"
   },
   "counts": {
-    "parsed": 32,
-    "published": null,
+    "parsed": 31,
+    "published": 31,
     "per_scope": {
-      "all": 32
+      "all": 31
     },
     "per_pass": null
   },
   "notes": [],
-  "validator_differences": []
+  "validator_differences": [
+    {
+      "item": "*",
+      "validator": "1.1–6.5 (32 kérdés, közte nem-QUIPS tételek)",
+      "here": "1a–6d (31 hivatalos prompting item)",
+      "reason": {
+        "hu": "A publikált QUIPS prompting itemek (Hayden 2013; 2006): a vágópont (3c) és a modell-megfelelőség (6c) tétele pótolva, a nem-QUIPS tételek (3.6, 4.4, 6.3, 6.5) elhagyva.",
+        "en": "The published QUIPS prompting items (Hayden 2013; 2006): cut-point (3c) and model adequacy (6c) added, non-QUIPS items (3.6, 4.4, 6.3, 6.5) removed."
+      }
+    }
+  ],
+  "validator_ids": [
+    "1.1",
+    "1.2",
+    "1.3",
+    "1.4",
+    "1.5",
+    "1.6",
+    "2.1",
+    "2.2",
+    "2.3",
+    "2.4",
+    "2.5",
+    "3.1",
+    "3.2",
+    "3.3",
+    "3.4",
+    "3.5",
+    "3.6",
+    "4.1",
+    "4.2",
+    "4.3",
+    "4.4",
+    "5.1",
+    "5.2",
+    "5.3",
+    "5.4",
+    "5.5",
+    "5.6",
+    "6.1",
+    "6.2",
+    "6.3",
+    "6.4",
+    "6.5"
+  ]
 }

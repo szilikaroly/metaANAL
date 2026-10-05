@@ -216,12 +216,16 @@ def build_flow(state, reviews, studies_doc, decisions, update_doc=None, merged=N
         d3 = int(res.get("unusable") or 0)
         d1 = int(a1) + int(a2) - d3 - b
         if d1 < 0:
-            warnings.append(_warn("H011", "A frissítő keresés letöltött száma (%d) kisebb, mint az új egyedi rekordoké "
-                                          "(%d) — az update_search.json elavult; futtasd újra az update lépést."
+            # Számot nem „javítunk" (N1): a letöltött számot NEM emeljük meg, hogy az egyenlet kijöjjön — a motor
+            # ellenőrzése így P002-t jelez (H011), és a lezárás (EP5) addig nem lehetséges, amíg az update újra nem fut.
+            warnings.append(_warn("H011", "A frissítő keresés letöltött száma (%d) kisebb, mint az adatbázis-ág új egyedi "
+                                          "rekordjaié (%d) — az update_search.json elavult; futtasd újra az update "
+                                          "lépést. A PRISMA-számokat nem igazítjuk ki, ezért a motor-ellenőrzés hibát "
+                                          "jelez, és a lezárás addig nem lehetséges."
                                   % (int(a1) + int(a2), b),
                                   "Update search retrieved count (%d) is below the number of new unique records (%d); "
-                                  "re-run update." % (int(a1) + int(a2), b)))
-            a1 = int(a1) - d1
+                                  "re-run update. The counts are not adjusted, so the engine check fails until then."
+                                  % (int(a1) + int(a2), b)))
             d1 = 0
         flow.update({"identified_databases": int(a1), "identified_registers": int(a2), "duplicates_removed": d1,
                      "automation_removed": 0, "other_removed": d3})
@@ -250,12 +254,15 @@ def build_flow(state, reviews, studies_doc, decisions, update_doc=None, merged=N
             if k in ("identified_databases", "identified_registers", "duplicates_removed", "automation_removed",
                      "other_removed"):
                 flow[k] = 0
-        hh["no_database_branch"] = True
+        hh["no_database_branch"] = not b
         if b:
-            warnings.append(_warn("H011", "Frissítő keresésből származó rekordok vannak, de nincs update_search.json — az "
-                                          "azonosítási dobozok nem számolhatók; futtasd újra az update lépést.",
-                                  "Records from an update search exist but update_search.json is missing."))
-            flow["identified_databases"] = b
+            # nincs keresési napló → az azonosított számot NEM találjuk ki (korábban: identified_databases = b, amivel az
+            # ellenőrzés hamisan átment); a motor P002-t jelez, a lezárás addig nem lehetséges
+            warnings.append(_warn("H011", "Frissítő keresésből származó rekordok vannak (%d), de nincs update_search.json — "
+                                          "az azonosítási dobozok (A1/A2/D1) nem számolhatók, ezért a PRISMA-ellenőrzés "
+                                          "hibát jelez; futtasd újra az update lépést." % b,
+                                  "Records from an update search exist (%d) but update_search.json is missing; the "
+                                  "identification boxes cannot be computed — re-run update." % b))
 
     if not flow.get("excluded_eligibility_reasons"):
         flow.pop("excluded_eligibility_reasons", None)

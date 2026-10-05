@@ -1407,10 +1407,13 @@ class TestFinderText(unittest.TestCase):
                          '(systematic[sb] OR meta-analysis[pt] OR "meta-analysis"[ti] OR "systematic review"[ti])')
         self.assertEqual((q["pubmed"]["datetype"], q["pubmed"]["mindate"], q["pubmed"]["maxdate"]),
                          ("pdat", "2015/01/01", "2024/06/30"))
+        # Europe PMC: a P/I kifejezések cím/absztrakt/kulcsszó mezőre szűkítve (élő próba: mező nélkül a teljes
+        # szövegben is keresett — BCG: 892 találat a 78 helyett)
         self.assertEqual(q["europepmc"]["query"],
-                         '((tuberculosis) AND ("BCG vaccine" OR "BCG vaccination")) AND (PUB_TYPE:"systematic-review" '
-                         'OR PUB_TYPE:"meta-analysis" OR TITLE:"meta-analysis" OR TITLE:"systematic review") AND '
-                         'FIRST_PDATE:[2015-01-01 TO 2024-06-30]')
+                         '((TITLE_ABS:tuberculosis OR KW:tuberculosis) AND (TITLE_ABS:"BCG vaccine" OR '
+                         'TITLE_ABS:"BCG vaccination" OR KW:"BCG vaccine" OR KW:"BCG vaccination")) AND '
+                         '(PUB_TYPE:"systematic-review" OR PUB_TYPE:"meta-analysis" OR TITLE:"meta-analysis" OR '
+                         'TITLE:"systematic review") AND FIRST_PDATE:[2015-01-01 TO 2024-06-30]')
         self.assertEqual(q["openalex"]["filter"], [("type", "review"), ("from_publication_date", "2015-01-01"),
                                                    ("to_publication_date", "2024-06-30")])
         self.assertEqual(q["scopus"]["query"],
@@ -1741,7 +1744,7 @@ class TestFindReviewsCassettes(unittest.TestCase):
         res = self._replay("soy_reviews", SOY_BLOCKS, "pubmed,europepmc", 4)
         self.assertEqual(res["exit_code"], 0)
         self.assertEqual(sorted(set(w["code"] for w in res["warnings"])), ["H012"])
-        self.assertEqual(len(res["candidates"]), 8)
+        self.assertEqual(len(res["candidates"]), 7)  # újrarögzítve a TITLE_ABS-szűkítéssel (2026-10-05)
         oa = [c for c in res["candidates"] if c["fulltext"]["route"] == "europepmc_oa"]
         self.assertTrue(oa)
         for c in oa:

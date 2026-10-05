@@ -1,0 +1,438 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "e2e-esummary_name_forms",
+  "recorded_at": "2026-10-05T14:13:41Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "esummary: szerzőalak/év/testületi szerző eltérések (élő próba, BCG)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=18102809%2C15392668%2C15417251%2C4537855%2C10573656&retmode=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "2"
+        },
+        "body_json": {
+          "header": {
+            "type": "esummary",
+            "version": "0.3"
+          },
+          "result": {
+            "uids": [
+              "18102809",
+              "15392668",
+              "15417251",
+              "4537855",
+              "10573656"
+            ],
+            "18102809": {
+              "uid": "18102809",
+              "pubdate": "1949 Jan",
+              "epubdate": "",
+              "source": "Tubercle",
+              "authors": [
+                {
+                  "name": "FERGUSON RG",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "SIMES AB",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "SIMES AB",
+              "title": "BCG vaccination of Indian infants in Saskatchewan.",
+              "sorttitle": "bcg vaccination of indian infants in saskatchewan",
+              "volume": "30",
+              "issue": "1",
+              "pages": "5-11",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "1273730",
+              "issn": "0041-3879",
+              "essn": "",
+              "pubtype": [
+                "Conference Proceedings"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "4",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "18102809"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1016/s0041-3879(49)80055-9"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "pubmed",
+                  "date": "1949/01/01 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "1949/01/01 00:01"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "1949/01/01 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [],
+              "pmcrefcount": "",
+              "fulljournalname": "Tubercle",
+              "elocationid": "",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "1949/01/01 00:00",
+              "sortfirstauthor": "FERGUSON RG",
+              "vernaculartitle": ""
+            },
+            "15392668": {
+              "uid": "15392668",
+              "pubdate": "1949 Nov",
+              "epubdate": "",
+              "source": "Dis Chest",
+              "authors": [
+                {
+                  "name": "MacDOWELL A Jr",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "MacDOWELL A Jr",
+              "title": "Results of oral BCG vaccination on 348 families.",
+              "sorttitle": "results of oral bcg vaccination on 348 families",
+              "volume": "16",
+              "issue": "5",
+              "pages": "590-9",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "0231342",
+              "issn": "0096-0217",
+              "essn": "",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "4",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "15392668"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "pubmed",
+                  "date": "1949/11/01 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "1949/11/01 00:01"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "1949/11/01 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [],
+              "pmcrefcount": "",
+              "fulljournalname": "Diseases of the chest",
+              "elocationid": "",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "1949/11/01 00:00",
+              "sortfirstauthor": "MacDOWELL A Jr",
+              "vernaculartitle": ""
+            },
+            "15417251": {
+              "uid": "15417251",
+              "pubdate": "1949 Nov-Dec",
+              "epubdate": "",
+              "source": "Pediatr Pol",
+              "authors": [
+                {
+                  "name": "BELKE J",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "BELKE J",
+              "title": "[BCG vaccination in Poland after World War II].",
+              "sorttitle": "bcg vaccination in poland after world war ii",
+              "volume": "23",
+              "issue": "7-8",
+              "pages": "674-91",
+              "lang": [
+                "und"
+              ],
+              "nlmuniqueid": "2985039R",
+              "issn": "0031-3939",
+              "essn": "",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "4",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "15417251"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "pubmed",
+                  "date": "1949/11/01 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "1949/11/01 00:01"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "1949/11/01 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [],
+              "pmcrefcount": "",
+              "fulljournalname": "Pediatria polska",
+              "elocationid": "",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "1949/11/01 00:00",
+              "sortfirstauthor": "BELKE J",
+              "vernaculartitle": "Szczepienia B.C.G. w Polsce powojennej."
+            },
+            "4537855": {
+              "uid": "4537855",
+              "pubdate": "1972",
+              "epubdate": "",
+              "source": "Bull World Health Organ",
+              "authors": [
+                {
+                  "name": "Fourth Report to the Medical Research Council by its Tuberculosis Vaccines Clinical Trials Committee",
+                  "authtype": "CollectiveName",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Fourth Report to the Medical Research Council by its Tuberculosis Vaccines Clinical Trials Committee",
+              "title": "BCG and vole bacillus vaccines in the prevention of tuberculosis in adolescence and early adult life.",
+              "sorttitle": "bcg and vole bacillus vaccines in the prevention of tuberculosis in adolescence and early adult life",
+              "volume": "46",
+              "issue": "3",
+              "pages": "371-85",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "7507052",
+              "issn": "0042-9686",
+              "essn": "",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "4",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "4537855"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC2480749"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC2480749;"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "pubmed",
+                  "date": "1972/01/01 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "1972/01/01 00:01"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "1972/01/01 00:00"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "1972/01/01 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 22,
+              "fulljournalname": "Bulletin of the World Health Organization",
+              "elocationid": "",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "1972/01/01 00:00",
+              "sortfirstauthor": "Fourth Report to the Medical Research Council by its Tuberculosis Vaccines Clinical Trials Committee",
+              "vernaculartitle": ""
+            },
+            "10573656": {
+              "uid": "10573656",
+              "pubdate": "1999 Aug",
+              "epubdate": "",
+              "source": "Indian J Med Res",
+              "authors": [],
+              "lastauthor": "",
+              "title": "Fifteen year follow up of trial of BCG vaccines in south India for tuberculosis prevention. Tuberculosis Research Centre (ICMR), Chennai.",
+              "sorttitle": "fifteen year follow up of trial of bcg vaccines in south india for tuberculosis prevention tuberculosis research centre icmr chennai",
+              "volume": "110",
+              "issue": "",
+              "pages": "56-69",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "0374701",
+              "issn": "0971-5916",
+              "essn": "",
+              "pubtype": [
+                "Clinical Trial",
+                "Journal Article",
+                "Randomized Controlled Trial"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "4",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "10573656"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "pubmed",
+                  "date": "1999/11/26 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "1999/11/26 00:01"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "1999/11/26 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "The Indian journal of medical research",
+              "elocationid": "",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "1999/08/01 00:00",
+              "sortfirstauthor": "",
+              "vernaculartitle": ""
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

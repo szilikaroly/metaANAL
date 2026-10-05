@@ -371,7 +371,56 @@ def write_handmade():
         print("  kézi:", os.path.relpath(p, ROOT))
 
 
-STEPS = {"pubmed": record_pubmed, "europepmc": record_europepmc, "openalex": record_openalex,
+#: az élő végponttól végpontig próba (2026-10-05) hibamódjainak regressziós kazettái (tests/test_headhunter_e2e.py)
+E2E_REVIEWS = {
+    # Colditz 1994 (JAMA): nincs nyílt szöveg, az Europe PMC-ben nincs irodalomjegyzék → OpenAlex referenced_works
+    "rv-pmid-8309034": {"pmid": "8309034", "title": "Efficacy of BCG vaccine in the prevention of tuberculosis. "
+                        "Meta-analysis of the published literature.", "first_author": "Colditz GA", "year": 1994},
+    # Abubakar 2013 (HTA): PMC-ben van, de az efetch csak címlapot ad (<body> nélkül) → irodalomjegyzék-út
+    "rv-pmid-24021245": {"pmid": "24021245", "pmcid": "PMC4781620", "title": "Systematic review and meta-analysis of "
+                         "the current evidence on the duration of protection by bacillus Calmette-Guérin vaccination "
+                         "against tuberculosis.", "first_author": "Abubakar I", "year": 2013},
+}
+#: valódi PubMed-rekordok, amelyeknél a hivatkozás szerzőalakja/éve eltér (OpenAlex „Ferguson Rg", „A. Mac DOWELL",
+#: digitalizálási év; testületi szerző; a PubMed-cím végére fűzött testület)
+E2E_NAME_FORM_PMIDS = ["18102809", "15392668", "15417251", "4537855", "10573656"]
+E2E_REF_CAP = 12
+
+
+def e2e_review_doc(rid, info, at="2026-10-05T12:00:00Z"):
+    ids = {"pmid": {"value": info["pmid"], "source": "pubmed", "via": "pubmed.esearch", "at": at}}
+    if info.get("pmcid"):
+        ids["pmcid"] = {"value": info["pmcid"], "source": "pubmed", "via": "pubmed.esummary", "at": at}
+    return {"schema": "szk.ma.headhunter.review/v1", "model": "szk.ma.headhunter/v1", "review_id": rid,
+            "status": "selected", "superseded_by": None, "ids": ids,
+            "bib": {"title": info["title"], "first_author": info["first_author"], "year": info["year"]},
+            "found_by": [], "candidates": [], "evidence": [], "decision_ids": []}
+
+
+def record_e2e():
+    import tempfile
+    from metaelemzes.headhunter import state as S, extract as X, sources as srcreg
+    old_cap = X.OPENALEX_REF_CAP
+    X.OPENALEX_REF_CAP = E2E_REF_CAP
+    try:
+        for rid, info in sorted(E2E_REVIEWS.items()):
+            name = "extract_%s" % rid.replace("rv-pmid-", "pmid")
+            with rec(name, "extract_review(%s) — élő próba hibamódja; OpenAlex-korlát: %d hivatkozás"
+                     % (rid, E2E_REF_CAP), "e2e", slim=True) as h:
+                d = tempfile.mkdtemp(prefix="hh-e2e-")
+                S.init_state(d, "BCG", actor=None)
+                S.save_review(d, e2e_review_doc(rid, info))
+                cfg = srcreg.config_from_state(S.load_state(d))
+                row, ws, down = X.extract_review(d, rid, "auto", None, X._Clients(h, cfg, h.env), cfg,
+                                                 "2026-10-05T12:00:00Z")
+                print("  e2e", rid, row["strategy"], row["reflist_source"], row["n_candidates"], [w["code"] for w in ws])
+    finally:
+        X.OPENALEX_REF_CAP = old_cap
+    with rec("esummary_name_forms", "esummary: szerzőalak/év/testületi szerző eltérések (élő próba, BCG)", "e2e") as h:
+        pubmed.Client(h).esummary(E2E_NAME_FORM_PMIDS)
+
+
+STEPS = {"e2e": record_e2e, "pubmed": record_pubmed, "europepmc": record_europepmc, "openalex": record_openalex,
          "scopus_401": record_scopus_401, "ctgov": record_ctgov, "finder": record_finder,
          "scopus_live": record_scopus_live}
 

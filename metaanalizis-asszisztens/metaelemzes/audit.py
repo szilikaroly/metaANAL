@@ -138,8 +138,11 @@ RULES = {
     "X008": ("error", "A SoF-táblázat egy cellája eltér a motor eredményétől",
              "A 06_kezirat/sof/<kimenet>.sof.json egy cellája (k, résztvevők, a relatív hatás szövege vagy az abszolút "
              "hatás /1000) nem egyezik azzal, amit a motor a kimenet elsődleges commit-futásából számol: kézzel írt vagy "
-             "régi futásból maradt szám került a táblázatba. Generáld újra a SoF-ot a GRADE-lapon (a számokat a motor "
-             "sof() függvénye adja), ne szerkeszd kézzel.", "Cochrane Handbook 14.1; GRADE Handbook 5.2"),
+             "régi futásból maradt szám került a táblázatba. A bizonyosság-cella csak a kimenet rögzített GRADE-"
+             "ítéletének szintje lehet (ugyanarra a futásra): piszkozat, feloldatlan publikációs torzítás, jóvá nem "
+             "hagyott AI-vázlat vagy GRADE nélküli bizonyosság is ide tartozik. Generáld újra a SoF-ot a GRADE-lapon "
+             "(a számokat a motor sof() függvénye, a bizonyosságot a rögzített GRADE adja), ne szerkeszd kézzel.",
+             "Cochrane Handbook 14.1; GRADE Handbook 5.2"),
     "X009": ("error", "Kettős kinyerés lezáratlan eltéréssel",
              "A két független kinyerő táblája (03_adatok/kettos/<kimenet>.A.csv és .B.csv) eltér, és nem minden "
              "eltérésre van érvényes egyeztetési döntés a <kimenet>.consensus.json-ban — vagy egy döntés óta valamelyik "
@@ -1194,10 +1197,13 @@ def _appraisals(ctx):
             ctx.skip("X003", None, "%s: az összítélet (%r) nem RoB-kategória" % (rel, raw))
             continue
         assessor = _fold(doc.get("assessor"))
+        ai = doc.get("origin") == "ai_draft"
+        # a (jóváhagyott) AI-vázlat soha nem független értékelő és nem konszenzus (6. döntés): külön jelölve
         out.append({"rel": rel, "study": study, "tool": tool,
                     "outcome": target.get("outcome") if isinstance(target.get("outcome"), str) else None,
-                    "category": cat, "raw": raw,
-                    "consensus": status == "consensus" or assessor in _CONSENSUS or "consensus" in stem[2:],
+                    "category": cat, "raw": raw, "ai": ai,
+                    "consensus": not ai and (status == "consensus" or assessor in _CONSENSUS or
+                                             "consensus" in stem[2:]),
                     "updated": str(doc.get("updated") or "")})
     if not out:
         ctx.skip("X003", None, "nincs lezárt (status: complete) értékelés (%s)" % APPRAISAL_DIR)
@@ -1205,7 +1211,11 @@ def _appraisals(ctx):
 
 
 def _final_judgements(ctx, appraisals, oid):
-    """vizsgálat → (kategória, nyers ítélet, [fájlok]) a kimenetre vonatkozó lezárt értékelésekből."""
+    """vizsgálat → (kategória, nyers ítélet, [fájlok]) a kimenetre vonatkozó lezárt értékelésekből. Elsőbbség (az
+    appraisal._finals-szal azonosan): konszenzus (a legutóbbi) > az egyező lezárt EMBERI értékelések > a jóváhagyott
+    AI-vázlat (csak ha nincs lezárt emberi értékelés vagy konszenzus). Az AI-vázlat soha nem második értékelő
+    (6. döntés): emberi ítélet mellett sem eltérést, sem egyezést nem okoz. Eltérő emberi (vagy — emberi nélkül —
+    eltérő jóváhagyott AI-) ítéleteknél konszenzus kell: a vizsgálat kimarad (not_checked)."""
     groups = collections.OrderedDict()
     for a in appraisals:
         if a["outcome"] is not None and a["outcome"] != oid:
@@ -1214,15 +1224,21 @@ def _final_judgements(ctx, appraisals, oid):
     out = {}
     for key, items in groups.items():
         cons = [a for a in items if a["consensus"]]
+        human = [a for a in items if not a.get("ai") and not a["consensus"]]
+        ai_ok = [a for a in items if a.get("ai")]
         if cons:
             pick = sorted(cons, key=lambda a: a["updated"])[-1:]
-        elif len({a["category"] for a in items}) == 1:
-            pick = items
         else:
-            ctx.skip("X003", oid, "%s: a lezárt értékelések összítélete eltér, konszenzus nincs (%s)" % (
-                items[0]["study"], ", ".join(a["rel"] for a in items)))
-            continue
-        out[key] = (pick[0]["category"], pick[0]["raw"], [a["rel"] for a in items])
+            pool = human or ai_ok
+            if len({a["category"] for a in pool}) == 1:
+                pick = pool
+            else:
+                ctx.skip("X003", oid, "%s: a lezárt %s összítélete eltér, konszenzus nincs (%s)" % (
+                    items[0]["study"], "emberi értékelések" if human else "jóváhagyott AI-vázlatok",
+                    ", ".join(a["rel"] for a in pool)))
+                continue
+        used = [a for a in items if not a.get("ai")] if (cons or human) else ai_ok
+        out[key] = (pick[0]["category"], pick[0]["raw"], [a["rel"] for a in used])
     return out
 
 
@@ -1770,7 +1786,31 @@ def _lists_close(a, b):
     return all(_close(x, y, 1e-6) for x, y in zip(a, b))
 
 
-def _x008(ctx, oc, prun, runs_by_id):
+def _grade_reference(docs_for, rows_for):
+    """A kimenet rögzített GRADE-bizonyossága az X008-hoz → ({certainty, run_id, rel} | None, ok-szöveg | None).
+    A GRADE-dokumentum az irányadó (rögzített, nem jóvá nem hagyott AI-vázlat, nem feloldatlan); dokumentum nélkül a
+    projektnapló legutóbbi grade-sora (futás nélkül)."""
+    from .projekt import grade_token
+    if docs_for:
+        e = docs_for[-1]
+        doc = e["doc"]
+        if doc.get("origin") == "ai_draft" and not _nonempty(doc.get("approved_by")):
+            return None, "a GRADE jóvá nem hagyott AI-vázlat (%s; 6. döntés)" % e["rel"]
+        if _pb_unresolved_doc(doc):
+            return None, "a GRADE publikációs torzítása feloldatlan (%s; X019)" % e["rel"]
+        cert = grade_token(doc.get("certainty"))
+        if doc.get("status") != "recorded" or cert not in ("high", "moderate", "low", "very low"):
+            return None, "a GRADE még nincs rögzítve (%s)" % e["rel"]
+        return {"certainty": cert, "run_id": doc.get("run_id"), "rel": e["rel"]}, None
+    if rows_for:
+        g = sorted(rows_for, key=lambda r: r.get("id") or 0)[-1]
+        cert = grade_token(g.get("certainty"))
+        if cert in ("high", "moderate", "low", "very low"):
+            return {"certainty": cert, "run_id": None, "rel": JOURNAL_FILE}, None
+    return None, "nincs rögzített GRADE-ítélet ehhez a kimenethez"
+
+
+def _x008(ctx, oc, prun, runs_by_id, rows_for=None, docs_for=None):
     rel = "%s/%s.sof.json" % (SOF_DIR, oc.id)
     if not ctx.isfile(rel):
         ctx.skip("X008", oc.id, "nincs SoF-táblázat ehhez a kimenethez (%s)" % rel)
@@ -1817,13 +1857,34 @@ def _x008(ctx, oc, prun, runs_by_id):
             if not (_lists_close(a.get("difference_per_1000"), again.get("difference_per_1000")) and
                     _lists_close(a.get("risk_per_1000"), again.get("risk_per_1000"))):
                 probs.append("%s: abszolút hatás (%s) ≠ az újraszámolt" % (where, label))
+    # a bizonyosság-cella a kimenet RÖGZÍTETT GRADE-ítéletéé (ugyanarra a futásra; 4. döntés, methodology:M6)
+    from .projekt import grade_token
+    ref, why = _grade_reference(docs_for or [], rows_for or [])
+    extra = []
+    for i, row in enumerate(doc["rows"]):
+        if not isinstance(row, dict) or row.get("outcome_id") not in (None, oc.id):
+            continue
+        cert = grade_token(row.get("certainty"))
+        if cert is None:
+            continue
+        where = "%d. sor" % (i + 1)
+        if ref is None:
+            probs.append("%s: a bizonyosság (%s) mellé %s" % (where, cert, why))
+        elif cert != ref["certainty"]:
+            probs.append("%s: a bizonyosság (%s) ≠ a rögzített GRADE-é (%s, %s)" % (where, cert, ref["certainty"],
+                                                                                   ref["rel"]))
+            extra.append(ref["rel"])
+        elif ref["run_id"] and doc.get("run_id") != ref["run_id"]:
+            probs.append("%s: a rögzített GRADE (%s) a(z) %s futásra vonatkozik, a SoF a(z) %s futásra" % (
+                where, ref["rel"], ref["run_id"], doc.get("run_id") or "–"))
+            extra.append(ref["rel"])
     if probs:
         ref = (" (a SoF a(z) %s futásra hivatkozik)" % doc["run_id"]) if doc.get("run_id") and doc.get(
             "run_id") != target["run_id"] else ""
         ctx.add("X008", oc.id, "a SoF %d cellája eltér a(z) %s commit-futás motor-számaitól%s: %s" % (
             len(probs), target["run_id"], ref, "; ".join(probs[:12]) + (
                 " … (+%d)" % (len(probs) - 12) if len(probs) > 12 else "")),
-            [rel, target["rel"]], None, run_id=target["run_id"])
+            [rel, target["rel"]] + extra, None, run_id=target["run_id"])
 
 
 # ------------------------------------------------------------------ X009
@@ -2037,8 +2098,18 @@ def _x012(ctx, meta, entries, stage):
                                "appraisal_tools sem kéri" % APPRAISAL_DIR)
         return
     late = _late(stage)
+    # a jóvá nem hagyott (vagy jóváhagyva is lezáratlan) AI-vázlat nem az áttekintés önellenőrzése (6. döntés)
+    ai_only = [e for e in docs if e["ai"] and not e["final"]]
+    docs = [e for e in docs if not (e["ai"] and not e["final"])]
     if not docs:
-        if late:
+        if ai_only and late:
+            ctx.add("X012", None, "csak jóvá nem hagyott AI-vázlat van (%s): az AMSTAR 2 önellenőrzést ember töltse ki "
+                                  "vagy hagyja jóvá és zárja le (approved_by, status: complete; 6. döntés)" % ", ".join(
+                                      e["rel"] for e in ai_only), [e["rel"] for e in ai_only] + [META_FILE], None)
+        elif ai_only:
+            ctx.skip("X012", None, "csak jóvá nem hagyott AI-vázlat van (%s); az S14-től és a FINAL kéréskor számít" %
+                     ", ".join(e["rel"] for e in ai_only))
+        elif late:
             ctx.add("X012", None, "a ma-projekt.json az AMSTAR 2-t kéri (appraisal_tools), de nincs önellenőrzés "
                                   "(%s/review.amstar2.<monogram>.json)" % APPRAISAL_DIR, [META_FILE], None)
         else:
@@ -2204,9 +2275,50 @@ def _pb_unresolved_doc(doc):
     return pb.get("status") == "unresolved" or (pb.get("rating") == "suspected" and pb.get("step") is None)
 
 
-def _x019(ctx, grade_docs, grade_rows):
+def _answer_value(a):
+    v = a.get("value") if isinstance(a, dict) else a
+    return re.sub(r"[_\s]+", " ", v.strip().lower()) if isinstance(v, str) else None
+
+
+def _grade_appraisal_unresolved(doc):
+    """Egy szk.appraisal/v1 GRADE-értékelés (tool: grade) feloldatlan „suspected” publikációs torzítása → True /
+    False. Elsődlegesen a motor ítélete (appraisal.check → grade.unresolved); ha az nem érhető el (vagy a dokumentum
+    hibás), ugyanaz a szabály a válaszokon: az 5. domén (5.x) „suspected” válasza 0 / −1 lépésű, indokolt feloldás
+    (resolution {step, rationale}) nélkül feloldatlan (4. döntés; ugyanaz, mint a _pb_unresolved_doc)."""
+    AP = _module("appraisal")
+    check = getattr(AP, "check", None) if AP is not None else None
+    if callable(check):
+        try:
+            res = check(doc)
+            blk = res.get("grade") if isinstance(res, dict) else None
+            if isinstance(blk, dict) and isinstance(blk.get("unresolved"), list):
+                return "publication_bias" in blk["unresolved"]
+        except Exception:       # noqa: BLE001 — hibás dokumentum: a tárolt válaszokból döntünk
+            pass
+    answers = doc.get("answers") if isinstance(doc.get("answers"), dict) else {}
+    for key, a in answers.items():
+        if not str(key).startswith("5.") or _answer_value(a) != "suspected":
+            continue
+        res = a.get("resolution") if isinstance(a, dict) and isinstance(a.get("resolution"), dict) else {}
+        step = res.get("step")
+        if not (isinstance(step, int) and not isinstance(step, bool) and step in (0, -1)
+                and _nonempty(res.get("rationale"))):
+            return True
+    return False
+
+
+def _x019(ctx, grade_docs, grade_rows, entries=None):
+    grade_apps = [e for e in entries or () if e["tool"] == "grade" and e["final"]]
+    for e in grade_apps:
+        if _grade_appraisal_unresolved(e["doc"]):
+            ctx.add("X019", e["outcome"] or e["unit"],
+                    "%s (szk.appraisal/v1, GRADE, státusz: %s): a publikációs torzítás „gyanított” (suspected), de "
+                    "nincs 0 / −1 döntés indoklással — a lezárt GRADE-értékelés nem lehet végleges" % (
+                        e["rel"], e["status"] or "–"), [e["rel"]], None)
     if not grade_docs and not grade_rows:
-        ctx.skip("X019", None, "nincs GRADE-ítélet (%s/*.grade.json vagy projektnapló grade-sor)" % GRADE_DIR)
+        if not grade_apps:
+            ctx.skip("X019", None, "nincs GRADE-ítélet (%s/*.grade.json, projektnapló grade-sor vagy lezárt GRADE-"
+                                   "értékelés)" % GRADE_DIR)
         return
     seen = set()
     for e in grade_docs or ():
@@ -2569,7 +2681,8 @@ def project_audit(project_dir, stage=None, now=None):
             _x007(ctx, oc, prun, _grade_rows_for(grade_rows, oc),
                   [e for e in grade_docs or () if e["outcome"] == oc.id], runs_by_id)
         if sof_any:
-            _x008(ctx, oc, prun, runs_by_id)
+            _x008(ctx, oc, prun, runs_by_id, _grade_rows_for(grade_rows, oc),
+                  [e for e in grade_docs or () if e["outcome"] == oc.id])
         _x009(ctx, oc, no_kettos)
         x015_any = _x015(ctx, oc, prun, tab, specs_by_path, label_to_id, smap, flow_meta, len(outcomes)) or x015_any
     if outcomes:
@@ -2591,7 +2704,7 @@ def project_audit(project_dir, stage=None, now=None):
     _x011(ctx, meta, entries, smap, sorted(table_ids))
     _x012(ctx, meta, entries, ctx.stage)
     _x017(ctx, entries, conventions)
-    _x019(ctx, grade_docs, grade_rows)
+    _x019(ctx, grade_docs, grade_rows, entries)
     _x020(ctx, ctx.stage)
     _x021(ctx, flow_src)
     figs = _figures(ctx)

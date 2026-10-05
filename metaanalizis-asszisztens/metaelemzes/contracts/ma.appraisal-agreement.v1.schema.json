@@ -213,6 +213,124 @@
           }
         ]
       }
+    },
+    "kappa_level": {
+      "enum": [
+        "item"
+      ],
+      "description": "a felső szintű kappa tételszintű (másodlagos)"
+    },
+    "primary": {
+      "enum": [
+        "domain"
+      ],
+      "description": "elsődleges mérték: a doménítéletek κ-ja (terv 5.4)"
+    },
+    "domain_kappa": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/kappa_entry"
+      }
+    },
+    "judgement_kappa": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/kappa_entry"
+        }
+      ]
+    },
+    "overall_kappa": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/kappa_entry"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "kappa_entry": {
+      "type": "object",
+      "required": [
+        "n",
+        "kappa"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "domain_judgements",
+            "applicability",
+            "overall"
+          ]
+        },
+        "domain": {
+          "type": "string"
+        },
+        "pass": {
+          "enum": [
+            "development",
+            "evaluation",
+            null
+          ]
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agree": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disagree": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "kappa": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "kappa_se": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "kappa_ci": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          ]
+        },
+        "kappa_text": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

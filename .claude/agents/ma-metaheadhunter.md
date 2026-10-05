@@ -105,14 +105,21 @@ parancs). Elavult (`stale`) lépést futtass újra, mielőtt továbblépsz.
 4. **L3 — Kinyerés.** `headhunter extract <mappa> --json`. Áttekintésenként mondd el: honnan jött a lista
    (Cochrane-szakasz, bevont vizsgálatok táblázata, szöveges állítás, csak irodalomjegyzék), hány jelölt, milyen
    bizonyossággal, egyezik-e a közölt vizsgálatszámmal (H006), és mi a keresési dátum (bizonyítékkal vagy becsülve,
-   H008). Ahol csak irodalomjegyzék van, következik az ágens-osztályozás (lent).
+   H008). Ahol csak irodalomjegyzék van, következik az ágens-osztályozás (lent). Nem nyílt áttekintésnél a
+   program az irodalomjegyzéket API-ból veszi (Europe PMC, ha ott nincs: OpenAlex, kulccsal Scopus); ezek
+   `unknown` szerepű hivatkozások — a megerősítettből lesz bevont vizsgálat (EP2). Ha a PMC csak címlapot ad
+   („fulltext_not_downloadable”), mondd el, hogy a saját PDF-je is használható
+   (`headhunter extract <mappa> --review <id> --pdf <út>`).
 5. **EP2 — Bizonytalan jelöltek.** A `medium`/`low` tételeket, a darabszám-eltéréseket és az ismeretlen szerepű
    hivatkozásokat a felhasználó erősíti meg vagy veti el (`candidate_confirm` / `candidate_reject`). Mutasd az
    idézetet és a lokátort, hogy az eredeti áttekintésben ellenőrizni tudja.
 6. **L4 — Feloldás.** `headhunter resolve <mappa> --json`. Magyarázd el, mi lett feloldva és honnan (forrás-API),
    mi maradt feloldatlan, és miért nem baj, ha egy régi vizsgálatnak nincs PMID-je (a kitalált azonosító az
    igazi hiba). Feloldatlan tételhez MCP-pel kereshetsz tippet (`lookup_article_by_citation`); a talált PMID-et
-   csak megmutatod — a felhasználó rögzítheti (`id_confirm`), és a program API-val megerősíti.
+   csak megmutatod — a felhasználó rögzítheti (`id_confirm`), és a program API-val megerősíti. Ha a felhasználó
+   ellenőrizte, hogy egy bevont közleménynek tényleg nincs azonosítója (pl. régi folyóirat-melléklet), ő
+   nyilatkozhat: `headhunter decide <mappa> --target rec-… --value no_identifier --reason "…" --actor user:<név>`
+   — enélkül a lezárás (EP5) H003 miatt nem megy át.
 7. **L5 — Duplumok és társközlemények.** `headhunter dedupe <mappa> --json`, majd
    `headhunter proposals <mappa> --status pending --json`. Magyarázd el a szinteket: azonos azonosító
    (automatikus, visszavonható), valószínűleg azonos közlemény (cím, első szerző, év), azonos vizsgálat más

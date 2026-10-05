@@ -96,14 +96,14 @@ def _scopus_usable(cfg, clients):
         "unauthorized", "forbidden", "not_configured")
 
 
-def _openalex_reference_works(oa, ident, cap=OPENALEX_REF_CAP):
+def _openalex_reference_works(oa, ident, cap=None):
     """A hivatkozott munkák nyers OpenAlex-alakban. Előbb listás lekérés (gyors, kredites); ha a keret elfogyott,
     egyedi lekérések (ingyenesek). Visszaad: (munkák, megjegyzés)."""
     SU = _source_unavailable()
     wids = oa.referenced_works(ident)
     if not wids:
         return [], None
-    wids = wids[:cap]
+    wids = wids[:int(cap or OPENALEX_REF_CAP)]
     note = None
     works = []
     try:

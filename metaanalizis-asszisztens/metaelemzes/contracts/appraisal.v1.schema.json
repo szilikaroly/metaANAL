@@ -142,6 +142,23 @@
             }
           ],
           "description": "GRADE publikációs torzítás: a 'suspected' feloldása (0 vagy −1) indoklással"
+        },
+        "parts": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          ],
+          "description": "résztételes tételnél (AMSTAR 2 9., 11.) a részek ítélete ({RCT, NRSI}); a value ebből adódik"
         }
       }
     },
@@ -400,6 +417,17 @@
               "string",
               "null"
             ]
+          },
+          "sha256": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+              }
+            ],
+            "description": "az egyeztetett értékelő-fájl hash-e a konszenzus mentésekor"
           }
         }
       }

@@ -2122,6 +2122,31 @@ def summarize_result(res):
 # Scopus view=REF) → jelöltek (unknown, low, needs_review)
 # ---------------------------------------------------------------------------
 
+_PARTICLES = set("van von de der den da di du la le del della dos das ten ter mac mc st st. al el bin ibn".split())
+
+
+def openalex_surname(display_name):
+    """Vezetéknév egy OpenAlex ``display_name``-ből. Az OpenAlex régi rekordjainál gyakori a „Vezetéknév Kezdőbetűk"
+    alak (élő próba: „Ferguson Rg", „Comstock Gw") — ilyenkor az utolsó szó NEM a vezetéknév; egyébként az utolsó
+    szó a névelőkkel/előtagokkal együtt („A. Mac DOWELL" → „Mac DOWELL", „Jan van Nielen" → „van Nielen")."""
+    toks = [t for t in re.split(r"\s+", (display_name or "").strip()) if t]
+    if not toks:
+        return None
+    while len(toks) > 1 and re.match(r"^(?:Jr|Sr|II|III|IV)\.?$", toks[-1], re.I):
+        toks.pop()
+    last = toks[-1].rstrip(".")
+    if len(toks) >= 2 and len(last) <= 3 and len(toks[0].rstrip(".")) > 3 and (
+            last.isupper() or not re.search(r"[aeiouy]", last[1:].lower() if len(last) > 1 else "x")):
+        # „Ferguson Rg" / „Comstock GW": a végén kezdőbetűk
+        return " ".join(t for t in toks if not (len(t.rstrip(".")) <= 3 and t is not toks[0]))
+    out = [toks[-1]]
+    i = len(toks) - 2
+    while i >= 1 and toks[i].lower().rstrip(".") in _PARTICLES:
+        out.insert(0, toks[i])
+        i -= 1
+    return " ".join(out)
+
+
 def _norm_record(rec, source):
     """Különböző API-alakok → {'text','first_author','year','title','journal','ids':{…},'key'}."""
     r = rec or {}
@@ -2164,7 +2189,7 @@ def _norm_record(rec, source):
     if r.get("authorships") and not first:
         try:
             nm = r["authorships"][0]["author"]["display_name"]
-            first = nm.split()[-1] if nm else None
+            first = openalex_surname(nm) if nm else None
         except (KeyError, IndexError, TypeError, AttributeError):
             pass
     # PubMed ReferenceList

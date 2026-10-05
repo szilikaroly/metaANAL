@@ -9,7 +9,7 @@
   "full_name": "Cochrane risk-of-bias tool for randomised trials, version 2 (individually randomised, parallel-group; effect of assignment)",
   "family": "rob",
   "tool_version": "2019-08-22",
-  "definition_version": 1,
+  "definition_version": 2,
   "validator_version": "1.0.0",
   "reference_sha256": "7257e53a2eea9dc7ec8efa9911481afb76f2014f7b18055631da79e0ea6ab804",
   "source": {
@@ -191,7 +191,180 @@
       },
       "short": "D1",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "1-a",
+          "if": {
+            "item": "1.2",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.2"
+          ],
+          "text": {
+            "hu": "A besorolási szekvencia nem volt rejtve (1.2 N/VN) → magas.",
+            "en": "Allocation sequence not concealed (1.2 N/PN) → high."
+          }
+        },
+        {
+          "id": "1-b",
+          "if": {
+            "all": [
+              {
+                "item": "1.2",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.2",
+            "1.3"
+          ],
+          "text": {
+            "hu": "Nincs információ a rejtésről (1.2 NI), és a kiinduló különbségek problémára utalnak (1.3 I/VI) → magas.",
+            "en": "No information on concealment (1.2 NI) and baseline differences suggest a problem (1.3 Y/PY) → high."
+          }
+        },
+        {
+          "id": "1-c",
+          "if": {
+            "item": "1.2",
+            "in": [
+              "no_information"
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "1.2"
+          ],
+          "text": {
+            "hu": "Nincs információ a rejtésről (1.2 NI) → némi aggály.",
+            "en": "No information on concealment (1.2 NI) → some concerns."
+          }
+        },
+        {
+          "id": "1-d",
+          "if": {
+            "all": [
+              {
+                "item": "1.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "1.1",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.1",
+            "1.3"
+          ],
+          "text": {
+            "hu": "Nem véletlen szekvencia (1.1 N/VN) ÉS problémára utaló kiinduló különbség (1.3 I/VI): a forrással nem ellenőrizhető ág — a konzervatív szabály a szigorúbb „magas” ítéletet adja (a hivatalos lehet „némi aggály”).",
+            "en": "Non-random sequence (1.1 N/PN) AND baseline differences suggesting a problem (1.3 Y/PY): a branch that could not be checked against the source — the conservative rule takes the stricter 'high' (the official result may be 'some concerns')."
+          }
+        },
+        {
+          "id": "1-e",
+          "if": {
+            "all": [
+              {
+                "item": "1.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "1.1",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "1.1"
+          ],
+          "text": {
+            "hu": "Rejtett, de nem véletlen szekvencia (1.1 N/VN) → némi aggály.",
+            "en": "Concealed but non-random sequence (1.1 N/PN) → some concerns."
+          }
+        },
+        {
+          "id": "1-f",
+          "if": {
+            "all": [
+              {
+                "item": "1.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "1.3"
+          ],
+          "text": {
+            "hu": "A kiinduló különbségek randomizációs problémára utalnak (1.3 I/VI) → némi aggály.",
+            "en": "Baseline differences suggest a problem with randomisation (1.3 Y/PY) → some concerns."
+          }
+        },
+        {
+          "id": "1-g",
+          "if": {
+            "always": true
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Rejtett (1.2 I/VI), véletlen vagy nem ismert szekvencia (1.1 I/VI/NI), nincs problémára utaló kiinduló különbség (1.3 N/VN/NI) → alacsony.",
+            "en": "Concealed (1.2 Y/PY), random or unknown sequence (1.1 Y/PY/NI), no baseline problem (1.3 N/PN/NI) → low."
+          }
+        }
+      ]
     },
     {
       "id": "2",
@@ -201,7 +374,203 @@
       },
       "short": "D2",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "2-a",
+          "part": "deviations",
+          "if": {
+            "all": [
+              {
+                "item": "2.1",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "2.2",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Résztvevők és nyújtók vakok (2.1, 2.2 N/VN).",
+            "en": "Participants and carers blinded (2.1, 2.2 N/PN)."
+          }
+        },
+        {
+          "id": "2-b",
+          "part": "deviations",
+          "if": {
+            "item": "2.3",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Nem volt a vizsgálati helyzetből fakadó eltérés (2.3 N/VN).",
+            "en": "No deviations arising from the trial context (2.3 N/PN)."
+          }
+        },
+        {
+          "id": "2-c",
+          "part": "deviations",
+          "if": {
+            "item": "2.3",
+            "in": [
+              "no_information"
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "2.3"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ az eltérésekről (2.3 NI) → némi aggály.",
+            "en": "No information on deviations (2.3 NI) → some concerns."
+          }
+        },
+        {
+          "id": "2-d",
+          "part": "deviations",
+          "if": {
+            "all": [
+              {
+                "item": "2.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "2.4",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "2.3"
+          ],
+          "text": {
+            "hu": "Voltak eltérések (2.3 I/VI), de valószínűleg nem befolyásolták a kimenetet (2.4 N/VN) → némi aggály.",
+            "en": "Deviations (2.3 Y/PY) unlikely to have affected the outcome (2.4 N/PN) → some concerns."
+          }
+        },
+        {
+          "id": "2-e",
+          "part": "deviations",
+          "if": {
+            "all": [
+              {
+                "item": "2.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "2.5",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "2.3",
+            "2.4"
+          ],
+          "text": {
+            "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+            "en": "Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
+          }
+        },
+        {
+          "id": "2-f",
+          "part": "deviations",
+          "if": {
+            "always": true
+          },
+          "tier": "high",
+          "because": [
+            "2.3",
+            "2.4",
+            "2.5"
+          ],
+          "text": {
+            "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések nem kiegyensúlyozottak vagy nincs róluk információ (2.5 N/VN/NI) → magas.",
+            "en": "Deviations affecting the outcome (or of unknown effect) unbalanced or no information (2.5 N/PN/NI) → high."
+          }
+        },
+        {
+          "id": "2-g",
+          "part": "analysis",
+          "if": {
+            "item": "2.6",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Megfelelő elemzés a besorolás hatására (2.6 I/VI).",
+            "en": "Appropriate analysis of the effect of assignment (2.6 Y/PY)."
+          }
+        },
+        {
+          "id": "2-h",
+          "part": "analysis",
+          "if": {
+            "item": "2.7",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "2.6"
+          ],
+          "text": {
+            "hu": "Nem megfelelő (vagy nem ismert) elemzés (2.6 N/VN/NI), számottevő hatás nélkül (2.7 N/VN) → némi aggály.",
+            "en": "Inappropriate (or unknown) analysis (2.6 N/PN/NI) without substantial impact (2.7 N/PN) → some concerns."
+          }
+        },
+        {
+          "id": "2-i",
+          "part": "analysis",
+          "if": {
+            "always": true
+          },
+          "tier": "high",
+          "because": [
+            "2.6",
+            "2.7"
+          ],
+          "text": {
+            "hu": "Nem megfelelő (vagy nem ismert) elemzés (2.6 N/VN/NI), számottevő vagy nem ismert hatással (2.7 I/VI/NI) → magas.",
+            "en": "Inappropriate (or unknown) analysis (2.6 N/PN/NI) with substantial or unknown impact (2.7 Y/PY/NI) → high."
+          }
+        }
+      ]
     },
     {
       "id": "3",
@@ -211,7 +580,92 @@
       },
       "short": "D3",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "3-a",
+          "if": {
+            "item": "3.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+            "en": "Outcome data for (nearly) all participants (3.1 Y/PY)."
+          }
+        },
+        {
+          "id": "3-b",
+          "if": {
+            "item": "3.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Bizonyíték, hogy a hiány nem torzított (3.2 I/VI).",
+            "en": "Evidence that missing data did not bias the result (3.2 Y/PY)."
+          }
+        },
+        {
+          "id": "3-c",
+          "if": {
+            "item": "3.3",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "A hiány nem függhetett a valódi értéktől (3.3 N/VN).",
+            "en": "Missingness could not depend on the true value (3.3 N/PN)."
+          }
+        },
+        {
+          "id": "3-d",
+          "if": {
+            "item": "3.4",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "3.1",
+            "3.3"
+          ],
+          "text": {
+            "hu": "A hiány függhetett a valódi értéktől, de nem valószínű (3.4 N/VN) → némi aggály.",
+            "en": "Missingness could depend on the true value but probably did not (3.4 N/PN) → some concerns."
+          }
+        },
+        {
+          "id": "3-e",
+          "if": {
+            "always": true
+          },
+          "tier": "high",
+          "because": [
+            "3.1",
+            "3.3",
+            "3.4"
+          ],
+          "text": {
+            "hu": "Valószínű vagy nem ismert, hogy a hiány a valódi értéktől függött (3.4 I/VI/NI) → magas.",
+            "en": "Missingness likely (or not known not) to depend on the true value (3.4 Y/PY/NI) → high."
+          }
+        }
+      ]
     },
     {
       "id": "4",
@@ -221,7 +675,194 @@
       },
       "short": "D4",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "4-a",
+          "if": {
+            "item": "4.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "4.1"
+          ],
+          "text": {
+            "hu": "Nem megfelelő mérési módszer (4.1 I/VI) → magas.",
+            "en": "Inappropriate measurement method (4.1 Y/PY) → high."
+          }
+        },
+        {
+          "id": "4-b",
+          "if": {
+            "item": "4.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "4.2"
+          ],
+          "text": {
+            "hu": "A mérés eltérhetett a csoportok között (4.2 I/VI) → magas.",
+            "en": "Measurement could differ between groups (4.2 Y/PY) → high."
+          }
+        },
+        {
+          "id": "4-c",
+          "if": {
+            "all": [
+              {
+                "item": "4.2",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "4.3",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Vakított értékelők (4.3 N/VN).",
+            "en": "Blinded outcome assessors (4.3 N/PN)."
+          }
+        },
+        {
+          "id": "4-d",
+          "if": {
+            "all": [
+              {
+                "item": "4.2",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "4.4",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Az ismeret nem befolyásolhatta az értékelést (4.4 N/VN).",
+            "en": "Knowledge could not influence assessment (4.4 N/PN)."
+          }
+        },
+        {
+          "id": "4-e",
+          "if": {
+            "all": [
+              {
+                "item": "4.2",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "4.3",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "4.2"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a mérés csoportok közti eltéréséről (4.2 NI) → némi aggály.",
+            "en": "No information on differential measurement (4.2 NI) → some concerns."
+          }
+        },
+        {
+          "id": "4-f",
+          "if": {
+            "all": [
+              {
+                "item": "4.2",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "4.4",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "4.2"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a mérés csoportok közti eltéréséről (4.2 NI) → némi aggály.",
+            "en": "No information on differential measurement (4.2 NI) → some concerns."
+          }
+        },
+        {
+          "id": "4-g",
+          "if": {
+            "item": "4.5",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "4.2",
+            "4.3",
+            "4.4"
+          ],
+          "text": {
+            "hu": "Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+            "en": "Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
+          }
+        },
+        {
+          "id": "4-h",
+          "if": {
+            "always": true
+          },
+          "tier": "high",
+          "because": [
+            "4.2",
+            "4.3",
+            "4.4",
+            "4.5"
+          ],
+          "text": {
+            "hu": "Valószínű vagy nem ismert, hogy az ismeret befolyásolta az értékelést (4.5 I/VI/NI) → magas.",
+            "en": "Assessment likely (or not known not) influenced by knowledge of the intervention (4.5 Y/PY/NI) → high."
+          }
+        }
+      ]
     },
     {
       "id": "5",
@@ -231,7 +872,104 @@
       },
       "short": "D5",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "5-a",
+          "if": {
+            "item": "5.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "5.2"
+          ],
+          "text": {
+            "hu": "Kiválasztás több kimenetmérés közül (5.2 I/VI) → magas.",
+            "en": "Selected from multiple outcome measurements (5.2 Y/PY) → high."
+          }
+        },
+        {
+          "id": "5-b",
+          "if": {
+            "item": "5.3",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "5.3"
+          ],
+          "text": {
+            "hu": "Kiválasztás több elemzés közül (5.3 I/VI) → magas.",
+            "en": "Selected from multiple analyses (5.3 Y/PY) → high."
+          }
+        },
+        {
+          "id": "5-c",
+          "if": {
+            "any": [
+              {
+                "item": "5.2",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "5.3",
+                "in": [
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "5.2",
+            "5.3"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a szelektív kiválasztásról (5.2/5.3 NI) → némi aggály.",
+            "en": "No information on selection of the result (5.2/5.3 NI) → some concerns."
+          }
+        },
+        {
+          "id": "5-d",
+          "if": {
+            "item": "5.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+            "en": "Analysed per a pre-specified plan (5.1 Y/PY), no selection."
+          }
+        },
+        {
+          "id": "5-e",
+          "if": {
+            "always": true
+          },
+          "tier": "some",
+          "because": [
+            "5.1"
+          ],
+          "text": {
+            "hu": "Nincs (vagy nem ismert) előre rögzített elemzési terv (5.1 N/VN/NI) → némi aggály.",
+            "en": "No (or unknown) pre-specified analysis plan (5.1 N/PN/NI) → some concerns."
+          }
+        }
+      ]
     }
   ],
   "items": [
@@ -387,7 +1125,27 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "any": [
+          {
+            "item": "2.1",
+            "in": [
+              "yes",
+              "probably_yes",
+              "no_information"
+            ]
+          },
+          {
+            "item": "2.2",
+            "in": [
+              "yes",
+              "probably_yes",
+              "no_information"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2.4",
@@ -409,8 +1167,8 @@
       ],
       "applies_to": null,
       "help": {
-        "hu": "Irányító kérdés: a 2.5-höz vezet.",
-        "en": ""
+        "hu": "Irányító kérdés: I/VI/NI válasznál a 2.5 következik; N/VN esetén a domén ezen ága „némi aggály”.",
+        "en": "Routing question: Y/PY/NI leads to 2.5; N/PN gives 'some concerns' on this branch."
       },
       "condition": {
         "hu": "Ha a 2.3 válasza I/VI",
@@ -423,7 +1181,14 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "item": "2.3",
+        "in": [
+          "yes",
+          "probably_yes"
+        ]
+      }
     },
     {
       "id": "2.5",
@@ -431,8 +1196,8 @@
       "domain": "2",
       "pass": null,
       "text": {
-        "hu": "Ha a 2.4 válasza I/VI: kiegyensúlyozottak voltak-e ezek az eltérések a csoportok között?",
-        "en": "If Y/PY to 2.4: were these deviations from intended intervention balanced between groups?"
+        "hu": "Ha a 2.4 válasza I/VI/NI: kiegyensúlyozottak voltak-e ezek az eltérések a csoportok között?",
+        "en": "If Y/PY/NI to 2.4: were these deviations from intended intervention balanced between groups?"
       },
       "tags": [
         "assignment"
@@ -444,8 +1209,8 @@
       ],
       "applies_to": null,
       "condition": {
-        "hu": "Ha a 2.4 válasza I/VI",
-        "en": "If Y/PY to 2.4"
+        "hu": "Ha a 2.4 válasza I/VI/NI",
+        "en": "If Y/PY/NI to 2.4"
       },
       "answers": [
         "yes",
@@ -454,7 +1219,26 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "all": [
+          {
+            "item": "2.3",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "item": "2.4",
+            "in": [
+              "yes",
+              "probably_yes",
+              "no_information"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2.6",
@@ -513,7 +1297,15 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "item": "2.6",
+        "in": [
+          "no",
+          "probably_no",
+          "no_information"
+        ]
+      }
     },
     {
       "id": "3.1",
@@ -569,9 +1361,16 @@
         "probably_yes",
         "probably_no",
         "no",
-        "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "item": "3.1",
+        "in": [
+          "no",
+          "probably_no",
+          "no_information"
+        ]
+      }
     },
     {
       "id": "3.3",
@@ -607,7 +1406,26 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "all": [
+          {
+            "item": "3.1",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          },
+          {
+            "item": "3.2",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "3.4",
@@ -643,7 +1461,34 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "all": [
+          {
+            "item": "3.1",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          },
+          {
+            "item": "3.2",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          {
+            "item": "3.3",
+            "in": [
+              "yes",
+              "probably_yes",
+              "no_information"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "4.1",
@@ -727,7 +1572,27 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "all": [
+          {
+            "item": "4.1",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          },
+          {
+            "item": "4.2",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "4.4",
@@ -763,7 +1628,35 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "all": [
+          {
+            "item": "4.1",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          },
+          {
+            "item": "4.2",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          },
+          {
+            "item": "4.3",
+            "in": [
+              "yes",
+              "probably_yes",
+              "no_information"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "4.5",
@@ -799,7 +1692,43 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "all": [
+          {
+            "item": "4.1",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          },
+          {
+            "item": "4.2",
+            "in": [
+              "no",
+              "probably_no",
+              "no_information"
+            ]
+          },
+          {
+            "item": "4.3",
+            "in": [
+              "yes",
+              "probably_yes",
+              "no_information"
+            ]
+          },
+          {
+            "item": "4.4",
+            "in": [
+              "yes",
+              "probably_yes",
+              "no_information"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "5.1",
@@ -875,7 +1804,7 @@
   ],
   "rollup": {
     "algorithm": "conservative",
-    "basis": "validator-compatible",
+    "basis": "rob2-2019-flowchart-conservative",
     "official": false,
     "overall": "worst",
     "tiers": {
@@ -884,21 +1813,21 @@
       "high": "high"
     },
     "label": {
-      "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos RoB 2 algoritmus",
-      "en": "Validator-compatible conservative rule — NOT the official RoB 2 algorithm"
+      "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+      "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
     },
     "note": {
-      "hu": "Azt mutatja, amit a rögzített válaszok kikényszerítenek, és megnevezi a kiváltó kérdéseket. Ez NEM a hivatalos RoB 2 folyamatábra; a doménítélet és az összítélet a Tiéd. Ha eltérsz az implikálttól, indokold (a döntés a naplóba kerül, X017). A hivatalos algoritmus a 2.6/2.7, a 3.3/3.4 és a 4.3–4.5 kérdéseken ágazik el; határesetben vesd össze a hivatalos Excel-eszközzel vagy a 2019-es útmutató folyamatábráival.",
-      "en": "Shows what the recorded answers force and names the questions that forced it. This is NOT the official RoB 2 flowchart; the domain and overall judgements are yours. If you depart from the implied judgement, give a reason (logged as a decision, X017). The official algorithm branches on 2.6/2.7, 3.3/3.4 and 4.3–4.5; check borderline domains against the official Excel tool or the 2019 guidance flowcharts."
+      "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+      "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
     },
     "differences_from_validator": [
       {
-        "hu": "Hiányzó (nem irányító) válasz esetén a domén implikált ítélete üres marad — a validator 1.0.0 ilyenkor a megválaszolt tételekből „alacsony”-t ad.",
-        "en": "A domain with an unanswered (non-router) item has no implied judgement — validator 1.0.0 reports 'low' from the answered items."
+        "hu": "A validator 1.0.0 polaritás-szabálya az irányító kérdéseket figyelmen kívül hagyja; itt a 2019-es folyamatábra ágai döntenek (pl. 2.3–2.5 I/VI → „némi aggály”, 2.5 N/VN/NI → „magas”; 4.4 I/VI/NI és 4.5 N/VN → „némi aggály”; 3.1 N + 3.2 I → „alacsony”; 5.1 N → „némi aggály”).",
+        "en": "Validator 1.0.0's polarity rule ignores routing questions; here the 2019 flowchart branches decide (e.g. 2.3–2.5 Y/PY → 'some concerns', 2.5 N/PN/NI → 'high'; 4.4 Y/PY/NI with 4.5 N/PN → 'some concerns'; 3.1 N with 3.2 Y → 'low'; 5.1 N → 'some concerns')."
       },
       {
-        "hu": "A „részben” típusú válasz (pl. QUIPS „Részben”) legalább a középső szintet adja — a validator 1.0.0 problémamentesnek veszi.",
-        "en": "A partial answer (e.g. QUIPS 'Partly') yields at least the middle level — validator 1.0.0 treats it as no problem."
+        "hu": "Hiányzó válasz egy, az útvonalon szereplő kérdésnél: a domén implikált ítélete üres marad — a validator 1.0.0 ilyenkor „alacsony”-t ad.",
+        "en": "An unanswered question on the path leaves the domain without an implied judgement — validator 1.0.0 reports 'low'."
       }
     ]
   },
@@ -925,5 +1854,24 @@
       "en": "Overall (guidance): low only if every domain is low; high if any domain is high, or if several 'some concerns' together substantially lower confidence — the latter is a judgement and must be stated."
     }
   ],
-  "validator_differences": []
+  "validator_differences": [
+    {
+      "item": "2.5",
+      "validator": "If Y/PY to 2.4",
+      "here": "If Y/PY/NI to 2.4",
+      "reason": {
+        "hu": "A hivatalos 2019-es sablon szövege: „2.5. If Y/PY/NI to 2.4”.",
+        "en": "The official 2019 template reads '2.5. If Y/PY/NI to 2.4'."
+      }
+    },
+    {
+      "item": "3.2",
+      "validator": "Y/PY/PN/N/NI/NA",
+      "here": "Y/PY/PN/N/NA",
+      "reason": {
+        "hu": "A hivatalos sablonban a 3.2-nek nincs „Nincs információ” válasza.",
+        "en": "The official template offers no 'No information' option for 3.2."
+      }
+    }
+  ]
 }

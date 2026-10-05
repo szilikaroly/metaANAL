@@ -82,7 +82,8 @@ __all__ = [
     "link", "run_dedupe", "duplicates_report", "classify_new_records", "membership_problems", "select_proposals",
     "decide_proposal",
     "decide_batch",
-    "title_similarity", "compare_bib", "classify_l2", "l2_score", "norm_text", "norm_title", "norm_surname",
+    "title_similarity", "compare_bib", "classify_l2", "l2_score", "l1_bib_mismatch", "NAME_PARTICLES",
+    "norm_text", "norm_title", "norm_surname",
     "surname_display", "journal_key", "rec_id_for", "trusted_ids", "rec_sort_key",
     "read_decisions", "append_decision", "make_decision", "verify_decision_chain", "effective_decisions",
     "proposal_decision_kind", "ProjectLock", "LockError", "DecisionError", "write_json_atomic", "read_json",
@@ -507,23 +508,42 @@ def title_similarity(a, b):
     ratio = difflib.SequenceMatcher(None, ta, tb, autojunk=False).ratio()
     sa, sb = set(ta.split()), set(tb.split())
     jac = float(len(sa & sb)) / len(sa | sb) if (sa | sb) else 0.0
-    return round(max(ratio, jac), 4)
+    best = max(ratio, jac)
+    # előtag-egyezés: a PubMed sokszor a címhez fűzi a testületi szerzőt vagy az alcímet (élő próba: „Fifteen year
+    # follow up of trial of BCG vaccines in south India for tuberculosis prevention. Tuberculosis Research Centre
+    # (ICMR), Chennai.") — ha a rövidebb cím (≥ 6 szó) a hosszabb ELEJE, a hasonlóság legalább 0,95
+    short, long_ = (ta, tb) if len(ta) <= len(tb) else (tb, ta)
+    if len(short.split()) >= 6 and long_.startswith(short + " "):
+        best = max(best, TITLE_PREFIX_SIM)
+    return round(best, 4)
 
 
+#: L4 jelentés-sorozat: legalább ekkora cím-hasonlóság (eltérő évvel)
+TITLE_SERIES = 0.85
 _INITIALS_TOKEN = re.compile(r"^(?:[A-Z]{1,3}|(?:[A-Z]\.){1,3}|[A-Z]\.?-[A-Z]\.?)$")
+_NAME_SUFFIX = re.compile(r"^(?:Jr|Sr|Jnr|Snr|II|III|IV|2nd|3rd|4th)\.?$", re.I)
+#: helykitöltő „szerzők" (élő próba: „AUTHOR UNKNOWN", „[No authors listed]") — ismeretlen szerzőnek számítanak
+_NO_AUTHOR = re.compile(r"^\W*(?:author\s+unknown|anonymous|anon|no\s+authors?\s+listed|unknown|n/?a)\W*$", re.I)
+#: előtag-egyezés esetén a cím-hasonlóság alsó határa
+TITLE_PREFIX_SIM = 0.95
 
 
 def surname_display(name):
     """Vezetéknév megjelenítési alakja: 'Tameris MD' → 'Tameris'; 'van Nielen, M.' → 'van Nielen';
     'J. W. Anderson' → 'Anderson'. ``None``, ha nem dönthető el."""
-    if not name:
+    if not name or _NO_AUTHOR.match(str(name)):
         return None
     s = re.sub(r"\s+", " ", unicodedata.normalize("NFC", str(name))).strip()
     s = re.split(r"\bet\.?\s*al\b", s)[0].strip(" ,;.")
     if "," in s:
         s = s.split(",")[0]
     toks = [t for t in s.replace(".", ". ").split() if t]
+    # névutótag (Jr, Sr, II, III, 3rd …) — élő próba: „MacDOWELL A Jr" → korábban „macdowellajr" kulcs lett
+    while len(toks) > 1 and _NAME_SUFFIX.match(toks[-1].rstrip(",")):
+        toks.pop()
     while len(toks) > 1 and _INITIALS_TOKEN.match(toks[-1].rstrip(",")):
+        toks.pop()
+    while len(toks) > 1 and _NAME_SUFFIX.match(toks[-1].rstrip(",")):
         toks.pop()
     while len(toks) > 1 and _INITIALS_TOKEN.match(toks[0]) and ("." in toks[0] or len(toks[0]) == 1):
         toks.pop(0)
@@ -535,6 +555,44 @@ def norm_surname(name):
     """Az első szerző összevetési kulcsa: a normalizált vezetéknév kötőjel/szóköz nélkül (TERV 8.1)."""
     disp = surname_display(name)
     return norm_text(disp).replace(" ", "") if disp else ""
+
+
+#: névelők/előtagok — önálló szóként NEM vezetéknév-kulcsok (felülvizsgálat: „van der Berg" ↔ „van Dyk",
+#: „Abdel Rahman" ↔ „Abdel Aziz", „dos Santos" ↔ „dos Reis" korábban „egyező első szerzőnek" számított)
+NAME_PARTICLES = frozenset(["van", "von", "de", "der", "den", "da", "di", "del", "della", "dos", "das", "du", "la",
+                            "le", "les", "ten", "ter", "zu", "el", "al", "bin", "ibn", "abd", "abdel", "abdul",
+                            "st", "mac", "mc", "y", "e"])
+
+
+def name_keys(name):
+    """Egy szerzőnév összevetési kulcsai: a normalizált vezetéknév, a szavak összevonva, a ≥ 3 betűs szavak és az
+    utolsó szó. Különböző források eltérő névalakjaihoz (élő próba: OpenAlex „Ferguson Rg" / „Comstock Gw" a
+    PubMed „FERGUSON RG" / „Comstock GW" mellett; „A. Mac DOWELL" ↔ „MacDOWELL A Jr"; „Cano Pérez G" ↔ „Pérez").
+    A névelők (van, der, dos, Abdel, al- …) önmagukban nem kulcsok — különben két eltérő vezetéknév „egyezne"."""
+    if not name:
+        return set()
+    disp = surname_display(name) or ""
+    words = [w for w in norm_text(disp).split() if w]
+    keys = set()
+    if words:
+        keys.add("".join(words))
+        if words[-1] not in NAME_PARTICLES:
+            keys.add(words[-1])
+        keys.update(w for w in words if len(w) >= 3 and w not in NAME_PARTICLES)
+    ns = norm_surname(name)
+    if ns:
+        keys.add(ns)
+    return keys
+
+
+def first_author_match(a, b):
+    """Első szerző egyezése (``None``, ha bármelyik ismeretlen): azonos kulcs, vagy közös névkulcs."""
+    fa, fb = norm_surname(a), norm_surname(b)
+    if not (fa and fb):
+        return None
+    if fa == fb:
+        return True
+    return bool(name_keys(a) & name_keys(b))
 
 
 def journal_key(j):
@@ -567,10 +625,25 @@ def compare_bib(a, b):
         jm = None
     return {
         "title_sim": title_similarity(a.get("title"), b.get("title")),
-        "first_author_match": (fa == fb) if (fa and fb) else None,
+        "first_author_match": first_author_match(a.get("first_author"), b.get("first_author")),
         "year_diff": abs(ya - yb) if (ya is not None and yb is not None) else None,
         "journal_match": jm,
     }
+
+
+#: L1-őr: ennél kisebb cím-hasonlóság + nem egyező szerző/év → közös azonosító ellenére sem automatikus összevonás
+L1_TITLE_GUARD = 0.50
+
+
+def l1_bib_mismatch(f):
+    """Igaz, ha két, közös azonosítójú rekord bibliográfiai adatai egyértelműen ellentmondanak: mindkettőnek van
+    címe, a cím-hasonlóság < 0,50, és NEM igaz, hogy az első szerző egyezik és az év legfeljebb 1-gyel tér el (így
+    a lefordított cím — azonos szerző és év mellett — továbbra is automatikusan összevonódik)."""
+    ts = f.get("title_sim")
+    if ts is None or ts >= L1_TITLE_GUARD:
+        return False
+    yd = f.get("year_diff")
+    return not (f.get("first_author_match") is True and (yd is None or yd <= 1))
 
 
 def l2_score(f):
@@ -663,9 +736,21 @@ def trusted(idval):
     return idval.get("source") in API_SOURCES or bool(idval.get("confirmed_by"))
 
 
+#: a feloldás állapotai, amelyeknél a rekord azonosítói NEM igazoltan ehhez a közleményhez tartoznak
+UNVERIFIED_RESOLUTION = ("unresolved", "ambiguous")
+
+
 def trusted_ids(rec):
-    """``{fajta: normalizált érték}`` a rekord megbízható (API-forrású vagy API-val megerősített) L1-azonosítóiból."""
+    """``{fajta: normalizált érték}`` a rekord megbízható (API-forrású vagy API-val megerősített) L1-azonosítóiból.
+
+    Feloldatlan / kétértelmű rekordnál üres: az ilyen rekord azonosítói (pl. egy irodalomjegyzék API-ból jött
+    PMID-je, amelyet a feloldás cím-ellenőrzése ELUTASÍTOTT) nem bizonyítják, hogy a hivatkozás ugyanaz a közlemény
+    — felülvizsgálat: egy „Soy … CRP" hivatkozás rossz (Europe PMC által kapcsolt) PMID-je alapján az L1 automatikusan
+    beolvasztotta egy D-vitamin-cikk rekordjába (hamis összevonás + hamis proveniencia). Ezeket az L2 (cím–szerző–év)
+    javaslatként, emberi döntésre veti össze."""
     out = {}
+    if (rec.get("resolution") or {}).get("status") in UNVERIFIED_RESOLUTION:
+        return out
     for k in L1_KINDS:
         iv = (rec.get("ids") or {}).get(k)
         if trusted(iv):
@@ -1043,6 +1128,32 @@ def link(records, reviews=(), decisions=(), prior=None, now=None):
         ta, tb = trusted_ids(recs[a]), trusted_ids(recs[b])
         conflicting = ["%s:%s|%s" % (k, ta[k], tb[k]) for k in L1_KINDS if k in ta and k in tb and ta[k] != tb[k]]
         first_kind = shared[0].split(":")[0]
+        fbib = compare_bib(recs[a].get("bib"), recs[b].get("bib"))
+        if not conflicting and l1_bib_mismatch(fbib):
+            # közös azonosító, de a cím ÉS a szerző/év is eltér: gyűjtő-DOI (kongresszusi melléklet), hibásan
+            # kapcsolt azonosító — nem vonjuk össze automatikusan, ember dönt (Bramer 2016: kétség esetén megtartás)
+            p = {"kind": "id_conflict", "items": sorted([a, b]), "score": None, "rule": "L1-bib-mismatch",
+                 "features": {"shared_ids": sorted(set(shared)), "conflicting_ids": [],
+                              "title_sim": fbib["title_sim"], "first_author_match": fbib["first_author_match"],
+                              "year_diff": fbib["year_diff"]},
+                 "status": "pending", "decision_id": None,
+                 "explanation": _expl(
+                     "Közös azonosító (%s), de a bibliográfiai adatok eltérnek (cím-hasonlóság %s, első szerző %s, "
+                     "évkülönbség %s). Lehet gyűjtő-DOI (pl. kongresszusi melléklet) vagy hibásan kapcsolt azonosító — "
+                     "ezért NEM vontuk össze automatikusan. Nézd meg a két rekordot: ha ugyanaz a közlemény, fogadd "
+                     "el; ha nem, utasítsd el (H007)."
+                     % (", ".join(sorted(set(shared))), _fmt(fbib["title_sim"]),
+                        {True: "egyezik", False: "eltér", None: "ismeretlen"}[fbib["first_author_match"]],
+                        _fmt(fbib["year_diff"])),
+                     "Shared identifier (%s) but the bibliographic data differ (title similarity %s, first author %s, "
+                     "year difference %s). It may be a collective DOI (e.g. a congress supplement) or a mislinked "
+                     "identifier — so it was NOT merged automatically. Accept if it is the same report, otherwise "
+                     "reject (H007)."
+                     % (", ".join(sorted(set(shared))), _fmt(fbib["title_sim"]),
+                        {True: "matches", False: "differs", None: "unknown"}[fbib["first_author_match"]],
+                        _fmt(fbib["year_diff"])))}
+            l1_props.append(p)
+            continue
         if conflicting:
             p = {"kind": "id_conflict", "items": sorted([a, b]), "score": None,
                  "rule": "L1-conflict",
@@ -1241,10 +1352,12 @@ def _merge_same_signature(props):
         sig = _signature(p["kind"], p["rule"], p["items"])
         if sig in by:
             q = by[sig]
+            # élő próba (szója): két, áttekintés nélküli azonos aláírású javaslatnál KeyError('reviews') volt
             for rv in p.get("reviews") or []:
                 if rv not in q.setdefault("reviews", []):
                     q["reviews"].append(rv)
-            q["reviews"].sort()
+            if q.get("reviews"):
+                q["reviews"].sort()
             continue
         by[sig] = p
         out.append(p)
@@ -1430,6 +1543,49 @@ def _study_proposals(recs, cmap, cidx, l2_rejected=()):
                         "Possible companion report: same first author%s, %d years apart, title overlap %.2f. Check "
                         "whether it is the same study (watch for covert duplicate publication)."
                         % (" and last author" if last_match else "", abs(ya - yb), jac))})
+    # --- L4: követéses jelentés-sorozat — (majdnem) azonos cím, eltérő év (élő próba: az MRC-vizsgálat 1956-os,
+    # 1972-es és 1977-es jelentése, a Madras-vizsgálat 1979/1980/1999-es jelentése külön vizsgálat lett, tipp nélkül)
+    for p in props:
+        its = p["items"]
+        for i in range(len(its)):
+            for j in range(i + 1, len(its)):
+                seen_pairs.add(tuple(sorted((its[i], its[j]))))
+    tok = {}
+    index = {}
+    for r in active:
+        t = set(title_tokens((recs[r].get("bib") or {}).get("title")))
+        if len(t) >= 5:
+            tok[r] = t
+            for w in t:
+                index.setdefault(w, set()).add(r)
+    for a in sorted(tok):
+        cands = set()
+        for w in tok[a]:
+            if len(index.get(w, ())) <= 200:
+                cands |= index[w]
+        for b in sorted(x for x in cands if x > a):
+            if (a, b) in seen_pairs or (a, b) in l2_rejected:
+                continue
+            jac = float(len(tok[a] & tok[b])) / len(tok[a] | tok[b])
+            if jac < 0.6:
+                continue
+            ba, bb = recs[a].get("bib") or {}, recs[b].get("bib") or {}
+            ya, yb = _year(ba.get("year")), _year(bb.get("year"))
+            f = compare_bib(ba, bb)
+            if ya is None or yb is None or abs(ya - yb) < 2 or (f.get("title_sim") or 0) < TITLE_SERIES:
+                continue
+            seen_pairs.add((a, b))
+            props.append({
+                "kind": "same_study", "items": [a, b], "certainty": "possible", "score": None,
+                "rule": "L4-title-series", "features": {"shared_ids": [], "first_author_match": f["first_author_match"],
+                                                        "year_diff": abs(ya - yb), "title_sim": f["title_sim"]},
+                "status": "pending", "decision_id": None,
+                "explanation": _expl(
+                    "Lehetséges követéses jelentés: (majdnem) azonos cím (%.2f), %d év különbség — ugyanannak a "
+                    "vizsgálatnak egy későbbi jelentése lehet (társközlemény). Ha igen, kapcsold össze; ha külön "
+                    "vizsgálat, utasítsd el." % (f["title_sim"], abs(ya - yb)),
+                    "Possible follow-up report: (nearly) identical title (%.2f), %d years apart — may be a later "
+                    "report of the same study (companion)." % (f["title_sim"], abs(ya - yb)))})
     return _merge_same_signature(props)
 
 
@@ -1536,6 +1692,8 @@ def _build_studies(recs, suf, cmap, cidx, eff, prior, counters, proposals):
         reg = {}
         for r in g:
             for m in members_all.get(r, [r]):
+                if (recs[m].get("resolution") or {}).get("status") in UNVERIFIED_RESOLUTION:
+                    continue  # feloldatlan rekord azonosítója nem igazolt (N1)
                 ids = recs[m].get("ids") or {}
                 for iv in ([ids.get("nct")] if ids.get("nct") else []) + list(ids.get("registry") or []):
                     if isinstance(iv, dict) and iv.get("value") and trusted(iv) and iv["value"] not in reg:
@@ -1575,9 +1733,16 @@ def _build_studies(recs, suf, cmap, cidx, eff, prior, counters, proposals):
     return studies
 
 
+def _short_name(sn):
+    """Testületi szerző (pl. „Fourth Report to the Medical Research Council by its …") rövid címkéje."""
+    if sn and len(sn) > 40:
+        return " ".join(sn.split()[:4]) + "…"
+    return sn
+
+
 def _label_base(rec, cand_info):
     b = rec.get("bib") or {}
-    sn = surname_display(b.get("first_author"))
+    sn = _short_name(surname_display(b.get("first_author")))
     y = _year(b.get("year"))
     if sn and y:
         return "%s %d" % (sn, y)
@@ -1586,11 +1751,13 @@ def _label_base(rec, cand_info):
             return str(c["study_label_in_review"])[:80]
     for _rv, c in cand_info or []:
         ca = c.get("cited_as") or {}
-        sn2 = surname_display(ca.get("first_author"))
+        sn2 = _short_name(surname_display(ca.get("first_author")))
         if sn2 and ca.get("year"):
             return "%s %s" % (sn2, ca.get("year"))
     if sn:
         return sn
+    if b.get("title") and y:  # szerző nélküli (testületi) közlemény: a cím eleje + év
+        return "%s %d" % (" ".join(str(b["title"]).split()[:4]).rstrip(".,:;") + "…", y)
     t = (rec.get("cited_as") or {}).get("text") or b.get("title") or rec["rec_id"]
     return str(t)[:60]
 
@@ -1784,6 +1951,11 @@ def decide_batch(project_dir, value, actor, reason=None, now=None, **filters):
     doc = load_studies(project_dir) or {}
     filters.setdefault("status", "pending")
     sel = select_proposals(doc.get("proposals") or [], **filters)
+    # Feloldási javaslatot tömegesen elfogadni nem lehet (melyik lehetőség? — egyenként: option:N / pmid:…), az
+    # azonosító-ütközést pedig csak kifejezett --kind id_conflict szűrővel (felülvizsgálat: a szűrő nélküli
+    # „mindet elfogad" érvénytelen id_confirm döntéseket írt, és ellentmondó azonosítójú rekordokat vont össze).
+    sel = [p for p in sel if not (p.get("kind") == "resolution" and str(value).lower() not in ("reject",))
+           and not (p.get("kind") in ("resolution", "id_conflict") and filters.get("kind") != p.get("kind"))]
     if not sel:
         return []
     ts = utc_now(now)

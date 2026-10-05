@@ -114,6 +114,17 @@ def effective_reviews(reviews, decisions):
     return out
 
 
+def retracted_retention(decisions):
+    """Az emberi „visszavont közlemény tudatos megtartása" döntések: ``{study_id: decision}`` (``final_inclusion``
+    döntés ``keep_retracted`` értékkel, indoklással; H013)."""
+    out = {}
+    for (ttype, tid), d in S.effective_decisions(decisions, kinds=("final_inclusion",)).items():
+        if ttype == "study" and d.get("value") == "keep_retracted" and \
+                str(d.get("actor") or "").startswith("user:") and (d.get("reason") or "").strip():
+            out[tid] = d
+    return out
+
+
 def screening_status(records, decisions, state=None):
     """Rekordonkénti hatályos szűrési döntés (``eligibility.screening_status``; ha az nem tölthető be, egyszerű
     tartalék: szintenként az utolsó emberi ``screen`` döntés)."""
@@ -346,11 +357,23 @@ def _study_status(rep_status):
     return "awaiting"
 
 
+#: az EP6 (másodlagos adat ellenőrzése) mezői — a lezárás (EP5) UTÁN jönnek, ezért nem részei az ujjlenyomatnak
+_EP6_FIELDS = ("status", "verified_decision", "primary_locator", "primary_value")
+
+
 def _content_hash(studies):
-    """A vizsgálatlista tartalmi ujjlenyomata (a ``final``-mezők nélkül) — a lezárás érvényességéhez."""
+    """A vizsgálatlista tartalmi ujjlenyomata (a ``final``-mezők és az EP6-ellenőrzés mezői nélkül) — a lezárás
+    érvényességéhez. Felülvizsgálat: korábban a másodlagos adat ``verified`` állapota is benne volt, így a TERV szerinti
+    sorrend (EP5 lezárás → EP6 ellenőrzés → elemzési export) lehetetlen volt — minden EP6-döntés érvénytelenítette a
+    lezárást (H017), és az ``export --for-analysis`` megtagadta a futást."""
     body = []
     for s in studies:
         x = dict((k, v) for k, v in s.items() if k not in ("final",))
+        if x.get("secondary_data"):
+            x["secondary_data"] = [{"review_id": blk.get("review_id"),
+                                    "values": [dict((k, v) for k, v in val.items() if k not in _EP6_FIELDS)
+                                               for val in blk.get("values") or []]}
+                                   for blk in x["secondary_data"]]
         body.append(x)
     return hashlib.sha256(json.dumps(body, sort_keys=True, ensure_ascii=False,
                                      separators=(",", ":")).encode("utf-8")).hexdigest()
@@ -374,6 +397,11 @@ def build_merged(state, reviews, studies_doc, decisions, update_doc=None, now=No
     branch = branch_membership(records, reviews)
     tol = (state.get("settings") or {}).get("secondary_tolerance_rel", 0.0) or 0.0
     sdec = secondary_decisions(decisions)
+    # emberi nyilatkozat: a közleménynek nincs API-ban elérhető azonosítója (pl. régi, nem indexelt folyóirat-
+    # melléklet) — élő próbán (BCG: Madras 1980, Indian J Med Res Suppl.) e nélkül a lezárás után H003 hiba maradt
+    no_id_ack = set(t[1] for t, dd in S.effective_decisions(decisions, kinds=("id_confirm",)).items()
+                    if t[0] == "record" and str(dd.get("value")) == "no_identifier")
+    keep_retracted = retracted_retention(decisions)
     warnings = []
 
     # jelöltek a kanonikus rekord szerint (kiválasztott áttekintések, nem elutasított, bevonás-szerepű)
@@ -493,7 +521,7 @@ def build_merged(state, reviews, studies_doc, decisions, update_doc=None, now=No
             if fl.get("preprint"):
                 flags.add("preprint")
             if (rec.get("resolution") or {}).get("status") in ("unresolved", "ambiguous") or not _trusted_any(rec):
-                flags.add("unresolved_ids")
+                flags.add("no_identifier_acknowledged" if x["rec_id"] in no_id_ack else "unresolved_ids")
             if (rec.get("resolution") or {}).get("unverified_live"):
                 flags.add("unverified_live_source")
         if all((by_id[x["rec_id"]].get("flags") or {}).get("registry_record") for x in reps):
@@ -509,11 +537,17 @@ def build_merged(state, reviews, studies_doc, decisions, update_doc=None, now=No
                                   "%s (%s): %d fields differ between reviews." % (s["study_id"], s.get("label"),
                                                                                     len(conflicts)),
                                   study_id=s["study_id"]))
-        if st_status == "included" and "retracted" in flags:
-            warnings.append(_warn("H013", "%s (%s): visszavont közlemény a bevont halmazban — indokold a kizárást "
-                                          "(X8), vagy dokumentáld, miért marad." % (s["study_id"], s.get("label")),
-                                  "%s (%s): retracted publication in the included set." % (s["study_id"],
-                                                                                          s.get("label")),
+        if "retracted" in flags and s["study_id"] in keep_retracted:
+            flags.add("retracted_retention_documented")
+        if st_status == "included" and "retracted" in flags and s["study_id"] not in keep_retracted:
+            warnings.append(_warn("H013", "%s (%s): visszavont közlemény a bevont halmazban — zárd ki (exclude --target "
+                                          "%s --reason-code …), vagy ha tudatosan megtartod, rögzítsd az indokot: decide "
+                                          "--target %s --value keep_retracted --reason \"…\" --actor user:<név>. Amíg "
+                                          "egyik sincs meg, a lezárás (EP5) nem lehetséges."
+                                  % (s["study_id"], s.get("label"), s["study_id"], s["study_id"]),
+                                  "%s (%s): retracted publication in the included set — exclude it or record why it is "
+                                  "kept (decide --value keep_retracted); sign-off is blocked until then."
+                                  % (s["study_id"], s.get("label")),
                                   study_id=s["study_id"]))
         if st_status == "included" and "unresolved_ids" in flags:
             warnings.append(_warn("H003", "%s (%s): van API-val meg nem erősített azonosítójú közlemény a bevont "
@@ -708,8 +742,36 @@ def signoff(project_dir, actor, reason=None, now=None, env=None):
         return res
     blockers = [p for p in res["pending"] if p["checkpoint"] in ("EP1", "EP2", "EP3", "EP4")]
     prisma_ok = ((res.get("data") or {}).get("prisma") or {}).get("ok")
-    if blockers or not prisma_ok:
+    # H003: a végső halmazban csak API-val megerősített azonosítójú (vagy emberi nyilatkozattal „nincs azonosító")
+    # közlemény lehet — élő próbán (szója: 6, BCG: 2 vizsgálat) a lezárás e nélkül átment, utána H003-hiba maradt
+    cur = S.read_json(S.path(project_dir, S.FILES["merged"])) or {}
+    unresolved = [st for st in cur.get("studies") or [] if st.get("status") == "included"
+                  and "unresolved_ids" in (st.get("flags") or [])]
+    # H013 (error): visszavont közlemény a bevont halmazban csak dokumentált emberi megtartással zárható le —
+    # felülvizsgálat: korábban a lezárás figyelmeztetéssel átment
+    retracted = [st for st in cur.get("studies") or [] if st.get("status") == "included"
+                 and "retracted" in (st.get("flags") or [])
+                 and "retracted_retention_documented" not in (st.get("flags") or [])]
+    if blockers or not prisma_ok or unresolved or retracted:
         errs = []
+        if retracted:
+            errs.append(_expl(
+                "A lezárás nem lehetséges: %d bevont vizsgálatnak visszavont (retracted) közleménye van (H013): %s. "
+                "Teendő: zárd ki (exclude <projekt> --target st-… --reason-code X…), vagy ha tudatosan megtartod "
+                "(pl. érzékenységi elemzéshez), rögzítsd az indokot: decide <projekt> --target st-… --value "
+                "keep_retracted --reason \"…\" --actor user:<név>."
+                % (len(retracted), ", ".join("%s (%s)" % (x["study_id"], x.get("label")) for x in retracted[:8])),
+                "Sign-off blocked: %d included studies have a retracted report (H013) — exclude them or record why "
+                "they are kept (decide --value keep_retracted)." % len(retracted)))
+        if unresolved:
+            errs.append(_expl(
+                "A lezárás nem lehetséges: %d bevont vizsgálatnak van API-val meg nem erősített azonosítójú közleménye "
+                "(H003): %s. Teendő: resolve (vagy a feloldási javaslat eldöntése), illetve ha a közleménynek valóban "
+                "nincs azonosítója: decide <projekt> --target rec-… --value no_identifier --reason \"hol "
+                "ellenőrizted\" --actor user:<név>."
+                % (len(unresolved), ", ".join("%s (%s)" % (x["study_id"], x.get("label")) for x in unresolved[:8])),
+                "Sign-off blocked: %d included studies have reports without API-confirmed identifiers (H003)."
+                % len(unresolved)))
         if blockers:
             errs.append(_expl("A lezárás nem lehetséges, amíg nyitott emberi döntés van (H009): %s."
                               % ", ".join("%s: %d" % (p["checkpoint"], p["n"]) for p in blockers),
@@ -719,7 +781,8 @@ def signoff(project_dir, actor, reason=None, now=None, env=None):
             errs.append(_expl("A PRISMA-számok nem mennek át a motor ellenőrzésén (H011) — javítsd a döntéseket.",
                               "The PRISMA numbers fail the engine check (H011)."))
         return {"ok": False, "data": res.get("data"), "warnings": res["warnings"], "errors": errs,
-                "pending": res["pending"], "exit_code": 4 if blockers else 1, "next": "status"}
+                "pending": res["pending"], "exit_code": 4 if (blockers or unresolved or retracted) else 1,
+                "next": "status"}
     merged = S.read_json(S.path(project_dir, S.FILES["merged"]))
     counts = merged["counts"]
     txt = reason or ("Végső bevonás lezárva: %d vizsgálat (%d jelentés) a bevont halmazban, %d forrás-áttekintésből "
@@ -795,6 +858,13 @@ def verify_secondary(project_dir, study_id, field, status, actor, review_id=None
                               "--arm kapcsolóval: %s" % (len(hits), ", ".join("%s %s" % (rv, v.get("evidence_id"))
                                                                               for rv, v in hits[:6])))
     rv, v = hits[0]
+    if status == "verified" and primary_value is not None and str(primary_value).strip() != "" and \
+            not _same_value(primary_value, v.get("value"), 0):
+        # felülvizsgálat: korábban az eltérő elsődleges értékkel „ellenőrzött" jelölés után az elemzési export az
+        # ÁTTEKINTÉS (eltérő) számát írta be „ellenőrzött" címkével
+        raise S.DecisionError("Az elsődleges közleményben talált érték (%s) eltér az áttekintésétől (%s): ez nem "
+                              "„verified\", hanem „discrepant\" (--status discrepant). Az elemzésbe az elsődleges "
+                              "közlemény értékét te írod be (03_adatok/<kimenet>.csv)." % (primary_value, v.get("value")))
     return S.append_decision(project_dir, "secondary_verify", ("study", study_id), status, actor, now=now,
                              reason=reason, evidence_ids=[v["evidence_id"]], kb_refs=KB_SECONDARY,
                              field=field, review_id=rv, outcome=v.get("outcome") or None, arm=v.get("arm") or None,
@@ -813,8 +883,13 @@ def _slug(text):
 
 
 def _first_id(rep, kind):
+    """Egy jelentés azonosítója exportokhoz — CSAK API-ból jött vagy API-val megerősített érték, és csak feloldott
+    rekordnál (N1; felülvizsgálat: korábban az áttekintés meg nem erősített PMID-je/DOI-ja is a RIS-be és a
+    kimenet-sablonba került, mintha ellenőrzött azonosító volna)."""
+    if rep.get("resolution") in _d().UNVERIFIED_RESOLUTION:
+        return None
     v = (rep.get("ids") or {}).get(kind)
-    return v.get("value") if isinstance(v, dict) else None
+    return v.get("value") if isinstance(v, dict) and _d().trusted(v) else None
 
 
 def _primary(study):
@@ -1107,12 +1182,20 @@ def run_export(project_dir, outcome=None, to_project=False, prisma=False, for_an
     ``outcome`` adott — ``03_adatok/<kimenet>.csv``; ``prisma``: ``02_szures/prisma_flow.json`` (csak ha nem
     létezik). ``for_analysis``: csak lezárt (EP5) halmazból, és csak ellenőrzött másodlagos értékkel (H009, H010)."""
     state, reviews, studies, decisions, update_doc = _load_all(project_dir)
-    merged = S.read_json(S.path(project_dir, S.FILES["merged"]))
-    if not merged:
+    stored = S.read_json(S.path(project_dir, S.FILES["merged"]))
+    if not stored or not studies:
         return {"ok": False, "data": None, "warnings": [], "errors": [_expl("Még nincs merged.json — futtasd: merge.",
                                                                            "No merged.json — run merge.")],
                 "pending": [], "exit_code": 2, "next": "merge"}
     warnings, errors = [], []
+    # az exportot mindig a FRISS döntésekből számoljuk (felülvizsgálat: a tárolt merged.json elavult lehetett — pl. a
+    # lezárás utáni döntések vagy az EP6-ellenőrzések nem jelentek meg az elemzési exportban)
+    merged, _mw = build_merged(state, reviews, studies, decisions, update_doc, now=now)
+    if merged.get("content_sha256") != stored.get("content_sha256") or bool(merged.get("final")) != \
+            bool(stored.get("final")):
+        warnings.append(_warn("H017", "A merged.json elavult volt (azóta új döntés született) — az export a friss "
+                                      "állapotból készült; futtasd a merge lépést is a PRISMA-számok frissítéséhez.",
+                              "merged.json was stale — the export uses the current decisions; run merge too."))
     if for_analysis and not merged.get("final"):
         errors.append(_expl("Az elemzési export (--for-analysis) csak a végső lezárás (EP5, signoff) után futhat (H009).",
                             "--for-analysis requires the EP5 sign-off (H009)."))

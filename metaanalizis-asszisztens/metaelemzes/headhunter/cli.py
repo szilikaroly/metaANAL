@@ -32,8 +32,6 @@ API-kulcs parancssori kapcsolóval NEM adható meg (az argv naplóba kerülhet):
 from __future__ import absolute_import, print_function
 
 import argparse
-import hashlib
-import io
 import json
 import os
 import re
@@ -657,7 +655,7 @@ def _validate_targets(project, targets, value, reason, reason_code, level, raw_v
             if prop is None:
                 raise UsageError("Nincs ilyen javaslat: %s (list <projekt> proposals)." % t)
             if prop.get("kind") == "resolution" and value == "include" and \
-                    not str(raw_value or "").startswith(("pmid:", "option:", "doi:")):
+                    not str(raw_value or "").lower().startswith(_RESOLUTION_PREFIXES):
                 raise UsageError("Feloldási javaslatnál add meg, melyik közleményt fogadod el: --value option:<N> "
                                  "(a javaslat lehetőségei közül) vagy --value pmid:<szám>; elutasítás: exclude/decide "
                                  "--value reject. Az azonosítót a program API-val ellenőrzi (N1).")
@@ -851,7 +849,11 @@ def cmd_confirm(a):
     return _decision_cmd(a, "include")
 
 
-_DECIDE_VALUES = {"accept": "include", "include": "include", "confirm": "include", "yes": "include",
+#: feloldási javaslatra adható értékek előtagjai (a resolve ``_human_pass`` mindet API-val ellenőrzi)
+_RESOLUTION_PREFIXES = ("option:", "pmid:", "doi:", "pmcid:", "nct:", "eid:", "openalex:")
+
+_DECIDE_VALUES = {"no_identifier": "no_identifier", "keep_retracted": "keep_retracted",
+                  "accept": "include", "include": "include", "confirm": "include", "yes": "include",
                   "reject": "exclude", "exclude": "exclude", "no": "exclude", "not_retrieved": "not_retrieved",
                   "awaiting": "awaiting"}
 
@@ -860,18 +862,79 @@ def cmd_decide(a):
     """A TERV 14. fejezet általános ``decide`` parancsa: ``--value accept|reject|include|exclude|not_retrieved|
     awaiting`` (feloldási javaslatnál ``pmid:…`` / ``option:N`` is) — a ``confirm``/``exclude`` útján."""
     raw = (a.value or "").strip()
-    if raw.startswith(("pmid:", "option:", "doi:")):
+    if raw.lower().startswith(_RESOLUTION_PREFIXES):
         return _decision_cmd(a, "include")
     if raw not in _DECIDE_VALUES:
-        raise UsageError("A --value: accept | reject | include | exclude | not_retrieved | awaiting (feloldási "
-                         "javaslatnál: pmid:… vagy option:N).")
+        raise UsageError("A --value: accept | reject | include | exclude | not_retrieved | awaiting | no_identifier | "
+                         "keep_retracted (feloldási javaslatnál: pmid:… / doi:… / pmcid:… / nct:… / option:N).")
     kind = _DECIDE_VALUES[raw]
+    if kind == "no_identifier":
+        return _no_identifier(a)
+    if kind == "keep_retracted":
+        return _keep_retracted(a)
     a.value = None
     if kind == "include":
         return _decision_cmd(a, "include")
     if kind != "exclude" and (a.level or "full_text") != "full_text":
         raise UsageError("A 'nem elérhető' / 'elbírálásra vár' csak teljes szöveg szinten adható.")
     return _decision_cmd(a, kind)
+
+
+def _no_identifier(a):
+    """Emberi nyilatkozat: a közleménynek nincs API-ban elérhető azonosítója (H003 nyugtázása). Csak feloldatlan
+    rekordra, indoklással (hol ellenőrizted: könyvtári katalógus, a folyóirat archívuma …)."""
+    project = a.project
+    actor = _actor(a)
+    targets = _split_ids(a.target)
+    if not targets or not all(_REC.match(t) for t in targets):
+        raise UsageError("A --value no_identifier célja feloldatlan közlemény-rekord (rec-…).")
+    if not a.reason:
+        raise UsageError("Írd le, hol ellenőrizted, hogy nincs azonosító (--reason \"…\").")
+    studies = S.read_json(S.path(project, S.FILES["studies"])) or {}
+    recs = dict((r.get("rec_id"), r) for r in studies.get("records") or [])
+    out = []
+    for t in targets:
+        r = recs.get(t)
+        if r is None:
+            raise UsageError("Nincs ilyen közlemény (rekord): %s." % t)
+        if (r.get("resolution") or {}).get("status") == "resolved":
+            raise UsageError("%s API-val feloldott — a nyilatkozat csak feloldatlan rekordra adható." % t)
+    for t in targets:
+        d = S.append_decision(project, "id_confirm", ("record", t), "no_identifier", actor, reason=a.reason,
+                              kb_refs=["D-S03-103"])
+        out.append({"target": t, "kind": "id_confirm", "value": "no_identifier", "decision_id": d["decision_id"]})
+    return _env(True, {"decisions": out, "n": len(out)}, nxt="merge %s" % project,
+                message=_expl("Rögzítve: nincs API-azonosító (%d rekord)." % len(out),
+                              "Recorded: no API identifier (%d records)." % len(out)))
+
+
+def _keep_retracted(a):
+    """Emberi döntés: a visszavont (retracted) közleményű vizsgálatot tudatosan a bevont halmazban tartod (H013) —
+    indoklás kötelező (pl. „csak érzékenységi elemzésben, a visszavonás oka nem az adatok hibája"). Enélkül a
+    lezárás (EP5) nem lehetséges."""
+    project = a.project
+    actor = _actor(a)
+    targets = _split_ids(a.target)
+    if not targets or not all(_STUDY.match(t) for t in targets):
+        raise UsageError("A --value keep_retracted célja vizsgálat (st-…).")
+    if not (a.reason and a.reason.strip()):
+        raise UsageError("Írd le, miért tartod meg a visszavont közleményű vizsgálatot (--reason \"…\").")
+    merged = S.read_json(S.path(project, S.FILES["merged"])) or {}
+    by = dict((st.get("study_id"), st) for st in merged.get("studies") or [])
+    for t in targets:
+        st = by.get(t)
+        if st is None:
+            raise UsageError("Nincs ilyen vizsgálat az egyesített halmazban: %s (futtasd: merge)." % t)
+        if "retracted" not in (st.get("flags") or []):
+            raise UsageError("%s nem tartalmaz visszavont közleményt — erre nincs szükség." % t)
+    out = []
+    for t in targets:
+        d = S.append_decision(project, "final_inclusion", ("study", t), "keep_retracted", actor, reason=a.reason,
+                              level="final", kb_refs=["D-S04-103"])
+        out.append({"target": t, "kind": "final_inclusion", "value": "keep_retracted", "decision_id": d["decision_id"]})
+    return _env(True, {"decisions": out, "n": len(out)}, nxt="merge %s" % project,
+                message=_expl("Rögzítve: a visszavont közleményű vizsgálat(ok) tudatos megtartása (%d)." % len(out),
+                              "Recorded: retracted study kept deliberately (%d)." % len(out)))
 
 
 def cmd_exclude(a):
@@ -1100,7 +1163,7 @@ def cmd_verify(a):
                  for f in warns],
                 [{"code": f.get("code"), "hu": f.get("hu") or f.get("title"), "en": f.get("en") or f.get("title")}
                  for f in errs], exit_code=EXIT_ERROR if errs else EXIT_OK,
-                nxt=(errs or warns or [{}])[0].get("suggested_command", [None])[0] if (errs or warns) else None)
+                nxt=next((f["suggested_command"][0] for f in errs + warns if f.get("suggested_command")), None))
 
 
 # =============================================================================================
@@ -1344,7 +1407,9 @@ def build_parser(parser_class=None):
                         ("title_abstract", "full_text"), default=None,
                         help="szűrési szint közleménynél/vizsgálatnál (confirm alap: both; exclude alap: full_text)")
         sp.add_argument("--value", required=(name == "decide"),
-                        help="decide: a döntés; javaslatnál egyedi érték (pl. feloldásnál pmid:… vagy option:N)")
+                        help="decide: a döntés; javaslatnál egyedi érték (pl. feloldásnál pmid:… / doi:… / pmcid:… / "
+                             "nct:… vagy option:N; feloldatlan rekordnál: no_identifier; visszavont közleményű "
+                             "vizsgálat tudatos megtartása: keep_retracted)")
         sp.add_argument("--review", help="--all-candidates mellé: az áttekintés")
         sp.add_argument("--all-pending", dest="all_pending", action="store_true",
                         help="tömegesen: minden függő vizsgálat (merge után; a szűrő a döntésben rögzül)")

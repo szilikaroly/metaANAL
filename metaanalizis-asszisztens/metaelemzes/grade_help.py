@@ -6,8 +6,11 @@ A motor itt SOHA nem dönt. Az advice() egy szk.ma.grade/v1 PISZKOZATOT ad: mind
 mellette a számok (advisory) és egy kezdőknek is érthető javaslat (suggestion: summary, why — a „Miért?” panel
 szövege —, flags, kb_refs). Az ítéletet ember hozza; a tár: projekt.save_grade_doc / record_grade_doc.
 
-    advice(run, rob_by_row=None, mid=None, project_dir=None, …)   → szk.ma.grade/v1 piszkozat (tanáccsal)
-    sof(run, assumed_risks=None, certainty=None, footnotes=None, …) → szk.ma.sof/v1
+    advice(run, rob_by_row=None, mid=None, project_dir=None, …)   → szk.ma.grade/v1 piszkozat (tanáccsal; ROBINS-I /
+                                                   ROBINS-E esetén GRADE 18; a felminősítés az elrendezésből)
+    sof(run, assumed_risks=None, certainty=None, footnotes=None, …) → szk.ma.sof/v1 (a bizonyosság a kimenet
+                                                   rögzített GRADE-ítéletéé; AI-vázlat / feloldatlan: nincs szint)
+    save_sof / sof_certainty_problems / recorded_certainty           mentés csak rögzített GRADE-szinttel (4. döntés)
     absolute_effect(measure, rel, assumed_risk)    a totals.absolute_per_1000 általánosítása (RR, OR, RD)
     ois_binary(...) / ois_continuous(...)          optimális információméret (OIS) a power modullal
     parse_mid(mid, measure)                        MID: szám, szöveg ('0,75–1,25') vagy {lower, upper | value, source}
@@ -683,7 +686,114 @@ def _ev(hu, en, text):
     return {"label": _tr(hu, en), "text": text if isinstance(text, dict) else _tr(str(text), str(text))}
 
 
-def _advise_rob(rd, rows, child, thresholds, project_dir):
+ROBINS_TOOLS = {"robins-i": "ROBINS-I", "robins-e": "ROBINS-E"}
+_REVIEW_LEVEL_TOOLS = ("amstar2", "grade", "tripod-ai", "tripod", "probast-ai")
+GRADE18 = "GRADE 18 (Schünemann et al. J Clin Epidemiol 2019;111:105)"
+
+
+def _rob_tool(project_dir, oid, meta_o=None):
+    """A kimenet vizsgálatonkénti RoB-eszköze a projektből → 'robins-i' | 'robins-e' | 'rob2' | 'mixed' | None:
+    a kimenet appraisal_tool(s) mezője, a ma-projekt.json appraisal_tools-a (az áttekintés-szintűek nélkül), és a
+    04_torzitas_kockazat/appraisals lezárt értékeléseinek eszköze (a kimenetre vagy kimenet nélkül). Több eszköz
+    (pl. RoB 2 és ROBINS-I) → 'mixed'."""
+    if project_dir is None:
+        return None
+    tools = set()
+    meta_o = meta_o or {}
+    own = meta_o.get("appraisal_tool")
+    if isinstance(own, str) and own.strip():
+        tools.add(own.strip().lower())
+    for t in meta_o.get("appraisal_tools") or [] if isinstance(meta_o.get("appraisal_tools"), list) else []:
+        if isinstance(t, str) and t.strip():
+            tools.add(t.strip().lower())
+    if not tools:
+        try:
+            meta = P.load_project_meta(project_dir) or {}
+        except (ValueError, OSError):
+            meta = {}
+        for t in meta.get("appraisal_tools") or [] if isinstance(meta.get("appraisal_tools"), list) else []:
+            if isinstance(t, str) and t.strip():
+                tools.add(t.strip().lower())
+    d = os.path.join(project_dir, "04_torzitas_kockazat", "appraisals")
+    if os.path.isdir(d):
+        for fn in sorted(os.listdir(d)):
+            if not fn.endswith(".json") or fn.startswith("."):
+                continue
+            try:
+                doc = _read_json(os.path.join(d, fn))
+            except (OSError, ValueError):
+                continue
+            if not isinstance(doc, dict) or doc.get("status") not in ("complete", "consensus", "final"):
+                continue
+            if doc.get("origin") == "ai_draft" and not doc.get("approved_by"):
+                continue
+            tg = doc.get("target") if isinstance(doc.get("target"), dict) else {}
+            if tg.get("outcome") not in (None, oid):
+                continue
+            if isinstance(doc.get("tool"), str):
+                tools.add(doc["tool"].strip().lower())
+    tools = {t for t in tools if t not in _REVIEW_LEVEL_TOOLS}
+    if not tools:
+        return None
+    if len(tools) > 1:
+        return "mixed" if tools & set(ROBINS_TOOLS) else sorted(tools)[0]
+    return tools.pop()
+
+
+_ROBINS_I_WORDS = re.compile(r"^\s*(?:moderate|serious|critical)(?:\s+risk(?:\s+of\s+bias)?)?\s*$", re.I)
+
+
+def _robins_vocabulary(rows):
+    """Igaz, ha a rob-értékek közt ROBINS-I-szó (moderate / serious / critical risk of bias) van — a RoB 2 (low /
+    some concerns / high) és a ROBINS-E 2023 (… / very high) nem használja őket."""
+    return any(isinstance(r.get("rob_value"), str) and _ROBINS_I_WORDS.match(r["rob_value"]) for r in rows)
+
+
+def _robins_adjust(rob_tool, start, rating, status, pct, flags, because, kb):
+    """GRADE 18 a ROBINS-I / ROBINS-E-vel értékelt nem randomizált bizonyítékra (methodology:M8): magas kiindulásnál
+    a „serious” / „critical” ítéletű súly-többség −2 (a gyakorlatban legalább két szint); alacsony kiindulásnál a
+    további RoB-leminősítés a zavaró tényezőket kétszer számolná. → (rating, status, flags, because, kb)"""
+    name = ROBINS_TOOLS[rob_tool]
+    kb = list(kb) + ["D-S13-001", "GRADE-02"]
+    if start == "low":
+        flags.append(_flag("grade18_double_count",
+                           "%s-értékelés alacsony kiindulással: a %s már tartalmazza a zavaró tényezők és a szelekció "
+                           "kockázatát, ezért alacsonyról indulva a RoB-doménben ugyanezért újra leminősíteni kettős "
+                           "számolás (%s). Vagy indulj magasról (és itt minősíts le), vagy itt ne számold újra a "
+                           "zavaró tényezőket." % (name, name, GRADE18),
+                           "%s appraisal with a low start: %s already covers confounding and selection, so rating down "
+                           "again for them in the risk-of-bias domain after starting low double counts it (%s). Either "
+                           "start high (and rate down here) or do not count confounding again here." % (
+                               name, name, GRADE18), "warning"))
+        if rating != "not serious":
+            status = "borderline"
+        extra = _tr(" %s: alacsony kiindulásnál a zavaró tényezőket ne számold kétszer." % GRADE18,
+                    " %s: with a low start do not count confounding twice." % GRADE18)
+    elif start == "high":
+        if pct["high"] >= 50:
+            rating, status = "very serious", "suggested"
+            flags[:] = [f for f in flags if f["code"] != "very_serious_possible"]
+        flags.append(_flag("grade18_two_levels",
+                           "%s-tel értékelt NRSI magas kiindulással (%s): a „serious” / „critical” ítéletű súly-többség "
+                           "a gyakorlatban legalább két szint leminősítést jelent; a „moderate” túlsúly jellemzően egyet."
+                           % (name, GRADE18),
+                           "NRSI assessed with %s and a high start (%s): a weight majority judged 'serious' / "
+                           "'critical' generally means rating down by at least two levels; a 'moderate' majority "
+                           "typically one." % (name, GRADE18), "info"))
+        extra = _tr(" %s: ROBINS-szel magasról indulva a „serious” / „critical” súly-többség −2." % GRADE18,
+                    " %s: starting high with ROBINS, a 'serious' / 'critical' weight majority is −2." % GRADE18)
+    else:
+        flags.append(_flag("grade18_start",
+                           "%s-értékelés: a kiindulás magas lehet (%s), ekkor a RoB-domén jellemzően több szinttel "
+                           "minősít le; add meg a kiindulást." % (name, GRADE18),
+                           "%s appraisal: the start may be high (%s), and then the risk-of-bias domain usually rates "
+                           "down by more than one level; set the starting level." % (name, GRADE18), "info"))
+        extra = _tr("", "")
+    because = {k: because[k] + extra[k] for k in because}
+    return rating, status, flags, because, kb
+
+
+def _advise_rob(rd, rows, child, thresholds, project_dir, start=None, rob_tool=None):
     asks = _tr("Mennyire bízhatunk abban, hogy a bevont vizsgálatok jól voltak kivitelezve (randomizálás, "
                "elrejtés, vakítás, hiányzó adatok, szelektív közlés)? A GRADE azt nézi, hogy az összesített eredmény "
                "SÚLYÁNAK mekkora része jön korlátozott (magas vagy „some concerns” kockázatú) vizsgálatokból — nem a "
@@ -793,6 +903,15 @@ def _advise_rob(rd, rows, child, thresholds, project_dir):
         rating, status = "not serious", "borderline"
     else:
         rating, status = "not serious", "suggested"
+    kb = KB["risk_of_bias"]
+    if rob_tool in ROBINS_TOOLS:
+        rating, status, flags, because, kb = _robins_adjust(rob_tool, start, rating, status, pct, flags, because, kb)
+    elif rob_tool == "mixed":
+        flags.append(_flag("mixed_rob_tools",
+                           "RoB 2 és ROBINS mellett: a randomizált és a nem randomizált bizonyítékot külön értékeld "
+                           "(külön SoF-sor; D-S13-001, %s)." % GRADE18,
+                           "RoB 2 and ROBINS together: rate randomised and non-randomised evidence separately "
+                           "(separate SoF rows; D-S13-001, %s)." % GRADE18, "warning"))
     change = _tr("Ha a magas kockázatú vizsgálatok kizárása megváltoztatja a következtetést, vagy a súly többsége "
                  "korlátozott vizsgálatból jön, a −1 indokolt; ha a hiányzó értékelések pótlása vagy a konszenzus "
                  "más arányt ad, a javaslat is változik. Szubjektív kimenetnél vakítás nélkül a korlát súlyosabb.",
@@ -800,8 +919,9 @@ def _advise_rob(rd, rows, child, thresholds, project_dir):
                  "limited studies, −1 is warranted; completing the missing appraisals or the consensus may change "
                  "the shares and thus the suggestion. With subjective outcomes and no blinding the limitation "
                  "weighs more.")
+    advisory["rob_tool"] = rob_tool
     return advisory, _suggest(rating, P.GRADE_RATINGS[rating], status, summary, _why(asks, because, change), flags,
-                              KB["risk_of_bias"], evidence)
+                              kb, evidence)
 
 
 def _advise_inconsistency(rd, rows, thresholds, mid):
@@ -1289,14 +1409,18 @@ def _advise_publication_bias(rd):
     return advisory, _suggest(rating, step, status, summary, why, flags, KB["publication_bias"], evidence)
 
 
-def _advise_upgrades(rd, start):
+def _advise_upgrades(rd, start, design=None):
     """Felminősítési tanács (GRADE-08; D-S13-009) felminősítésenként: {suggested, candidate_step, summary, evidence,
     why, flags, kb_refs}. Csak a nagy hatás számolható (RR / OR: > 2 vagy < 0,5 → +1; > 5 vagy < 0,2 → +2); a
-    dózis–válasz és az ellentétes zavaró tényezők emberi ítéletek. Javaslat (suggested) csak megfigyeléses
-    kiindulásnál lehet."""
+    dózis–válasz és az ellentétes zavaró tényezők emberi ítéletek. Javaslat (suggested) csak nem randomizált
+    bizonyítéknál lehet — az ELRENDEZÉS dönt (design: RCT | NRSI | observational | mixed), nem a kiindulás: a
+    ROBINS-I-gyel értékelt NRSI magasról indul, mégis felminősíthető (GRADE 18; methodology:M9). Ismeretlen
+    elrendezésnél a kiindulás csak jelölt feltételezés (alacsony → nem randomizált, magas → RCT)."""
     m = rd.measure
     est, lo, hi = rd.bt
-    obs = start == "low"
+    design = P.grade_design(design)
+    assumed = design not in P.GRADE_DESIGNS
+    obs = (start == "low") if assumed else design in ("NRSI", "observational")
     cand, ci_beyond = None, None
     if m in ("RR", "OR") and None not in (est, lo, hi) and est > 0 and lo > 0:
         far = max(est, 1.0 / est)
@@ -1309,11 +1433,13 @@ def _advise_upgrades(rd, start):
         because = _both(lambda lang: (
             "%s %s: a relatív hatás %s, ezért +%d mérlegelhető%s." % (
                 m, _fmt(est, 2), "nagyon nagy (> 5 vagy < 0.2)" if cand == 2 else "nagy (> 2 vagy < 0.5)", cand,
-                "" if obs else " — de RCT-kiindulásnál a felminősítés ritkán indokolt")
+                "" if obs else " — de RCT-%snál a felminősítés ritkán indokolt" % ("kiindulás" if assumed else
+                                                                                   "bizonyíték"))
             if lang == "hu" else
             "%s %s: the relative effect is %s, so +%d may be considered%s." % (
                 m, _fmt(est, 2, "en"), "very large (> 5 or < 0.2)" if cand == 2 else "large (> 2 or < 0.5)", cand,
-                "" if obs else " — but rating up is rarely justified when starting from RCTs")))
+                "" if obs else " — but rating up is rarely justified %s" % (
+                    "when starting from RCTs" if assumed else "for RCT evidence"))))
     elif cand == 0:
         because = _tr("A relatív hatás nem éri el a nagy hatás tájékoztató határát (RR > 2 vagy < 0.5).",
                       "The relative effect does not reach the indicative large-effect threshold (RR > 2 or < 0.5).")
@@ -1335,8 +1461,20 @@ def _advise_upgrades(rd, start):
                              "Plausible confounding, important downgrades or a CI not reaching the threshold argue "
                              "against it; a consistent large effect across studies argues for it (GRADE-08a).")),
              "flags": [], "kb_refs": ["GRADE-08", "GRADE-08a", "D-S13-009"]}
-    large["why"]["uncertain"] = None if obs else _tr("RCT-kiindulás: felminősítés ritkán indokolt.",
-                                                     "RCT start: rating up is rarely justified.")
+    if obs:
+        large["why"]["uncertain"] = _tr("Az elrendezés nincs megadva: a kiindulásból (alacsony) feltételezve nem "
+                                        "randomizált.", "Design not given: assumed non-randomised from the (low) "
+                                        "start.") if assumed else None
+    elif design == "mixed":
+        large["why"]["uncertain"] = _tr("Vegyes elrendezés (RCT és nem randomizált): a felminősítést külön, a nem "
+                                        "randomizált bizonyítékra mérlegeld.", "Mixed designs (randomised and non-"
+                                        "randomised): consider rating up separately, for the non-randomised evidence.")
+    else:
+        large["why"]["uncertain"] = _tr("RCT-kiindulás: felminősítés ritkán indokolt.",
+                                        "RCT start: rating up is rarely justified.") if assumed else \
+            _tr("Randomizált vizsgálatok: felminősítés ritkán indokolt.",
+                "Randomised trials: rating up is rarely justified.")
+    large["design"] = design if not assumed else None
     human = _tr("emberi ítélet", "human judgement")
     dose = {"suggested": False, "candidate_step": None, "summary": human, "evidence": [], "flags": [],
             "why": _why(_tr("Változik-e hihetően és következetesen a hatás a dózissal vagy az expozíció mértékével?",
@@ -1415,7 +1553,7 @@ def run_summary(rd):
 
 
 def advice(run, rob_by_row=None, mid=None, project_dir=None, outcome_id=None, start=None, importance=None,
-           rob_child=None, run_id=None, ois_rrr=None, alpha=0.05, power=0.8):
+           rob_child=None, run_id=None, ois_rrr=None, alpha=0.05, power=0.8, design=None, rob_tool=None):
     """GRADE-tanács egy (commit-)futásra → szk.ma.grade/v1 PISZKOZAT: minden domén ítélete null; doménenként
     'advisory' (számok) és 'suggestion' (javasolt ítélet és lépés; status: suggested | borderline | human_judgement |
     not_applicable | insufficient_data; concern; summary; evidence [{label, text}]; why — a „Miért?” panel: asks (mit
@@ -1426,7 +1564,9 @@ def advice(run, rob_by_row=None, mid=None, project_dir=None, outcome_id=None, st
     rob_by_row: {row_uid | study_id | címke: RoB-ítélet} vagy lista a vizsgálatok sorrendjében (alapból a futás saját
     rob oszlopa). mid: lásd parse_mid. project_dir: a „magas RoB nélkül” gyermek-futás felderítéséhez (vagy
     rob_child: a gyermek-futás bármely run-alakban) és a ma-projekt.json kimenet-adataihoz (grade_start, critical).
-    ois_rrr: az OIS relatív kockázatcsökkenése (alap: 25%, vagy a MID-ből)."""
+    ois_rrr: az OIS relatív kockázatcsökkenése (alap: 25%, vagy a MID-ből). design: a bizonyíték elrendezése (RCT |
+    NRSI | observational | mixed; alap: a studies.json-ból — a felminősítési tanács erre épül, nem a kiindulásra).
+    rob_tool: a vizsgálatonkénti RoB-eszköz (alap: a projektből; ROBINS-I / ROBINS-E → GRADE 18 szerinti tanács)."""
     rd = load_run(run, project_dir)
     if rd.primary is None:
         raise ValueError("A futásban nincs összesített eredmény (k = 0): GRADE-tanács nem adható.")
@@ -1445,8 +1585,30 @@ def advice(run, rob_by_row=None, mid=None, project_dir=None, outcome_id=None, st
     rows = _apply_rob(_study_rows(rd), rob_by_row)
     thresholds = _thresholds(m, mid_n)
     child = load_run(rob_child, project_dir) if rob_child is not None else _find_rob_child(rd, project_dir)
+    tool_source = "parameter" if rob_tool is not None else None
+    if rob_tool is None:
+        rob_tool = _rob_tool(project_dir, oid, meta_o)
+        tool_source = "project" if rob_tool else None
+    if rob_tool is None and _robins_vocabulary(rows):
+        rob_tool, tool_source = "robins-i", "vocabulary"
+    rob_tool = rob_tool.strip().lower() if isinstance(rob_tool, str) and rob_tool.strip() else None
+    design = P.grade_design(design)
+    if design is None and project_dir is not None:
+        design = _studies_design(rd, project_dir)
+    if design is None and rob_tool in ROBINS_TOOLS:
+        design = "NRSI" if rob_tool == "robins-i" else "observational"
+    if design is not None and design not in P.GRADE_DESIGNS:
+        raise ValueError("design: %s vagy None lehet" % " | ".join(P.GRADE_DESIGNS))
     adv, sug = {}, {}
-    adv["risk_of_bias"], sug["risk_of_bias"] = _advise_rob(rd, rows, child, thresholds, project_dir)
+    adv["risk_of_bias"], sug["risk_of_bias"] = _advise_rob(rd, rows, child, thresholds, project_dir, start, rob_tool)
+    adv["risk_of_bias"]["rob_tool_source"] = tool_source
+    if tool_source == "vocabulary":
+        sug["risk_of_bias"]["flags"].append(_flag(
+            "rob_tool_from_vocabulary",
+            "A rob oszlop ROBINS-I-szókincset használ (moderate / serious / critical): az eszközt ebből feltételeztem; "
+            "add meg a projektben (appraisal_tools), ha nem így van.",
+            "The rob column uses ROBINS-I vocabulary (moderate / serious / critical): the tool was assumed from it; "
+            "declare it in the project (appraisal_tools) if this is wrong.", "info"))
     adv["inconsistency"], sug["inconsistency"] = _advise_inconsistency(rd, rows, thresholds, mid_n)
     adv["indirectness"], sug["indirectness"] = _advise_indirectness()
     adv["imprecision"], sug["imprecision"] = _advise_imprecision(rd, mid_n, thresholds, ois_rrr, alpha, power)
@@ -1460,18 +1622,20 @@ def advice(run, rob_by_row=None, mid=None, project_dir=None, outcome_id=None, st
                  "Advice only: the engine does not decide. You choose and justify every domain judgement; the "
                  "certainty follows from the starting level and your steps.")]
     if start is None:
-        notes.append(_tr("Add meg a kiindulást: randomizált vizsgálatok → magas; megfigyeléses → alacsony (GRADE-02).",
-                         "Set the starting level: randomised trials → high; observational → low (GRADE-02)."))
+        notes.append(_tr("Add meg a kiindulást: randomizált vizsgálatok → magas; megfigyeléses → alacsony (GRADE-02); "
+                         "ROBINS-I-gyel értékelt nem randomizált vizsgálatok → magas is lehet (%s)." % GRADE18,
+                         "Set the starting level: randomised trials → high; observational → low (GRADE-02); "
+                         "non-randomised studies assessed with ROBINS-I → may start high (%s)." % GRADE18))
     if rd.run_id is None:
         notes.append(_tr("Ez nem commit-futás: a GRADE csak rögzített (commit) futásra hivatkozhat (terv 2.6).",
                          "This is not a commit run: GRADE may only refer to a committed run (design 2.6)."))
     doc = {
         "schema": GRADE_SCHEMA, "outcome_id": oid, "importance": importance, "run_id": rd.run_id,
-        "start": start, "start_reason": None, "domains": domains,
+        "start": start, "start_reason": None, "design": design, "domains": domains,
         "upgrades": {u: False for u in P.GRADE_UPGRADES}, "certainty": None, "consistency_warning": None,
         "validator_rollup": None, "status": "draft", "mid": mid_n, "run_summary": run_summary(rd),
         "advice": {"engine": {"name": "metaelemzes", "version": __version__}, "notes": notes,
-                   "upgrades": _advise_upgrades(rd, start),
+                   "upgrades": _advise_upgrades(rd, start, design),
                    "kb_refs": sorted({r for key in DOMAINS + ("upgrades", "general") for r in KB[key]}),
                    "expected_certainty_if_suggested": _expected_if(start, sug)},
     }
@@ -1483,13 +1647,8 @@ def advice(run, rob_by_row=None, mid=None, project_dir=None, outcome_id=None, st
 
 def _expected_if(start, sug):
     """A javaslatok szerinti szint (csak tájékoztató; None, ha a kiindulás vagy egy javaslat hiányzik)."""
-    if start not in ("high", "low"):
-        return None
     steps = [sug[d].get("step") for d in DOMAINS]
-    if any(s is None for s in steps):
-        return None
-    idx = (3 if start == "high" else 1) - sum(abs(s) for s in steps)
-    return LEVELS[max(0, min(3, idx))]
+    return P.grade_arithmetic(start, steps, 0)["certainty"]      # a motor egyetlen GRADE-szabálya
 
 
 # ------------------------------------------------------------------ abszolút hatás, SoF
@@ -1610,6 +1769,7 @@ def _direction(rd):
 def statement(certainty, direction, important=True, outcome=None, intervention=None):
     """GRADE-megfogalmazás (GRADE-11, D-S13-016) {hu, en}. direction: reduce | increase | none; important=False:
     „kevés vagy semmi különbség” (csak ha a pontbecslés a MID-en belül van). None, ha nincs bizonyosság."""
+    certainty = P.grade_token(certainty)
     if certainty not in LEVELS or direction is None:
         return None
     o = outcome or {}
@@ -1636,7 +1796,7 @@ def statement(certainty, direction, important=True, outcome=None, intervention=N
 
 
 def certainty_symbols(certainty):
-    return SYMBOLS.get(certainty)
+    return SYMBOLS.get(P.grade_token(certainty))
 
 
 def _i18n_in(v):
@@ -1715,10 +1875,109 @@ def _grade_footnotes(grade):
     return out
 
 
+_BASIS_LABELS = {"draft": (" (piszkozat — a GRADE még nincs rögzítve)", " (draft — GRADE not yet recorded)")}
+
+
+def _certainty_text(certainty, basis):
+    """A bizonyosság-cella {hu, en}; a még nem rögzített GRADE-ből (piszkozat) jövő szint jelölve, a jóvá nem hagyott
+    AI-vázlat és a feloldatlan publikációs torzítás szint nélkül, felirattal. (A paraméterként megadott szintet a
+    certainty_basis 'parameter' és a figyelmeztetés jelzi; menteni rögzített GRADE nélkül nem lehet.)"""
+    if not certainty:
+        if basis == "ai_draft":
+            return _tr("— AI-vázlat (jóváhagyásra vár)", "— AI draft (awaiting approval)")
+        if basis == "unresolved":
+            return _tr("— feloldatlan publikációs torzítás (X019)", "— unresolved publication bias (X019)")
+        return None
+    hu_x, en_x = _BASIS_LABELS.get(basis, ("", ""))
+    return {"hu": "%s %s%s" % (SYMBOLS[certainty], LEVEL_LABELS[certainty][0], hu_x),
+            "en": "%s %s%s" % (SYMBOLS[certainty], LEVEL_LABELS[certainty][1], en_x)}
+
+
+def sof_grade_state(grade):
+    """A GRADE-dokumentum (szk.ma.grade/v1, normalizált) bizonyossága a SoF számára → {certainty, basis, reason,
+    warning}. basis: 'recorded' (rögzített, végleges) | 'draft' (még nem rögzített — ideiglenes, nem menthető) |
+    'ai_draft' (jóvá nem hagyott AI-vázlat: a szint NEM kerül a SoF-ba; 6. döntés, contracts:M3) | 'unresolved'
+    (feloldatlan „suspected” publikációs torzítás: nincs szint; 4. döntés, X019)."""
+    cert = P.grade_token(grade.get("certainty"))
+    cert = cert if cert in LEVELS else None
+    if P._unapproved_ai(grade):
+        return {"certainty": None, "basis": "ai_draft",
+                "reason": _tr("jóvá nem hagyott AI-vázlat", "unapproved AI draft"),
+                "warning": _tr("A GRADE-ítélet AI-vázlat (jóváhagyásra vár): a bizonyossága nem kerül a SoF-ba, amíg "
+                               "ember jóvá nem hagyja és rögzíti (6. döntés).",
+                               "The GRADE judgement is an AI draft (awaiting approval): its certainty is not shown in "
+                               "the SoF until a person approves and records it (decision 6).")}
+    if P.grade_doc_open(grade)["unresolved"]:
+        return {"certainty": None, "basis": "unresolved",
+                "reason": _tr("feloldatlan „gyanított” publikációs torzítás", "unresolved 'suspected' publication bias"),
+                "warning": _tr("A publikációs torzítás „gyanított” ítélete feloldatlan: az ilyen kimenet bizonyossága "
+                               "nem kerülhet a SoF-ba (4. döntés; X019).",
+                               "Publication bias 'suspected' is unresolved: such an outcome's certainty cannot go into "
+                               "the SoF (decision 4; X019).")}
+    if grade.get("status") == "recorded" and cert is not None:
+        return {"certainty": cert, "basis": "recorded", "reason": None, "warning": None}
+    return {"certainty": cert, "basis": "draft" if cert is not None else None,
+            "reason": _tr("a GRADE-ítélet még nincs rögzítve", "the GRADE judgement is not recorded yet"),
+            "warning": _tr("A GRADE-ítélet még piszkozat (nincs rögzítve): a bizonyosság ideiglenes, a SoF így nem "
+                           "menthető (X008).",
+                           "The GRADE judgement is still a draft (not recorded): the certainty is provisional and "
+                           "this SoF cannot be saved (X008).") if cert is not None else None}
+
+
+def _design_class(code):
+    """studies.json design-kód / szöveg → 'RCT' | 'NRSI' | 'observational' | None."""
+    t = str(code or "").strip().lower().replace("-", "_").replace(" ", "_")
+    if not t:
+        return None
+    if re.search(r"(^|_)(non_?randomi[sz]ed|nrsi|quasi|before_?after|interrupted|its|nem_randomiz)", t):
+        return "NRSI"
+    if re.match(r"^(rct|randomi[sz]ed|randomiz[aá]lt|cluster_?randomi|crossover)", t):
+        return "RCT"
+    if re.search(r"(cohort|case_?control|cross_?sectional|exposure|observational|kohorsz|eset_?kontroll|"
+                 r"megfigyel|keresztmetszeti)", t):
+        return "observational"
+    return None
+
+
+def _studies_design(rd, project_dir):
+    """A futás vizsgálatainak elrendezése a studies.json-ból (design): mind RCT → 'RCT'; RCT és nem randomizált →
+    'mixed'; csak NRSI → 'NRSI'; más nem randomizált → 'observational'; ha egy vizsgálaté ismeretlen: None (nem
+    találgatunk; a kiindulásból sem — M9)."""
+    try:
+        st = _read_json(os.path.join(project_dir, "03_adatok", "studies.json"))
+    except (OSError, ValueError):
+        return None
+    by = {}
+    for x in (st or {}).get("studies") or [] if isinstance(st, dict) else []:
+        if not isinstance(x, dict):
+            continue
+        cls = _design_class(x.get("design"))
+        for key in (x.get("study_id"), x.get("label")):
+            if isinstance(key, str) and key.strip():
+                by[key.strip().casefold()] = cls
+    rows = _study_rows(rd)
+    if not rows or not by:
+        return None
+    found = set()
+    for r in rows:
+        cls = next((by[str(k).strip().casefold()] for k in (r.get("study_id"), r.get("label"))
+                    if k is not None and str(k).strip().casefold() in by), None)
+        if cls is None:
+            return None
+        found.add(cls)
+    if found == {"RCT"}:
+        return "RCT"
+    if "RCT" in found:
+        return "mixed"
+    return "NRSI" if found == {"NRSI"} else "observational"
+
+
 def _studies_text(k, participants, design):
     dsg = {"RCT": ("RCT", "RCT", "RCTs"), "observational": ("megfigyeléses vizsgálat", "observational study",
-                                                           "observational studies")}.get(design, (
-        "vizsgálat", "study", "studies"))
+                                                           "observational studies"),
+           "NRSI": ("nem randomizált vizsgálat", "non-randomised study", "non-randomised studies"),
+           "mixed": ("vizsgálat (RCT és nem randomizált)", "study (randomised and non-randomised)",
+                     "studies (randomised and non-randomised)")}.get(design, ("vizsgálat", "study", "studies"))
     p = _int_text(participants)
     hu = "%s (%d %s)" % (p, k, dsg[0]) if p else "%d %s" % (k, dsg[0])
     en = "%s (%d %s)" % (p, k, dsg[1] if k == 1 else dsg[2]) if p else "%d %s" % (k, dsg[1] if k == 1 else dsg[2])
@@ -1756,18 +2015,33 @@ def sof(run, assumed_risks=None, certainty=None, footnotes=None, project_dir=Non
     warnings = []
     if isinstance(certainty, dict):
         grade, certainty = certainty, None
-    if grade is None and certainty is None and project_dir is not None:
+    certainty = P.grade_token(certainty)              # egy GRADE-szótár: 'very_low' → 'very low' (contracts:m2)
+    if certainty not in LEVELS + (None,):
+        raise ValueError("certainty: %s vagy None lehet" % " | ".join(LEVELS))
+    explicit = certainty
+    if grade is None and project_dir is not None:     # a mentett ítélet akkor is, ha a bizonyosság paraméter (M6)
         try:
             grade = P.load_grade_doc(project_dir, oid)
         except ValueError:
             grade = None
+    basis = "parameter" if certainty is not None else None
     if grade is not None:
         g, errs = P.validate_grade_doc(grade)
         if errs:
             raise ValueError("a GRADE-dokumentum érvénytelen: %s" % "; ".join(errs))
         grade = g
-        if certainty is None:
-            certainty = grade.get("certainty")
+        state = sof_grade_state(grade)
+        basis = state["basis"]
+        if explicit is not None and explicit != state["certainty"]:
+            # 4. döntés, M6: a SoF bizonyossága a kimenet GRADE-ítéletéé — paraméterrel nem írható felül
+            raise ValueError(
+                "A megadott bizonyosság (%s) ellentmond a kimenet GRADE-ítéletének (%s: %s): a SoF bizonyossága csak a "
+                "rögzített GRADE-ítéleté lehet (4. döntés; X008). Hagyd el a bizonyosság-paramétert, vagy javítsd és "
+                "rögzítsd a GRADE-et." % (explicit, P.GRADE_DIR + "/%s.grade.json" % oid,
+                                          state["certainty"] or "nincs bizonyosság — %s" % state["reason"]["hu"]))
+        certainty = state["certainty"]
+        if state["warning"] is not None:
+            warnings.append(state["warning"])
         if grade.get("run_id") and rd.run_id and grade["run_id"] != rd.run_id:
             warnings.append(_tr("A GRADE-ítélet másik futásra hivatkozik (%s ≠ %s): nézd át az új számokkal (X007)."
                                 % (grade["run_id"], rd.run_id),
@@ -1775,12 +2049,18 @@ def sof(run, assumed_risks=None, certainty=None, footnotes=None, project_dir=Non
                                 "numbers (X007)." % (grade["run_id"], rd.run_id)))
         if mid is None and isinstance(grade.get("mid"), dict):
             mid = grade["mid"]
-        if design is None and grade.get("start") in ("high", "low"):
-            design = "RCT" if grade["start"] == "high" else "observational"
+        if design is None and grade.get("design") in P.GRADE_DESIGNS:
+            design = grade["design"]                  # NEM a kiindulásból (M9: NRSI ROBINS-I-gyel is magasról indul)
         if importance is None:
             importance = grade.get("importance")
-    if certainty not in LEVELS + (None,):
-        raise ValueError("certainty: %s vagy None lehet" % " | ".join(LEVELS))
+    elif certainty is not None:
+        warnings.append(_tr("A bizonyosság paraméterként megadva, rögzített GRADE-ítélet nélkül: a SoF így nem menthető "
+                            "(save_sof), és a projekt-audit X008-cal jelzi.",
+                            "Certainty given as a parameter without a recorded GRADE judgement: this SoF cannot be "
+                            "saved (save_sof), and the project audit flags it (X008)."))
+    design = P.grade_design(design)
+    if design is None and project_dir is not None:
+        design = _studies_design(rd, project_dir)
     meta_o = _project_outcome(project_dir, oid) or {}
     lab = _i18n_in(label) if label is not None else (_i18n_in(meta_o.get("name")) if meta_o.get("name") else
                                                      {"hu": oid, "en": oid})
@@ -1834,6 +2114,9 @@ def sof(run, assumed_risks=None, certainty=None, footnotes=None, project_dir=Non
     refs = {}
     if grade is not None:
         for d, txt in _grade_footnotes(grade):
+            if basis == "ai_draft":         # a jóvá nem hagyott AI-vázlat indoklása sem emberi ítélet (6. döntés)
+                txt = {"hu": "AI-vázlat (jóváhagyásra vár) — " + txt["hu"],
+                       "en": "AI draft (awaiting approval) — " + txt["en"]}
             fn.append({"id": _letters(len(fn)), "text": txt, "domain": d, "kind": "grade"})
             refs.setdefault("certainty", []).append(fn[-1]["id"])
     for item in absolute:
@@ -1885,13 +2168,13 @@ def sof(run, assumed_risks=None, certainty=None, footnotes=None, project_dir=Non
                          "MID."))
     out_lab = lab
     stmt = statement(certainty, direction, important, out_lab, _i18n_in(intervention))
+    design = design if design in P.GRADE_DESIGNS else None
     row = {"outcome_id": oid, "label": lab, "importance": importance, "k": k, "participants": participants,
-           "design": design if design in ("RCT", "observational") else None,
+           "design": design,
            "studies_text": _studies_text(k, participants, design), "relative": relative, "effect": effect,
-           "absolute": absolute, "certainty": certainty, "certainty_symbols": certainty_symbols(certainty),
-           "certainty_text": ({"hu": "%s %s" % (SYMBOLS[certainty], LEVEL_LABELS[certainty][0]),
-                               "en": "%s %s" % (SYMBOLS[certainty], LEVEL_LABELS[certainty][1])}
-                              if certainty else None),
+           "absolute": absolute, "certainty": certainty, "certainty_basis": basis,
+           "certainty_symbols": certainty_symbols(certainty),
+           "certainty_text": _certainty_text(certainty, basis),
            "statement": stmt, "footnotes": fn, "footnote_refs": refs,
            "sources": {"participants": "totals.participants", "k": "totals.k (primary.k)",
                        "relative": "back_transformed.estimate_ci", "effect": "back_transformed.estimate_ci",
@@ -1960,10 +2243,72 @@ def sof_path(project_dir, outcome_id):
     return os.path.join(project_dir, *SOF_DIR.split("/"), "%s.sof.json" % outcome_id)
 
 
+def recorded_certainty(project_dir, outcome_id):
+    """A kimenet RÖGZÍTETT GRADE-bizonyossága → {certainty, run_id, source, path} vagy None. Forrás: a
+    06_kezirat/grade/<kimenet>.grade.json, ha 'recorded' (és nem jóvá nem hagyott AI-vázlat, nem feloldatlan);
+    GRADE-dokumentum nélkül a projektnapló legutóbbi grade-sora (a régi `project grade` út; futás nélkül)."""
+    try:
+        g = P.load_grade_doc(project_dir, outcome_id)
+    except ValueError:
+        g = None
+    if g is not None:
+        st = sof_grade_state(g)
+        if st["basis"] == "recorded":
+            return {"certainty": st["certainty"], "run_id": g.get("run_id"), "source": "grade",
+                    "path": "%s/%s.grade.json" % (P.GRADE_DIR, outcome_id)}
+        return None
+    if not os.path.isfile(P.db_path(project_dir)):
+        return None
+    try:
+        rows = [r for r in P.list_items(project_dir, "grades") if r.get("outcome") == outcome_id]
+    except Exception:       # noqa: BLE001 — olvashatatlan napló: nincs rögzített GRADE
+        return None
+    if not rows:
+        return None
+    last = sorted(rows, key=lambda r: r.get("id") or 0)[-1]
+    c = P.grade_token(last.get("certainty"))
+    if c not in LEVELS:
+        return None
+    return {"certainty": c, "run_id": None, "source": "journal", "path": None, "id": last.get("id")}
+
+
+def sof_certainty_problems(project_dir, doc):
+    """A SoF-sorok bizonyossága vs. a kimenet rögzített GRADE-ítélete (4. döntés; M6) → [szöveg]. Hiba: bizonyosság
+    rögzített GRADE nélkül (piszkozat, feloldatlan, jóvá nem hagyott AI-vázlat vagy semmi), eltérő szint, vagy a
+    rögzített GRADE másik futásra vonatkozik. A bizonyosság nélküli (null) sor rendben van."""
+    out = []
+    for i, row in enumerate(doc.get("rows") or []):
+        if not isinstance(row, dict):
+            continue
+        c = P.grade_token(row.get("certainty"))
+        if c is None:
+            continue
+        oid = row.get("outcome_id") or doc.get("outcome_id")
+        where = "%d. sor (%s)" % (i + 1, oid)
+        ref = recorded_certainty(project_dir, oid) if isinstance(oid, str) and _OUTCOME_ID.match(oid) else None
+        if ref is None:
+            out.append("%s: a bizonyosság (%s) mellé nincs rögzített GRADE-ítélet (piszkozat, feloldatlan publikációs "
+                       "torzítás, jóvá nem hagyott AI-vázlat, vagy nincs GRADE)" % (where, c))
+        elif ref["certainty"] != c:
+            out.append("%s: a bizonyosság (%s) ≠ a rögzített GRADE-é (%s)" % (where, c, ref["certainty"]))
+        elif ref["run_id"] and doc.get("run_id") != ref["run_id"]:
+            out.append("%s: a rögzített GRADE a(z) %s futásra vonatkozik, a SoF a(z) %s futásra" % (
+                where, ref["run_id"], doc.get("run_id") or "–"))
+    return out
+
+
 def save_sof(project_dir, doc):
-    """A SoF mentése: <projekt>/06_kezirat/sof/<kimenet>.sof.json (atomikus, UTF-8, 'updated' UTC) → a dokumentum."""
+    """A SoF mentése: <projekt>/06_kezirat/sof/<kimenet>.sof.json (atomikus, UTF-8, 'updated' UTC) → a dokumentum.
+    A bizonyosság csak a kimenet rögzített GRADE-ítéletéé lehet (ugyanarra a futásra; 4. döntés, methodology:M6):
+    piszkozat, feloldatlan publikációs torzítás, jóvá nem hagyott AI-vázlat vagy eltérő szint mellett ValueError
+    (a bizonyosság nélküli SoF menthető)."""
     if not isinstance(doc, dict) or doc.get("schema") != SOF_SCHEMA:
         raise ValueError("szk.ma.sof/v1 dokumentum kell")
+    probs = sof_certainty_problems(project_dir, doc)
+    if probs:
+        raise ValueError("A SoF nem menthető: %s. A SoF bizonyossága a rögzített GRADE-ítéleté (4. döntés; X008, "
+                         "X019) — előbb rögzítsd a GRADE-et (ma.py grade record), vagy készítsd a SoF-ot "
+                         "bizonyosság nélkül." % "; ".join(probs))
     doc = dict(doc)
     doc["updated"] = P._grade_utc_now()
     path = sof_path(project_dir, doc.get("outcome_id"))

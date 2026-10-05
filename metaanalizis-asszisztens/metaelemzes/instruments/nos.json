@@ -9,7 +9,7 @@
   "full_name": "Newcastle-Ottawa Scale for assessing the quality of nonrandomised studies in meta-analyses",
   "family": "quality",
   "tool_version": "coding manual",
-  "definition_version": 1,
+  "definition_version": 2,
   "validator_version": "1.0.0",
   "reference_sha256": "7a1ee9bf4c839c627962d0106ec437f7cf878f18e5309cb3146deee6411aa68b",
   "source": {
@@ -246,7 +246,8 @@
       "help": {
         "hu": "Csillag jár, ha a kitett kohorsz valóban vagy nagyjából reprezentálja az átlagos kitett személyt a közösségben; válogatott felhasználói csoportnál vagy leírás hiányában nem.",
         "en": "Truly or somewhat representative of the average exposed person in the community earns a star; a selected group of users, or no description, does not."
-      }
+      },
+      "official_id": "S1"
     },
     {
       "id": "S2",
@@ -275,7 +276,8 @@
       "help": {
         "hu": "Csillag, ha ugyanabból a közösségből származik, mint a kitett kohorsz.",
         "en": "Drawn from the same community as the exposed cohort earns a star; a different source does not."
-      }
+      },
+      "official_id": "S2"
     },
     {
       "id": "S3",
@@ -304,7 +306,8 @@
       "help": {
         "hu": "Biztos dokumentáció vagy strukturált interjú → csillag; írásos önbevallás vagy leírás hiánya → nem.",
         "en": "Secure record or structured interview earns a star; written self-report or no description does not."
-      }
+      },
+      "official_id": "S3"
     },
     {
       "id": "S4",
@@ -329,7 +332,8 @@
         "yes",
         "no",
         "unclear"
-      ]
+      ],
+      "official_id": "S4"
     },
     {
       "id": "C1",
@@ -360,7 +364,8 @@
       "help": {
         "hu": "Egy csillag a legfontosabb tényezőre való kontrollért, egy második bármely más fontos tényezőért: „Részben igen” = 1 csillag, „Igen” = 2 csillag. A két tényezőt a protokollban nevezd meg, mielőtt a cikket olvasod — különben ez a tétel azt méri, mire döntöttek korrigálni a szerzők.",
         "en": "One star for controlling the single most important factor, a second for controlling any other important factor. **Name the two factors in your protocol before you read the study** — otherwise this item measures what the authors chose to adjust for."
-      }
+      },
+      "official_id": "C1"
     },
     {
       "id": "O1",
@@ -389,7 +394,8 @@
       "help": {
         "hu": "Független, vak értékelés vagy rekordösszekapcsolás → csillag; önbevallás → nem.",
         "en": "Independent blind assessment or record linkage earns a star; self-report does not."
-      }
+      },
+      "official_id": "O1"
     },
     {
       "id": "O2",
@@ -418,7 +424,8 @@
       "help": {
         "hu": "Előre megadott időtartamhoz mérve.",
         "en": "Against a duration you specify in advance."
-      }
+      },
+      "official_id": "O2"
     },
     {
       "id": "O3",
@@ -447,7 +454,8 @@
       "help": {
         "hu": "Teljes követés, vagy a lemorzsolódás valószínűleg nem torzít, és a kiesetteket leírták.",
         "en": "Complete follow-up, or loss unlikely to introduce bias with a description of those lost."
-      }
+      },
+      "official_id": "O3"
     },
     {
       "id": "S5",
@@ -476,7 +484,8 @@
       "help": {
         "hu": "Független validálás → csillag; csak rekordösszekapcsolás vagy önbevallás → nem.",
         "en": "Independent validation earns a star; record linkage or self-report alone does not."
-      }
+      },
+      "official_id": "S1"
     },
     {
       "id": "S6",
@@ -505,7 +514,8 @@
       "help": {
         "hu": "Egymást követő vagy nyilvánvalóan reprezentatív esetsor.",
         "en": "Consecutive or obviously representative series."
-      }
+      },
+      "official_id": "S2"
     },
     {
       "id": "S7",
@@ -534,7 +544,8 @@
       "help": {
         "hu": "Közösségi kontrollok → csillag; kórházi kontrollok → nem.",
         "en": "Community controls earn a star; hospital controls do not."
-      }
+      },
+      "official_id": "S3"
     },
     {
       "id": "S8",
@@ -563,7 +574,8 @@
       "help": {
         "hu": "Kimondják, hogy a kontrolloknak nincs a betegség az előzményében.",
         "en": "No history of the disease, stated."
-      }
+      },
+      "official_id": "S4"
     },
     {
       "id": "C2",
@@ -594,7 +606,8 @@
       "help": {
         "hu": "Ugyanaz a szabály és ugyanaz a figyelmeztetés, mint a C1-nél.",
         "en": "Same rule as C1, and the same warning."
-      }
+      },
+      "official_id": "C1"
     },
     {
       "id": "E1",
@@ -623,7 +636,8 @@
       "help": {
         "hu": "Biztos dokumentáció vagy vakított strukturált interjú → csillag.",
         "en": "Secure record or blinded structured interview earns a star."
-      }
+      },
+      "official_id": "E1"
     },
     {
       "id": "E2",
@@ -648,7 +662,8 @@
         "yes",
         "no",
         "unclear"
-      ]
+      ],
+      "official_id": "E2"
     },
     {
       "id": "E3",
@@ -677,7 +692,8 @@
       "help": {
         "hu": "Mindkét csoportban azonos, és le is írták.",
         "en": "Same rate for both groups, described."
-      }
+      },
+      "official_id": "E3"
     }
   ],
   "rollup": {
@@ -706,6 +722,10 @@
     {
       "hu": "A „PY” rövidítés itt NEM érvényes (H4): a „Részben igen”-t írd ki, mert a „PY” más eszközökben „valószínűleg igen”-t jelent.",
       "en": "'PY' is NOT accepted here (H4): write 'Partial yes', because 'PY' means 'probably yes' in other tools."
+    },
+    {
+      "hu": "Az eset-kontroll tételek kulcsa (S5–S8, C2, E1–E3) belső azonosító; a NOS kódolási kézikönyve szerinti hivatalos szám az 'official_id' (Selection 1–4, Comparability 1, Exposure 1–3) — kéziratban és táblázatban ezt közöld.",
+      "en": "The case-control item keys (S5–S8, C2, E1–E3) are internal ids; the official number per the NOS coding manual is 'official_id' (Selection 1–4, Comparability 1, Exposure 1–3) — report that in manuscripts and tables."
     }
   ],
   "validator_differences": [

@@ -15,11 +15,29 @@ parafrázis áll a hivatalos számozással (eszközönként: 'licence').
     fold(szöveg)              → a válasz-álnevek összevetési alakja (kisbetű, ékezet nélkül, '_' → szóköz)
     definition_problems(doc)  → a definíció belső ellentmondásai (álnév-ütközés, ismeretlen domén, számlálás …)
     contract_errors(doc, név) → a dokumentum eltérései a metaelemzes/contracts sémájától (a sémák részhalmaza)
+    evaluate(feltétel, érték) → gépi feltétel (ask_if, rules[].if) háromértékű kiértékelése: True / False / None
 
 A JSON-fájlok az egyetlen igazságforrás (kézzel szerkeszthetők; mentés: json.dumps(indent=2, ensure_ascii=False) +
 "\n"). A validatortól való szerkezeti eltávolodást a tests/test_v1_instruments.py TestValidatorDrift őrzi (ha a
 plugin elérhető; SZK_VALIDATOR_DIR), a validator 1.0.0 ismert polaritás-hibáinak javítását pedig eszközönként a
-'validator_differences' mező rögzíti.
+'validator_differences' mező rögzíti. Ahol a definíció a publikált eszközt követi a validator helyett (ROBINS-I 2016
+tételkészlet, QUIPS a–g tételek), a 'validator_ids' mező őrzi a validator akkori azonosító-listáját: a sodródás-őr
+azzal vet össze.
+
+Gépi útválasztás és szabályok (v1, additív mezők):
+    items[].ask_if        a 'condition' szöveg gépi párja: {"item": "2.3", "in": [...]}, {"all"|"any": [...]},
+                          {"not": …}, {"always": true}. Hamis feltételnél a tételt nem kérdezik (a válasza nem
+                          számít); igaz feltétel mellett a 'Nem alkalmazható' útválasztási ellentmondás, és a szabály
+                          'Nincs információ'-ként kezeli (konzervatív).
+    domains[].rules       sorrendben az első igaz szabály dönt ([{id, part?, scopes?, if, tier, because, kind?,
+                          text?}]); több 'part' esetén a domén a legrosszabb rész. Szabály nélkül a polaritás-alapú
+                          konzervatív szabály fut.
+    domains[].verdict_labels  doménenkénti ítéletfelirat (pl. ROBINS-E D1: „alacsony, kivéve a nem kontrollált
+                          zavaró tényezőket”).
+    answers[].severity    'some': a problémás válasz csak a középső szintet kényszeríti (ROBINS-E „gyenge nem”).
+    items[].official_id   a hivatalos tételszám, ha a kulcs eltér (Newcastle–Ottawa eset-kontroll).
+    items[].parts         külön ítélt résztételek (AMSTAR 2 9. és 11.: RCT / NRSI); a tétel értéke a részekből adódik
+                          (bármelyik 'Nem' → 'Nem').
 
 Az álnév-tábla ESZKÖZÖNKÉNTI (H4 javítása): a 'PY' az AMSTAR 2-ben 'partial_yes', a RoB 2 / ROBINS / PROBAST+AI-ban
 'probably_yes', a Newcastle–Ottawában pedig nem fogadott (kétértelmű)."""
@@ -42,6 +60,8 @@ POLARITIES = ("normal", "reverse", "router", "none")
 KINDS = ("affirmative", "negative", "unknown", "partial", "na", "rating", "start")
 ALGORITHMS = ("published", "count", "conservative", "none")
 LEVELS = ("low", "some", "high", "critical", "ni")
+RULE_TIERS = ("low", "some", "high")
+PART_ORDER = ("no", "partial_yes", "yes")
 
 
 class InstrumentError(LookupError):
@@ -118,6 +138,55 @@ def definition(key):
 
 def index():
     return [load(k).summary() for k in available()]
+
+
+# ------------------------------------------------------------------ gépi feltételek (ask_if, rules[].if)
+def condition_items(cond):
+    """A feltételben hivatkozott tételkulcsok (előfordulási sorrendben, ismétlés nélkül)."""
+    out = []
+
+    def walk(c):
+        if not isinstance(c, dict):
+            return
+        if isinstance(c.get("item"), str) and c["item"] not in out:
+            out.append(c["item"])
+        for k in ("all", "any"):
+            for sub in c.get(k) or ():
+                walk(sub)
+        if "not" in c:
+            walk(c["not"])
+    walk(cond)
+    return out
+
+
+def evaluate(cond, value_of):
+    """Háromértékű kiértékelés: True / False / None (ismeretlen: hiányzó válasz). value_of(kulcs) → kanonikus
+    érték vagy None. {"always": true} mindig igaz; hiányzó/üres feltétel igaz."""
+    if cond is None or cond == {}:
+        return True
+    if not isinstance(cond, dict):
+        return None
+    if "always" in cond:
+        return bool(cond["always"])
+    if "item" in cond:
+        v = value_of(cond["item"])
+        if v is None:
+            return None
+        return v in (cond.get("in") or ())
+    if "all" in cond:
+        res = [evaluate(c, value_of) for c in cond.get("all") or ()]
+        if any(r is False for r in res):
+            return False
+        return None if any(r is None for r in res) else True
+    if "any" in cond:
+        res = [evaluate(c, value_of) for c in cond.get("any") or ()]
+        if any(r is True for r in res):
+            return True
+        return None if any(r is None for r in res) else False
+    if "not" in cond:
+        r = evaluate(cond["not"], value_of)
+        return None if r is None else not r
+    return None
 
 
 # ------------------------------------------------------------------ az eszköz
@@ -200,6 +269,45 @@ class Instrument(object):
         d = self.domain(did)
         return _i18n_text(d.get("title"), lang) if d else str(did)
 
+    def display_id(self, item):
+        """A tétel hivatalos száma (official_id), különben az azonosítója."""
+        if not isinstance(item, dict):
+            return str(item)
+        return item.get("official_id") or item.get("id")
+
+    def rules(self, did, scope=None):
+        """A domén gépi szabályai a hatókörre szűrve ([] → polaritás-alapú konzervatív szabály)."""
+        d = self.domain(did)
+        out = []
+        for r in (d or {}).get("rules") or ():
+            if isinstance(r, dict) and (not r.get("scopes") or scope in r["scopes"]):
+                out.append(r)
+        return out
+
+    def parts(self, item):
+        p = item.get("parts") if isinstance(item, dict) else None
+        return [x for x in p if isinstance(x, dict) and isinstance(x.get("id"), str)] if isinstance(p, list) else []
+
+    def part_allowed(self, item, part_id):
+        for p in self.parts(item):
+            if p["id"] == part_id:
+                return list(p.get("answers") or self.allowed(item))
+        return []
+
+    def combine_parts(self, item, values):
+        """Résztételek → a tétel értéke (AMSTAR 2: bármelyik 'Nem' → 'Nem'; különben 'Részben igen', ha van; különben
+        'Igen'; ha minden rész 'Nem alkalmazható' → 'not_applicable', ha a tétel megengedi, különben None)."""
+        vals = [v for v in values if isinstance(v, str)]
+        if not vals:
+            return None
+        rated = [v for v in vals if v != "not_applicable"]
+        for v in PART_ORDER:
+            if v in rated:
+                return v if v in self.allowed(item) else None
+        if not rated:
+            return "not_applicable" if "not_applicable" in self.allowed(item) else None
+        return None
+
     # -- válaszok
     def allowed(self, item):
         vals = item.get("answers") if isinstance(item, dict) else None
@@ -222,6 +330,11 @@ class Instrument(object):
     def kind(self, value):
         a = self.answers.get(value)
         return a.get("kind") if a else None
+
+    def answer_severity(self, value):
+        """A válasz saját szintje ('some': csak a középső szintet kényszeríti — ROBINS-E „gyenge nem”), vagy None."""
+        a = self.answers.get(value)
+        return a.get("severity") if a else None
 
     def answer_label(self, value, lang="hu"):
         a = self.answers.get(value)
@@ -254,7 +367,13 @@ class Instrument(object):
         v = self._verdict.get(value)
         return v.get("level") if v else None
 
-    def verdict_label(self, value, lang="hu"):
+    def verdict_label(self, value, lang="hu", domain=None):
+        """Az ítélet felirata; domain megadásakor a domén saját felirata (verdict_labels), ha van."""
+        if domain is not None:
+            d = self.domain(domain)
+            own = ((d or {}).get("verdict_labels") or {}).get(value)
+            if own:
+                return _i18n_text(own, lang)
         v = self._verdict.get(value)
         return _i18n_text(v.get("label"), lang) if v else str(value)
 
@@ -315,6 +434,69 @@ def definition_problems(doc):
                 p.append("%s: ismeretlen hatókör %r" % (k, s))
         if it.get("polarity", "normal") not in POLARITIES:
             p.append("%s: ismeretlen polaritás" % k)
+    order = {it["key"]: i for i, it in enumerate(inst.items)}
+
+    def cond_problems(cond, where, before=None):
+        for ref in condition_items(cond):
+            if ref not in order:
+                p.append("%s: ismeretlen tételre hivatkozik (%s)" % (where, ref))
+            elif before is not None and order[ref] >= before:
+                p.append("%s: csak korábbi tételre hivatkozhat (%s)" % (where, ref))
+
+        def values(c):
+            if not isinstance(c, dict):
+                return
+            if "item" in c:
+                for v in c.get("in") or ():
+                    if v not in inst.answers:
+                        p.append("%s: ismeretlen válaszérték %r" % (where, v))
+            for k in ("all", "any"):
+                for sub in c.get(k) or ():
+                    values(sub)
+            if "not" in c:
+                values(c["not"])
+        values(cond)
+
+    for it in inst.items:
+        if it.get("ask_if") is not None:
+            cond_problems(it["ask_if"], "%s.ask_if" % it["key"], order[it["key"]])
+            if "not_applicable" not in inst.allowed(it):
+                p.append("%s: feltételes tétel ('ask_if'), de nem adható rá 'Nem alkalmazható'" % it["key"])
+        seen_parts = set()
+        for part in inst.parts(it):
+            if part["id"] in seen_parts:
+                p.append("%s.parts: ismétlődő rész %s" % (it["key"], part["id"]))
+            seen_parts.add(part["id"])
+            for v in part.get("answers") or ():
+                if v not in inst.answers:
+                    p.append("%s.parts[%s]: ismeretlen válaszérték %r" % (it["key"], part["id"], v))
+    for d in inst.domains:
+        rules = [r for r in d.get("rules") or () if isinstance(r, dict)]
+        for i, r in enumerate(rules):
+            where = "domains[%s].rules[%d]" % (d["id"], i)
+            if r.get("tier") not in RULE_TIERS:
+                p.append("%s.tier: %s egyike kell" % (where, " | ".join(RULE_TIERS)))
+            cond_problems(r.get("if"), where + ".if")
+            for ref in r.get("because") or ():
+                if ref not in order:
+                    p.append("%s.because: ismeretlen tétel %s" % (where, ref))
+            for s in r.get("scopes") or ():
+                if s not in inst.scope_ids:
+                    p.append("%s.scopes: ismeretlen hatókör %r" % (where, s))
+        if rules:
+            for s in inst.scope_ids:
+                in_scope = [r for r in rules if not r.get("scopes") or s in r["scopes"]]
+                has_items = any(str(it["domain"]) == str(d["id"]) for it in inst.slots(s))
+                for part in sorted({r.get("part") or "main" for r in in_scope}):
+                    last = [r for r in in_scope if (r.get("part") or "main") == part][-1]
+                    if (last.get("if") or {}).get("always") is not True:
+                        p.append("domains[%s].rules (%s, %s): az utolsó szabály legyen {\"always\": true}" % (
+                            d["id"], s, part))
+                if has_items and not in_scope:
+                    p.append("domains[%s].rules: a(z) %s hatókörre nincs szabály" % (d["id"], s))
+    for a in inst.answers.values():
+        if a.get("severity") not in (None, "some", "high"):
+            p.append("answers[%s].severity: some | high" % a["value"])
     for v in inst.default_answers:
         if v not in inst.answers:
             p.append("default_answers: ismeretlen érték %r" % v)

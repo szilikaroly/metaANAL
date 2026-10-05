@@ -620,7 +620,8 @@ class TestGradeSof(_Base):
                              "assumed_risk_per_1000": 100.0, "risk_per_1000": risk,
                              "difference_per_1000": [r - 100.0 for r in risk], "text": {"hu": "x", "en": "x"}}]
                if absolute else [],
-               "certainty": "moderate", "footnotes": [], "sources": {}}
+               # methodology:M6 — a bizonyosság-cellát az X008 a rögzített GRADE-hez veti: itt GRADE nélkül null
+               "certainty": None, "footnotes": [], "sources": {}}
         row.update(row_kw)
         self.pj.write("06_kezirat/sof/o1.sof.json", {"schema": "szk.ma.sof/v1", "outcome_id": "o1",
                                                      "run_id": d["run_id"], "measure": "RR", "rows": [row]})
@@ -928,7 +929,12 @@ class TestX017(_Base):
             allowed = inst.allowed(it)
             v = "no" if it.get("polarity") == "reverse" else ("yes" if "yes" in allowed else allowed[0])
             ans[it["key"]] = {"value": v}
-        ans["2.6"] = {"value": "no"}                  # a 2. domént a válaszok „high”-ra kényszerítik
+        # tiszta út a RoB 2 (2019) folyamatábrája szerint (2.3 N, 4.3 N), és a 2. domént a válaszok „high”-ra
+        # kényszerítik: 2.6 N + 2.7 VI (a 2.6 N + 2.7 N csak „némi aggály”; v1 javítás A)
+        ans["2.3"] = {"value": "no"}
+        ans["4.3"] = {"value": "no"}
+        ans["2.6"] = {"value": "no"}
+        ans["2.7"] = {"value": "probably_yes"}
         dj = [{"domain": str(i), "pass": None, "judgement": "low"} for i in range(1, 6)]
         dj[1].update(judgement=judgement2, override_reason=reason)
         overall = {"judgement": "high", "rationale": "x"}

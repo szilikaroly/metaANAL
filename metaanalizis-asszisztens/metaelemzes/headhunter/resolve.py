@@ -50,6 +50,7 @@ Nyilvános API::
 from __future__ import absolute_import
 
 import copy
+import json
 import os
 import re
 
@@ -58,6 +59,7 @@ from . import dedup as _d
 ACCEPT_ID = 0.80          # 1–2. lépés: az áttekintés azonosítója / ecitmatch → cím-ellenőrzés
 ACCEPT_SEARCH = 0.90      # 3–7. lépés: cím-keresés
 OPTION_FLOOR = 0.60       # ennél gyengébb találatot lehetőségként sem mutatunk
+STRONG_TITLE = 0.95       # azonosító-ellenőrzésnél: (majdnem) szó szerinti cím → szerző-alak/év eltérés tűrhető
 MAX_HITS = 5
 TOOL_ACTOR = _d.TOOL_ACTOR
 RESOLUTION_SOURCES = ("pubmed", "europepmc", "openalex", "scopus", "crossref", "ctgov")
@@ -318,9 +320,25 @@ def _accept(item, meta, threshold):
     yd = f["year_diff"]
     if ts is not None:
         ok = ts >= threshold and fam is not False and (yd is None or yd <= 1)
+        if not ok and threshold <= ACCEPT_ID and ts >= STRONG_TITLE:
+            # Az azonosító a hivatkozásból/API-ból jött, és a cím szó szerint egyezik — csak a szerző ALAKJA vagy az
+            # ÉV tér el. Élő próba (BCG): OpenAlex régi rekordjainál a megjelenési év gyakran a digitalizálás éve
+            # (33–55 év eltérés a PubMedhez képest), a szerzőnév pedig „Vezetéknév Kezdőbetűk"/fordított alakú.
+            if yd is None or yd <= 1:
+                ok = True
+                _note(item, "accepted_author_form_differs")
+            elif fam is True:
+                ok = True
+                _note(item, "accepted_year_differs")
     else:
         ok = fam is True and yd == 0
     return ok, ts, f
+
+
+def _note(item, text):
+    notes = getattr(item, "notes", None)
+    if isinstance(notes, list) and text not in notes:
+        notes.append(text)
 
 
 def _option(meta, source, via, score, feats):
@@ -537,6 +555,22 @@ class Resolver(object):
                 it.status = "unresolved"
                 continue
             ok, ts, f = _accept(it, meta, ACCEPT_ID)
+            if not ok:
+                # az ember döntése érvényes (N3), de szólunk: elírt PMID/DOI esetén a hivatkozás egy MÁSIK közleményhez
+                # kötődne (felülvizsgálat: korábban figyelmeztetés nélkül fogadtuk el)
+                it.notes.append("human_choice_bib_mismatch")
+                self.warnings.append(_warn(
+                    "id_title_mismatch",
+                    "%s: a megadott azonosító (%s:%s) közleménye nem egyezik a hivatkozással (cím-hasonlóság %s, első "
+                    "szerző %s, évkülönbség %s: „%s”). A döntésedet rögzítettük — ha elírás, adj új döntést "
+                    "(decide … --value pmid:<helyes>)."
+                    % (it.ref, kind, ident, "—" if ts is None else "%.2f" % ts,
+                       {True: "egyezik", False: "eltér", None: "ismeretlen"}[f.get("first_author_match")],
+                       "—" if f.get("year_diff") is None else f.get("year_diff"), (meta.get("title") or "")[:120]),
+                    "%s: the record of the given identifier (%s:%s) does not match the citation (title similarity %s). "
+                    "Your decision was recorded — if it is a typo, decide again." % (it.ref, kind, ident,
+                                                                                  "—" if ts is None else "%.2f" % ts),
+                    ref=it.ref, decision_id=d.get("decision_id")))
             meta = dict(meta)
             meta["_human"] = {"kind": kind, "value": ident, "decision_id": d.get("decision_id"),
                               "from_option": bool(option), "option_source": (option or {}).get("source"),
@@ -1274,14 +1308,30 @@ class Resolver(object):
                     "H013", "Visszavont közlemény: %s — jelöld, és a jogosultsági szűrésnél indokold a kizárást."
                     % r["rec_id"], "Retracted publication: %s — flag it and justify the exclusion at screening."
                     % r["rec_id"], rec_id=r["rec_id"]))
+            unverified = (r.get("resolution") or {}).get("status") in _d.UNVERIFIED_RESOLUTION
             for k, iv in (r.get("ids") or {}).items():
-                if k != "registry" and isinstance(iv, dict) and not _d.trusted(iv) and r.get("status") != "merged_into":
+                if k != "registry" and isinstance(iv, dict) and (unverified or not _d.trusted(iv)) and \
+                        r.get("status") != "merged_into":
                     self.warnings.append(_warn(
                         "H003", "API-val meg nem erősített azonosító (%s:%s) a %s rekordban — a végső halmazba így nem "
                                 "kerülhet." % (k, iv.get("value"), r["rec_id"]),
                         "Identifier not confirmed by an API (%s:%s) in %s — it cannot enter the final set like this."
                         % (k, iv.get("value"), r["rec_id"]), rec_id=r["rec_id"]))
 
+        # automatikus elfogadás eltérő évvel (a cím szó szerint egyezik — pl. OpenAlex digitalizálási év, vagy a
+        # követéses jelentés-sorozat másik tagja!): ember nézze meg (felülvizsgálat: korábban csak a rekordban látszott)
+        for it in items:
+            if it.status == "resolved" and "accepted_year_differs" in it.notes and not it.human:
+                m = it.result["meta"]
+                self.warnings.append(_warn(
+                    "resolution_year_differs",
+                    "%s: a hivatkozás (%s) a(z) %s rekordhoz kötve, mert a cím és az első szerző egyezik, de az év eltér "
+                    "(%s ↔ %s). Ellenőrizd: nem ugyanannak a vizsgálatnak egy másik (követéses) jelentése-e — ha igen, "
+                    "adj feloldási döntést (decide --target %s --value pmid:<helyes>)."
+                    % (it.ref, it.year, links.get(it.ref), it.year, m.get("year"), it.ref),
+                    "%s: linked to %s because title and first author match, but the year differs (%s vs %s) — check "
+                    "that it is not another (follow-up) report." % (it.ref, links.get(it.ref), it.year, m.get("year")),
+                    ref=it.ref))
         # javaslatok
         proposals = self._proposals(items, links, conflicts, prior_doc, decisions)
         confirmations = self._confirmations(items)
@@ -1342,7 +1392,13 @@ class Resolver(object):
                 out.append(p)
                 continue
             if it.status == "ambiguous" or (human and it.options) or (it.options and "human_rejected" in it.notes):
-                opts = sorted(it.options, key=lambda o: (-(o.get("score") or 0), o.get("rec_id") or ""))
+                opts, seen_opt = [], set()
+                for o in sorted(it.options, key=lambda o: (-(o.get("score") or 0), o.get("rec_id") or "")):
+                    k = o.get("rec_id") or json.dumps(o.get("ids"), sort_keys=True)
+                    if k in seen_opt:
+                        continue  # ugyanaz a közlemény két úton (PubMed + Europe PMC) — egyszer mutatjuk
+                    seen_opt.add(k)
+                    opts.append(o)
                 for i, o in enumerate(opts, 1):
                     o["option"] = i
                 rule = "R-id-title-mismatch" if "review_id_title_mismatch" in it.notes else (

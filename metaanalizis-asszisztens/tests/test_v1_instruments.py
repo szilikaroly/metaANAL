@@ -72,6 +72,9 @@ def clean_answers(tool, scope=None):
 
 def rob2(assessor="SzK", unit="S1", status="draft", judgement=None, **changes):
     ans = clean_answers("rob2")
+    # tiszta vizsgálat a RoB 2 (2019) folyamatábrája szerint: nincs a vizsgálati helyzetből fakadó eltérés (2.3 N),
+    # vakított kimenet-értékelők (4.3 N) — a 2.3–2.5 és 4.3–4.4 „Igen” útvonala már „némi aggály” (v1 javítás A)
+    ans.update({"2.3": "no", "4.3": "no"})
     for k, v in changes.items():
         ans[k.replace("_", ".")] = v
     d = base_doc("rob2", ans, unit=unit, key="o1", assessor=assessor, status=status)
@@ -156,7 +159,9 @@ class TestDefinitions(unittest.TestCase):
         self.assertEqual({s: len(j.slots(s)) for s in j.scope_ids},
                          {"cohort": 11, "case-control": 10, "cross-sectional": 8, "case-series": 10,
                           "case-report": 8, "prevalence": 9, "qualitative": 10})
-        self.assertEqual(len(c["robins-i"].slots("assignment")), len(c["robins-i"].slots("adherence")))
+        # ROBINS-I 2016 (Sterne 2016, Table A): 34 tétel; a besorolás hatására 30, a betartásra 32 (v1 javítás A)
+        self.assertEqual((len(c["robins-i"].items), len(c["robins-i"].slots("assignment")),
+                          len(c["robins-i"].slots("adherence"))), (34, 30, 32))
 
     def test_units_rollup_labels_and_families(self):
         units = {k: I.load(k).unit for k in I.available()}
@@ -172,12 +177,17 @@ class TestDefinitions(unittest.TestCase):
         self.assertEqual({k for k, v in algs.items() if v == "conservative"},
                          {"rob2", "robins-i", "robins-e", "quadas2", "quips"})
         self.assertEqual({k for k, v in algs.items() if v == "none"}, {"probast-ai", "tripod-ai", "jbi"})
+        # a szabály alapja eszközönként: a RoB 2 / ROBINS-I / ROBINS-E gépi szabályai a publikált folyamatábrát /
+        # kritériumokat követik (konzervatívan), a többi a validátor-kompatibilis polaritás-szabály (v1 javítás A)
+        basis = {"rob2": "rob2-2019-flowchart-conservative", "robins-i": "robins-i-2016-criteria-conservative",
+                 "robins-e": "robins-e-2023-criteria-conservative", "quadas2": "validator-compatible",
+                 "quips": "validator-compatible"}
         for k, v in algs.items():
             r = I.load(k).rollup
             with self.subTest(tool=k):
                 if v == "conservative":
                     self.assertIs(r["official"], False)
-                    self.assertEqual(r["basis"], "validator-compatible")
+                    self.assertEqual(r["basis"], basis[k])
                     self.assertIn("NEM a hivatalos", r["label"]["hu"])
                     self.assertIn("NOT the official", r["label"]["en"])
                 if v == "published":
@@ -263,10 +273,13 @@ class TestValidatorDrift(unittest.TestCase):
             return fh.read()
 
     def test_generic_ids_match(self):
+        # ahol a definíció a publikált eszközt követi a validator helyett (ROBINS-I 2016, QUIPS a–g; v1 javítás A),
+        # a validator akkori azonosítói a 'validator_ids' mezőben vannak: a sodródás-őr azzal vet össze
         for tool in ("rob2", "robins-i", "robins-e", "quadas2", "nos", "quips", "jbi", "amstar2", "grade"):
             ids = [m.group("id") for m in map(self.ITEM_RE.match, self.ref(tool + ".md").splitlines()) if m]
+            doc = I.load(tool).doc
             with self.subTest(tool=tool):
-                self.assertEqual([it["id"] for it in I.load(tool).items], ids)
+                self.assertEqual(doc.get("validator_ids") or [it["id"] for it in doc["items"]], ids)
 
     def test_probast_and_tripod_ids_match(self):
         text = self.ref("probast-ai.md")
@@ -427,7 +440,7 @@ class TestImplied(unittest.TestCase):
         self.assertEqual(r["overall"]["implied"], "low")
         self.assertEqual(r["overall"]["algorithm"], "conservative")
         self.assertIs(r["overall"]["official"], False)
-        self.assertEqual(r["overall"]["basis"], "validator-compatible")
+        self.assertEqual(r["overall"]["basis"], "rob2-2019-flowchart-conservative")
         self.assertIn("NEM a hivatalos RoB 2", r["overall"]["lines"][-1]["hu"])
         self.assertEqual(self.dom(r, "2")["routers"], ["2.1", "2.2", "2.3", "2.4"])
 
@@ -443,7 +456,8 @@ class TestImplied(unittest.TestCase):
 
     def test_rob2_reverse_ni_and_missing(self):
         r = A.check(rob2(**{"1_3": "yes"}))
-        self.assertEqual((self.dom(r, "1")["implied"], self.dom(r, "1")["forced_by"]), ("high", ["1.3"]))
+        # rejtett, véletlen szekvencia + problémára utaló kiinduló különbség: a hivatalos ág „némi aggály” (v1 javítás A)
+        self.assertEqual((self.dom(r, "1")["implied"], self.dom(r, "1")["forced_by"]), ("some_concerns", ["1.3"]))
         r = A.check(rob2(**{"5_1": "no_information"}))
         self.assertEqual(self.dom(r, "5")["implied"], "some_concerns")
         self.assertEqual(self.dom(r, "5")["unknown_at"], ["5.1"])
@@ -465,12 +479,15 @@ class TestImplied(unittest.TestCase):
         r = A.check(d)
         self.assertEqual(self.dom(r, "1")["implied"], "moderate", "zavarás lehetősége → legalább mérsékelt")
         self.assertEqual(r["overall"]["implied"], "moderate")
+        # 5.2 „Igen” (kizárás hiányzó adat miatt) probléma — „súlyos”, ha az arány/ok nem hasonló és az eredmény nem
+        # robusztus (5.4, 5.5 N); a 2016-os Table C szerint hasonló arány/ok (5.4 I) mellett alacsony (v1 javítás A)
         ans["5.2"] = "yes"
+        ans["5.4"] = ans["5.5"] = "no"
         d = base_doc("robins-i", ans)
         d["scope"] = "assignment"
         self.assertEqual(self.dom(A.check(d), "5")["implied"], "serious")
         ans2 = clean_answers("robins-i", "adherence")
-        ans2["4.4"] = "yes"
+        ans2["4.3"] = "yes"
         d = base_doc("robins-i", ans2)
         d["scope"] = "adherence"
         self.assertEqual(self.dom(A.check(d), "4")["implied"], "low", "kiegyensúlyozott ko-intervenció: rendben")
@@ -488,9 +505,10 @@ class TestImplied(unittest.TestCase):
 
     def test_quips_partly_is_moderate(self):
         ans = clean_answers("quips")
-        ans["2.4"] = "partly"
+        # a QUIPS hivatalos prompting itemjei a–g betűjellel (Hayden 2013; v1 javítás A): 2d = a kiesettek leírása
+        ans["2d"] = "partly"
         r = A.check(base_doc("quips", ans))
-        self.assertEqual((self.dom(r, "2")["implied"], self.dom(r, "2")["partial_at"]), ("moderate", ["2.4"]))
+        self.assertEqual((self.dom(r, "2")["implied"], self.dom(r, "2")["partial_at"]), ("moderate", ["2d"]))
 
     def test_probast_and_jbi_have_no_implied_judgement(self):
         inst = I.load("probast-ai")
@@ -566,8 +584,9 @@ class TestImplied(unittest.TestCase):
         g = A.check(self.grade())["grade"]
         self.assertEqual(g["certainty"], "high")
         self.assertEqual(A.check(self.grade(**{"1_1": "serious"}))["grade"]["certainty"], "moderate")
+        # a GRADE-blokk a szk.ma.grade/v1 kanonikus tokenjeit adja ('very low'; v1 javítás A, contracts:m2)
         self.assertEqual(A.check(self.grade(**{"1_1": "very_serious", "4_1": "serious"}))["grade"]["certainty"],
-                         "very_low")
+                         "very low")
         r = A.check(self.grade(**{"5_1": "suspected"}))
         self.assertIsNone(r["grade"]["certainty"])
         self.assertEqual(r["grade"]["unresolved"], ["publication_bias"])
@@ -590,7 +609,7 @@ class TestImplied(unittest.TestCase):
         self.assertEqual(A.check(self.grade("low", **{"6_1": "yes"}))["grade"]["certainty"], "moderate")
         self.assertEqual(A.check(self.grade("low", **{"6_1": "very_large"}))["grade"]["certainty"], "high")
         g = A.check(self.grade("low", **{"6_1": "yes", "2_1": "serious"}))["grade"]
-        self.assertEqual((g["certainty"], g["upgrades_applied"]), ("very_low", False))
+        self.assertEqual((g["certainty"], g["upgrades_applied"]), ("very low", False))
         self.assertTrue(any("NEM alkalmazva" in x["hu"] for x in g["lines"]))
         d = self.grade()
         del d["answers"]["3.1"]
@@ -607,7 +626,7 @@ class TestOverride(unittest.TestCase):
         projekt.init(self.proj, "Teszt")
 
     def test_override_without_reason_blocks_final_save(self):
-        d = rob2(status="complete", judgement=["low"], **{"2_6": "no"})
+        d = rob2(status="complete", judgement=["low"], **{"2_6": "no", "2_7": "probably_yes"})
         r = A.check(d)
         ov = {o["domain"]: o for o in r["overrides"]}
         self.assertEqual(set(ov), {"2", "overall"})
@@ -622,7 +641,7 @@ class TestOverride(unittest.TestCase):
         self.assertTrue(A.save(self.proj, draft, now=TS)["path"].endswith("S1.rob2.o1.SzK.json"))
 
     def test_set_judgement_logs_decision(self):
-        d = rob2(**{"2_6": "no"})
+        d = rob2(**{"2_6": "no", "2_7": "probably_yes"})
         with self.assertRaises(A.AppraisalError):
             A.set_judgement(d, "2", "low")
         d2, dec = A.set_judgement(d, "2", "low", reason="az ITT-eltérés 2 főt érint 400-ból", project_dir=self.proj,
@@ -981,7 +1000,8 @@ class TestProjectSyncAudit(unittest.TestCase):
         with open(os.path.join(self.proj, "03_adatok", "o1.prov.json"), "w", encoding="utf-8") as fh:
             json.dump(prov, fh)
         high2 = ["low", "high", "low", "low", "low", "high"]
-        a = rob2("SzK", unit="S1", status="complete", judgement=high2, **{"2_6": "no"})
+        # 2.6 N + 2.7 NI → „magas” a 2019-es folyamatábra szerint (2.6 N + 2.7 N csak „némi aggály”; v1 javítás A)
+        a = rob2("SzK", unit="S1", status="complete", judgement=high2, **{"2_6": "no", "2_7": "no_information"})
         b = rob2("KP", unit="S1", status="complete", judgement=high2, **{"2_6": "no", "2_7": "probably_yes"})
         cons, unresolved = A.build_consensus(a, b, resolutions={"2.7": {"value": "PY", "reason": "egyeztetve"}})
         self.assertEqual(unresolved, [])

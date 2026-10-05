@@ -1110,36 +1110,163 @@ parancsát. Így a képernyő, az export és a kézirat garantáltan ugyanazt a 
       "cov_ratio_text": {"$ref": "#/$defs/text"}, "hat_text": {"$ref": "#/$defs/text"}, "dfbetas_text": {"$ref": "#/$defs/text"}}}},
     "influence_axes": {"oneOf": [{"type": "null"}, {"type": "object", "additionalProperties": {"$ref": "#/$defs/axis"}}]},
     "influence_text": {"$ref": "#/$defs/text"}, "influence_note": {"$ref": "#/$defs/text"},
-    "cumulative": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["key_label","entries"], "properties": {
-      "key_label": {"$ref": "#/$defs/text"}, "axis": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/axis"}]},
-      "entries": {"type": "array", "items": {"type": "object", "properties": {
-        "label": {"type": "string"}, "key_text": {"type": "string"}, "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
-        "i2_text": {"$ref": "#/$defs/text"}, "tau2_text": {"$ref": "#/$defs/text"},
-        "added_row_uid": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}, "row_index": {"type": "integer"}, "k": {"type": "integer"}}}},
-      "order": {"type": "object", "description": "E4c: a sorrend — oszlop, növekvő, számként vagy természetes rendezéssel, a hiányzó kulcsúak a végén",
-                "properties": {"column": {"type": "string"}, "label": {"$ref": "#/$defs/text"}, "direction": {"enum": ["ascending"]},
-                  "sort": {"enum": ["numeric","natural"]}, "missing_last": {"type": "boolean"}, "n_missing": {"type": "integer"},
-                  "mixed_types": {"type": "boolean"}, "row_uids": {"type": "array", "items": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}},
-                  "text": {"$ref": "#/$defs/text"}}},
-      "note": {"$ref": "#/$defs/text"}}}]},
-    "bubble": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["moderator","points","line","band"],
-      "properties": {"band": {"type": "array", "items": {"type": "array", "minItems": 3, "maxItems": 3},
-                              "description": "[[x, alsó, felső], …] — a motor számolja a koefficiens-kovarianciából"},
-                     "coef_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
-                     "moderator": {"oneOf": [{"type": "string"}, {"type": "object", "required": ["name","type"], "properties": {
-                       "name": {"type": "string"}, "label": {"$ref": "#/$defs/text"}, "type": {"enum": ["continuous","categorical"]}}}]},
-                     "points": {"type": "array", "items": {"type": "object", "properties": {
-                       "row_uid": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}, "x": {"type": "number"}, "y": {"type": "number"},
-                       "weight_pct": {"type": "number"}, "x_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
-                       "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}, "weight_text": {"$ref": "#/$defs/text"}}}},
-                     "line": {"type": "array", "items": {"type": "array", "minItems": 2, "maxItems": 2}, "description": "[[x, ŷ], …]"},
-                     "pi_band": {"type": "array", "items": {"type": "array", "minItems": 3, "maxItems": 3},
-                                 "description": "[[x, alsó, felső], …] — predikciós sáv: ŷ ± krit·√(se² + τ²)"},
-                     "model": {"type": "object", "properties": {"test": {"enum": ["z","knha"]}, "df": {"type": ["integer","null"]},
-                       "crit": {"type": "number"}, "level": {"type": "number"}, "tau2": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
-                     "vcov": {"type": "array", "items": {"type": "array"}, "description": "az együttható-kovariancia (Knapp–Hartungnál s²-tel skálázva)"},
-                     "x_axis": {"$ref": "#/$defs/axis"}, "y_axis": {"$ref": "#/$defs/axis"},
-                     "band_label": {"$ref": "#/$defs/text"}, "pi_band_label": {"$ref": "#/$defs/text"}, "note": {"$ref": "#/$defs/text"}}}]},
+    "cumulative": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["key_label", "entries"],
+          "properties": {
+            "key_label": {"$ref": "#/$defs/text"},
+            "axis": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/axis"}]},
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": "string"},
+                  "key_text": {"type": "string"},
+                  "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+                  "i2_text": {"$ref": "#/$defs/text"},
+                  "tau2_text": {"$ref": "#/$defs/text"},
+                  "added_row_uid": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"},
+                  "row_index": {"type": "integer"},
+                  "k": {"type": "integer", "minimum": 1},
+                  "estimate": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "ci_lower": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "ci_upper": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "display": {"$ref": "urn:szk:contract:common:1#/$defs/display"},
+                  "analysis": {"type": "object", "description": "PFT: az eredeti Freeman–Tukey-értékek"}}},
+              "description": "a k-adik sor az első k (a rendezőkulcs szerint) vizsgálat összesítése; estimate / ci_* az elemzési skálán (PFT: a tengely n-jével elhelyezve), display_text kész szöveg"},
+            "order": {
+              "type": "object",
+              "description": "E4c: a kumulatív sorrend leírása (sensitivity.cumulative_order): a rendező oszlop, növekvő irány, számként vagy természetes (szöveg szerinti) rendezés, a hiányzó kulcsú vizsgálatok a végén; row_uids = a bevonás sorrendje",
+              "properties": {
+                "column": {"type": "string"},
+                "label": {"$ref": "#/$defs/text"},
+                "direction": {"enum": ["ascending"]},
+                "sort": {"enum": ["numeric", "natural"]},
+                "missing_last": {"type": "boolean"},
+                "n_missing": {"type": "integer", "minimum": 0},
+                "mixed_types": {"type": "boolean"},
+                "row_uids": {"type": "array", "items": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}},
+                "text": {"$ref": "#/$defs/text"}}},
+            "note": {
+              "$ref": "#/$defs/text",
+              "description": "kezdőbarát magyarázat (mit mutat a kumulatív ábra, mire nem alkalmas)"}}}]},
+    "bubble": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["moderator", "points", "line", "band"],
+          "properties": {
+            "moderator": {
+              "oneOf": [
+                {"type": "string"},
+                {
+                  "type": "object",
+                  "required": ["name", "type"],
+                  "properties": {
+                    "name": {"type": "string"},
+                    "label": {"$ref": "#/$defs/text"},
+                    "type": {"enum": ["continuous", "categorical"]},
+                    "coefficient": {
+                      "type": "string",
+                      "description": "a moderátor együtthatójának neve a meta-regresszióban"}}}],
+              "description": "a moderátor leírása; a régebbi, szöveges (csak név) alak továbbra is érvényes"},
+            "model": {
+              "type": "object",
+              "properties": {
+                "k": {"type": "integer"},
+                "p": {"type": "integer"},
+                "tau2": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                "tau2_method": {"type": "string"},
+                "test": {"enum": ["z", "knha"]},
+                "df": {"type": ["integer", "null"]},
+                "crit": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num",
+                  "description": "a sávok kritikus értéke: t(k − p) (knha) vagy z"},
+                "level": {"type": "number"},
+                "R2": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                "QM": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                "QM_p": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
+            "coefficients": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "estimate"],
+                "properties": {
+                  "name": {"type": "string"},
+                  "estimate": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "se": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "ci_lower": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "ci_upper": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "p": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}}},
+            "vcov": {
+              "type": "array",
+              "description": "a próba szerinti együttható-kovariancia (Knapp–Hartungnál s²-tel skálázva) — ebből számolódik a sáv",
+              "items": {"type": "array", "items": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
+            "points": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["row_uid", "x", "y", "weight_pct"],
+                "properties": {
+                  "row_uid": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"},
+                  "row_index": {"type": "integer"},
+                  "label": {"type": "string"},
+                  "x": {"type": "number", "description": "a moderátor értéke"},
+                  "y": {"type": "number", "description": "a hatás az elemzési skálán"},
+                  "se": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+                  "weight_pct": {
+                    "type": "number",
+                    "description": "meta-regressziós súly 1/(v_i + τ²), %-ban (a buborék területe)"},
+                  "weight_text": {"$ref": "#/$defs/text"},
+                  "x_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+                  "display": {"$ref": "urn:szk:contract:common:1#/$defs/display"},
+                  "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+                  "flags": {"type": "object"}}}},
+            "line": {
+              "type": "array",
+              "description": "[[x, ŷ], …] — az illesztett egyenes a rácson",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
+            "band": {
+              "type": "array",
+              "description": "[[x, alsó, felső], …] — a motor számolja a koefficiens-kovarianciából (konfidenciasáv)",
+              "items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
+            "pi_band": {
+              "type": "array",
+              "description": "[[x, alsó, felső], …] — predikciós sáv (√(x0ᵀVx0 + τ²))",
+              "items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
+            "grid_n": {"type": "integer", "minimum": 2},
+            "x_range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+            "x_axis": {"$ref": "#/$defs/axis"},
+            "y_axis": {"$ref": "#/$defs/axis"},
+            "coef_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+            "line_label": {"$ref": "#/$defs/text"},
+            "band_label": {"$ref": "#/$defs/text"},
+            "pi_band_label": {"$ref": "#/$defs/text"},
+            "note": {
+              "$ref": "#/$defs/text",
+              "description": "kezdőbarát magyarázat (olvasás, a sávok jelentése, ökológiai torzítás, kis k)"},
+            "groups": {
+              "type": "array",
+              "description": "kategóriás moderátornál a csoportok összesítői (a motor még nem írja)",
+              "items": {"type": "object"}}},
+          "description": "E4c: buborékábra egyetlen folytonos moderátoros meta-regresszióhoz. A line / band / pi_band a motor rácsán (a moderátor megfigyelt tartományán) a moderators.predict értékei — metafor predict(rma(yi, vi, mods = ~x), newmods = …): CI = ŷ ± krit·√(x0ᵀVx0), PI = ŷ ± krit·√(x0ᵀVx0 + τ²), V = vcov, krit = model.crit. A felület és a figure-forge csak összeköti a pontokat."}]},
     "notes": {"type": "array", "items": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}
   } }
 ```
@@ -1159,7 +1286,7 @@ Kötelező mező nem változott; a régebbi v2-olvasók az új mezőket figyelme
 **E4c (v1, 2026-10-05).** A `cumulative` blokk `order` (rendezés) és `note` mezője és a sorok `added_row_uid` /
 `row_index` / `k` mezője; a `bubble` blokk leírása (moderátor, súlyozott pontok, illesztett egyenes, konfidencia- és
 predikciós sáv a motor rácsán a koefficiens-kovarianciából, `model.crit`, `vcov`, tengelyek, kész szövegek). A
-szöveges `bubble.moderator` továbbra is érvényes.
+szöveges `bubble.moderator` továbbra is érvényes (additív `oneOf`). A v1-motor ábra-blokkjai a HEAD-beli E4c-megkötéseket megtartják (2026-10-05, contracts:M6): a buborékpont kötelező mezői (`row_uid`, `x`, `y`, `weight_pct`), a `line` / `band` / `pi_band` / `vcov` számcellái, a kumulatív sor `estimate` / `ci_*` / `display` / `analysis` mezője és `k ≥ 1`, az `order.n_missing ≥ 0`, valamint a `coefficients`, `grid_n`, `x_range`, `line_label`, `groups` és a `model` `k` / `p` / `R2` / `QM` / `QM_p` mezője.
 
 ### 4.7 Átváltás — `szk.ma.convert-request/v1` → `szk.ma.convert-result/v1`
 

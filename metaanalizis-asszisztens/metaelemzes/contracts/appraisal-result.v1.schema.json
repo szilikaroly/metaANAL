@@ -123,6 +123,9 @@
           },
           "key": {
             "type": "string"
+          },
+          "official_id": {
+            "type": "string"
           }
         }
       }
@@ -218,6 +221,37 @@
             ]
           },
           "text": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            ]
+          },
+          "not_asked": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "routing_conflicts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rule_path": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "label": {
             "oneOf": [
               {
                 "type": "null"
@@ -345,6 +379,18 @@
                 "string",
                 "null"
               ]
+            },
+            "parts": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            },
+            "parts_missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         }
@@ -363,16 +409,33 @@
           ],
           "properties": {
             "certainty": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "enum": [
+                "high",
+                "moderate",
+                "low",
+                "very low",
+                null
+              ],
+              "description": "szk.ma.grade/v1 kanonikus token (javaslat; végleges csak emberi döntéssel)"
             },
             "unresolved": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            },
+            "certainty_value": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ugyanez az eszköz ítélet-tokenjével (very_low)"
+            },
+            "vocabulary": {
+              "const": "szk.ma.grade/v1"
+            },
+            "computed": {
+              "type": "boolean"
             }
           }
         }

@@ -80,6 +80,9 @@ def clean_answers(tool, scope=None):
 def rob2(unit, assessor="SzK", status="complete", overall=None, origin="human", ai=False, judged=True, **changes):
     """RoB 2 értékelés: a doménítéletek az implikáltak; az összítélet az implikált, vagy a megadott (overall)."""
     ans = clean_answers("rob2")
+    # tiszta vizsgálat a RoB 2 (2019) folyamatábrája szerint: 2.3 N (nincs a vizsgálati helyzetből fakadó eltérés),
+    # 4.3 N (vakított értékelők) — a 2.3–2.5 és 4.3–4.4 „Igen” útvonala már „némi aggály” (v1 javítás A)
+    ans.update({"2.3": "no", "4.3": "no"})
     for k, v in changes.items():
         ans[k.replace("_", ".")] = v
     answers = {}
@@ -139,7 +142,9 @@ class _Base(unittest.TestCase):
         for path, doc in ((cls.file_a, a), (cls.file_b, b)):
             with open(path, "w", encoding="utf-8") as fh:
                 json.dump(doc, fh, ensure_ascii=False)
-        for doc in (a, rob2("S02", "SzK"), rob2("S10", "SzK", **{"1_1": "no"})):
+        # S10 (systematic allocation): nem véletlen ÉS nem rejtett szekvencia → „high” (a RoB 2 2019 szerint a
+        # rejtett, de nem véletlen szekvencia csak „némi aggály”; v1 javítás A)
+        for doc in (a, rob2("S02", "SzK"), rob2("S10", "SzK", **{"1_1": "no", "1_2": "no"})):
             A.save(cls.root, doc, now=TS)
 
     @classmethod
@@ -421,6 +426,7 @@ class TestGradeCli(_Base):
         self.assertEqual(api.project_list(root, "grades"), [])
         saved["domains"]["publication_bias"].update(step=0, rationale="Harbord és Peters nem jelez; a regiszter-"
                                                                      "keresés teljes.")
+        saved["certainty"] = "moderate"         # methodology:M5 — a végső bizonyosság emberi ítélet (megerősítés)
         with open(f, "w", encoding="utf-8") as fh:
             json.dump(saved, fh, ensure_ascii=False)
         rc, out, err = run_cli("grade", "save", root, "--doc", f, "--json")

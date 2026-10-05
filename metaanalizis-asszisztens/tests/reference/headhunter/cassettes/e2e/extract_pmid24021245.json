@@ -1,0 +1,2607 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "e2e-extract_pmid24021245",
+  "recorded_at": "2026-10-05T14:13:35Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "extract_review(rv-pmid-24021245) — élő próba hibamódja; OpenAlex-korlát: 12 hivatkozás",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4781620/fullTextXML",
+        "headers": {
+          "accept": "application/xml, text/xml;q=0.9, */*;q=0.1"
+        }
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "timestamp": "2026-10-05T14:13:30.586+00:00",
+          "status": 500,
+          "error": "Internal Server Error",
+          "path": "/europepmc/webservices/rest/PMC4781620/fullTextXML"
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=4781620&retmode=xml",
+        "headers": {
+          "accept": "application/xml, text/xml;q=0.9, */*;q=0.1"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/xml; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_text": "<?xml version=\"1.0\"  ?><!DOCTYPE pmc-articleset PUBLIC \"-//NLM//DTD ARTICLE SET 2.0//EN\" \"https://dtd.nlm.nih.gov/ncbi/pmc/articleset/nlm-articleset-2.0.dtd\"><pmc-articleset><article article-type=\"review-article\" xml:lang=\"en\" dtd-version=\"1.4\"><!--The publisher of this article does not allow downloading of the full text in XML form.--><front><journal-meta><journal-id journal-id-type=\"nlm-ta\">Health Technol Assess</journal-id><journal-id journal-id-type=\"iso-abbrev\">Health Technol Assess</journal-id><journal-id journal-id-type=\"pmc-domain-id\">2939</journal-id><journal-id journal-id-type=\"pmc-domain\">pmbook2pmc</journal-id><journal-id journal-id-type=\"nlm-id\">9706284</journal-id><journal-title-group><journal-title>Health Technology Assessment (Winchester, England)</journal-title></journal-title-group><issn pub-type=\"ppub\">1366-5278</issn><issn pub-type=\"epub\">2046-4924</issn><custom-meta-group><custom-meta><meta-name>pmc-is-collection-domain</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-collection-title</meta-name><meta-value>Medline Book to support NIHPA</meta-value></custom-meta></custom-meta-group></journal-meta><article-meta><article-id pub-id-type=\"pmcid\">PMC4781620</article-id><article-id pub-id-type=\"pmcid-ver\">PMC4781620.1</article-id><article-id pub-id-type=\"pmcaid\">4781620</article-id><article-id pub-id-type=\"pmcaiid\">4781620</article-id><article-id pub-id-type=\"pmid\">24021245</article-id><article-id pub-id-type=\"doi\">10.3310/hta17370</article-id><article-version article-version-type=\"pmc-version\">1</article-version><article-categories><subj-group subj-group-type=\"heading\"><subject>Research Article</subject></subj-group></article-categories><title-group><article-title>Systematic review and meta-analysis of the current evidence on the duration of protection by bacillus Calmette-Guérin vaccination against tuberculosis.</article-title></title-group><contrib-group><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Abubakar</surname><given-names initials=\"I\">I</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Pimpin</surname><given-names initials=\"L\">L</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Ariti</surname><given-names initials=\"C\">C</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Beynon</surname><given-names initials=\"R\">R</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Mangtani</surname><given-names initials=\"P\">P</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Sterne</surname><given-names initials=\"JAC\">J A C</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Fine</surname><given-names initials=\"PEM\">P E M</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Smith</surname><given-names initials=\"PG\">P G</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Lipman</surname><given-names initials=\"M\">M</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Elliman</surname><given-names initials=\"D\">D</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Watson</surname><given-names initials=\"JM\">J M</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Drumright</surname><given-names initials=\"LN\">L N</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Whiting</surname><given-names initials=\"PF\">P F</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Vynnycky</surname><given-names initials=\"E\">E</given-names></name></contrib><contrib contrib-type=\"author\"><name name-style=\"western\"><surname>Rodrigues</surname><given-names initials=\"LC\">L C</given-names></name></contrib></contrib-group><pub-date pub-type=\"ppub\"><month>9</month><year>2013</year></pub-date><volume>17</volume><issue>37</issue><issue-id pub-id-type=\"pmc-issue-id\">266324</issue-id><fpage>1</fpage><lpage>vi</lpage><page-range>1-372, v-vi</page-range><pub-history><event event-type=\"pmc-release\"><date><day>07</day><month>03</month><year>2016</year></date></event><event event-type=\"pmc-live\"><date><day>23</day><month>03</month><year>2016</year></date></event><event event-type=\"pmc-last-change\"><date iso-8601-date=\"2016-03-24 00:07:21.003\"><day>24</day><month>03</month><year>2016</year></date></event></pub-history><abstract>«redacted»</abstract><custom-meta-group><custom-meta><meta-name>pmc-status-qastatus</meta-name><meta-value>0</meta-value></custom-meta><custom-meta><meta-name>pmc-status-live</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-status-embargo</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-status-released</meta-name><meta-value>yes</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-open-access</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-olf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-manuscript</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-legally-suppressed</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-pdf</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-has-supplement</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-pdf-only</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-suppress-copyright</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-real-version</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-is-scanned-article</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-preprint</meta-name><meta-value>no</meta-value></custom-meta><custom-meta><meta-name>pmc-prop-in-epmc</meta-name><meta-value>no</meta-value></custom-meta></custom-meta-group></article-meta></front></article></pmc-articleset>",
+        "redactions": [
+          "abstract"
+        ]
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/24021245/references?format=json&page=1&pageSize=1000",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 0,
+          "request": {
+            "id": "24021245",
+            "source": "MED",
+            "offSet": 1,
+            "pageSize": 1000
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/pmid:24021245?select=id%2Creferenced_works",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35188"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W2058969608",
+          "referenced_works": [
+            "https://openalex.org/W784944",
+            "https://openalex.org/W11642185",
+            "https://openalex.org/W16036600",
+            "https://openalex.org/W25280149",
+            "https://openalex.org/W31228351",
+            "https://openalex.org/W31750708",
+            "https://openalex.org/W32008101",
+            "https://openalex.org/W48925124",
+            "https://openalex.org/W87372712",
+            "https://openalex.org/W88988626",
+            "https://openalex.org/W89777965",
+            "https://openalex.org/W127397471",
+            "https://openalex.org/W156388509",
+            "https://openalex.org/W180293389",
+            "https://openalex.org/W204046037",
+            "https://openalex.org/W209692282",
+            "https://openalex.org/W263336621",
+            "https://openalex.org/W357401932",
+            "https://openalex.org/W628863491",
+            "https://openalex.org/W846534069",
+            "https://openalex.org/W1030058020",
+            "https://openalex.org/W1222359057",
+            "https://openalex.org/W1434444598",
+            "https://openalex.org/W1440796467",
+            "https://openalex.org/W1453092861",
+            "https://openalex.org/W1498705924",
+            "https://openalex.org/W1506299873",
+            "https://openalex.org/W1537708179",
+            "https://openalex.org/W1565486526",
+            "https://openalex.org/W1566130020",
+            "https://openalex.org/W1580168436",
+            "https://openalex.org/W1635024015",
+            "https://openalex.org/W1659858848",
+            "https://openalex.org/W1704706075",
+            "https://openalex.org/W1775406031",
+            "https://openalex.org/W1820118657",
+            "https://openalex.org/W1826420015",
+            "https://openalex.org/W1831091428",
+            "https://openalex.org/W1862202521",
+            "https://openalex.org/W1868650262",
+            "https://openalex.org/W1888535285",
+            "https://openalex.org/W1889694071",
+            "https://openalex.org/W1912110005",
+            "https://openalex.org/W1964524742",
+            "https://openalex.org/W1965763498",
+            "https://openalex.org/W1968795584",
+            "https://openalex.org/W1970636179",
+            "https://openalex.org/W1971154760",
+            "https://openalex.org/W1973509625",
+            "https://openalex.org/W1975188284",
+            "https://openalex.org/W1975686988",
+            "https://openalex.org/W1976297878",
+            "https://openalex.org/W1976377560",
+            "https://openalex.org/W1977597024",
+            "https://openalex.org/W1977872496",
+            "https://openalex.org/W1980641006",
+            "https://openalex.org/W1980834230",
+            "https://openalex.org/W1983487627",
+            "https://openalex.org/W1985848595",
+            "https://openalex.org/W1986785372",
+            "https://openalex.org/W1989545131",
+            "https://openalex.org/W1990634659",
+            "https://openalex.org/W1993100788",
+            "https://openalex.org/W1997063073",
+            "https://openalex.org/W1997480887",
+            "https://openalex.org/W1998152066",
+            "https://openalex.org/W1999450920",
+            "https://openalex.org/W2001743699",
+            "https://openalex.org/W2003082501",
+            "https://openalex.org/W2003992418",
+            "https://openalex.org/W2006371945",
+            "https://openalex.org/W2008115314",
+            "https://openalex.org/W2010470204",
+            "https://openalex.org/W2013991969",
+            "https://openalex.org/W2015557892",
+            "https://openalex.org/W2017939647",
+            "https://openalex.org/W2018145026",
+            "https://openalex.org/W2019175219",
+            "https://openalex.org/W2023271312",
+            "https://openalex.org/W2023532881",
+            "https://openalex.org/W2028868711",
+            "https://openalex.org/W2029818410",
+            "https://openalex.org/W2031056001",
+            "https://openalex.org/W2036129920",
+            "https://openalex.org/W2036137631",
+            "https://openalex.org/W2036218860",
+            "https://openalex.org/W2036325768",
+            "https://openalex.org/W2036511488",
+            "https://openalex.org/W2038580281",
+            "https://openalex.org/W2038734745",
+            "https://openalex.org/W2038766147",
+            "https://openalex.org/W2041645657",
+            "https://openalex.org/W2042166993",
+            "https://openalex.org/W2045100487",
+            "https://openalex.org/W2045159003",
+            "https://openalex.org/W2049761024",
+            "https://openalex.org/W2050551544",
+            "https://openalex.org/W2050637081",
+            "https://openalex.org/W2051205011",
+            "https://openalex.org/W2054221913",
+            "https://openalex.org/W2055588703",
+            "https://openalex.org/W2058969608",
+            "https://openalex.org/W2062144811",
+            "https://openalex.org/W2063294290",
+            "https://openalex.org/W2063326735",
+            "https://openalex.org/W2065343288",
+            "https://openalex.org/W2067834832",
+            "https://openalex.org/W2068961578",
+            "https://openalex.org/W2070620071",
+            "https://openalex.org/W2071115494",
+            "https://openalex.org/W2072830993",
+            "https://openalex.org/W2073744734",
+            "https://openalex.org/W2073820883",
+            "https://openalex.org/W2075438067",
+            "https://openalex.org/W2076818843",
+            "https://openalex.org/W2077784411",
+            "https://openalex.org/W2078978147",
+            "https://openalex.org/W2083480533",
+            "https://openalex.org/W2086986623",
+            "https://openalex.org/W2089718066",
+            "https://openalex.org/W2091199723",
+            "https://openalex.org/W2096215627",
+            "https://openalex.org/W2098790100",
+            "https://openalex.org/W2103734560",
+            "https://openalex.org/W2104315854",
+            "https://openalex.org/W2106395142",
+            "https://openalex.org/W2106682613",
+            "https://openalex.org/W2107499811",
+            "https://openalex.org/W2108096268",
+            "https://openalex.org/W2109336860",
+            "https://openalex.org/W2112304840",
+            "https://openalex.org/W2112566069",
+            "https://openalex.org/W2114104820",
+            "https://openalex.org/W2114735252",
+            "https://openalex.org/W2120113705",
+            "https://openalex.org/W2120936216",
+            "https://openalex.org/W2121158241",
+            "https://openalex.org/W2122049247",
+            "https://openalex.org/W2122766312",
+            "https://openalex.org/W2123643891",
+            "https://openalex.org/W2124515177",
+            "https://openalex.org/W2125049374",
+            "https://openalex.org/W2128468264",
+            "https://openalex.org/W2131071075",
+            "https://openalex.org/W2133433718",
+            "https://openalex.org/W2139223289",
+            "https://openalex.org/W2139658369",
+            "https://openalex.org/W2143400844",
+            "https://openalex.org/W2144045544",
+            "https://openalex.org/W2144802046",
+            "https://openalex.org/W2146715346",
+            "https://openalex.org/W2146839581",
+            "https://openalex.org/W2147316565",
+            "https://openalex.org/W2149701134",
+            "https://openalex.org/W2154740221",
+            "https://openalex.org/W2156083398",
+            "https://openalex.org/W2157559696",
+            "https://openalex.org/W2164944419",
+            "https://openalex.org/W2166859134",
+            "https://openalex.org/W2168199976",
+            "https://openalex.org/W2182331085",
+            "https://openalex.org/W2185637092",
+            "https://openalex.org/W2186434804",
+            "https://openalex.org/W2189128258",
+            "https://openalex.org/W2194286237",
+            "https://openalex.org/W2200168470",
+            "https://openalex.org/W2202187855",
+            "https://openalex.org/W2208127194",
+            "https://openalex.org/W2208200397",
+            "https://openalex.org/W2221008288",
+            "https://openalex.org/W2227707735",
+            "https://openalex.org/W2234112278",
+            "https://openalex.org/W2239786339",
+            "https://openalex.org/W2242301493",
+            "https://openalex.org/W2253481110",
+            "https://openalex.org/W2259596779",
+            "https://openalex.org/W2259717301",
+            "https://openalex.org/W2262630542",
+            "https://openalex.org/W2262731023",
+            "https://openalex.org/W2269308275",
+            "https://openalex.org/W2277314841",
+            "https://openalex.org/W2281143502",
+            "https://openalex.org/W2287213313",
+            "https://openalex.org/W2289455370",
+            "https://openalex.org/W2293812805",
+            "https://openalex.org/W2294399412",
+            "https://openalex.org/W2295776697",
+            "https://openalex.org/W2296787320",
+            "https://openalex.org/W2302232841",
+            "https://openalex.org/W2304805616",
+            "https://openalex.org/W2306336942",
+            "https://openalex.org/W2319488836",
+            "https://openalex.org/W2320123368",
+            "https://openalex.org/W2324733969",
+            "https://openalex.org/W2335487469",
+            "https://openalex.org/W2337292563",
+            "https://openalex.org/W2338589189",
+            "https://openalex.org/W2342334642",
+            "https://openalex.org/W2342510686",
+            "https://openalex.org/W2342931455",
+            "https://openalex.org/W2345204941",
+            "https://openalex.org/W2345350834",
+            "https://openalex.org/W2360975046",
+            "https://openalex.org/W2361419296",
+            "https://openalex.org/W2362905990",
+            "https://openalex.org/W2365685503",
+            "https://openalex.org/W2370212299",
+            "https://openalex.org/W2372223576",
+            "https://openalex.org/W2373145021",
+            "https://openalex.org/W2386125107",
+            "https://openalex.org/W2394996462",
+            "https://openalex.org/W2395040459",
+            "https://openalex.org/W2395125857",
+            "https://openalex.org/W2395313949",
+            "https://openalex.org/W2395673074",
+            "https://openalex.org/W2395796382",
+            "https://openalex.org/W2396086010",
+            "https://openalex.org/W2396098718",
+            "https://openalex.org/W2396767051",
+            "https://openalex.org/W2397475484",
+            "https://openalex.org/W2397569056",
+            "https://openalex.org/W2397941928",
+            "https://openalex.org/W2398316496",
+            "https://openalex.org/W2398753207",
+            "https://openalex.org/W2398881666",
+            "https://openalex.org/W2399053855",
+            "https://openalex.org/W2399600272",
+            "https://openalex.org/W2399656536",
+            "https://openalex.org/W2400448826",
+            "https://openalex.org/W2400494666",
+            "https://openalex.org/W2400998907",
+            "https://openalex.org/W2401153785",
+            "https://openalex.org/W2401756676",
+            "https://openalex.org/W2401817086",
+            "https://openalex.org/W2402181406",
+            "https://openalex.org/W2402247813",
+            "https://openalex.org/W2402366116",
+            "https://openalex.org/W2402749854",
+            "https://openalex.org/W2402832361",
+            "https://openalex.org/W2402959477",
+            "https://openalex.org/W2403203857",
+            "https://openalex.org/W2403348081",
+            "https://openalex.org/W2403529139",
+            "https://openalex.org/W2403684682",
+            "https://openalex.org/W2404113329",
+            "https://openalex.org/W2404292539",
+            "https://openalex.org/W2404506166",
+            "https://openalex.org/W2404836831",
+            "https://openalex.org/W2405003182",
+            "https://openalex.org/W2405491877",
+            "https://openalex.org/W2405546184",
+            "https://openalex.org/W2405571297",
+            "https://openalex.org/W2405657180",
+            "https://openalex.org/W2406186527",
+            "https://openalex.org/W2406294787",
+            "https://openalex.org/W2407245672",
+            "https://openalex.org/W2407348281",
+            "https://openalex.org/W2407479391",
+            "https://openalex.org/W2408036317",
+            "https://openalex.org/W2408097488",
+            "https://openalex.org/W2408696695",
+            "https://openalex.org/W2408778421",
+            "https://openalex.org/W2409615292",
+            "https://openalex.org/W2409660558",
+            "https://openalex.org/W2409717862",
+            "https://openalex.org/W2409847585",
+            "https://openalex.org/W2410125908",
+            "https://openalex.org/W2410159673",
+            "https://openalex.org/W2410197694",
+            "https://openalex.org/W2410218174",
+            "https://openalex.org/W2410299258",
+            "https://openalex.org/W2410396493",
+            "https://openalex.org/W2410439952",
+            "https://openalex.org/W2410445216",
+            "https://openalex.org/W2410498384",
+            "https://openalex.org/W2410611890",
+            "https://openalex.org/W2410643815",
+            "https://openalex.org/W2410752972",
+            "https://openalex.org/W2410812039",
+            "https://openalex.org/W2410941264",
+            "https://openalex.org/W2411167637",
+            "https://openalex.org/W2411501301",
+            "https://openalex.org/W2411575172",
+            "https://openalex.org/W2411588341",
+            "https://openalex.org/W2411685776",
+            "https://openalex.org/W2411807310",
+            "https://openalex.org/W2411911470",
+            "https://openalex.org/W2411932921",
+            "https://openalex.org/W2411962464",
+            "https://openalex.org/W2411971837",
+            "https://openalex.org/W2412052325",
+            "https://openalex.org/W2412233562",
+            "https://openalex.org/W2412293408",
+            "https://openalex.org/W2412554539",
+            "https://openalex.org/W2412843566",
+            "https://openalex.org/W2412937919",
+            "https://openalex.org/W2413021520",
+            "https://openalex.org/W2413060646",
+            "https://openalex.org/W2413163366",
+            "https://openalex.org/W2413187171",
+            "https://openalex.org/W2413251676",
+            "https://openalex.org/W2413255535",
+            "https://openalex.org/W2413333965",
+            "https://openalex.org/W2413427714",
+            "https://openalex.org/W2413482417",
+            "https://openalex.org/W2413634713",
+            "https://openalex.org/W2413726022",
+            "https://openalex.org/W2413751233",
+            "https://openalex.org/W2413831609",
+            "https://openalex.org/W2414015379",
+            "https://openalex.org/W2414092569",
+            "https://openalex.org/W2414129461",
+            "https://openalex.org/W2414160647",
+            "https://openalex.org/W2414202410",
+            "https://openalex.org/W2414369796",
+            "https://openalex.org/W2414486644",
+            "https://openalex.org/W2414587983",
+            "https://openalex.org/W2414686389",
+            "https://openalex.org/W2414909278",
+            "https://openalex.org/W2415294511",
+            "https://openalex.org/W2415698442",
+            "https://openalex.org/W2415860723",
+            "https://openalex.org/W2415884043",
+            "https://openalex.org/W2415918287",
+            "https://openalex.org/W2416026759",
+            "https://openalex.org/W2416156283",
+            "https://openalex.org/W2416189972",
+            "https://openalex.org/W2416235787",
+            "https://openalex.org/W2416514881",
+            "https://openalex.org/W2416764658",
+            "https://openalex.org/W2416891332",
+            "https://openalex.org/W2416922228",
+            "https://openalex.org/W2416926602",
+            "https://openalex.org/W2417017597",
+            "https://openalex.org/W2417033565",
+            "https://openalex.org/W2417095933",
+            "https://openalex.org/W2417106168",
+            "https://openalex.org/W2417116161",
+            "https://openalex.org/W2417311595",
+            "https://openalex.org/W2417423212",
+            "https://openalex.org/W2417521184",
+            "https://openalex.org/W2417570916",
+            "https://openalex.org/W2417792003",
+            "https://openalex.org/W2417805803",
+            "https://openalex.org/W2417937997",
+            "https://openalex.org/W2417951073",
+            "https://openalex.org/W2417986910",
+            "https://openalex.org/W2418003624",
+            "https://openalex.org/W2418263891",
+            "https://openalex.org/W2418303703",
+            "https://openalex.org/W2418386007",
+            "https://openalex.org/W2418466284",
+            "https://openalex.org/W2418542993",
+            "https://openalex.org/W2418869332",
+            "https://openalex.org/W2418918298",
+            "https://openalex.org/W2419071101",
+            "https://openalex.org/W2419319383",
+            "https://openalex.org/W2419523507",
+            "https://openalex.org/W2420477799",
+            "https://openalex.org/W2420801385",
+            "https://openalex.org/W2421144724",
+            "https://openalex.org/W2421186539",
+            "https://openalex.org/W2422530032",
+            "https://openalex.org/W2423519301",
+            "https://openalex.org/W2423583065",
+            "https://openalex.org/W2425206326",
+            "https://openalex.org/W2425304936",
+            "https://openalex.org/W2425742310",
+            "https://openalex.org/W2428054043",
+            "https://openalex.org/W2428116854",
+            "https://openalex.org/W2429771387",
+            "https://openalex.org/W2429797076",
+            "https://openalex.org/W2431526191",
+            "https://openalex.org/W2434658823",
+            "https://openalex.org/W2435112637",
+            "https://openalex.org/W2435389555",
+            "https://openalex.org/W2435558492",
+            "https://openalex.org/W2435898725",
+            "https://openalex.org/W2436272004",
+            "https://openalex.org/W2437042322",
+            "https://openalex.org/W2439032911",
+            "https://openalex.org/W2440472675",
+            "https://openalex.org/W2441175799",
+            "https://openalex.org/W2460634469",
+            "https://openalex.org/W2461037312",
+            "https://openalex.org/W2461610272",
+            "https://openalex.org/W2461746995",
+            "https://openalex.org/W2461867074",
+            "https://openalex.org/W2463614928",
+            "https://openalex.org/W2466349450",
+            "https://openalex.org/W2466403251",
+            "https://openalex.org/W2467958802",
+            "https://openalex.org/W2469245068",
+            "https://openalex.org/W2470294591",
+            "https://openalex.org/W2470630707",
+            "https://openalex.org/W2472826056",
+            "https://openalex.org/W2473181777",
+            "https://openalex.org/W2474861505",
+            "https://openalex.org/W2494692702",
+            "https://openalex.org/W2529682399",
+            "https://openalex.org/W2549697376",
+            "https://openalex.org/W2576044060",
+            "https://openalex.org/W2578539430",
+            "https://openalex.org/W2593368557",
+            "https://openalex.org/W2604580986",
+            "https://openalex.org/W2607426992",
+            "https://openalex.org/W2611460292",
+            "https://openalex.org/W2613127381",
+            "https://openalex.org/W2614456772",
+            "https://openalex.org/W2622651036",
+            "https://openalex.org/W2713617828",
+            "https://openalex.org/W2728640579",
+            "https://openalex.org/W2729082804",
+            "https://openalex.org/W2883270050",
+            "https://openalex.org/W2893899051",
+            "https://openalex.org/W2986404456",
+            "https://openalex.org/W2995599991",
+            "https://openalex.org/W3089751385",
+            "https://openalex.org/W3156162901",
+            "https://openalex.org/W3158177709",
+            "https://openalex.org/W3158522960",
+            "https://openalex.org/W3159745778",
+            "https://openalex.org/W4205730884",
+            "https://openalex.org/W4206351620",
+            "https://openalex.org/W4230522119",
+            "https://openalex.org/W4234364820",
+            "https://openalex.org/W4234368491",
+            "https://openalex.org/W4235671691",
+            "https://openalex.org/W4236880009",
+            "https://openalex.org/W4237409016",
+            "https://openalex.org/W4239595702",
+            "https://openalex.org/W4243452379",
+            "https://openalex.org/W4245485809",
+            "https://openalex.org/W4250932295",
+            "https://openalex.org/W4252412724",
+            "https://openalex.org/W4253747742",
+            "https://openalex.org/W4291254226",
+            "https://openalex.org/W4291255843",
+            "https://openalex.org/W4291263303",
+            "https://openalex.org/W4291266003",
+            "https://openalex.org/W4291734703",
+            "https://openalex.org/W4291943929",
+            "https://openalex.org/W4299599255",
+            "https://openalex.org/W4299637375",
+            "https://openalex.org/W4299905514",
+            "https://openalex.org/W4300551644",
+            "https://openalex.org/W4302077063",
+            "https://openalex.org/W4302323048",
+            "https://openalex.org/W4302357021",
+            "https://openalex.org/W4312476154",
+            "https://openalex.org/W6639054183",
+            "https://openalex.org/W6663781737",
+            "https://openalex.org/W6663964723",
+            "https://openalex.org/W6667465434",
+            "https://openalex.org/W6669438718",
+            "https://openalex.org/W6678665254",
+            "https://openalex.org/W6679872293",
+            "https://openalex.org/W6681718835",
+            "https://openalex.org/W6687319128",
+            "https://openalex.org/W6690291655",
+            "https://openalex.org/W6715997901",
+            "https://openalex.org/W6716741947",
+            "https://openalex.org/W6777057440",
+            "https://openalex.org/W6795198071",
+            "https://openalex.org/W6822993721",
+            "https://openalex.org/W7075666667"
+          ]
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works?cursor=%2A&filter=openalex%3AW784944%7CW11642185%7CW16036600%7CW25280149%7CW31228351%7CW31750708%7CW32008101%7CW48925124%7CW87372712%7CW88988626%7CW89777965%7CW127397471&per_page=12&select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "application/json",
+          "retry-after": "35188",
+          "x-ratelimit-cost-required-usd": "0.0001",
+          "x-ratelimit-credits-required": "1",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35188"
+        },
+        "body_json": {
+          "error": "Rate limit exceeded",
+          "message": "Insufficient budget. This request has no API key, so it counts against the free daily budget shared by everyone on your network's IP address, and that budget is used up ($0 remaining; resets at midnight UTC). Use your own key instead: add ?api_key=«redacted» to the URL, or send it as an \"Authorization: «redacted»\" header. Keys are free and have their own budget: https://help.openalex.org/api/authentication/",
+          "retryAfter": 35188,
+          "costUsd": 0.0001,
+          "dailyRemainingUsd": 0,
+          "prepaidRemainingUsd": 0,
+          "creditsRequired": 1,
+          "creditsRemaining": 0,
+          "onetimeCreditsRemaining": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W784944?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35188"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W784944",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W784944",
+            "mag": "784944",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/10751066"
+          },
+          "display_name": "BCG coverage and the annual risk of tuberculosis infection over a 14-year period in the Philippines assessed from the Nationwide Prevalence Surveys.",
+          "publication_year": 2000,
+          "publication_date": "2000-03-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:10751066",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/10751066",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The international journal of tuberculosis and lung disease : the official journal of the International Union against Tuberculosis and Lung Disease",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5053817241",
+                "display_name": "Thelma E. Tupasi",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I2802226052",
+                  "display_name": "Makati Medical Center",
+                  "ror": "https://ror.org/02jy1hx10",
+                  "country_code": "PH",
+                  "type": "healthcare",
+                  "lineage": [
+                    "https://openalex.org/I2802226052"
+                  ]
+                },
+                {
+                  "id": "https://openalex.org/I4210146316",
+                  "display_name": "Tropical Disease Foundation",
+                  "ror": "https://ror.org/05jxxs868",
+                  "country_code": "PH",
+                  "type": "nonprofit",
+                  "lineage": [
+                    "https://openalex.org/I4210146316"
+                  ]
+                }
+              ],
+              "countries": [
+                "PH"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "T E Tupasi",
+              "raw_affiliation_strings": [
+                "Tropical Disease Foundation, Makati Medical Center, Makati City, The Philippines. tdf@info.com.ph"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Tropical Disease Foundation, Makati Medical Center, Makati City, The Philippines. tdf@info.com.ph",
+                  "institution_ids": [
+                    "https://openalex.org/I2802226052",
+                    "https://openalex.org/I4210146316"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5009290778",
+                "display_name": "S. Radhakrishna",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S Radhakrishna",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5103365347",
+                "display_name": "M L Pascual",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M L Pascual",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5111618159",
+                "display_name": "M. I. D. Quelapio",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M I Quelapio",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": null,
+                "display_name": "M L Villa",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M L Villa",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5084292265",
+                "display_name": "V M Co",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "V M Co",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5004595435",
+                "display_name": "Jesus N. Sarol Jr.",
+                "orcid": "https://orcid.org/0000-0003-1281-4485",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0003-1281-4485"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "J Sarol",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5072650358",
+                "display_name": "Nellie V. Mangubat",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "N Mangubat",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5068076596",
+                "display_name": "Alejandra Reyes",
+                "orcid": "https://orcid.org/0000-0001-9845-5000",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-9845-5000"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "A C Reyes",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5024276354",
+                "display_name": "A Sarmiento",
+                "orcid": "https://orcid.org/0000-0002-7260-1417",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-7260-1417"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "A Sarmiento",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5087261001",
+                "display_name": "M Solon",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M Solon",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5008560720",
+                "display_name": "F S Solon",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "F Solon",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": null,
+                "display_name": "L Burton",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "L Burton",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5074098196",
+                "display_name": "Vivian S. Lofranco",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "V S Lofranco",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5066567042",
+                "display_name": "M. P.C. Rostrata",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M P Rostrata",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5077967157",
+                "display_name": "M J Mantala",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M J Mantala",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "4",
+            "issue": "3",
+            "first_page": "216",
+            "last_page": "22"
+          },
+          "cited_by_count": 31,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 10
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W11642185?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35188"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W11642185",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W11642185",
+            "mag": "11642185",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/7775875"
+          },
+          "display_name": "Evaluation of the efficacy of routine BCG vaccination: a case-control study.",
+          "publication_year": 1993,
+          "publication_date": "1993-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:7775875",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/7775875",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The Journal of the Egyptian Public Health Association",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5110406378",
+                "display_name": "Mohammed Mahmoud Kotb",
+                "orcid": "https://orcid.org/0000-0002-5019-6633",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-5019-6633"
+                ]
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I107720978",
+                  "display_name": "Ain Shams University",
+                  "ror": "https://ror.org/00cb9w016",
+                  "country_code": "EG",
+                  "type": "education",
+                  "lineage": [
+                    "https://openalex.org/I107720978"
+                  ]
+                }
+              ],
+              "countries": [
+                "EG"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "M M Kotb",
+              "raw_affiliation_strings": [
+                "Community Medicine Department, Faculty of Medicine Ain, Shams University, Cairo, Egypt"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Community Medicine Department, Faculty of Medicine Ain, Shams University, Cairo, Egypt",
+                  "institution_ids": [
+                    "https://openalex.org/I107720978"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5065654960",
+                "display_name": "A T Azza",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "A T Azza",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "68",
+            "issue": "5-6",
+            "first_page": "469",
+            "last_page": "85"
+          },
+          "cited_by_count": 4,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W16036600?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35187"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W16036600",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W16036600",
+            "mag": "16036600",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/7005086"
+          },
+          "display_name": "Tuberculosis prevention Trial, Madras.",
+          "publication_year": 1980,
+          "publication_date": "1980-07-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:7005086",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/7005086",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The Indian journal of medical research",
+            "raw_type": "Clinical Trial"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5084804824",
+                "display_name": "G. V. J. Baily",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": true,
+              "raw_author_name": "G V Baily",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "72 Suppl",
+            "issue": null,
+            "first_page": "1",
+            "last_page": "74"
+          },
+          "cited_by_count": 131,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W25280149?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35187"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W25280149",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W25280149",
+            "mag": "25280149",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/11495262"
+          },
+          "display_name": "Efficacy of the BCG revaccination programme in a cohort given BCG vaccination at birth in Hong Kong.",
+          "publication_year": 2001,
+          "publication_date": "2001-08-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:11495262",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/11495262",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The international journal of tuberculosis and lung disease : the official journal of the International Union against Tuberculosis and Lung Disease",
+            "raw_type": "Clinical Trial"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5007081456",
+                "display_name": "Chi Chiu Leung",
+                "orcid": "https://orcid.org/0000-0002-9699-9730",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-9699-9730"
+                ]
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I889458895",
+                  "display_name": "University of Hong Kong",
+                  "ror": "https://ror.org/02zhqgq86",
+                  "country_code": "HK",
+                  "type": "education",
+                  "lineage": [
+                    "https://openalex.org/I889458895"
+                  ]
+                }
+              ],
+              "countries": [
+                "HK"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "C C Leung",
+              "raw_affiliation_strings": [
+                "Department of Health, The University of Hong Kong, Hong Kong SAR, China. cclpnc@asiaonline.net"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Department of Health, The University of Hong Kong, Hong Kong SAR, China. cclpnc@asiaonline.net",
+                  "institution_ids": [
+                    "https://openalex.org/I889458895"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5103754095",
+                "display_name": "Cheuk Ming Tam",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "C M Tam",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5046498356",
+                "display_name": "Stephen Lam Chan",
+                "orcid": "https://orcid.org/0000-0001-8998-5480",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-8998-5480"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S L Chan",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5109933610",
+                "display_name": "M M W Chan-Yeung",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M Chan-Yeung",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5059509440",
+                "display_name": "Chi Kuen Chan",
+                "orcid": "https://orcid.org/0000-0002-6819-1961",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-6819-1961",
+                  "https://orcid.org/0000-0003-3725-0313"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "C K Chan",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5091510502",
+                "display_name": "Kwok Chiu Chang",
+                "orcid": "https://orcid.org/0000-0002-3682-5069",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-3682-5069"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "K C Chang",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "5",
+            "issue": "8",
+            "first_page": "717",
+            "last_page": "23"
+          },
+          "cited_by_count": 95,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 11
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W31228351?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35187"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W31228351",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W31228351",
+            "mag": "31228351",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/3596034"
+          },
+          "display_name": "Evaluation of BCG vaccination in Bab El Shaaria zone--Cairo.",
+          "publication_year": 1986,
+          "publication_date": "1986-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:3596034",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/3596034",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Developments in biological standardization",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": null,
+                "display_name": "M E Mahmoud",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M E Mahmoud",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5022809191",
+                "display_name": "I A Monhim Attia",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "I A Monhim Attia",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "58 ( Pt A)",
+            "issue": null,
+            "first_page": "249",
+            "last_page": "56"
+          },
+          "cited_by_count": 2,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 16
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W31750708?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35187"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W31750708",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W31750708",
+            "mag": "31750708",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/16229231"
+          },
+          "display_name": "Neonatal BCG protection against tuberculosis lasts for 20 years in Brazil.",
+          "publication_year": 2005,
+          "publication_date": "2005-10-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:16229231",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/16229231",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The international journal of tuberculosis and lung disease : the official journal of the International Union against Tuberculosis and Lung Disease",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5042413273",
+                "display_name": "Maurício L. Barreto",
+                "orcid": "https://orcid.org/0000-0002-0215-4930",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-0215-4930"
+                ]
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I126158947",
+                  "display_name": "Universidade Federal da Bahia",
+                  "ror": "https://ror.org/03k3p7647",
+                  "country_code": "BR",
+                  "type": "education",
+                  "lineage": [
+                    "https://openalex.org/I126158947"
+                  ]
+                }
+              ],
+              "countries": [
+                "BR"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "M L Barreto",
+              "raw_affiliation_strings": [
+                "Instituto de Saúde Coletiva, Universidade Federal da Bahia, Salvador-Bahia, Brazil. mauricio@ufba.br"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Instituto de Saúde Coletiva, Universidade Federal da Bahia, Salvador-Bahia, Brazil. mauricio@ufba.br",
+                  "institution_ids": [
+                    "https://openalex.org/I126158947"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5006818401",
+                "display_name": "Sérgio Souza da Cunha",
+                "orcid": "https://orcid.org/0000-0002-4926-3827",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-4926-3827"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S S Cunha",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5071851141",
+                "display_name": "Susan Martins Pereira",
+                "orcid": "https://orcid.org/0000-0001-5291-454X",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-5291-454X"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S M Pereira",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5039500726",
+                "display_name": "Bernd Genser",
+                "orcid": "https://orcid.org/0000-0001-5787-0902",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-5787-0902"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "B Genser",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5043786155",
+                "display_name": "Miguel Aiub Hijjar",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M A Hijjar",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5004331877",
+                "display_name": "Maria Yury Ichihara",
+                "orcid": "https://orcid.org/0000-0001-8590-6212",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-8590-6212"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "M Yury Ichihara",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5111521750",
+                "display_name": "Silvana C de Brito",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "S C de Brito",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5089008239",
+                "display_name": "Inês Costa Dourado",
+                "orcid": "https://orcid.org/0000-0003-1675-2146",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0003-1675-2146"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "I Dourado",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5041430267",
+                "display_name": "Alyssa Nicole G Dela Cruz",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "A Cruz",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5022002065",
+                "display_name": "C Santa'Ana",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "C Santa'Ana",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5025677183",
+                "display_name": "Laura Cunha Rodrigues",
+                "orcid": "https://orcid.org/0000-0001-9008-660X",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-9008-660X"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "L C Rodrigues",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "9",
+            "issue": "10",
+            "first_page": "1171",
+            "last_page": "3"
+          },
+          "cited_by_count": 46,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W32008101?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35186"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W32008101",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W32008101",
+            "mag": "32008101",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/9526191"
+          },
+          "display_name": "Does the efficacy of BCG decline with time since vaccination?",
+          "publication_year": 1998,
+          "publication_date": "1998-03-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:9526191",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/9526191",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The international journal of tuberculosis and lung disease : the official journal of the International Union against Tuberculosis and Lung Disease",
+            "raw_type": "Clinical Trial"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5015955757",
+                "display_name": "Jonathan A C Sterne",
+                "orcid": "https://orcid.org/0000-0001-8496-6053",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-8496-6053"
+                ]
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I1324925910",
+                  "display_name": "St Thomas' Hospital",
+                  "ror": "https://ror.org/054gk2851",
+                  "country_code": "GB",
+                  "type": "healthcare",
+                  "lineage": [
+                    "https://openalex.org/I1324925910",
+                    "https://openalex.org/I200166805",
+                    "https://openalex.org/I4210111135"
+                  ]
+                }
+              ],
+              "countries": [
+                "GB"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "J A Sterne",
+              "raw_affiliation_strings": [
+                "Department of Public Health Medicine, United Medical and Dental Schools, St Thomas's Hospital, London, UK. j.sterne@umds.ac.uk"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Department of Public Health Medicine, United Medical and Dental Schools, St Thomas's Hospital, London, UK. j.sterne@umds.ac.uk",
+                  "institution_ids": [
+                    "https://openalex.org/I1324925910"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5025677183",
+                "display_name": "Laura Cunha Rodrigues",
+                "orcid": "https://orcid.org/0000-0001-9008-660X",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0001-9008-660X"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "L C Rodrigues",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5041442395",
+                "display_name": "Ines Nobre Guedes",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "I N Guedes",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "2",
+            "issue": "3",
+            "first_page": "200",
+            "last_page": "7"
+          },
+          "cited_by_count": 314,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 3
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W48925124?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35186"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W48925124",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W48925124",
+            "mag": "48925124",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/3596033"
+          },
+          "display_name": "Evaluation of BCG vaccination in Romania.",
+          "publication_year": 1986,
+          "publication_date": "1986-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:3596033",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/3596033",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Developments in biological standardization",
+            "raw_type": "Comparative Study"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5114154154",
+                "display_name": "P Mihăilescu",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "P Mihăilescu",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5072261083",
+                "display_name": "R Bărbulescu",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "R Bărbulescu",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "58 ( Pt A)",
+            "issue": null,
+            "first_page": "243",
+            "last_page": "7"
+          },
+          "cited_by_count": 1,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W87372712?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35186"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W87372712",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W87372712",
+            "mag": "87372712",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/1209449"
+          },
+          "display_name": "[The importance of BCG vaccination in Mexico].",
+          "publication_year": 1976,
+          "publication_date": "1976-03-11",
+          "type": "other",
+          "primary_location": {
+            "id": "pmid:1209449",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/1209449",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Salud publica de Mexico",
+            "raw_type": "English Abstract"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5006369646",
+                "display_name": "G Cano Pérez",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": true,
+              "raw_author_name": "G Cano Pérez",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "17",
+            "issue": "5",
+            "first_page": "597",
+            "last_page": "611"
+          },
+          "cited_by_count": 2,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W88988626?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35186"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W88988626",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W88988626",
+            "mag": "88988626",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/16512178"
+          },
+          "display_name": "[BCG vaccination and its efficiency in children].",
+          "publication_year": 2006,
+          "publication_date": "2006-01-01",
+          "type": "other",
+          "primary_location": {
+            "id": "pmid:16512178",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/16512178",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "Problemy tuberkuleza i boleznei legkikh",
+            "raw_type": "English Abstract"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5053256946",
+                "display_name": "Л. В. Поддубная",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": true,
+              "raw_author_name": "L V Poddubnaia",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": null,
+            "issue": "1",
+            "first_page": "13",
+            "last_page": "6"
+          },
+          "cited_by_count": 3,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W89777965?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35185"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W89777965",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W89777965",
+            "mag": "89777965"
+          },
+          "display_name": "Vaccination with BCG in El Salvador. Analysis of the results.",
+          "publication_year": 1980,
+          "publication_date": "1980-01-01",
+          "type": "article",
+          "primary_location": {
+            "id": "mag:89777965",
+            "is_oa": false,
+            "landing_page_url": "https://www.cabdirect.org/abstracts/19812900982.html",
+            "pdf_url": null,
+            "source": null,
+            "license": null,
+            "license_id": null,
+            "version": null,
+            "is_accepted": false,
+            "is_published": false,
+            "raw_source_name": null,
+            "raw_type": null
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5102816432",
+                "display_name": "Michael S. Block",
+                "orcid": "https://orcid.org/0000-0003-2263-4277",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0003-2263-4277"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": true,
+              "raw_author_name": "Michael S. Block",
+              "raw_affiliation_strings": [],
+              "raw_orcid": "https://orcid.org/0000-0003-2263-4277",
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "9",
+            "issue": "3",
+            "first_page": "221",
+            "last_page": "247"
+          },
+          "cited_by_count": 2,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/W127397471?select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "35185"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W127397471",
+          "doi": null,
+          "ids": {
+            "openalex": "https://openalex.org/W127397471",
+            "mag": "127397471",
+            "pmid": "https://pubmed.ncbi.nlm.nih.gov/19335948"
+          },
+          "display_name": "Evidence of protective effect of BCG vaccination in persons at low risk of tuberculosis in Nordic countries.",
+          "publication_year": 2009,
+          "publication_date": "2009-04-01",
+          "type": "article",
+          "primary_location": {
+            "id": "pmid:19335948",
+            "is_oa": false,
+            "landing_page_url": "https://pubmed.ncbi.nlm.nih.gov/19335948",
+            "pdf_url": null,
+            "source": {
+              "id": "https://openalex.org/S4306525036",
+              "display_name": "PubMed",
+              "issn_l": null,
+              "issn": null,
+              "is_oa": false,
+              "is_in_doaj": false,
+              "is_core": false,
+              "listed_in": [],
+              "host_organization": "https://openalex.org/I1299303238",
+              "host_organization_name": "National Institutes of Health",
+              "host_organization_lineage": [
+                "https://openalex.org/I1299303238"
+              ],
+              "host_organization_lineage_names": [],
+              "type": "repository"
+            },
+            "license": null,
+            "license_id": null,
+            "version": "publishedVersion",
+            "is_accepted": true,
+            "is_published": true,
+            "raw_source_name": "The international journal of tuberculosis and lung disease : the official journal of the International Union against Tuberculosis and Lung Disease",
+            "raw_type": "Journal Article"
+          },
+          "authorships": [
+            {
+              "author_position": "first",
+              "author": {
+                "id": "https://openalex.org/A5029286144",
+                "display_name": "Arne Broch Brantsæter",
+                "orcid": "https://orcid.org/0000-0003-1723-0577",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0003-1723-0577"
+                ]
+              },
+              "institutions": [
+                {
+                  "id": "https://openalex.org/I1333353642",
+                  "display_name": "Norwegian Institute of Public Health",
+                  "ror": "https://ror.org/046nvst19",
+                  "country_code": "NO",
+                  "type": "government",
+                  "lineage": [
+                    "https://openalex.org/I1333353642",
+                    "https://openalex.org/I4210149801",
+                    "https://openalex.org/I4210163359"
+                  ]
+                }
+              ],
+              "countries": [
+                "NO"
+              ],
+              "is_corresponding": false,
+              "raw_author_name": "A B Brantsaeter",
+              "raw_affiliation_strings": [
+                "Department of Infectious Disease Epidemiology, Norwegian Institute of Public Health, Nydalen, Oslo, Norway. arne.brantsaeter@ulleval.no"
+              ],
+              "raw_orcid": null,
+              "affiliations": [
+                {
+                  "raw_affiliation_string": "Department of Infectious Disease Epidemiology, Norwegian Institute of Public Health, Nydalen, Oslo, Norway. arne.brantsaeter@ulleval.no",
+                  "institution_ids": [
+                    "https://openalex.org/I1333353642"
+                  ]
+                }
+              ]
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5061713483",
+                "display_name": "Victoria Romanus",
+                "orcid": null,
+                "observed_orcids": []
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "V Romanus",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "middle",
+              "author": {
+                "id": "https://openalex.org/A5103950691",
+                "display_name": "Peter Henrik Andersen",
+                "orcid": "https://orcid.org/0000-0002-1905-619X",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-1905-619X"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "P H Andersen",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            },
+            {
+              "author_position": "last",
+              "author": {
+                "id": "https://openalex.org/A5016752242",
+                "display_name": "Einar Heldal",
+                "orcid": "https://orcid.org/0000-0002-8741-792X",
+                "observed_orcids": [
+                  "https://orcid.org/0000-0002-8741-792X"
+                ]
+              },
+              "institutions": [],
+              "countries": [],
+              "is_corresponding": false,
+              "raw_author_name": "E Heldal",
+              "raw_affiliation_strings": [],
+              "raw_orcid": null,
+              "affiliations": []
+            }
+          ],
+          "biblio": {
+            "volume": "13",
+            "issue": "4",
+            "first_page": "440",
+            "last_page": "5"
+          },
+          "cited_by_count": 9,
+          "is_retracted": false,
+          "open_access": {
+            "is_oa": false,
+            "oa_status": "closed",
+            "oa_url": null,
+            "any_repository_has_fulltext": false
+          },
+          "referenced_works_count": 0
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

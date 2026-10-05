@@ -9,7 +9,7 @@
   "full_name": "Risk Of Bias In Non-randomised Studies — of Exposures (2023)",
   "family": "rob",
   "tool_version": "2023",
-  "definition_version": 1,
+  "definition_version": 2,
   "validator_version": "1.0.0",
   "reference_sha256": "9523e9c9e22358e92e3fbb949d0b7ac2faee58af1e43d9f73ee4274438c198b4",
   "source": {
@@ -118,6 +118,35 @@
       ]
     },
     {
+      "value": "weak_no",
+      "label": "WN",
+      "text": {
+        "hu": "Gyenge nem (nem, de a nem kontrollált zavarás valószínűleg nem számottevő)",
+        "en": "Weak no (no, but uncontrolled confounding was probably not substantial)"
+      },
+      "kind": "negative",
+      "severity": "some",
+      "aliases": [
+        "wn",
+        "weak no",
+        "gyenge nem"
+      ]
+    },
+    {
+      "value": "strong_no",
+      "label": "SN",
+      "text": {
+        "hu": "Erős nem (nem, és a nem kontrollált zavarás valószínűleg számottevő)",
+        "en": "Strong no (no, and uncontrolled confounding was probably substantial)"
+      },
+      "kind": "negative",
+      "aliases": [
+        "sn",
+        "strong no",
+        "eros nem"
+      ]
+    },
+    {
       "value": "no_information",
       "label": "NI",
       "text": {
@@ -199,7 +228,13 @@
       },
       "short": "D1",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "verdict_labels": {
+        "low": {
+          "hu": "Alacsony (kivéve a nem kontrollált zavaró tényezők miatti aggályt)",
+          "en": "Low risk of bias (except for concerns about uncontrolled confounding)"
+        }
+      }
     },
     {
       "id": "2",
@@ -219,7 +254,134 @@
       },
       "short": "D3",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "3-a",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "3.1",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "3.2",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "3.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "3.1",
+            "3.2"
+          ],
+          "text": {
+            "hu": "Szelekciós torzítás lehetősége, korrekcióval (3.3 I/VI) → némi aggály (konzervatív).",
+            "en": "Potential selection bias, corrected (3.3 Y/PY) → some concerns (conservative)."
+          }
+        },
+        {
+          "id": "3-b",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "3.1",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "3.2",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "3.3",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "3.1",
+            "3.2",
+            "3.3"
+          ],
+          "text": {
+            "hu": "Szelekciós torzítás lehetősége korrekció nélkül (3.3 N/VN/NI) → magas.",
+            "en": "Potential selection bias without correction (3.3 N/PN/NI) → high."
+          }
+        },
+        {
+          "id": "3-c",
+          "if": {
+            "any": [
+              {
+                "item": "3.1",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "3.2",
+                "in": [
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "3.1",
+            "3.2"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a beválasztásról → némi aggály.",
+            "en": "No information on selection → some concerns."
+          }
+        },
+        {
+          "id": "3-d",
+          "if": {
+            "always": true
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "A beválasztás nem függött az expozíciótól és a kimenettől, a követés az expozícióval kezdődött → alacsony (a 3.3 nem kérdés).",
+            "en": "Selection unrelated to exposure and outcome, follow-up starts with exposure → low (3.3 not asked)."
+          }
+        }
+      ]
     },
     {
       "id": "4",
@@ -229,7 +391,100 @@
       },
       "short": "D4",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "4-a",
+          "if": {
+            "item": "4.1",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Nem volt eltérő, a kimenetet befolyásoló expozíció utáni beavatkozás (4.1 N/VN) → alacsony.",
+            "en": "No differing post-exposure interventions affecting the outcome (4.1 N/PN) → low."
+          }
+        },
+        {
+          "id": "4-b",
+          "if": {
+            "all": [
+              {
+                "item": "4.1",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "4.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "4.1"
+          ],
+          "text": {
+            "hu": "Expozíció utáni beavatkozás, megfelelő elemzéssel (4.2 I/VI) → némi aggály (konzervatív).",
+            "en": "Post-exposure interventions with an appropriate analysis (4.2 Y/PY) → some concerns (conservative)."
+          }
+        },
+        {
+          "id": "4-c",
+          "if": {
+            "all": [
+              {
+                "item": "4.1",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "4.2",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "4.1",
+            "4.2"
+          ],
+          "text": {
+            "hu": "Expozíció utáni beavatkozás megfelelő elemzés nélkül (4.2 N/VN/NI) → magas.",
+            "en": "Post-exposure interventions without an appropriate analysis (4.2 N/PN/NI) → high."
+          }
+        },
+        {
+          "id": "4-d",
+          "if": {
+            "always": true
+          },
+          "tier": "some",
+          "because": [
+            "4.1"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ az expozíció utáni beavatkozásokról → némi aggály.",
+            "en": "No information on post-exposure interventions → some concerns."
+          }
+        }
+      ]
     },
     {
       "id": "5",
@@ -239,7 +494,131 @@
       },
       "short": "D5",
       "passes": null,
-      "applicability": false
+      "applicability": false,
+      "rules": [
+        {
+          "id": "5-a",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "5.1",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "5.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "5.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Hiányzó adat, de bizonyított, hogy nem torzított (5.3 I/VI) → alacsony.",
+            "en": "Missing data, with evidence that the result was not biased (5.3 Y/PY) → low."
+          }
+        },
+        {
+          "id": "5-b",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "5.1",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "5.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "5.3",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "5.1",
+            "5.2",
+            "5.3"
+          ],
+          "text": {
+            "hu": "Hiányzó adat, bizonyíték nélkül arra, hogy nem torzított (5.3 N/VN/NI) → magas (konzervatív).",
+            "en": "Missing data without evidence that the result was not biased (5.3 N/PN/NI) → high (conservative)."
+          }
+        },
+        {
+          "id": "5-c",
+          "if": {
+            "any": [
+              {
+                "item": "5.1",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "5.2",
+                "in": [
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "5.1",
+            "5.2"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a hiányzó adatokról → némi aggály.",
+            "en": "No information on missing data → some concerns."
+          }
+        },
+        {
+          "id": "5-d",
+          "if": {
+            "always": true
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Teljes vagy közel teljes adat, kizárás nélkül → alacsony (az 5.3 nem kérdés).",
+            "en": "Complete or nearly complete data, no exclusions → low (5.3 not asked)."
+          }
+        }
+      ]
     },
     {
       "id": "6",
@@ -269,8 +648,8 @@
       "domain": "1",
       "pass": null,
       "text": {
-        "hu": "Megfelelő elemzési módszerrel kontrollálták-e a szerzők az összes fontos zavaró tényezőt?",
-        "en": "Did the authors use an appropriate analysis method that controlled for all the important confounding factors?"
+        "hu": "Kontrollálták-e a szerzők az összes olyan fontos zavaró tényezőt, amelyre ez szükséges volt?",
+        "en": "Did the authors control for all the important confounding factors for which this was necessary?"
       },
       "tags": [
         "all"
@@ -282,9 +661,16 @@
       ],
       "applies_to": null,
       "help": {
-        "hu": "A TE előre rögzített listádhoz mérve, nem a cikk korrekciós táblázatához.",
-        "en": "Against your pre-specified list, not theirs."
-      }
+        "hu": "A ROBINS-E (2023) ennél a kérdésnél a „Nem” két fokozatát kéri: „gyenge nem” (a nem kontrollált zavarás valószínűleg nem számottevő → legalább „némi aggály”) és „erős nem” (valószínűleg számottevő → „magas”). A doménben a legjobb elérhető ítélet: „alacsony (kivéve a nem kontrollált zavaró tényezők miatti aggályt)”.",
+        "en": "ROBINS-E (2023) asks for two grades of 'No' here: 'weak no' (uncontrolled confounding probably not substantial → at least 'some concerns') and 'strong no' (probably substantial → 'high'). The best available judgement in this domain is 'low (except for concerns about uncontrolled confounding)'."
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "weak_no",
+        "strong_no",
+        "no_information"
+      ]
     },
     {
       "id": "1.2",
@@ -386,7 +772,14 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "item": "1.4",
+        "in": [
+          "yes",
+          "probably_yes"
+        ]
+      }
     },
     {
       "id": "2.1",
@@ -508,8 +901,8 @@
       "domain": "3",
       "pass": null,
       "text": {
-        "hu": "Alkalmaztak-e olyan korrekciós eljárást, amely valószínűleg kiküszöböli a szelekciós torzítást?",
-        "en": "Were adjustment techniques used that are likely to correct for selection bias?"
+        "hu": "Ha a 3.1 válasza I/VI vagy a 3.2 válasza N/VN: alkalmaztak-e olyan korrekciós eljárást, amely valószínűleg kiküszöböli a szelekciós torzítást?",
+        "en": "If Y/PY to 3.1 or N/PN to 3.2: were adjustment techniques used that are likely to correct for the presence of selection bias?"
       },
       "tags": [
         "all"
@@ -519,7 +912,37 @@
       "scopes": [
         "all"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha a 3.1 válasza I/VI vagy a 3.2 válasza N/VN",
+        "en": "If Y/PY to 3.1 or N/PN to 3.2"
+      },
+      "ask_if": {
+        "any": [
+          {
+            "item": "3.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "item": "3.2",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
     },
     {
       "id": "4.1",
@@ -574,7 +997,14 @@
         "no",
         "no_information",
         "not_applicable"
-      ]
+      ],
+      "ask_if": {
+        "item": "4.1",
+        "in": [
+          "yes",
+          "probably_yes"
+        ]
+      }
     },
     {
       "id": "5.1",
@@ -624,8 +1054,8 @@
       "domain": "5",
       "pass": null,
       "text": {
-        "hu": "Van-e bizonyíték arra, hogy a hiányzó adatok nem torzították az eredményt?",
-        "en": "Is there evidence that the result was not biased by missing data?"
+        "hu": "Ha az 5.1 válasza N/VN vagy az 5.2 válasza I/VI: van-e bizonyíték arra, hogy a hiányzó adatok nem torzították az eredményt?",
+        "en": "If N/PN to 5.1 or Y/PY to 5.2: is there evidence that the result was not biased by missing data?"
       },
       "tags": [
         "all"
@@ -639,7 +1069,37 @@
       "help": {
         "hu": "Például megnevezett hiányzási feltevés melletti többszörös imputálás vagy érzékenységi elemzés. A teljes esetes elemzés nem bizonyíték.",
         "en": "Multiple imputation under a stated missingness assumption, or a sensitivity analysis. Complete case analysis is not evidence."
-      }
+      },
+      "condition": {
+        "hu": "Ha az 5.1 válasza N/VN vagy az 5.2 válasza I/VI",
+        "en": "If N/PN to 5.1 or Y/PY to 5.2"
+      },
+      "ask_if": {
+        "any": [
+          {
+            "item": "5.1",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          {
+            "item": "5.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
     },
     {
       "id": "6.1",
@@ -807,7 +1267,7 @@
   ],
   "rollup": {
     "algorithm": "conservative",
-    "basis": "validator-compatible",
+    "basis": "robins-e-2023-criteria-conservative",
     "official": false,
     "overall": "worst",
     "tiers": {
@@ -816,12 +1276,12 @@
       "high": "high"
     },
     "label": {
-      "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos ROBINS-E algoritmus",
-      "en": "Validator-compatible conservative rule — NOT the official ROBINS-E algorithm"
+      "hu": "Konzervatív szabály a ROBINS-E (2023) útválasztása szerint — NEM a hivatalos ROBINS-E algoritmus",
+      "en": "Conservative rule following the ROBINS-E (2023) routing — NOT the official ROBINS-E algorithm"
     },
     "note": {
-      "hu": "Azt mutatja, amit a rögzített válaszok kikényszerítenek, és megnevezi a kiváltó kérdéseket. Ez NEM a hivatalos ROBINS-E folyamatábra; a doménítélet és az összítélet a Tiéd. Ha eltérsz az implikálttól, indokold (a döntés a naplóba kerül, X017). A „nagyon magas” ítéletet a szabály sosem adja: az emberi döntés.",
-      "en": "Shows what the recorded answers force and names the questions that forced it. This is NOT the official ROBINS-E flowchart; the domain and overall judgements are yours. If you depart from the implied judgement, give a reason (logged as a decision, X017). The rule never yields 'very high': that is a human decision."
+      "hu": "Azt mutatja, amit a rögzített válaszok kikényszerítenek, a ROBINS-E (Higgins és mtsai, Environ Int 2024;186:108602) útválasztását tiszteletben tartva: a korrekciós / robusztussági kérdések (3.3, 4.2, 5.3) csak akkor számítanak, ha az előző válaszok szelekcióra, expozíció utáni beavatkozásra vagy hiányzó adatra utalnak; az 1.1 „gyenge nem” legalább „némi aggály”, az „erős nem” „magas”. Ez NEM a hivatalos ROBINS-E algoritmus; a „nagyon magas” ítéletet a szabály sosem adja. Ha eltérsz az implikálttól, indokold (X017). A ROBINS-E első változata csak követéses (kohorsz) vizsgálatokra való.",
+      "en": "Shows what the recorded answers force, respecting the ROBINS-E (Higgins et al., Environ Int 2024;186:108602) routing: the correction / robustness questions (3.3, 4.2, 5.3) only count when earlier answers indicate selection, post-exposure interventions or missing data; a 'weak no' to 1.1 gives at least 'some concerns', a 'strong no' gives 'high'. This is NOT the official ROBINS-E algorithm; the rule never yields 'very high'. Give a reason if you depart from the implied judgement (X017). The first version of ROBINS-E covers follow-up (cohort) studies only."
     },
     "differences_from_validator": [
       {
@@ -852,6 +1312,10 @@
     {
       "hu": "Zárd azzal, hogy az azonosított torzítások merre tolnák a becslést, és megmagyarázhatják-e az eredményt — a ROBINS-E ezt kifejezetten kéri.",
       "en": "Close by stating the direction in which the identified biases would push the estimate — ROBINS-E asks for this explicitly."
+    },
+    {
+      "hu": "A ROBINS-E jelenlegi (2023) változata csak követéses (kohorsz) vizsgálatokra vonatkozik; eset-kontroll elrendezésre még nincs ROBINS-E-változat (az eszköz-javaslat ezért nem ajánlja).",
+      "en": "The current (2023) ROBINS-E addresses follow-up (cohort) studies only; there is no ROBINS-E variant for case-control designs yet (so the instrument router does not suggest it)."
     }
   ],
   "validator_differences": [
@@ -880,6 +1344,33 @@
       "reason": {
         "hu": "Az összehasonlítható kimenetmérés a jó válasz (Igen = rendben).",
         "en": "Comparable outcome assessment is the good answer (Yes = fine)."
+      }
+    },
+    {
+      "item": "1.1",
+      "validator": "Y/PY/PN/N/NI",
+      "here": "Y/PY/WN/SN/NI",
+      "reason": {
+        "hu": "ROBINS-E (2023): az 1.1-nél „gyenge nem” és „erős nem” választható.",
+        "en": "ROBINS-E (2023): 1.1 offers 'weak no' and 'strong no'."
+      }
+    },
+    {
+      "item": "3.3",
+      "validator": "feltétel nélkül",
+      "here": "If Y/PY to 3.1 or N/PN to 3.2 (NA)",
+      "reason": {
+        "hu": "A korrekciós kérdés csak szelekciós probléma esetén kérdés; különben „Nem” válasza hamisan „magas”-at adott.",
+        "en": "The correction question only applies when selection is a problem; otherwise a 'No' wrongly forced 'high'."
+      }
+    },
+    {
+      "item": "5.3",
+      "validator": "feltétel nélkül",
+      "here": "If N/PN to 5.1 or Y/PY to 5.2 (NA)",
+      "reason": {
+        "hu": "A robusztussági kérdés csak hiányzó adat esetén kérdés.",
+        "en": "The robustness question only applies when data are missing."
       }
     }
   ]

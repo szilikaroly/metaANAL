@@ -47,6 +47,27 @@ A build során felvett, nem kötelező mezők (a régi dokumentumok érvényesek
   `screening_status`, `eligibility`; `provenance[].confidence`; `conflicts[].arm`.
 - **state**: `exclusion_reasons[].domain` (a PICO-terület, amelyhez az ok tartozik).
 
+## Additív bővítések (integráció és élő próba, 2026-10-05)
+
+A sémák nem változtak (a mezők a meglévő objektumokba additívan kerülnek; a sémák nem tiltják őket):
+
+- **review**: `flags` (`retracted`, `erratum`, `narrative_suspect`, `updates`, `unverified_live`) és `proposal`
+  (`{action: exclude|check, reason{hu,en}}`) — a felkutatás gépi jelzései a fájlban is megmaradnak;
+  `fulltext.note` (`pmc_no_body`: a PMC csak címlapot adott); `extraction_runs[].reflist_tried`
+  (`[{source, n, note}]`, `note: list_quota` = OpenAlex listás keret helyett egyedi lekérések) és `reflist_source`;
+  `candidates[].role_origin` (`{extracted: unknown, set_by: d-…}` — az EP2-ben megerősített irodalomjegyzék-
+  hivatkozás bevont vizsgálattá válik).
+- **decision**: `id_confirm` célja lehet `record` is, `value: no_identifier` — emberi nyilatkozat, hogy a közleménynek
+  nincs API-ban elérhető azonosítója (indoklás kötelező; csak feloldatlan rekordra).
+- **merged**: `studies[].flags` új értéke `no_identifier_acknowledged` (az `unresolved_ids` helyett, ha a fenti
+  nyilatkozat megvan); a lezárás (EP5) `unresolved_ids` mellett nem engedett (H003).
+- **state**: alap `criteria` (`E1`: nem elsődleges közlemény — publikációtípus-javaslat; `E2`: emberi vizsgálat), ha
+  az `init` nem kapott saját kritériumot; az `X6`/`X1` ok ezekhez kötve.
+- **studies**: új javaslat-szabály `L4-title-series` (`same_study`, `possible`): (majdnem) azonos cím, legalább
+  2 év különbség — követéses jelentés-sorozat tippje.
+- **resolution notes**: `accepted_author_form_differs`, `accepted_year_differs` (a cím szó szerint egyezik, a
+  szerzőalak/év eltérése tűrt — azonosító-ellenőrzésnél).
+
 ## Elvek, amelyeket a sémák kikényszerítenek
 
 - **N1 — nincs kitalált azonosító**: minden azonosító `idval` (`value`, `source`, `via`, `at`); a `review`/`user`

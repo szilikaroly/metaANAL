@@ -450,6 +450,37 @@ def default_exclusion_reasons():
             for c, dom, hu, en in items]
 
 
+#: az alap gépi előszűrési kritériumok (csak JAVASLATOT adnak — a döntés emberi, N3). Élő próbán (BCG) a CLI
+#: ``init``-je kritériumok nélkül indult, így a ``screen propose`` 245 rekordra 0 javaslatot adott (a TERV 10.
+#: fejezete szerinti „Review", „Editorial" kizárási javaslat sem született).
+DEFAULT_PUB_TYPES_EXCLUDE = ("Review", "Systematic Review", "Meta-Analysis", "Editorial", "Comment",
+                             "Practice Guideline", "Guideline", "News", "Retracted Publication")
+
+
+def default_criteria():
+    """Alap kritériumok, ha a felhasználó (vagy a ``ma-tervezo`` protokollja) nem adott meg sajátot."""
+    return [
+        {"id": "E1", "type": "exclude", "domain": "S",
+         "text": "Nem elsődleges közlemény (áttekintés, metaanalízis, szerkesztőségi, kommentár, irányelv) — gépi "
+                 "javaslat a PubMed publikációtípusa alapján; a döntés emberi.",
+         "machine_hint": {"pub_types_exclude": list(DEFAULT_PUB_TYPES_EXCLUDE), "exclude_retracted": True}},
+        {"id": "E2", "type": "include", "domain": "P",
+         "text": "Emberi vizsgálat — a csak állatkísérletként indexelt közlemény kizárási javaslatot kap.",
+         "machine_hint": {"humans_only": True}},
+    ]
+
+
+def _default_reasons_for(criteria):
+    reasons = default_exclusion_reasons()
+    if criteria is None:  # az alap kritériumokhoz kötjük az okokat (a gépi javaslat így okkódot is kap)
+        for r in reasons:
+            if r["code"] == "X6":
+                r["criterion"] = "E1"
+            if r["code"] == "X1":
+                r["criterion"] = "E2"
+    return reasons
+
+
 def _split_terms(text):
     """Szabadszavas kifejezések szétbontása (``;``, ``|``, sortörés vagy `` OR `` mentén; a vessző a kifejezés része
     maradhat)."""
@@ -526,8 +557,8 @@ def new_state(question, pico=None, mode="harvest", criteria=None, exclusion_reas
         "updated": ts,
         "mode": mode,
         "pico": _norm_pico(pico, question),
-        "criteria": list(criteria or []),
-        "exclusion_reasons": list(exclusion_reasons or default_exclusion_reasons()),
+        "criteria": list(criteria) if criteria is not None else default_criteria(),
+        "exclusion_reasons": list(exclusion_reasons or _default_reasons_for(criteria)),
         "sources": srcs,
         "steps": dict((s, {"status": "not_started", "updated": None, "run_id": None, "message": None})
                       for s in STEPS),

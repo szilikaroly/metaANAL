@@ -3,7 +3,7 @@
   "$id": "urn:szk:contract:ma.grade:1",
   "$comment": "a tervből (próza) — pontosítandó",
   "title": "szk.ma.grade/v1 — GRADE-ítélet kimenetenként (06_kezirat/grade/<kimenet>.grade.json; terv 4.14, E10)",
-  "description": "Az öt leminősítési domén EMBERI ítélete (rating, step, rationale) a motor tanácsa mellett (advisory: számok; suggestion: javasolt ítélet, „Miért?” szöveg, KB-azonosítók — grade_help.advice). A motor nem dönt: az advice() piszkozatában minden ítélet null. A rating és a step összetartozik (not serious 0, serious −1, very serious −2). Publikációs torzítás (11. döntés, 4. pont): undetected 0; strongly suspected −1 (−2 csak indoklással); suspected lépés nélkül FELOLDATLAN (status: unresolved, step: null) — 0 vagy −1 csak indoklással (status: resolved); ítélet nélkül status: open. A certainty null, amíg bármely domén ítélete hiányzik vagy feloldatlan. Rögzítés: projekt.record_grade_doc → projekt.add_grade előjeles lépés-szövegekkel (a grade_consistency így változatlanul ellenőriz); X019: feloldatlan publikációs torzítás S13-tól hiba.",
+  "description": "Az öt leminősítési domén EMBERI ítélete (rating, step, rationale) a motor tanácsa mellett (advisory: számok; suggestion: javasolt ítélet, „Miért?” szöveg, KB-azonosítók — grade_help.advice). A motor nem dönt: az advice() piszkozatában minden ítélet null. A rating és a step összetartozik (not serious 0, serious −1, very serious −2). Publikációs torzítás (11. döntés, 4. pont): undetected 0; strongly suspected −1 (−2 csak indoklással); suspected lépés nélkül FELOLDATLAN (status: unresolved, step: null) — 0 vagy −1 csak indoklással (status: resolved); ítélet nélkül status: open. A certainty null, amíg bármely domén ítélete hiányzik vagy feloldatlan. Rögzítés: projekt.record_grade_doc → projekt.add_grade előjeles lépés-szövegekkel (a grade_consistency így változatlanul ellenőriz); X019: feloldatlan publikációs torzítás S13-tól hiba. Egy GRADE-szótár (contracts:m2): a kanonikus alak szóközös ('very low', 'not serious', 'very serious', 'strongly suspected', 'not important'); az aláhúzásos alakok ('very_low', 'not_serious' …) csak bemeneten elfogadott álnevek, mentéskor a kanonikusra normalizálódnak. A bizonyosság egyetlen motor-szabálya (projekt.grade_arithmetic): kiindulás − Σ|lépés|, a felminősítés csak leminősítés nélkül számít (GRADE 9; D-S13-009). A számolt szint (certainty_source: computed) csak előtöltés: a rögzítéshez ember erősíti meg (certainty_source: human; GRADE-09).",
   "type": "object",
   "required": [
     "schema",
@@ -53,6 +53,16 @@
         "string",
         "null"
       ]
+    },
+    "design": {
+      "enum": [
+        "RCT",
+        "NRSI",
+        "observational",
+        "mixed",
+        null
+      ],
+      "description": "a bizonyíték elrendezése (SoF „Résztvevők (vizsgálatok)” cellája, felminősítési tanács) — nem a kiindulásból következik: ROBINS-I-gyel értékelt NRSI is indulhat magasról (GRADE 18), mégsem RCT; null: ismeretlen"
     },
     "domains": {
       "type": "object",
@@ -159,7 +169,7 @@
         "human",
         null
       ],
-      "description": "computed: a kiindulásból és a lépésekből; human: az ember adta meg (eltérésnél consistency_warning)"
+      "description": "computed: a kiindulásból és a lépésekből (projekt.grade_arithmetic) — csak előtöltés, így nem rögzíthető; human: az ember adta meg vagy erősítette meg (eltérésnél consistency_warning). A jóvá nem hagyott AI-vázlat szintje nem emberi (6. döntés)."
     },
     "consistency_warning": {
       "type": [

@@ -24,6 +24,7 @@ Fájlt nem ír: a hívó (``discover``/CLI) menti a ``reviews/<id>.json``-t (``t
 from __future__ import absolute_import
 
 import hashlib
+import html
 import math
 import re
 import unicodedata
@@ -176,6 +177,20 @@ def _date_str(value, start=True):
     if re.match(r"^\d{4}[-/]\d{2}[-/]\d{2}$", s):
         return s.replace("/", "-")
     raise ValueError("Érvénytelen dátum: %r (várt: ÉÉÉÉ, ÉÉÉÉ-HH vagy ÉÉÉÉ-HH-NN)." % value)
+
+
+_TAG_RE = re.compile(r"<[^<>]{0,200}>")
+
+
+def clean_abstract(text):
+    """Az absztrakt szövege jelölések nélkül. Az Europe PMC ``abstractText``-je strukturált absztraktnál XML/HTML-
+    jelölést tartalmaz (``</sec><sec id="st3"><title>RESULTS</title>``) — élő próbán ez idézetbe került, és a
+    ``verify`` joggal teljes-szöveg gyanút (H019) jelzett."""
+    if not text:
+        return text
+    t = _TAG_RE.sub(" ", text)
+    t = html.unescape(t)
+    return re.sub(r"\s+", " ", t).strip()
 
 
 def _fold(text):
@@ -940,6 +955,7 @@ def _candidate(cluster, rel_terms, today, weights, http):
             if s == src and a and not abstract:
                 abstract = a
                 abs_container = "pubmed:%s" % norm_pmid(rec.get("pmid")) if norm_pmid(rec.get("pmid")) else src
+    abstract = clean_abstract(abstract)
     preview = []
     sd = extract_search_date(abstract, "Abstract", abs_container) if abstract else None
     k = extract_k(abstract, "Abstract", abs_container) if abstract else None

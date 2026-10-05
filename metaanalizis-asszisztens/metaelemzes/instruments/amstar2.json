@@ -9,7 +9,7 @@
   "full_name": "A MeaSurement Tool to Assess systematic Reviews, version 2",
   "family": "review",
   "tool_version": "2017",
-  "definition_version": 1,
+  "definition_version": 2,
   "validator_version": "1.0.0",
   "reference_sha256": "5d537ced232d0fb404f515fa55bc0f8612e240133c3ac88d493351c4e84a2e80",
   "source": {
@@ -417,7 +417,43 @@
       "help": {
         "hu": "Kielégítő módszerrel értékelték az egyes bevont vizsgálatok torzítási kockázatát (RCT-re és NRSI-re külön ítélve). RCT — részben igen: a nem rejtett besorolás, valamint a betegek és a kimenetet értékelők vakításának hiánya (objektív kimenetnél, pl. összhalálozás, a vakítás nem szükséges); igen: ezen felül a nem valódi véletlen besorolási szekvencia és a közölt eredmény szelektív kiválasztása több mérés vagy elemzés közül. NRSI — részben igen: zavaró tényezők és szelekciós torzítás; igen: ezen felül az expozíció és a kimenetek megállapításának módszerei, valamint a közölt eredmény szelektív kiválasztása több mérés vagy elemzés közül.",
         "en": "For RCTs: allocation concealment and blinding at minimum. For non-randomised studies: confounding and selection at minimum. A review that reports \"quality was assessed using the Jadad scale\" is No — a scale is not a risk-of-bias assessment."
-      }
+      },
+      "parts": [
+        {
+          "id": "RCT",
+          "label": {
+            "hu": "Randomizált vizsgálatok (RCT)",
+            "en": "Randomised controlled trials (RCT)"
+          },
+          "answers": [
+            "yes",
+            "partial_yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Csak NRSI-t von be",
+            "en": "Includes only NRSI"
+          }
+        },
+        {
+          "id": "NRSI",
+          "label": {
+            "hu": "Nem randomizált vizsgálatok (NRSI)",
+            "en": "Non-randomised studies of interventions (NRSI)"
+          },
+          "answers": [
+            "yes",
+            "partial_yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Csak RCT-t von be",
+            "en": "Includes only RCTs"
+          }
+        }
+      ]
     },
     {
       "id": "10",
@@ -476,7 +512,41 @@
       "condition": {
         "hu": "Ha volt metaanalízis",
         "en": "If meta-analysis was performed"
-      }
+      },
+      "parts": [
+        {
+          "id": "RCT",
+          "label": {
+            "hu": "Randomizált vizsgálatok (RCT)",
+            "en": "Randomised controlled trials (RCT)"
+          },
+          "answers": [
+            "yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Nem volt RCT-metaanalízis (vagy csak NRSI)",
+            "en": "No meta-analysis of RCTs (or only NRSI)"
+          }
+        },
+        {
+          "id": "NRSI",
+          "label": {
+            "hu": "Nem randomizált vizsgálatok (NRSI)",
+            "en": "Non-randomised studies of interventions (NRSI)"
+          },
+          "answers": [
+            "yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Nem volt NRSI-metaanalízis (vagy csak RCT)",
+            "en": "No meta-analysis of NRSI (or only RCTs)"
+          }
+        }
+      ]
     },
     {
       "id": "12",
@@ -666,6 +736,10 @@
     {
       "hu": "A „Részben igen” csak a 2., 4., 7., 8. és 9. tételnél, a „Nem volt metaanalízis” csak a 11., 12. és 15. tételnél adható (KB AMSTAR2-00).",
       "en": "'Partial yes' only on items 2, 4, 7, 8, 9; 'No meta-analysis' only on items 11, 12, 15."
+    },
+    {
+      "hu": "A hivatalos AMSTAR 2 űrlap (Shea és mtsai, BMJ 2017;358:j4008) a 9. és a 11. tételt RCT-re és NRSI-re KÜLÖN ítélteti (résztételek: parts.RCT, parts.NRSI; „csak NRSI-t / csak RCT-t von be” = Nem alkalmazható). A tétel értéke a részekből adódik: bármelyik rész „Nem” → a tétel „Nem” (kritikus hiba); különben „Részben igen”, ha van ilyen rész; különben „Igen”.",
+      "en": "The official AMSTAR 2 form (Shea et al., BMJ 2017;358:j4008) rates items 9 and 11 SEPARATELY for RCTs and NRSI (parts.RCT, parts.NRSI; 'includes only NRSI / only RCTs' = Not applicable). The item value follows from the parts: 'No' on either part → the item is 'No' (critical flaw); otherwise 'Partial yes' if any part is; otherwise 'Yes'."
     }
   ],
   "validator_differences": [

@@ -3,7 +3,7 @@
   "$id": "urn:szk:contract:ma.sof:1",
   "$comment": "a tervből (próza) — pontosítandó",
   "title": "szk.ma.sof/v1 — Summary of Findings (06_kezirat/sof/<kimenet>.sof.json; terv 4.14, E10)",
-  "description": "Kimenetenként egy (vagy több) SoF-sor; minden szám a motoré (grade_help.sof): résztvevők és k (totals), relatív hatás (back_transformed.estimate_ci — a display_text a motor szövege), alapkockázatonként abszolút hatás /1000 CI-vel (RR: ACR·RR; OR: ACR·OR/(1−ACR+ACR·OR); RD: maga az RD), bizonyosság szimbólummal, GRADE-megfogalmazás és lábjegyzetek. A sources a cellák forrásmezőit nevezi meg (X008).",
+  "description": "Kimenetenként egy (vagy több) SoF-sor; minden szám a motoré (grade_help.sof): résztvevők és k (totals), relatív hatás (back_transformed.estimate_ci — a display_text a motor szövege), alapkockázatonként abszolút hatás /1000 CI-vel (RR: ACR·RR; OR: ACR·OR/(1−ACR+ACR·OR); RD: maga az RD), bizonyosság szimbólummal, GRADE-megfogalmazás és lábjegyzetek. A sources a cellák forrásmezőit nevezi meg (X008). A bizonyosság csak a kimenet RÖGZÍTETT GRADE-ítéletéé lehet (ugyanarra a futásra; 4. döntés, methodology:M6): a jóvá nem hagyott AI-vázlat szintje nem kerül a táblába (6. döntés), a feloldatlan „gyanított” publikációs torzítású kimenetnek nincs szintje (X019), a még nem rögzített GRADE szintje ideiglenes (certainty_basis: draft) — ilyenkor a save_sof elutasít, az X008 jelez. A design az elrendezés (nem a GRADE-kiindulás).",
   "type": "object",
   "required": [
     "schema",
@@ -190,8 +190,11 @@
           "enum": [
             "RCT",
             "observational",
+            "NRSI",
+            "mixed",
             null
-          ]
+          ],
+          "description": "a bizonyíték elrendezése: a GRADE-ítélet design mezőjéből, a hívó paraméteréből vagy a studies.json-ból — nem a kiindulásból (ROBINS-I-gyel értékelt NRSI is indul magasról; M9)"
         },
         "studies_text": {
           "$ref": "urn:szk:contract:common:1#/$defs/i18n"
@@ -229,7 +232,19 @@
             "low",
             "very low",
             null
-          ]
+          ],
+          "description": "kanonikus szóközös alak; a bemeneti 'very_low' álnév 'very low'-ra normalizálódik"
+        },
+        "certainty_basis": {
+          "enum": [
+            "recorded",
+            "draft",
+            "ai_draft",
+            "unresolved",
+            "parameter",
+            null
+          ],
+          "description": "a bizonyosság forrása: recorded — rögzített GRADE (végleges); draft — még nem rögzített GRADE (ideiglenes, nem menthető); ai_draft — jóvá nem hagyott AI-vázlat (szint nélkül); unresolved — feloldatlan publikációs torzítás (szint nélkül); parameter — hívó adta, GRADE nélkül (nem menthető)"
         },
         "certainty_symbols": {
           "type": [
