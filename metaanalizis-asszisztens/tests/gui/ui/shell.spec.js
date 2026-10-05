@@ -314,6 +314,13 @@ async function tabUntil(page, id, max) {
     const calls = await p3.evaluate(() => window.MA.dev.fixtures.calls.filter((c) => c.path !== '/api/session').every((c) => c.headers['X-MA-Token'] === window.MA.dev.fixtures.TOKEN));
     check(calls, 'fixture-módban is minden kérés tokennel megy');
     check(srv.state.requests.filter((r) => r.path.startsWith('/api/') && r.query && r.query.fixtures).length === 0, 'fixture-módban nincs hálózati API-kérés');
+    // a tömörített i18n-csomag („lz1”) kicsomagolása gyors és teljes (lineáris idejű dekóder)
+    const i18nLoad = await p3.evaluate(() => {
+      const t0 = performance.now();
+      for (let i = 0; i < 5; i++) { window.MA.i18n._reload(); }
+      return { ms: (performance.now() - t0) / 5, hu: window.MA.i18n.keys('hu').length, en: window.MA.i18n.keys('en').length };
+    });
+    check(i18nLoad.ms < 60 && i18nLoad.hu > 1000 && i18nLoad.hu === i18nLoad.en, 'i18n-csomag kicsomagolása < 60 ms, teljes (' + JSON.stringify(i18nLoad) + ')');
     check(err3.length === 0, 'nincs konzolhiba: ' + err3.join(' || '));
   });
 
