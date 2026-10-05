@@ -498,6 +498,11 @@ class TestBubbleBlock(_Tmp):
         self.assertIsNone(doc_of(BCG, measure="RR")[2]["bubble"])
         self.assertIsNone(doc_of(BCG, measure="RR", moderators=["allokáció"])[2]["bubble"])          # kategóriás
         self.assertIsNone(doc_of(BCG, measure="RR", moderators=["szélesség", "év"])[2]["bubble"])    # kettő
+        for opts, want in (({"moderators": ["szélesség"]}, ("szélesség", "szélesség")), ({"moderators": ["allokáció"]}, None),
+                           ({"moderators": ["szélesség", "év"]}, None), ({}, None)):
+            out, es = analyze(BCG, measure="RR", **opts)
+            self.assertEqual(pipeline.bubble_moderator(out, es), want)
+            self.assertEqual(pipeline.bubble_moderator(out), want)          # es nélkül (pl. a riportból) ugyanaz
         out, es, doc = doc_of(BCG, measure="RR", moderators=["év"])
         self.assertEqual(doc["bubble"]["moderator"]["name"], "year")       # kanonikus kulcs, eredeti címke
         self.assertEqual(doc["bubble"]["moderator"]["label"], {"hu": "év", "en": "év"})
