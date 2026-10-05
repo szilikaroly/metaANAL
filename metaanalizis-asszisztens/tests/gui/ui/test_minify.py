@@ -61,6 +61,9 @@ class MinifyJsTests(unittest.TestCase):
         self.assertEqual(mj("function f(s) { return /x+/i.test(s); }"), "function f(s){return/x+/i.test(s);}\n")
         self.assertEqual(mj("x = a.split(/,\\s*/)"), "x=a.split(/,\\s*/)\n")
 
+    def test_line_separator_allowed_in_string(self):
+        self.assertEqual(mj("var s = 'a\u2028b';"), "var s='a\u2028b';\n")
+
     def test_template_literals(self):
         src = "var t = `a ${ {x: 1}.x } b\n  c`;"
         self.assertEqual(mj(src), "var t=`a ${{x:1}.x} b\n  c`;\n")

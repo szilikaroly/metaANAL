@@ -461,8 +461,8 @@ _JS_PUNCT_RE = re.compile("|".join(re.escape(p) for p in sorted(
 _JS_NUM_RE = re.compile(r"0[xX][0-9a-fA-F]+|0[oO][0-7]+|0[bB][01]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?")
 _JS_IDENT_RE = re.compile(r"(?:[A-Za-z_$]|[^\x00-\x7f])(?:[\w$]|[^\x00-\x7f])*")
 _JS_PLAIN_KEY_RE = re.compile(r"^[A-Za-z_$][A-Za-z0-9_$]*$")
-_JS_WS = " \t\v\f ﻿"
-_JS_NL = "\n\r  "
+_JS_WS = " \t\v\f\u00a0\ufeff"
+_JS_NL = "\n\r\u2028\u2029"
 _JS_DIGITS = "0123456789"
 _JS_IDENT_CHAR = re.compile(r"[\w$\\]|[^\x00-\x7f]")
 # kulcsszavak, amelyek után '/' reguláris kifejezést nyit (nem osztást)
@@ -512,7 +512,7 @@ def _js_tokens(text):
         if c in "'\"":
             j = i + 1
             while True:
-                if j >= n or text[j] in _JS_NL:
+                if j >= n or text[j] in "\n\r":                 # U+2028/2029 ES2019 óta megengedett
                     raise MinifyError("lezáratlan sztring (%d)" % i)
                 if text[j] == "\\":
                     j += 2                                  # escape (a sorfolytatás \⏎ is)

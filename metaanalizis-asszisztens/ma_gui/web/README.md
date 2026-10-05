@@ -261,6 +261,25 @@ Fixture-fájl: `{"description": "…", "routes": [{"method": "GET", "path": "/ap
   `stale`, `participants_text`, `rob_high`, `grade.certainty`, `primary.i2_text`).
 - A HTML-ben a `{{CSP_NONCE}}` helyeket válaszonként a szerver cseréli.
 
+### Integrációs állapot (2026-10-05, a termék-build a valódi `ma_gui` szerverrel, szigorú CSP mellett)
+
+A `dist/index.html`-t a szerver `ma_gui/routes/static.py` útvonala szolgálja ki (a `{{CSP_NONCE}}` csere
+egyezik); CSP-sértés és JS-kivétel nincs, az oldalon belüli önteszt (`?selftest=1`) zöld.
+
+- **Egyezik a szerverrel:** `POST /api/session` (`launch_code` → `data.token`), `GET /api/project`,
+  `GET /api/privacy`, `POST /api/privacy/apply`, `GET /api/capabilities` (+ `/refresh`), `GET /api/engine`,
+  `GET /api/changes`, `GET/PUT /api/table`, `GET/PUT /api/provenance`, `GET/PUT /api/documents`,
+  `POST /api/fileurl` (`{doc}` vagy `{doc: null, path}`), `GET /api/log/<kind>`, `POST /api/log/*`,
+  `GET /api/kb/search`, `GET /api/kb/item/<id>`.
+- **A szerveren még nincs (a felület helyben, szövegként jelzi a 404-et, a többi rész működik):**
+  `POST /api/validate`, `POST /api/convert`, `GET/PUT /api/specs/<név>`, `POST /api/analyze`,
+  `GET /api/jobs/<id>`, `GET /api/runs` (+ `/<id>/plot`), `GET /api/kb/rules?field=`, `GET /api/prisma`,
+  `PUT /api/prisma/manual`, `GET/PUT /api/studies`, `GET /api/audit/project`, `POST /api/export/{audit,snapshot}`.
+  A várt kérés-/válaszalakokat a képernyőmodulok fejléce és a fixture-ök (`fixtures/*.json`) rögzítik.
+- **Motor-oldali egyeztetés:** a `szk.ma.plot/v2`-n túli szövegmezők (tanulmányonkénti `weight_text`,
+  az összesítő `p_text`/`pi_text`/`pi_label`/`het_text`, a funnel/Doi/LOO/kumulatív tengelyek és szövegek,
+  a befolyás `<mező>_text`-jei) — a felület ezekből ír ki számot; hiányzó mező → „—”.
+
 ## KIEGÉSZÍTÉS (folyamat-ágens, 2026-10-05) — Folyamat és audit képernyők, „Miért?” komponens
 
 Fájlok: `src/components/{proc,why}.js`, `src/screens/{overview,prisma,studies,log,capabilities,export}.js`,
