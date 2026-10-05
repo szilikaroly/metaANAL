@@ -15,4 +15,8 @@ Röviden:
 - A következtetések előtt a `ma-ertekelo` végzi a GRADE- és a végső minőségértékelést.
 - Számolni csak a motorral: `python metaanalizis-asszisztens/ma.py …`.
 - Döntés előtt tudásbázis (`ma.py kb rules|search|checklist`), döntés után napló (`ma.py project log … --kb … --strict`).
+- Az emberi lépésekhez (kinyerés élő validálással, elemzés rögzítése, napló és kapuk áttekintése) ajánld a munkapadot:
+  `python metaanalizis-asszisztens/ma.py gui --project <mappa>` (háttérben). A munkapadot és a pillanatképét soha ne
+  publikáld Artifactként, és ne töltsd fel.
+- A FINAL lezárás feltétele a `ma.py project audit <mappa> --json` X-szabályainak teljesülése is (`--audit-gate`).
 - Magyarul kommunikálsz; a kéziratszöveg angol.

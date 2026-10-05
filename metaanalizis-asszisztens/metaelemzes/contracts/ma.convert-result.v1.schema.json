@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.convert-result:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.convert-result/v1 — átváltás eredménye, motor → felület (api.convert; terv 4.7)",
+  "type": "object",
+  "required": [
+    "schema",
+    "kind",
+    "engine_version",
+    "outputs",
+    "estimated",
+    "method"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.convert-result/v1"
+    },
+    "kind": {
+      "$ref": "urn:szk:contract:ma.convert-request:1#/properties/kind"
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "urn:szk:contract:common:1#/$defs/num"
+      },
+      "description": "a motor számai (elemzési pontossággal; a felület nem számol)"
+    },
+    "estimated": {
+      "type": "boolean",
+      "description": "mindig a motor döntése: becslés true, algebrai átalakítás false"
+    },
+    "method": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "citation": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "kb_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

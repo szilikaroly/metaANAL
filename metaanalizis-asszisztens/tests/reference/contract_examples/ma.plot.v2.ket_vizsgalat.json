@@ -1,0 +1,265 @@
+{
+  "schema": "szk.ma.plot/v2",
+  "meta": {
+    "engine_version": "0.2.0",
+    "run_id": "20261004T211200Z-a1f3c2",
+    "data_sha256": "a1f3c20000000000000000000000000000000000000000000000000000000000",
+    "spec_sha256": "5e00000000000000000000000000000000000000000000000000000000000000"
+  },
+  "measure": "RR",
+  "scale": {
+    "analysis": "log",
+    "ratio": true,
+    "null_analysis": 0.0,
+    "null_display": 1.0
+  },
+  "level": 0.95,
+  "axis": {
+    "domain": [
+      -2.5,
+      1.0
+    ],
+    "ticks": [
+      {
+        "at": -2.302585,
+        "text": "0,1"
+      },
+      {
+        "at": 0.0,
+        "text": "1"
+      }
+    ],
+    "title": {
+      "hu": "RR (log-skálán ábrázolva)",
+      "en": "RR (log scale)"
+    }
+  },
+  "labels": {
+    "left": "oltás jobb",
+    "right": "kontroll jobb",
+    "title": null
+  },
+  "columns": [
+    {
+      "id": "events1",
+      "title": {
+        "hu": "Esemény/N (1. kar)",
+        "en": "Events/N (arm 1)"
+      }
+    }
+  ],
+  "studies": [
+    {
+      "row_uid": "r7f3a2b",
+      "row_index": 0,
+      "study_id": null,
+      "label": "Aronson 1948",
+      "section": null,
+      "y": -0.889,
+      "lo": -2.008,
+      "hi": 0.229,
+      "weight_pct": 45.2,
+      "weight_fixed_pct": null,
+      "cells": {
+        "events1": "4/123",
+        "events2": "11/139"
+      },
+      "display": {
+        "est": 0.411,
+        "lo": 0.134,
+        "hi": 1.257
+      },
+      "display_text": {
+        "hu": "0,41 [0,13; 1,26]",
+        "en": "0.41 [0.13; 1.26]"
+      },
+      "clip": {
+        "left": false,
+        "right": false
+      },
+      "flags": {
+        "estimated": false,
+        "rob": "low",
+        "zero_cell_corrected": false,
+        "influential": false,
+        "outlier": false
+      },
+      "source": {
+        "doc": "pmid:20123456",
+        "page": 4,
+        "locator": "Table 2"
+      }
+    },
+    {
+      "row_uid": "r9k2m4p",
+      "row_index": 1,
+      "study_id": null,
+      "label": "Ferguson 1949",
+      "section": null,
+      "y": -1.585,
+      "lo": -2.45,
+      "hi": -0.721,
+      "weight_pct": 54.8,
+      "weight_fixed_pct": null,
+      "cells": {
+        "events1": "4/123",
+        "events2": "11/139"
+      },
+      "display": {
+        "est": 0.205,
+        "lo": 0.086,
+        "hi": 0.486
+      },
+      "display_text": {
+        "hu": "0,20 [0,09; 0,49]",
+        "en": "0.20 [0.09; 0.49]"
+      },
+      "clip": {
+        "left": false,
+        "right": false
+      },
+      "flags": {
+        "estimated": false,
+        "rob": "low",
+        "zero_cell_corrected": false,
+        "influential": false,
+        "outlier": false
+      },
+      "source": {
+        "doc": "pmid:20123456",
+        "page": 4,
+        "locator": "Table 2"
+      }
+    }
+  ],
+  "sections": [],
+  "summaries": [
+    {
+      "id": "overall_random",
+      "kind": "overall",
+      "model": "random",
+      "label": {
+        "hu": "Véletlen hatású modell",
+        "en": "Random-effects model"
+      },
+      "estimate": -1.27,
+      "ci_lower": -2.01,
+      "ci_upper": -0.53,
+      "pi_lower": null,
+      "pi_upper": null,
+      "display": {
+        "est": 0.281,
+        "lo": 0.134,
+        "hi": 0.589
+      },
+      "display_text": {
+        "hu": "0,28 [0,13; 0,59]",
+        "en": "0.28 [0.13; 0.59]"
+      },
+      "pi_text": null,
+      "het_text": {
+        "hu": "τ² = 0,000; I² = 0%",
+        "en": "τ² = 0.000; I² = 0%"
+      }
+    }
+  ],
+  "subgroup_test": null,
+  "heterogeneity": {
+    "Q": 0.92,
+    "df": 1,
+    "p": 0.337,
+    "I2": 0.0,
+    "tau2": 0.0,
+    "text": {
+      "hu": "Heterogenitás: Q = 0,92 (df = 1, p = 0,337)",
+      "en": "Heterogeneity: Q = 0.92 (df = 1, p = 0.337)"
+    }
+  },
+  "funnel": {
+    "points": [
+      {
+        "row_uid": "r7f3a2b",
+        "x": -0.889,
+        "se": 0.571
+      },
+      {
+        "row_uid": "r9k2m4p",
+        "x": -1.585,
+        "se": 0.441
+      }
+    ],
+    "filled": [],
+    "center": -1.27,
+    "se_max": 0.6,
+    "pseudo_ci": [
+      [
+        -2.446,
+        0.6
+      ],
+      [
+        -1.27,
+        0.0
+      ],
+      [
+        -0.094,
+        0.6
+      ]
+    ],
+    "contours": [
+      {
+        "p": 0.05,
+        "polygon": [
+          [
+            -1.176,
+            0.6
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.176,
+            0.6
+          ]
+        ]
+      }
+    ],
+    "tests_text": {
+      "hu": "k < 10: a tesztek nem értelmezhetők",
+      "en": "k < 10: tests not interpretable"
+    }
+  },
+  "loo": [
+    {
+      "omitted_row_uid": "r7f3a2b",
+      "estimate": -1.585,
+      "ci_lower": -2.45,
+      "ci_upper": -0.721,
+      "display_text": {
+        "hu": "0,20 [0,09; 0,49]",
+        "en": "0.20 [0.09; 0.49]"
+      }
+    }
+  ],
+  "influence": [
+    {
+      "row_uid": "r7f3a2b",
+      "rstudent": 0.96,
+      "dffits": 0.5,
+      "cook_d": 0.4,
+      "cov_ratio": 1.1,
+      "hat": 0.45,
+      "dfbetas": 0.5,
+      "influential": false,
+      "decimals": 3
+    }
+  ],
+  "cumulative": null,
+  "bubble": null,
+  "notes": [
+    {
+      "hu": "A súlyok a véletlen hatású modellből.",
+      "en": "Weights from the random-effects model."
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "schema": "szk.ma.validation/v1",
+  "engine_version": "0.2.0",
+  "measure": "RR",
+  "summary": {
+    "error": 1,
+    "warning": 0,
+    "info": 0
+  },
+  "k_analysable": 0,
+  "findings": [
+    {
+      "code": "X001",
+      "severity": "error",
+      "title": "Hiányzó kötelező érték",
+      "study": "Lee 2015",
+      "row": 4,
+      "rows": [
+        4
+      ],
+      "row_uid": "r9k2m4p",
+      "line": 6,
+      "fields": [
+        "m2"
+      ],
+      "detail": "hiányzik: m2",
+      "advice": "A vizsgálat kimarad az elemzésből.",
+      "source": "Cochrane Handbook 6.5.2",
+      "blocking": true,
+      "kb_id": "V002",
+      "acknowledged": 12
+    }
+  ]
+}

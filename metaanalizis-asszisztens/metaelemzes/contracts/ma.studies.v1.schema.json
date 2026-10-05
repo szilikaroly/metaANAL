@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.studies:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.studies/v1 — vizsgálat ↔ jelentés (03_adatok/studies.json; terv 4.10)",
+  "type": "object",
+  "required": [
+    "schema",
+    "studies"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.studies/v1"
+    },
+    "studies": {
+      "type": "array",
+      "description": "PRISMA I = a vizsgálatok száma",
+      "items": {
+        "type": "object",
+        "required": [
+          "study_id"
+        ],
+        "properties": {
+          "study_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "registration": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "design": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "rct_parallel"
+            ],
+            "description": "a validator --route bemenete"
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reports": {
+            "type": "array",
+            "description": "PRISMA J = a reports uniója",
+            "items": {
+              "type": "object",
+              "required": [
+                "rec_id"
+              ],
+              "properties": {
+                "rec_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "role": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "examples": [
+                    "primary",
+                    "secondary"
+                  ]
+                },
+                "doc": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "documents.json id"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

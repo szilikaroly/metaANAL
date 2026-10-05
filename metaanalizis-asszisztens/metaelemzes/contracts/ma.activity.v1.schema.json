@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.activity:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.activity/v1 — hash-láncolt tevékenységnapló egy sora (07_ellenorzes/activity.jsonl; terv 4.16)",
+  "type": "object",
+  "required": [
+    "schema",
+    "seq",
+    "ts",
+    "actor",
+    "action",
+    "argv",
+    "inputs",
+    "outputs",
+    "result",
+    "prev"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.activity/v1"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ts": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "examples": [
+        "user:SzK",
+        "external"
+      ]
+    },
+    "action": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,99}$",
+      "examples": [
+        "analyze.commit"
+      ]
+    },
+    "argv": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "description": "projekt-relatív út → sha256"
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "description": "projekt-relatív út → sha256"
+    },
+    "result": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "details": {
+      "type": "object"
+    },
+    "prev": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "az előző sor kanonikus JSON-jának sha256-ja; az első soré null"
+    }
+  },
+  "description": "cellaérték nem kerülhet bele (adatvédelem); az explore-futások nem naplózódnak"
+}

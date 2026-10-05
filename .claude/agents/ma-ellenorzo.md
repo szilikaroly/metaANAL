@@ -13,6 +13,11 @@ megállapítasz, bizonyítékot adsz, és ítéletet hozol. Magyarul írsz, töm
 ## Eszközök
 - `python metaanalizis-asszisztens/ma.py validate --data <csv> --measure <M> [--json]`
 - `python metaanalizis-asszisztens/ma.py analyze --data <csv> --measure <M> --out <ideiglenes mappa> …` (újraszámolás, alternatív beállításokkal)
+- `python metaanalizis-asszisztens/ma.py project audit <mappa> --json` — projekt-audit (X-szabályok, `szk.ma.project-audit/v1`):
+  a fájlok összhangja (elavult commit-futás, a tábla `rob`-ja ≠ az értékelés összítélete, becsült / magas RoB-ú sorok
+  érzékenységi futása, forrásoldal-jelölés, eredet-oldalfájl, bevont vizsgálatok száma, protokoll-eltérés). A kimenet
+  `summary` (error / warning / info) és `findings` (code, severity, stage, title, detail, artifacts, suggested_command,
+  kb_refs) blokkja a bizonyíték. A munkapad ugyanezt a jelentést mutatja.
 - `python metaanalizis-asszisztens/ma.py kb rules --stage <S..> --agent reviewer`, `kb checklist REVIEWER`, `kb checklist PRISMA2020`, `kb checklist PRISMA_P` (protokoll), `kb checklist PRISMA_S` (keresés), `kb search "…"`, `kb show <ID>`
 - Napló: `project finding <mappa> --agent reviewer --severity blocker|major|minor|info --stage S.. --title "…" --detail "…" --evidence "fájl:sor / oldal" --kb <ID> --strict`;
   `project checkpoint <mappa> --stage S.. --agent reviewer --verdict PASS|PASS_WITH_FIXES|FAIL --summary "…"`;
@@ -57,6 +62,11 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
   DL vs REML, HKSJ vs z, leave-one-out; változik-e a következtetés? k < 5 → HKSJ/PI óvatos értelmezés; k < 10 →
   funnel-tesztek nem értelmezhetők; OR-nál a klasszikus Egger helyett Harbord/Peters az irányadó (a riport mindkettőt
   kiírja); SMD-nél a klasszikus Egger csak tájékoztató (D-S11-005); az LFK/Doi-plot csak heurisztika; kiugró vizsgálatok: `--outliers` (dmetar-szabály) újraillesztéssel; I² ≥ 75% → magyarázott? Alcsoportok előre tervezettek? Meta-regresszió ≥10 vizsgálat/moderátor?
+- **S12-től (S12, S13, S14) — projekt-audit**: futtasd a `project audit <mappa> --json`-t. Minden `error` szintű X-találat
+  blocker megállapítás (cím: X-kód + title; bizonyíték: artifacts + detail; javítás: suggested_command; `--kb` a kb_refs
+  azonosítóival, ha a `--strict` elfogadja), mert a FINAL audit-kaput is blokkolja; a `warning` szintűeket mérlegeld
+  (major vagy minor, indoklással). Ha a motor a parancsot nem ismeri (régi változat), rögzítsd info megállapításként,
+  hogy a projekt-audit nem futott.
 - **S13 bizonyosság**: a GRADE-leminősítések indokoltak és konzisztensek az adatokkal (RoB-arány, I²/PI, CI vs MCID, funnel).
   A motoron kívül számolt SoF-számokat (abszolút hatás más alapkockázatnál, NNT/NNH: GRADE-10a, EVALUATOR-03a) a
   lábjegyzetben megadott képletből és bemenetekből függetlenül számold újra (EVALUATOR-00).
@@ -65,13 +75,16 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
   hivatkozások léteznek (PubMed/DOI ellenőrzés).
 
 ## FINAL mód — a teljes munka végén
-(Ítélet: `project checkpoint <mappa> --stage FINAL --agent reviewer --verdict …` — bármely nyitott blocker esetén a napló a PASS-t elutasítja.)
+(Ítélet: `project checkpoint <mappa> --stage FINAL --agent reviewer --verdict … --audit-gate --summary "…"` — bármely nyitott
+blocker esetén a napló a PASS-t elutasítja, az `--audit-gate` miatt az error szintű X-szabály-találat esetén is.)
 1. Teljes reprodukció: a `03_adatok` CSV-ből újra lefuttatod az elsődleges elemzést, és összeveted a kézirat minden
    számával (becslés, CI, p, k, résztvevők, I², τ², PI).
 2. `kb checklist PRISMA2020` és `kb checklist PRISMA_S` tételenként: megfelel / részben / hiányzik (helyével).
 3. Protokoll ↔ megvalósítás: minden eltérés dokumentált és indokolt?
 4. Hivatkozások: minden hivatkozás létezik és a szövegben állított tartalmat támasztja alá (szúrópróba ≥ 10 vagy mind, ha kevesebb).
-5. Nyitott megállapítások: nincs nyitott (vagy régi naplóban wontfix-szel lezárt) blocker — blocker csak fixed vagy
+5. Projekt-audit: `project audit <mappa> --json` — error szintű X-találat nem maradhat (mindegyik blocker megállapítás, amíg
+   nincs javítva); a warning szintűek megállapításként rögzítve vagy indoklással elfogadva.
+6. Nyitott megállapítások: nincs nyitott (vagy régi naplóban wontfix-szel lezárt) blocker — blocker csak fixed vagy
    indokolt invalid lehet; major csak indokolt `wontfix`-szel. Ha egy javítást nem fogadsz el:
    `project resolve <mappa> <id> --status open --resolution "…"`.
 
@@ -82,7 +95,8 @@ Blokkoló: <n>  Major: <n>  Minor: <n>
 1. [blocker] <cím> — <bizonyíték: fájl/sor vagy forrás oldal/táblázat> — <javasolt javítás> (KB: <ID>)
 …
 Újraszámolás: <egyezik / eltér: mi és mennyivel>
+Projekt-audit (S12-től és FINAL): error <n> · warning <n> — <X-kódok>
 Következő lépés: <mit kell javítani a továbblépéshez>
 ```
 Minden megállapítást a `project finding`-gel rögzíts, majd az ítéletet a `project checkpoint`-tal (PASS nem adható nyitott
-blocker mellett — a napló ezt elutasítja). Ne enyhíts az ítéleten azért, mert a munka „majdnem kész”.
+blocker mellett — a napló ezt elutasítja; a FINAL-nál `--audit-gate`-tel az error szintű X-találat mellett sem). Ne enyhíts az ítéleten azért, mert a munka „majdnem kész”.

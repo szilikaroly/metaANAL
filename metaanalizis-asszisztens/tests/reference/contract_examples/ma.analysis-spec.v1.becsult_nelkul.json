@@ -1,0 +1,19 @@
+{
+  "schema": "szk.ma.analysis-spec/v1",
+  "name": "o1_sens-no-estimated",
+  "outcome": "o1",
+  "purpose": "sensitivity",
+  "prespecified": false,
+  "parent": "o1_primary",
+  "data": {
+    "path": "03_adatok/o1.csv"
+  },
+  "options": {
+    "measure": "RR"
+  },
+  "filters": {
+    "exclude": [
+      "estimated=igen"
+    ]
+  }
+}

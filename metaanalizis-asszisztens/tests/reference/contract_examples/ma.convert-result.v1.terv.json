@@ -1,0 +1,24 @@
+{
+  "schema": "szk.ma.convert-result/v1",
+  "kind": "median_to_mean_sd",
+  "engine_version": "0.2.0",
+  "outputs": {
+    "mean": 12.43,
+    "sd": 3.71
+  },
+  "estimated": true,
+  "method": {
+    "id": "luo2018+wan2014",
+    "citation": "Cochrane Handbook 6.5.2.5",
+    "function": "conversions.mean_from_median / sd_from_median",
+    "kb_refs": [
+      "K-…"
+    ]
+  },
+  "assumptions": [
+    "közel normális eloszlás"
+  ],
+  "warnings": [
+    "a medián Q1-hez közelebb: ferde eloszlás gyanúja (V013)"
+  ]
+}

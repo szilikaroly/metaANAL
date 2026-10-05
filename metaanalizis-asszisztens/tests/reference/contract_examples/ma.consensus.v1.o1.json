@@ -1,0 +1,27 @@
+{
+  "schema": "szk.ma.consensus/v1",
+  "key": [
+    "study_id",
+    "arm"
+  ],
+  "decisions": [
+    {
+      "key": "NCT0456|T",
+      "field": "sd1",
+      "chosen": "b",
+      "value": "4.2",
+      "reason": "Table 2: SD = 4.2 (az A kinyerő tizedesjelet tévesztett)",
+      "actor": "user:SzK",
+      "ts": "2026-10-04T21:30:00Z"
+    },
+    {
+      "key": "NCT0123|T",
+      "field": "rob",
+      "chosen": "other",
+      "value": "some",
+      "reason": "egyeztetés után: some concerns",
+      "actor": "user:KA",
+      "ts": "2026-10-04T21:31:12.5Z"
+    }
+  ]
+}

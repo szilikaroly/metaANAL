@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.project-audit:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.project-audit/v1 — X-szabályok (project audit --json; terv 4.15, 6.4)",
+  "type": "object",
+  "required": [
+    "schema",
+    "project",
+    "generated",
+    "summary",
+    "findings"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.project-audit/v1"
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "project": {
+      "type": "string",
+      "description": "a projektmappa neve"
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+    },
+    "stage": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^(S(0\\d|1[0-4])|FINAL)$",
+      "description": "a szakasz-kontextus (a súlyosság ettől függhet); null = ismeretlen"
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "error",
+        "warning",
+        "info"
+      ],
+      "properties": {
+        "error": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warning": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "info": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "stage",
+          "outcome",
+          "title",
+          "detail",
+          "artifacts",
+          "suggested_command",
+          "kb_refs"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^X\\d{3}$"
+          },
+          "severity": {
+            "$ref": "urn:szk:contract:common:1#/$defs/severity"
+          },
+          "stage": {
+            "type": "string",
+            "pattern": "^(S(0\\d|1[0-4])|FINAL)$",
+            "description": "a szabály szakasza (6.4)"
+          },
+          "outcome": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "advice": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:common:1#/$defs/relpath"
+            }
+          },
+          "suggested_command": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "kb_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "spec": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "row_uids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cells": {
+            "type": "array",
+            "description": "érintett cellák — érték nélkül (adatvédelem)",
+            "items": {
+              "type": "object",
+              "required": [
+                "row_uid",
+                "field"
+              ],
+              "properties": {
+                "row_uid": {
+                  "type": "string"
+                },
+                "field": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "not_checked": {
+      "type": "array",
+      "description": "a nem ellenőrizhető szabályok, indokkal",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "outcome",
+          "reason"
+        ],
+        "properties": {
+          "code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "outcome": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "rules_checked": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^X\\d{3}$"
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+      },
+      "description": "a beolvasott fájlok: projekt-relatív út → sha256"
+    },
+    "amstar2_hints": {
+      "type": "object",
+      "description": "AMSTAR 2 tételszám → javaslat",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "suggested"
+        ],
+        "properties": {
+          "suggested": {
+            "type": "string",
+            "examples": [
+              "yes",
+              "partial_yes",
+              "no"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

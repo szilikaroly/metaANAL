@@ -1,0 +1,426 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.analysis-spec:1",
+  "title": "szk.ma.analysis-spec/v1 — elemzési spec, felület → motor (analyze --spec; terv 4.4)",
+  "type": "object",
+  "required": [
+    "schema",
+    "name",
+    "outcome",
+    "data",
+    "options"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.analysis-spec/v1"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "outcome": {
+      "type": "string"
+    },
+    "purpose": {
+      "enum": [
+        "primary",
+        "sensitivity",
+        "subgroup",
+        "metaregression",
+        "exploratory"
+      ]
+    },
+    "prespecified": {
+      "type": "boolean"
+    },
+    "protocol_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parent": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "gyermek-futásnál az elsődleges spec neve"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "urn:szk:contract:common:1#/$defs/relpath"
+        },
+        "sha256": {
+          "type": "string",
+          "description": "commitnál kötelező; eltérésnél a motor 409-et ad (elavult)"
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "$comment": "generált rész (required, properties): pipeline.DEFAULTS + cli.build_parser() (spec.analysis_spec_schema); frissítés: python3 -m metaelemzes.contracts sync",
+      "description": "PONTOSAN a pipeline.DEFAULTS kulcsai (generált séma): measure, model, tau2, ci, pi, level, smd_vtype, j_method, cc, cc_to, drop00, mh, peto, rd_var, subgroup, common_tau2, moderators, metareg_test, cumulative, title, left_label, right_label, label_col, bias_min_k, trimfill_estimator, md_vtype, glass_vtype, gen_smd_vtype, pft_backtransform, h_centre, trimfill_trim_model, egger_ci_dist, begg_method, begg_continuity, metareg_robust, outliers + ÚJ (E10): mid {low, high}, assumed_risks [], plot_locale",
+      "required": [
+        "measure"
+      ],
+      "properties": {
+        "measure": {
+          "enum": [
+            "MD",
+            "SMD",
+            "COHEN_D",
+            "ROM",
+            "SMD_GLASS",
+            "MC",
+            "SMCC",
+            "OR",
+            "RR",
+            "RD",
+            "PR",
+            "PLN",
+            "PLO",
+            "PAS",
+            "PFT",
+            "COR",
+            "ZCOR",
+            "GEN"
+          ],
+          "description": "--measure — hatásméret (a szükséges oszlopokat lásd lent)"
+        },
+        "model": {
+          "enum": [
+            "random",
+            "fixed",
+            "ivhet"
+          ],
+          "default": "random"
+        },
+        "tau2": {
+          "enum": [
+            "DL",
+            "REML",
+            "ML",
+            "PM",
+            "HE",
+            "SJ",
+            null
+          ],
+          "default": null,
+          "description": "--tau2 — τ²-becslő (alap: a modellé — random → REML, ivhet → DL, a Doi 2015 szerint; ivhet-nél más becslő figyelmeztetéssel)"
+        },
+        "ci": {
+          "enum": [
+            "z",
+            "t",
+            "hksj",
+            "hksj_adhoc",
+            null
+          ],
+          "default": null,
+          "description": "--ci — alap: random→hksj, fixed→z"
+        },
+        "pi": {
+          "enum": [
+            "t_k-2",
+            "t_k-1",
+            "z"
+          ],
+          "default": "t_k-2"
+        },
+        "level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "description": "--level — megbízhatósági szint: 0.95 vagy 95"
+        },
+        "smd_vtype": {
+          "enum": [
+            "LS",
+            "LS2",
+            "UB",
+            "METAN_COHEN",
+            "METAN_HEDGES"
+          ],
+          "default": "LS",
+          "description": "--smd-vtype — SMD / Cohen d / SMCC variancia: LS (alap), LS2 (Borenstein), UB (torzítatlan), METAN_COHEN (Stata metan/MetaXL: N/(n1n2) + d²/(2(N−2))), METAN_HEDGES (N/(n1n2) + g²/(2(N−3.94)), közelítő J)"
+        },
+        "j_method": {
+          "enum": [
+            "exact",
+            "approx"
+          ],
+          "default": "exact"
+        },
+        "cc": {
+          "type": "number",
+          "default": 0.5,
+          "description": "--cc — folytonossági korrekció (>= 0; 0 = nincs)"
+        },
+        "cc_to": {
+          "enum": [
+            "only0",
+            "all",
+            "none"
+          ],
+          "default": "only0",
+          "description": "--cc-to — only0: csak nulla cellás vizsgálatnál (RD-nél nincs korrekció, Cochrane 10.4.4.1); all: minden vizsgálatnál (RD-nél is, metafor to='all'); none: soha"
+        },
+        "drop00": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null
+        },
+        "mh": {
+          "type": "boolean",
+          "default": false,
+          "description": "--mh — Mantel–Haenszel (bináris)"
+        },
+        "peto": {
+          "type": "boolean",
+          "default": false,
+          "description": "--peto — Peto OR"
+        },
+        "rd_var": {
+          "enum": [
+            "sato",
+            "gr"
+          ],
+          "default": "sato"
+        },
+        "subgroup": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "--subgroup — alcsoport-oszlop"
+        },
+        "common_tau2": {
+          "type": "boolean",
+          "default": false,
+          "description": "--common-tau2 — közös τ² az alcsoportokban (faktor-moderátoros vegyes modell; véletlen hatású és IVhet modellnél — IVhet-nél alapból DL; fix hatású modellnél figyelmeztetéssel figyelmen kívül marad)"
+        },
+        "moderators": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^,\\s](?:[^,]*[^,\\s])?$"
+          },
+          "default": [],
+          "description": "--moderators — meta-regresszió moderátorai, vesszővel"
+        },
+        "metareg_test": {
+          "enum": [
+            "knha",
+            "z"
+          ],
+          "default": "knha"
+        },
+        "cumulative": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "--cumulative — kumulatív elemzés rendező oszlopa (pl. year)"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "left_label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "--left-label — forest plot bal oldali felirat (pl. 'kontroll jobb')"
+        },
+        "right_label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "label_col": {
+          "type": "string",
+          "default": "study",
+          "description": "csak specben (nincs parancssori kapcsolója)"
+        },
+        "bias_min_k": {
+          "type": "integer",
+          "default": 10,
+          "description": "csak specben (nincs parancssori kapcsolója)"
+        },
+        "trimfill_estimator": {
+          "enum": [
+            "L0",
+            "R0"
+          ],
+          "default": "L0"
+        },
+        "md_vtype": {
+          "enum": [
+            "unequal",
+            "pooled"
+          ],
+          "default": "unequal",
+          "description": "--md-vtype — MD variancia: unequal (alap; sd1²/n1 + sd2²/n2, metafor LS) vagy pooled (közös SD, metafor HO)"
+        },
+        "glass_vtype": {
+          "enum": [
+            "METAN",
+            "LS",
+            "LS2",
+            "UB",
+            "SMD1H"
+          ],
+          "default": "METAN",
+          "description": "--glass-vtype — SMD_GLASS variancia: METAN (alap; Stata metan/MetaXL), LS, LS2, UB, SMD1H (metafor)"
+        },
+        "gen_smd_vtype": {
+          "enum": [
+            "LS",
+            "LS2",
+            "UB",
+            "METAN_COHEN",
+            "METAN_HEDGES",
+            null
+          ],
+          "default": null,
+          "description": "--gen-smd-vtype — GEN: ha egy sorban nincs vi/sei, de van n1 és n2, a yi-t közölt SMD-nek veszi és ezzel a képlettel számol varianciát"
+        },
+        "pft_backtransform": {
+          "enum": [
+            "harmonic",
+            "variance"
+          ],
+          "default": "harmonic",
+          "description": "--pft-backtransform — PFT visszatranszformálás n-je: harmonic (alap; metafor/meta) vagy variance (MetaXL: m = 1/Var(t) az adott összesített becslésből)"
+        },
+        "h_centre": {
+          "enum": [
+            "truncated",
+            "untruncated"
+          ],
+          "default": "truncated",
+          "description": "--ht-centre — a Higgins–Thompson H/I² CI középpontja: truncated (alap; ln max(1, H), R meta) vagy untruncated (½·ln(Q/df), Borenstein 2009)"
+        },
+        "trimfill_trim_model": {
+          "enum": [
+            "fixed",
+            "random",
+            null
+          ],
+          "default": null,
+          "description": "--trimfill-trim-model — a trim-and-fill vágási modellje (alap: az elsődleges modell, mint a metafor; fixed: közös hatással vág, a kitöltött adatokat az elsődleges modellel összesíti — a meta::trimfill alapértelmezése)"
+        },
+        "egger_ci_dist": {
+          "enum": [
+            "t",
+            "norm"
+          ],
+          "default": "t",
+          "description": "--egger-ci-dist — az Egger-tengelymetszet CI-je: t (alap; t(k−2), metafor) vagy norm (z, dmetar)"
+        },
+        "begg_method": {
+          "enum": [
+            "auto",
+            "exact",
+            "normal"
+          ],
+          "default": "auto",
+          "description": "--begg-method — Begg-teszt: auto (alap; metafor: pontos Kendall-eloszlás, kötésnél normális), exact, normal (Stata metabias)"
+        },
+        "begg_continuity": {
+          "type": "boolean",
+          "default": false,
+          "description": "--begg-continuity — Begg normális közelítés folytonossági korrekcióval (Stata metabias 2. sora)"
+        },
+        "metareg_robust": {
+          "type": "boolean",
+          "default": false,
+          "description": "--robust — meta-regresszió: robusztus (HC1 szendvics) SE-k, t(k−p) és robusztus F is, a meta-regresszió súlyaival (1/(v+τ²); = metafor robust(…, adjust=TRUE)); Stata regress [aw=1/v], vce(robust) csak --metareg-tau2 FE mellett; --moderators kell hozzá"
+        },
+        "outliers": {
+          "type": "boolean",
+          "default": false,
+          "description": "--outliers — kiugró vizsgálatok szűrése (dmetar::find.outliers: a vizsgálat CI-je teljesen az összesített CI-n kívül) és újraillesztés nélkülük (érzékenységi elemzés)"
+        },
+        "metareg_tau2": {
+          "enum": [
+            "REML",
+            "ML",
+            "DL",
+            "PM",
+            "HE",
+            "SJ",
+            "FE",
+            null
+          ],
+          "default": null,
+          "description": "--metareg-tau2 — a meta-regresszió τ²-becslője (alap: a --tau2, ha ott értelmezett, különben REML); FE = inverz-variancia súlyok, τ² = 0 — a --robust így = Stata regress [aw=1/v], vce(robust) (Khan 2020 11. fej.)"
+        },
+        "subgroup_prespecified": {
+          "type": "boolean",
+          "default": false,
+          "description": "--subgroup-prespecified — az alcsoport-elemzés a protokollban előre tervezett (a Methods csak ekkor írja: Pre-specified)"
+        },
+        "plot_schema": {
+          "type": "string",
+          "default": "v2",
+          "description": "csak specben (nincs parancssori kapcsolója)"
+        },
+        "plot_locale": {
+          "type": "string",
+          "default": "hu",
+          "description": "csak specben (nincs parancssori kapcsolója)"
+        },
+        "svg_annotate": {
+          "type": "boolean",
+          "default": false,
+          "description": "csak specben (nincs parancssori kapcsolója)"
+        }
+      }
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[^=]+=.*$"
+          }
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[^=]+=.*$"
+          }
+        }
+      }
+    },
+    "kb_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

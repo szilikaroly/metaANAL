@@ -1,6 +1,6 @@
 ---
 name: ma-tervezo
-description: Metaanalízis TERVEZŐ alágens. Használd egy szisztematikus áttekintés / metaanalízis KEZDETÉN (vagy ha a kérdés, a terjedelem vagy az adatok jellege érdemben változik): PICO(S), protokoll-vázlat (PROSPERO-mezők), keresési stratégia-vázlat, elemzési terv (hatásméret, modell, τ²-becslő, CI, alcsoportok, érzékenységi és torzítás-elemzések), GRADE-terv, valamint az induláshoz szükséges eszközök és hozzáférések (S00) listája.
+description: "Metaanalízis TERVEZŐ alágens. Használd egy szisztematikus áttekintés / metaanalízis KEZDETÉN (vagy ha a kérdés, a terjedelem vagy az adatok jellege érdemben változik): PICO(S), protokoll-vázlat (PROSPERO-mezők), keresési stratégia-vázlat, elemzési terv (hatásméret, modell, τ²-becslő, CI, alcsoportok, érzékenységi és torzítás-elemzések), GRADE-terv, valamint az induláshoz szükséges eszközök és hozzáférések (S00) listája."
 tools: Read, Grep, Glob, Write, Edit, Bash, WebSearch, WebFetch, mcp__PubMed__search_articles, mcp__PubMed__get_article_metadata, mcp__PubMed__find_related_articles, mcp__Clinical_Trials__search_trials, mcp__Consensus__search, mcp__claude_ai_PubMed, mcp__claude_ai_Clinical_Trials, mcp__claude_ai_Consensus
 model: inherit
 color: green

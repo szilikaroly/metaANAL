@@ -13,9 +13,10 @@ magyarul kommunikálj vele, a kéziratba szánt szövegeket angolul írd. Szakma
 
 | Mi | Hol / hogyan |
 |---|---|
-| Számítási motor (csak Python standard könyvtár, metaforral validált) | `python metaanalizis-asszisztens/ma.py <parancs>` (ha nincs `python`, akkor `python3`) |
+| Számítási motor (csak Python standard könyvtár, metaforral validált) | `python metaanalizis-asszisztens/ma.py <parancs>` (ha nincs `python`, akkor `python3`; Windows-on `py -3` is lehet) |
 | Tudásbázis (SQLite + FTS5) | `python metaanalizis-asszisztens/ma.py kb search "…"`, `kb rules --stage S08 --agent planner`, `kb checklist PRISMA2020` (továbbá `PRISMA_P`, `PRISMA_S`, `PREFLIGHT`, `REVIEWER`, `EVALUATOR`, `AMSTAR2`, `GRADE`), `kb show <ID>`, `kb sql "SELECT …"` |
-| Projektnapló (SQLite) | `python metaanalizis-asszisztens/ma.py project status <mappa>`, `project log …`, `project finding …`, `project checkpoint …` |
+| Projektnapló (SQLite) | `python metaanalizis-asszisztens/ma.py project status <mappa>`, `project log …`, `project finding …`, `project checkpoint …`, `project audit <mappa> --json` (X-szabályok) |
+| MA-munkapad (helyi böngészős felület) | `python metaanalizis-asszisztens/ma.py gui --project <mappa>` — lásd lent: „MA-munkapad” |
 | Alágensek | `ma-tervezo`, `ma-ellenorzo`, `ma-ertekelo` (Agent eszközzel hívod őket) |
 | Eszköz- és hozzáférés-lista | általános: `metaanalizis-asszisztens/ESZKOZOK_ES_HOZZAFERESEK.md`; projektenként: `<projekt>/00_protokoll/eszkozok_hozzaferesek.md` (a ma-tervezo írja, a `kb sql "SELECT * FROM tool"` és `kb checklist PREFLIGHT` alapján) |
 
@@ -44,14 +45,18 @@ S14 jelentés (PRISMA 2020).
    értékeléséhez (két független bíráló). Te előkészíted, összeveted, és jelzed az eltéréseket — a döntést rögzíted.
    Torzítási kockázathoz / PROBAST+AI / TRIPOD+AI-hoz a `ma-ertekelo` csak **„AI-vázlatot”** készít (publikált cikkre,
    tételenként javaslat + idézet helymegjelöléssel + kezdőknek is érthető indoklás); ez nem második értékelő, és emberi
-   jóváhagyás nélkül nem ítélet. Betegszintű adat csak anonimizáltan kerülhet a projektbe, és azt Claude nem olvassa.
+   jóváhagyás nélkül nem ítélet. Betegszintű adat csak anonimizáltan kerülhet a projektbe (a `_privat/` mappába), és azt
+   Claude nem olvassa.
 6. **Kapuk:** egy szakasz csak akkor zárható, ha a `ma-ellenorzo` PASS vagy PASS_WITH_FIXES ítéletet adott, és
    nincs nyitott `blocker` megállapítás (`project status`). A projektnapló ezt technikailag is kikényszeríti
-   (a szakaszkód S00–S14, tartomány pl. `S01-S02`, vagy a záró `FINAL`, amelyet bármely nyitott blocker blokkol).
+   (a szakaszkód S00–S14, tartomány pl. `S01-S02`, vagy a záró `FINAL`, amelyet bármely nyitott blocker blokkol; a FINAL
+   `--audit-gate` kapcsolóval a `project audit` error szintű X-szabály-találatai is blokkolnak).
 7. Beteg-azonosításra alkalmas adat nem kerülhet a repóba: a gyökér `.gitignore` azokat a fájlokat zárja ki, amelyek
    nevében a PHI (kis- vagy nagybetűvel) önálló, elválasztott tagként áll (`*_[Pp][Hh][Ii]`, `*_[Pp][Hh][Ii][._-]*`,
    `[Pp][Hh][Ii]_*`, `*.[Pp][Hh][Ii].*`) vagy a `beteg_adat` rész szerepel (`*beteg_adat*`) — a betegszintű fájlt így
-   nevezd el (pl. `betegek_PHI.csv`); a más szó részeként álló „phi” (pl. `dengue_philippines`) nem számít.
+   nevezd el (pl. `betegek_PHI.csv`); a más szó részeként álló „phi” (pl. `dengue_philippines`) nem számít. Ha a
+   projektmappa saját git-repóban (vagy a vault/OneDrive alatt) van, ugyanezeket a mintákat és a `_privat/` mappát a
+   projekt saját `.gitignore`-jába is vedd fel.
 
 ## Munkafolyamat
 
@@ -104,7 +109,28 @@ klinikai jelentőség (MCID, abszolút hatás), AMSTAR 2 önellenőrzés. Rögz�
 ### 4. Végső ellenőrzés → `ma-ellenorzo` **final módban**
 Teljes reprodukció (adat → riport → kézirat számai), PRISMA 2020 tételenként, protokolltól való eltérések,
 hivatkozások ellenőrzése. FAIL esetén vissza a megfelelő szakaszhoz.
+A `ma-ellenorzo` ekkor a `project audit <mappa> --json`-t is lefuttatja, és a FINAL ellenőrzőpontot `--audit-gate`-tel
+rögzíti: error szintű X-szabály-találat (pl. elavult elemzés, eltérő RoB a tábla és az értékelés között) mellett a
+munka nem zárható.
 Végül: `project export <mappa>` → döntési és ellenőrzési napló a kiegészítő anyaghoz.
+
+## MA-munkapad (helyi grafikus felület)
+
+A munkapad böngészős felület ugyanahhoz a projektmappához és naplóhoz: a számokat ott is a motor adja, a felület és az
+ágensek ugyanazokat a fájlokat látják (amit az egyik rögzít, a másik is látja).
+- **Mikor ajánld:** az emberi lépésekhez — adatkinyerés élő validálással és forrásoldal-jelöléssel, átváltások, az
+  elemzés kipróbálása és rögzítése (commit-futás), a napló, a kapuk és a PRISMA-számok áttekintése (a későbbi
+  változatokban a RoB-űrlap, a GRADE/SoF és az ábra-export is) —, és ha a felhasználó az eredményt vizuálisan akarja
+  átnézni (interaktív forest, lefúrás a vizsgálatig). Amit a felület még nem tud, azt a parancssoros úton végezd.
+- **Indítás** a háttérben (a szerver a leállításig fut): `python metaanalizis-asszisztens/ma.py gui --project <mappa>`.
+  A kiírt helyi (127.0.0.1) címet add át a felhasználónak — a böngészőben ő nyitja meg; a felület csak ezen a gépen
+  érhető el.
+- **Soha ne publikáld Artifactként** a munkapadot, egyetlen képernyőjét vagy a pillanatképét (egyfájlos HTML), és ne
+  töltsd fel sehova (claude.ai, Drive, e-mail): projektadatot és jogvédett szöveget tartalmazhat. A pillanatképet a
+  felhasználó maga adja tovább a társszerzőknek.
+- **Projekt-audit:** `python metaanalizis-asszisztens/ma.py project audit <mappa> --json` — az X-szabályok a fájlok
+  összhangját ellenőrzik (elavult futás, a tábla és az értékelés RoB-eltérése, hiányzó forrásjelölés, becsült vagy magas
+  RoB-ú sorok érzékenységi futása …). A felület ugyanezt mutatja; a `ma-ellenorzo` az S12-től és a FINAL-ban futtatja.
 
 ## Együttműködés a szk-plugins pluginjaival (ha telepítve vannak)
 

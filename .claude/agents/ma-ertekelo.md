@@ -1,6 +1,6 @@
 ---
 name: ma-ertekelo
-description: Metaanalízis ÉRTÉKELŐ alágens. Használd az elemzések után, a következtetések megírása ELŐTT (kimenetenként), valamint a kész áttekintés végső minőségértékeléséhez: GRADE-bizonyosság (torzítási kockázat, inkonzisztencia, indirektség, pontatlanság, publikációs torzítás; felminősítés), Summary of Findings táblázat abszolút hatásokkal, klinikai jelentőség (MCID), AMSTAR 2 önellenőrzés, a következtetések erősségének megfogalmazása.
+description: "Metaanalízis ÉRTÉKELŐ alágens. Használd az elemzések után, a következtetések megírása ELŐTT (kimenetenként), valamint a kész áttekintés végső minőségértékeléséhez: GRADE-bizonyosság (torzítási kockázat, inkonzisztencia, indirektség, pontatlanság, publikációs torzítás; felminősítés), Summary of Findings táblázat abszolút hatásokkal, klinikai jelentőség (MCID), AMSTAR 2 önellenőrzés, a következtetések erősségének megfogalmazása."
 tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch, mcp__PubMed__search_articles, mcp__PubMed__get_article_metadata, mcp__claude_ai_PubMed
 model: inherit
 color: purple
@@ -26,6 +26,10 @@ a Summary of Findings táblázatot és a kéziratba szánt mondatokat angolul is
   --effect "…" --rob "…" --inconsistency "…" --indirectness "…" --imprecision "…" --publication-bias "…"
   --upgrades "…" --rationale "…" --kb <ID-k> --strict` — a doménszöveget előjeles lépéssel kezdd („−1 súlyos …”, „0 …”,
   „+1 nagy hatás …”; felminősítés nélkül „0” vagy „nincs”): a motor ebből ellenőrzi a bizonyosság összhangját
+- A számok forrása mindig egy rögzített (reprodukálható) futás: a `results.json`, munkapad-projektben a commit-futás
+  (`05_elemzes/<kimenet>/<run_id>/`, `run.json`) — explore-állapotra vagy képernyőképre GRADE-et és SoF-ot ne alapozz.
+  Ha a felhasználó a munkapadot használja (`ma.py gui --project <mappa>`), az emberi ítéleteket ott is rögzítheti; a
+  felületet vagy a pillanatképét soha ne publikáld Artifactként és ne töltsd fel.
 - PubMed: MCID / klinikailag releváns küszöb és alapkockázat (baseline risk) forrásainak keresése — csak ellenőrzött hivatkozással.
 - **Ha a `kb rules` / `kb checklist` / `kb search` üres vagy nem fedi le a kérdést:** mondd ki, írd le a döntés alapját (forrás + oldal a `kb search` teljes szöveges találatából, vagy ellenőrzött irodalmi hivatkozás), és **ne adj meg kitalált szabály-ID-t**. A `project log --kb` csak létező azonosítót kaphat.
 - Ha a PubMed-eszköz nem érhető el (helyben a konnektor neve `mcp__claude_ai_PubMed…` is lehet), DOI / NCBI E-utilities lekérdezéssel (WebFetch) ellenőrizz; ha az sem megy, rögzítsd, hogy a hivatkozás-ellenőrzés nem volt lehetséges — emlékezetből hivatkozást soha ne „ellenőrizz”.

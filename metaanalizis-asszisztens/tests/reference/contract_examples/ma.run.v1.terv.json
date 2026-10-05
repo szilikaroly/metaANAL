@@ -1,0 +1,54 @@
+{
+  "schema": "szk.ma.run/v1",
+  "run_id": "20261004T211200Z-a1f3c2",
+  "mode": "commit",
+  "spec": {
+    "path": "05_elemzes/specs/o1_primary.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "name": "o1_primary",
+    "parent": null
+  },
+  "equivalent_argv": [
+    "ma.py",
+    "analyze",
+    "--spec",
+    "05_elemzes/specs/o1_primary.json",
+    "--out",
+    "05_elemzes/o1/20261004T211200Z-a1f3c2",
+    "--project",
+    "."
+  ],
+  "engine_version": "0.2.0",
+  "data": {
+    "path": "03_adatok/o1.csv",
+    "sha256": "9f3a000000000000000000000000000000000000000000000000000000000000",
+    "rows": 13
+  },
+  "files": {
+    "results": {
+      "path": "…/results.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "plot": {
+      "path": "…/plot_data.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "k": 13,
+  "primary": {
+    "model": "random",
+    "display_text": {
+      "hu": "0,49 [0,33; 0,73]",
+      "en": "0.49 [0.33; 0.73]"
+    }
+  },
+  "validation_summary": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  },
+  "client_seq": 57,
+  "elapsed_ms": 84,
+  "started": "2026-10-04T21:12:00Z",
+  "finished": "2026-10-04T21:12:00Z"
+}

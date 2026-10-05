@@ -1,0 +1,19 @@
+{
+  "schema": "szk.ma.convert-request/v1",
+  "kind": "median_to_mean_sd",
+  "inputs": {
+    "n": "40",
+    "median": "12,5",
+    "q1": "10",
+    "q3": "15"
+  },
+  "method": "luo",
+  "target": {
+    "dataset": "03_adatok/o1.csv",
+    "row_uid": "r7f3a2",
+    "fields": {
+      "mean": "m1",
+      "sd": "sd1"
+    }
+  }
+}

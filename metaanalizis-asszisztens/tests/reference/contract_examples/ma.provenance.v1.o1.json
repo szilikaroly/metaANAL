@@ -1,0 +1,68 @@
+{
+  "schema": "szk.ma.provenance/v1",
+  "table": "03_adatok/o1.csv",
+  "table_sha256": "9f3a000000000000000000000000000000000000000000000000000000000000",
+  "cells": [
+    {
+      "row_uid": "r7f3a2b",
+      "field": "e1",
+      "value_as_entered": "4",
+      "method": "reported",
+      "estimated": false,
+      "source": {
+        "doc": "pmid:20123456",
+        "page": 4,
+        "locator": "Table 2",
+        "quote": "4/123 vaccinated"
+      },
+      "conversion": null,
+      "reconciliation": null,
+      "extracted_by": "SzK",
+      "extracted_at": "2026-10-04T20:01:00Z",
+      "verified_by": null,
+      "verified_at": null,
+      "history": []
+    },
+    {
+      "row_uid": "r9k2m4p",
+      "field": "sd1",
+      "value_as_entered": "3,71",
+      "method": "estimated",
+      "estimated": true,
+      "source": {
+        "doc": "pmid:21987654",
+        "page": 6,
+        "locator": "Table 1"
+      },
+      "conversion": {
+        "kind": "median_to_mean_sd",
+        "engine_version": "0.2.0",
+        "method": "luo2018+wan2014"
+      },
+      "extracted_by": "SzK",
+      "extracted_at": "2026-10-04T20:05:00Z"
+    },
+    {
+      "row_uid": "r4h5j6k",
+      "field": "n2",
+      "value_as_entered": "50",
+      "method": "reconciled",
+      "estimated": false,
+      "reconciliation": {
+        "key": "NCT0456|T",
+        "a": "50",
+        "b": "5",
+        "chosen": "a",
+        "reason": "Table 1 szerint 50"
+      },
+      "history": [
+        {
+          "value": "5",
+          "method": "reported",
+          "by": "B",
+          "at": "2026-10-03T10:00:00Z"
+        }
+      ]
+    }
+  ]
+}

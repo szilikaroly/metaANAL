@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.compare-result:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.compare-result/v1 — kettős kinyerés összevetése (api.compare; terv 4.9, E6)",
+  "type": "object",
+  "required": [
+    "schema",
+    "key",
+    "summary",
+    "disagreements",
+    "only_a",
+    "only_b"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.compare-result/v1"
+    },
+    "key": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "description": "a sorokat párosító oszlopok (pl. study_id, arm)"
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "rows_a",
+        "rows_b",
+        "matched",
+        "cells_compared",
+        "agree",
+        "disagree",
+        "agreement_pct"
+      ],
+      "properties": {
+        "rows_a": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rows_b": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matched": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cells_compared": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agree": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disagree": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agreement_pct": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "by_field": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "compared",
+              "disagree"
+            ],
+            "properties": {
+              "compared": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "disagree": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "kappa": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "kappa_ci": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "disagreements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "field",
+          "a",
+          "b",
+          "kind"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "a kulcsoszlopok értékei '|'-lal összefűzve"
+          },
+          "row_uid_a": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+              }
+            ]
+          },
+          "row_uid_b": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+              }
+            ]
+          },
+          "field": {
+            "type": "string",
+            "description": "kanonikus oszlopnév"
+          },
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "az A kinyerő nyers cellaszövege"
+          },
+          "b": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "a B kinyerő nyers cellaszövege"
+          },
+          "a_value": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "b_value": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "kind": {
+            "enum": [
+              "value",
+              "missing_a",
+              "missing_b",
+              "format_only",
+              "parse",
+              "category"
+            ]
+          },
+          "hint": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            ],
+            "description": "a motor súgója (V011/V012 heurisztikák)"
+          },
+          "impact": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "measure": {
+                "type": "string"
+              },
+              "yi_a": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "yi_b": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "text": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "only_a": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "only_b": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

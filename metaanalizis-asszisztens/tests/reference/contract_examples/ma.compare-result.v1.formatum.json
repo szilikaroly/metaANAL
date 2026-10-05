@@ -1,0 +1,55 @@
+{
+  "schema": "szk.ma.compare-result/v1",
+  "key": [
+    "study_id",
+    "arm"
+  ],
+  "summary": {
+    "rows_a": 2,
+    "rows_b": 3,
+    "matched": 2,
+    "cells_compared": 8,
+    "agree": 7,
+    "disagree": 1,
+    "agreement_pct": 87.5
+  },
+  "disagreements": [
+    {
+      "key": "NCT0789|C",
+      "row_uid_a": null,
+      "row_uid_b": "r33cc",
+      "field": "m1",
+      "a": "12,30",
+      "b": "12.3",
+      "a_value": 12.3,
+      "b_value": 12.3,
+      "kind": "format_only",
+      "hint": null,
+      "impact": null
+    },
+    {
+      "key": "NCT0789|T",
+      "field": "sd1",
+      "a": null,
+      "b": "3.1",
+      "kind": "missing_a",
+      "hint": {
+        "hu": "az A kinyerőnél hiányzik",
+        "en": "missing for extractor A"
+      },
+      "impact": {
+        "measure": "SMD",
+        "yi_a": null,
+        "yi_b": 0.12,
+        "text": {
+          "hu": "SMD — → 0,12",
+          "en": "SMD — → 0.12"
+        }
+      }
+    }
+  ],
+  "only_a": [],
+  "only_b": [
+    "NCT0999|T"
+  ]
+}

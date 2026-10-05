@@ -1,0 +1,457 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.plot:2",
+  "title": "szk.ma.plot/v2 — ábra-nézetmodell (plot_data.json; terv 4.6)",
+  "type": "object",
+  "required": [
+    "schema",
+    "meta",
+    "measure",
+    "scale",
+    "level",
+    "axis",
+    "studies",
+    "summaries"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.plot/v2"
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "engine_version",
+        "data_sha256"
+      ],
+      "properties": {
+        "engine_version": {},
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data_sha256": {},
+        "spec_sha256": {}
+      }
+    },
+    "measure": {
+      "type": "string"
+    },
+    "scale": {
+      "type": "object",
+      "required": [
+        "analysis",
+        "ratio",
+        "null_analysis"
+      ],
+      "properties": {
+        "analysis": {
+          "enum": [
+            "identity",
+            "log",
+            "logit",
+            "atanh",
+            "asin_sqrt",
+            "pft"
+          ]
+        },
+        "ratio": {
+          "type": "boolean"
+        },
+        "null_analysis": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "null_display": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        }
+      }
+    },
+    "level": {
+      "type": "number"
+    },
+    "axis": {
+      "type": "object",
+      "required": [
+        "domain",
+        "ticks",
+        "title"
+      ],
+      "properties": {
+        "domain": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "ticks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "at",
+              "text"
+            ],
+            "properties": {
+              "at": {
+                "type": "number",
+                "description": "elemzési skálán"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "title": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "properties": {
+        "left": {},
+        "right": {},
+        "title": {}
+      }
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ]
+      }
+    },
+    "studies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "row_uid",
+          "row_index",
+          "label",
+          "y",
+          "lo",
+          "hi",
+          "weight_pct",
+          "display",
+          "display_text"
+        ],
+        "properties": {
+          "row_uid": {
+            "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+          },
+          "row_index": {
+            "type": "integer"
+          },
+          "study_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "y": {
+            "type": "number"
+          },
+          "lo": {
+            "type": "number"
+          },
+          "hi": {
+            "type": "number"
+          },
+          "weight_pct": {
+            "type": "number"
+          },
+          "weight_fixed_pct": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "cells": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "kész szövegek: 4/123, 12.4 (3.1)"
+          },
+          "display": {
+            "$ref": "urn:szk:contract:common:1#/$defs/display"
+          },
+          "display_text": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "clip": {
+            "type": "object",
+            "properties": {
+              "left": {
+                "type": "boolean"
+              },
+              "right": {
+                "type": "boolean"
+              }
+            }
+          },
+          "flags": {
+            "type": "object",
+            "properties": {
+              "estimated": {
+                "type": "boolean"
+              },
+              "rob": {
+                "enum": [
+                  "low",
+                  "some",
+                  "high",
+                  "critical",
+                  null
+                ]
+              },
+              "zero_cell_corrected": {
+                "type": "boolean"
+              },
+              "influential": {
+                "type": "boolean"
+              },
+              "outlier": {
+                "type": "boolean"
+              }
+            }
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "doc": {},
+              "page": {},
+              "locator": {}
+            }
+          }
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "row_uids",
+          "summary"
+        ]
+      }
+    },
+    "summaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "label",
+          "estimate",
+          "ci_lower",
+          "ci_upper",
+          "display",
+          "display_text"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "overall",
+              "subgroup",
+              "sensitivity"
+            ]
+          },
+          "model": {
+            "enum": [
+              "random",
+              "fixed",
+              "ivhet",
+              "mh",
+              "peto"
+            ]
+          },
+          "label": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "pi_lower": {},
+          "pi_upper": {},
+          "display_text": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "pi_text": {},
+          "het_text": {}
+        }
+      }
+    },
+    "subgroup_test": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "Q",
+            "df",
+            "p",
+            "text"
+          ]
+        }
+      ]
+    },
+    "heterogeneity": {
+      "type": "object",
+      "properties": {
+        "Q": {},
+        "df": {},
+        "p": {},
+        "I2": {},
+        "tau2": {},
+        "text": {}
+      }
+    },
+    "funnel": {
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "row_uid",
+              "x",
+              "se"
+            ]
+          }
+        },
+        "filled": {
+          "type": "array"
+        },
+        "center": {
+          "type": "number"
+        },
+        "se_max": {
+          "type": "number"
+        },
+        "pseudo_ci": {
+          "type": "array",
+          "description": "[[x, se], …] töréspontok"
+        },
+        "contours": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "p",
+              "polygon"
+            ],
+            "description": "p = 0.10 / 0.05 / 0.01 sávok kész poligonként — a JS nem számol x = c ± z·se-t"
+          }
+        },
+        "tests_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "doi": {
+      "type": "object",
+      "properties": {
+        "points": {},
+        "lfk": {},
+        "category": {},
+        "lfk_text": {}
+      }
+    },
+    "loo": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "omitted_row_uid",
+          "estimate",
+          "ci_lower",
+          "ci_upper",
+          "display_text"
+        ]
+      }
+    },
+    "influence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "row_uid"
+        ],
+        "properties": {
+          "rstudent": {},
+          "dffits": {},
+          "cook_d": {},
+          "cov_ratio": {},
+          "hat": {},
+          "dfbetas": {},
+          "influential": {
+            "type": "boolean"
+          },
+          "decimals": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "cumulative": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "key_label",
+            "entries"
+          ]
+        }
+      ]
+    },
+    "bubble": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "moderator",
+            "points",
+            "line",
+            "band"
+          ],
+          "properties": {
+            "band": {
+              "description": "[[x, alsó, felső], …] — a motor számolja a koefficiens-kovarianciából"
+            },
+            "coef_text": {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          }
+        }
+      ]
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      }
+    }
+  }
+}

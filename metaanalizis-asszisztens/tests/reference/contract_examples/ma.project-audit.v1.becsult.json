@@ -1,0 +1,28 @@
+{
+  "schema": "szk.ma.project-audit/v1",
+  "project": "glp1",
+  "generated": "2026-10-05T08:00:00.250Z",
+  "summary": {
+    "error": 0,
+    "warning": 1,
+    "info": 0
+  },
+  "findings": [
+    {
+      "code": "X005",
+      "severity": "warning",
+      "stage": "S12",
+      "outcome": "o1",
+      "title": "Van becsült sor, de nincs „becsült nélkül” gyermek-futás",
+      "detail": "03_adatok/o1.csv: 2 becsült sor",
+      "artifacts": [
+        "03_adatok/o1.csv"
+      ],
+      "suggested_command": null,
+      "kb_refs": [
+        "D-S12-003",
+        "D-S05-023"
+      ]
+    }
+  ]
+}

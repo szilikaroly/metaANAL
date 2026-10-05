@@ -1,0 +1,60 @@
+{
+  "schema": "szk.ma.validate-request/v1",
+  "measure": "SMD",
+  "options": {
+    "smd_vtype": "LS",
+    "j_method": "exact",
+    "label_col": "study"
+  },
+  "table": {
+    "header": [
+      "row_uid",
+      "study",
+      "m1",
+      "sd1",
+      "n1",
+      "m2",
+      "sd2",
+      "n2"
+    ],
+    "rows": [
+      [
+        "r7f3a2b",
+        "Smith 2010",
+        "12,3",
+        "3,1",
+        "40",
+        "14,0",
+        "3,4",
+        "41"
+      ],
+      [
+        "r9k2m4p",
+        "Lee 2015",
+        "2,000",
+        "NR",
+        "35",
+        "",
+        "2,9",
+        "33"
+      ],
+      [
+        "r4h5j6k",
+        "Kovács 2019",
+        "11,9",
+        "2,8",
+        "52",
+        "13,2",
+        null,
+        "50"
+      ]
+    ],
+    "decimal_mark": ",",
+    "delimiter": ";",
+    "lines": [
+      2,
+      3,
+      4
+    ]
+  }
+}

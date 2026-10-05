@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.provenance:1",
+  "title": "szk.ma.provenance/v1 — cellaszintű eredet (03_adatok/<kimenet>.prov.json; terv 4.8)",
+  "type": "object",
+  "required": [
+    "schema",
+    "table",
+    "table_sha256",
+    "cells"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.provenance/v1"
+    },
+    "table": {
+      "$ref": "urn:szk:contract:common:1#/$defs/relpath"
+    },
+    "table_sha256": {
+      "description": "a CSV hash-e, amelyhez ez az oldalfájl tartozik (X022 őrzi)"
+    },
+    "cells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "row_uid",
+          "field",
+          "method"
+        ],
+        "properties": {
+          "row_uid": {},
+          "field": {
+            "type": "string",
+            "description": "kanonikus oszlopnév"
+          },
+          "value_as_entered": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "method": {
+            "enum": [
+              "reported",
+              "calculated",
+              "estimated",
+              "digitized",
+              "imputed",
+              "author_contact",
+              "reconciled",
+              "external_edit"
+            ]
+          },
+          "estimated": {
+            "type": "boolean",
+            "description": "true: estimated | digitized | imputed"
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "doc": {
+                "description": "documents.json id"
+              },
+              "page": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "locator": {
+                "examples": [
+                  "Table 2",
+                  "Fig. 3B",
+                  "Suppl. S4"
+                ]
+              },
+              "quote": {
+                "type": "string",
+                "maxLength": 500
+              }
+            }
+          },
+          "conversion": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "a convert-request + convert-result lényege, motorverzióval"
+          },
+          "reconciliation": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "kulcs, A/B érték, választás, indoklás"
+          },
+          "extracted_by": {},
+          "extracted_at": {},
+          "verified_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "verified_at": {},
+          "history": {
+            "type": "array",
+            "maxItems": 50,
+            "description": "korábbi bejegyzések (érték + method + ki/mikor)"
+          }
+        }
+      }
+    }
+  }
+}
