@@ -29,6 +29,30 @@
       },
       "description": "a motor számai (elemzési pontossággal; a felület nem számol)"
     },
+    "outputs_text": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "null"
+          },
+          {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        ]
+      },
+      "description": "kimenetenként a motor kijelzési szövege (a display_text konvenciója: tizedespont; hu: kötőjel-mínusz, en: U+2212) — a felület nem kerekít újra"
+    },
+    "cell_text": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "description": "kimenetenként a cellába írandó szöveg a cél tábla tizedesjelével (target.decimal_mark; ennek hiányában target.delimiter: ';' → ',', más → '.'; alapból ','), ASCII mínusszal"
+    },
     "estimated": {
       "type": "boolean",
       "description": "mindig a motor döntése: becslés true, algebrai átalakítás false"

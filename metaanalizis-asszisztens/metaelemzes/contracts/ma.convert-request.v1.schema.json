@@ -77,6 +77,23 @@
             "type": "string"
           },
           "description": "kimenet → kanonikus oszlopnév (pl. mean → m1)"
+        },
+        "decimal_mark": {
+          "enum": [
+            ",",
+            ".",
+            null
+          ],
+          "description": "a cél tábla tizedesjele (a cell_text ehhez igazodik)"
+        },
+        "delimiter": {
+          "enum": [
+            ",",
+            ";",
+            "\t",
+            null
+          ],
+          "description": "a cél tábla tagolója (ha a tizedesjel ismeretlen)"
         }
       }
     }

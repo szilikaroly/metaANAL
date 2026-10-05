@@ -665,7 +665,9 @@ def validation_document(header, rows_text, measure, options=None, decimal_mark=N
 
 
 def validation_document_from_file(path, measure, options=None):
-    """CSV/TSV-fájl → szk.ma.validation/v1 (input_sha256 = a fájl bájtjainak sha256-ja; line = fájlsor)."""
+    """CSV/TSV-fájl → szk.ma.validation/v1 (input_sha256 = a fájl bájtjainak sha256-ja; line = fájlsor). A 'row' és
+    a 'rows' az adatsorok indexei (az üres rekordok nélkül) — ugyanaz a rács, mint a tableio.read_raw /
+    api.read_table sorai és a munkapad táblája, így a fájlból és a piszkozatból ugyanaz a szám adódik."""
     measure = _check_measure(measure)
     opts = compute_options(options)
     with open(path, "rb") as fh:

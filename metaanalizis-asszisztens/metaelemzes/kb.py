@@ -5,7 +5,9 @@ PDF/DOCX/TXT/MD fájlokból, keresés és csak-olvasó SQL az ágensek döntése
 Elérési utak:
   tudasbazis/schema.sql         — séma
   tudasbazis/seed/*.json         — verziókövetett, saját szavas tudás
-  tudasbazis/tudasbazis.sqlite   — a felépített adatbázis (gitignore; `kb build` újraépíti)
+  tudasbazis/tudasbazis.sqlite   — a felépített adatbázis (gitignore; `kb build` újraépíti); pluginként
+                                   telepítve a plugin megmaradó adatmappájában (<plugins>/data/<plugin>-<marketplace>/),
+                                   hogy frissítéskor a betöltött teljes szöveg ne vesszen el; METAELEMZES_KB felülírja
   tudasbazis/forrasok/           — a helyi forrásfájlok (gitignore; szerzői jog)
 """
 import collections
@@ -28,7 +30,35 @@ ROOT = os.path.dirname(HERE)
 KB_DIR = os.path.join(ROOT, "tudasbazis")
 SCHEMA = os.path.join(KB_DIR, "schema.sql")
 SEED_DIR = os.path.join(KB_DIR, "seed")
-DEFAULT_DB = os.environ.get("METAELEMZES_KB") or os.path.join(KB_DIR, "tudasbazis.sqlite")
+
+
+def _plugin_data_dir(env=os.environ, root=ROOT):
+    """A Claude Code-plugin megmaradó adatmappája, ha a motor pluginként fut (különben None). A
+    CLAUDE_PLUGIN_DATA csak a hook-/MCP-folyamatok környezetében van meg, a Bash-eszközzel futtatott
+    parancsokéban nincs: ezért a plugin-gyorsítótár elrendezéséből is levezetjük."""
+    data = env.get("CLAUDE_PLUGIN_DATA")
+    if data:
+        proot = env.get("CLAUDE_PLUGIN_ROOT")
+        if not proot or os.path.normcase(os.path.realpath(proot)) == os.path.normcase(os.path.realpath(root)):
+            return data
+    parts = os.path.normpath(root).split(os.sep)
+    if len(parts) >= 5 and parts[-4] == "cache":   # <plugins>/cache/<marketplace>/<plugin>/<verzió>
+        plugins = os.sep.join(parts[:-4]) or os.sep
+        if parts[-6:-4] == [".claude", "plugins"] or os.path.isfile(os.path.join(plugins, "installed_plugins.json")):
+            pid = re.sub(r"[^A-Za-z0-9_-]", "-", "%s@%s" % (parts[-2], parts[-3]))
+            return os.path.join(plugins, "data", pid)
+    return None
+
+
+def _default_db(env=os.environ, root=ROOT):
+    """Az alapértelmezett adatbázis: METAELEMZES_KB > a plugin adatmappája > tudasbazis/tudasbazis.sqlite."""
+    if env.get("METAELEMZES_KB"):
+        return env["METAELEMZES_KB"]
+    data = _plugin_data_dir(env, root)
+    return os.path.join(data, "tudasbazis.sqlite") if data else os.path.join(KB_DIR, "tudasbazis.sqlite")
+
+
+DEFAULT_DB = _default_db()
 
 SEED_TABLES = [
     # (fájlminta, tábla, oszlopok)
@@ -100,8 +130,11 @@ def _schema_hash(schema=None):
     return hashlib.sha256((schema if schema is not None else _read_schema()).encode("utf-8")).hexdigest()
 
 
-# a motor szabálykészletei: (modul, szakasz) → a kb decision_rule táblájába kerülnek
-ENGINE_RULESETS = (("validate", "S05"), ("prisma", "S04"))
+# a motor szabálykészletei: (modul, szakasz) → a kb decision_rule táblájába kerülnek; szakasz None: a modul
+# RULE_STAGES-e adja szabályonként (audit: X-szabályok)
+ENGINE_RULESETS = (("validate", "S05"), ("prisma", "S04"), ("audit", None))
+ENGINE_RULE_KINDS = {"validate": "Adatvalidálási", "prisma": "PRISMA-számellenőrzési",
+                     "audit": "Projekt-audit (kereszt-artefaktum)"}
 
 
 def _engine_rules():
@@ -116,8 +149,10 @@ def _engine_rule_meta():
     """kód → (szakasz, modul) — melyik szakaszhoz és melyik motormodulhoz tartozik a szabály."""
     meta = {}
     for mod, stage in ENGINE_RULESETS:
-        for code in __import__("metaelemzes." + mod, fromlist=["RULES"]).RULES:
-            meta[code] = (stage, mod)
+        m = __import__("metaelemzes." + mod, fromlist=["RULES"])
+        per_rule = getattr(m, "RULE_STAGES", {})
+        for code in m.RULES:
+            meta[code] = (per_rule.get(code, stage), mod)
     return meta
 
 
@@ -336,13 +371,13 @@ def build(path=None, keep_fulltext=True):
         rules = _engine_rules()
         clash = sorted(set(rules) & set(seed_ids.get("decision_rule", {})))
         if clash:
-            raise KBError("A seed-szabály azonosítója ütközik a motor validálási szabályával: %s (%s) — a "
-                          "V-kódok a metaelemzes/validate.py RULES-ból jönnek." % (
+            raise KBError("A seed-szabály azonosítója ütközik a motor szabályával: %s (%s) — a V-, P- és "
+                          "X-kódok a metaelemzes/validate.py, prisma.py és audit.py RULES-ából jönnek." % (
                               ", ".join(clash), ", ".join(seed_ids["decision_rule"][c] for c in clash)))
         rmeta = _engine_rule_meta()
         for code, (sev, title, advice, src) in rules.items():
             stage, mod = rmeta[code]
-            kind = "Adatvalidálási" if mod == "validate" else "PRISMA-számellenőrzési"
+            kind = ENGINE_RULE_KINDS.get(mod, mod)
             cur.execute("INSERT INTO decision_rule (rule_id, stage_id, applies_to, condition, recommendation, "
                         "rationale, strength, machine_check, source_ids, locator) VALUES (?,?,?,?,?,?,?,?,?,?)",
                         (code, stage, "engine", title, advice, "%s szabály (%s)" % (kind, sev),

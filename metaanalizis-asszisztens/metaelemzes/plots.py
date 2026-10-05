@@ -222,6 +222,11 @@ def axis_label(measure, label=None, lang="hu"):
     return suffix.get(measure, "%s") % lab
 
 
+# a tartomány széléhez közeli tick-jelöltek (ZCOR: r; arány-mértékek: p), ha a kerek beosztás túl kevés tickhez vezet
+_EDGE_TICKS_R = (-0.999, -0.99, -0.95, -0.9, -0.8, 0.8, 0.9, 0.95, 0.99, 0.999)
+_EDGE_TICKS_P = (0.001, 0.01, 0.05, 0.1, 0.9, 0.95, 0.99, 0.999)
+
+
 class _Axis(object):
     """Vízszintes tengely az elemzési skálán; a tickek felirata az értelmezési skálán
     (arány-mértékeknél exp, arányoknál/korrelációnál a visszatranszformált érték)."""
@@ -239,13 +244,27 @@ class _Axis(object):
         return self.x0 + (v - self.lo) / (self.hi - self.lo) * (self.x1 - self.x0)
 
     def ticks(self, min_px=30):
+        transformed = self.measure in TRANSFORMED_MEASURES and not (self.measure == "PFT" and not self.n_harmonic)
         if self.ratio:
             pos, labels = _ratio_ticks(self.lo, self.hi)
             ticks = list(zip(pos, [("%g" % t) for t in labels]))
-        elif self.measure in TRANSFORMED_MEASURES and not (self.measure == "PFT" and not self.n_harmonic):
+        elif transformed:
             ticks = self._transformed_ticks()
         else:
             ticks = [(t, "%g" % t) for t in _nice_ticks(self.lo, self.hi)]
+        out = self._spaced(ticks, min_px)
+        if transformed and len(out) < 3:
+            # széles tartomány (pl. ZCOR, kis k-jú PI): a kerek r/arány-tickek a null mellé szorulnak — a
+            # tartomány széléhez közeli értékek (0.9, 0.99 …) is jelöltek (a középhez közelebbiek előbb), ha
+            # minden megtartott ticktől legalább min_px-re vannak
+            mid = 0.0 if self.measure == "ZCOR" else 0.5
+            for pos, lab in sorted(self._transformed_ticks(edges=True), key=lambda t: abs(float(t[1]) - mid)):
+                if all(abs(self.x(pos) - self.x(q)) >= min_px for q, _ in out):
+                    out.append((pos, lab))
+            out = sorted(out)
+        return out
+
+    def _spaced(self, ticks, min_px):
         # egymásra csúszó feliratok elhagyása; a nullhatás tickje (pl. OR = 1) mindig megmarad, a
         # többi a tőle mért távolság sorrendjében, ha minden megtartottól legalább min_px-re van
         null = default_null(self.measure)
@@ -263,11 +282,19 @@ class _Axis(object):
                 out.append((pos, lab))
         return sorted(out)
 
-    def _transformed_ticks(self):
+    def _transformed_ticks(self, edges=False):
         m, nh = self.measure, self.n_harmonic
         a, b = back_transform(m, self.lo, nh), back_transform(m, self.hi, nh)
         dom = (-1.0, 1.0) if m == "ZCOR" else (0.0, 1.0)
         a, b = max(min(a, b), dom[0]), min(max(a, b), dom[1])
+        if edges:
+            cand = _EDGE_TICKS_R if m == "ZCOR" else _EDGE_TICKS_P
+            out = []
+            for t in cand:
+                pos = forward_transform(m, t, nh) if a <= t <= b else None
+                if pos is not None and self.lo - 1e-12 <= pos <= self.hi + 1e-12:
+                    out.append((pos, "%g" % t))
+            return out
         out = []
         for n in (5, 6, 8):
             cand = []

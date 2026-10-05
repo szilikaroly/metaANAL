@@ -17,10 +17,10 @@ a tudásbázis `tool` táblájából és a `PREFLIGHT` ellenőrzőlistából.
 A Claude Code a claude.ai konnektorokat helyben `mcp__claude_ai_<Név>__…` néven látja. Az alágensek mindkét
 névváltozatot engedélyezik, ezért ezzel nincs teendő.
 
-## 2. Claude Code-engedélyek (ebben a repóban)
+## 2. Claude Code-engedélyek
 
-A `.claude/settings.json` előre engedélyezi azokat a csak olvasó vagy helyi műveleteket, amelyeket az ágensek gyakran
-futtatnak:
+**A repóban dolgozva** a `.claude/settings.json` előre engedélyezi azokat a csak olvasó vagy helyi műveleteket, amelyeket
+az ágensek gyakran futtatnak:
 - a motor futtatása: `python metaanalizis-asszisztens/ma.py …`;
 - a tesztek;
 - a tudományos API-k lekérése: NCBI E-utilities, Europe PMC, Crossref, OpenAlex, ClinicalTrials.gov, PROSPERO, Unpaywall, Semantic Scholar;
@@ -28,11 +28,17 @@ futtatnak:
 
 Ha ezt nem szeretnéd, töröld a fájlt: ekkor minden ilyen műveletnél rákérdez.
 
+**Pluginként telepítve** (`metaanalizis@anamnezis-asszisztens`) ez a fájl nem érvényes, és a plugin maga nem adhat
+engedélyt (a plugin `settings.json`-jából a Claude Code csak az `agent` és a `subagentStatusLine` kulcsot olvassa). A
+javasolt engedélylistát — a plugin telepítési útjára illeszkedő `Bash(python "…/ma.py" *)` szabályokkal és a
+`_privat/` mappát tiltó `deny` sorokkal — a [TELEPITES.md](TELEPITES.md) 5. pontja adja; a saját
+`~/.claude/settings.json` vagy a projekt `.claude/settings.json` fájljába másold.
+
 ## 3. Helyi szoftver
 
 | Eszköz | Mire kell | Kötelező? |
 |---|---|---|
-| **Python ≥ 3.8** (a te `.claude/.venv`-ed is jó) | a motor, a tudásbázis és a projektnapló — külső csomag nélkül | **igen** |
+| **Python ≥ 3.9** (a te `.claude/.venv`-ed is jó; Windows-on `py -3` is) | a motor, a tudásbázis, a projektnapló és a munkapad — külső csomag nélkül | **igen** |
 | `pypdf` (`pip install pypdf`) vagy poppler `pdftotext` | PDF-ek betöltése a tudásbázisba (`kb ingest`) | ajánlott |
 | R + `metafor` (+ `meta`) | független keresztellenőrzés; a motor által nem tudott modellek: többszintű (`rma.mv`), hálózati, dózis–hatás, bayesi | ajánlott |
 | Zotero (ingyenes) | hivatkozáskezelés, RIS-export, duplikátumszűrés | ajánlott |
@@ -85,6 +91,8 @@ suspected” választ nem minősíti le. Az értékelő alágens ezt a domént k
 
 ## 8. Adatvédelem
 
+- Betegszintű adat csak **anonimizáltan**, a projekt `_privat/` mappájában lehet; ezt Claude nem olvassa (javasolt `deny`
+  szabályok: [TELEPITES.md](TELEPITES.md) 5. pont). A metaanalízis maga aggregált adatot használ.
 - Betegszintű adat nem kerülhet a repóba; a gyökér `.gitignore` a `*_[Pp][Hh][Ii]`, `*_[Pp][Hh][Ii][._-]*`,
   `[Pp][Hh][Ii]_*`, `*.[Pp][Hh][Ii].*` és `*beteg_adat*` mintákat kizárja — a betegszintű fájl (vagy mappa) nevében tehát a PHI (kis- vagy nagybetűvel) önálló, elválasztott
   tagként szerepeljen: a név végén `_PHI`, utána `.`, `_` vagy `-` (pl. `betegek_PHI.csv`, `kohorsz_PHI_v2.csv`), az
@@ -92,4 +100,6 @@ suspected” választ nem minősíti le. Az értékelő alágens ezt a domént k
   (pl. `morphine-…`, `delphi-…`, `neutrophil-…`, `dengue_philippines`, `smith_phillips_2020.pdf`) nem zár ki semmit.
 - A **vault** plugin a `~/Documents/claude` alatti projekteket automatikusan feltölti a GitHubra. Érzékeny kinyerési adatot
   ne tárolj ott, vagy tedd `.gitignore`-ba.
-- A forrásdokumentumok teljes szövege (`tudasbazis/forrasok/`, `tudasbazis/*.sqlite`) szerzői jogvédett, ezért nem kerül a repóba.
+- A forrásdokumentumok teljes szövege (`tudasbazis/forrasok/` vagy bármely saját mappa, `tudasbazis/*.sqlite`, pluginként a
+  plugin adatmappája) szerzői jogvédett, ezért nem kerül a repóba, és nem adható tovább.
+- A munkapadot és a pillanatképét soha ne publikáld Artifactként, és ne töltsd fel.

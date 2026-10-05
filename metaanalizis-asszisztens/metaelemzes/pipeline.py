@@ -549,14 +549,22 @@ def attach_row_ids(es, rows, meta=None, table_rows=None):
     es.table_index = [pos.get(id(rows[i]), i) if 0 <= i < len(rows) else i for i in rix]
     es.row_uids = [uids[i] if 0 <= i < len(uids) else tableio.row_uid_for(lab, i)
                    for i, lab in zip(es.table_index, es.labels)]
+    # nyers piszkozatnál (tableio.parse_table) a sor helye a kliens sorai között (meta['row_positions'], a
+    # közbülső üres sorokkal együtt, mint a validálási dokumentum 'row'-ja) — a plot row_index-e
+    grid = (meta or {}).get("row_positions")
+    if grid is not None and len(grid) == len(full):
+        es.table_position = [grid[i] if 0 <= i < len(grid) else i for i in es.table_index]
     return es
 
 
 def _row_ids(es):
-    """(row_uids, table_index) — a pipeline.run után az es-en; más úton számolt es-nél a sorindexből."""
+    """(row_uids, sorindex) — a pipeline.run után az es-en; más úton számolt es-nél a sorindexből. A sorindex
+    ugyanaz, mint a validálási dokumentum 'row'-ja: fájlnál az adatsor indexe, nyers piszkozatnál a kliens sorai
+    közötti hely (meta['row_positions'])."""
     uids, tix = getattr(es, "row_uids", None), getattr(es, "table_index", None)
     if uids is not None and tix is not None and len(uids) == len(es) == len(tix):
-        return list(uids), list(tix)
+        grid = getattr(es, "table_position", None)
+        return list(uids), list(grid if grid is not None and len(grid) == len(tix) else tix)
     rix = list(getattr(es, "row_index", []) or [])
     if len(rix) != len(es):
         rix = list(range(len(es)))
@@ -1122,6 +1130,12 @@ def _tests_text(out, lang):
     return txt
 
 
+def _tests_i18n(out):
+    """A tölcsér-tesztek szövege {hu, en}, vagy None, ha nincs mit kiírni (k < 3, vagy minden teszt kimaradt)."""
+    txt = {lg: _tests_text(out, lg) for lg in P.LANGS}
+    return txt if all(isinstance(t, str) for t in txt.values()) else None
+
+
 def _trimfill_text(out, measure, nh, pft_n, lang, minus):
     tf = (out.get("bias") or {}).get("trimfill")
     if tf is None:
@@ -1320,11 +1334,12 @@ def plot_document(out, es, opt=None, run_info=None, data=None):
         "contour_center": geo.null if geo.contour else None, "se_max": geo.se_max, "pseudo_ci": geo.pseudo_ci(),
         "contours": [{"p": p_, "z": z, "polygon": poly, "band_text": _same(band[p_])} for p_, z, poly in geo.contours()],
         "outside_text": _same("p < 0.01") if geo.contour else None,
-        "tests_text": {lg: _tests_text(out, lg) for lg in P.LANGS} if (out.get("bias") or {}).get("performed")
-        else None,
+        "tests_text": _tests_i18n(out),
         "trimfill_text": _i18n(lambda lg, mn: _trimfill_text(out, measure, nh, pft_n, lg, mn)) if tf else None,
         "axis": _axis_doc(geo.axis, axis_title, pref),
         "y_axis": _value_axis(0.0, geo.se_max, {lg: P.tr("se_axis", lg) for lg in P.LANGS}, pref)}
+    if doc["funnel"]["tests_text"] is None:
+        del doc["funnel"]["tests_text"]         # a szerződés i18n-objektumot vár (nem null): nincs teszt → nincs kulcs
 
     # Doi-plot
     lf = (out.get("bias") or {}).get("lfk")

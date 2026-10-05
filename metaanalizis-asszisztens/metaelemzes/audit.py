@@ -17,7 +17,15 @@ kimenet `not_checked` listája indokkal sorolja fel, találat helyett):
   03_adatok/studies.json                   szk.ma.studies/v1 (I; vizsgálat-címkék)
   04_torzitas_kockazat/appraisals/*.json   szk.appraisal/v1 (X003)
   05_elemzes/specs/*.json                  szk.ma.analysis-spec/v1 (X005, X006, X016)
-  05_elemzes/<kimenet>/<run_id>/run.json   szk.ma.run/v1 (+ results.json: a futás tényleges szűrői)
+  05_elemzes/<kimenet>/<run_id>/run.json   szk.ma.run/v1 (+ results.json: a futás tényleges szűrői); a commit-futás
+                                           05_elemzes/<kimenet>/run.json-ban, vagy — a projektnapló futásai között —
+                                           bárhol (pl. a --project melletti alapértelmezett <adatmappa>/eredmeny) is
+                                           lehet
+
+A futás kimenete: a specje kimenete (a spec-fájl vagy a spec neve alapján), ennek hiányában a 05_elemzes/<kimenet>/
+<futás> mappa, majd az adatfájlja szerinti ismert kimenet, végül az adatfájl neve. A futás-csoport (X001, X005,
+X006, X014: csak a csoport legutóbbi futása számít) a spec-fájl; spec-fájl nélkül a spec neve és az elemzés tartalma
+(adatfájl, opciók, szűrők) — így két különböző CLI-elemzés ugyanazon a táblán nem takarja el egymást.
 
 Belépési pontok: project_audit(mappa, stage=None) → szk.ma.project-audit/v1 szótár; audit_gate_errors(mappa) →
 a FINAL audit-kaput elutasító (error szintű) találatok; require_gate(mappa) → ValueError, ha van ilyen;
@@ -306,6 +314,24 @@ class _Ctx(object):
         self._tables[key] = res
         return res
 
+    def raw_cells(self, rel, meta):
+        """A tábla nyers cellaszövegei a beolvasott sorok sorrendjében: [{kanonikus oszlop: szöveg}] (X022: a
+        bevitt érték először szövegként vetendő össze); olvashatatlan fájlnál None."""
+        try:
+            with open(self.abs(rel), "rb") as fh:
+                _, rows_text, _ = tableio.read_raw(raw=fh.read())
+        except (OSError, ValueError):
+            return None
+        mapping = meta.get("mapping") or {}
+        index = {}
+        for p, col in enumerate(meta.get("columns") or []):
+            index.setdefault(mapping.get(col, col), p)
+        out = []
+        for pos in meta.get("row_positions") or range(len(rows_text)):
+            cells = rows_text[pos] if 0 <= pos < len(rows_text) else []
+            out.append({f: (cells[p] if p < len(cells) else "") for f, p in index.items()})
+        return out
+
     def skip(self, code, outcome, reason):
         item = {"code": code, "outcome": outcome, "reason": reason}
         if item not in self.not_checked:
@@ -386,34 +412,37 @@ def _str_list(v):
 
 
 def _load_runs(ctx):
-    """05_elemzes/<kimenet>/<futás>/run.json (csak commit-futások), időrendben."""
+    """A projekt commit-futásai (spec.project_run_files: 05_elemzes/<kimenet>/<futás>/run.json, 05_elemzes/
+    <kimenet>/run.json és a projektnapló futásainak mappái), időrendben (indulás, majd a run.json módosítási ideje)."""
+    from . import spec as S
     out = []
-    base = ctx.abs(ANALYSIS_DIR)
-    if not os.path.isdir(base):
-        return out
-    for oid in sorted(os.listdir(base)):
-        odir = os.path.join(base, oid)
-        if oid == "specs" or not os.path.isdir(odir):
+    for path, layout, folder, logged in S.project_run_files(ctx.root):
+        rel = ctx.rel(path)
+        doc = ctx.load_json(rel, what="futás-leíró")
+        if not isinstance(doc, dict):
             continue
-        for sub in sorted(os.listdir(odir)):
-            rel = "%s/%s/%s/run.json" % (ANALYSIS_DIR, oid, sub)
-            if not ctx.isfile(rel):
-                continue
-            doc = ctx.load_json(rel, what="futás-leíró")
-            if not isinstance(doc, dict):
-                continue
-            if doc.get("mode", "commit") != "commit":
-                continue
-            spec = doc.get("spec") if isinstance(doc.get("spec"), dict) else {}
-            data = doc.get("data") if isinstance(doc.get("data"), dict) else {}
-            out.append({"rel": rel, "dir": "%s/%s/%s" % (ANALYSIS_DIR, oid, sub), "outcome": oid, "doc": doc,
-                        "run_id": doc.get("run_id") if isinstance(doc.get("run_id"), str) else sub,
-                        "spec_name": spec.get("name") if isinstance(spec.get("name"), str) else None,
-                        "spec_path": spec.get("path") if isinstance(spec.get("path"), str) else None,
-                        "data_path": data.get("path") if isinstance(data.get("path"), str) else None,
-                        "data_sha": data.get("sha256") if isinstance(data.get("sha256"), str) else None,
-                        "k": _int(doc.get("k")),
-                        "sort": (str(doc.get("started") or ""), str(doc.get("run_id") or ""), sub)})
+        if doc.get("mode", "commit") != "commit":
+            continue
+        spec = doc.get("spec") if isinstance(doc.get("spec"), dict) else {}
+        data = doc.get("data") if isinstance(doc.get("data"), dict) else {}
+        if os.path.isabs(rel) and logged and not any(
+                (not f or _same_path(ctx, data.get("path"), f)) and (not h or h == data.get("sha256"))
+                for f, h in logged):
+            continue        # a projekten kívüli mappában már nem a projekt futása van (más adat)
+        try:
+            mtime = os.stat(path).st_mtime_ns
+        except OSError:
+            mtime = 0
+        d = os.path.dirname(rel) if os.path.isabs(rel) else (rel.rsplit("/", 1)[0] if "/" in rel else ".")
+        out.append({"rel": rel, "dir": d, "layout": layout, "folder": folder, "outcome": None, "doc": doc,
+                    "run_id": doc.get("run_id") if isinstance(doc.get("run_id"), str) else os.path.basename(d),
+                    "spec_name": spec.get("name") if isinstance(spec.get("name"), str) else None,
+                    "spec_path": spec.get("path") if isinstance(spec.get("path"), str) else None,
+                    "spec_sha": spec.get("sha256") if isinstance(spec.get("sha256"), str) else None,
+                    "data_path": data.get("path") if isinstance(data.get("path"), str) else None,
+                    "data_sha": data.get("sha256") if isinstance(data.get("sha256"), str) else None,
+                    "k": _int(doc.get("k")),
+                    "sort": (str(doc.get("started") or ""), mtime, str(doc.get("run_id") or ""), rel)})
     out.sort(key=lambda r: r["sort"])
     return out
 
@@ -422,15 +451,34 @@ def _run_results(ctx, run):
     """A futás results.json-ja: (exclude, include, measure) — a futás TÉNYLEGES szűrői."""
     if "results" not in run:
         res = ctx.load_json(run["dir"] + "/results.json", what="futás-eredmény")
-        excl, incl, measure = None, None, None
+        excl, incl, measure, content = None, None, None, None
         if isinstance(res, dict):
             inp = res.get("input") if isinstance(res.get("input"), dict) else {}
             if isinstance(inp.get("filters"), dict):
                 excl, incl = _str_list(inp["filters"].get("exclude")), _str_list(inp["filters"].get("include"))
             opts = res.get("options") if isinstance(res.get("options"), dict) else {}
             measure = opts.get("measure") if isinstance(opts.get("measure"), str) else None
+            if opts:
+                key = {k: v for k, v in opts.items() if k not in _COSMETIC and k != "filter_report"}
+                content = json.dumps([run["data_path"], key, sorted(excl or []), sorted(incl or [])],
+                                     sort_keys=True, ensure_ascii=False, default=str)
         run["results"] = (excl, incl, measure)
+        run["content"] = content
     return run["results"]
+
+
+def _run_group(ctx, run):
+    """A futás csoportja (a csoport legutóbbi futása számít): spec-fájlos futásnál a spec (neve vagy útja); spec-fájl
+    nélkül a spec neve + az elemzés tartalma (adatfájl, opciók, szűrők a results.json-ból; ennek hiányában a spec
+    hash-e, végül a futásmappa) — a CLI minden --data futása ugyanazt a (táblanévből képzett) spec-nevet kapja."""
+    if run["spec_path"]:
+        return ("spec", run["spec_name"] or run["spec_path"])
+    _run_results(ctx, run)
+    if run.get("content"):
+        return ("run", run["spec_name"], run["content"])
+    if run["spec_sha"]:
+        return ("run", run["spec_name"], run["spec_sha"])
+    return ("dir", run["dir"])
 
 
 def _run_filters(ctx, run, specs_by_path):
@@ -444,11 +492,11 @@ def _run_filters(ctx, run, specs_by_path):
     return None
 
 
-def _latest_runs(runs):
-    """Futás-csoportonként (spec neve vagy útja) a legutolsó commit-futás."""
+def _latest_runs(ctx, runs):
+    """Futás-csoportonként (_run_group) a legutolsó commit-futás."""
     last = collections.OrderedDict()
     for r in runs:
-        last[r["spec_name"] or r["spec_path"] or r["dir"]] = r
+        last[_run_group(ctx, r)] = r
     return list(last.values())
 
 
@@ -470,6 +518,7 @@ def _outcomes(ctx, meta, specs, runs):
     for sp in specs:
         if sp["outcome"]:
             get(sp["outcome"]).specs.append(sp)
+    _assign_run_outcomes(ctx, runs, specs, outs)
     for r in runs:
         get(r["outcome"]).runs.append(r)
     for oc in outs.values():
@@ -483,6 +532,61 @@ def _outcomes(ctx, meta, specs, runs):
                 if oid not in outs:
                     _resolve_outcome(ctx, get(oid))
     return list(outs.values())
+
+
+def _data_key(ctx, path):
+    return os.path.normcase(os.path.normpath(ctx.abs(path))) if path else None
+
+
+def _assign_run_outcomes(ctx, runs, specs, outs):
+    """A futások kimenete (r['outcome']): 1. a futás specje (spec-fájl útja, ennek hiányában egyértelmű név) szerint;
+    2. a 05_elemzes/<kimenet>/<futás> mappa szerint (ha a mappanév egy ismert kimenet slugja, az a kimenet);
+    3. az adatfájl szerint, ha az pontosan egy ismert kimeneté; 4. a 05_elemzes/<kimenet>/run.json mappája, ha
+    ismert kimenet; 5. az adatfájl neve; 6. a mappa."""
+    from . import spec as S
+    by_rel = {sp["rel"]: sp for sp in specs}
+    names = collections.Counter(sp["name"] for sp in specs if sp["name"])
+    by_name = {sp["name"]: sp for sp in specs if sp["name"] and names[sp["name"]] == 1}
+    known = list(outs) + [sp["outcome"] for sp in specs if sp["outcome"] and sp["outcome"] not in outs]
+    slug_of = collections.defaultdict(set)
+    for oid in known:
+        slug_of[S.outcome_dir(oid)].add(oid)
+    data_of = collections.defaultdict(set)
+    for oid, oc in outs.items():
+        if oc.data:
+            data_of[_data_key(ctx, oc.data)].add(oid)
+    for sp in specs:
+        if sp["outcome"] and _relpath_ok(sp["data_path"]):
+            data_of[_data_key(ctx, sp["data_path"])].add(sp["outcome"])
+    rest = []
+    for r in runs:
+        sp = by_rel.get(r["spec_path"]) if r["spec_path"] else None
+        if sp is None and r["spec_name"] in by_name:
+            cand = by_name[r["spec_name"]]
+            # a CLI-futás spec-neve a tábla nevéből képzett: csak egyező adatfájl esetén ugyanaz a spec
+            if r["spec_path"] or not cand["data_path"] or _data_key(ctx, cand["data_path"]) == _data_key(
+                    ctx, r["data_path"]):
+                sp = cand
+        if sp is not None and sp["outcome"]:
+            r["outcome"] = sp["outcome"]
+        elif r["layout"] == "nested":
+            hit = slug_of.get(r["folder"]) or set()
+            r["outcome"] = (r["folder"] if r["folder"] in hit or len(hit) != 1 else next(iter(hit)))
+        else:
+            rest.append(r)
+            continue
+        if r["data_path"]:
+            data_of[_data_key(ctx, r["data_path"])].add(r["outcome"])
+    for r in rest:
+        hit = data_of.get(_data_key(ctx, r["data_path"])) if r["data_path"] else None
+        if hit and len(hit) == 1:
+            r["outcome"] = next(iter(hit))
+        elif r["layout"] == "flat" and r["folder"] in known:
+            r["outcome"] = r["folder"]
+        elif r["data_path"]:
+            r["outcome"] = os.path.splitext(os.path.basename(r["data_path"]))[0] or r["folder"] or r["dir"]
+        else:
+            r["outcome"] = r["folder"] or os.path.basename(r["dir"])
 
 
 def _prov_rel(data):
@@ -633,10 +737,11 @@ def _cell_located(cell):
 # ------------------------------------------------------------------ X001
 def _x001(ctx, oc):
     if not oc.runs:
-        ctx.skip("X001", oc.id, "nincs commit-futás (%s/%s/*/run.json)" % (ANALYSIS_DIR, oc.id))
+        ctx.skip("X001", oc.id, "nincs commit-futás (%s/%s/*/run.json, és a projektnapló futásai között sincs)" % (
+            ANALYSIS_DIR, oc.id))
         return
     primary = {sp["name"] for sp in _primary_candidates(oc)}
-    for run in _latest_runs(oc.runs):
+    for run in _latest_runs(ctx, oc.runs):
         if not run["data_path"] or not run["data_sha"]:
             ctx.skip("X001", oc.id, "%s: hiányzik a data.path vagy a data.sha256" % run["rel"])
             continue
@@ -716,7 +821,8 @@ def _x005_x006(ctx, oc, code, tab, specs_by_path):
     flagged = _flagged_rows(code, rows)
     if not flagged:
         return
-    runs = [r for r in _latest_runs(oc.runs) if r["data_path"] is None or _same_path(ctx, r["data_path"], oc.data)]
+    runs = [r for r in _latest_runs(ctx, oc.runs)
+            if r["data_path"] is None or _same_path(ctx, r["data_path"], oc.data)]
     for r in runs:
         f = _run_filters(ctx, r, specs_by_path)
         if f is not None and _removes_all(f, column, rows, meta, flagged):
@@ -834,17 +940,31 @@ def _x013(ctx, oc, tab, prov):
 
 
 # ------------------------------------------------------------------ X022
-def _values_match(row_value, entered, field):
+def _values_match(row_value, entered, field, raw=None, meta=None):
+    """A bevitt érték (value_as_entered) egyezik-e a tábla cellájával: azonos nyers szöveg, vagy — számoszlopban a
+    tábla saját tizedesjelével és tagolójával értelmezve ('1.234' egy tizedesvesszős táblában 1234) — azonos szám."""
     if entered is None:
         return True
-    try:
-        na = tableio.parse_number(entered) is None
-    except ValueError:
-        na = False
+    if raw is not None and isinstance(entered, str) and entered.strip() == raw.strip():
+        return True
+    num = None
+    if isinstance(entered, str) and field in tableio.NUMERIC and meta is not None:
+        try:
+            num = tableio._parse_numeric_cell(entered, field, meta.get("decimal_mark"), meta.get("delimiter") or ",")[0]
+        except ValueError:
+            return False
+        na = num is None
+    else:
+        try:
+            na = tableio.parse_number(entered) is None
+        except ValueError:
+            na = False
     if row_value is None or (isinstance(row_value, str) and not row_value.strip()):
         return na or not str(entered).strip()
     if na:
         return False
+    if num is not None and isinstance(row_value, (int, float)):
+        return abs(float(row_value) - float(num)) <= 1e-9 * max(1.0, abs(float(row_value)), abs(float(num)))
     return tableio.values_equal(row_value, entered, field)
 
 
@@ -866,13 +986,16 @@ def _x022(ctx, oc, tab, prov):
     rows, meta, uids = tab
     cols = set(_columns(meta))
     by_uid = dict(zip(uids, rows))
+    raws = ctx.raw_cells(oc.data, meta)
+    raw_by_uid = dict(zip(uids, raws)) if raws is not None and len(raws) == len(uids) else {}
     bad = []
     for (u, f), cell in index.items():
         if u not in by_uid:
             bad.append((u, f, "nincs ilyen sor"))
         elif f not in cols:
             bad.append((u, f, "nincs ilyen oszlop"))
-        elif not _values_match(by_uid[u].get(f), cell.get("value_as_entered"), f):
+        elif not _values_match(by_uid[u].get(f), cell.get("value_as_entered"), f,
+                               (raw_by_uid.get(u) or {}).get(f), meta):
             bad.append((u, f, "eltérő érték (eredet: %r)" % (cell.get("value_as_entered"),)))
     if not bad:
         return
@@ -1019,7 +1142,7 @@ def _x014(ctx, oc, tab, included):
         if n_sid > n_i:
             problems.append("az adattábla egyedi study_id-jainak száma %d > I = %d" % (n_sid, n_i))
             artifacts.append(oc.data)
-    latest = [r for r in _latest_runs(oc.runs) if r["k"] is not None]
+    latest = [r for r in _latest_runs(ctx, oc.runs) if r["k"] is not None]
     if latest:
         top = max(latest, key=lambda r: r["k"])
         if top["k"] > n_i and (n_sid is None or n_sid > n_i):
@@ -1142,8 +1265,8 @@ def project_audit(project_dir, stage=None, now=None):
     outcomes = _outcomes(ctx, meta, specs, runs)
     specs_by_path = {sp["rel"]: sp for sp in specs}
     if not outcomes:
-        ctx.skip(None, None, "a projektben nincs kimenet (%s, %s, %s/<kimenet>/*/run.json vagy %s/*.prov.json)" % (
-            META_FILE, SPEC_DIR, ANALYSIS_DIR, DATA_DIR))
+        ctx.skip(None, None, "a projektben nincs kimenet (%s, %s, %s/<kimenet>/*/run.json, a projektnapló "
+                 "commit-futásai vagy %s/*.prov.json)" % (META_FILE, SPEC_DIR, ANALYSIS_DIR, DATA_DIR))
     appraisals = _appraisals(ctx) if outcomes else None
     included = _included_studies(ctx) if outcomes else (None, None)
     st = ctx.load_json(STUDIES_FILE)
@@ -1193,6 +1316,28 @@ def audit_gate_errors(project_dir):
     return [f for f in project_audit(project_dir, stage=FINAL)["findings"] if f["severity"] == "error"]
 
 
+def _data_tables(project_dir):
+    d = os.path.join(project_dir, DATA_DIR)
+    if not os.path.isdir(d):
+        return []
+    return sorted(n for n in os.listdir(d) if n.lower().endswith((".csv", ".tsv", ".txt"))
+                  and os.path.isfile(os.path.join(d, n)))
+
+
+def coverage_warning(rep, project_dir):
+    """Figyelmeztetés, ha az audit egyetlen kimenetet sem talált, pedig a 03_adatok-ban van adattábla: ilyenkor a
+    kapu átengedése nem jelenti, hogy bármi ellenőrződött (pl. a commit-futások a projekten kívül vannak)."""
+    if rep.get("outcomes"):
+        return None
+    tables = _data_tables(project_dir)
+    if not tables:
+        return None
+    return ("A projekt-audit egyetlen kimenetet sem talált (nincs ma-projekt.json, spec, commit-futás vagy eredet-"
+            "oldalfájl), pedig a %s mappában van adattábla (%s): az X-szabályok (pl. X001 elavult futás) semmit sem "
+            "ellenőriztek. Futtasd az elemzést --project-tel (commit-futás), és ellenőrizd: ma.py project audit "
+            "<mappa>." % (DATA_DIR, _plural_list(tables, 5)))
+
+
 def gate_message(errors):
     """A FINAL audit-kapu elutasításának szövege (üres lista: None)."""
     if not errors:
@@ -1206,11 +1351,16 @@ def gate_message(errors):
                                 fs[0]["title"]) for (code, oid), fs in groups.items())))
 
 
-def require_gate(project_dir):
-    """'checkpoint --stage FINAL --audit-gate': ValueError, ha van error szintű X-találat."""
-    msg = gate_message(audit_gate_errors(project_dir))
+def require_gate(project_dir, warnings=None):
+    """'checkpoint --stage FINAL --audit-gate': ValueError, ha van error szintű X-találat. warnings (lista): ide kerül
+    a coverage_warning, ha az audit semmit sem tudott ellenőrizni."""
+    rep = project_audit(project_dir, stage=FINAL)
+    msg = gate_message([f for f in rep["findings"] if f["severity"] == "error"])
     if msg:
         raise ValueError(msg)
+    w = coverage_warning(rep, project_dir)
+    if w and warnings is not None:
+        warnings.append(w)
 
 
 # ------------------------------------------------------------------ megjelenítés, metaadat, séma
@@ -1231,7 +1381,10 @@ def format_text(rep):
         for n in rep["not_checked"]:
             lines.append("  - %s%s: %s" % (n.get("code") or "audit", (" [%s]" % n["outcome"]) if n.get("outcome")
                                            else "", n["reason"]))
-    if not rep["findings"]:
+    if not rep["findings"] and not rep.get("outcomes"):
+        lines.append("Nincs X-szabály találat, de kimenet sem: a szabályok (%s) semmit sem ellenőriztek." %
+                     ", ".join(rep["rules_checked"]))
+    elif not rep["findings"]:
         lines.append("Nincs X-szabály találat (ellenőrzött szabályok: %s)." % ", ".join(rep["rules_checked"]))
     return "\n".join(lines)
 
@@ -1255,49 +1408,10 @@ def rules_table():
 
 
 def audit_schema():
-    """A szk.ma.project-audit/v1 JSON Schema (2020-12)."""
-    sev = {"enum": list(SEVERITIES)}
-    count = {"type": "integer", "minimum": 0}
-    return {
-        "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": SCHEMA_ID,
-        "title": "Projekt-audit (X-szabályok; ma.py project audit <mappa> --json)", "type": "object",
-        "required": ["schema", "project", "generated", "summary", "findings"],
-        "properties": {
-            "schema": {"const": SCHEMA},
-            "engine_version": {"type": "string"},
-            "project": {"type": "string"},
-            "title": {"type": ["string", "null"]},
-            "generated": {"type": "string"},
-            "stage": {"type": ["string", "null"], "pattern": r"^(S\d{2}|FINAL)$"},
-            "summary": {"type": "object", "required": list(SEVERITIES),
-                        "properties": {s: count for s in SEVERITIES}},
-            "findings": {"type": "array", "items": {
-                "type": "object",
-                "required": ["code", "severity", "stage", "outcome", "title", "detail", "artifacts",
-                             "suggested_command", "kb_refs"],
-                "properties": {
-                    "code": {"type": "string", "pattern": r"^X\d{3}$"}, "severity": sev,
-                    "stage": {"type": "string", "pattern": r"^S\d{2}$"},
-                    "outcome": {"type": ["string", "null"]}, "title": {"type": "string"},
-                    "detail": {"type": "string"}, "advice": {"type": "string"}, "source": {"type": "string"},
-                    "artifacts": {"type": "array", "items": {"type": "string"}},
-                    "suggested_command": {"type": ["array", "null"], "items": {"type": "string"}},
-                    "kb_refs": {"type": "array", "items": {"type": "string"}},
-                    "run_id": {"type": "string"}, "spec": {"type": ["string", "null"]},
-                    "row_uids": {"type": "array", "items": {"type": "string"}},
-                    "cells": {"type": "array", "items": {"type": "object", "required": ["row_uid", "field"],
-                                                         "properties": {"row_uid": {"type": "string"},
-                                                                        "field": {"type": "string"}}}}}}},
-            "not_checked": {"type": "array", "items": {"type": "object", "required": ["code", "outcome", "reason"],
-                                                       "properties": {"code": {"type": ["string", "null"]},
-                                                                      "outcome": {"type": ["string", "null"]},
-                                                                      "reason": {"type": "string"}}}},
-            "rules_checked": {"type": "array", "items": {"type": "string"}},
-            "outcomes": {"type": "array", "items": {"type": "string"}},
-            "inputs": {"type": "object", "additionalProperties": {"type": "string", "pattern": r"^[0-9a-f]{64}$"},
-                       "description": "a beolvasott fájlok sha256-ja (projekt-relatív út → hash; gyorsítótár-kulcs)"},
-            "amstar2_hints": {"type": "object"},
-        }}
+    """A szk.ma.project-audit/v1 JSON Schema (2020-12) — a metaelemzes/contracts/ma.project-audit.v1.schema.json
+    (egy igazságforrás; a teszt a kimenetet ehhez méri)."""
+    from . import contracts
+    return contracts.load("ma.project-audit", 1)
 
 
 def cli_main(project_dir, as_json=False, stage=None, out=None):

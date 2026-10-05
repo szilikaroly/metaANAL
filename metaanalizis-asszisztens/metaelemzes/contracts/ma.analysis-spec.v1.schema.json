@@ -91,7 +91,7 @@
             "ZCOR",
             "GEN"
           ],
-          "description": "--measure — hatásméret (a szükséges oszlopokat lásd lent)"
+          "description": "--measure — hatásméret (a szükséges oszlopokat lásd lent); kötelező, ha nincs --spec"
         },
         "model": {
           "enum": [
@@ -160,6 +160,7 @@
         },
         "cc": {
           "type": "number",
+          "minimum": 0.0,
           "default": 0.5,
           "description": "--cc — folytonossági korrekció (>= 0; 0 = nincs)"
         },
@@ -381,19 +382,25 @@
           "description": "--subgroup-prespecified — az alcsoport-elemzés a protokollban előre tervezett (a Methods csak ekkor írja: Pre-specified)"
         },
         "plot_schema": {
-          "type": "string",
+          "enum": [
+            "v1",
+            "v2"
+          ],
           "default": "v2",
-          "description": "csak specben (nincs parancssori kapcsolója)"
+          "description": "--plot-schema — plot_data.json sémája (alap: v2 = szk.ma.plot/v2; v1 = a korábbi kulcsok)"
         },
         "plot_locale": {
-          "type": "string",
+          "enum": [
+            "hu",
+            "en"
+          ],
           "default": "hu",
-          "description": "csak specben (nincs parancssori kapcsolója)"
+          "description": "--lang — az ábrák feliratainak nyelve és a plot_data megjelenítési nyelve (alap: hu)"
         },
         "svg_annotate": {
           "type": "boolean",
           "default": false,
-          "description": "csak specben (nincs parancssori kapcsolója)"
+          "description": "--svg-annotate — elnevezett rétegek és sor-azonosítók (data-*) az SVG-kben, U+2212 mínusz"
         }
       }
     },

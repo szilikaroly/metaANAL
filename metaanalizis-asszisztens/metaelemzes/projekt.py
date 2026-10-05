@@ -350,8 +350,9 @@ def open_blockers(con, stages):
     return [r for r in rows if _stored_stages(r["stage_id"]) is None or want & set(_stored_stages(r["stage_id"]))]
 
 
-def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None, actor=None):
+def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None, actor=None, audit_gate=False):
     """Ellenőrzőpont rögzítése. Tartomány (pl. S01-S02) szakaszonként külön sort kap.
+    audit_gate=True (csak FINAL): az error szintű X-szabály találatok (project audit) is kizárják a PASS-t.
     Visszaad: az (utolsó) beszúrt sor azonosítója."""
     stages = parse_stage(stage)
     if not stages:
@@ -359,10 +360,15 @@ def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None, 
     if verdict not in VERDICTS:
         raise ValueError("ítélet: %s" % ", ".join(VERDICTS))
     actor = check_actor(actor)
+    if audit_gate and FINAL not in stages:
+        raise ValueError("Az audit-kapu (--audit-gate) csak a záró, FINAL ellenőrzőponthoz adható meg.")
     _check_agent(agent, warnings)
     con = connect(project_dir)
     try:
         if verdict in ("PASS", "PASS_WITH_FIXES"):
+            if audit_gate:
+                from . import audit
+                audit.require_gate(project_dir, warnings)
             blockers = open_blockers(con, stages)
             if blockers:
                 where = ("a záró (FINAL) ellenőrzőponthoz egyetlen szakaszban sem lehet nyitott blocker"

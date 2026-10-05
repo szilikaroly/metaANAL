@@ -81,7 +81,10 @@ def legacy_opts(a):
             "pft_backtransform": a.pft_backtransform, "h_centre": a.ht_centre,
             "trimfill_trim_model": a.trimfill_trim_model, "egger_ci_dist": a.egger_ci_dist,
             "begg_method": a.begg_method, "begg_continuity": a.begg_continuity,
-            "metareg_robust": a.robust, "outliers": a.outliers}
+            "metareg_robust": a.robust, "outliers": a.outliers,
+            # E4/E5 kapcsolók (--plot-schema, --lang, --svg-annotate): a kézi dict-ben is így szerepelnének
+            "plot_schema": getattr(a, "plot_schema", "v2"), "plot_locale": getattr(a, "plot_locale", "hu"),
+            "svg_annotate": getattr(a, "svg_annotate", False)}
     if a.drop00 is not None:
         opts["drop00"] = a.drop00 == "yes"
     return opts
@@ -315,7 +318,16 @@ class TestEngineIdentity(unittest.TestCase):
         self.assertIn("results.json", fa)
         for f in fa:
             with open(os.path.join(a, f), "rb") as x, open(os.path.join(b, f), "rb") as y:
-                self.assertEqual(x.read(), y.read(), "%s: %s" % (msg, f))
+                xa, yb = x.read(), y.read()
+            if f == "plot_data.json" and xa != yb:
+                # a meta a futás azonossága (run_id, spec_sha256): futásonként más; minden más bájtra egyezik
+                da, db = json.loads(xa.decode("utf-8")), json.loads(yb.decode("utf-8"))
+                for d in (da, db):
+                    for k in ("run_id", "spec_sha256"):
+                        (d.get("meta") or {}).pop(k, None)
+                self.assertEqual(da, db, "%s: %s" % (msg, f))
+                continue
+            self.assertEqual(xa, yb, "%s: %s" % (msg, f))
 
     def test_spec_vs_flags(self):
         for i, (fname, flags) in enumerate(CASES):
@@ -568,7 +580,7 @@ class TestRunDescriptor(unittest.TestCase):
         self.assertEqual(d["files"]["results"]["sha256"], S.sha256_file(paths["results.json"]))
         self.assertEqual(list(d["files"]), ["results", "plot", "report", "effect_sizes", "forest", "funnel", "doi"])
         self.assertEqual(d["primary"], {"model": "random",
-                                        "display_text": {"hu": "0,49 [0,33; 0,73]", "en": "0.49 [0.33; 0.73]"}})
+                                        "display_text": {"hu": "0.49 [0.33; 0.73]", "en": "0.49 [0.33; 0.73]"}})
         self.assertEqual((d["k"], d["elapsed_ms"], d["started"]), (13, 84, "2026-10-04T21:12:00Z"))
         for key in S.run_schema()["required"]:
             self.assertIn(key, d)
@@ -587,9 +599,10 @@ class TestRunDescriptor(unittest.TestCase):
         self.assertEqual(d["spec"], {"path": None, "sha256": None, "name": "pritz1997_arany", "parent": None})
         self.assertEqual(d["equivalent_argv"][:3], ["ma.py", "analyze", "--data"])
         self.assertEqual(parse(d["equivalent_argv"][1:]).data, os.path.abspath(data))
-        self.assertEqual(list(d["files"]), ["results", "effect_sizes"])
+        self.assertNotIn("files", d)            # 4.5: explore-futásnak nincs files mezője (a kimenet a --out-ban)
         ns.run_id = "20261004T211200Z-abcdef"
-        self.assertEqual(S.describe_cli_run(ns, out, paths, self.tmp, t, t)["mode"], "commit")
+        commit = S.describe_cli_run(ns, out, paths, self.tmp, t, t)
+        self.assertEqual((commit["mode"], list(commit["files"])), ("commit", ["results", "effect_sizes"]))
         ns.run_id = "rossz"
         with self.assertRaises(S.SpecError):
             S.describe_cli_run(ns, out, paths, self.tmp, t, t)
@@ -608,7 +621,9 @@ class TestRunDescriptor(unittest.TestCase):
             S.run_descriptor(out, mode="explore", run_id="20261004T211200Z-abcdef")
         with self.assertRaises(ValueError):
             S.run_descriptor(out, mode="dry")
-        self.assertEqual(S.display_text(float("nan"), None, 1.5), {"hu": "– [–; 1,50]", "en": "– [–; 1.50]"})
+        self.assertEqual(S.display_text(float("nan"), None, 1.5), {"hu": "– [–; 1.50]", "en": "– [–; 1.50]"})
+        self.assertEqual(S.display_text(-0.41, -0.9, 0.1), {"hu": "-0.41 [-0.90; 0.10]",
+                                                             "en": "\u22120.41 [\u22120.90; 0.10]"})
         self.assertNotIn("NaN", S.run_json_bytes({"x": float("nan"), "y": [float("inf")]}).decode())
 
 
@@ -622,15 +637,15 @@ class TestContractFiles(unittest.TestCase):
                 re.compile(json.loads('"%s"' % pat))
 
     def test_contract_copy_matches_generated(self):
-        # ha a metaelemzes/contracts/ már tartalmazza, bájt-tartalomban a generálttal egyezzen (sodródás-őr)
-        d = os.path.join(ROOT, "metaelemzes", "contracts")
-        for fname, gen in (("ma.analysis-spec.schema.json", S.analysis_spec_schema),
-                           ("ma.run.schema.json", S.run_schema)):
-            p = os.path.join(d, fname)
-            if not os.path.isfile(p):
-                continue
-            with open(p, encoding="utf-8") as fh:
-                self.assertEqual(json.load(fh), gen(), fname)
+        # sodródás-őr: a metaelemzes/contracts/ analysis-spec sémájának generált options-része a spec.py-ból jön,
+        # a run.json sémája maga a szerződésfájl
+        from metaelemzes import contracts as K
+        opts = K.load("ma.analysis-spec", 1)["properties"]["options"]
+        gen = S.analysis_spec_schema()["properties"]["options"]
+        self.assertEqual(opts["required"], gen["required"])
+        self.assertEqual(opts["properties"], gen["properties"])
+        self.assertTrue(K.sync(write=False))
+        self.assertEqual(S.run_schema(), K.load("ma.run", 1))
 
 
 @unittest.skipUnless(wired(), "a cli.py még nincs bekötve (analyze --spec / --json-summary / --run-id)")
@@ -653,8 +668,15 @@ class TestCLIWired(unittest.TestCase):
 
     def test_spec_run_equals_flag_run_and_run_json(self):
         a_dir, b_dir = os.path.join(self.tmp, "a"), os.path.join(self.tmp, "b")
-        code, out, err = run_cli("analyze", "--data", S.data_path(S.load_spec(self.spec_path), self.proj),
-                                 *self.flags, "--out", a_dir, "--project", self.proj, "--date", DATE)
+        # a kapcsolós megfelelő a run.json equivalent_argv-je: a projektgyökérből, relatív adatúttal (a spec-futás
+        # results.json-jában és report.md-jében is a projekt-relatív data.path áll — terv 4.0)
+        here = os.getcwd()
+        os.chdir(self.proj)
+        try:
+            code, out, err = run_cli("analyze", "--data", S.load_spec(self.spec_path)["data"]["path"], *self.flags,
+                                     "--out", a_dir, "--project", ".", "--date", DATE)
+        finally:
+            os.chdir(here)
         self.assertEqual(code, 0, err)
         code, out, err = run_cli("analyze", "--spec", self.spec_path, "--out", b_dir, "--project", self.proj,
                                  "--date", DATE, "--json-summary")
@@ -667,6 +689,10 @@ class TestCLIWired(unittest.TestCase):
         self.assertEqual((run["schema"], run["mode"]), (S.RUN_SCHEMA, "commit"))
         self.assertRegex(run["run_id"], S.RUN_ID_PATTERN)
         self.assertEqual(run["spec"]["sha256"], self.spec_sha)
+        with open(os.path.join(b_dir, "plot_data.json"), encoding="utf-8") as fh:
+            meta = json.load(fh)["meta"]
+        self.assertEqual((meta["run_id"], meta["spec_sha256"], meta["data_sha256"]),
+                         (run["run_id"], run["spec"]["sha256"], run["data"]["sha256"]))
         self.assertEqual(run["spec"]["name"], "o1_primary")
         self.assertEqual(run["data"]["sha256"], S.sha256_file(self.data))
         self.assertEqual(run["data"]["path"], "03_adatok/o1.csv")

@@ -47,7 +47,7 @@ DEST_TO_KEY = {"ht_centre": "h_centre", "robust": "metareg_robust"}
 DATA_DEST = "data"
 FILTER_DESTS = ("include", "exclude")
 # futás-vezérlő kapcsolók: nem részei a specnek (a --spec mellett is megadhatók)
-RUN_DESTS = ("out", "project", "date", "no_plots", "spec", "json_summary", "run_id")
+RUN_DESTS = ("out", "project", "date", "no_plots", "spec", "json_summary", "run_id", "actor")
 # a parancssorban kötelező opció a specben is kötelező (a DEFAULTS 'SMD'-je nem csendes alapérték)
 REQUIRED_OPTIONS = ("measure",)
 
@@ -237,10 +237,12 @@ def spec_only_keys():
 
 
 def option_table():
-    """Opció-metaadat (űrlap, engine_info): kulcs, kapcsoló, fajta, JSON-típus, választások, alapérték, súgó."""
+    """Opció-metaadat (űrlap, engine_info): kulcs, kapcsoló (és álnevei), dest, fajta, JSON-típus, választások,
+    alapérték, súgó."""
     res = []
     for key, o in _meta().opts.items():
-        res.append({"key": key, "flag": o.flag, "dest": o.dest, "kind": o.kind, "type": o.json_type,
+        res.append({"key": key, "flag": o.flag, "flags": list(o.act.option_strings) if o.act is not None else [],
+                    "dest": o.dest, "kind": o.kind, "type": o.json_type,
                     "choices": list(o.choices) if o.choices is not None else None,
                     "nullable": o.default is None and not o.required,
                     "default": copy.deepcopy(o.default), "required": o.required, "help": o.help,
@@ -282,6 +284,8 @@ def _check_value(o, v, where):
             return [], v
         if want is None:
             return [], v
+        if want == (int,) and isinstance(v, float) and math.isfinite(v) and v.is_integer():
+            v = int(v)                      # a JSON-ban a 2.0 és a 2 ugyanaz a szám (a séma 'integer'-nek veszi)
         ok = isinstance(v, want) and (bool in want or not isinstance(v, bool))
         if ok and _num(v) and not math.isfinite(v):
             ok = False
@@ -333,8 +337,10 @@ def _check_value(o, v, where):
 
 def validate_spec(spec):
     """szk.ma.analysis-spec/v1 ellenőrzése → magyar hibaüzenetek listája (üres = érvényes).
-    Az options és a filters ismeretlen kulcsa hiba (additionalProperties: false); a felső szint és a data
-    ismeretlen mezőit a fogyasztó figyelmen kívül hagyja (4.0)."""
+    Az options ismeretlen kulcsa hiba (a szerződésben is additionalProperties: false); a felső szint és a data
+    ismeretlen mezőit a fogyasztó figyelmen kívül hagyja (4.0). Amit a szerződés (terv 4.4) mintája nem fejez ki, de
+    a motor elutasít: a filters ismeretlen kulcsa, a nem névalakú parent, a '/'-re végződő data.path, a nem 64 jegyű
+    data.sha256 (null sem: rögzítés nélkül a kulcs elmarad) és a szűrő üres oszlopneve."""
     if not isinstance(spec, dict):
         return ["a spec nem JSON-objektum (kapott: %s)" % type(spec).__name__]
     errs = []
@@ -366,8 +372,9 @@ def validate_spec(spec):
             elif not _match("relpath", d["path"]) or d["path"].endswith("/") or "\x00" in d["path"]:
                 errs.append("data.path: a projektgyökérhez képest relatív, '/' elválasztós fájlút szükséges ('..', "
                             "meghajtójel, '\\' és ':' nélkül), kapott: %r" % (d["path"],))
-            if "sha256" in d and d["sha256"] is not None and not _match("sha256", d["sha256"]):
-                errs.append("data.sha256: 64 jegyű kisbetűs hexadecimális hash szükséges, kapott: %r" % (d["sha256"],))
+            if "sha256" in d and not _match("sha256", d["sha256"]):
+                errs.append("data.sha256: 64 jegyű kisbetűs hexadecimális hash szükséges (rögzítés nélkül hagyd el a "
+                            "kulcsot), kapott: %r" % (d["sha256"],))
     if "options" in spec:
         errs += _options_errors(spec["options"])
     if "filters" in spec:
@@ -508,7 +515,8 @@ def namespace_from_spec(spec, project_root=None):
     ns = an.parse_args(toks)
     for key, o in _meta().opts.items():
         if o.act is None:
-            setattr(ns, key, copy.deepcopy(spec["options"].get(key, o.default)))
+            v = spec["options"].get(key, o.default)
+            setattr(ns, key, copy.deepcopy(_check_value(o, v, key)[1] if key in spec["options"] else v))
     return ns
 
 
@@ -767,6 +775,122 @@ def run_id(now_utc, data_sha256):
     return now_utc.strftime("%Y%m%dT%H%M%SZ") + "-" + h[:6]
 
 
+ANALYSIS_DIR = "05_elemzes"
+
+
+def _relocated(path, root):
+    """A projektnapló abszolút útja (outdir) a mostani projektgyökérben: ha az út nem létezik (a projektet
+    áthelyezték), az utolsó projektmappa-névtől (03_adatok, 05_elemzes …) kezdődő része a gyökérhez illesztve."""
+    from .projekt import FOLDERS
+    if os.path.exists(path) or root is None:
+        return path
+    parts = re.split(r"[\\/]+", str(path))
+    for i in range(len(parts) - 1, -1, -1):
+        if parts[i] in FOLDERS:
+            cand = os.path.join(root, *parts[i:])
+            return cand if os.path.exists(cand) else path
+    return path
+
+
+def outcome_dir(outcome):
+    """A kimenet commit-futásainak mappaneve (05_elemzes/<ez>/<run_id>): a kimenet-azonosító, ha névalakú, különben
+    a slugja."""
+    return outcome if _match("name", outcome or "") else _slug(outcome)
+
+
+def journal_run_dirs(project_root, with_data=False):
+    """A projektnapló (projekt.sqlite, csak olvasva) futásainak kimeneti mappái, naplósorrendben (áthelyezett
+    projektnél a gyökérhez igazítva); with_data=True: [(mappa, a futás adatfájlja, az adat sha256-ja)]. Napló nélkül
+    vagy olvashatatlan naplónál üres lista."""
+    import sqlite3
+    from pathlib import Path
+    p = os.path.join(project_root, "projekt.sqlite")
+    if not os.path.isfile(p):
+        return []
+    try:
+        con = sqlite3.connect(Path(os.path.abspath(p)).as_uri() + "?mode=ro", uri=True, timeout=0.5)
+    except sqlite3.Error:
+        return []
+    try:
+        rows = con.execute("SELECT outdir, data_path, data_sha256 FROM run WHERE outdir IS NOT NULL "
+                           "ORDER BY id").fetchall()
+    except sqlite3.Error:
+        return []
+    finally:
+        con.close()
+    out = [(_relocated(d, project_root), _relocated(f, project_root) if isinstance(f, str) and f else None,
+            h if isinstance(h, str) and h else None) for d, f, h in rows if isinstance(d, str) and d]
+    return out if with_data else [d for d, _, _ in out]
+
+
+def project_run_files(project_root):
+    """A projekt futás-leírói (run.json): 05_elemzes/<kimenet>/<futás>/run.json ('nested', a terv elrendezése),
+    05_elemzes/<kimenet>/run.json ('flat') és a projektnapló futásainak mappái ('journal'; pl. a --project melletti
+    alapértelmezett <adatmappa>/eredmeny). → [(abszolút út, elrendezés, kimenet-mappa vagy None, a napló ide írt
+    futásainak [(adatfájl, adat-sha256)] listája)] ismétlés nélkül. A naplóbeli adatokkal a hívó ellenőrizheti, hogy
+    a projekten kívüli mappában a projekt futása van-e (egy másik projekt futása felülírhatta)."""
+    out, seen = [], {}
+
+    def add(path, layout, folder, logged=None):
+        key = os.path.normcase(os.path.realpath(path))
+        if key in seen:
+            if logged:
+                out[seen[key]][3].append(logged)
+        elif os.path.isfile(path):
+            seen[key] = len(out)
+            out.append((os.path.abspath(path), layout, folder, [logged] if logged else []))
+    base = os.path.join(project_root, ANALYSIS_DIR)
+    if os.path.isdir(base):
+        for oid in sorted(os.listdir(base)):
+            odir = os.path.join(base, oid)
+            if oid == "specs" or not os.path.isdir(odir):
+                continue
+            add(os.path.join(odir, "run.json"), "flat", oid)
+            for sub in sorted(os.listdir(odir)):
+                if os.path.isdir(os.path.join(odir, sub)):
+                    add(os.path.join(odir, sub, "run.json"), "nested", oid)
+    for d, data, sha in journal_run_dirs(project_root, with_data=True):
+        add(os.path.join(d, "run.json"), "journal", None, (data, sha))
+    return out
+
+
+def project_run_ids(project_root):
+    """A projekt futás-leíróiban már szereplő run_id-k halmaza (project_run_files)."""
+    ids = set()
+    for path, _, _, _ in project_run_files(project_root):
+        try:
+            with open(path, "rb") as fh:
+                doc = json.loads(fh.read().decode("utf-8-sig"))
+        except (OSError, ValueError):
+            continue
+        if isinstance(doc, dict) and isinstance(doc.get("run_id"), str):
+            ids.add(doc["run_id"])
+    return ids
+
+
+def unique_run_id(started, data_sha256, project_root=None, base_dir=None, taken=None):
+    """Generált, a projektben még nem használt run_id: ha a run_id(started) foglalt (egy futás-leíró már viseli,
+    vagy a <base_dir>/<run_id> mappa létezik), az időbélyeg másodpercenként előrelép (az alak marad).
+    base_dir: a mappa atomi létrehozása (os.mkdir) le is foglalja az azonosítót, így két egyidejű commit sem kapja
+    ugyanazt. → (run_id, a lefoglalt mappa vagy None)."""
+    taken = set(taken or ()) | (project_run_ids(project_root) if project_root is not None else set())
+    t = started
+    for _ in range(86400):
+        rid = run_id(t, data_sha256)
+        if rid not in taken:
+            if base_dir is None:
+                return rid, None
+            os.makedirs(base_dir, exist_ok=True)
+            d = os.path.join(base_dir, rid)
+            try:
+                os.mkdir(d)
+                return rid, d
+            except FileExistsError:
+                pass
+        t = t + datetime.timedelta(seconds=1)
+    raise SpecError("nem található szabad run_id (%s)" % run_id(started, data_sha256))
+
+
 def _clean(obj):
     if isinstance(obj, dict):
         return {str(k): _clean(v) for k, v in obj.items()}
@@ -778,10 +902,11 @@ def _clean(obj):
 
 
 def display_text(est, lo, hi):
-    """{'hu': '0,49 [0,33; 0,73]', 'en': '0.49 [0.33; 0.73]'} — az ábrák fmt_triple-jével, tizedesvesszővel."""
-    from .plots import fmt_triple
-    en = fmt_triple(est, lo, hi)
-    return {"hu": en.replace(".", ","), "en": en}
+    """A plot_data v2 summaries[].display_text-jével azonos szöveg (plots.display_text): 'hu' = az ábra és a
+    riport szövege ('0.49 [0.33; 0.73]'), 'en' = U+2212 mínusszal — így a run.json, a plot_data.json és az SVG
+    ugyanazt a számot mutatja (számhűség-lánc, terv 6.7)."""
+    from .plots import display_text as _display_text
+    return _display_text(est, lo, hi)
 
 
 def _primary(out):
@@ -859,7 +984,7 @@ def cli_run_id(a, started):
             raise SpecError("--run-id: érvénytelen azonosító %r (alak: 20261004T211200Z-a1f3c2)" % (rid,))
         return rid
     if getattr(a, "project", None):
-        return run_id(started, sha256_file(a.data))
+        return unique_run_id(started, sha256_file(a.data), a.project)[0]
     return None
 
 
@@ -889,7 +1014,8 @@ def cli_equivalent_argv(a, outdir, prog="ma.py"):
 
 def describe_cli_run(a, out, paths, outdir, started, finished, rid=None):
     """A cmd_analyze futás-leírója (run.json / --json-summary). commit, ha van run_id (--run-id vagy --project),
-    különben explore; a files a ténylegesen kiírt kimenetek."""
+    különben explore; a files a ténylegesen kiírt kimenetek — csak commit-futásnál (4.5: explore-futásnak nincs
+    files mezője; a kimenetek helyét a --out és a parancs kimenete adja)."""
     root = getattr(a, "project", None)
     rid = rid if rid is not None else cli_run_id(a, started)
     spec = getattr(a, "spec_doc", None)
@@ -904,7 +1030,8 @@ def describe_cli_run(a, out, paths, outdir, started, finished, rid=None):
     elapsed = int(round((finished - started).total_seconds() * 1000)) if started and finished else None
     return run_descriptor(out, mode="commit" if rid else "explore", run_id=rid, spec=spec,
                           spec_path=getattr(a, "spec", None), spec_hash=digest,
-                          equivalent_argv=cli_equivalent_argv(a, outdir), data_file=a.data, files=paths,
+                          equivalent_argv=cli_equivalent_argv(a, outdir), data_file=a.data,
+                          files=paths if rid else None,
                           project_root=root, started=started, finished=finished, elapsed_ms=elapsed)
 
 
@@ -938,6 +1065,9 @@ def analysis_spec_schema():
             s = {"type": [t, "null"] if o.default is None and not o.required else t}
         if key == "level":
             s.update({"exclusiveMinimum": 0, "exclusiveMaximum": 1})
+        minimum = getattr(o.act.type, "minimum", None) if o.act is not None else None
+        if minimum is not None and t in ("number", "integer"):
+            s["minimum"] = minimum
         if o.default is not None or not o.required:
             s["default"] = copy.deepcopy(o.default)
         if o.help:
@@ -971,40 +1101,9 @@ def analysis_spec_schema():
 
 
 def run_schema():
-    """A szk.ma.run/v1 JSON Schema (2020-12)."""
-    num = {"type": ["number", "null"]}
-    path_sha = {"type": "object", "required": ["path", "sha256"], "properties": {
-        "path": {"type": "string"}, "sha256": {"type": "string", "pattern": SHA256_PATTERN}}}
-    return {
-        "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": RUN_SCHEMA_ID,
-        "title": "Futás-leíró (run.json; analyze --json-summary)", "type": "object",
-        "required": ["schema", "run_id", "mode", "spec", "equivalent_argv", "engine_version", "data", "k", "primary",
-                     "validation_summary"],
-        "properties": {
-            "schema": {"const": RUN_SCHEMA},
-            "run_id": {"type": ["string", "null"], "pattern": RUN_ID_PATTERN},
-            "mode": {"enum": list(MODES)},
-            "spec": {"type": "object", "required": ["path", "sha256", "name", "parent"], "properties": {
-                "path": {"type": ["string", "null"]},
-                "sha256": {"type": ["string", "null"], "pattern": SHA256_PATTERN},
-                "name": {"type": ["string", "null"]}, "parent": {"type": ["string", "null"]}}},
-            "equivalent_argv": {"type": ["array", "null"], "items": {"type": "string"}},
-            "engine_version": {"type": "string"},
-            "data": {"type": "object", "required": ["path", "sha256", "rows"], "properties": {
-                "path": {"type": ["string", "null"]},
-                "sha256": {"type": ["string", "null"], "pattern": SHA256_PATTERN},
-                "rows": {"type": ["integer", "null"]}}},
-            "files": {"type": "object", "additionalProperties": path_sha},
-            "k": {"type": ["integer", "null"]},
-            "primary": {"type": ["object", "null"], "required": ["model", "display_text"], "properties": {
-                "model": {"type": ["string", "null"]},
-                "display_text": {"type": "object", "required": ["hu", "en"], "properties": {
-                    "hu": {"type": "string"}, "en": {"type": "string"}}}}},
-            "validation_summary": {"type": "object", "required": ["error", "warning", "info"], "properties": {
-                "error": num, "warning": num, "info": num}},
-            "client_seq": {"type": "integer"}, "elapsed_ms": {"type": "integer"},
-            "started": {"type": "string"}, "finished": {"type": "string"},
-        }}
+    """A szk.ma.run/v1 JSON Schema (2020-12) — a metaelemzes/contracts/ma.run.v1.schema.json (egy igazságforrás)."""
+    from . import contracts
+    return contracts.load("ma.run", 1)
 
 
 def _main(argv=None):

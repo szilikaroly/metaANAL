@@ -46,7 +46,7 @@ STUDY_REQUIRED = ("row_uid", "row_index", "label", "y", "lo", "hi", "weight_pct"
 SUMMARY_REQUIRED = ("id", "kind", "label", "estimate", "ci_lower", "ci_upper", "display", "display_text")
 UID_RE = re.compile(r"^r[0-9a-z]{4,12}$")
 SCHEMA_PATH = os.path.join(ROOT, "metaelemzes", "contracts", "ma.plot.v2.schema.json")
-COMMON_PATH = os.path.join(ROOT, "metaelemzes", "contracts", "common.schema.json")
+COMMON_PATH = os.path.join(ROOT, "metaelemzes", "contracts", "common.v1.schema.json")
 
 
 def analyze(path, table_rows=False, filters=None, **opts):

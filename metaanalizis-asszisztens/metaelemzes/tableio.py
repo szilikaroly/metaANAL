@@ -542,6 +542,167 @@ def row_uids(rows, meta=None):
     return out
 
 
+# ------------------------------------------------------------------ formátumtartó nyers olvasás / írás
+RAW_ENCODINGS = ("utf-8", "utf-16-le", "utf-16-be", "cp1250", "latin-1")
+RAW_QUOTING = ("minimal", "strings", "all")
+_RAW_BOMS = {"utf-8": codecs.BOM_UTF8, "utf-16-le": codecs.BOM_UTF16_LE, "utf-16-be": codecs.BOM_UTF16_BE}
+# új tábla formátuma: magyar Excel-barát (UTF-8 BOM-mal, ';', CRLF, minimális idézés)
+RAW_DEFAULT_FORMAT = {"encoding": "utf-8", "bom": True, "delimiter": ";", "newline": "\r\n", "final_newline": True,
+                      "quoting": "minimal", "header_quoting": "minimal", "lead_blank": 0, "lead_records": None,
+                      "gaps": None}
+
+
+def _raw_numberish(cell):
+    try:
+        parse_number(cell)
+    except ValueError:
+        return False
+    return True
+
+
+def _raw_quote(cell, style, delim):
+    special = delim in cell or '"' in cell or "\r" in cell or "\n" in cell
+    if not special and (style == "minimal" or (style == "strings" and _raw_numberish(cell))):
+        return cell
+    return '"' + cell.replace('"', '""') + '"'
+
+
+def _raw_join(cells, style, delim):
+    if len(cells) == 1 and cells[0] == "":
+        return '""'                     # különben üres sor lenne (ahogy a csv.writer is írja)
+    return delim.join(_raw_quote(c, style, delim) for c in cells)
+
+
+def _raw_blank(cells, delim):
+    """Üres rekord szövege: üres sor ([]), vagy a cellái változatlanul (pl. az Excel ';;;;' sora)."""
+    return _raw_join(cells, "minimal", delim) if cells else ""
+
+
+def read_raw(path=None, raw=None):
+    """CSV/TSV → (fejléc, sorok nyers cellaszövegként, formátum-metaadat) — a cellákat NEM értelmezi
+    (a felület szövegként szerkeszti, a számot a motor olvassa: parse_table). A fejléc az első nem üres
+    rekord; a sorok a többi NEM ÜRES rekord a fájl sorrendjében — ugyanaz a sorrács, mint a read_table sorai, a
+    validálási dokumentum 'row'-ja, a plot row_index-e és a munkapad táblája. Az üres rekordok (üres sor, az Excel
+    ';;;;' sora) a metaadatba kerülnek, hogy a változatlan tábla bájtra azonosan íródjon vissza. A meta: encoding,
+    bom, delimiter, newline, final_newline, quoting, header_quoting, lead_blank, lead_records (a fejléc előtti üres
+    rekordok cellái), gaps (len(sorok) + 1 lista: gaps[0] a fejléc utáni, gaps[i + 1] az i. sor utáni üres rekordok
+    cellái), decimal_mark (a tableio döntése, tájékoztató), lines (soronként az 1-alapú fizikai sor), sha256 (a
+    bájtoké). raw: a fájl bájtjai (path helyett vagy mellett)."""
+    if raw is None:
+        with open(path, "rb") as fh:
+            raw = fh.read()
+    text, enc = _decode(raw)
+    if enc == "utf-8-sig":
+        encoding, bom = "utf-8", raw.startswith(codecs.BOM_UTF8)
+    elif enc == "utf-16":
+        encoding, bom = ("utf-16-be" if raw.startswith(codecs.BOM_UTF16_BE) else "utf-16-le"), True
+    else:
+        encoding, bom = enc, False
+    delim = _sniff_delimiter(text)
+    buf = io.StringIO(text)
+    consumed = []
+
+    def feed():
+        for ln in buf:
+            consumed.append(ln)
+            yield ln
+
+    reader = csv.reader(feed(), delimiter=delim)
+    recs, prev = [], 0
+    for cells in reader:
+        recs.append((cells, "".join(consumed), prev + 1))
+        prev = reader.line_num
+        del consumed[:]
+    nonblank = [i for i, (cells, _, _) in enumerate(recs) if any(c.strip() for c in cells)]
+    n_crlf = sum(1 for _, r, _ in recs if r.endswith("\r\n"))
+    n_lf = sum(1 for _, r, _ in recs if r.endswith("\n") and not r.endswith("\r\n"))
+    meta = {"encoding": encoding, "bom": bom, "delimiter": delim, "newline": "\n" if n_lf > n_crlf else "\r\n",
+            "final_newline": text.endswith("\n"), "quoting": "minimal", "header_quoting": "minimal",
+            "lead_blank": nonblank[0] if nonblank else 0, "lead_records": [], "gaps": [], "decimal_mark": None,
+            "lines": [], "sha256": hashlib.sha256(raw).hexdigest()}
+    if not nonblank:
+        return [], [], meta
+    first = nonblank[0]
+    header = recs[first][0]
+    body = [recs[i] for i in nonblank[1:]]
+    rows = [list(c) for c, _, _ in body]
+    meta["lines"] = [ln for _, _, ln in body]
+    meta["lead_records"] = [list(c) for c, _, _ in recs[:first]]
+    bounds = nonblank + [len(recs)]
+    meta["gaps"] = [[list(c) for c, _, _ in recs[bounds[k] + 1:bounds[k + 1]]] for k in range(len(nonblank))]
+    mapping = canonical_columns(header)
+    meta["decimal_mark"] = _decimal_mark([v for r in rows for col, v in zip(header, r) if mapping.get(col) in NUMERIC])
+    data = [(c, r) for c, r, _ in body]
+    if data:
+        def strip_nl(t):
+            return t[:-2] if t.endswith("\r\n") else (t[:-1] if t.endswith("\n") else t)
+        score = {st: sum(1 for c, r in data if strip_nl(r) == _raw_join(c, st, delim)) for st in RAW_QUOTING}
+        meta["quoting"] = max(RAW_QUOTING, key=lambda st: (score[st], -RAW_QUOTING.index(st)))
+    hraw = recs[first][1]
+    hbody = hraw[:-2] if hraw.endswith("\r\n") else (hraw[:-1] if hraw.endswith("\n") else hraw)
+    if hbody == _raw_join(header, "all", delim) and hbody != _raw_join(header, "minimal", delim):
+        meta["header_quoting"] = "all"
+    return list(header), rows, meta
+
+
+def render_raw(header, rows_text, meta=None):
+    """A read_raw párja: (fejléc, nyers sorok, formátum) → bájtok. Hiányzó formátum-kulcs: RAW_DEFAULT_FORMAT.
+    Változatlan tábla és formátum a read_raw bájtjait adja vissza (az üres és ';;;;' sorokkal együtt; a meta gaps
+    listája csak változatlan sorszámnál érvényes — beszúrt / törölt sor után az üres rekordok elmaradnak). A
+    sorok között átadott üres sor ([]) üres sorként íródik."""
+    fmt = dict(RAW_DEFAULT_FORMAT)
+    fmt.update({k: v for k, v in (meta or {}).items() if k in RAW_DEFAULT_FORMAT and v is not None})
+    if fmt["encoding"] not in RAW_ENCODINGS:
+        raise ValueError("nem támogatott kódolás: %r (lehetséges: %s)" % (fmt["encoding"], ", ".join(RAW_ENCODINGS)))
+    if fmt["delimiter"] not in (",", ";", "\t"):
+        raise ValueError("nem támogatott tagoló: %r (lehetséges: ',', ';', tabulátor)" % (fmt["delimiter"],))
+    if fmt["newline"] not in ("\r\n", "\n"):
+        raise ValueError("nem támogatott sorvég: %r" % (fmt["newline"],))
+    if fmt["quoting"] not in RAW_QUOTING or fmt["header_quoting"] not in ("minimal", "all"):
+        raise ValueError("nem támogatott idézési mód: %r / %r" % (fmt["quoting"], fmt["header_quoting"]))
+    nl, delim = fmt["newline"], fmt["delimiter"]
+    lead = fmt["lead_records"]
+    if not isinstance(lead, list) or len(lead) != int(fmt["lead_blank"] or 0):
+        lead = [[]] * int(fmt["lead_blank"] or 0)
+    gaps = fmt["gaps"]
+    if not (isinstance(gaps, list) and len(gaps) == len(rows_text) + 1 and all(isinstance(g, list) for g in gaps)):
+        gaps = [[]] * (len(rows_text) + 1)
+    lines = [_raw_blank([_cell_text(c) for c in r], delim) for r in lead]
+    lines.append(_raw_join([_cell_text(h) for h in header], fmt["header_quoting"], delim))
+    lines += [_raw_blank([_cell_text(c) for c in r], delim) for r in gaps[0]]
+    for r, gap in zip(rows_text, gaps[1:]):
+        cells = [_cell_text(c) for c in r]
+        lines.append(_raw_join(cells, fmt["quoting"], delim) if any(c.strip() for c in cells) else "")
+        lines += [_raw_blank([_cell_text(c) for c in g], delim) for g in gap]
+    text = nl.join(lines) + (nl if fmt["final_newline"] else "")
+    data = text.encode(fmt["encoding"])
+    if fmt["bom"] and fmt["encoding"] in _RAW_BOMS:
+        data = _RAW_BOMS[fmt["encoding"]] + data
+    return data
+
+
+def write_raw(path, header, rows_text, meta=None):
+    """Formátumtartó, atomi írás (ideiglenes fájl + os.replace) → a kiírt bájtok sha256-ja."""
+    import os
+    import tempfile
+    data = render_raw(header, rows_text, meta)
+    d = os.path.dirname(os.path.abspath(path))
+    fd, tmp = tempfile.mkstemp(dir=d, prefix="." + os.path.basename(path) + ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        raise
+    return hashlib.sha256(data).hexdigest()
+
+
 def write_csv(path, header, rows, delimiter=","):
     with open(path, "w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh, delimiter=delimiter)
