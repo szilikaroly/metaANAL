@@ -15,6 +15,8 @@ from metaelemzes import sensitivity as S
 
 REF = load_reference()
 TOL = 1e-6
+# p-típusú mennyiségek (p, p_Q, QMp, együttható-p, Egger/Begg p): rel=True — a referencia 17 értékes
+# jegyű (formatC digits = 17), a 2e-26 / 3.8e-47 nagyságú farok-valószínűségeket is relatívan mérjük.
 
 
 def _dataset(name, measure, **kw):
@@ -78,9 +80,9 @@ class TestModels(unittest.TestCase):
                 assert_close(self, r.se, ref["se"], tol, tag + " se")
                 assert_close(self, r.ci_lower, ref["ci_lower"], tol, tag + " ci_lower")
                 assert_close(self, r.ci_upper, ref["ci_upper"], tol, tag + " ci_upper")
-                assert_close(self, r.p, ref["p"], 1e-6, tag + " p")
+                assert_close(self, r.p, ref["p"], 1e-6, tag + " p", rel=True)
                 assert_close(self, r.Q, ref["Q"], 1e-8, tag + " Q")
-                assert_close(self, r.p_Q, ref["p_Q"], 1e-8, tag + " p_Q")
+                assert_close(self, r.p_Q, ref["p_Q"], 1e-8, tag + " p_Q", rel=True)
                 assert_close(self, r.tau2, ref["tau2"], tol, tag + " tau2")
                 if meth == "FE":
                     assert_close(self, r.I2, ref["I2"], 1e-6, tag + " I2")
@@ -101,7 +103,7 @@ class TestModels(unittest.TestCase):
             assert_close(self, r.ci_lower, ref["ci_lower"], 2e-6, tag + " ci_lower")
             assert_close(self, r.ci_upper, ref["ci_upper"], 2e-6, tag + " ci_upper")
             assert_close(self, r.stat, ref["stat"], 2e-6, tag + " t")
-            assert_close(self, r.p, ref["p"], 1e-6, tag + " p")
+            assert_close(self, r.p, ref["p"], 1e-6, tag + " p", rel=True)
             assert_close(self, r.pi_lower, ref["pi_lower"], 2e-6, tag + " pi_lower")
             refdl = self._results(name, sub)["DL_knha"]
             r = M.meta_analysis(es.yi, es.vi, "random", "DL", "hksj")
@@ -179,10 +181,10 @@ class TestModeratorsBias(unittest.TestCase):
                 for j in range(2):
                     assert_close(self, r.coefficients[j]["estimate"], ref["b"][j], 1e-6, tag + " b%d" % j)
                     assert_close(self, r.coefficients[j]["se"], ref["se"][j], 1e-6, tag + " se%d" % j)
-                    assert_close(self, r.coefficients[j]["p"], ref["p"][j], 1e-6, tag + " p%d" % j)
+                    assert_close(self, r.coefficients[j]["p"], ref["p"][j], 1e-6, tag + " p%d" % j, rel=True)
                 assert_close(self, r.tau2, ref["tau2"], 1e-6, tag + " tau2")
                 assert_close(self, r.QM, ref["QM"], 1e-5, tag + " QM")
-                assert_close(self, r.QM_p, ref["QMp"], 1e-6, tag + " QMp")
+                assert_close(self, r.QM_p, ref["QMp"], 1e-6, tag + " QMp", rel=True)
                 assert_close(self, r.QE, ref["QE"], 1e-6, tag + " QE")
                 assert_close(self, r.I2_res, ref["I2"], 1e-5, tag + " I2")
                 if meth != "FE":
@@ -208,10 +210,10 @@ class TestModeratorsBias(unittest.TestCase):
             res = REF[name]["results"] if sub is None else REF[name][sub]["results"]
             eg = B.egger_test(es.yi, es.vi)
             assert_close(self, eg.intercept, res["egger_lm"]["intercept"], 1e-8, name + " Egger")
-            assert_close(self, eg.p, res["egger_lm"]["p"], 1e-8, name + " Egger p")
+            assert_close(self, eg.p, res["egger_lm"]["p"], 1e-8, name + " Egger p", rel=True)
             bg = B.begg_test(es.yi, es.vi)
             assert_close(self, bg.kendall_tau, res["ranktest"]["tau"], 1e-8, name + " Begg tau")
-            assert_close(self, bg.p, res["ranktest"]["p"], 1e-6, name + " Begg p")
+            assert_close(self, bg.p, res["ranktest"]["p"], 1e-6, name + " Begg p", rel=True)
 
     def test_trimfill(self):
         for name, measure, sub in TestModels.CASES:

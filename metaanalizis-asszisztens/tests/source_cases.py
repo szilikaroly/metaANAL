@@ -301,6 +301,24 @@ def check_case(case):
     return out
 
 
+STATUSES = ("active", "known_gap")
+
+
+def case_status(case):
+    """Az eset állapota ('active' alapértelmezéssel); ismeretlen érték (pl. elírt 'Active') →
+    ValueError, hogy a unittest és a parancssori futtató ugyanúgy utasítsa el."""
+    st = case.get("status", "active")
+    if st not in STATUSES:
+        raise ValueError("%s: ismeretlen status: %r (lehetséges: %s)" % (
+            case.get("case_id", "?"), st, ", ".join(STATUSES)))
+    return st
+
+
+def is_active(case):
+    """A két futtató (test_source_examples és a __main__) közös szűrője."""
+    return case_status(case) == "active"
+
+
 def load_cases(path=None):
     files = []
     if path and os.path.isfile(path):
@@ -324,7 +342,13 @@ if __name__ == "__main__":  # python3 tests/source_cases.py [fájl vagy mappa]
     target = sys.argv[1] if len(sys.argv) > 1 else None
     n_ok = n_fail = n_active = n_gap = 0
     for c in load_cases(target):
-        if c.get("status") == "known_gap":
+        try:
+            active = is_active(c)
+        except ValueError as exc:
+            n_fail += 1
+            print("FAIL  %s" % exc)
+            continue
+        if not active:
             n_gap += 1
             print("GAP   %s — %s" % (c["case_id"], c.get("gap_reason", "")))
             continue

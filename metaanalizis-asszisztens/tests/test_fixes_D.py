@@ -2,8 +2,9 @@
 """Regressziós tesztek a D-köteg (tudásbázis és projektnapló) javításaihoz.
 
 Minden teszt egy review-megállapításra hivatkozik (az azonosító a teszt docstringjében).
-Minden tudásbázis ideiglenes fájlban épül (a repó tudasbazis.sqlite-ját a tesztek nem írják,
-kivéve a projektnapló alapértelmezett --kb-ellenőrzését, amely csak olvas).
+Minden tudásbázis ideiglenes fájlban épül: a repó tudasbazis.sqlite-ját a tesztek nem olvassák és
+nem írják (az elavult alapértelmezett tudásbázist a kb.ensure_built újraépítené; a projektnapló
+--kb-ellenőrzése is ideiglenes tudásbázissal fut, lásd test_integration.TestProject).
 """
 import glob
 import io

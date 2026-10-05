@@ -2552,14 +2552,14 @@
    }
   ],
   "status": "active",
-  "notes": "Study rows (yi = Hedges' g, vi, mean_age) are not printed in the PDF; they come from the authors' supplementary data.csv (added by the verifier, provenance in the verified extraction). The authors analysed exactly these 4-decimal values, so there is no input-rounding allowance. Min/max ES (-1.859, -0.234) are input descriptives and are not checked. -2LL and Wilson's 'Wghtd SD' are in __fixed_effect__loglik_wilson_sd."
+  "notes": "Study rows (yi = Hedges' g, vi, mean_age) are not printed in the PDF; they come from the authors' supplementary data.csv (added by the verifier, provenance in the verified extraction). The authors analysed exactly these 4-decimal values, so there is no input-rounding allowance. Min/max ES (-1.859, -0.234) are input descriptives and are not checked. Wilson's 'Wghtd SD' is checked in cheung_guide__fixed_effect__wilson_weighted_sd; the FE -2LL is a known gap (cheung_guide__fixed_effect__loglik)."
  },
  {
-  "case_id": "cheung_guide__fixed_effect__loglik_wilson_sd",
+  "case_id": "cheung_guide__fixed_effect__loglik",
   "example_id": "cheung_guide__supp_fixed_effect",
   "source_id": "cheung2016",
-  "location": "SUPPLEMENT conduct_a_meta_analysis.md, metaSEM output (github.com/mikewlcheung/code-in-articles, 'Cheung and Vijayakumar 2016'); SUPPLEMENT conduct_a_meta_analysis.md, SPSS section (D. B. Wilson macros 2005.05.23)",
-  "description": "FE -2 log-likelihood (metaSEM) and Wilson MEANES weighted SD sqrt(Q/sum w).",
+  "location": "SUPPLEMENT conduct_a_meta_analysis.md, metaSEM output (github.com/mikewlcheung/code-in-articles, 'Cheung and Vijayakumar 2016')",
+  "description": "FE -2 log-likelihood (metaSEM, incl. the 2*pi term).",
   "measure": "GEN",
   "options": {},
   "rows": [
@@ -2875,18 +2875,355 @@
     "value": 19.40719,
     "tol": 5e-06,
     "transform": null,
-    "note": "-2LL of the FE model (placeholder path)"
-   },
-   {
-    "path": "weighted_sd",
-    "value": 0.267,
-    "tol": 0.0005,
-    "transform": null,
-    "note": "SPSS 'Wghtd SD' = sqrt(Q/sum w) = 0.26736 (placeholder path)"
+    "note": "-2LL of the FE model, printed 19.40719 (5 dp); = k*log(2*pi) + sum(log vi) + Q (verifier 19.407191); path name only (the engine has no log-likelihood output)"
    }
   ],
   "status": "known_gap",
-  "gap_reason": "Not implemented as outputs: the engine's meta_analysis result exposes neither the model log-likelihood (-2LL incl. the 2*pi term) nor Wilson's MEANES 'weighted SD' sqrt(Q/sum w) (no transform combines Q and se)."
+  "gap_reason": "Not implemented as an output: the engine's meta_analysis result has no model log-likelihood field (-2LL incl. the 2*pi term). The runner's expr cannot form sum(log vi) either (no element-wise log or comprehension), and doing so would only re-evaluate the formula on the input variances, not test an engine output. Wilson's MEANES weighted SD, formerly in this case, is now checked in cheung_guide__fixed_effect__wilson_weighted_sd (expr sqrt(Q/sum_weights))."
+ },
+ {
+  "case_id": "cheung_guide__fixed_effect__wilson_weighted_sd",
+  "example_id": "cheung_guide__supp_fixed_effect",
+  "source_id": "cheung2016",
+  "location": "SUPPLEMENT conduct_a_meta_analysis.md, SPSS section (D. B. Wilson macros 2005.05.23)",
+  "description": "Wilson's SPSS MEANES fixed-effect 'Wghtd SD' = sqrt(Q/sum w) = sqrt(sum w(y - mu)^2 / sum w) on the same 50 studies.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Study 1",
+    "yi": -1.8586,
+    "vi": 0.0743,
+    "mean_age": 64.92
+   },
+   {
+    "study": "Study 2",
+    "yi": -0.7913,
+    "vi": 0.0545,
+    "mean_age": 50.71
+   },
+   {
+    "study": "Study 3",
+    "yi": -0.6882,
+    "vi": 0.0375,
+    "mean_age": 39.71
+   },
+   {
+    "study": "Study 4",
+    "yi": -0.5261,
+    "vi": 0.036,
+    "mean_age": 42.21
+   },
+   {
+    "study": "Study 5",
+    "yi": -0.4075,
+    "vi": 0.0412,
+    "mean_age": 34.43
+   },
+   {
+    "study": "Study 6",
+    "yi": -1.3356,
+    "vi": 0.0404,
+    "mean_age": 54.05
+   },
+   {
+    "study": "Study 7",
+    "yi": -0.635,
+    "vi": 0.0416,
+    "mean_age": 18.5
+   },
+   {
+    "study": "Study 8",
+    "yi": -0.5464,
+    "vi": 0.0337,
+    "mean_age": 45.87
+   },
+   {
+    "study": "Study 9",
+    "yi": -0.8833,
+    "vi": 0.0584,
+    "mean_age": 30.9
+   },
+   {
+    "study": "Study 10",
+    "yi": -0.8825,
+    "vi": 0.0418,
+    "mean_age": 40.65
+   },
+   {
+    "study": "Study 11",
+    "yi": -0.8348,
+    "vi": 0.0439,
+    "mean_age": 30.7
+   },
+   {
+    "study": "Study 12",
+    "yi": -0.4746,
+    "vi": 0.0462,
+    "mean_age": 29.96
+   },
+   {
+    "study": "Study 13",
+    "yi": -0.8859,
+    "vi": 0.0395,
+    "mean_age": 43.17
+   },
+   {
+    "study": "Study 14",
+    "yi": -0.4739,
+    "vi": 0.0451,
+    "mean_age": 16.44
+   },
+   {
+    "study": "Study 15",
+    "yi": -0.5436,
+    "vi": 0.0332,
+    "mean_age": 36.14
+   },
+   {
+    "study": "Study 16",
+    "yi": -0.7776,
+    "vi": 0.0426,
+    "mean_age": 54.58
+   },
+   {
+    "study": "Study 17",
+    "yi": -0.5556,
+    "vi": 0.0411,
+    "mean_age": 56.11
+   },
+   {
+    "study": "Study 18",
+    "yi": -0.8258,
+    "vi": 0.0429,
+    "mean_age": 28.42
+   },
+   {
+    "study": "Study 19",
+    "yi": -0.7017,
+    "vi": 0.0456,
+    "mean_age": 39.27
+   },
+   {
+    "study": "Study 20",
+    "yi": -0.911,
+    "vi": 0.0437,
+    "mean_age": 48.76
+   },
+   {
+    "study": "Study 21",
+    "yi": -0.8223,
+    "vi": 0.0466,
+    "mean_age": 34.55
+   },
+   {
+    "study": "Study 22",
+    "yi": -0.9469,
+    "vi": 0.0468,
+    "mean_age": 50.08
+   },
+   {
+    "study": "Study 23",
+    "yi": -1.0941,
+    "vi": 0.0553,
+    "mean_age": 71.84
+   },
+   {
+    "study": "Study 24",
+    "yi": -0.6214,
+    "vi": 0.0335,
+    "mean_age": 30.88
+   },
+   {
+    "study": "Study 25",
+    "yi": -0.4958,
+    "vi": 0.0416,
+    "mean_age": 32.68
+   },
+   {
+    "study": "Study 26",
+    "yi": -0.2527,
+    "vi": 0.0497,
+    "mean_age": 36.47
+   },
+   {
+    "study": "Study 27",
+    "yi": -0.6362,
+    "vi": 0.0392,
+    "mean_age": 57.52
+   },
+   {
+    "study": "Study 28",
+    "yi": -0.8268,
+    "vi": 0.0377,
+    "mean_age": 36.54
+   },
+   {
+    "study": "Study 29",
+    "yi": -0.6074,
+    "vi": 0.0398,
+    "mean_age": 40.07
+   },
+   {
+    "study": "Study 30",
+    "yi": -1.1563,
+    "vi": 0.0386,
+    "mean_age": 27.81
+   },
+   {
+    "study": "Study 31",
+    "yi": -1.0167,
+    "vi": 0.0544,
+    "mean_age": 32.94
+   },
+   {
+    "study": "Study 32",
+    "yi": -0.6711,
+    "vi": 0.0418,
+    "mean_age": 49.31
+   },
+   {
+    "study": "Study 33",
+    "yi": -0.62,
+    "vi": 0.0289,
+    "mean_age": 20.02
+   },
+   {
+    "study": "Study 34",
+    "yi": -0.9104,
+    "vi": 0.0365,
+    "mean_age": 42.89
+   },
+   {
+    "study": "Study 35",
+    "yi": -0.8934,
+    "vi": 0.0463,
+    "mean_age": 35.97
+   },
+   {
+    "study": "Study 36",
+    "yi": -0.6574,
+    "vi": 0.0373,
+    "mean_age": 45.21
+   },
+   {
+    "study": "Study 37",
+    "yi": -1.0717,
+    "vi": 0.0419,
+    "mean_age": 64.82
+   },
+   {
+    "study": "Study 38",
+    "yi": -0.7004,
+    "vi": 0.0437,
+    "mean_age": 42.58
+   },
+   {
+    "study": "Study 39",
+    "yi": -0.4441,
+    "vi": 0.0505,
+    "mean_age": 30.1
+   },
+   {
+    "study": "Study 40",
+    "yi": -0.5648,
+    "vi": 0.0467,
+    "mean_age": 33.89
+   },
+   {
+    "study": "Study 41",
+    "yi": -0.5949,
+    "vi": 0.0345,
+    "mean_age": 29.09
+   },
+   {
+    "study": "Study 42",
+    "yi": -0.6363,
+    "vi": 0.0331,
+    "mean_age": 26.43
+   },
+   {
+    "study": "Study 43",
+    "yi": -0.5568,
+    "vi": 0.0367,
+    "mean_age": 56.6
+   },
+   {
+    "study": "Study 44",
+    "yi": -1.0348,
+    "vi": 0.0498,
+    "mean_age": 44.0
+   },
+   {
+    "study": "Study 45",
+    "yi": -0.2884,
+    "vi": 0.0475,
+    "mean_age": 32.07
+   },
+   {
+    "study": "Study 46",
+    "yi": -0.9005,
+    "vi": 0.0454,
+    "mean_age": 43.62
+   },
+   {
+    "study": "Study 47",
+    "yi": -0.5717,
+    "vi": 0.0362,
+    "mean_age": 22.96
+   },
+   {
+    "study": "Study 48",
+    "yi": -1.2231,
+    "vi": 0.0435,
+    "mean_age": 40.01
+   },
+   {
+    "study": "Study 49",
+    "yi": -0.4597,
+    "vi": 0.0398,
+    "mean_age": 30.78
+   },
+   {
+    "study": "Study 50",
+    "yi": -0.2341,
+    "vi": 0.0369,
+    "mean_age": 63.59
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "weighted_sd",
+    "expr": "sqrt(Q/sum_weights)",
+    "value": 0.267,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "SPSS MEANES 'Wghtd SD' printed .267 (3 dp); tol = half unit. Formula identified by the verifier (a k/(k-1)-corrected variant would give 0.2701 and does not match)"
+   },
+   {
+    "path": "weighted_sd",
+    "expr": "sqrt(Q)*se",
+    "value": 0.267,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "the same printed .267 through the FE identity sum w = 1/se^2 (cross-check of Q, se and sum_weights)"
+   },
+   {
+    "path": "weighted_sd",
+    "expr": "sqrt(Q/sum_weights)",
+    "value": 0.26736,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "tight check vs verifier (sqrt(Q/sum w) = 0.26736, 5 dp; tudasbazis seed reproduction notes)"
+   }
+  ],
+  "status": "active",
+  "activation_note": "Split off the known_gap case cheung_guide__fixed_effect__loglik_wilson_sd (now cheung_guide__fixed_effect__loglik): the gap reason 'no transform combines Q and se' predates the runner's expr, and the engine exposes Q and sum_weights, so the weighted SD is computable. Only the -2LL remains a gap."
  },
  {
   "case_id": "cheung_guide__random_dl",

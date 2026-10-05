@@ -331,6 +331,7 @@
       inst.validating = false;
       inst.validationError = err;
       renderSummary();
+      renderFindings();
       return null;
     });
   }
@@ -397,7 +398,11 @@
         header: d.header.slice(),
         rows: G.rows().map(function (r) { return { row_uid: r.uid, cells: d.header.map(function (x, i) { return str(r.cells['c' + i]); }) }; })
       };
-      if (withProv) { body.provenance = provForSave(d); }
+      if (withProv) {
+        body.provenance = provForSave(d);
+        // az oldalfájl is feltételes írás: a betöltött eredet-etag (null = még nincs oldalfájl)
+        body.provenance_if_match = cleanEtag(d.provEtag) || null;
+      }
       if (opts.phi_override) { body.phi_override = opts.phi_override; }
       if (opts.consent) { body.consent = true; }
       p = MA.api.put('/api/table', body, { ifMatch: d.etag || undefined, quiet: ['CONFLICT', 'LOCKED', 'FORBIDDEN'] }).then(function (env) {
@@ -405,6 +410,7 @@
         d.etag = env.etag || data.etag || d.etag;
         if (d.tver === tver) { d.tableDirty = false; }
         if (withProv) {
+          if (data.provenance_etag) { d.provEtag = data.provenance_etag; }
           if (d.pver === pver) { d.provDirty = false; d.provKeys = {}; }
           return MA.api.get('/api/provenance', { query: { dataset: d.dataset }, toast: false }).then(function (pe) {
             if (d.pver === pver) { d.prov = provFrom(pe, d.dataset); }
@@ -433,9 +439,12 @@
     }, function (err) {
       d.saving = null;
       if (err.code === 'CONFLICT') {
-        if (provOnly) { return provConflict(d, err); }
+        // az eredet-oldalfájl változott (a tábla nem): friss eredetre fésüljük a sajátunkat, majd újramentés
+        if (provOnly || (err.details && err.details.kind === 'provenance')) { return provConflict(d, err); }
         conflictDialog(err);
       } else if (err.code === 'LOCKED') {
+        // részleges írás: a CSV már az új változat (új etag), csak az oldalfájl maradt ki
+        if (err.details && err.details.partial && err.details.etag) { d.etag = err.details.etag; }
         d.locked = err;
       } else if (err.code === 'FORBIDDEN' && err.details && Array.isArray(err.details.phi)) {
         phiDialog(err);
@@ -876,7 +885,11 @@
     var d = st();
     if (!V || !V.els.findings || !d) { return; }
     var list = (d.validation && d.validation.findings) || [];
-    if (!d.validation) { MA.dom.mount(V.els.findings, MA.ui.spinner('extraction.sum.running')); return; }
+    if (!d.validation) {
+      // a validálás hibája a fenti összesítőben látszik; itt ne maradjon „validálás …” jelző
+      MA.dom.mount(V.els.findings, V.validationError && !V.validating ? MA.ui.emptyState('extraction.f.unavailable') : MA.ui.spinner('extraction.sum.running'));
+      return;
+    }
     if (!list.length) { MA.dom.mount(V.els.findings, MA.ui.emptyState('extraction.f.none')); return; }
     MA.dom.mount(V.els.findings, SEV.map(function (sev) {
       var items = list.filter(function (f) { return (SEV.indexOf(f.severity) >= 0 ? f.severity : 'info') === sev; });
@@ -1312,7 +1325,21 @@
       renderFindings();
     }
     applyFilter();
+    focusRowParam(ctx);
     return validateNow();
+  }
+
+  /** #/extraction?outcome=o1&row=<row_uid> — lefúrás az ábrákról (3.5.7): a sor első cellája kerül fókuszba
+   *  (ha a „csak problémás sorok” szűrő elrejtené, a szűrő kikapcsol). */
+  function focusRowParam(ctx) {
+    var uid = ctx.params && ctx.params.row;
+    if (!uid || !G || !G.row(uid)) { return; }
+    if (V.problem && !V.problem[uid] && MA.prefs.get('extraction.onlyProblems', '0') === '1') {
+      MA.prefs.set('extraction.onlyProblems', '0');
+      if (V.els.only) { V.els.only.checked = false; }
+      applyFilter();
+    }
+    G.focusCell(uid, 'c0');
   }
 
   function render(root, ctx) {

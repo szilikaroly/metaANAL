@@ -4,6 +4,10 @@ adatok JSON-ban, hogy külső ábrakészítő (pl. figure-forge) is újrarajzolh
 
 Konvenciók (Cochrane/PRISMA): négyzetméret ∝ súly, gyémánt = összesített becslés és CI,
 vízszintes vonal a gyémánt alatt = predikciós intervallum, arány-mértékeknél log-skála.
+
+Nyelv (E5): lang = 'hu' (alapértelmezés; a korábbi kimenettel bájtra azonos) vagy 'en'. Angol nyelven és
+annotate=True esetén a számok mínuszjele U+2212. annotate=True: elnevezett rétegek (<g id="layer-…">) és
+soronként <g id="study-<row_uid>" data-row data-y data-lo data-hi> (a figure-forge / a felület számára).
 """
 import math
 import re
@@ -17,6 +21,81 @@ MUTED = "#6b6b6b"
 GRID = "#d9d9d9"
 ACCENT = "#1f4e79"
 PI_COLOR = "#b03a2e"
+
+MINUS = "\u2212"
+LANGS = ("hu", "en")
+
+# a kódba égetett feliratok nyelvenként (a 'hu' a korábbi, byte-azonos szöveg; a contour_legend és a
+# doi_note már XML-escape-elt)
+TEXTS = {
+    "study": {"hu": "Vizsgálat", "en": "Study"},
+    "weight": {"hu": "Súly", "en": "Weight"},
+    "effect": {"hu": "Hatás", "en": "Effect"},
+    "effect_size": {"hu": "Hatásméret", "en": "Effect size"},
+    "se_axis": {"hu": "Standard hiba (elemzési skála)", "en": "Standard error (analysis scale)"},
+    "contour_legend": {"hu": "Sávok (a nullhatás körül): p &gt; 0.10 sötét · 0.05–0.10 · 0.01–0.05 · p &lt; 0.01 fehér",
+                       "en": "Bands (around the null effect): p &gt; 0.10 dark · 0.05–0.10 · 0.01–0.05 · "
+                             "p &lt; 0.01 white"},
+    "no_contour": {"hu": "Egycsoportos arány: nincs nullhatás, ezért nincsenek szignifikancia-kontúrok; az aszimmetria "
+                         "arányoknál nehezen értelmezhető.",
+                   "en": "Single-arm proportion: no null effect, hence no significance contours; asymmetry is hard "
+                         "to interpret for proportions."},
+    "doi_svg_title": {"hu": "Doi-plot, LFK-index = %s (%s)", "en": "Doi plot, LFK index = %s (%s)"},
+    "abs_z": {"hu": "|Z-pontszám| (0 felül)", "en": "|Z-score| (0 at top)"},
+    "lfk": {"hu": "LFK-index: %s (%s)", "en": "LFK index: %s (%s)"},
+    "doi_note": {"hu": ("Heurisztikus mutató (|LFK| ≤ 1 nincs, 1–2 kisebb, &gt; 2 jelentős aszimmetria) — "
+                        "érzékenységi jellegű,",
+                        "nem szignifikancia-teszt; a funnel plottal és az Egger/Harbord/Peters-teszttel "
+                        "együtt értelmezd."),
+                 "en": ("Heuristic index (|LFK| ≤ 1 none, 1–2 minor, &gt; 2 major asymmetry) — a sensitivity "
+                        "measure,",
+                        "not a significance test; interpret it together with the funnel plot and the "
+                        "Egger/Harbord/Peters tests.")},
+}
+# a bias.doi_plot_data kategóriái angolul
+LFK_CATEGORY_EN = {"nincs aszimmetria": "no asymmetry", "kisebb aszimmetria": "minor asymmetry",
+                   "jelentős aszimmetria": "major asymmetry"}
+_SCALE_SUFFIX = {
+    "hu": {"log": "%s (log-skálán ábrázolva)", "PLO": "%s (logit-skálán ábrázolva)", "PAS": "%s (arcsin-skálán ábrázolva)",
+           "PFT": "%s (Freeman–Tukey skálán ábrázolva)", "ZCOR": "%s (Fisher z-skálán ábrázolva)"},
+    "en": {"log": "%s (log scale)", "PLO": "%s (logit scale)", "PAS": "%s (arcsine scale)",
+           "PFT": "%s (Freeman–Tukey scale)", "ZCOR": "%s (Fisher z scale)"},
+}
+
+
+def check_lang(lang):
+    if lang not in LANGS:
+        raise ValueError("lang: érvénytelen nyelv %r (lehetséges: %s)" % (lang, ", ".join(LANGS)))
+    return lang
+
+
+def tr(key, lang="hu"):
+    """Kódba égetett felirat a kért nyelven."""
+    return TEXTS[key][check_lang(lang)]
+
+
+def lfk_category(category, lang="hu"):
+    if lang == "en":
+        return LFK_CATEGORY_EN.get(category, category)
+    return category
+
+
+def minus_for(lang="hu", annotate=False):
+    """A számok mínuszjele: U+2212 angolul és annotált SVG-ben, egyébként a korábbi '-'."""
+    return MINUS if (lang == "en" or annotate) else "-"
+
+
+def num_text(s, minus="-"):
+    """Formázott szám(ok) szövegében a kötőjel-mínusz cseréje (csak számszövegre hívható)."""
+    return s if minus == "-" else s.replace("-", minus)
+
+
+def attr_num(v):
+    """Gépi olvasásra szánt data-* érték: a float teljes pontosságú alakja (mint a JSON-ban); nem véges → ''."""
+    if v is None or isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v):
+        return ""
+    return repr(float(v))
+
 
 # az XML 1.0-ban tiltott vezérlőkarakterek (pl. Word-sortörés \x0b, PDF-ből másolt \x0c)
 _XML_ILLEGAL = re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]")
@@ -51,10 +130,21 @@ def _fmt(v, nd=2):
     return s
 
 
-def fmt_triple(est, lo, hi):
-    """'becslés [alsó; felső]' közös, nagyságrendhez igazított tizedesjeggyel."""
+def fmt_triple(est, lo, hi, minus="-"):
+    """'becslés [alsó; felső]' közös, nagyságrendhez igazított tizedesjeggyel (minus: '-' vagy U+2212)."""
     nd = decimals((est, lo, hi))
-    return "%s [%s; %s]" % (_fmt(est, nd), _fmt(lo, nd), _fmt(hi, nd))
+    return num_text("%s [%s; %s]" % (_fmt(est, nd), _fmt(lo, nd), _fmt(hi, nd)), minus)
+
+
+def fmt_pair(lo, hi, minus="-"):
+    """'[alsó; felső]' közös tizedesjeggyel (a PI szövege az ábrán: 'PI ' + ez)."""
+    nd = decimals((lo, hi))
+    return num_text("[%s; %s]" % (_fmt(lo, nd), _fmt(hi, nd)), minus)
+
+
+def display_text(est, lo, hi):
+    """A motor kész szövege mindkét nyelven: {'hu': az ábra és a riport mai szövege, 'en': U+2212 mínusszal}."""
+    return {"hu": fmt_triple(est, lo, hi), "en": fmt_triple(est, lo, hi, MINUS)}
 
 
 def _nice_ticks(lo, hi, n=5):
@@ -123,14 +213,13 @@ def forward_transform(measure, v, n_harmonic=None):
     return v
 
 
-def axis_label(measure, label=None):
+def axis_label(measure, label=None, lang="hu"):
     """A tengely címe, a skála megnevezésével."""
-    lab = label or "Hatásméret"
-    if measure in RATIO_MEASURES:
-        return "%s (log-skálán ábrázolva)" % lab
-    return {"PLN": "%s (log-skálán ábrázolva)", "PLO": "%s (logit-skálán ábrázolva)",
-            "PAS": "%s (arcsin-skálán ábrázolva)", "PFT": "%s (Freeman–Tukey skálán ábrázolva)",
-            "ZCOR": "%s (Fisher z-skálán ábrázolva)"}.get(measure, "%s") % lab
+    lab = label or tr("effect_size", lang)
+    suffix = _SCALE_SUFFIX[check_lang(lang)]
+    if measure in RATIO_MEASURES or measure == "PLN":
+        return suffix["log"] % lab
+    return suffix.get(measure, "%s") % lab
 
 
 class _Axis(object):
@@ -258,19 +347,20 @@ def default_null(measure):
     return 0.0          # log(1) = 0 (OR/RR/ROM), atanh(0) = 0 (ZCOR), 0 (MD/SMD/RD/COR/GEN)
 
 
-def forest_svg(data, title=None, left_label=None, right_label=None, null_value=None,
-               effect_label=None, footer=None, axis_title=None):
-    """null_value: a referenciavonal az ábrázolási skálán; None → a mérték nullhatása
-    (default_null); arány-mértékeknél nincs vonal (nincs értelmes nullhatás)."""
+# a forest plot vízszintes elrendezése (az SVG és a plot_data v2 tengelye ugyanebből számol)
+FOREST_X0, FOREST_X1 = 300, 640
+FOREST_LAYERS = ("title", "header", "null", "studies", "subgroups", "summaries", "axis", "labels", "footer")
+FUNNEL_LAYERS = ("title", "frame", "contours", "pseudo-ci", "studies", "filled", "axis", "legend")
+DOI_LAYERS = ("title", "frame", "curve", "studies", "axis", "legend")
+
+
+def forest_axis(data, null_value=None):
+    """A forest-tengely és a nullvonal helye az elemzési skálán: (tengely, null). Ugyanez rajzolja az SVG-t
+    és adja a plot_data v2 axis-át (tartomány, tickek), így a kettő nem térhet el."""
     studies = data["studies"]
     summaries = data.get("summaries") or []
-    ratio = data["ratio_scale"]
     measure = data.get("measure")
-    sections = data.get("sections")
-    row_h = 22
-    width = 940
-    label_x, plot_x0, plot_x1, est_x, w_x = 12, 300, 640, 660, 925
-    sec_sums = [sec["summary"] for sec in (sections or []) if sec.get("summary")]
+    sec_sums = [sec["summary"] for sec in (data.get("sections") or []) if sec.get("summary")]
     # tengelytartomány: CI-k és összesítések (az alcsoport-összesítéseké is)
     vals = []
     for s in studies:
@@ -294,20 +384,66 @@ def forest_svg(data, title=None, left_label=None, right_label=None, null_value=N
     if null is not None:
         must.append(null)
     lo, hi = min([lo] + must), max([hi] + must)
-    axis = _Axis(lo, hi, plot_x0, plot_x1, ratio, measure, data.get("axis_n"))
+    return _Axis(lo, hi, FOREST_X0, FOREST_X1, data["ratio_scale"], measure, data.get("axis_n")), null
+
+
+def _layered(items, plot, order, annotate):
+    """[(réteg, sor)] → SVG-sorok; annotate=True: rétegenként <g id="layer-<ábra>-<réteg>">, a rétegek
+    rögzített sorrendjében (a rétegen belül a rajzolási sorrend marad)."""
+    if not annotate:
+        return [line for _, line in items]
+    out = []
+    for layer in order:
+        lines = [line for ly, line in items if ly == layer]
+        if lines:
+            out += ['<g id="layer-%s-%s">' % (plot, layer)] + lines + ["</g>"]
+    return out
+
+
+def _row_id(row_ids, i):
+    if row_ids is None or i is None or not 0 <= i < len(row_ids) or row_ids[i] is None:
+        return None, None
+    uid, rix = row_ids[i]
+    return uid, rix
+
+
+def forest_svg(data, title=None, left_label=None, right_label=None, null_value=None,
+               effect_label=None, footer=None, axis_title=None, lang="hu", annotate=False, row_ids=None):
+    """null_value: a referenciavonal az ábrázolási skálán; None → a mérték nullhatása
+    (default_null); arány-mértékeknél nincs vonal (nincs értelmes nullhatás).
+
+    lang: 'hu' | 'en' (a kódba égetett feliratok; a többi szöveget a hívó adja a kért nyelven).
+    annotate: elnevezett rétegek és soronként <g id="study-<row_uid>" data-row data-y data-lo data-hi>;
+    row_ids: a studies sorrendjében [(row_uid, row_index)] (annotate-hez)."""
+    check_lang(lang)
+    minus = minus_for(lang, annotate)
+    studies = data["studies"]
+    summaries = data.get("summaries") or []
+    sections = data.get("sections")
+    row_h = 22
+    width = 940
+    label_x, plot_x0, plot_x1, est_x, w_x = 12, FOREST_X0, FOREST_X1, 660, 925
+    axis, null = forest_axis(data, null_value)
     top = 40 if title else 16
     header_y = top + 14
     body_top = header_y + 14
-    out = []
-    eff_lab = effect_label or ("%s [%d%% CI]" % ("Hatás", int(round(data["level"] * 100))))
-    out.append('<text x="%d" y="%d" font-weight="bold" fill="%s">Vizsgálat</text>' % (label_x, header_y, INK))
-    out.append('<text x="%d" y="%d" font-weight="bold" fill="%s">%s</text>' % (est_x, header_y, INK, escape(eff_lab)))
-    out.append('<text x="%d" y="%d" font-weight="bold" fill="%s" text-anchor="end">Súly</text>' % (w_x, header_y, INK))
-    out.append('<line x1="%d" x2="%d" y1="%d" y2="%d" stroke="%s"/>' % (label_x, w_x, header_y + 6, header_y + 6, INK))
+    items = []
+    if title:
+        items.append(("title", '<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>'
+                      % (label_x, INK, escape(title))))
+    eff_lab = effect_label or ("%s [%d%% CI]" % (tr("effect", lang), int(round(data["level"] * 100))))
+    items.append(("header", '<text x="%d" y="%d" font-weight="bold" fill="%s">%s</text>'
+                  % (label_x, header_y, INK, escape(tr("study", lang)))))
+    items.append(("header", '<text x="%d" y="%d" font-weight="bold" fill="%s">%s</text>'
+                  % (est_x, header_y, INK, escape(eff_lab))))
+    items.append(("header", '<text x="%d" y="%d" font-weight="bold" fill="%s" text-anchor="end">%s</text>'
+                  % (w_x, header_y, INK, escape(tr("weight", lang)))))
+    items.append(("header", '<line x1="%d" x2="%d" y1="%d" y2="%d" stroke="%s"/>'
+                  % (label_x, w_x, header_y + 6, header_y + 6, INK)))
     y = body_top + row_h * 0.6
     maxw = max([s["weight_pct"] or 0 for s in studies] + [1e-9])
 
-    def study_row(s, y):
+    def study_row(i, s, y):
         parts = []
         parts.append('<text x="%d" y="%.1f" fill="%s">%s</text>' % (label_x, y + 4, INK, escape(_clip(s["label"], 40))))
         x_lo, x_hi = axis.x(s["lo"]), axis.x(s["hi"])
@@ -322,13 +458,20 @@ def forest_svg(data, title=None, left_label=None, right_label=None, null_value=N
             parts.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s"/>'
                          % (axis.x(s["y"]) - side / 2, y - side / 2, side, side, ACCENT))
         d = s["display"]
-        parts.append('<text x="%d" y="%.1f" fill="%s">%s</text>' % (est_x, y + 4, INK, fmt_triple(d[0], d[1], d[2])))
+        parts.append('<text x="%d" y="%.1f" fill="%s">%s</text>'
+                     % (est_x, y + 4, INK, fmt_triple(d[0], d[1], d[2], minus)))
         if s["weight_pct"] is not None:
             parts.append('<text x="%d" y="%.1f" fill="%s" text-anchor="end">%.1f%%</text>'
                          % (w_x, y + 4, MUTED, s["weight_pct"]))
-        return parts
+        if annotate:
+            uid, rix = _row_id(row_ids, i)
+            parts = ['<g id="study-%s" data-row="%s" data-y="%s" data-lo="%s" data-hi="%s">' % (
+                escape(uid if uid is not None else "i%d" % i), "" if rix is None else int(rix),
+                attr_num(s["y"]), attr_num(s["lo"]), attr_num(s["hi"]))] + parts + ["</g>"]
+        return [("studies", p) for p in parts]
 
     def summary_row(sm, y, bold=True):
+        layer = "summaries" if bold else "subgroups"
         parts = []
         est, l, h = sm["estimate"], sm["ci_lower"], sm["ci_upper"]
         xl, xe, xh = axis.x(l), axis.x(est), axis.x(h)
@@ -351,32 +494,31 @@ def forest_svg(data, title=None, left_label=None, right_label=None, null_value=N
                      % (label_x, y + 4, "bold" if bold else "normal", INK, escape(sm["label"])))
         d = sm.get("display") or [est, l, h]
         parts.append('<text x="%d" y="%.1f" font-weight="%s" fill="%s">%s</text>'
-                     % (est_x, y + 4, "bold" if bold else "normal", INK, fmt_triple(d[0], d[1], d[2])))
+                     % (est_x, y + 4, "bold" if bold else "normal", INK, fmt_triple(d[0], d[1], d[2], minus)))
         if sm.get("pi_lower") is not None:
             pd = sm.get("pi_display") or [sm["pi_lower"], sm["pi_upper"]]
-            nd = decimals(pd)
-            parts.append('<text x="%d" y="%.1f" fill="%s" font-size="11">PI [%s; %s]</text>'
-                         % (est_x, y + 19, PI_COLOR, _fmt(pd[0], nd), _fmt(pd[1], nd)))
+            parts.append('<text x="%d" y="%.1f" fill="%s" font-size="11">PI %s</text>'
+                         % (est_x, y + 19, PI_COLOR, fmt_pair(pd[0], pd[1], minus)))
         if sm.get("note"):
             parts.append('<text x="%d" y="%.1f" fill="%s" font-size="11">%s</text>'
                          % (label_x, y + 19, MUTED, escape(sm["note"])))
-        return parts
+        return [(layer, p) for p in parts]
 
     body = []
     if sections:
         for sec in sections:
-            body.append('<text x="%d" y="%.1f" font-weight="bold" font-style="italic" fill="%s">%s</text>'
-                        % (label_x, y + 4, INK, escape(sec["title"])))
+            body.append(("subgroups", '<text x="%d" y="%.1f" font-weight="bold" font-style="italic" fill="%s">%s</text>'
+                         % (label_x, y + 4, INK, escape(sec["title"]))))
             y += row_h
             for i in sec["indices"]:
-                body += study_row(studies[i], y)
+                body += study_row(i, studies[i], y)
                 y += row_h
             if sec.get("summary"):
                 body += summary_row(sec["summary"], y, bold=False)
                 y += row_h * 1.6
     else:
-        for s in studies:
-            body += study_row(s, y)
+        for i, s in enumerate(studies):
+            body += study_row(i, s, y)
             y += row_h
     y += row_h * 0.3
     for sm in summaries:
@@ -386,40 +528,38 @@ def forest_svg(data, title=None, left_label=None, right_label=None, null_value=N
     # null-vonal (ha van értelmes nullhatás) és tengely
     xn = axis.x(null) if null is not None else (plot_x0 + plot_x1) / 2.0
     if null is not None:
-        out.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s" stroke-dasharray="3,3"/>'
-                   % (xn, xn, body_top, plot_bottom, MUTED))
-    out += body
+        items.append(("null", '<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s" stroke-dasharray="3,3"/>'
+                      % (xn, xn, body_top, plot_bottom, MUTED)))
+    items += body
     ay = plot_bottom + 6
-    out.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (plot_x0, plot_x1, ay, ay, INK))
+    items.append(("axis", '<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (plot_x0, plot_x1, ay, ay, INK)))
     for pos, lab in axis.ticks():
         xt = axis.x(pos)
-        out.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s"/>' % (xt, xt, ay, ay + 5, INK))
-        out.append('<text x="%.1f" y="%.1f" text-anchor="middle" fill="%s">%s</text>' % (xt, ay + 18, INK, lab))
+        items.append(("axis", '<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s"/>' % (xt, xt, ay, ay + 5, INK)))
+        items.append(("axis", '<text x="%.1f" y="%.1f" text-anchor="middle" fill="%s">%s</text>'
+                      % (xt, ay + 18, INK, num_text(lab, minus))))
     ly = ay + 34
     if axis_title:
-        out.append('<text x="%.1f" y="%.1f" text-anchor="middle" fill="%s" font-size="11">%s</text>'
-                   % ((plot_x0 + plot_x1) / 2.0, ly, INK, escape(axis_title)))
+        items.append(("labels", '<text x="%.1f" y="%.1f" text-anchor="middle" fill="%s" font-size="11">%s</text>'
+                      % ((plot_x0 + plot_x1) / 2.0, ly, INK, escape(axis_title))))
         ly += 16
     if left_label:
-        out.append('<text x="%.1f" y="%.1f" text-anchor="end" fill="%s" font-size="11">← %s</text>'
-                   % (xn - 6, ly, MUTED, escape(left_label)))
+        items.append(("labels", '<text x="%.1f" y="%.1f" text-anchor="end" fill="%s" font-size="11">← %s</text>'
+                      % (xn - 6, ly, MUTED, escape(left_label))))
     if right_label:
-        out.append('<text x="%.1f" y="%.1f" fill="%s" font-size="11">%s →</text>'
-                   % (xn + 6, ly, MUTED, escape(right_label)))
+        items.append(("labels", '<text x="%.1f" y="%.1f" fill="%s" font-size="11">%s →</text>'
+                      % (xn + 6, ly, MUTED, escape(right_label))))
     fy = ly + 22
     if footer:
         for line in footer if isinstance(footer, list) else [footer]:
-            out.append('<text x="%d" y="%.1f" fill="%s" font-size="11">%s</text>' % (label_x, fy, MUTED, escape(line)))
+            items.append(("footer", '<text x="%d" y="%.1f" fill="%s" font-size="11">%s</text>'
+                          % (label_x, fy, MUTED, escape(line))))
             fy += 15
     total_h = int((fy if footer else ly + 6) + 16)
     head = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
             'font-family="%s" font-size="12" role="img">' % (width, total_h, width, total_h, FONT),
             '<rect width="100%" height="100%" fill="#ffffff"/>']
-    if title:
-        head.append('<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>'
-                    % (label_x, INK, escape(title)))
-    out.append("</svg>")
-    return "\n".join(head + out)
+    return "\n".join(head + _layered(items, "forest", FOREST_LAYERS, annotate) + ["</svg>"])
 
 
 def _arrow(x, y, direction, color=INK):
@@ -432,8 +572,48 @@ def _clip(s, n):
     return s if len(s) <= n else s[: n - 1] + "…"
 
 
+# a kontúr-javított funnel sávjai (p, z); az SVG és a plot_data v2 poligonjai ugyanezekkel számolnak
+FUNNEL_CONTOURS = ((0.10, 1.645), (0.05, 1.96), (0.01, 2.576))
+FUNNEL_PSEUDO_Z = 1.96
+
+
+class FunnelGeometry(object):
+    """A funnel plot geometriája az elemzési skálán (az SVG és a plot_data v2 közös forrása):
+    se_max, a tengely, a kontúr-poligonok és a pszeudo-95% háromszög."""
+
+    def __init__(self, yi, vi, center, measure, filled_yi=None, filled_vi=None, contour=None, n_harmonic=None,
+                 null_value=None, x0=70, x1=610):
+        null = default_null(measure) if null_value is None else null_value
+        if contour is None:
+            contour = null is not None
+        if null is None:
+            contour = False
+        self.null, self.contour, self.center = null, contour, center
+        ses = [math.sqrt(v) for v in vi] + ([math.sqrt(v) for v in filled_vi] if filled_vi else [])
+        self.se_max = maxse = max(ses) * 1.08 if ses else 1.0
+        allx = list(yi) + (list(filled_yi) if filled_yi else []) + [center + 1.96 * maxse, center - 1.96 * maxse]
+        if contour:
+            allx += [null + 2.576 * maxse, null - 2.576 * maxse]
+        self.axis = _Axis(min(allx), max(allx), x0, x1, measure in RATIO_MEASURES, measure, n_harmonic)
+
+    def contours(self):
+        """[(p, z, zárt poligon [[x, se], …])] kívülről befelé haladó rajzoláshoz fordított sorrendben."""
+        if not self.contour:
+            return []
+        n, m = self.null, self.se_max
+        return [(p, z, [[n, 0.0], [n - z * m, m], [n + z * m, m], [n, 0.0]]) for p, z in FUNNEL_CONTOURS]
+
+    def pseudo_ci(self):
+        c, m = self.center, self.se_max
+        return [[c - FUNNEL_PSEUDO_Z * m, m], [c, 0.0], [c + FUNNEL_PSEUDO_Z * m, m]]
+
+    def se_ticks(self):
+        return _nice_ticks(0, self.se_max, 4)
+
+
 def funnel_svg(yi, vi, center, measure, title=None, filled_yi=None, filled_vi=None,
-               contour=None, labels=None, n_harmonic=None, null_value=None, axis_title=None):
+               contour=None, labels=None, n_harmonic=None, null_value=None, axis_title=None,
+               lang="hu", annotate=False, row_ids=None):
     """Funnel plot: x = hatás az elemzési skálán (a tengelyfeliratok az értelmezési skálán),
     y = SE (fent 0).
 
@@ -441,71 +621,88 @@ def funnel_svg(yi, vi, center, measure, title=None, filled_yi=None, filled_vi=No
     Peters et al. 2008). None → automatikus: arány-mértékeknél (egycsoportos arány; nincs
     értelmes nullhatás) nincs kontúr, egyébként van. null_value: a kontúrok középpontja az
     elemzési skálán (alap: default_null). A pszeudo-95% háromszög a `center` (FE-becslés) körül.
+    lang / annotate / row_ids: mint a forest_svg-nél (a pontok: <g id="funnel-study-<row_uid>" data-row
+    data-x data-se>).
     """
-    null = default_null(measure) if null_value is None else null_value
-    if contour is None:
-        contour = null is not None
-    if null is None:
-        contour = False
+    check_lang(lang)
+    minus = minus_for(lang, annotate)
+    geo = FunnelGeometry(yi, vi, center, measure, filled_yi, filled_vi, contour, n_harmonic, null_value)
+    null, contour, maxse, axis = geo.null, geo.contour, geo.se_max, geo.axis
     width, height = 640, 486
     x0, x1, y0, y1 = 70, 610, 40 if title else 20, 410
-    ses = [math.sqrt(v) for v in vi] + ([math.sqrt(v) for v in filled_vi] if filled_vi else [])
-    maxse = max(ses) * 1.08 if ses else 1.0
-    allx = list(yi) + (list(filled_yi) if filled_yi else []) + [center + 1.96 * maxse, center - 1.96 * maxse]
-    if contour:
-        allx += [null + 2.576 * maxse, null - 2.576 * maxse]
-    axis = _Axis(min(allx), max(allx), x0, x1, measure in RATIO_MEASURES, measure, n_harmonic)
 
     def ypx(se):
         return y0 + se / maxse * (y1 - y0)
 
-    out = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
-           'font-family="%s" font-size="12" role="img">' % (width, height, width, height, FONT),
-           '<rect width="100%" height="100%" fill="#ffffff"/>']
+    head = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
+            'font-family="%s" font-size="12" role="img">' % (width, height, width, height, FONT),
+            '<rect width="100%" height="100%" fill="#ffffff"/>']
+    items = []
     if title:
-        out.append('<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>' % (x0, INK, escape(title)))
-    out.append('<rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s"/>' % (x0, y0, x1 - x0, y1 - y0, GRID))
+        items.append(("title", '<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>'
+                      % (x0, INK, escape(title))))
+    items.append(("frame", '<rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s"/>'
+                  % (x0, y0, x1 - x0, y1 - y0, GRID)))
     if contour:
         # sávok kívülről befelé: p<0.01 fehér marad; 0.01–0.05 világos; 0.05–0.10 közép; >0.10 sötét
-        bands = ((2.576, "#e8e8e8"), (1.96, "#cfcfcf"), (1.645, "#b0b0b0"))
-        for zc, shade in bands:
+        shades = {2.576: "#e8e8e8", 1.96: "#cfcfcf", 1.645: "#b0b0b0"}
+        for _, zc, _poly in reversed(geo.contours()):
             pts = "%.1f,%.1f %.1f,%.1f %.1f,%.1f" % (axis.x(null), y0, axis.x(null - zc * maxse), y1,
                                                     axis.x(null + zc * maxse), y1)
-            out.append('<polygon points="%s" fill="%s" opacity="0.9"/>' % (pts, shade))
+            items.append(("contours", '<polygon points="%s" fill="%s" opacity="0.9"/>' % (pts, shades[zc])))
     # pszeudo-95% háromszög
-    out.append('<polyline points="%.1f,%.1f %.1f,%.1f %.1f,%.1f" fill="none" stroke="%s" stroke-dasharray="4,3"/>'
-               % (axis.x(center - 1.96 * maxse), y1, axis.x(center), y0, axis.x(center + 1.96 * maxse), y1, INK))
-    out.append('<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>' % (axis.x(center), axis.x(center), y0, y1, INK))
-    for y, v in zip(yi, vi):
-        out.append('<circle cx="%.1f" cy="%.1f" r="4" fill="%s"/>' % (axis.x(y), ypx(math.sqrt(v)), ACCENT))
+    items.append(("pseudo-ci", '<polyline points="%.1f,%.1f %.1f,%.1f %.1f,%.1f" fill="none" stroke="%s" '
+                  'stroke-dasharray="4,3"/>' % (axis.x(center - 1.96 * maxse), y1, axis.x(center), y0,
+                                                axis.x(center + 1.96 * maxse), y1, INK)))
+    items.append(("pseudo-ci", '<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>'
+                  % (axis.x(center), axis.x(center), y0, y1, INK)))
+    for i, (y, v) in enumerate(zip(yi, vi)):
+        dot = '<circle cx="%.1f" cy="%.1f" r="4" fill="%s"/>' % (axis.x(y), ypx(math.sqrt(v)), ACCENT)
+        if annotate:
+            uid, rix = _row_id(row_ids, i)
+            dot = '<g id="funnel-study-%s" data-row="%s" data-x="%s" data-se="%s">%s</g>' % (
+                escape(uid if uid is not None else "i%d" % i), "" if rix is None else int(rix), attr_num(y),
+                attr_num(math.sqrt(v)), dot)
+        items.append(("studies", dot))
     if filled_yi:
         for y, v in zip(filled_yi, filled_vi):
-            out.append('<circle cx="%.1f" cy="%.1f" r="4" fill="#ffffff" stroke="%s" stroke-width="1.4"/>'
-                       % (axis.x(y), ypx(math.sqrt(v)), PI_COLOR))
+            items.append(("filled", '<circle cx="%.1f" cy="%.1f" r="4" fill="#ffffff" stroke="%s" stroke-width="1.4"/>'
+                          % (axis.x(y), ypx(math.sqrt(v)), PI_COLOR)))
     # tengelyek
     for pos, lab in axis.ticks():
         xt = axis.x(pos)
-        out.append('<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>' % (xt, xt, y1, y1 + 5, INK))
-        out.append('<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>' % (xt, y1 + 19, INK, lab))
-    for t in _nice_ticks(0, maxse, 4):
+        items.append(("axis", '<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>' % (xt, xt, y1, y1 + 5, INK)))
+        items.append(("axis", '<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>'
+                      % (xt, y1 + 19, INK, num_text(lab, minus))))
+    for t in geo.se_ticks():
         yt = ypx(t)
-        out.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0 - 5, x0, yt, yt, INK))
-        out.append('<text x="%d" y="%.1f" text-anchor="end" fill="%s">%g</text>' % (x0 - 8, yt + 4, INK, t))
-    xlab = axis_title or axis_label(measure)
-    out.append('<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>' % ((x0 + x1) / 2, y1 + 38, INK, escape(xlab)))
-    out.append('<text x="18" y="%.1f" transform="rotate(-90 18 %.1f)" text-anchor="middle" fill="%s">Standard hiba '
-               '(elemzési skála)</text>' % ((y0 + y1) / 2, (y0 + y1) / 2, INK))
+        items.append(("axis", '<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0 - 5, x0, yt, yt, INK)))
+        items.append(("axis", '<text x="%d" y="%.1f" text-anchor="end" fill="%s">%s</text>'
+                      % (x0 - 8, yt + 4, INK, num_text("%g" % t, minus))))
+    xlab = axis_title or axis_label(measure, lang=lang)
+    items.append(("axis", '<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>'
+                  % ((x0 + x1) / 2, y1 + 38, INK, escape(xlab))))
+    items.append(("axis", '<text x="18" y="%.1f" transform="rotate(-90 18 %.1f)" text-anchor="middle" fill="%s">%s</text>'
+                  % ((y0 + y1) / 2, (y0 + y1) / 2, INK, escape(tr("se_axis", lang)))))
     if contour:
-        out.append('<text x="%d" y="%d" fill="%s" font-size="10">Sávok (a nullhatás körül): p &gt; 0.10 sötét · 0.05–0.10 · 0.01–0.05 · p &lt; 0.01 fehér</text>'
-                   % (x0, y1 + 52, MUTED))
+        items.append(("legend", '<text x="%d" y="%d" fill="%s" font-size="10">%s</text>'
+                      % (x0, y1 + 52, MUTED, tr("contour_legend", lang))))
     elif null is None:
-        out.append('<text x="%d" y="%d" fill="%s" font-size="10">Egycsoportos arány: nincs nullhatás, ezért nincsenek '
-                   'szignifikancia-kontúrok; az aszimmetria arányoknál nehezen értelmezhető.</text>' % (x0, y1 + 52, MUTED))
-    out.append("</svg>")
-    return "\n".join(out)
+        items.append(("legend", '<text x="%d" y="%d" fill="%s" font-size="10">%s</text>'
+                      % (x0, y1 + 52, MUTED, escape(tr("no_contour", lang)))))
+    return "\n".join(head + _layered(items, "funnel", FUNNEL_LAYERS, annotate) + ["</svg>"])
 
 
-def doi_svg(points, lfk, category, measure, labels=None, title=None, n_harmonic=None, axis_title=None):
+def doi_axes(points, measure, n_harmonic=None, x0=70, x1=610):
+    """A Doi-plot tengelyei: (x-tengely az elemzési skálán, |Z|-tengely maximuma) — SVG és plot_data v2."""
+    ys = [p["y"] for p in points]
+    zs = [p["abs_z"] for p in points]
+    maxz = max(zs + [1.0]) * 1.08
+    return _Axis(min(ys), max(ys), x0, x1, measure in RATIO_MEASURES, measure, n_harmonic), maxz
+
+
+def doi_svg(points, lfk, category, measure, labels=None, title=None, n_harmonic=None, axis_title=None,
+            lang="hu", annotate=False, row_ids=None):
     """Doi-plot (Furuya-Kanamori, Barendregt & Doi 2018): x = hatás az elemzési skálán (a
     tengelyfeliratok az értelmezési skálán), y = |Z| (a normális kvantilis a rangsorolt kumulatív
     súly-percentilisből; bias.doi_plot_data). A |Z| tengely fordított (0 felül), így szimmetrikus
@@ -514,51 +711,64 @@ def doi_svg(points, lfk, category, measure, labels=None, title=None, n_harmonic=
     |LFK| ≤ 1 nincs, 1–2 kisebb, > 2 jelentős aszimmetria).
 
     points: [{"y", "abs_z", "study_index"}] a bias.doi_plot_data szerint (hatás szerint rendezve);
-    labels: a vizsgálatok címkéi (study_index szerint) — minden pont <title>-t kap (rámutatásra)."""
+    labels: a vizsgálatok címkéi (study_index szerint) — minden pont <title>-t kap (rámutatásra).
+    lang / annotate / row_ids: mint a forest_svg-nél (row_ids a study_index szerint; a pontok:
+    <g id="doi-study-<row_uid>" data-row data-x data-abs-z>)."""
+    check_lang(lang)
+    minus = minus_for(lang, annotate)
+    category = lfk_category(category, lang)
     width, height = 640, 486
     x0, x1, y0, y1 = 70, 610, 40, 400      # a fejlécsorban a cím (balra) és az LFK-index (jobbra)
-    ys = [p["y"] for p in points]
-    zs = [p["abs_z"] for p in points]
-    maxz = max(zs + [1.0]) * 1.08
-    axis = _Axis(min(ys), max(ys), x0, x1, measure in RATIO_MEASURES, measure, n_harmonic)
+    axis, maxz = doi_axes(points, measure, n_harmonic, x0, x1)
+    lfk_txt = num_text(_fmt(lfk, 2), minus)
 
     def ypx(z):
         return y0 + z / maxz * (y1 - y0)       # 0 felül
 
-    out = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
-           'font-family="%s" font-size="12" role="img">' % (width, height, width, height, FONT),
-           '<title>Doi-plot, LFK-index = %s (%s)</title>' % (_fmt(lfk, 2), escape(category or "")),
-           '<rect width="100%" height="100%" fill="#ffffff"/>']
+    head = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
+            'font-family="%s" font-size="12" role="img">' % (width, height, width, height, FONT),
+            '<title>%s</title>' % (tr("doi_svg_title", lang) % (lfk_txt, escape(category or ""))),
+            '<rect width="100%" height="100%" fill="#ffffff"/>']
+    items = []
     if title:
-        out.append('<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>' % (x0, INK, escape(title)))
-    out.append('<rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s"/>' % (x0, y0, x1 - x0, y1 - y0, GRID))
+        items.append(("title", '<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>'
+                      % (x0, INK, escape(title))))
+    items.append(("frame", '<rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s"/>'
+                  % (x0, y0, x1 - x0, y1 - y0, GRID)))
     for t in _nice_ticks(0, maxz, 4):
         yt = ypx(t)
-        out.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0, x1, yt, yt, GRID))
-        out.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0 - 5, x0, yt, yt, INK))
-        out.append('<text x="%d" y="%.1f" text-anchor="end" fill="%s">%g</text>' % (x0 - 8, yt + 4, INK, t))
+        items.append(("frame", '<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0, x1, yt, yt, GRID)))
+        items.append(("frame", '<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0 - 5, x0, yt, yt, INK)))
+        items.append(("frame", '<text x="%d" y="%.1f" text-anchor="end" fill="%s">%s</text>'
+                      % (x0 - 8, yt + 4, INK, num_text("%g" % t, minus))))
     pts = " ".join("%.1f,%.1f" % (axis.x(p["y"]), ypx(p["abs_z"])) for p in points)
-    out.append('<polyline points="%s" fill="none" stroke="%s" stroke-width="1.6"/>' % (pts, ACCENT))
+    items.append(("curve", '<polyline points="%s" fill="none" stroke="%s" stroke-width="1.6"/>' % (pts, ACCENT)))
     for p in points:
         i = p.get("study_index")
         lab = labels[i] if (labels is not None and i is not None and 0 <= i < len(labels)) else None
-        out.append('<circle cx="%.1f" cy="%.1f" r="4" fill="%s"><title>%s</title></circle>' % (
+        z_txt = num_text(_fmt(p["abs_z"], 2), minus)
+        dot = '<circle cx="%.1f" cy="%.1f" r="4" fill="%s"><title>%s</title></circle>' % (
             axis.x(p["y"]), ypx(p["abs_z"]), ACCENT,
-            escape("%s: |Z| = %s" % (lab, _fmt(p["abs_z"], 2)) if lab else "|Z| = %s" % _fmt(p["abs_z"], 2))))
+            escape("%s: |Z| = %s" % (lab, z_txt) if lab else "|Z| = %s" % z_txt))
+        if annotate:
+            uid, rix = _row_id(row_ids, i)
+            dot = '<g id="doi-study-%s" data-row="%s" data-x="%s" data-abs-z="%s">%s</g>' % (
+                escape(uid if uid is not None else "i%s" % i), "" if rix is None else int(rix), attr_num(p["y"]),
+                attr_num(p["abs_z"]), dot)
+        items.append(("studies", dot))
     for pos, lab in axis.ticks():
         xt = axis.x(pos)
-        out.append('<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>' % (xt, xt, y1, y1 + 5, INK))
-        out.append('<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>' % (xt, y1 + 19, INK, lab))
-    xlab = axis_title or axis_label(measure)
-    out.append('<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>' % ((x0 + x1) / 2, y1 + 38, INK, escape(xlab)))
-    out.append('<text x="18" y="%.1f" transform="rotate(-90 18 %.1f)" text-anchor="middle" fill="%s">|Z-pontszám| '
-               '(0 felül)</text>' % ((y0 + y1) / 2, (y0 + y1) / 2, INK))
-    out.append('<text x="%d" y="22" text-anchor="end" font-size="13" font-weight="bold" fill="%s">LFK-index: %s '
-               '(%s)</text>' % (x1, INK, _fmt(lfk, 2), escape(category or "")))
-    for i, line in enumerate(("Heurisztikus mutató (|LFK| ≤ 1 nincs, 1–2 kisebb, &gt; 2 jelentős aszimmetria) — "
-                              "érzékenységi jellegű,",
-                              "nem szignifikancia-teszt; a funnel plottal és az Egger/Harbord/Peters-teszttel "
-                              "együtt értelmezd.")):
-        out.append('<text x="%d" y="%d" fill="%s" font-size="10">%s</text>' % (x0 - 50, y1 + 56 + 13 * i, MUTED, line))
-    out.append("</svg>")
-    return "\n".join(out)
+        items.append(("axis", '<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>' % (xt, xt, y1, y1 + 5, INK)))
+        items.append(("axis", '<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>'
+                      % (xt, y1 + 19, INK, num_text(lab, minus))))
+    xlab = axis_title or axis_label(measure, lang=lang)
+    items.append(("axis", '<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>'
+                  % ((x0 + x1) / 2, y1 + 38, INK, escape(xlab))))
+    items.append(("axis", '<text x="18" y="%.1f" transform="rotate(-90 18 %.1f)" text-anchor="middle" fill="%s">%s</text>'
+                  % ((y0 + y1) / 2, (y0 + y1) / 2, INK, escape(tr("abs_z", lang)))))
+    items.append(("legend", '<text x="%d" y="22" text-anchor="end" font-size="13" font-weight="bold" fill="%s">%s</text>'
+                  % (x1, INK, tr("lfk", lang) % (lfk_txt, escape(category or "")))))
+    for i, line in enumerate(TEXTS["doi_note"][lang]):
+        items.append(("legend", '<text x="%d" y="%d" fill="%s" font-size="10">%s</text>'
+                      % (x0 - 50, y1 + 56 + 13 * i, MUTED, line)))
+    return "\n".join(head + _layered(items, "doi", DOI_LAYERS, annotate) + ["</svg>"])

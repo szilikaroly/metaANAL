@@ -4,8 +4,10 @@
 A szerver egyetlen, indításkor megadott projektmappán dolgozik. ``POST`` műveletek:
 ``{action: "init", title, question?, data_class?, review_type?, path?}`` (``metaelemzes.projekt.init``
 + ``ma-projekt.json``, ha még nincs), ``{action: "open", path}`` (csak a mostani projekt),
-``{action: "data_class", data_class}`` (``ma-projekt.json`` frissítése, naplózva). Másik mappához
-új munkapad-példány indítandó (egy projekt = egy szerver)."""
+``{action: "data_class", data_class, confirm?, reason?}`` (``ma-projekt.json`` frissítése, naplózva;
+alacsonyabb osztályba sorolás — C → B → A, az ismeretlen osztály C-nek számít — csak ``confirm: true``-val,
+és a projektnaplóba döntésként is bekerül). Másik mappához új munkapad-példány indítandó (egy projekt
+= egy szerver)."""
 import os
 
 from metaelemzes import projekt
@@ -27,9 +29,12 @@ REQUEST_SCHEMA = {
         "question": {"type": ["string", "object", "null"]},
         "data_class": {"type": ["string", "null"], "maxLength": 4},
         "review_type": {"type": ["string", "null"], "maxLength": 40},
+        "confirm": {"type": "boolean"},
+        "reason": {"type": ["string", "null"], "maxLength": 2000},
     },
     "additionalProperties": False,
 }
+RANK = {"A": 0, "B": 1, "C": 2}
 
 
 def _question_text(q):
@@ -64,6 +69,12 @@ def _same_project(app, path):
         if os.path.normcase(p.replace("\\", "/").rstrip("/")) == os.path.normcase(app.project_root.name):
             return True
         p = os.path.join(str(app.project_root.parent), p)
+    # macOS-en a betűméret, bind mounttal az út is eltérhet: a fizikai azonosság dönt
+    try:
+        if os.path.samefile(p, str(app.project_root)):
+            return True
+    except (OSError, ValueError):
+        pass
     return os.path.normcase(os.path.realpath(p)) == os.path.normcase(str(app.project_root))
 
 
@@ -161,9 +172,31 @@ def _init(req, body):
     return Result(data, SCHEMA, warnings=warnings, etag=etag)
 
 
+def _log_downgrade(app, old, new, reason, warnings):
+    """Az osztály csökkentése döntésként a projektnaplóba (ha van) → döntés-azonosító vagy None."""
+    if not (app.project_root / "projekt.sqlite").is_file():
+        warnings.append("Nincs projektnapló (projekt.sqlite): az osztály csökkentése csak az activity-naplóba került.")
+        return None
+    try:
+        return projekt.log_decision(str(app.project_root), "user",
+                                    "Adatosztály csökkentve: %s → %s" % (old, new),
+                                    rationale=reason or "A felhasználó megerősítette (munkapad).", stage=None,
+                                    kb_db=app.kb_db, check_kb=False)
+    except Exception:                                      # noqa: BLE001 — a váltás már megtörtént
+        warnings.append("Az osztály csökkentésének döntését nem sikerült a projektnaplóba írni.")
+        return None
+
+
 def _set_data_class(req, body):
     app = req.app
     dc = privacy.normalize_data_class(body.get("data_class"))
+    old_effective, old_source = app.data_class_with_source()
+    downgrade = RANK[dc] < RANK.get(old_effective, 0) and old_source != "default"
+    reason = body_str(body, "reason", max_len=2000)
+    if downgrade and body.get("confirm") is not True:
+        raise ApiError("BAD_REQUEST", "Az adatosztály csökkentése (%s → %s) gyengíti az adatvédelmi szabályokat; "
+                                      "csak kifejezett megerősítéssel (confirm: true) lehetséges." % (old_effective, dc),
+                       {"needs_confirm": True, "from": old_effective, "to": dc})
     header_etag = req.header("If-Match")
     meta, etag = app.project_meta()
     if meta is None:
@@ -178,8 +211,14 @@ def _set_data_class(req, body):
     doc["data_class"] = dc
     sha = app.store.write_bytes(PROJECT_JSON, store.json_bytes(doc), if_match=expected)
     warnings = []
-    rec = app.log_activity("project.data_class", outputs=[{"path": PROJECT_JSON, "sha256": sha}],
-                           details={"from": old if old in privacy.DATA_CLASSES else None, "to": dc})
+    details = {"from": old if old in privacy.DATA_CLASSES else None, "to": dc}
+    if downgrade:
+        details["downgrade"] = True
+        details["from_effective"] = old_effective
+        did = _log_downgrade(app, old_effective, dc, reason, warnings)
+        if did is not None:
+            details["decision_id"] = did
+    rec = app.log_activity("project.data_class", outputs=[{"path": PROJECT_JSON, "sha256": sha}], details=details)
     if rec is None:
         warnings.append(app.ACTIVITY_WARNING)
     app.refresh_privacy()

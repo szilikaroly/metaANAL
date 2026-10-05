@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """CSV beolvasás magyar Excel-exportokhoz is: kódolás- és elválasztó-felismerés,
 tizedesvessző, ezres tagolás, oszlopnév-szinonimák; sorszűrők (--exclude/--include).
+Ugyanez az értelmezés fut a felületről érkező nyers cellaszövegekre (parse_table), és itt
+készül a sorok stabil azonosítója (row_uid_for, row_uids).
 """
+import base64
 import codecs
 import csv
+import hashlib
 import io
 import math
 import re
@@ -299,6 +303,30 @@ def _decode(raw):
 
 _C0_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 
+# táblázatkezelő-képletként futó cellakezdetek (OWASP „CSV Injection”): V025
+_FORMULA_LEAD = ("=", "+", "-", "@", "\t", "\r")
+
+
+def formula_like(text):
+    """Képletnek látszó szöveges cella (V025): =, +, -, @, tabulátor vagy CR az elején, és nem szám.
+
+    Nem jelez: érvényes szám ('-1,5', '+3', '-2,000'), NA-jelölő ('-', '—'), egyetlen jel ('+')."""
+    if not isinstance(text, str) or not text.startswith(_FORMULA_LEAD):
+        return False
+    t = _clean(text)
+    if t.lower() in NA_TOKENS or len(t) < 2:
+        return False
+    return not (_num_dot.match(t) or _num_comma.match(t) or _grp_comma.match(t) or _grp_dot.match(t))
+
+
+def _sniff_delimiter(text):
+    sample = text[:20000]
+    try:
+        return csv.Sniffer().sniff(sample, delimiters=",;\t").delimiter
+    except csv.Error:
+        counts = {d: sample.count(d) for d in (";", "\t", ",")}
+        return max(counts, key=counts.get)
+
 
 def read_table(path):
     """CSV/TSV → (sorok listája dict-ként, metaadat).
@@ -312,17 +340,22 @@ def read_table(path):
     - Az ezres tagolásként olvasott számok a 'ambiguous' listába kerülnek.
     - Az azonosító oszlopok (study, study_id, subgroup) szövegek maradnak; a többi nem
       kanonikus oszlop számnak látszó cellái NumText-ek (float, eredeti szöveggel).
+    - A képletnek látszó cellák (formula_like) a 'formula_like' listába kerülnek (csak ha van ilyen).
     """
     with open(path, "rb") as fh:
         raw = fh.read()
+    return read_table_bytes(raw, path)
+
+
+def read_table_bytes(raw, path=None):
+    """Mint a read_table, de a fájl bájtjaiból (pl. mentés előtti tartalom); path csak a metaadatba kerül."""
+    rows, meta, _ = _table_from_bytes(raw, path)
+    return rows, meta
+
+
+def _table_from_bytes(raw, path):
     text, enc = _decode(raw)
-    sample = text[:20000]
-    try:
-        dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
-        delim = dialect.delimiter
-    except csv.Error:
-        counts = {d: sample.count(d) for d in (";", "\t", ",")}
-        delim = max(counts, key=counts.get)
+    delim = _sniff_delimiter(text)
     reader = csv.reader(io.StringIO(text), delimiter=delim)
     records = []
     prev = 0
@@ -332,15 +365,60 @@ def read_table(path):
             records.append((start, r))
     if not records:
         raise ValueError("üres fájl: %s" % path)
-    orig_header = records[0][1]
+    rows, meta = _parse_records(records[0][1], records[1:], delim, None, path, enc)
+    return rows, meta, records[0][1]
+
+
+def parse_table(header, rows_text, decimal_mark=None, delimiter=None, lines=None):
+    """Nyers cellaszövegek (felület, validate-request) → (sorok, metaadat), a read_table-lel azonos
+    értelmezéssel ('12,3', '2,000', 'NR', tizedesjel-felismerés, V003/V021/V023/V024/V025 nyersanyaga).
+
+    decimal_mark: '.', ',' vagy None (felismerés a cellákból); delimiter: a forrásfájl tagolója,
+    ha ismert (a '2,000'-féle kétértelmű számok döntéséhez), különben a vesszős fájl szabálya.
+    lines: soronként a forrásfájl 1-alapú sora (vagy None); hiányában a sor fájlbeli helye, ha a
+    tábla fejléccel az 1. sorban, üres sorok nélkül íródna ki (a részletek „N. sor”-a).
+    A csupa üres sorok — mint a fájlban — kimaradnak; a meta 'row_positions' listája adja, hogy az
+    egyes sorok a rows_text hányadik elemei."""
+    if decimal_mark not in (None, ".", ","):
+        raise ValueError("érvénytelen tizedesjel: %r (lehetséges: '.', ',' vagy null)" % (decimal_mark,))
+    if delimiter not in (None, ",", ";", "\t"):
+        raise ValueError("érvénytelen tagoló: %r (lehetséges: ',', ';', tabulátor vagy null)" % (delimiter,))
+    if lines is not None and len(lines) != len(rows_text):
+        raise ValueError("a 'lines' hossza (%d) eltér a sorok számától (%d)" % (len(lines), len(rows_text)))
+    if lines is not None and not all(ln is None or (isinstance(ln, int) and not isinstance(ln, bool) and ln >= 1)
+                                     for ln in lines):
+        raise ValueError("a 'lines' elemei pozitív egészek (vagy None-ok) legyenek")
+    hdr = [_cell_text(h) for h in header]
+    if not any(h.strip() for h in hdr):
+        raise ValueError("üres fejléc: a táblának nincs oszlopneve")
+    records, positions = [], []
+    for pos, r in enumerate(rows_text):
+        cells = [_cell_text(c) for c in r]
+        if any(c.strip() for c in cells):
+            line = lines[pos] if lines is not None and lines[pos] is not None else pos + 2
+            records.append((line, cells))
+            positions.append(pos)
+    rows, meta = _parse_records(hdr, records, delimiter or ",", decimal_mark, None, None)
+    meta["delimiter"] = delimiter
+    meta["row_positions"] = positions
+    return rows, meta
+
+
+def _cell_text(v):
+    return "" if v is None else (v if isinstance(v, str) else str(v))
+
+
+def _parse_records(orig_header, records, delim, mark, path, enc):
+    """A beolvasás közös magja: fejléc + [(sorszám, cellák)] → (sorok, metaadat)."""
     header = _unique_header(orig_header)
     mapping = canonical_columns(header)
-    numeric_cells = [val for _, r in records[1:] for col, val in zip(header, r) if mapping[col] in NUMERIC]
-    mark = _decimal_mark(numeric_cells)
+    if mark is None:
+        mark = _decimal_mark([val for _, r in records for col, val in zip(header, r) if mapping[col] in NUMERIC])
     rows = []
     parse_errors = []
     ambiguous = []
-    for line_no, r in records[1:]:
+    formulas = []
+    for line_no, r in records:
         row = {}
         extra = r[len(header):]
         ragged = any(c.strip() for c in extra)
@@ -351,6 +429,8 @@ def read_table(path):
                         "vesszővel tagolt fájlban?)" % (len(r), len(header))})
         for col, val in zip(header, r + [""] * (len(header) - len(r))):
             key = mapping[col]
+            if formula_like(val):
+                formulas.append({"line": line_no, "column": col, "value": val})
             if key in NUMERIC:
                 try:
                     value, note = _parse_numeric_cell(val, key, mark, delim)
@@ -385,6 +465,8 @@ def read_table(path):
     meta = {"path": path, "encoding": enc, "delimiter": delim, "decimal_mark": mark, "columns": header,
             "mapping": mapping, "parse_errors": parse_errors, "ambiguous": ambiguous, "n_rows": len(rows),
             "duplicate_columns": _duplicate_columns(orig_header, header, mapping)}
+    if formulas:     # új kulcs csak akkor, ha van mit jelezni (a meglévő kimenetek bájtra változatlanok)
+        meta["formula_like"] = formulas
     keys = set(mapping.values())
     if "study" not in keys and "study_id" in keys:
         _labels_from_study_id(rows)
@@ -406,6 +488,58 @@ def _labels_from_study_id(rows):
             r["study"] = "%s (%d)" % (sid, seen[sid])
         else:
             r["study"] = sid
+
+
+# ------------------------------------------------------------------ row_uid
+UID_COLUMN = "row_uid"
+UID_RE = re.compile(r"^r[0-9a-z]{4,12}$")
+
+
+def row_uid_for(label, row_index, taken=()):
+    """Determinisztikus sor-azonosító row_uid oszlop nélküli táblához (terv 4.6): 'r' + a
+    sha1('<címke>|<sorindex>') base32 alakjának első 6 karaktere, kisbetűvel.
+
+    label: a study-oszlop cellája; ugyanúgy tisztítva, mint beolvasáskor (C0 vezérlőkarakter →
+    szóköz, szélek nélkül; NA-jelölő vagy hiány → ''), így a nyers cella és a beolvasott címke
+    ugyanazt adja. row_index: 0-alapú adatsor-index az üres sorok nélkül (mint a read_table
+    soraiban). Ha az eredmény már foglalt (taken), '|1', '|2'… utótaggal újraszámol."""
+    lab = "" if label is None else _C0_CONTROL.sub(" ", str(label)).strip()
+    if lab.lower() in NA_TOKENS:
+        lab = ""
+    base = "%s|%d" % (lab, int(row_index))
+    n = 0
+    while True:
+        key = base if n == 0 else "%s|%d" % (base, n)
+        uid = "r" + base64.b32encode(hashlib.sha1(key.encode("utf-8")).digest()).decode("ascii").lower()[:6]
+        if uid not in taken:
+            return uid
+        n += 1
+
+
+def row_uids(rows, meta=None):
+    """A read_table / parse_table sorainak row_uid-jai, sorrendben (a SZŰRÉS ELŐTTI sorlistára; szűrt
+    listához: {id(sor): uid} a teljes listából).
+
+    Ha a táblában van row_uid oszlop, a cella érvényes ('r' + 4–12 [0-9a-z]) és még nem foglalt
+    értéke számít; egyébként (hiányzó, érvénytelen vagy ismétlődő uid, illetve nincs ilyen oszlop)
+    row_uid_for(a study-oszlop cellája, sorindex) — a study_id-ből képzett címke nem számít."""
+    mapping = (meta or {}).get("mapping") or {}
+    uid_key = next((k for c, k in mapping.items() if c.strip().lower() == UID_COLUMN), None)
+    if not mapping and any(UID_COLUMN in r for r in rows):
+        uid_key = UID_COLUMN
+    has_label = "study" in mapping.values() if mapping else not (meta or {}).get("label_column")
+    raw = []
+    for r in rows:
+        v = r.get(uid_key) if uid_key is not None else None
+        raw.append("" if v is None else str(v).strip())
+    reserved = {u for u in raw if UID_RE.match(u)}
+    taken, out = set(), []
+    for i, (r, uid) in enumerate(zip(rows, raw)):
+        if not UID_RE.match(uid) or uid in taken:
+            uid = row_uid_for(r.get("study") if has_label else None, i, taken | reserved)
+        taken.add(uid)
+        out.append(uid)
+    return out
 
 
 def write_csv(path, header, rows, delimiter=","):

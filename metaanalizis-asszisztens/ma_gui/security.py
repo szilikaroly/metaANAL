@@ -117,6 +117,9 @@ WINDOWS_RESERVED_NAMES = frozenset(
     + ["COM" + c for c in "0123456789¹²³"]
     + ["LPT" + c for c in "0123456789¹²³"])
 _FORBIDDEN_PATH_CHARS = frozenset('<>:"|?*\\')
+# az atomikus írás ideiglenes fájljainak előtagja a projektmappában (a kezelt .gitignore-blokk
+# '.ma-tmp-*' mintája fedi; az indításkori takarítás csak ilyen nevet töröl)
+TMP_PREFIX = ".ma-tmp-"
 
 FORBIDDEN_JSON_KEYS = frozenset(["__proto__", "constructor", "prototype"])
 

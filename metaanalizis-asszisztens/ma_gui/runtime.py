@@ -57,11 +57,28 @@ def runtime_base(env=None, home=None):
     return _caps.default_runtime_dir(env, home)
 
 
+def dir_identity(path):
+    """A mappa fizikai azonosítója ('<st_dev>:<st_ino>') vagy None (nem érhető el / nincs inode).
+
+    macOS-en (APFS/HFS+ alapból kis/nagybetű-független) a realpath nem javítja a betűméretet, és egy
+    mappa bind mounttal is elérhető több úton: az út szövege ezért nem azonosít egyértelműen."""
+    try:
+        st = os.stat(os.fspath(path))
+    except (OSError, ValueError):
+        return None
+    if not st.st_ino:
+        return None
+    return "%d:%d" % (st.st_dev, st.st_ino)
+
+
 def project_key(project_dir):
-    """A projekt azonosítója a futásidejű mappában: a feloldott, kis/nagybetű-normalizált
-    abszolút út sha256-jának első 16 hexa jegye (az út maga nem kerül a mappanévbe)."""
+    """A projekt azonosítója a futásidejű mappában: a mappa fizikai azonosítójának (st_dev, st_ino;
+    ha nem érhető el: a feloldott, kis/nagybetű-normalizált abszolút útnak) sha256-ja, első 16 hexa
+    jegy. Így egy mappára egy szerver fut, akárhogy (más betűmérettel, más úton) adják meg."""
     real = os.path.normcase(os.path.realpath(os.fspath(project_dir)))
-    return hashlib.sha256(real.encode("utf-8", "surrogatepass")).hexdigest()[:16]
+    ident = dir_identity(real)
+    material = ("dir:" + ident) if ident else real
+    return hashlib.sha256(material.encode("utf-8", "surrogatepass")).hexdigest()[:16]
 
 
 def _private_dir(path):

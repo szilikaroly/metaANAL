@@ -8,11 +8,13 @@
   ``projekt.checkpoint`` nyitott blocker miatt elutasít, 409 GATE_BLOCKED a blockerek listájával és
   a motor üzenetével szó szerint; egyéb motor-``ValueError`` → 422 VALIDATION.
 
-Az activity-sorba csak a tétel fajtája, azonosítója és kódjai kerülnek (szöveg nem, T10)."""
+Az activity-sorba csak a tétel fajtája, azonosítója és kódjai kerülnek (szöveg nem, T10). A szabad
+szöveges mezők a projekt.sqlite-ba (a vault feltolja) írás előtt PHI-őrön mennek át
+(``_common.phi_text_guard``): B/C osztályú, vault által követett projektben TAJ-gyanúnál 403."""
 from metaelemzes import projekt
 
 from ..router import ApiError, Result
-from ._common import body_int, body_str, int_arg, kb_refs_text
+from ._common import body_int, body_str, int_arg, kb_refs_text, phi_text_guard
 
 SCHEMA = "szk.ma.log/v1"
 ITEM_SCHEMA = "szk.ma.log-item/v1"
@@ -129,7 +131,7 @@ def post_decision(req):
     app.require_open()
     body = req.json_object()
     root = _root(app)
-    warns = []
+    warns = phi_text_guard(app, [(k, body.get(k)) for k in ("decision", "rationale", "alternatives")])
     did = projekt.log_decision(root, _agent(body), body_str(body, "decision", required=True),
                                rationale=body_str(body, "rationale"), stage=body_str(body, "stage", max_len=100),
                                kb_refs=kb_refs_text(body.get("kb_refs")),
@@ -144,7 +146,7 @@ def post_finding(req):
     app.require_open()
     body = req.json_object()
     root = _root(app)
-    warns = []
+    warns = phi_text_guard(app, [(k, body.get(k)) for k in ("title", "detail", "evidence")])
     fid = projekt.add_finding(root, _agent(body), body["severity"], body_str(body, "title", required=True),
                               detail=body_str(body, "detail"), stage=body_str(body, "stage", max_len=100),
                               evidence=body_str(body, "evidence"), kb_refs=kb_refs_text(body.get("kb_refs")),
@@ -159,8 +161,9 @@ def post_resolve(req):
     body = req.json_object()
     root = _root(app)
     fid = body_int(body, "id", required=True, minimum=1)
+    warns = phi_text_guard(app, [("resolution", body.get("resolution"))])
     projekt.resolve_finding(root, fid, body["status"], body_str(body, "resolution"))
-    return _done(app, "resolve", fid, [], {"status": body["status"]})
+    return _done(app, "resolve", fid, warns, {"status": body["status"]})
 
 
 def _blockers(root, stage):
@@ -186,7 +189,7 @@ def post_checkpoint(req):
     root = _root(app)
     stage = body_str(body, "stage", required=True, max_len=100)
     verdict = body["verdict"]
-    warns = []
+    warns = phi_text_guard(app, [("summary", body.get("summary"))])
     try:
         cid = projekt.checkpoint(root, stage, _agent(body), verdict, body_str(body, "summary"), warnings=warns)
     except ValueError as exc:

@@ -15,6 +15,10 @@ Kimenet:
 A sablon ``{{CSP_NONCE}}`` helyeit a szerver válaszonként cseréli a CSP-nonce-ra; a build ezeket
 érintetlenül hagyja. Minden ``<script>`` és ``<style>`` tag nonce-ot visz.
 
+A termék-build a lint után veszteségmentesen tömörít (minify_js, minify_css, pack_i18n — lásd a fájl
+végén); a --dev build az olvasható forrást adja. Az i18n mindkét módban a tömörített („lz1”) alakban
+kerül a lapba, így a kicsomagoló (i18n.js) mindkettőben fut.
+
 Modulsorrend (JS): dom, geom, i18n, store, api, [dev/fixture_backend + dev/*.js — csak --dev],
 ui, selftest, app, components/*.js, plots/*.js, screens/*.js (ábécérendben), boot.
 CSS: css/tokens.css, css/base.css, majd a többi css/*.css ábécérendben.
@@ -227,7 +231,7 @@ def load_i18n(src=SRC):
             if not isinstance(data, dict):
                 raise BuildError("%s: a szótár lapos objektum legyen" % f)
             for k, v in data.items():
-                if not I18N_KEY_RE.match(k):
+                if not I18N_KEY_RE.match(k) or "" in k.split("."):
                     raise BuildError("%s: érvénytelen kulcs: %r" % (f, k))
                 if not isinstance(v, str):
                     raise BuildError("%s: a(z) %r értéke nem sztring" % (f, k))
@@ -353,24 +357,31 @@ def build(dev=False, src=SRC, fixtures=FIXTURES):
     template = read_text(src / TEMPLATE)
     check_template(template)
     violations = []
-    css_parts = []
+    css_src = []
     for name in css_order(src):
         text = read_text(src / name)
         violations += lint_css(name, text)
-        css_parts.append("/* --- %s --- */\n%s" % (name, text if dev else compact_source(text)))
-    js_parts = []
+        css_src.append((name, text))
+    js_src = []
     for name in js_order(src, dev):
         text = read_text(src / name)
         violations += lint_js(name, text)
-        if not dev:
-            text = strip_dev(text, name)
-        else:
-            strip_dev(text, name)      # csak a jelölők ellenőrzése
-        js_parts.append("/* --- %s --- */\n%s" % (name, text if dev else compact_source(text)))
+        stripped = strip_dev(text, name)       # a jelölők ellenőrzése mindkét módban
+        js_src.append((name, text if dev else stripped))
     if violations:
         raise BuildError("lint-hibák (%d):\n  %s" % (len(violations), "\n  ".join(violations)))
+    # a termék-build tömörít (a lint UTÁN, a forráson futott); a --dev változatlan forrást ad
+    css_parts = ["/* --- %s --- */\n%s" % (name, text if dev else minify_css(text)) for name, text in css_src]
+    js_parts = []
+    for name, text in js_src:
+        if not dev:
+            try:
+                text = minify_js(text)
+            except MinifyError as e:
+                raise BuildError("%s: a tömörítés sikertelen: %s" % (name, e))
+        js_parts.append("/* --- %s --- */\n%s" % (name, text))
     i18n = load_i18n(src)
-    data_tags = ['<script type="application/json" id="ma-i18n" nonce="%s">%s</script>' % (NONCE, json_for_script(i18n))]
+    data_tags = ['<script type="text/plain" id="ma-i18n" data-enc="lz1" nonce="%s">%s</script>' % (NONCE, pack_i18n(i18n))]
     if dev:
         data_tags.append('<script type="application/json" id="ma-fixtures" nonce="%s">%s</script>'
                          % (NONCE, json_for_script(load_fixtures(fixtures))))
@@ -428,41 +439,475 @@ def main(argv=None):
         return 2
 
 
-# ================================================================ KIEGÉSZÍTÉS (elemzés-ágens, 2026-10-05)
-# compact_source — a termék-build mérethatára (≤ 450 KB) miatt: a lint UTÁN, modulonként elhagyja a
-# behúzást, az üres sorokat, a sor eleji // és a sor elején kezdődő /* … */ megjegyzéseket. Csak
-# sor-alapú (nincs tokenizálás): a sorok sorrendje és tartalma egyébként változatlan, így a kimenet
-# determinisztikus marad. Biztonsági feltétel: sablonliterál (`) vagy sorvégi \ (sorfolytatás) esetén a
-# modul változatlan marad. A modul-fejlécek („/* --- név --- */”) megmaradnak. A --dev build nem tömörít.
-def compact_source(text):
-    if "`" in text or re.search(r"\\\n", text):
-        return text
-    out = []
-    in_block = False
-    for line in text.split("\n"):
-        s = line.strip()
-        if in_block:
-            end = s.find("*/")
-            if end < 0:
-                continue
-            in_block = False
-            s = s[end + 2:].strip()
-            if s:
-                out.append(s)
-            continue
-        if not s or (s.startswith("//") and "*/" not in s):
-            continue
-        if s.startswith("/*"):
-            end = s.find("*/", 2)
-            if end < 0:
-                in_block = True
-                continue
-            s = s[end + 2:].strip()
-            if not s:
-                continue
-        out.append(s)
-    return "\n".join(out) + "\n"
+# ================================================================ termék-tömörítés (≤ 450 KB, 2.3)
+# A termék-build a lint UTÁN tömörít; a --dev build az eredeti forrást adja (olvasható, hibakereséshez).
+# Mindhárom lépés determinisztikus, csak stdlib, és veszteségmentes:
+#   minify_js   — tokenszintű: megjegyzések és fölös szóközök/sortörések nélkül; a sortörés ott marad,
+#                 ahol az ASI (automatikus pontosvessző) számíthat. Az idézőjeles, azonosító-alakú
+#                 objektumkulcs idézőjel nélkül kerül ki ({'class': x} → {class:x}); a névtelen
+#                 függvénykifejezés nyílfüggvény lesz, ahol a jelentés biztosan azonos (_js_arrowify).
+#                 Nevet NEM cserél. Az egyenértékűséget a tests/gui/ui/test_minify.py ellenőrzi
+#                 (espree-AST összevetés + a nyílfüggvény-feltételek: tests/gui/ui/minify_check.js).
+#   minify_css  — megjegyzések és fölös szóközök nélkül (a ':' ELŐTTI szóköz marad: '.a :hover').
+#   pack_i18n   — a két szótár egy fává ({"a":{"b":["hu","en"]}}), majd szöveges LZ77 („lz1”); a
+#                 kicsomagolás az i18n.js-ben van (unpackI18n), a Python-oldali párja: unpack_i18n.
+class MinifyError(BuildError):
+    pass
 
+
+_JS_PUNCT_RE = re.compile("|".join(re.escape(p) for p in sorted(
+    ">>>= ... === !== **= <<= >>= >>> => == != <= >= += -= *= /= %= &= |= ^= ++ -- << >> ** && || "
+    "{ } ( ) [ ] ; , < > + - * / % & | ^ ! ~ ? : = .".split(), key=len, reverse=True)))
+_JS_NUM_RE = re.compile(r"0[xX][0-9a-fA-F]+|0[oO][0-7]+|0[bB][01]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?")
+_JS_IDENT_RE = re.compile(r"(?:[A-Za-z_$]|[^\x00-\x7f])(?:[\w$]|[^\x00-\x7f])*")
+_JS_PLAIN_KEY_RE = re.compile(r"^[A-Za-z_$][A-Za-z0-9_$]*$")
+_JS_WS = " \t\v\f ﻿"
+_JS_NL = "\n\r  "
+_JS_DIGITS = "0123456789"
+_JS_IDENT_CHAR = re.compile(r"[\w$\\]|[^\x00-\x7f]")
+# kulcsszavak, amelyek után '/' reguláris kifejezést nyit (nem osztást)
+_JS_BEFORE_EXPR = {"return", "typeof", "instanceof", "in", "of", "new", "delete", "void", "throw",
+                   "case", "do", "else", "yield", "await"}
+# korlátozott produkciók: utánuk a sortörés jelentést hordoz (return\nx ≠ return x)
+_JS_RESTRICTED = {"return", "break", "continue", "throw", "yield", "async"}
+# kulcsszavak, amelyek után utasítás nem érhet véget → a sortörés elhagyható
+_JS_WORD_CONT = {"var", "let", "const", "typeof", "new", "delete", "void", "in", "instanceof", "else", "do",
+                 "case", "function", "if", "for", "while", "switch", "catch", "try", "finally", "with",
+                 "class", "extends"}
+# írásjelek, amelyek után utasítás nem érhet véget
+_JS_A_CONT = set("{ ( [ , ; : ? . ... => = += -= *= /= %= **= <<= >>= >>>= &= |= ^= == === != !== < > <= >= "
+                 "+ - * / % ** << >> >>> & | ^ && || ! ~".split())
+# írásjelek, amelyekkel utasítás nem kezdődhet (előttük nincs ASI; a '}' előtt mindig van)
+_JS_B_CONT = set(") ] } , ; : ? . = += -= *= /= %= **= <<= >>= >>>= &= |= ^= == === != !== < > <= >= "
+                 "* % ** << >> >>> & | ^ && ||".split())
+
+
+def _js_tokens(text):
+    """Tokenlista: (fajta, szöveg, előtte_sortörés); fajta: word, num, str, tmpl, regex, punct."""
+    toks = []
+    i, n = 0, len(text)
+    nl = False
+    braces = []            # '{' vagy 'tmpl' (sablonliterál ${…} helyettesítése)
+    while i < n:
+        c = text[i]
+        if c in _JS_WS:
+            i += 1
+            continue
+        if c in _JS_NL:
+            nl = True
+            i += 1
+            continue
+        if text.startswith("//", i):
+            while i < n and text[i] not in _JS_NL:
+                i += 1
+            continue
+        if text.startswith("/*", i):
+            j = text.find("*/", i + 2)
+            if j < 0:
+                raise MinifyError("lezáratlan /* megjegyzés (%d)" % i)
+            if any(ch in text[i:j] for ch in _JS_NL):
+                nl = True
+            i = j + 2
+            continue
+        if c in "'\"":
+            j = i + 1
+            while True:
+                if j >= n or text[j] in _JS_NL:
+                    raise MinifyError("lezáratlan sztring (%d)" % i)
+                if text[j] == "\\":
+                    j += 2                                  # escape (a sorfolytatás \⏎ is)
+                    continue
+                if text[j] == c:
+                    break
+                j += 1
+            toks.append(("str", text[i:j + 1], nl))
+            i = j + 1
+        elif c == "`" or (c == "}" and braces and braces[-1] == "tmpl"):
+            if c == "}":
+                braces.pop()
+            j = i + 1
+            while True:
+                if j >= n:
+                    raise MinifyError("lezáratlan sablonliterál (%d)" % i)
+                if text[j] == "\\":
+                    j += 2
+                    continue
+                if text[j] == "`":
+                    j += 1
+                    break
+                if text.startswith("${", j):
+                    j += 2
+                    braces.append("tmpl")
+                    break
+                j += 1
+            toks.append(("tmpl", text[i:j], nl))
+            i = j
+        elif c in _JS_DIGITS or (c == "." and i + 1 < n and text[i + 1] in _JS_DIGITS):
+            m = _JS_NUM_RE.match(text, i)
+            toks.append(("num", m.group(0), nl))
+            i = m.end()
+        elif c == "/" and _js_regex_allowed(toks):
+            j = i + 1
+            in_class = False
+            while True:
+                if j >= n or text[j] in _JS_NL:
+                    raise MinifyError("lezáratlan reguláris kifejezés (%d)" % i)
+                ch = text[j]
+                if ch == "\\":
+                    j += 2
+                    continue
+                if ch == "[":
+                    in_class = True
+                elif ch == "]":
+                    in_class = False
+                elif ch == "/" and not in_class:
+                    break
+                j += 1
+            j += 1
+            while j < n and _JS_IDENT_CHAR.match(text[j]):
+                j += 1
+            toks.append(("regex", text[i:j], nl))
+            i = j
+        else:
+            m = _JS_IDENT_RE.match(text, i)
+            if m:
+                toks.append(("word", m.group(0), nl))
+            else:
+                m = _JS_PUNCT_RE.match(text, i)
+                if not m:
+                    raise MinifyError("ismeretlen karakter: %r (%d)" % (c, i))
+                if m.group(0) == "{":
+                    braces.append("{")
+                elif m.group(0) == "}" and braces:
+                    braces.pop()
+                toks.append(("punct", m.group(0), nl))
+            i = m.end()
+        nl = False
+    return toks
+
+
+def _js_regex_allowed(toks):
+    """A '/' reguláris kifejezést nyit-e (az előző jelentős token alapján)."""
+    if not toks:
+        return True
+    kind, val, _ = toks[-1]
+    if kind == "punct":
+        return val not in (")", "]")
+    if kind == "tmpl":
+        return val.endswith("${")
+    if kind == "word":
+        if len(toks) > 1 and toks[-2][1] == "." and toks[-2][0] == "punct":
+            return False                                    # tulajdonságnév: x.return / 2
+        return val in _JS_BEFORE_EXPR
+    return False
+
+
+def _js_need_space(a, b):
+    at, bt = a[1], b[1]
+    if _JS_IDENT_CHAR.match(at[-1]) and _JS_IDENT_CHAR.match(bt[0]):
+        return True                                         # két szó / szám / regex-zászló
+    if a[0] == "num" and bt[0] == ".":
+        return True                                         # 1 .toString()
+    if at[-1] in "+-" and bt[0] == at[-1]:
+        return True                                         # a + +b, a - --b
+    if at[-1] == "/" and bt[0] in "/*":
+        return True                                         # nem nyílhat megjegyzés
+    return False
+
+
+def _js_need_newline(prev2, a, b):
+    """Megmaradjon-e az eredeti sortörés a és b között (ASI-biztonság)."""
+    is_prop = prev2 is not None and prev2[0] == "punct" and prev2[1] == "."
+    if a[0] == "word" and a[1] in _JS_RESTRICTED and not is_prop:
+        return True
+    if b[0] == "punct" and b[1] in ("++", "--"):
+        return True
+    if a[0] == "punct" and a[1] in _JS_A_CONT:
+        return False
+    if a[0] == "word" and a[1] in _JS_WORD_CONT and not is_prop:
+        return False
+    if b[0] == "punct" and b[1] in _JS_B_CONT:
+        return False
+    if b[0] == "word" and b[1] in ("else", "catch", "finally") and a == ("punct", "}", a[2]):
+        return False
+    return True
+
+
+_ARROW_PREV = {"(", ",", "=", ":", "?", "[", "return"}
+_ARROW_NEXT = {")", ",", ";", "]", "}", ":"}
+_ARROW_BLOCKERS = {"this", "arguments", "super", "yield", "await"}
+# beépített konstruktorok: ha a modulban csak ezek állnak 'new' után, egyetlen saját függvénykifejezést
+# sem hívnak konstruktorként (a nyílfüggvény nem konstruálható) — különben a modul nem alakul át
+_NEW_OK = {"Error", "TypeError", "RangeError", "SyntaxError", "Promise", "Date", "RegExp", "Array", "Object",
+           "Map", "Set", "WeakMap", "WeakSet", "ArrayBuffer", "DataView", "Uint8Array", "Uint16Array",
+           "Uint32Array", "Int32Array", "Float64Array", "URL", "URLSearchParams", "AbortController",
+           "BroadcastChannel", "Blob", "File", "FileReader", "FormData", "Headers", "Request", "Response",
+           "Event", "CustomEvent", "KeyboardEvent", "MouseEvent", "FocusEvent", "ClipboardEvent", "DataTransfer",
+           "MutationObserver", "ResizeObserver", "IntersectionObserver", "TextEncoder", "TextDecoder", "Image"}
+
+
+def _js_match(toks, i, opener, closer):
+    """Az i-edik nyitó tokenhez tartozó záró indexe (sablon-helyettesítéseket is számolva)."""
+    depth = 0
+    for j in range(i, len(toks)):
+        kind, val = toks[j][0], toks[j][1]
+        if kind == "tmpl":
+            if val.startswith("}"):
+                depth -= 1
+            if val.endswith("${"):
+                depth += 1
+        elif kind == "punct" and val == opener:
+            depth += 1
+        elif kind == "punct" and val == closer:
+            depth -= 1
+            if depth == 0:
+                return j
+    raise MinifyError("pár nélküli %r" % opener)
+
+
+def _js_only_builtin_new(toks):
+    """Minden 'new' operandusa beépített konstruktor (_NEW_OK, ill. window._NEW_OK)?"""
+    n = len(toks)
+    for k in range(n):
+        if toks[k][:2] != ("word", "new") or (k > 0 and toks[k - 1][:2] == ("punct", ".")):
+            continue
+        chain = []
+        j = k + 1
+        while j < n and toks[j][0] == "word":
+            chain.append(toks[j][1])
+            if j + 1 < n and toks[j + 1][:2] == ("punct", "."):
+                j += 2
+            else:
+                break
+        if not ((len(chain) == 1 and chain[0] in _NEW_OK) or
+                (len(chain) == 2 and chain[0] == "window" and chain[1] in _NEW_OK)):
+            return False
+    return True
+
+
+def _js_arrowify(toks):
+    """Névtelen függvénykifejezés → nyílfüggvény, ahol a jelentés biztosan azonos:
+    function (a, b) { … } → (a,b)=>{…}; egyetlen egyszerű paraméternél a=>{…}.
+    Feltételek: (1) a modulban 'new' után csak beépített konstruktor áll (saját függvényt senki nem hív
+    konstruktorként; különben a modul változatlan); (2) kifejezés-pozíció, amelyben a nyílfüggvény is
+    megállhat (_ARROW_PREV előtt, _ARROW_NEXT után — pl. nem '||' operandusa és nem '.bind(…)' tárgya);
+    (3) a paraméterekben és a törzsben (beágyazva is) nincs this / arguments / super / yield / await /
+    new.target. A tests/gui/ui/minify_check.js ezt AST-szinten is ellenőrzi."""
+    n = len(toks)
+    if not _js_only_builtin_new(toks):
+        return toks
+    out = []
+    i = 0
+    while i < n:
+        tok = toks[i]
+        if (tok[0] == "word" and tok[1] == "function" and i + 1 < n and toks[i + 1][:2] == ("punct", "(")
+                and out and out[-1][1] in _ARROW_PREV and out[-1][0] in ("punct", "word")
+                and not (out[-1][1] == "(" and len(out) > 1 and out[-2][1] == "new")):
+            close_p = _js_match(toks, i + 1, "(", ")")
+            if close_p + 1 < n and toks[close_p + 1][:2] == ("punct", "{"):
+                close_b = _js_match(toks, close_p + 1, "{", "}")
+                after = toks[close_b + 1] if close_b + 1 < n else None
+                inner = toks[i + 1:close_b + 1]
+                if (after is not None and after[0] == "punct" and after[1] in _ARROW_NEXT and not after[2]
+                        and not any(t[0] == "word" and t[1] in _ARROW_BLOCKERS for t in inner)
+                        and not any(inner[k][:2] == ("word", "new") and inner[k + 1][1] == "." for k in range(len(inner) - 1))
+                        and not (out[-1][1] == "return" and tok[2])):
+                    params = toks[i + 2:close_p]
+                    if len(params) == 1 and params[0][0] == "word":
+                        out.append(("word", params[0][1], tok[2]))
+                    else:
+                        out.append(("punct", "(", tok[2]))
+                        out.extend(params)
+                        out.append(("punct", ")", False))
+                    out.append(("punct", "=>", False))
+                    i = close_p + 1                      # a törzs tokenjei változatlanul jönnek
+                    continue
+        out.append(tok)
+        i += 1
+    return out
+
+
+def minify_js(text):
+    """Veszteségmentes JS-tömörítés (lásd fent). MinifyError, ha a forrás nem tokenizálható."""
+    toks = _js_arrowify(_js_tokens(text))
+    for k in range(1, len(toks) - 1):                       # {'class': x} → {class:x}
+        kind, val, nl = toks[k]
+        if (kind == "str" and toks[k - 1][0] == "punct" and toks[k - 1][1] in ("{", ",")
+                and toks[k + 1][:2] == ("punct", ":") and _JS_PLAIN_KEY_RE.match(val[1:-1])):
+            toks[k] = ("word", val[1:-1], nl)
+    out = []
+    prev2 = prev = None
+    for tok in toks:
+        if prev is not None:
+            if tok[2] and _js_need_newline(prev2, prev, tok):
+                out.append("\n")
+            elif _js_need_space(prev, tok):
+                out.append(" ")
+        out.append(tok[1])
+        prev2, prev = prev, tok
+    return "".join(out) + "\n"
+
+
+_CSS_TOKEN_RE = re.compile(r"""/\*.*?\*/|"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|\s+|[^\s"'/]+|/""", re.S)
+
+
+def minify_css(text):
+    """Megjegyzések és fölös szóközök nélküli CSS. A ':' előtti szóköz marad ('.a :hover' ≠ '.a:hover')."""
+    res = []
+    for m in _CSS_TOKEN_RE.finditer(text):
+        tok = m.group(0)
+        if tok.startswith("/*") or tok[0].isspace():
+            if res and res[-1] != " " and (res[-1][0] in "'\"" or res[-1][-1] not in "{};,:"):
+                res.append(" ")
+            continue
+        if tok[0] in "'\"":
+            res.append(tok)
+            continue
+        if res and res[-1] == " " and tok[0] in "{};,":
+            res.pop()
+        if tok[0] == "}" and res and res[-1][0] not in "'\"" and res[-1].endswith(";"):
+            res[-1] = res[-1][:-1]                          # 'a:b;}' → 'a:b}'
+            if not res[-1]:
+                res.pop()
+        res.append(re.sub(r";+\}", "}", tok))
+    return "".join(res).strip() + "\n"
+
+
+# ---- i18n-csomag („lz1”): fa + szöveges LZ77. Formátum (a kicsomagoló az i18n.js-ben):
+#   • a JSON-szöveg csak BMP-karaktert tartalmaz (az asztrális karakter \\uXXXX\\uXXXX escape-ként
+#     kerül bele), így a Python-index = a JS UTF-16-indexe;
+#   • '~~' = egy '~' karakter; '~' + 2 jegy (eltolás-1) + 1 jegy (hossz-LZ_MIN) = visszahivatkozás
+#     (a jegyek az LZ_ALPHABET-ből; átfedő másolás megengedett); minden más karakter szó szerint.
+LZ_ALPHABET = "".join(chr(c) for c in range(0x21, 0x7f) if chr(c) not in "<\\\"'`~")
+LZ_MIN = 5
+_LZ_N = len(LZ_ALPHABET)
+_LZ_WINDOW = _LZ_N * _LZ_N
+_LZ_MAX = LZ_MIN + _LZ_N - 1
+_LZ_DEPTH = 128
+
+
+def i18n_tree(dicts):
+    """{'hu': {k: v}, 'en': {k: v}} → fa: a pontokkal tagolt kulcs útvonal, a levél [hu, en]; ha egy kulcs
+    egyben egy másik előtagja is, a saját szövege az alfa "" kulcsán áll."""
+    tree = {}
+    hu, en = dicts["hu"], dicts["en"]
+    for key in sorted(hu):
+        parts = key.split(".")
+        node = tree
+        for p in parts[:-1]:
+            nxt = node.get(p)
+            if isinstance(nxt, list):
+                nxt = node[p] = {"": nxt}
+            elif nxt is None:
+                nxt = node[p] = {}
+            node = nxt
+        leaf = [hu[key], en[key]]
+        if isinstance(node.get(parts[-1]), dict):
+            node[parts[-1]][""] = leaf
+        else:
+            node[parts[-1]] = leaf
+    return tree
+
+
+def _i18n_untree(tree, prefix, out):
+    for k, v in tree.items():
+        key = prefix if k == "" else (prefix + "." + k if prefix else k)
+        if isinstance(v, list):
+            out["hu"][key], out["en"][key] = v[0], v[1]
+        else:
+            _i18n_untree(v, key, out)
+    return out
+
+
+def _bmp_json(obj):
+    text = json_for_script(obj)
+    return "".join(c if ord(c) < 0x10000 else
+                   "\\u%04x\\u%04x" % (0xD800 + ((ord(c) - 0x10000) >> 10), 0xDC00 + ((ord(c) - 0x10000) & 0x3FF))
+                   for c in text)
+
+
+def lz_encode(s):
+    """Determinisztikus mohó LZ77 (hash-lánc, egylépéses lusta illesztés) a fenti formátumban."""
+    n = len(s)
+    out = []
+    chains = {}
+
+    def find(i):
+        best = off = 0
+        cand = chains.get(s[i:i + 3]) if i + 3 <= n else None
+        if not cand:
+            return 0, 0
+        lim = min(_LZ_MAX, n - i)
+        for j in reversed(cand[-_LZ_DEPTH:]):
+            if i - j > _LZ_WINDOW:
+                break
+            k = 0
+            while k < lim and s[j + k] == s[i + k]:
+                k += 1
+            if k > best:
+                best, off = k, i - j
+                if k == lim:
+                    break
+        return best, off
+
+    def insert(k):
+        if k + 3 <= n:
+            chains.setdefault(s[k:k + 3], []).append(k)
+
+    def literal(k):
+        out.append("~~" if s[k] == "~" else s[k])
+        insert(k)
+
+    i = 0
+    while i < n:
+        length, off = find(i)
+        if length >= LZ_MIN and i + 1 < n and find(i + 1)[0] > length + 1:
+            literal(i)
+            i += 1
+            continue
+        if length >= LZ_MIN:
+            o = off - 1
+            out.append("~" + LZ_ALPHABET[o // _LZ_N] + LZ_ALPHABET[o % _LZ_N] + LZ_ALPHABET[length - LZ_MIN])
+            for k in range(i, i + length):
+                insert(k)
+            i += length
+        else:
+            literal(i)
+            i += 1
+    return "".join(out)
+
+
+def lz_decode(z):
+    s = []
+    i, n = 0, len(z)
+    while i < n:
+        c = z[i]
+        if c != "~":
+            s.append(c)
+            i += 1
+        elif z[i + 1] == "~":
+            s.append("~")
+            i += 2
+        else:
+            off = LZ_ALPHABET.index(z[i + 1]) * _LZ_N + LZ_ALPHABET.index(z[i + 2]) + 1
+            start = len(s) - off
+            for k in range(LZ_ALPHABET.index(z[i + 3]) + LZ_MIN):
+                s.append(s[start + k])
+            i += 4
+    return "".join(s)
+
+
+def pack_i18n(dicts):
+    """A szótárak a <script type="text/plain" id="ma-i18n" data-enc="lz1"> tartalmaként."""
+    text = lz_encode(_bmp_json(i18n_tree(dicts)))
+    if "<" in text:
+        raise BuildError("i18n-csomag: '<' a kimenetben")       # a json_for_script \\u003c-ként írja
+    return text
+
+
+def unpack_i18n(text):
+    """pack_i18n inverze (tesztekhez): {'hu': {...}, 'en': {...}}."""
+    return _i18n_untree(json.loads(lz_decode(text)), "", {"hu": {}, "en": {}})
 
 if __name__ == "__main__":
     sys.exit(main())

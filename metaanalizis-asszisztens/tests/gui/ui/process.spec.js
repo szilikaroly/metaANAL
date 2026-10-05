@@ -191,6 +191,7 @@ async function waitCheck(page) {
     const modal = await txt(p, '[role="dialog"][aria-modal="true"]');
     check(modal.indexOf('P007') >= 0 && modal.indexOf('PRISMA 2020 16a tétel') >= 0 && modal.indexOf('kötelező') >= 0, 'KB-tétel modális: P007 mezői (hely, erősség)');
     await p.keyboard.press('Escape');
+    check(await p.evaluate(() => !!document.activeElement.closest('li[data-id="12"]') && document.activeElement.classList.contains('why-btn')), 'a KB-modális bezárása után a fókusz a „Miért?” gombon');
     // ugrás a naplóba, a tétel kiemelve és fókuszban
     await p.click('#ov-blockers li[data-id="15"] a.btn');
     await screen(p, 'log');

@@ -9,6 +9,7 @@ import tempfile
 import unittest
 import zipfile
 from contextlib import redirect_stdout, redirect_stderr
+from unittest import mock
 
 from _helpers import ROOT
 from metaelemzes import cli, kb, projekt
@@ -116,10 +117,40 @@ class TestProject(unittest.TestCase):
     def test_lifecycle(self):
         tmp = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, tmp, True)
+        # Ideiglenes tudásbázis, mintha METAELEMZES_KB=<tmp>/kb.sqlite mellett indult volna a folyamat
+        # (a kb.DEFAULT_DB az import pillanatában olvassa a változót): a --kb-ellenőrzés így nem olvassa
+        # és nem építi újra a repó tudasbazis.sqlite-ját.
+        db = os.path.join(tmp, "kb.sqlite")
+        kb.build(db)
+        repo_db = os.path.join(kb.KB_DIR, "tudasbazis.sqlite")
+        touched = []
+        real_ensure = kb.ensure_built
+
+        def ensure_spy(path=None):
+            touched.append(path or kb.DEFAULT_DB)
+            return real_ensure(path)
+
+        env = mock.patch.dict(os.environ, {"METAELEMZES_KB": db})
+        env.start()
+        self.addCleanup(env.stop)
+        for patcher in (mock.patch.object(kb, "DEFAULT_DB", db), mock.patch.object(kb, "ensure_built", ensure_spy)):
+            patcher.start()
+            self.addCleanup(patcher.stop)
         d = os.path.join(tmp, "proj")
         projekt.init(d, "Teszt SR", "PICO?")
         did = projekt.log_decision(d, "planner", "REML + HKSJ", "k várhatóan < 10", "S08", "D-SYN-001")
         fid = projekt.add_finding(d, "reviewer", "blocker", "SE/SD csere gyanú", stage="S05", kb_refs="V011")
+        self.assertTrue(touched)
+        self.assertEqual({os.path.abspath(p) for p in touched}, {os.path.abspath(db)})
+        self.assertNotIn(os.path.abspath(repo_db), {os.path.abspath(p) for p in touched})
+        con = projekt.connect(d)
+        try:
+            # az ellenőrzés az ideiglenes tudásbázisban futott: a V011 létezik, a D-SYN-001 nem (ellenőrizetlen)
+            for table, want in (("decision", ("D-SYN-001", "D-SYN-001")), ("finding", ("V011", None))):
+                rows = [tuple(r) for r in con.execute("SELECT kb_refs, kb_unverified FROM %s" % table)]
+                self.assertEqual(rows, [want], table)
+        finally:
+            con.close()
         with self.assertRaises(ValueError):
             projekt.checkpoint(d, "S05", "reviewer", "PASS")
         projekt.resolve_finding(d, fid, "fixed", "forrás ellenőrizve, SD javítva")

@@ -23,8 +23,12 @@ def as_list(x):
     return x if isinstance(x, list) else [x]
 
 
-def assert_close(tc, got, want, tol=1e-6, msg=""):
-    """Abszolút VAGY relatív tolerancia (a nagyobbik)."""
+def assert_close(tc, got, want, tol=1e-6, msg="", rel=False):
+    """Abszolút VAGY relatív tolerancia (a nagyobbik).
+
+    rel=True: csak relatív tolerancia, abszolút alsó korlát nélkül (|kapott − várt| <= tol·|várt|;
+    várt = 0-nál pontos egyezés) — p-értékekhez: az 1e-26 nagyságú farok-valószínűséget az abszolút
+    tolerancia nem ellenőrizné (a 0-ra alulcsorduló érték is átmenne)."""
     if want is None:
         tc.assertTrue(got is None or (isinstance(got, float) and math.isnan(got)), "%s: várt None, kapott %r" % (msg, got))
         return
@@ -33,4 +37,6 @@ def assert_close(tc, got, want, tol=1e-6, msg=""):
         tc.assertTrue(math.isinf(got), msg)
         return
     diff = abs(got - want)
-    tc.assertLessEqual(diff, max(tol, tol * abs(want)), "%s: kapott %.10g, várt %.10g (eltérés %.3g)" % (msg, got, want, diff))
+    bound = tol * abs(want) if rel else max(tol, tol * abs(want))
+    tc.assertLessEqual(diff, bound, "%s: kapott %.10g, várt %.10g (eltérés %.3g, %s tolerancia %.3g)" % (
+        msg, got, want, diff, "relatív" if rel else "abszolút/relatív", tol))

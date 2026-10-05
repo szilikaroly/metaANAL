@@ -236,7 +236,8 @@
       MA.ui.confirm({ title: t('project.class.confirmTitle', { cls: c }), message: t('project.class.confirmBody', { from: current, to: c }), okLabel: t('project.class.apply') })
         .then(function (ok) {
           if (!ok) { return null; }
-          return MA.api.post('/api/project', { action: 'data_class', data_class: c }).then(function (env) {
+          // a megerősítő párbeszéd után: az osztály csökkentéséhez a szerver kifejezett confirm-et kér
+          return MA.api.post('/api/project', { action: 'data_class', data_class: c, confirm: true }).then(function (env) {
             MA.ui.toast({ kind: 'success', title: t('project.class.done', { cls: c }) });
             return afterProjectChange(env.data, ctx);
           }, function () { return null; });

@@ -8,17 +8,22 @@ implementálja a módszert, vagy a forrás hibás).
 import unittest
 
 import _helpers  # noqa: F401  (sys.path)
-from source_cases import load_cases, check_case
+from source_cases import STATUSES, load_cases, check_case, is_active
 
 
 class TestSourceExamples(unittest.TestCase):
     def test_cases(self):
         cases = load_cases()
-        active = [c for c in cases if c.get("status", "active") == "active"]
         if not cases:
             self.skipTest("nincsenek forrás-esetek")
         failures = []
-        for c in active:
+        for c in cases:
+            try:
+                if not is_active(c):
+                    continue
+            except ValueError as exc:      # ugyanaz a szűrő, mint a source_cases.py futtatóé
+                failures.append(str(exc))
+                continue
             for path, want, got, tol, ok, msg in check_case(c):
                 if not ok:
                     failures.append("%s [%s] %s: várt %r, kapott %r, tol %r %s" % (
@@ -29,6 +34,7 @@ class TestSourceExamples(unittest.TestCase):
         for c in load_cases():
             for key in ("case_id", "source_id", "location", "call", "expected"):
                 self.assertIn(key, c, c.get("case_id"))
+            self.assertIn(c.get("status", "active"), STATUSES, c["case_id"])
             if c.get("status") == "known_gap":
                 self.assertTrue(c.get("gap_reason"), c["case_id"])
 

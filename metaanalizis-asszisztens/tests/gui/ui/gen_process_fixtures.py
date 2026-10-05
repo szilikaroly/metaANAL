@@ -294,12 +294,13 @@ def kb_fixture():
     routes = []
     q = "predikciós intervallum"
     for sc in ("rule", "knowledge"):
-        res = kb.search(q, 6, None, (sc,))
+        # a bm25-pontszám a KB minden újraépítésekor kicsit változik, a felület nem használja → kimarad (stabil fixture)
+        res = {k: [{f: v for f, v in r.items() if f != "score"} for r in rows] for k, rows in kb.search(q, 6, None, (sc,)).items()}
         routes.append({"method": "GET", "path": "/api/kb/search", "query": {"scope": sc},
                        "envelope": env("szk.ma.kb-search/v1", {"query": q, "scopes": [sc], "results": res, "local_only": True, "note": NOTE})})
     chunk = [{"id": 9412, "ref": CHUNK_REF, "source_id": "cochrane_handbook", "seq": 412, "locator": "10.10.4.3",
               "snippet": "… a [predikciós intervallum] (SZINTETIKUS minta a fejlesztői fixture-ben — a jogvédett teljes "
-                         "szöveg nem kerül a repóba) … <script>alert(1)</script> …", "score": -7.1}]
+                         "szöveg nem kerül a repóba) … <script>alert(1)</script> …"}]
     routes.append({"method": "GET", "path": "/api/kb/search", "query": {"scope": "chunk"},
                    "envelope": env("szk.ma.kb-search/v1", {"query": q, "scopes": ["chunk"], "results": {"chunk": chunk}, "local_only": True, "note": NOTE})})
     routes.append({"method": "GET", "path": "/api/kb/search", "query": {"q": "nincs-ilyen-kifejezes"},

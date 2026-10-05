@@ -87,3 +87,184 @@ def xtwy(x, w, y):
 
 def trace(a):
     return sum(a[i][i] for i in range(len(a)))
+
+
+class WeightedQR(object):
+    """Householder-QR az A = W^½ X mátrixra (súlyozott legkisebb négyzetek, kis p).
+
+    A normálegyenletek (XᵀWX explicit inverze) helyett: a kondíciószám cond(A), nem cond(A)², és
+    a projekcióból adódó mennyiségek (reziduumok, 1 − h_ii, tr(P)) kiejtés nélkül számolhatók.
+    Oszlopcsere (pivoting) és a sorok |A_i| szerint csökkenő rendezése: soronként stabil erősen
+    eltérő súlyoknál is (Cox & Higham 1998). Rangdefektus: |R_jj| < rtol · |R_00|, ekkor
+    SingularMatrixError; rtol = 1e-7 (mint az R qr() / lm tol-ja; a pontosan kollineáris
+    tervek aránya ~1e-16, a még megbízhatóan számolható közel-kollineárisaké >= ~1e-7).
+    """
+
+    def __init__(self, x, w, rtol=1e-7):
+        k, p = len(x), len(x[0])
+        self.k, self.p = k, p
+        self.sw = sw = [math.sqrt(a) for a in w]
+        self.w = list(w)
+        order = sorted(range(k), key=lambda i: (-max(abs(c) for c in x[i]) * sw[i], i))
+        self.order = order
+        cols = [[sw[i] * x[i][j] for i in order] for j in range(p)]
+        perm = list(range(p))
+        vs, betas = [], []
+        r = [[0.0] * p for _ in range(p)]
+        r00 = None
+        for j in range(p):
+            norms = [math.hypot(*cols[c][j:]) if j < k else 0.0 for c in range(j, p)]
+            jj = j + max(range(len(norms)), key=lambda t: norms[t])
+            if jj != j:
+                cols[j], cols[jj] = cols[jj], cols[j]
+                perm[j], perm[jj] = perm[jj], perm[j]
+                for row in r[:j]:
+                    row[j], row[jj] = row[jj], row[j]
+            nrm = norms[jj - j]
+            if r00 is None:
+                r00 = nrm
+            if not (nrm > rtol * r00) or not math.isfinite(nrm):
+                raise SingularMatrixError("szinguláris mátrix (kollineáris moderátorok?)")
+            col = cols[j]
+            alpha = -math.copysign(nrm, col[j])
+            v = col[j:]
+            v[0] -= alpha
+            vv = sum(a * a for a in v)
+            beta = 2.0 / vv
+            for c in range(j + 1, p):
+                cc = cols[c]
+                s = beta * sum(a * b for a, b in zip(v, cc[j:]))
+                if s:
+                    for t in range(len(v)):
+                        cc[j + t] -= s * v[t]
+                r[j][c] = cc[j]
+            r[j][j] = alpha
+            vs.append(v)
+            betas.append(beta)
+        self.r, self.perm, self._v, self._beta = r, perm, vs, betas
+        self._lev = None
+
+    def _qt(self, z):
+        """Qᵀz (z a rendezett sorrendben), helyben."""
+        for j, (v, beta) in enumerate(zip(self._v, self._beta)):
+            s = beta * sum(a * b for a, b in zip(v, z[j:]))
+            if s:
+                for t in range(len(v)):
+                    z[j + t] -= s * v[t]
+        return z
+
+    def _q(self, z):
+        """Qz (z a rendezett sorrendben), helyben."""
+        for j in range(self.p - 1, -1, -1):
+            v, beta = self._v[j], self._beta[j]
+            s = beta * sum(a * b for a, b in zip(v, z[j:]))
+            if s:
+                for t in range(len(v)):
+                    z[j + t] -= s * v[t]
+        return z
+
+    def _rsolve(self, c):
+        p, r = self.p, self.r
+        z = [0.0] * p
+        for i in range(p - 1, -1, -1):
+            z[i] = (c[i] - sum(r[i][j] * z[j] for j in range(i + 1, p))) / r[i][i]
+        return z
+
+    def solve(self, y):
+        """(b, e, rss): a WLS-együtthatók, a reziduumok y − Xb (eredeti sorrend) és Σ w e²."""
+        p, order = self.p, self.order
+        c = self._qt([self.sw[i] * y[i] for i in order])
+        z = self._rsolve(c[:p])
+        b = [0.0] * p
+        for j, pj in enumerate(self.perm):
+            b[pj] = z[j]
+        rr = [0.0] * p + c[p:]
+        rss = sum(a * a for a in c[p:])
+        self._q(rr)
+        e = [0.0] * self.k
+        for t, i in enumerate(order):
+            e[i] = rr[t] / self.sw[i]
+        return b, e, rss
+
+    def cov(self):
+        """(XᵀWX)⁻¹ = Π R⁻¹ R⁻ᵀ Πᵀ."""
+        p, r = self.p, self.r
+        rinv = [[0.0] * p for _ in range(p)]
+        for j in range(p):
+            rinv[j][j] = 1.0 / r[j][j]
+            for i in range(j - 1, -1, -1):
+                rinv[i][j] = -sum(r[i][t] * rinv[t][j] for t in range(i + 1, j + 1)) / r[i][i]
+        m = [[0.0] * p for _ in range(p)]
+        for a in range(p):
+            for b in range(a, p):
+                s = sum(rinv[a][t] * rinv[b][t] for t in range(b, p))
+                m[self.perm[a]][self.perm[b]] = m[self.perm[b]][self.perm[a]] = s
+        return m
+
+    def logdet(self):
+        """log det(XᵀWX) = 2 Σ log|R_jj|."""
+        return 2.0 * sum(math.log(abs(self.r[j][j])) for j in range(self.p))
+
+    def leverages(self):
+        """(h, 1 − h) az eredeti sorrendben, h_ii = (W^½ X M Xᵀ W^½)_ii. A nagy hatású (h > ½)
+        soroknál 1 − h = ‖(Qᵀe_i)[p:]‖², kiejtés nélkül (pl. domináns súlyú vizsgálat)."""
+        if self._lev is not None:
+            return self._lev
+        k, p = self.k, self.p
+        qcols = []
+        for j in range(p):
+            z = [0.0] * k
+            z[j] = 1.0
+            qcols.append(self._q(z))
+        qrows = [[qcols[j][t] for j in range(p)] for t in range(k)]
+        h_s = [sum(a * a for a in row) for row in qrows]
+        m_s = []
+        for t in range(k):
+            if h_s[t] > 0.5:
+                z = [0.0] * k
+                z[t] = 1.0
+                self._qt(z)
+                m_s.append(sum(a * a for a in z[p:]))
+            else:
+                m_s.append(1.0 - h_s[t])
+        h, m1 = [0.0] * k, [0.0] * k
+        for t, i in enumerate(self.order):
+            h[i], m1[i] = h_s[t], m_s[t]
+        self._lev = (h, m1)
+        self._qrows = qrows
+        return self._lev
+
+    def traces(self):
+        """tr(P), tr(PP) a P = W − WX(XᵀWX)⁻¹XᵀW projekcióhoz, csak nemnegatív tagokból:
+        tr(P) = Σ w_i (1 − h_ii); tr(PP) = Σ w_i²(1 − h_ii)² + Σ_i w_i Σ_{j≠i} w_j H_ij²,
+        a második tag Q-sorokkal és előtag/utótag-összegekkel O(k p²) időben."""
+        _, m1 = self.leverages()
+        k, p, w = self.k, self.p, self.w
+        ws = [w[i] for i in self.order]
+        m1s = [m1[i] for i in self.order]
+        q = self._qrows
+        tr_p = sum(a * b for a, b in zip(ws, m1s))
+        pre = [[[0.0] * p for _ in range(p)]]
+        for t in range(k):
+            g = [row[:] for row in pre[-1]]
+            qt, wt = q[t], ws[t]
+            for a in range(p):
+                fa = wt * qt[a]
+                ga = g[a]
+                for b in range(p):
+                    ga[b] += fa * qt[b]
+            pre.append(g)
+        suf = [[0.0] * p for _ in range(p)]
+        off = 0.0
+        for t in range(k - 1, -1, -1):
+            qt, wt = q[t], ws[t]
+            gp = pre[t]
+            quad = sum(qt[a] * sum((gp[a][b] + suf[a][b]) * qt[b] for b in range(p)) for a in range(p))
+            off += wt * max(0.0, quad)
+            for a in range(p):
+                fa = wt * qt[a]
+                sa = suf[a]
+                for b in range(p):
+                    sa[b] += fa * qt[b]
+        tr_pp = sum((a * b) ** 2 for a, b in zip(ws, m1s)) + off
+        return tr_p, tr_pp

@@ -4,8 +4,11 @@
 - Adatosztályok (A–D) és írás-tartás (``can_write``): B/C osztálynál, ha a vault követi a projektet,
   adat csak .gitignore-olt célba írható; C osztályú adat csak a ``_privat/`` alá kerülhet.
 - PHI/TAJ-szkenner (``scan_table``): oszlopnév-minták (magyar és angol, ékezetfüggetlen) és
-  értékminták (9 jegyű TAJ-szám CDV-ellenőrzőjeggyel, teljes dátum, e-mail). A találat csak
-  oszlopot, sorindexet és mintanevet tartalmaz, értéket soha.
+  értékminták (9 jegyű TAJ-szám CDV-ellenőrzőjeggyel — számexport-alakban is: '123456788.0',
+  '1.23456788E+08', azonosító-oszlopban a vezető nullát vesztett 8 jegyű alak —, teljes dátum,
+  e-mail). ``scan_doc``: JSON-dokumentum (pl. eredet-oldalfájl) minden szöveges levele;
+  ``text_patterns``: szabad szöveg (napló, indoklás). A találat csak helyet és mintanevet
+  tartalmaz, értéket soha.
 - L1 vault-felismerés (``$VAULT_HOME`` vagy ``~/.claude/vault/config.json``: root, max_depth,
   exclude, paused) és a már követett érzékeny fájlok (``git ls-files``).
 - L2 kezelt .gitignore-blokk a jelölők között: idempotens, a blokkon kívüli sorokhoz nem nyúl;
@@ -44,6 +47,9 @@ DATA_CLASS_LABELS = {
     "D": "jogvédett teljes szöveg",
 }
 PRIVATE_DIR = "_privat"
+# az atomikus írás ideiglenes fájljainak előtagja (azonos a security.TMP_PREFIX-szel; a modul
+# szándékosan önálló, csak stdlib)
+TMP_PREFIX = ".ma-tmp-"
 
 # L2: kezelt .gitignore-blokk (7.5)
 GITIGNORE_REL = ".gitignore"
@@ -58,6 +64,7 @@ MANAGED_PATTERNS = (
     "*.snapshot.html",
     "projekt.sqlite-wal",
     "projekt.sqlite-shm",
+    TMP_PREFIX + "*",                 # atomikus írás árva ideiglenes fájljai (összeomlás után)
 )
 
 # Claude-hozzáférés (7.5)
@@ -238,7 +245,10 @@ def is_valid_taj(text):
     return taj_check_digit(s[:8]) == int(s[8])
 
 
-_TAJ_RE = re.compile(r"(?<![\w.,/])([0-9]{3})[ \-]?([0-9]{3})[ \-]?([0-9]{3})(?!\w)(?![.,/][0-9])")
+_TAJ_RE = re.compile(r"(?<![\w.,/])([0-9]{3})[ \-]{0,2}([0-9]{3})[ \-]{0,2}([0-9]{3})(?!\w)(?![.,/][0-9])")
+# 'TAJ123456788', 'TAJ-szám: 123 456 788' (a betű közvetlenül a szám előtt áll)
+_TAJ_PREFIX_RE = re.compile(r"taj(?:[ \-]?szam[a]?)?\s*[:#.\-]?\s*([0-9]{3})[ \-]{0,2}([0-9]{3})[ \-]{0,2}"
+                            r"([0-9]{3})(?![0-9])")
 _EMAIL_RE = re.compile(r"(?<![a-z0-9._%+\-])[a-z0-9._%+\-]+@[a-z0-9\-]+(?:\.[a-z0-9\-]+)*\.[a-z]{2,24}"
                        r"(?![a-z0-9\-])")
 
@@ -311,26 +321,88 @@ def _date_context_excluded(column_name):
 
 
 _PLAIN_NUMBER = re.compile(r"\s*[+\-]?[0-9]*(?:[.,][0-9]*)?\s*\Z")
+# egész szám, esetleg '.0'-s lebegőpontos exportalakban (pandas/R: NA-t is tartalmazó egész oszlop)
+_INT_EXPORT = re.compile(r"\s*[+\-]?([0-9]+)(?:[.,]0+)?\s*\Z")
+# Excel/R tudományos alak: 1.23456788E+08
+_SCI_NUMBER = re.compile(r"\s*[+\-]?([0-9])[.,]([0-9]{1,8})[eE]\+?0*([0-9]{1,2})\s*\Z")
+# ezekben az oszlopokban a 8 jegyű szám nem nullát vesztett TAJ: bibliográfiai azonosító (PMID …),
+# évszám, létszám, a motor számoszlopai (n1, e1, m1, sd1, yi, vi, sei …; tokenekre bontva)
+_SHORT_TAJ_NOT = {
+    "pmid", "pmcid", "pubmed", "doi", "isbn", "issn", "nct", "ev", "eve", "evszam", "year", "volume",
+    "kotet", "issue", "page", "pages", "oldal", "n", "nt", "nc", "ni", "count", "total", "osszes",
+    "letszam", "population", "nepesseg", "lakossag", "size", "meret", "events", "event", "esemeny",
+    "esetszam", "e", "x", "xi", "cases", "m", "mean", "atlag", "sd", "sdt", "sdc", "szoras", "r", "ri",
+    "cor", "korrelacio", "yi", "es", "effect", "hatas", "te", "vi", "var", "variance", "variancia", "sei",
+    "se", "sete", "mdiff", "sum", "ssd", "tpos", "cpos", "ai", "ci",
+}
 
 
-def value_patterns(text, dates=True):
-    """A cellaszövegre illő értékminták azonosítói ('taj_cdv', 'full_date', 'email'); értéket nem ad vissza."""
-    # a legrövidebb illeszkedő alak is ≥ 6 karakter (a@b.hu, 1.2.1990, 9 jegyű TAJ): a tipikus
+def _number_digits(text):
+    """Számként írt egész szám jegyei ('123456788', '123456788.0', '1.23456788E+08') vagy None."""
+    m = _INT_EXPORT.match(text)
+    if m:
+        return m.group(1)
+    m = _SCI_NUMBER.match(text)
+    if m:
+        mant, exp = m.group(1) + m.group(2), int(m.group(3))
+        if len(mant) - 1 <= exp:
+            return mant + "0" * (exp - (len(mant) - 1))
+    return None
+
+
+def _numeric_taj(text, short_taj):
+    digits = _number_digits(text)
+    if digits is None:
+        return False
+    if len(digits) == 9:
+        return is_valid_taj(digits)
+    # Excelben számként tárolt TAJ: a vezető 0 elvész (012345678 → 12345678)
+    return short_taj and len(digits) == 8 and is_valid_taj("0" + digits)
+
+
+def value_patterns(text, dates=True, short_taj=False):
+    """A cellaszövegre illő értékminták azonosítói ('taj_cdv', 'full_date', 'email'); értéket nem ad vissza.
+
+    short_taj: a 8 jegyű számot a vezető nullát vesztett TAJ-ként is ellenőrzi (azonosító-jellegű
+    oszlopban; a hívó dönti el)."""
+    # a legrövidebb illeszkedő alak is ≥ 6 karakter (a@b.hu, 1.2.1990, 8–9 jegyű TAJ): a tipikus
     # számcella gyorsan kiesik; a sima szám csak TAJ lehet
     if not text or len(text) < 6:
         return []
-    if _PLAIN_NUMBER.match(text):
-        digits = text.strip().lstrip("+-")
-        return ["taj_cdv"] if len(digits) == 9 and is_valid_taj(digits) else []
+    if _PLAIN_NUMBER.match(text) or _SCI_NUMBER.match(text):
+        return ["taj_cdv"] if _numeric_taj(text, short_taj) else []
     t = text.lower() if text.isascii() else _fold(text)
     found = []
-    if any(is_valid_taj(m.group(1) + m.group(2) + m.group(3)) for m in _TAJ_RE.finditer(t)):
+    if (any(is_valid_taj(m.group(1) + m.group(2) + m.group(3)) for m in _TAJ_RE.finditer(t))
+            or ("taj" in t and any(is_valid_taj(m.group(1) + m.group(2) + m.group(3))
+                                   for m in _TAJ_PREFIX_RE.finditer(t)))):
         found.append("taj_cdv")
     if dates and _has_full_date(t):
         found.append("full_date")
     if "@" in t and _EMAIL_RE.search(t):
         found.append("email")
     return found
+
+
+_BIRTH_CONTEXT_RE = re.compile(r"(?<![a-z])(?:szul|dob(?![a-z])|birth|date of birth)")
+
+
+def text_patterns(text):
+    """Szabad szöveg (naplóbejegyzés, indoklás) mintái: 'taj_cdv'; 'full_date' csak születési
+    kontextusban (szül., született, DOB, birth) — a sima dátum a naplóban szokásos. Értéket nem ad."""
+    if not isinstance(text, str) or len(text) < 6:
+        return []
+    found = [p for p in value_patterns(text, dates=False) if p == "taj_cdv"]
+    t = text.lower() if text.isascii() else _fold(text)
+    if _BIRTH_CONTEXT_RE.search(t) and _has_full_date(t):
+        found.append("full_date")
+    return found
+
+
+def _short_taj_column(name):
+    """A 8 jegyű (nullát vesztett) TAJ-ellenőrzés kell-e ebben az oszlopban: nem a motor
+    számoszlopa (n1, e1, year …) és nem bibliográfiai/létszám-jellegű (PMID, évszám …)."""
+    return not set(_tokens(name)) & _SHORT_TAJ_NOT
 
 
 def _cell_text(v):
@@ -367,6 +439,7 @@ def scan_table(header, rows, max_findings=None):
             if full():
                 return findings
     no_date = [_date_context_excluded(n) for n in names]
+    short = [_short_taj_column(n) for n in names]
     for ri, row in enumerate(rows or []):
         if isinstance(row, dict):
             cells = [row.get(n) for n in names]
@@ -377,10 +450,54 @@ def scan_table(header, rows, max_findings=None):
             if not text or not text.strip():
                 continue
             dates = not (ci < len(no_date) and no_date[ci])
-            for pat in value_patterns(text, dates=dates):
+            for pat in value_patterns(text, dates=dates, short_taj=ci < len(short) and short[ci]):
                 findings.append({"kind": "value", "column": names[ci] if ci < len(names) else None,
                                  "column_index": ci, "row_index": ri, "pattern": pat})
                 if full():
+                    return findings
+    return findings
+
+
+# eredet-oldalfájl: szerkezeti kulcsok (nem szabad szöveg) és időbélyeg-kulcsok (dátum nem PHI-jel)
+_DOC_SKIP_KEYS = frozenset(["schema", "table", "table_sha256", "row_uid", "method", "sha256", "doc",
+                            "estimated", "field"])
+_DOC_TIME_KEYS = frozenset(["at", "date", "time", "timestamp", "ts", "created", "updated", "modified",
+                            "engine_version", "version"])
+
+
+def _time_key(key):
+    if not key:
+        return False
+    k = str(key).lower()
+    return k.endswith("_at") or k in _DOC_TIME_KEYS or _date_context_excluded(k)
+
+
+def scan_doc(obj, max_findings=None, max_nodes=200000):
+    """JSON-dokumentum (pl. szk.ma.provenance/v1) minden szöveges levelének PHI/TAJ-szkennelése:
+    value_as_entered, source.quote/locator, history[*], conversion, reconciliation, verified_by …
+
+    Visszaad: [{kind: 'value', column: <út>, path: <út>, column_index: None, row_index: None,
+    pattern}] — az út pl. 'cells[3].source.quote'; az illeszkedő értéket soha nem adja vissza."""
+    findings = []
+    stack = [(obj, "", None)]
+    nodes = 0
+    while stack:
+        node, path, key = stack.pop()
+        nodes += 1
+        if nodes > max_nodes:
+            break
+        if isinstance(node, dict):
+            items = [(str(k), v) for k, v in node.items() if str(k) not in _DOC_SKIP_KEYS]
+            for k, v in reversed(items):
+                stack.append((v, "%s.%s" % (path, k) if path else k, k))
+        elif isinstance(node, list):
+            for i in range(len(node) - 1, -1, -1):
+                stack.append((node[i], "%s[%d]" % (path, i), key))
+        elif isinstance(node, str) and node.strip():
+            for pat in value_patterns(node, dates=not _time_key(key)):
+                findings.append({"kind": "value", "column": path, "path": path, "column_index": None,
+                                 "row_index": None, "pattern": pat})
+                if max_findings is not None and len(findings) >= max_findings:
                     return findings
     return findings
 
@@ -525,6 +642,16 @@ def _clean_rel(rel_path):
     return parts
 
 
+def is_private_path(rel_path, platform=None):
+    """A projekt-relatív út a _privat/ mappán belül van-e (Windows-on és macOS-en kis/nagybetű-független)."""
+    parts = _clean_rel(rel_path)
+    if parts is None or len(parts) < 2:
+        return False
+    if _ignore_case(platform):
+        return parts[0].casefold() == PRIVATE_DIR.casefold()
+    return parts[0] == PRIVATE_DIR
+
+
 def _project(project_dir):
     p = Path(project_dir)
     if not p.is_dir():
@@ -547,9 +674,10 @@ def _read_bytes(path):
 
 
 def _atomic_write(path, data, mode=None):
-    """tmp + os.replace ugyanabban a mappában. mode: kötelező jogosultság (pl. hooknál 0o755)."""
+    """tmp + os.replace ugyanabban a mappában. mode: kötelező jogosultság (pl. hooknál 0o755).
+    A tmp-név '.ma-tmp-…' (a kezelt blokk fedi, az indításkori takarítás törli)."""
     path = Path(path)
-    tmp = path.with_name(".%s.%s.tmp" % (path.name, secrets.token_hex(6)))
+    tmp = path.with_name("%s%s-%s.tmp" % (TMP_PREFIX, path.name, secrets.token_hex(6)))
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0)
     try:
         fd = os.open(str(tmp), flags, 0o666 if mode is None else mode)
@@ -1443,9 +1571,7 @@ def can_write(project_dir, rel_path, data_class, *, home=None, env=None, platfor
     parts = _clean_rel(rel_path)
     if parts is None:
         return False, "Érvénytelen vagy a projektmappán kívülre mutató út."
-    ic = _ignore_case(platform)
-    in_private = (parts[0].casefold() == PRIVATE_DIR.casefold()) if ic else parts[0] == PRIVATE_DIR
-    in_private = in_private and len(parts) > 1
+    in_private = is_private_path(rel_path, platform)
     if dc == "C" and not in_private:
         return False, "C osztályú (betegszintű) adat csak a _privat/ mappába írható."
     if phi_detected and not in_private:

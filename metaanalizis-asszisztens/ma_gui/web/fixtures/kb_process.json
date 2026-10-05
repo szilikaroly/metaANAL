@@ -25,8 +25,7 @@
         "condition": "Kevés vizsgálat",
         "recommendation": "k < 5: a τ² becslése megbízhatatlan; HKSJ-CI és predikciós intervallum ajánlott, a véletlen hatású eredményt óvatosan értelmezd.",
         "source_ids": "engine",
-        "locator": "Cochrane Handbook 10.10.4",
-        "score": -9.515734686100114
+        "locator": "Cochrane Handbook 10.10.4"
        },
        {
         "id": "D-S02-006",
@@ -36,8 +35,7 @@
         "condition": "Az elemzési tervben a szintézis modellje, a τ²-becslő, a CI-módszer vagy a predikciós intervallum nincs előre rögzítve, vagy a modellválasztás a Q-teszttől vagy az I²-től függne",
         "recommendation": "Rögzítsd előre, indoklással: véletlen hatású modell, ha klinikai/módszertani sokféleség várható (független kutatócsoportok vizsgálatai); τ²: REML (alternatíva: PM); CI: HKSJ; predikciós intervallum t(k−2)-vel (csak k ≥ 3 esetén számolható; k < 5-nél nagyon széles) — motor: `ma.py analyze --model random --tau2 REML --ci hksj --pi t_k-2` (ez az alapértelmezés). DL τ², z-alapú CI és közös (fix) hatású modell csak előre megnevezett érzékenységi elemzésként szerepelhet. A modell nem függhet a heterogenitás-teszt eredményétől.",
         "source_ids": "borenstein2009,borenstein2007_fe_re,simplypsychology2024,khan2020,cochrane_handbook,inthout2016,veroniki2016,rover2015",
-        "locator": "Cochrane Handbook v6.5 ch. 10; K-BOR07-003, K-BOR07-004, K-BOR07-062, K-BOR07-049, K-BOR09-034, K-KHN0102-046, K-SIM24-052",
-        "score": -7.634228026652626
+        "locator": "Cochrane Handbook v6.5 ch. 10; K-BOR07-003, K-BOR07-004, K-BOR07-062, K-BOR07-049, K-BOR09-034, K-KHN0102-046, K-SIM24-052"
        },
        {
         "id": "D-S08-020",
@@ -47,8 +45,7 @@
         "condition": "Véletlen vagy közös hatású összesített eredményt értelmezel vagy szövegezel (absztrakt, eredmények, következtetés).",
         "recommendation": "A véletlen hatású becslést a valódi hatások eloszlása átlagaként fogalmazd meg ('átlagos hatás'), ne 'a' hatásként; mellé mindig add meg a τ-t és a predikciós intervallumot (D-S09-007). Ha a CI tartalmazza a nullát, ne olvasd úgy, hogy 'egyik vizsgálatban sincs hatás'. A közös hatású becslést csak a bevont vizsgálatok közös (súlyozott) hatásaként értelmezd. Kevés, de nagy vizsgálatnál se várj szűk véletlen hatású CI-t: az SE nem csökkenhet kb. √(τ²/k) alá. Kétoldalú p-t közölj; egyoldalút csak előre regisztrált irányított hipotézisnél.",
         "source_ids": "borenstein2007_fe_re,borenstein2009,cochrane_handbook,inthout2016",
-        "locator": "Cochrane Handbook v6.5 10.10.4.2; K-BOR07-017, K-BOR07-060, K-BOR07-076, K-BOR09-033, K-BOR09-036, K-BOR09-037, F-BOR09-026",
-        "score": -6.6878123489921775
+        "locator": "Cochrane Handbook v6.5 10.10.4.2; K-BOR07-017, K-BOR07-060, K-BOR07-076, K-BOR09-033, K-BOR09-036, K-BOR09-037, F-BOR09-026"
        },
        {
         "id": "D-S11-012",
@@ -58,8 +55,7 @@
         "condition": "Jelentős heterogenitás van (nagy τ² és I², széles predikciós intervallum), és aszimmetria-tesztet vagy trim-and-fill-t értelmeznél.",
         "recommendation": "Fokozott óvatossággal kezeld: a heterogenitás maga is okozhat aszimmetriát, a trim-and-fill pedig ilyenkor rosszul teljesít. Előbb a heterogenitás előre rögzített magyarázatait vizsgáld (S10), és ha egy moderátor magyarázza, az aszimmetriát a homogénebb alcsoportokban (ha ott k ≥ 10) nézd. A funnel / Doi-plot nem a heterogenitás mérőeszköze — azt Q, I², τ² és a PI méri.",
         "source_ids": "sterne2011,zhang2022_jslhr,khan2020,cochrane_handbook",
-        "locator": "Sterne 2011; Cochrane Handbook v6.5 ch. 13; K-ZHA22-065, K-ZHA22-069, K-KHN08-056, K-KHN08-055",
-        "score": -6.482570697706263
+        "locator": "Sterne 2011; Cochrane Handbook v6.5 ch. 13; K-ZHA22-065, K-ZHA22-069, K-KHN08-056, K-KHN08-055"
        },
        {
         "id": "D-S09-008",
@@ -69,8 +65,7 @@
         "condition": "El kell döntened, hogy a heterogenitás klinikailag fontos-e (a következtetés megfogalmazásához vagy a GRADE inkonzisztencia-doménhez).",
         "recommendation": "Ne az I² küszöbéből dönts, hanem együtt nézd: a vizsgálati pontbecslések szóródását és irányát, a CI-k átfedését, a τ nagyságát az összesített hatáshoz és a klinikai döntési küszöbhöz (MCID) viszonyítva, azt, hogy a predikciós intervallum átnyúlik-e a döntési küszöbön vagy a nullhatáson, és hogy előre tervezett alcsoport vagy meta-regresszió megmagyarázza-e. Ha a szóródás jelentős és megmagyarázatlan, a következtetés a szóródásra is fókuszáljon (ne csak az átlagra), és jelezd a GRADE inkonzisztencia miatti leminősítés lehetőségét (S13).",
         "source_ids": "grade_handbook,cochrane_handbook,borenstein2009,borenstein2007_fe_re,morvaridzadeh2020,simplypsychology2024,zhang2022_jslhr,khan2020",
-        "locator": "GRADE Handbook (inconsistency); K-MOR20-064, K-BOR07-079, K-BOR09-048, K-BOR09-068, K-SIM24-074, K-ZHA22-080, K-KHN0607-070",
-        "score": -5.915103951422176
+        "locator": "GRADE Handbook (inconsistency); K-MOR20-064, K-BOR07-079, K-BOR09-048, K-BOR09-068, K-SIM24-074, K-ZHA22-080, K-KHN0607-070"
        },
        {
         "id": "D-S09-001",
@@ -80,8 +75,7 @@
         "condition": "Egy összesített kimenet heterogenitásának vizsgálatát tervezed (PRISMA-P 15b), közlöd (PRISMA 2020 13d, 20b), vagy egy kéziratot vagy közölt metaanalízist ellenőrzöl.",
         "recommendation": "Mindig az alábbi együttest add meg: a forest plot vizuális értékelése (átfednek-e a vizsgálati CI-k, egyező-e az irány); Q (df, pontos p — ne 'p = 0'); I² a CI-jével; τ² a becslő nevével és Q-profile CI-jével, valamint τ (a hatásméret skáláján); véletlen hatásnál a predikciós intervallum. A motor ezeket a `results.json` `random` és `random.heterogeneity` blokkjában (Q, p_Q, I2, I2_ci_HT, I2_from_tau2, I2_ci_QP, tau2_ci_QP, pi_lower, pi_upper) és a riport táblázatában adja. Ellenőrzéskor ha csak I² vagy csak a Q p-értéke szerepel: major megállapítás.",
         "source_ids": "prisma2020,prisma_p,cochrane_handbook,cheung2016,simplypsychology2024,morvaridzadeh2020,khan2020,zhang2022_jslhr,borenstein2009",
-        "locator": "PRISMA 2020 items 13d, 20b; PRISMA-P 2015 item 15b; Cochrane Handbook v6.5 10.10.2, 10.10.4.2; K-CHE16-050, K-SIM24-060, K-MOR20-043, K-MOR20-047, K-KHN09-041, K-KHN10-045, K-ZHA22-086, K-BOR09-051, K-KHN05-041, K-KHN09-071",
-        "score": -5.209059539624179
+        "locator": "PRISMA 2020 items 13d, 20b; PRISMA-P 2015 item 15b; Cochrane Handbook v6.5 10.10.2, 10.10.4.2; K-CHE16-050, K-SIM24-060, K-MOR20-043, K-MOR20-047, K-KHN09-041, K-KHN10-045, K-ZHA22-086, K-BOR09-051, K-KHN05-041, K-KHN09-071"
        }
       ]
      },
@@ -123,8 +117,7 @@
         "title": "Predikciós intervallum",
         "snippet": "The guide notes that a wide prediction interval indicates substantial heterogeneity in the true effects but gives no formula. [note: the usual random-effects … ",
         "source_id": "simplypsychology2024",
-        "locator": "p. 21",
-        "score": -9.493164498041244
+        "locator": "p. 21"
        },
        {
         "id": "K-ZHA22-052",
@@ -133,8 +126,7 @@
         "title": "Összesített átlag nagy heterogenitás mellett; hiányzó predikciós intervallum",
         "snippet": "Reporting a pooled mean as if it applied everywhere despite large heterogeneity (here I^2 = 75%) is misleading. Fix: interpret it with caution and … ",
         "source_id": "zhang2022_jslhr",
-        "locator": "p. 10",
-        "score": -9.493164498041244
+        "locator": "p. 10"
        },
        {
         "id": "K-KHN0607-036",
@@ -143,8 +135,7 @@
         "title": "Csak z-alapú CI; nincs HKSJ és predikciós intervallum",
         "snippet": "Every CI and test in these chapters uses the standard normal (z_{0.025} = 1.96), for single studies and for FE, RE and … ",
         "source_id": "khan2020",
-        "locator": "Ch6–7 throughout; e.g. Ch6 §6.4 p. 122; Ch7 §7.4 p. 142",
-        "score": -9.197292686446527
+        "locator": "Ch6–7 throughout; e.g. Ch6 §6.4 p. 122; Ch7 §7.4 p. 142"
        },
        {
         "id": "K-MOR20-047",
@@ -153,8 +144,7 @@
         "title": "Ellenőrzés: a véletlen hatású modell teljes jelentése",
         "snippet": "Reviewer check: random-effects reporting includes the tau^2 estimator, tau^2, Q with df and p, I^2 (ideally with a CI), the … ",
         "source_id": "morvaridzadeh2020",
-        "locator": "p. 7 Table 2",
-        "score": -8.006015523676426
+        "locator": "p. 7 Table 2"
        },
        {
         "id": "K-KHN0304-027",
@@ -163,8 +153,7 @@
         "title": "CI-módszer: mindenhol Wald z = 1,96",
         "snippet": "All 95% CIs in this chunk, for single studies and for FE, RE and IVhet pooled estimates, use the Wald normal approximation with z … ",
         "source_id": "khan2020",
-        "locator": "Ch4 pp. 57, 60, 70, 73",
-        "score": -7.900781010249461
+        "locator": "Ch4 pp. 57, 60, 70, 73"
        },
        {
         "id": "K-SIM24-074",
@@ -173,8 +162,7 @@
         "title": "Értékelési szempont: a heterogenitás számszerűsítése és magyarázata",
         "snippet": "Evaluator criterion: the magnitude of heterogeneity is quantified with τ², I² and a prediction interval; its causes are explored through pre-specified moderators or … ",
         "source_id": "simplypsychology2024",
-        "locator": "pp. 2, 20–21",
-        "score": -7.896913805139691
+        "locator": "pp. 2, 20–21"
        }
       ]
      },
@@ -215,8 +203,7 @@
         "source_id": "cochrane_handbook",
         "seq": 412,
         "locator": "10.10.4.3",
-        "snippet": "… a [predikciós intervallum] (SZINTETIKUS minta a fejlesztői fixture-ben — a jogvédett teljes szöveg nem kerül a repóba) … <script>alert(1)</script> …",
-        "score": -7.1
+        "snippet": "… a [predikciós intervallum] (SZINTETIKUS minta a fejlesztői fixture-ben — a jogvédett teljes szöveg nem kerül a repóba) … <script>alert(1)</script> …"
        }
       ]
      },

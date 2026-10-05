@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """Dokumentum-jegyzék és aláírt fájl-URL-ek (3.4, 4.8 vége, 7.1 T5/T7).
 
-- ``GET/PUT /api/documents`` ↔ ``03_adatok/documents.json`` (``szk.ma.documents/v1``, If-Match).
+- ``GET/PUT /api/documents`` ↔ ``03_adatok/documents.json`` (``szk.ma.documents/v1``, If-Match). C osztályú
+  projektben a jegyzék helye ``_privat/documents.json``: C-ben adat csak a _privat/ alá írható, és a
+  vault azt nem tolja fel (a jegyzék útjai is árulkodók lehetnek). Ha ott még nincs jegyzék, de a
+  régi helyen van, a GET figyelmeztet (áthelyezni a felhasználó dönt).
 - ``POST /api/fileurl`` ← ``{doc}`` (jegyzékbeli dokumentum) vagy ``{path}`` (futás-artefaktum a
   ``05_elemzes/`` vagy ``06_kezirat/`` alatt) → ``{url: "/f/<doc>/<lejárat>/<aláírás>", expires_at}``.
 - ``GET /f/<doc>/<lejárat>/<aláírás>``: token nélkül, csak érvényes, le nem járt aláírással; a fájl
@@ -35,27 +38,37 @@ FILEURL_REQUEST = {
 
 
 # ---------------------------------------------------------------------------- jegyzék
+def _location_warnings(app, rel):
+    if rel != store.DOCUMENTS_REL and (app.project_root / store.DOCUMENTS_REL).is_file() \
+            and not (app.project_root / rel).is_file():
+        return ["C osztályú projekt: a dokumentum-jegyzék helye %s; a régi %s-t a munkapad nem használja "
+                "(helyezd át, ha kell)." % (rel, store.DOCUMENTS_REL)]
+    return []
+
+
 def get_documents(req):
     app = req.app
     app.require_open()
-    doc, etag = app.store.load_documents()
-    return Result(doc, SCHEMA, etag=etag)
+    rel = app.documents_rel()
+    doc, etag = app.store.load_documents(rel)
+    return Result(doc, SCHEMA, warnings=_location_warnings(app, rel), etag=etag)
 
 
 def put_documents(req):
     app = req.app
     app.require_open()
     doc = req.json_object()
-    ok, reason = app.can_write(store.DOCUMENTS_REL)
+    rel = app.documents_rel()
+    ok, reason = app.can_write(rel)
     if not ok:
-        raise ApiError("FORBIDDEN", reason, {"path": store.DOCUMENTS_REL})
-    new_etag = app.store.save_documents(doc, if_match(req))
+        raise ApiError("FORBIDDEN", reason, {"path": rel})
+    new_etag = app.store.save_documents(doc, if_match(req), rel)
     warnings = []
     docs = doc.get("docs")
-    if app.log_activity("documents.save", outputs=[{"path": store.DOCUMENTS_REL, "sha256": new_etag}],
+    if app.log_activity("documents.save", outputs=[{"path": rel, "sha256": new_etag}],
                         details={"n_docs": len(docs) if isinstance(docs, list) else 0}) is None:
         warnings.append(app.ACTIVITY_WARNING)
-    saved, etag = app.store.load_documents()
+    saved, etag = app.store.load_documents(rel)
     return Result(saved, SCHEMA, warnings=warnings, etag=etag)
 
 
@@ -71,7 +84,7 @@ def _composer_outdir(app):
 
 
 def _doc_entry(app, doc_id):
-    doc, _ = app.store.load_documents()
+    doc, _ = app.store.load_documents(app.documents_rel())
     for d in doc.get("docs") or []:
         if isinstance(d, dict) and d.get("id") == doc_id:
             return d
@@ -101,7 +114,7 @@ def _resolve(app, doc_id, must_exist=True):
         return security.safe_resolve(app.project_root, rel, security.RUN_ARTIFACT_EXTENSIONS, must_exist), rel
     entry = _doc_entry(app, doc_id)
     if entry is None:
-        raise ApiError("NOT_FOUND", "Nincs ilyen dokumentum a jegyzékben (03_adatok/documents.json).")
+        raise ApiError("NOT_FOUND", "Nincs ilyen dokumentum a jegyzékben (%s)." % app.documents_rel())
     rel = entry.get("path")
     if entry.get("root") == "project":
         root = app.project_root

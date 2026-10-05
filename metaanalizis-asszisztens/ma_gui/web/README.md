@@ -29,6 +29,7 @@ web/
   fixtures/*.json          fejlesztői API-borítékok (csak a --dev buildbe kerülnek)
   dist/index.html          termék-build (az integrátor másolja a ma_gui/static/index.html-be)
   dist/index.dev.html      fejlesztői build (gitignore-olt)
+  eslint.config.js         minimális ESLint (flat config): böngésző-globálisok, no-undef, no-unused-vars, eqeqeq
 ```
 
 ## Build és tesztek
@@ -38,9 +39,25 @@ python3 ma_gui/web/build_gui.py           # dist/index.html  (termék, ≤ 450 K
 python3 ma_gui/web/build_gui.py --dev     # dist/index.dev.html (+ fixture-ök; megnyitás: ?fixtures=1)
 python3 ma_gui/web/build_gui.py --check   # 1-es kód, ha a dist/index.html nem naprakész
 python3 ma_gui/web/build_gui.py --list    # modulsorrend
-python3 tests/gui/ui/test_build_gui.py    # build-, lint- és statikus tesztek (böngésző nélkül)
-node tests/gui/ui/shell.spec.js           # Playwright/Chromium: keret, CSP, munkamenet, billentyűzet, téma, nyelv, tároló, önteszt
+python3 tests/gui/test_ui_static.py       # a termék-dist és a források statikus ellenőrzése (böngésző nélkül)
+python3 tests/gui/ui/test_build_gui.py    # build-, lint- és szabálysértés-tesztek
+python3 tests/gui/ui/test_minify.py       # a tömörítés veszteségmentes (espree-AST összevetés)
+node /opt/node22/lib/node_modules/eslint/bin/eslint.js -c ma_gui/web/eslint.config.js ma_gui/web/src
+node tests/gui/ui/run_all.js [--python]   # az összes *.spec.js egymás után (+ a Python-tesztek); 1-es kód hibánál
+node tests/gui/ui/a11y.spec.js            # akadálymentesség: csak billentyűzettel minden MVP-képernyőn, kontraszt két témában
 ```
+
+**Termék-tömörítés (≤ 450 KB, terv 2.3).** A termék-build a lint UTÁN veszteségmentesen tömörít
+(`build_gui.py` vége): `minify_js` tokenszinten elhagyja a megjegyzéseket és a fölös szóközöket (a
+sortörés ott marad, ahol az ASI számít), az idézőjeles azonosító-kulcsot idézőjel nélkül írja, és a
+névtelen függvénykifejezést nyílfüggvényre cseréli, ahol a jelentés biztosan azonos (nincs `this` /
+`arguments` / `new.target` a törzsben, és a modulban csak beépített konstruktor áll `new` után); nevet
+nem cserél. `minify_css` a megjegyzéseket és a fölös szóközöket hagyja el. Az i18n mindkét buildben
+`<script type="text/plain" id="ma-i18n" data-enc="lz1">`: a két szótár egy fában (`{"a":{"b":["hu","en"]}}`),
+szöveges LZ77-tel (kicsomagolás: `i18n.js`, Python-pár: `build_gui.unpack_i18n`). A `--dev` build a JS-t
+és a CSS-t olvasható alakban hagyja. A `tests/gui/ui/test_minify.py` minden termék-modulra ellenőrzi, hogy
+az AST tömörítés előtt és után azonos (`minify_check.js`). Ha a build mégis túllépi a keretet, a hiba
+üzenete megmondja; a keret emelése tervdöntés (2.3), nem a build dolga.
 
 A dev-build megnyitása szerver nélkül is megy (`file://…/index.dev.html?fixtures=1`), de a CSP
 csak HTTP-n él; a `shell.spec.js` saját teszt-szervere a nonce-ot behelyettesíti és a

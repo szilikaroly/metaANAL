@@ -214,12 +214,13 @@ def _reml_traces(w):
     return tr_p / sw, tr_pp / (sw * sw)
 
 
-def _fisher_scoring(yi, vi, kind, start, tol=1e-10, maxiter=1000, scale=None):
+def _fisher_scoring(yi, vi, kind, start, tol=1e-10, maxiter=1000, scale=None, step=1.0):
     """REML/ML Fisher-scoring lépésfelezéssel (Viechtbauer 2005).
 
     Konvergencia: |Δτ²| <= tol · max(τ², skála), ahol a skála a v_i mediánja (mértékegység-
     független). Nem véges vagy nem pozitív információ esetén converged=False-szal kilép,
-    és a hívó a profil-likelihood kereséssel folytatja."""
+    és a hívó a profil-likelihood kereséssel folytatja. step < 1: csillapított lépések
+    (a metafor control = list(stepadj = ...) megfelelője)."""
     if scale is None:
         scale = variance_scale(vi)
     tau2 = max(0.0, start)
@@ -239,6 +240,7 @@ def _fisher_scoring(yi, vi, kind, start, tol=1e-10, maxiter=1000, scale=None):
             adj = (r2w2 - sw) / sw2
         if not math.isfinite(adj):
             break
+        adj *= step
         while tau2 + adj < 0:
             adj /= 2.0
             if abs(adj) < 1e-300:
@@ -282,17 +284,32 @@ def _golden_max(f, a, b, tol=1e-13, maxiter=300):
 def optimize_tau2(ll, fs, start, scale, hi, ngrid=30):
     """(RE)ML τ²: Fisher-scoring + globális ellenőrzés a profil-likelihoodon.
 
-    ll: τ² -> (RE)ML log-likelihood; fs: kezdőérték -> (τ², converged, iterációk).
-    1) Fisher-scoring a kezdőértékből (HE, mint a metafor-ban).
+    ll: τ² -> (RE)ML log-likelihood; fs: (kezdőérték, lépésszorzó=1) -> (τ², converged, iterációk).
+    1) Fisher-scoring a kezdőértékből (HE, mint a metafor-ban); ha oszcillál és nem konvergál,
+       újra fél lépésekkel (metafor: stepadj = 0.5) — info['step_adj'].
     2) A τ² = 0 határ összehasonlítása: ha ll(0) nagyobb, mint ll(τ²_FS), akkor τ² = 0
        (a metafor 'Fisher scoring algorithm may have gotten stuck at a local maximum.
        Setting tau^2 = 0' esete) — info['boundary_reset'].
     3) Durva rács az u = log(1 + τ²/skála) tengelyen [0, felső korlát]; ha egy rácspont
        láthatóan nagyobb likelihoodot ad, a környezetében arany-metszés + Fisher-scoring
        finomítás (info['global_search']). Ez a nem konvergált Fisher-scoring tartaléka is.
+       Ha a legjobb rácspont a τ² = 0 határ, de a határ csak jelölt (a Fisher-scoring nem
+       konvergált, vagy ll(0) miatt állítottuk 0-ra), a [0, első rácspont] szakaszon is
+       keresünk: a belső maximum az első rácspont alatt is lehet.
     """
-    t_fs, conv, it = fs(start)
+    def run_fs(s0):
+        t, c, n = fs(s0)
+        if c:
+            return t, c, n, 1.0
+        t2, c2, n2 = fs(s0, 0.5)
+        if c2:
+            return t2, c2, n + n2, 0.5
+        return t, c, n + n2, 1.0
+
+    t_fs, conv, it, step = run_fs(start)
     info = {"converged": conv, "iterations": it}
+    if conv and step != 1.0:
+        info["step_adj"] = step
     ll0 = _safe_ll(ll, 0.0)
     if conv and math.isfinite(t_fs) and t_fs >= 0:
         ll_fs = _safe_ll(ll, t_fs)
@@ -312,14 +329,14 @@ def optimize_tau2(ll, fs, start, scale, hi, ngrid=30):
     us = [umax * j / ngrid for j in range(ngrid + 1)]
     vals = [ll0] + [_safe_ll(ll, scale * math.expm1(u)) for u in us[1:]]
     j = max(range(len(us)), key=lambda i: vals[i])
-    if j > 0 and vals[j] > best_ll + tol_for(best_ll):
-        a, b = us[j - 1], us[min(j + 1, ngrid)]
+    if (j > 0 and vals[j] > best_ll + tol_for(best_ll)) or (j == 0 and source == "zero"):
+        a, b = us[max(j - 1, 0)], us[min(j + 1, ngrid)]
         if j == ngrid:   # a rács szélén: tágítsuk a keresést
             b = us[ngrid] + 2.0
         u_best, _ = _golden_max(lambda u: _safe_ll(ll, scale * math.expm1(u)), a, b)
         t_g = scale * math.expm1(u_best)
         ll_g = _safe_ll(ll, t_g)
-        t2, conv2, _ = fs(t_g)     # finomítás Fisher-scoringgal
+        t2, conv2, _, _ = run_fs(t_g)     # finomítás Fisher-scoringgal
         if conv2 and math.isfinite(t2) and t2 >= 0:
             ll2 = _safe_ll(ll, t2)
             if ll2 >= ll_g - tol_for(ll_g):
@@ -352,7 +369,7 @@ def _tau2_uni(yi, vi, kind):
         return 0.0, {"converged": True, "iterations": 0}
     scale = variance_scale(vi)
     ll = (lambda x: reml_loglik(yi, vi, x)) if kind == "REML" else (lambda x: ml_loglik(yi, vi, x))
-    fs = lambda s: _fisher_scoring(yi, vi, kind, s, scale=scale)
+    fs = lambda s, step=1.0: _fisher_scoring(yi, vi, kind, s, scale=scale, step=step)
     return optimize_tau2(ll, fs, tau2_he(yi, vi), scale, _tau2_upper(yi, vi))
 
 

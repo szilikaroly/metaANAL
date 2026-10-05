@@ -18,7 +18,7 @@
         "value": 25,
         "tol": 0.5,
         "transform": "square",
-        "note": "printed weight 25 (integer, tol = half unit). With k = 1, the fixed-effect model and the placeholder yi = 1, z = yi / sqrt(1/w) so z^2 = w = 1/vi."
+        "note": "printed weight 25 (integer, tol = half unit). Cross-check through z: with k = 1, the fixed-effect model and the input yi = 1, z = yi / sqrt(1/w) so z^2 = w = 1/vi."
       },
       {
         "path": "stat",
@@ -35,6 +35,20 @@
         "note": "derived, not printed as a result: Var(FE pooled) = 1/sum(w) = 1/25 for a single study, i.e. the reciprocal of the printed weight"
       },
       {
+        "path": "weights_raw.0",
+        "value": 25,
+        "tol": 0.5,
+        "transform": null,
+        "note": "printed weight w = 1/0.04 = 25 (integer, tol = half unit), read directly from the engine's raw inverse-variance weight"
+      },
+      {
+        "path": "sum_weights",
+        "value": 25.0,
+        "tol": 1e-09,
+        "transform": null,
+        "note": "tight check vs verifier full-precision value (verification.computed.weight_fixed = 25.0); k = 1, so sum w = w"
+      },
+      {
         "path": "weights_pct.0",
         "value": 100.0,
         "tol": 1e-09,
@@ -42,7 +56,7 @@
         "note": "derived, not printed: a single study carries 100% of the weight"
       }
     ],
-    "note": "The source gives only the within-study variance (0.04) and the resulting weight (25); no effect size is printed, so yi = 1 is a placeholder needed to run the engine and is chosen so that z^2 equals the raw weight (the engine exposes only relative weights, not raw 1/vi weights). The random-effects weight 1/(VY + T^2) and DL T^2 = (Q - df)/C appear only as formulas (p. 27) with no numbers, so nothing else is testable from this source.",
+    "note": "The source gives only the within-study variance (0.04) and the resulting weight (25); no effect size is printed, so yi = 1 is a placeholder input needed to run the engine; it is chosen so that z^2 also equals the raw weight (kept as a cross-check). The raw 1/vi weight itself is checked through the engine's weights_raw and sum_weights. The random-effects weight 1/(VY + T^2) and DL T^2 = (Q - df)/C appear only as formulas (p. 27) with no numbers, so nothing else is testable from this source.",
     "status": "active"
   },
   {

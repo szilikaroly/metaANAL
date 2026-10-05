@@ -864,28 +864,7 @@
     "value": 0.002973,
     "tol": 5e-07,
     "transform": "square",
-    "note": "printed IVhet variance = sum of last column of Table 6.4 = 0.002973 (6 dp), p. 132"
-   },
-   {
-    "path": "se",
-    "value": 0.054527,
-    "tol": 1.39e-06,
-    "transform": null,
-    "note": "printed IVhet SE = 0.054527 (6 dp), p. 132, computed with tau^2 rounded to 0.006325; the engine (no tau2_fixed for IVhet) uses the unrounded DL tau^2, so tol = half unit + |SE(0.006325) - SE(unrounded)| (8.84e-07)"
-   },
-   {
-    "path": "ci_lower",
-    "value": 0.4815,
-    "tol": 6.78e-05,
-    "transform": null,
-    "note": "printed CI lower 0.4815 (4 dp), p. 132; book path 0.5884 - 1.96 x 0.054527 = 0.481527, tol = half unit + |book path - exact 0.481509| (1.77e-05; rounded estimate, rounded tau^2, z = 1.96)"
-   },
-   {
-    "path": "ci_upper",
-    "value": 0.6953,
-    "tol": 7.46e-05,
-    "transform": null,
-    "note": "printed CI upper 0.6953 (4 dp), p. 132; book path 0.5884 + 1.96 x 0.054527 = 0.695273, tol = half unit + |book path - exact 0.695248| (2.46e-05)"
+    "note": "printed IVhet variance = sum of last column of Table 6.4 = 0.002973 (6 dp), p. 132 (computed with tau^2 rounded to 0.006325; the unrounded DL tau^2 also gives 0.002973 at this precision, see khan_ch06_07__schizophrenia_raw_ivhet_tau2_rounded)"
    },
    {
     "path": "ci_lower",
@@ -930,7 +909,107 @@
     "note": "tight check vs verifier full-precision variance with unrounded DL tau^2"
    }
   ],
-  "note": "Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443). Table 6.4 displays Shen's p as 0.51 but its W and Wp imply 0.512 (input used here). Per-study Var* and IVhet variance components have no engine path.",
+  "note": "Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443). Table 6.4 displays Shen's p as 0.51 but its W and Wp imply 0.512 (input used here). Per-study Var* and IVhet variance components have no engine path. The book's IVhet SE and CI (p. 132) were computed with tau^2 rounded to 0.006325 and z = 1.96; they are checked at half-unit precision in khan_ch06_07__schizophrenia_raw_ivhet_tau2_rounded (tau2_fixed).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_ivhet_tau2_rounded",
+  "example_id": "khan_ch06_07__schizophrenia_raw_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.6, Table 6.4 p. 131; p. 132",
+  "description": "Raw-proportion IVhet hand calculation of Table 6.4 with tau^2 fixed at the rounded 0.006325 and z = 1.96: Var, SE, CI and z at the printed precision.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet",
+   "tau2_fixed": 0.006325,
+   "level": 0.950004209703559
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5884,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "IVhet estimate = FE = 13243.84/22509 = 0.5884 (4 dp; used in the CI and z), p. 132"
+   },
+   {
+    "path": "se",
+    "value": 0.002973,
+    "tol": 5e-07,
+    "transform": "square",
+    "note": "printed IVhet variance = sum of last column of Table 6.4 = 0.002973 (6 dp), p. 132; tol = half unit"
+   },
+   {
+    "path": "se",
+    "value": 0.054527,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed IVhet SE = 0.054527 (6 dp), p. 132; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4815,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed CI lower 0.4815 (4 dp), p. 132; book path 0.5884 - 1.96 x 0.054527 = 0.481527 from the rounded estimate; the exact 0.481506 (level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96) rounds to the same 4 dp, so tol = half unit"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6953,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed CI upper 0.6953 (4 dp), p. 132; book path 0.5884 + 1.96 x 0.054527 = 0.695273; the exact 0.695252 rounds to the same 4 dp, so tol = half unit"
+   },
+   {
+    "path": "stat",
+    "value": 10.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed z = 10.79 (2 dp), p. 132"
+   },
+   {
+    "path": "tau2",
+    "value": 0.006325,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "the fixed tau^2 (printed DL tau^2, 6 dp, p. 131) is used as given"
+   }
+  ],
+  "note": "Same data as khan_ch06_07__schizophrenia_raw_ivhet (input x = printed p x N). The book's IVhet chain uses the DL tau^2 rounded to 0.006325 and z = 1.96; with tau2_fixed and level = 2*Phi(1.96) - 1 = 0.950004209703559 (the book's z = 1.96), the printed SE, variance and CI are reproduced at half-unit precision (no tau^2-rounding allowance).",
   "status": "active"
  },
  {
@@ -3660,48 +3739,6 @@
     "note": "printed IVhet = -769.624/57294.75 = -0.01343 (5 dp), p. 152"
    },
    {
-    "path": "se",
-    "value": 5.099e-05,
-    "tol": 1.33e-07,
-    "transform": "square",
-    "note": "printed IVhet Var = 5.099E-05, Table 7.4 / p. 152, computed with tau^2 rounded to 0.000111; the engine (no tau2_fixed for IVhet) uses the unrounded DL tau^2: tol = half unit + |Var(0.000111) - Var(unrounded)| (1.28e-07)"
-   },
-   {
-    "path": "se",
-    "value": 0.00714,
-    "tol": 1.4e-05,
-    "transform": null,
-    "note": "printed IVhet SE = 0.00714 (5 dp), p. 152; tol = half unit + tau^2-rounding effect (8.95e-06)"
-   },
-   {
-    "path": "ci_lower",
-    "value": -0.02743,
-    "tol": 2.28e-05,
-    "transform": null,
-    "note": "printed CI lower -0.02743 (5 dp), p. 153; tol = half unit + |book path (tau^2 0.000111, z 1.96) - exact| (1.78e-05)"
-   },
-   {
-    "path": "ci_upper",
-    "value": 0.000563,
-    "tol": 1.83e-05,
-    "transform": null,
-    "note": "printed CI upper 0.000563 (6 dp), p. 153; tol = half unit + |book path - exact| (1.78e-05)"
-   },
-   {
-    "path": "stat",
-    "value": -1.88121,
-    "tol": 0.00237,
-    "transform": null,
-    "note": "printed z = -1.88121 (5 dp), p. 153; tol = half unit + tau^2-rounding effect on z (0.00236)"
-   },
-   {
-    "path": "p",
-    "value": 0.0602,
-    "tol": 0.000585,
-    "transform": null,
-    "note": "printed P = 2 x 0.0301 = 0.0602 (normal table at |z| = 1.88), p. 153: tol = 2 x half unit of the table value (1e-4) + z rounding 1.88121 -> 1.88 (1.65e-4) + tau^2 rounding (3.20e-4)"
-   },
-   {
     "path": "estimate",
     "value": -0.01,
     "tol": 0.005,
@@ -3835,7 +3872,133 @@
     "note": "tight check vs verifier (unrounded tau^2)"
    }
   ],
-  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). The 'W*' column of Table 7.4 is the IVhet variance component (w_i/W)^2 (v_i + tau^2), not a weight; it has no engine path. Typo on p. 153: the upper-limit formula prints '-1.96' for '+1.96' (the result 0.000563 is correct).",
+  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). The 'W*' column of Table 7.4 is the IVhet variance component (w_i/W)^2 (v_i + tau^2), not a weight; it has no engine path. Typo on p. 153: the upper-limit formula prints '-1.96' for '+1.96' (the result 0.000563 is correct). The book's IVhet Var, SE, CI, z and p (Table 7.4, pp. 152-153) were computed with tau^2 rounded to 0.000111 and z = 1.96; they are checked at half-unit precision in khan_ch06_07__aspirin_mi_rd_ivhet_tau2_rounded (tau2_fixed). This case keeps the tau^2-independent printed values and the tight checks of the unrounded DL tau^2 chain.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_mi_rd_ivhet_tau2_rounded",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch7 Example 7.7, Table 7.4 p. 152; pp. 152-153",
+  "description": "Aspirin IVhet hand calculation of Table 7.4 with tau^2 fixed at the rounded 0.000111 and z = 1.96: Var, SE, CI, z and p at the printed precision.",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet",
+   "tau2_fixed": 0.000111,
+   "level": 0.950004209703559
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.01343,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed IVhet = -769.624/57294.75 = -0.01343 (5 dp), p. 152 (FE estimate, tau^2-independent)"
+   },
+   {
+    "path": "se",
+    "value": 5.099e-05,
+    "tol": 5e-09,
+    "transform": "square",
+    "note": "printed IVhet Var = 5.099E-05 (4 significant digits), Table 7.4 / p. 152; tol = half unit"
+   },
+   {
+    "path": "se",
+    "value": 0.00714,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed IVhet SE = 0.00714 (5 dp), p. 152; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.02743,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed CI lower -0.02743 (5 dp), p. 153; level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96; tol = half unit"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.000563,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed CI upper 0.000563 (6 dp), p. 153 (the upper-limit formula's '-1.96' is a typo for '+1.96'); level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96; tol = half unit"
+   },
+   {
+    "path": "stat",
+    "value": -1.88121,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed z = -1.88121 (5 dp), p. 153; tol = half unit"
+   },
+   {
+    "path": "p",
+    "value": 0.0602,
+    "tol": 0.000265,
+    "transform": null,
+    "note": "printed P = 2 x 0.0301 = 0.0602, p. 153, read from a normal table at |z| = 1.88: tol = 2 x half unit of the 4-dp table value (1e-4) + |2*Phi(-1.88) - 2*Phi(-1.88121)| (1.647e-4)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.000111,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "the fixed tau^2 (Table 7.4 / Ex 7.6) is used as given"
+   }
+  ],
+  "note": "Same data as khan_ch06_07__aspirin_mi_rd_ivhet. The book's IVhet chain uses the DL tau^2 rounded to 0.000111 (Ex 7.6) and z = 1.96; with tau2_fixed and level = 2*Phi(1.96) - 1 = 0.950004209703559 (the book's z = 1.96), every printed tau^2-dependent value is reproduced at half-unit precision (no tau^2-rounding allowance).",
   "status": "active"
  }
 ]

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Közös segédek a végpontokhoz: törzsmezők és lekérdezési paraméterek ellenőrzése, If-Match,
-adattábla-út. A hibaüzenetek mezőnevet mondanak, értéket soha (T10)."""
+adattábla-út, szabad szöveg PHI-őre. A hibaüzenetek mezőnevet mondanak, értéket soha (T10)."""
+from .. import privacy, security
 from ..router import ApiError
 
 TABLE_EXTENSIONS = (".csv", ".tsv", ".txt")
@@ -86,8 +87,37 @@ def dataset_rel(req, value):
     rel = req.app.store.rel(value)
     if not rel.lower().endswith(TABLE_EXTENSIONS):
         raise ApiError("FORBIDDEN", "Csak CSV/TSV adattábla nyitható meg (.csv, .tsv, .txt).")
+    try:
+        # a teljes T7-szabálykészlet is (COM0, LPT¹, CONIN$, rejtett név, ':' …), ne csak a tárolóé
+        security.check_relpath(rel)
+    except security.UnsafePath as exc:
+        raise ApiError("FORBIDDEN", exc.message) from None
     req.app.store.path(rel)          # symlinkkel kivezető út → 403
     return rel
+
+
+def phi_text_guard(app, fields):
+    """Szabad szöveg (naplóbejegyzés, indoklás) PHI-őre (7.4, T10): a projekt.sqlite a vault
+    mentésével GitHubra kerülhet. fields: [(mezőnév, szöveg|None)].
+
+    TAJ-gyanú (vagy születési dátum) esetén B/C osztályú, vault által követett projektben (ha a
+    projekt.sqlite nincs .gitignore-ban) 403 a mezők nevével (érték nélkül); egyébként a
+    figyelmeztetések listája (üres, ha nincs találat)."""
+    hits = []
+    for name, text in fields:
+        pats = privacy.text_patterns(text) if isinstance(text, str) else []
+        if pats:
+            hits.append({"field": name, "patterns": pats})
+    if not hits:
+        return []
+    names = ", ".join(h["field"] for h in hits)
+    if app.text_hold():
+        raise ApiError("FORBIDDEN", "PHI-gyanús szöveg (mező: %s): a projektnapló (projekt.sqlite) a vault mentésével "
+                                    "GitHubra kerülne. Írd le azonosító nélkül (például: „a _privat/… tábla 14. "
+                                    "sora”), az adatot pedig tartsd a _privat/ alatt." % names,
+                       {"phi_fields": hits})
+    return ["PHI-gyanú a szövegben (mező: %s): a projektnaplóba azonosító (TAJ-szám, születési dátum) ne "
+            "kerüljön; hivatkozz a _privat/ alatti adatra." % names]
 
 
 def kb_refs_text(value):

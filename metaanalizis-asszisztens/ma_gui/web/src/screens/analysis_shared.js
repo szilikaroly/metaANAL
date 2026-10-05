@@ -194,33 +194,8 @@
     return p;
   }
 
-  var KB_FIELDS = ['condition', 'recommendation', 'rationale', 'strength', 'machine_check', 'locator', 'source_ids'];
-
-  function openKb(id) {
-    var body = h('div', { 'class': 'kb-item', 'aria-busy': 'true' }, MA.ui.spinner());
-    var m = MA.ui.modal({ title: t('analysis.kb.title', { id: id }), body: body, size: 'lg',
-      actions: [{ label: t('common.close'), kind: 'primary' }] });
-    MA.api.get('/api/kb/item/' + encodeURIComponent(id), { toast: false }).then(function (env) {
-      // szerver-alak: {id, table, item: {…}, local_only, note}; a lapos alakot is elfogadjuk
-      var d0 = env.data || {};
-      var d = d0.item && typeof d0.item === 'object' ? Object.assign({}, d0.item, { local_only: d0.local_only, note: d0.note, kind: d0.table }) : d0;
-      body.removeAttribute('aria-busy');
-      var dl = h('dl', { 'class': 'kb-fields' });
-      KB_FIELDS.forEach(function (f) {
-        if (d[f] === undefined || d[f] === null || d[f] === '') { return; }
-        dl.appendChild(h('dt', null, t('analysis.kb.field.' + f)));
-        dl.appendChild(h('dd', null, pick(d[f], '')));
-      });
-      MA.dom.mount(body,
-        h('p', { 'class': 'kb-meta' }, MA.ui.badge('neutral', d.stage_id || d.kind || 'KB'), ' ',
-          d.local_only ? MA.ui.badge('warning', pick(d.note, t('analysis.kb.localOnly'))) : null),
-        dl);
-    }, function (err) {
-      body.removeAttribute('aria-busy');
-      MA.dom.mount(body, MA.ui.errorBox(err));
-    });
-    return m;
-  }
+  /** openKb(id) — a KB-tétel modális ablaka: a közös „Miért?” komponensé (components/why.js, MA.why.openItem). */
+  function openKb(id) { return MA.why.openItem(id); }
 
   function kbButton(id, title) {
     return h('button', { type: 'button', 'class': 'kb-badge', 'data-kb': id, title: title || t('analysis.kb.open', { id: id }),
@@ -309,7 +284,7 @@
     var panel = h('section', { 'class': 'panel drill', id: 'drilldown', role: 'region', 'aria-labelledby': headId, tabindex: '-1', 'data-uid': s.row_uid,
       onkeydown: function (ev) { if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); close(); } } },
     h('div', { 'class': 'drill-head' },
-      h('h3', { id: headId, 'class': 'drill-title' }, t('analysis.drill.title', { study: s.label })),
+      h('h2', { id: headId, 'class': 'drill-title' }, t('analysis.drill.title', { study: s.label })),
       h('span', { 'class': 'muted drill-meta' }, t('analysis.drill.meta', { row: typeof s.row_index === 'number' ? String(s.row_index + 1) : '—', uid: s.row_uid })),
       h('button', { type: 'button', 'class': 'btn-icon drill-close', 'aria-label': t('analysis.drill.close'), onclick: close }, '×')),
     h('p', { 'class': 'drill-effect' }, h('span', { 'class': 'muted' }, (plot.measure || '') + ' '), MA.ui.num(s.display_text),
@@ -356,7 +331,7 @@
         var uid = rowUid || s.row_uid;
         var cells = (Array.isArray(prov.cells) ? prov.cells : []).filter(function (c) { return c.row_uid === uid; });
         MA.dom.mount(provHost, cells.length
-          ? [h('h4', { 'class': 'drill-sub' }, t('analysis.drill.provenance')), h('ul', { 'class': 'drill-prov-list' }, cells.map(provCell))]
+          ? [h('h3', { 'class': 'drill-sub' }, t('analysis.drill.provenance')), h('ul', { 'class': 'drill-prov-list' }, cells.map(provCell))]
           : MA.ui.emptyState('analysis.drill.noProv'));
       }, function (err) {
         if (err.code !== 'ABORTED') { MA.dom.mount(provHost, MA.ui.errorBox(err)); }

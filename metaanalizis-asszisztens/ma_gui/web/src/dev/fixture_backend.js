@@ -159,8 +159,12 @@
     TOKEN: FIXTURE_TOKEN,
     calls: calls,
     routes: routes,
-    /** route(method, pathPattern, handler) — dinamikus fixture (elsőbbséget kap a JSON-útvonalakkal szemben). */
-    route: function (method, path, fn) { handlers.push({ method: String(method).toUpperCase(), path: path, fn: fn }); },
+    /** route(method, pathPattern, handler, {first}?) — dinamikus fixture (elsőbbséget kap a JSON-útvonalakkal
+     *  szemben; a korábban regisztrált nyer, kivéve {first: true}: az a meglévő kezelők elé kerül — tesztekhez). */
+    route: function (method, path, fn, opts) {
+      var hd = { method: String(method).toUpperCase(), path: path, fn: fn };
+      if (opts && opts.first) { handlers.unshift(hd); } else { handlers.push(hd); }
+    },
     reset: function () { routes.forEach(function (r) { r._pos = 0; }); calls.length = 0; }
   };
 

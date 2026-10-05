@@ -265,6 +265,8 @@
 
   function renderError(root, e) {
     if (!(e && e.isApiError)) { window.console.error(e); }   // programhiba; az API-hibát a toast már jelezte
+    // a képernyő „Betöltés …” jelzője ne maradjon a hibadoboz mellett
+    Array.prototype.slice.call(root.children).forEach(function (c) { if (c.classList.contains('spinner')) { root.removeChild(c); } });
     root.appendChild(h('div', { 'class': 'panel' }, MA.ui.errorBox(e && e.isApiError ? e : { code: 'INTERNAL', message: e && e.message ? e.message : String(e) })));
   }
 

@@ -401,20 +401,37 @@ class ServerHttpTests(unittest.TestCase):
             self.assertEqual(env["error"]["code"], "FORBIDDEN")
         self.assertError(self.req("GET", "/api/table?dataset=" + quote("03_adatok/nincs.csv")), 404, "NOT_FOUND")
         self.assertError(self.req("GET", "/api/provenance?dataset=" + quote("../x.csv", safe="")), 403, "FORBIDDEN")
+        # az URL-szintű bejárás mindig fut (a symlink-rész Windows-on jog híján kimaradhat, SRV-8)
+        for path in ("/f/../../etc/passwd", "/f/%2e%2e/1/x", "/api/../api/engine"):
+            st = self.req("GET", path, token=False)[0]
+            self.assertIn(st, (400, 403, 404), path)
         outside = os.path.join(self.tmp, "outside.csv")
         shutil.copy(BCG, outside)
         link = os.path.join(self.proj, "03_adatok", "link.csv")
         try:
             os.symlink(outside, link)
         except (OSError, NotImplementedError):
-            return
+            self.skipTest("nincs symlink-jog (Windows fejlesztői mód nélkül): csak a symlink-rész marad ki")
         try:
             self.assertError(self.req("GET", "/api/table?dataset=03_adatok/link.csv"), 403, "FORBIDDEN")
         finally:
             os.unlink(link)
+
+    def test_path_traversal_url_checks_run_without_symlink_rights(self):
+        """SRV-8: jog nélküli Windows-fiókon (os.symlink → 1314) is lefutnak az URL-ellenőrzések."""
+        sent = []
+        real = self.req
+
+        def spy(method, path, *a, **kw):
+            sent.append(path)
+            return real(method, path, *a, **kw)
+
+        with mock.patch.object(os, "symlink", side_effect=OSError(1314, "A required privilege is not held by the client")), \
+                mock.patch.object(self, "req", side_effect=spy):
+            with self.assertRaises(unittest.SkipTest):
+                self.test_dataset_path_traversal()
         for path in ("/f/../../etc/passwd", "/f/%2e%2e/1/x", "/api/../api/engine"):
-            st = self.req("GET", path, token=False)[0]
-            self.assertIn(st, (400, 403, 404), path)
+            self.assertIn(path, sent)
 
     def test_table_import_parses_without_saving(self):
         before = sorted(os.listdir(os.path.join(self.proj, "03_adatok")))
@@ -741,14 +758,21 @@ class ServerHttpTests(unittest.TestCase):
                          400, "BAD_REQUEST")
         self.assertError(self.req("POST", "/api/project", {"action": "torol"}), 400, "BAD_REQUEST")
         try:
-            env = self.assertOk(self.req("POST", "/api/project", {"action": "data_class", "data_class": "b"}))
+            # (a megosztott projektben egy korábbi teszt beírhatta a kezelt blokkot: ma-projekt.json nélkül az
+            # osztály ilyenkor 'unknown' → C, és minden csökkentés megerősítést kér)
+            env = self.assertOk(self.req("POST", "/api/project", {"action": "data_class", "data_class": "b",
+                                                                  "confirm": True}))
             self.assertEqual((env["data"]["data_class"], env["data"]["data_class_source"]), ("B", "ma-projekt.json"))
             meta = json.loads(Path(self.proj, "ma-projekt.json").read_text(encoding="utf-8"))
             self.assertEqual(meta["data_class"], "B")
             self.assertError(self.req("POST", "/api/project", {"action": "data_class", "data_class": "D"}),
                              422, "VALIDATION")
+            err = self.assertError(self.req("POST", "/api/project", {"action": "data_class", "data_class": "A"}),
+                                   400, "BAD_REQUEST")
+            self.assertTrue(err["error"]["details"]["needs_confirm"])
         finally:
-            self.assertOk(self.req("POST", "/api/project", {"action": "data_class", "data_class": "A"}))
+            self.assertOk(self.req("POST", "/api/project", {"action": "data_class", "data_class": "A",
+                                                            "confirm": True}))
 
     def test_kb_routes(self):
         env = self.assertOk(self.req("GET", "/api/kb/search?q=heterogeneity&limit=3"))

@@ -139,7 +139,7 @@
         h('button', { type: 'button', 'class': 'btn-icon why-x', 'aria-label': t('common.close'), onclick: function () { close(true); } }, '×')),
       panel(spec),
       h('div', { 'class': 'why-foot' },
-        ids.length ? h('button', { type: 'button', 'class': 'btn btn-sm btn-ghost why-open-kb', onclick: function () { close(false); openItem(ids[0]); } }, t('why.openKb', { id: ids[0] })) : null,
+        ids.length ? h('button', { type: 'button', 'class': 'btn btn-sm btn-ghost why-open-kb', onclick: function () { close(false); openItem(ids[0], anchor); } }, t('why.openKb', { id: ids[0] })) : null,
         h('span', { 'class': 'muted why-note', i18n: 'why.note' })));
     document.body.appendChild(pop);
     place(pop, anchor);
@@ -179,9 +179,11 @@
     return b;
   }
 
-  function openItem(id) {
+  /** openItem(id, back?) — a KB-tétel modálisban; bezáráskor a fókusz a back elemre (pl. a „Miért?” gombra) kerül */
+  function openItem(id, back) {
     var body = h('div', { 'class': 'kb-item', 'aria-busy': 'true' }, MA.ui.spinner());
-    var m = MA.ui.modal({ title: t('why.itemTitle', { id: id }), body: body, size: 'lg', actions: [{ label: t('common.close'), kind: 'primary' }] });
+    var m = MA.ui.modal({ title: t('why.itemTitle', { id: id }), body: body, size: 'lg', actions: [{ label: t('common.close'), kind: 'primary' }],
+      onClose: function () { if (back && document.body.contains(back)) { back.focus(); } } });
     item(id).then(function (it) {
       MA.proc.pend(body, false);
       if (!it) { MA.dom.mount(body, MA.ui.emptyState('why.noKb')); return; }

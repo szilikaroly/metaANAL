@@ -15,14 +15,57 @@
   var listeners = [];
   var missing = {};
 
+  // A build (build_gui.py pack_i18n) a két szótárat egy fába teszi ({"a":{"b":["hu","en"]}}; ha egy kulcs
+  // egyben előtag is, a saját szövege az alfa "" kulcsán áll), majd szöveges LZ77-tel tömöríti („lz1”):
+  // '~~' = '~'; '~' + 2 jegy (eltolás-1) + 1 jegy (hossz-LZ_MIN) = visszahivatkozás; minden más szó szerint.
+  var LZ_ALPHABET = '!#$%&()*+,-./0123456789:;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}';
+  var LZ_MIN = 5;
+
+  function lzDecode(z) {
+    var n = LZ_ALPHABET.length;
+    var s = '';
+    var i = 0;
+    while (i < z.length) {
+      var c = z.charAt(i);
+      if (c !== '~') { s += c; i += 1; continue; }
+      if (z.charAt(i + 1) === '~') { s += '~'; i += 2; continue; }
+      var a = LZ_ALPHABET.indexOf(z.charAt(i + 1));
+      var b = LZ_ALPHABET.indexOf(z.charAt(i + 2));
+      var len = LZ_ALPHABET.indexOf(z.charAt(i + 3)) + LZ_MIN;
+      if (a < 0 || b < 0 || len < LZ_MIN) { throw new Error('i18n: hibás lz1-csomag'); }
+      var from = s.length - (a * n + b + 1);
+      if (from < 0) { throw new Error('i18n: hibás lz1-hivatkozás'); }
+      for (var k = 0; k < len; k++) { s += s.charAt(from + k); }   // átfedő másolás is helyes
+      i += 4;
+    }
+    return s;
+  }
+
+  function untree(node, prefix, out) {
+    Object.keys(node).forEach(function (k) {
+      var key = k === '' ? prefix : (prefix ? prefix + '.' + k : k);
+      var v = node[k];
+      if (Array.isArray(v)) {
+        out.hu[key] = v[0];
+        out.en[key] = v[1];
+      } else {
+        untree(v, key, out);
+      }
+    });
+    return out;
+  }
+
   function load() {
     var node = document.getElementById('ma-i18n');
     if (!node) { return; }
     try {
-      var data = JSON.parse(node.textContent || '{}');
+      var text = node.textContent || '';
+      var data = node.getAttribute('data-enc') === 'lz1' ?
+        untree(JSON.parse(lzDecode(text)), '', { hu: {}, en: {} }) : JSON.parse(text || '{}');
       LANGS.forEach(function (l) { dicts[l] = data[l] || {}; });
     } catch (e) {
       dicts = { hu: {}, en: {} };
+      if (window.console) { window.console.error(e); }
     }
   }
 

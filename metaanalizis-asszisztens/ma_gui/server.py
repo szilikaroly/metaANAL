@@ -8,9 +8,14 @@ Indítás (2.2), sorrendben: motor-önteszt (háttérben, alfolyamatban) → ``k
 - Csak ``127.0.0.1``-en hallgat; port: 8790, 8791–8799, majd az OS-é. Windows-on
   ``SO_EXCLUSIVEADDRUSE`` (a port nem „lopható el”), máshol ``SO_REUSEADDR``.
 - Egy projektre egy szerver: zárfájl + ``server.json`` (pid, port; token nélkül) a futásidejű
-  mappában; a második indítás új indítókódot kér a futó példánytól (``runtime.relaunch``).
+  mappában; a második indítás új indítókódot kér a futó példánytól (``runtime.relaunch``), és ha a
+  zár közben felszabadul (leálló példány), maga indul el.
 - Minden kérés a ``security.check_request`` szűrőn megy át (Host, Origin, Sec-Fetch-Site, metódus,
-  token, Content-Type, méret), minden válaszon ott vannak a kötelező fejlécek és a CSP.
+  token, Content-Type, méret), minden válaszon ott vannak a kötelező fejlécek és a CSP (HTTP/0.9-es
+  kérésre is: azt 400-zal, HTTP/1.0-ként utasítjuk el).
+- T11: a kéréssor + fejlécek + törzs beolvasására együttes határidő van (a csepegtetett bájtok nem
+  hosszabbítják meg), az egyidejű kapcsolatok száma korlátos; teli állapotban az új kapcsolat a
+  legrégebb óta olvasott (lassú) kapcsolatot zárja le.
 - Változásfigyelő (``store.ChangeWatcher``) háttérszálon; a külső írásokat ``actor: external``
   sorként naplózza (4.16). Tétlenségi leállás (alap 4 óra; a long-poll nem számít aktivitásnak),
   Ctrl-C-re tiszta leállás. A token nem kerül lemezre.
@@ -21,6 +26,7 @@ nincs; a számok a motorból jönnek.
 import argparse
 import contextlib
 import hmac
+import io
 import os
 import signal
 import socket
@@ -49,6 +55,19 @@ READ_CHUNK = 64 * 1024
 SEND_CHUNK = 256 * 1024
 DRAIN_LIMIT = 16 * 1024 * 1024
 DRAIN_TIMEOUT = 5.0
+REQUEST_DEADLINE = 15.0          # s; kéréssor + fejlécek + törzs együtt (slowloris ellen, T11)
+MAX_CONNECTIONS = 64             # egyidejű kapcsolatok (szálak) felső korlátja
+ACCEPT_WAIT = 1.0                # s; teli állapotban ennyit vár egy szabad helyre az új kapcsolat
+EVICT_MIN_AGE = 0.2              # s; ennél régebben olvasott kapcsolat zárható le egy új javára
+KB_RETRY_S = 30.0                # s; hibás KB-építés újrapróbálásának legkisebb időköze
+RELAUNCH_WAIT = 10.0             # s; a második indítás ennyit vár a futó (induló/leálló) példányra
+TMP_SWEEP_AGE = store.TMP_SWEEP_AGE
+# naplóba csak ismert metódusnév kerülhet (a kéréssor első szava bármi lehet: ESC-szekvencia, 64 KB …)
+KNOWN_METHODS = frozenset(["GET", "POST", "PUT", "HEAD", "OPTIONS", "DELETE", "PATCH", "TRACE", "CONNECT"])
+MSG_UNKNOWN_CLASS = ("Az adatosztály ismeretlen: a ma-projekt.json hiányzik (vagy nincs benne data_class), "
+                     "pedig a projektben van _privat/ adat vagy kezelt .gitignore-blokk. Válaszd ki az "
+                     "osztályt (Projekt → Adatosztály); addig a munkapad C osztályúként kezeli, és adat csak "
+                     "a _privat/ alá írható.")
 _LOG_DEFAULT = object()
 
 
@@ -61,16 +80,93 @@ class AlreadyRunning(RuntimeError):
 
 
 # ---------------------------------------------------------------------------- HTTP-réteg
+class _DeadlineRaw(io.RawIOBase):
+    """Socket-olvasó a kérés teljes határidejével: minden recv előtt a hátralévő időre áll a
+    timeout, így a csepegtetett bájtok sem nyújtják a beolvasást (a per-recv timeout nem elég)."""
+
+    def __init__(self, sock, handler):
+        super().__init__()
+        self._sock = sock
+        self._handler = handler
+
+    def readable(self):
+        return True
+
+    def readinto(self, b):
+        remaining = self._handler.read_deadline - time.monotonic()
+        if remaining <= 0:
+            raise socket.timeout("a kérés beolvasási határideje lejárt")
+        self._sock.settimeout(remaining)
+        return self._sock.recv_into(b)
+
+
 class MunkapadHTTPServer(ThreadingHTTPServer):
-    """ThreadingHTTPServer csak IPv4-loopbackre, gyors (DNS-mentes) kötéssel."""
+    """ThreadingHTTPServer csak IPv4-loopbackre, gyors (DNS-mentes) kötéssel, korlátos számú
+    egyidejű kapcsolattal (T11)."""
 
     daemon_threads = True
     allow_reuse_address = os.name != "nt"
     request_queue_size = 64
+    max_connections = MAX_CONNECTIONS
+    request_deadline = REQUEST_DEADLINE
+    accept_wait = ACCEPT_WAIT
 
     def __init__(self, address, handler, app):
         self.app = app
+        self.max_connections = max(1, int(self.max_connections))
+        self._slots = threading.BoundedSemaphore(self.max_connections)
+        self._reading = {}                  # id(kezelő) → (kezdet, kezelő): a kérését még olvassa
+        self._reading_lock = threading.Lock()
+        self._last_full_log = 0.0
         super().__init__(address, handler)
+
+    # -- kapcsolatkorlát
+    def process_request(self, request, client_address):
+        if not self._slots.acquire(blocking=False):
+            self._evict_slowest()
+            if not self._slots.acquire(timeout=self.accept_wait):
+                now = time.monotonic()
+                if now - self._last_full_log > 10.0:
+                    self._last_full_log = now
+                    self.app.log("túl sok egyidejű kapcsolat (legfeljebb %d): az új kapcsolatot lezártuk"
+                                 % self.max_connections)
+                self.shutdown_request(request)
+                return
+        try:
+            super().process_request(request, client_address)
+        except BaseException:
+            self._slots.release()
+            raise
+
+    def process_request_thread(self, request, client_address):
+        try:
+            super().process_request_thread(request, client_address)
+        finally:
+            self._slots.release()
+
+    def reading_started(self, handler):
+        with self._reading_lock:
+            self._reading[id(handler)] = (time.monotonic(), handler)
+
+    def reading_done(self, handler):
+        with self._reading_lock:
+            self._reading.pop(id(handler), None)
+
+    def _evict_slowest(self):
+        """Teli állapotban a legrégebb óta (még) olvasott kapcsolat lezárása: a lassú vagy csepegtető
+        kliens nem foglalhatja el az összes helyet; a már feldolgozás alatt álló kérést nem bántjuk."""
+        now = time.monotonic()
+        with self._reading_lock:
+            cands = [(t, h) for t, h in self._reading.values() if now - t >= EVICT_MIN_AGE]
+            if not cands:
+                return False
+            _t, victim = min(cands, key=lambda x: x[0])
+            self._reading.pop(id(victim), None)
+        try:
+            victim.connection.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
+        return True
 
     def server_bind(self):
         if os.name == "nt" and hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
@@ -98,6 +194,30 @@ class RequestHandler(BaseHTTPRequestHandler):
     def version_string(self):
         return "ma-munkapad"
 
+    def setup(self):
+        self.read_deadline = time.monotonic() + float(self.server.request_deadline)
+        super().setup()
+        # a teljes kérés-beolvasás határideje recv-szinten (a csepegtetés ne nyújtsa meg)
+        plain = self.rfile
+        self.rfile = io.BufferedReader(_DeadlineRaw(self.connection, self), io.DEFAULT_BUFFER_SIZE)
+        plain.close()
+        self.server.reading_started(self)
+
+    def _reading_finished(self):
+        """A kérés beolvasva: nincs több olvasási határidő, az írás a szokásos timeouttal megy."""
+        self.server.reading_done(self)
+        try:
+            self.connection.settimeout(self.timeout)
+        except OSError:
+            pass
+
+    def finish(self):
+        self.server.reading_done(self)
+        try:
+            super().finish()
+        except OSError:
+            pass
+
     # a BaseHTTPRequestHandler saját naplója a nyers kéréssort (query-vel) írná: kikapcsolva
     def log_message(self, format, *args):        # noqa: A002 — a szülőosztály paraméterneve
         pass
@@ -124,26 +244,40 @@ class RequestHandler(BaseHTTPRequestHandler):
             # biztonsági fejlécek így is menjenek ki
             self.request_version = "HTTP/1.0"
         self.close_connection = True
+        self._reading_finished()
         body = _router.dumps(security.error_envelope(err, msg))
         try:
             self._send_bytes(http, [], body)
         except OSError:
             pass
-        self.server.app.log("%s <hibás kérés> %d %s" % (self.command or "-", http, err))
+        # a metódus a kéréssor első szava: csak ismert név kerülhet a konzolra (T10; ESC-szekvencia,
+        # óriás sor ellen)
+        cmd = getattr(self, "command", None)
+        shown = cmd if cmd in KNOWN_METHODS else ("<?>" if cmd else "-")
+        self.server.app.log("%s <hibás kérés> %d %s" % (shown, http, err))
 
     def _handle(self):
         app = self.server.app
+        if self.request_version == "HTTP/0.9":
+            # a stdlib a kétszavas kéréssort HTTP/0.9-ként fogadja, és fejléc nélkül válaszolna (CSP
+            # és nosniff nélkül): elutasítjuk, a send_error HTTP/1.0-ként, fejlécekkel küldi
+            self.send_error(400)
+            return
         method = self.command
         target = self.path
         rej = app.security.check_request(method, target, self.headers)
         if rej is not None:
             http, code, msg = rej
             self._drain_body()
+            self._reading_finished()
             self._send_bytes(http, [], _router.dumps(security.error_envelope(code, msg)))
             app.log("%s %s %d %s" % (method, _target_class(target), http, code))
             return
         try:
-            body = self._read_body()
+            try:
+                body = self._read_body()
+            finally:
+                self._reading_finished()
             req = _router.Request(app, method, target, self.headers, body)
         except ApiError as exc:
             self._send_bytes(exc.http, exc.headers, _router.dumps(security.error_envelope(exc.code, exc.message)))
@@ -169,7 +303,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         if len(vals) != 1:
             return 0
         v = vals[0].strip()
-        return int(v) if v.isdigit() and len(v) <= 12 else 0
+        # str.isdigit() a '²'-re is igaz, de int('²') ValueError: csak ASCII-számjegy
+        return int(v) if v.isascii() and v.isdigit() and len(v) <= 12 else 0
 
     def _read_body(self):
         n = self._content_length()
@@ -190,8 +325,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         n = self._content_length()
         if n <= 0 or n > DRAIN_LIMIT:
             return
+        # összidő-korlát is (nem csak recv-enkénti): a kérés határideje legfeljebb DRAIN_TIMEOUT múlva
+        self.read_deadline = min(self.read_deadline, time.monotonic() + DRAIN_TIMEOUT)
         try:
-            self.connection.settimeout(DRAIN_TIMEOUT)
             remaining = n
             while remaining > 0:
                 chunk = self.rfile.read(min(remaining, READ_CHUNK))
@@ -257,7 +393,8 @@ class App(object):
     """Egy projektmappához kötött munkapad-szerver állapota és életciklusa.
 
     Tesztben: ``App(mappa, …).start(port=0)``, majd ``serve_forever()`` külön szálon és
-    ``shutdown()``. A CLI a ``cli_main``-en át ``single_instance=True``-val indítja."""
+    ``shutdown()``. A CLI a ``cli_main``-en át ``single_instance=True``-val indítja, a már
+    megszerzett példányzárral (``instance_lock``): foglalt zárnál App sem épül (nincs projekt-szkennelés)."""
 
     ACTIVITY_WARNING = "A tevékenységnaplót (07_ellenorzes/activity.jsonl) nem sikerült írni; a művelet megtörtént."
 
@@ -265,7 +402,7 @@ class App(object):
                  privacy_home=None, privacy_env=None, privacy_platform=None, selftest=True, kb_build=True,
                  caps_refresh=True, runtime_dir=None, single_instance=False, log_stream=_LOG_DEFAULT,
                  validate_responses=False, watch_interval=1.5, longpoll_max=LONGPOLL_MAX, clock=None,
-                 actor=ACTOR):
+                 actor=ACTOR, instance_lock=None, kb_retry_s=KB_RETRY_S, sweep_tmp=True):
         root = Path(os.path.realpath(os.fspath(project_dir)))
         if not root.is_dir():
             raise ValueError("A projektmappa nem létezik vagy nem mappa.")
@@ -297,6 +434,10 @@ class App(object):
         self.selftest_state = {"state": "disabled" if not selftest else "pending", "ok": None}
         self.kb_state = {"state": "pending" if kb_build else "lazy", "ok": None}
         self._kb_thread = None
+        self._kb_lock = threading.Lock()
+        self._kb_attempt_at = None
+        self.kb_retry_s = float(kb_retry_s)
+        self._sweep_tmp = sweep_tmp
         self._privacy = None
         self._privacy_at = 0.0
         self._privacy_lock = threading.Lock()
@@ -304,7 +445,7 @@ class App(object):
         self.httpd = None
         self.port = None
         self.admin_key = None
-        self._instance_lock = None
+        self._instance_lock = instance_lock
         self._serving = False
         self._closed = False
         self._stopping = threading.Event()
@@ -369,7 +510,7 @@ class App(object):
     def _build_kb(self):
         from metaelemzes import kb
         self.kb_state = {"state": "building", "ok": None}
-        started = time.monotonic()
+        started = self._kb_attempt_at = time.monotonic()
         try:
             rebuilt = kb.ensure_built(self.kb_db)
             self.kb_state = {"state": "ok", "ok": True, "rebuilt": bool(rebuilt),
@@ -380,12 +521,21 @@ class App(object):
             self.log("tudásbázis-hiba (%s)" % type(exc).__name__)
 
     def kb_ready(self, timeout=KB_WAIT):
-        """Megvárja az indításkori KB-építést; hibánál 424 CAPABILITY_MISSING."""
+        """Megvárja az indításkori KB-építést; hibánál (legfeljebb kb_retry_s-enként) újrapróbálja —
+        egy átmeneti zár (ágens `kb build`-je, víruskereső) ne tegye a munkamenet végéig elérhetetlenné;
+        ha most sem sikerül: 424 CAPABILITY_MISSING."""
         t = self._kb_thread
         if t is not None:
             t.join(timeout)
             if t.is_alive():
                 raise ApiError("TIMEOUT", "A tudásbázis még épül; próbáld újra néhány másodperc múlva.")
+        if self.kb_state.get("state") == "error":
+            with self._kb_lock:
+                last = self._kb_attempt_at
+                if (self.kb_state.get("state") == "error"
+                        and (last is None or time.monotonic() - last >= self.kb_retry_s)):
+                    self.log("tudásbázis: újrapróbálás")
+                    self._build_kb()
         if self.kb_state.get("state") == "error":
             raise ApiError("CAPABILITY_MISSING", self.kb_state.get("reason") or "A tudásbázis nem érhető el.")
 
@@ -412,13 +562,48 @@ class App(object):
             return None, None
 
     def data_class_with_source(self):
+        """(osztály, forrás). Forrás: 'ma-projekt.json' | 'default' (nincs osztály, és semmi nem utal
+        érzékeny adatra → A) | 'unknown' (nincs osztály, de van _privat/ adat vagy kezelt
+        .gitignore-blokk → zárt alapállás: C, és adat csak a _privat/ alá írható)."""
         meta, _ = self.project_meta()
         if meta is None or meta.get("data_class") in (None, ""):
+            if self._privacy_traces():
+                return "C", "unknown"
             return "A", "default"
         return privacy.normalize_data_class(meta.get("data_class")), PROJECT_JSON
 
+    def _privacy_traces(self):
+        """Van-e jele érzékeny adatnak: nem üres _privat/ vagy kezelt .gitignore-blokk."""
+        try:
+            with os.scandir(str(self.project_root / privacy.PRIVATE_DIR)) as it:
+                if any(True for _ in it):
+                    return True
+        except OSError:
+            pass
+        try:
+            return privacy.gitignore_block_present(self.project_root)
+        except Exception:                                  # noqa: BLE001 — kétség esetén zárt
+            return True
+
     def data_class(self):
         return self.data_class_with_source()[0]
+
+    def documents_rel(self):
+        """A dokumentum-jegyzék helye: C osztályban a _privat/ alatt (ott írható, a vault nem tolja
+        fel); különben 03_adatok/documents.json."""
+        return store.PRIVATE_DOCUMENTS_REL if self.data_class() == "C" else store.DOCUMENTS_REL
+
+    def text_hold(self):
+        """Szabad szöveg (napló, indoklás) a projekt.sqlite-ba: PHI-gyanúnál tiltott-e. Igen, ha B/C
+        osztály, a vault követi a projektet, és a projekt.sqlite nincs .gitignore-ban (feltolná)."""
+        dc = self.data_class()
+        if dc == "A":
+            return False
+        vault = privacy.vault_status(str(self.project_root), **self.privacy_kw)
+        if not vault.get("tracked"):
+            return False
+        ignored, _how = privacy.is_ignored(str(self.project_root), "projekt.sqlite")
+        return not ignored
 
     def compute_privacy(self, data_class=None):
         dc = data_class or self.data_class()
@@ -446,8 +631,12 @@ class App(object):
                            {"reasons": list(ob.get("reasons") or []), "actions": list(st.get("actions") or [])})
 
     def can_write(self, rel, phi_detected=False, consent=False):
-        """privacy.can_write a projekt adatosztályával → (ok, indoklás)."""
-        return privacy.can_write(str(self.project_root), rel, self.data_class(), consent=consent,
+        """privacy.can_write a projekt adatosztályával → (ok, indoklás). Ismeretlen osztálynál (lásd
+        data_class_with_source) csak a _privat/ alá."""
+        dc, source = self.data_class_with_source()
+        if source == "unknown" and not privacy.is_private_path(rel, self.privacy_kw.get("platform")):
+            return False, MSG_UNKNOWN_CLASS
+        return privacy.can_write(str(self.project_root), rel, dc, consent=consent,
                                  phi_detected=phi_detected, **self.privacy_kw)
 
     def log_activity(self, action, argv=None, inputs=(), outputs=(), result=None, details=None):
@@ -568,16 +757,27 @@ class App(object):
                 last = exc
         raise OSError("Nem sikerült portot nyitni a 127.0.0.1 címen (%s)." % (type(last).__name__ if last else "?"))
 
+    def _sweep(self):
+        try:
+            removed = store.sweep_temp_files(self.project_root, TMP_SWEEP_AGE)
+        except Exception as exc:                           # noqa: BLE001
+            self.log("ideiglenes fájlok takarítása: hiba (%s)" % type(exc).__name__)
+            return
+        if removed:
+            self.log("árva ideiglenes fájl törölve: %d db" % len(removed))
+
     def start(self, port=None):
         """Indítás a 2.2 sorrendjében, a kiszolgálás nélkül (azt a serve_forever végzi)."""
-        if self.single_instance:
-            rdir = self.ensure_runtime_dir()
-            lock = runtime.InstanceLock(rdir / runtime.LOCK_NAME)
-            if not lock.acquire():
-                raise AlreadyRunning(rdir)
-            self._instance_lock = lock
-            runtime.remove_server_info(rdir)        # a zárat mi tartjuk: a régi server.json elavult
         try:
+            if self.single_instance:
+                rdir = self.ensure_runtime_dir()
+                lock = self._instance_lock or runtime.InstanceLock(rdir / runtime.LOCK_NAME)
+                if not lock.acquire():
+                    raise AlreadyRunning(rdir)
+                self._instance_lock = lock
+                runtime.remove_server_info(rdir)    # a zárat mi tartjuk: a régi server.json elavult
+            if self._sweep_tmp:
+                self._thread(self._sweep, "ma-gui-sweep")
             if self._selftest_enabled:
                 self.selftest_state = {"state": "running", "ok": None}
                 self._thread(self._run_selftest, "ma-gui-selftest")
@@ -692,21 +892,18 @@ def _say(out, text):
         pass
 
 
-def _relaunch(rdir, a, out, wait_s=10.0):
-    """Már futó példány: új indítókód kérése (a zárat tartó példány még indulhat: várunk rá)."""
-    deadline = time.monotonic() + wait_s
+def _relaunch(rdir, a, out, deadline):
+    """A zár foglalt: új indítókód kérése a futó példánytól. A zárat tartó példány még indulhat
+    (nincs server.json) vagy épp leáll (a zár mindjárt felszabadul): a határidőig várunk.
+
+    Visszaad: 0 (új kód kiírva), 1 (hiba kiírva), vagy None — a zár közben felszabadult, a hívó
+    indítsa el a saját példányát."""
     while True:
+        err = None
         try:
             res = runtime.relaunch(rdir, a.lang)
         except RuntimeError as exc:
-            if time.monotonic() < deadline:             # a másik példány még indulhat
-                time.sleep(0.25)
-                continue
-            info = runtime.read_server_info(rdir) or {}
-            _say(out, "HIBA: %s A projekthez már fut munkapad%s; állítsd le (Ctrl-C a futó ablakban), vagy "
-                      "nyisd meg a meglévő böngészőlapot." % (exc, (" (port: %d)" % info["port"]) if info.get("port")
-                                                                    else ""))
-            return 1
+            res, err = None, exc
         if res is not None:
             url, info = res
             _say(out, "A projekthez már fut munkapad (port: %d, pid: %d). Új, egyszer használható indítókód "
@@ -715,16 +912,31 @@ def _relaunch(rdir, a, out, wait_s=10.0):
             if not a.no_browser:
                 runtime.open_browser(url)
             return 0
-        if time.monotonic() > deadline:
-            _say(out, "HIBA: a projekthez tartozó munkapad-zár foglalt, de a futó példány adatai nem olvashatók "
-                      "(%s). Várj néhány másodpercet, vagy állítsd le a másik példányt." % rdir)
+        probe = runtime.InstanceLock(rdir / runtime.LOCK_NAME)
+        try:
+            free = probe.acquire()
+        except OSError:
+            free = False
+        if free:
+            probe.release()
+            return None
+        if time.monotonic() >= deadline:
+            if err is not None:
+                info = runtime.read_server_info(rdir) or {}
+                _say(out, "HIBA: %s A projekthez már fut munkapad%s; állítsd le (Ctrl-C a futó ablakban), vagy "
+                          "nyisd meg a meglévő böngészőlapot." % (err, (" (port: %d)" % info["port"])
+                                                                    if info.get("port") else ""))
+            else:
+                _say(out, "HIBA: a projekthez tartozó munkapad-zár foglalt, de a futó példány adatai nem "
+                          "olvashatók (%s). Várj néhány másodpercet, vagy állítsd le a másik példányt." % rdir)
             return 1
         time.sleep(0.25)
 
 
 def cli_main(argv=None, out=None):
     """``python -m ma_gui --project DIR [--port N] [--no-browser] [--lang hu|en] [--idle-hours H]``.
-    A motor CLI ``gui`` alparancsa ide delegálhat."""
+    A motor CLI ``gui`` alparancsa ide delegálhat. Hibánál magyar „HIBA: …” sor és nem nulla kód
+    (traceback nélkül)."""
     out = out or sys.stdout
     a = build_parser().parse_args(argv)
     project = Path(os.path.expanduser(a.project))
@@ -734,15 +946,45 @@ def cli_main(argv=None, out=None):
     if a.idle_hours is not None and a.idle_hours < 0:
         _say(out, "HIBA: az --idle-hours nem lehet negatív.")
         return 2
-    rdir = runtime.project_runtime_dir(project)
-    app = App(project, lang=a.lang, idle_hours=a.idle_hours, runtime_dir=rdir, single_instance=True)
+    if a.port is not None and not 0 <= a.port <= 65535:
+        _say(out, "HIBA: a --port 0 és 65535 közötti egész szám lehet (0 = az OS választ).")
+        return 2
     try:
-        app.start(a.port)
-    except AlreadyRunning:
-        return _relaunch(rdir, a, out)
+        rdir = runtime.project_runtime_dir(project)
     except OSError as exc:
-        _say(out, "HIBA: %s" % exc)
+        _say(out, "HIBA: a munkapad futásidejű mappája nem hozható létre (%s: %s). Ellenőrizd a "
+                  "MA_GUI_RUNTIME_DIR beállítást." % (type(exc).__name__, exc))
         return 1
+    deadline = time.monotonic() + RELAUNCH_WAIT
+    while True:
+        # a zárat az App építése előtt szerezzük meg: foglalt zárnál nincs projekt-szkennelés
+        lock = runtime.InstanceLock(rdir / runtime.LOCK_NAME)
+        try:
+            got = lock.acquire()
+        except OSError as exc:
+            _say(out, "HIBA: a példányzár nem hozható létre (%s: %s)." % (type(exc).__name__, exc))
+            return 1
+        if not got:
+            rc = _relaunch(rdir, a, out, deadline)
+            if rc is None:
+                continue                        # a zár közben felszabadult: most mi indulunk
+            return rc
+        try:
+            app = App(project, lang=a.lang, idle_hours=a.idle_hours, runtime_dir=rdir, single_instance=True,
+                      instance_lock=lock)
+        except (OSError, ValueError, store.StoreError) as exc:
+            lock.release()
+            _say(out, "HIBA: %s" % (getattr(exc, "message", None) or exc))
+            return 1
+        try:
+            app.start(a.port)
+        except AlreadyRunning:                  # a zárat tartjuk, ez nem várható; biztos, ami biztos
+            app.close()
+            continue
+        except (OSError, ValueError) as exc:
+            _say(out, "HIBA: %s" % exc)
+            return 1
+        break
     url = app.launch_url()
     _say(out, "MA-munkapad %s fut — projekt: %s" % (__version__, app.project_root))
     _say(out, "  Cím: %s" % url)

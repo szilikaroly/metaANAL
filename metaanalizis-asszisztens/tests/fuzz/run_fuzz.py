@@ -264,32 +264,33 @@ def _rel(rec):
 
 # Unexplained classes that triage attributed to an engine defect: they still count as FAIL (so the
 # run keeps failing until the engine is fixed), but the summary groups them under these ids.
-SUSPECTED_DEFECTS = [
-    dict(id="D1_reml_fallback", func=r"^(rma|trimfill|leave1out|influence|cumul|subgroup|mods|rma_es):",
-         field=r".*", cond=lambda rec: "mf_ll_higher" in rec["tags"] or "eng_fallback_to_0" in rec["tags"],
-         reason="(RE)ML tau2 with a LOWER likelihood than metafor's: the engine's Fisher scoring did not "
-                "converge (oscillates) and the profile-likelihood grid fallback returns the boundary tau2 = 0 "
-                "when the interior maximum lies below the first grid point.",
-         source="metaelemzes/models.py optimize_tau2(): the golden-section refinement only runs for j > 0"),
-    dict(id="D2_mr_numerics", func=r"^(mods|subgroup):", field=r".*",
-         cond=lambda rec: any(t in ("exact=metafor", "exact=neither:metafor") for t in rec["tags"])
-         or (any(t in rec["tags"] for t in ("collinear", "vratio>=1e7", "vratio>=1e6", "df_res<=1"))
-             and "rel>1e-4" in rec["tags"]),
-         reason="meta-regression closed forms (tr(P) = sum(w) - tr(M X'W^2X), DL tau2, I2_res, WLS via the "
-                "explicit inverse of X'WX) lose digits by cancellation on ill-conditioned designs; metafor is "
-                "closer to the exact rational-arithmetic value.",
-         source="metaelemzes/moderators.py _traces(), _wls(), _tau2_mr('DL')"),
-    dict(id="D3_knha_perfect_fit", func=r"^mods:.*_knha$", field=r".*",
-         cond=lambda rec: "perfect_fit" in rec["tags"] or "identical_yi" in rec["tags"]
-         or any("SingularMatrix" in t for t in rec["tags"]),
-         reason="Knapp-Hartung meta-regression on an exact fit (residuals 0 up to rounding): the engine either "
-                "raises SingularMatrixError ('kollineáris moderátorok?' - misleading) or reports noise-driven "
-                "finite t/F/p; metafor reports se = 0, z = +-Inf and QM = NA.",
-         source="metaelemzes/moderators.py meta_regression(): knha branch, la.inverse(vsub)"),
-    dict(id="D4_begg_identical", func=r"^ranktest:", field=r".*", cond=_tag("identical_yi"),
-         reason="Begg test on identical yi: the 'tau undefined' guard uses exact equality, so rounding noise "
-                "in the standardized effects yields tau = +-1 and p < 0.05 (or an error) at random.",
-         source="metaelemzes/bias.py begg_test(): `if not (denom > 0) or not (var_s > 0)`"),
+SUSPECTED_DEFECTS = []
+
+# Defects fixed in the engine (record only; NOT used for classification). A mismatch that the old
+# condition would still match is reported as an ordinary (untriaged / known) class, never hidden.
+FIXED_DEFECTS = [
+    dict(id="D1_reml_fallback",
+         reason="(RE)ML tau2 = 0 below the interior maximum: oscillating Fisher scoring, and the grid fallback "
+                "never refined between 0 and the first grid point.",
+         fix="models.optimize_tau2(): damped (stepadj 0.5) Fisher-scoring retry; golden-section refinement on "
+             "[0, first grid point] when the boundary is only a candidate",
+         test="tests/test_fixes_R2b_numerics.py TestD1RemlBoundary"),
+    dict(id="D2_mr_numerics",
+         reason="meta-regression tr(P) = sum(w) - tr(M X'W^2X), DL tau2, I2_res and WLS via the explicit inverse "
+                "of X'WX lost digits on ill-conditioned designs.",
+         fix="linalg.WeightedQR (Householder QR of W^1/2 X): WLS, (X'WX)^-1, log det, tr(P) = sum w_i (1 - h_ii), "
+             "tr(PP) from non-negative terms; QM via the Schur complement (no explicit inverse)",
+         test="tests/test_fixes_R2b_numerics.py TestD2MetaRegressionNumerics (exact.py reference values)"),
+    dict(id="D3_knha_perfect_fit",
+         reason="Knapp-Hartung meta-regression on an exact fit raised SingularMatrixError ('kollineáris "
+                "moderátorok?') or reported noise-driven t/F/p.",
+         fix="moderators.meta_regression(): perfect-fit guard (weighted RSS <= 1e-20 sum(w y^2)): se = 0, "
+             "t = +-Inf (0/0 = NaN for coefficients that are 0 up to rounding), QM = None, warning",
+         test="tests/test_fixes_R2b_numerics.py TestD3KnhaPerfectFit"),
+    dict(id="D4_begg_identical",
+         reason="Begg test on identical yi gave noise-driven tau = +-1.",
+         fix="bias.begg_test(): relative-tolerance 'identical effects' guard (round 2, DT-2) -> ModelError",
+         test="tests/test_fixes_R2b_numerics.py TestD4BeggIdenticalEffects, tests/test_fixes_R3.py"),
 ]
 
 
@@ -1408,6 +1409,7 @@ def build_summary(checks, classes, fatal, stats, meta):
         "tolerances": {k: {kk: vv for kk, vv in v.items()} for k, v in TOLERANCES.items()},
         "known_differences": [{k: v for k, v in kd.items() if k != "cond"} for kd in KNOWN_DIFFERENCES],
         "suspected_defects": [{k: v for k, v in kd.items() if k != "cond"} for kd in SUSPECTED_DEFECTS],
+        "fixed_defects": FIXED_DEFECTS,
     }
 
 
@@ -1483,6 +1485,10 @@ def write_markdown(summary, path):
           "|---|---|---|---|---|"]
     for k in SUSPECTED_DEFECTS:
         L.append("| %s | `%s` | `%s` | %s | %s |" % (k["id"], k["func"], k["field"], k["reason"], k["source"]))
+    L += ["", "## Fixed engine defects (not used for classification)", "", "| id | defect | fix | regression test |",
+          "|---|---|---|---|"]
+    for k in FIXED_DEFECTS:
+        L.append("| %s | %s | %s | %s |" % (k["id"], k["reason"], k["fix"], k["test"]))
     L += ["", "Replay a dataset: `python3 tests/fuzz/run_fuzz.py --ids <id>[,<id>...] --only <group>`", ""]
     with open(path, "w", encoding="utf-8") as fh:
         fh.write("\n".join(L))

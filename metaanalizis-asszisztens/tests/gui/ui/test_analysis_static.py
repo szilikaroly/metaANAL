@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Az elemzés-képernyők statikus tesztjei (böngésző nélkül): a termék-build tömörítése (compact_source)
+"""Az elemzés-képernyők statikus tesztjei (böngésző nélkül): a termék-build tömörítése (minify_js)
 biztonságos, és az elemzés-fixture-ök a szerződés (szk.ma.plot/v2, szk.ma.run/v1, szk.ma.analysis-spec/v1)
 szerinti, egymással összhangban lévő borítékok.
 
@@ -34,18 +34,16 @@ def is_i18n(v):
 
 
 class CompactTests(unittest.TestCase):
-    def test_compact_keeps_code_drops_comments(self):
-        src = "/* fej\n * több sor */\n(function () {\n  'use strict';\n  // megjegyzés\n  var a = 1; // sorvégi marad\n  /* egysoros */ var b = '/* nem megjegyzés */';\n\n  return a\n    * b;\n})();\n"
-        out = bg.compact_source(src)
-        self.assertNotIn("fej", out)
-        self.assertNotIn("// megjegyzés", out)
-        self.assertIn("var b = '/* nem megjegyzés */';", out)
-        self.assertIn("* b;", out)                       # sor eleji szorzás nem megjegyzés
-        self.assertIn("var a = 1; // sorvégi marad", out)
+    """A termék-build tömörítése (build_gui.minify_js) — a részletes tesztek: tests/gui/ui/test_minify.py."""
 
-    def test_compact_skips_template_literals_and_continuations(self):
-        for src in ("var s = `a\n  b`;\n", "var s = 'a\\\n  b';\n"):
-            self.assertEqual(bg.compact_source(src), src)
+    def test_minify_keeps_code_drops_comments(self):
+        src = "/* fej\n * több sor */\n(function () {\n  'use strict';\n  // megjegyzés\n  var a = 1; // sorvégi\n  /* egysoros */ var b = '/* nem megjegyzés */';\n\n  return a\n    * b;\n})();\n"
+        out = bg.minify_js(src)
+        self.assertNotIn("fej", out)
+        self.assertNotIn("megjegyzés\n", out)
+        self.assertNotIn("sorvégi", out)
+        self.assertIn("var b='/* nem megjegyzés */';", out)
+        self.assertIn("return a*b;", out)                    # sor eleji szorzás nem megjegyzés
 
     @unittest.skipIf(shutil.which("node") is None, "node nincs telepítve")
     def test_compacted_product_script_parses(self):

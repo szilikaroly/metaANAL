@@ -148,23 +148,27 @@ def subgroup_analysis(yi, vi, groups, labels=None, model="random", tau2_method=N
 MR_TAU2_METHODS = ("REML", "ML", "DL", "PM", "HE", "SJ", "FE")
 
 
+def _wls_fit(x, y, w):
+    """Súlyozott LS a W^½X Householder-QR-jével (linalg.WeightedQR): (b, M = (XᵀWX)⁻¹, e, fit).
+    A normálegyenletek explicit inverzénél pontosabb rosszul kondicionált (közel-kollineáris
+    moderátorok, nagyon eltérő v_i) terveknél; a fit a nyomokat és a log det-et is adja."""
+    fit = la.WeightedQR(x, w)
+    b, e, _ = fit.solve(y)
+    return b, fit.cov(), e, fit
+
+
 def _wls(x, y, w):
-    xtwx = la.xtwx(x, w)
-    m = la.inverse(xtwx)
-    b = la.matvec(m, la.xtwy(x, w, y))
-    e = [yi - sum(a * c for a, c in zip(row, b)) for row, yi in zip(x, y)]
+    b, m, e, _ = _wls_fit(x, y, w)
     return b, m, e
 
 
-def _traces(x, w, m):
-    """tr(P), tr(PP) a P = W - WX M XᵀW projekcióhoz, O(k p²)."""
-    w2 = [a * a for a in w]
-    w3 = [a ** 3 for a in w]
-    a2 = la.matmul(m, la.xtwx(x, w2))     # M XᵀW²X
-    a3 = la.matmul(m, la.xtwx(x, w3))     # M XᵀW³X
-    tr_p = sum(w) - la.trace(a2)
-    tr_pp = sum(w2) - 2.0 * la.trace(a3) + la.trace(la.matmul(a2, a2))
-    return tr_p, tr_pp
+def _traces(x, w, m=None, fit=None):
+    """tr(P), tr(PP) a P = W - WX M XᵀW projekcióhoz, O(k p²), kiejtés nélkül: a naiv
+    Σw - tr(M XᵀW²X) alak közel-kollineáris tervnél vagy domináns súlynál jegyeket veszít
+    (akár negatív tr(PP)); itt a QR-ből tr(P) = Σ w_i (1 - h_ii) (linalg.WeightedQR.traces)."""
+    if fit is None:
+        fit = la.WeightedQR(x, w)
+    return fit.traces()
 
 
 def _qe(x, y, v, tau2):
@@ -178,10 +182,10 @@ def mr_loglik(x, y, v, tau2, reml=True):
     """(RE)ML log-likelihood (konstansok nélkül) a vegyes hatású meta-regresszióhoz:
     ML = -½[Σ log(v_i+τ²) + Σ w_i e_i²]; REML = ML - ½ log det(XᵀWX)."""
     w = [1.0 / (vi + tau2) for vi in v]
-    b, m, e = _wls(x, y, w)
+    b, m, e, fit = _wls_fit(x, y, w)
     ll = -0.5 * (sum(math.log(vi + tau2) for vi in v) + sum(wi * ei * ei for wi, ei in zip(w, e)))
     if reml:
-        ll -= 0.5 * la.logdet_spd(la.xtwx(x, w))
+        ll -= 0.5 * fit.logdet()
     return ll
 
 
@@ -189,10 +193,10 @@ def _tau2_he_mr(x, y, v):
     """Hedges (HE) momentum-becslő moderátorokkal (metafor): (RSS_OLS - tr(P_OLS V)) / (k - p)."""
     k, p = len(y), len(x[0])
     ones = [1.0] * k
-    b, m, e = _wls(x, y, ones)
+    b, m, e, fit = _wls_fit(x, y, ones)
     rss = sum(ei * ei for ei in e)
-    hdiag = [sum(row[i] * sum(m[i][j] * row[j] for j in range(p)) for i in range(p)) for row in x]
-    tr_pv = sum(vi * (1.0 - h) for vi, h in zip(v, hdiag))
+    _, one_minus_h = fit.leverages()
+    tr_pv = sum(vi * mh for vi, mh in zip(v, one_minus_h))
     return max(0.0, (rss - tr_pv) / (k - p))
 
 
@@ -228,16 +232,17 @@ def _tau2_pm_mr(x, y, v, tol=1e-12, maxiter=1000):
     return 0.5 * (lo + hi)
 
 
-def _fs_mr(x, y, v, method, start, scale, tol=1e-10, maxiter=1000):
-    """REML/ML Fisher-scoring moderátorokkal (metafor rma.uni), lépésfelezéssel."""
+def _fs_mr(x, y, v, method, start, scale, tol=1e-10, maxiter=1000, step=1.0):
+    """REML/ML Fisher-scoring moderátorokkal (metafor rma.uni), lépésfelezéssel; step < 1:
+    csillapított lépések (metafor stepadj)."""
     tau2 = max(0.0, start)
     it = -1
     for it in range(maxiter):
         w = [1.0 / (vi + tau2) for vi in v]
-        b, m, e = _wls(x, y, w)
+        b, m, e, fit = _wls_fit(x, y, w)
         r2w2 = sum((wi * ei) ** 2 for wi, ei in zip(w, e))
         if method == "REML":
-            tr_p, tr_pp = _traces(x, w, m)
+            tr_p, tr_pp = fit.traces()
             if not (tr_pp > 0) or not math.isfinite(tr_pp):
                 return tau2, False, it + 1
             adj = (r2w2 - tr_p) / tr_pp
@@ -245,6 +250,7 @@ def _fs_mr(x, y, v, method, start, scale, tol=1e-10, maxiter=1000):
             adj = (r2w2 - sum(w)) / sum(a * a for a in w)
         if not math.isfinite(adj):
             return tau2, False, it + 1
+        adj *= step
         while tau2 + adj < 0:
             adj /= 2.0
             if abs(adj) < 1e-300:
@@ -267,9 +273,9 @@ def _tau2_mr(x, y, v, method):
         return 0.0, {}
     if method == "DL":
         w0 = [1.0 / vi for vi in v]
-        b0, m0, e0 = _wls(x, y, w0)
+        b0, m0, e0, fit0 = _wls_fit(x, y, w0)
         qe = sum(wi * ei * ei for wi, ei in zip(w0, e0))
-        tr_p0, _ = _traces(x, w0, m0)
+        tr_p0, _ = fit0.traces()
         return (max(0.0, (qe - (k - p)) / tr_p0) if tr_p0 > 0 else 0.0), {}
     if method == "HE":
         return _tau2_he_mr(x, y, v), {}
@@ -287,7 +293,7 @@ def _tau2_mr(x, y, v, method):
     ss = max(ss, sum(a * a for a in e_ols))
     hi = 2.0 * ss + 2.0 * max(v)
     return optimize_tau2(lambda t: mr_loglik(x, y, v, t, reml),
-                         lambda s: _fs_mr(x, y, v, method, s, scale),
+                         lambda s, step=1.0: _fs_mr(x, y, v, method, s, scale, step=step),
                          _tau2_he_mr(x, y, v), scale, hi)
 
 
@@ -396,28 +402,52 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
     b, m, e = _wls(x, yi, w)
     vb = [row[:] for row in m]
     df_res = k - p
+    has_int = all(row[0] == 1.0 for row in x)
+    idx = list(range(1, p)) if has_int else list(range(p))
+    perfect = False
+    q = 1.0
     if test == "knha":
-        q = sum(wi * ei * ei for wi, ei in zip(w, e)) / df_res
+        rss = sum(wi * ei * ei for wi, ei in zip(w, e))
+        # tökéletes illeszkedés (y = Xb, pl. azonos y_i-k): a reziduumok csak kerekítési zaj, így a
+        # KH-skála s² = 0 (metafor: se = 0, z = ±Inf, QM = NA) — nem a moderátorok kollinearitása
+        swy2 = sum(wi * yv * yv for wi, yv in zip(w, yi))
+        perfect = rss <= 1e-20 * max(swy2, 1e-300)
+        if perfect:
+            q = 0.0
+            for j in range(p):      # a kerekítési zajból adódó együttható (pl. 1e-17) pontosan 0
+                aj = math.sqrt(sum(wi * row[j] * row[j] for wi, row in zip(w, x)))
+                if abs(b[j]) * aj <= 1e-10 * math.sqrt(swy2):
+                    b[j] = 0.0
+            warnings.append("Knapp–Hartung: a modell tökéletesen illeszkedik (a súlyozott reziduális "
+                            "négyzetösszeg csak kerekítési zaj), így a KH-skálázás s² = 0: az SE-k 0-k, a t-próbák "
+                            "és az omnibusz F-próba nem értelmezhetők (F = –). Ez nem a moderátorok "
+                            "kollinearitása; a z (Wald) teszt használható.")
+        else:
+            q = rss / df_res
         vb = [[q * c for c in row] for row in vb]
         crit = dist.t_ppf(0.5 + level / 2, df_res)
     else:
         crit = dist.norm_ppf(0.5 + level / 2)
     coefs = []
     for j in range(p):
-        se = math.sqrt(vb[j][j])
+        se = math.sqrt(max(vb[j][j], 0.0))
         stat = ratio_stat(b[j], se)
         pval = dist.t_two_sided_p(stat, df_res) if test == "knha" else dist.z_two_sided_p(stat)
         coefs.append({"name": names[j], "estimate": b[j], "se": se, "stat": stat, "p": pval,
                       "ci_lower": b[j] - crit * se, "ci_upper": b[j] + crit * se})
-    # omnibusz moderátor-teszt (a tengelymetszet nélkül, ha van)
-    has_int = all(row[0] == 1.0 for row in x)
-    idx = list(range(1, p)) if has_int else list(range(p))
+    # omnibusz moderátor-teszt (a tengelymetszet nélkül, ha van): QM = b_Sᵀ (M_SS)⁻¹ b_S a Schur-
+    # komplementerrel, (M_SS)⁻¹ = X_Sᵀ W (I - H_N) X_S — a moderátor-oszlopok súlyozott reziduumai a
+    # többi oszlopra (tengelymetszetnél: súlyozott centrálás); nincs explicit inverz, közel-kollineáris
+    # tervnél is pontos
     qm = qm_p = None
-    if idx:
-        bsub = [b[i] for i in idx]
-        vsub = [[vb[i][j] for j in idx] for i in idx]
-        vinv = la.inverse(vsub)
-        qm = sum(bsub[i] * sum(vinv[i][j] * bsub[j] for j in range(len(idx))) for i in range(len(idx)))
+    if idx and not perfect:
+        nidx = [j for j in range(p) if j not in idx]
+        if nidx:
+            fit_n = la.WeightedQR([[row[j] for j in nidx] for row in x], w)
+            res_s = [fit_n.solve([row[a] for row in x])[1] for a in idx]
+        else:
+            res_s = [[row[a] for row in x] for a in idx]
+        qm = sum(wi * sum(r[i] * b[a] for r, a in zip(res_s, idx)) ** 2 for i, wi in enumerate(w)) / q
         if test == "knha":
             fstat = qm / len(idx)
             qm_p = dist.f_sf(fstat, len(idx), df_res)
@@ -426,9 +456,9 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
             qm_p = dist.chi2_sf(qm, len(idx))
     # reziduális heterogenitás (FE-súlyokkal)
     w0 = [1.0 / v for v in vi]
-    b0, m0, e0 = _wls(x, yi, w0)
+    b0, m0, e0, fit0 = _wls_fit(x, yi, w0)
     qe = sum(wi * ei * ei for wi, ei in zip(w0, e0))
-    tr_p0, _ = _traces(x, w0, m0)
+    tr_p0, _ = fit0.traces()
     s2 = df_res / tr_p0 if tr_p0 > 0 else None
     if method == "FE":
         # metafor: FE-modellnél az I² a QE-ből számolódik

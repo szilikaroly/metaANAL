@@ -345,7 +345,6 @@
     init();
     var ds = req.query.dataset;
     var p = S.prov[ds];
-    var t = S.tables[ds];
     if (!p) { p = S.prov[ds] = { doc: { schema: 'szk.ma.provenance/v1', table: ds, table_sha256: null, cells: [] }, etag: null }; }
     return ok('szk.ma.provenance/v1', provView(ds), p.etag);
   });
@@ -384,7 +383,15 @@
 
   FX.route('POST', '/api/fileurl', function (req) {
     init();
-    var id = req.body && req.body.doc;
+    var b = req.body || {};
+    var id = b.doc === undefined ? null : b.doc;
+    var path = b.path === undefined ? null : b.path;
+    if ((id === null) === (path === null)) { return fail('BAD_REQUEST', 400, 'Pontosan egy mező adható meg: doc (jegyzékbeli dokumentum) vagy path (futás-artefaktum).'); }
+    if (path !== null) {
+      // futás-artefaktum (ma_gui/routes/documents.py: _run:<út>, csak 05_elemzes/ vagy 06_kezirat/ alatt)
+      if (!/^(05_elemzes|06_kezirat)\//.test(path) || /(^|\/)\.\.(\/|$)/.test(path)) { return fail('NOT_FOUND', 404, 'Nincs ilyen futás-artefaktum.', { path: path }); }
+      return ok('szk.ma.fileurl/v1', { url: '/f/' + encodeURIComponent('_run:' + path) + '/1791200000/dev' + String(S.n), expires_at: 1791200000, ttl: 600 });
+    }
     var known = S.docs.doc.docs.some(function (d) { return d.id === id; });
     if (!known) { return fail('NOT_FOUND', 404, 'Nincs ilyen dokumentum a jegyzékben.', { doc: id }); }
     return ok('szk.ma.fileurl/v1', { url: '/f/' + encodeURIComponent(id) + '/1791200000/dev' + String(S.n), expires_at: 1791200000 });

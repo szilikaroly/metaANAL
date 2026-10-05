@@ -27,6 +27,21 @@ class TestDistributions(unittest.TestCase):
         assert_close(self, D.chi2_sf(3.841458820694124, 1), 0.05, 1e-10)
         assert_close(self, D.f_sf(4.964602743730711, 1, 10), 0.05, 1e-9)
 
+    def test_tail_probabilities_relative(self):
+        # R 4.x (pchisq / pnorm / pt / pf, lower.tail = FALSE), 17 értékes jegy; relatív tolerancia,
+        # hogy a 0-ra alulcsorduló farok (pl. 1 − cdf alakú számítás) hibának számítson
+        for got, want in ((D.chi2_sf(200, 12), 3.2614563667204693e-36),
+                          (D.chi2_sf(152.2330080823733, 12), 1.9967645908459738e-26),   # BCG RR Q, df = 12
+                          (D.chi2_sf(238.9158108620096, 8), 3.8418092854003323e-47),    # Normand MD Q, df = 8
+                          (D.chi2_sf(1000, 3), 1.7994208765314476e-216),
+                          (D.z_two_sided_p(10.5), 8.638012635618462e-26),
+                          (D.z_two_sided_p(-37.5), 9.2107060191639104e-308),
+                          (D.norm_sf(30), 4.9067139271481872e-198),
+                          (D.t_two_sided_p(-12, 5), 7.0894925171615278e-05),
+                          (D.t_sf(30, 8), 8.2676283758948577e-10),
+                          (D.f_sf(80, 1, 11), 2.2274062839716295e-06)):
+            assert_close(self, got, want, 1e-10, "farok %r" % want, rel=True)
+
     def test_symmetry_and_roundtrip(self):
         for df in (1, 2, 5, 30, 200):
             for p in (0.001, 0.05, 0.3):

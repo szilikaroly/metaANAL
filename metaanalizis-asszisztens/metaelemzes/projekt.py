@@ -8,14 +8,23 @@ nyitott 'blocker' megállapítás van; a záró, FINAL ellenőrzőpontnál bárm
 elég az elutasításhoz. Blocker csak fixed vagy indokolt invalid státusszal zárható (a régi naplóban
 wontfix-szel lezárt blocker továbbra is blokkol); a megállapítás újranyitható (open).
 A szakaszkód csak S00–S14, tartomány (pl. S01-S02 → S01, S02) vagy FINAL lehet.
+
+Szereplő (E7): minden író függvény opcionális actor kulcsszót kap (pl. 'user:SzK', 'agent:reviewer');
+az 'actor' oszlopba kerül (alapból NULL), a megállapítás lezárójáé/újranyitójáé a 'resolved_actor'-ba.
+A lekérdezők (status, get_item, list_items, export_json) JSON-képes értékeket adnak (NaN/végtelen → None).
+A ma-projekt.json (szk.ma.project/v1) a load_project_meta / save_project_meta párral olvasható és írható.
 """
 import datetime
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
 import sqlite3
+import tempfile
+import threading
+from pathlib import Path
 
 from .kb import KB_DIR
 
@@ -51,9 +60,12 @@ CREATE TABLE IF NOT EXISTS run (
 );
 """
 
-# régebbi projektnaplók bővítése (ALTER TABLE ADD COLUMN)
-_ADDED_COLUMNS = {"decision": ["kb_unverified TEXT"], "finding": ["kb_unverified TEXT"],
-                  "grade": ["kb_unverified TEXT"]}
+# régebbi projektnaplók bővítése (ALTER TABLE ADD COLUMN); az új napló is így kapja meg
+_ADDED_COLUMNS = {"decision": ["kb_unverified TEXT", "actor TEXT"],
+                  "finding": ["kb_unverified TEXT", "actor TEXT", "resolved_actor TEXT"],
+                  "checkpoint": ["actor TEXT"],
+                  "grade": ["kb_unverified TEXT", "actor TEXT"],
+                  "run": ["actor TEXT"]}
 
 FOLDERS = ["00_protokoll", "01_kereses", "02_szures", "03_adatok", "04_torzitas_kockazat",
            "05_elemzes", "06_kezirat", "07_ellenorzes"]
@@ -80,7 +92,16 @@ def _upgrade(con):
             continue
         for c in cols:
             if c.split()[0] not in have:
-                con.execute("ALTER TABLE %s ADD COLUMN %s" % (table, c))
+                try:
+                    con.execute("ALTER TABLE %s ADD COLUMN %s" % (table, c))
+                except sqlite3.OperationalError as exc:
+                    msg = str(exc).lower()
+                    if "duplicate column" in msg:       # egy másik folyamat épp most bővítette
+                        continue
+                    if "readonly" in msg or "read-only" in msg:
+                        con.rollback()                  # csak olvasható napló: bővítés nélkül olvasható
+                        return
+                    raise
     con.commit()
 
 
@@ -178,6 +199,21 @@ def _stored_stages(value):
 
 
 # ------------------------------------------------------------------ ellenőrzések
+_MAX_ACTOR = 200
+
+
+def check_actor(actor):
+    """A szereplő (actor) ellenőrzése → a normalizált szöveg vagy None. Érvényes: nem üres, legfeljebb
+    200 karakteres, vezérlőkarakter nélküli szöveg (pl. 'user:SzK', 'agent:reviewer', 'cli')."""
+    if actor is None:
+        return None
+    if not isinstance(actor, str) or not actor.strip() or len(actor) > _MAX_ACTOR or \
+            any(ord(c) < 32 or ord(c) == 127 for c in actor):
+        raise ValueError("Érvénytelen szereplő (actor): nem üres, legfeljebb %d karakteres, vezérlőkarakter nélküli "
+                         "szöveg kell (pl. 'user:SzK', 'agent:reviewer')." % _MAX_ACTOR)
+    return actor.strip()
+
+
 def _check_agent(agent, warnings):
     if agent not in KNOWN_AGENTS and warnings is not None:
         warnings.append("Ismeretlen ágensnév: %r (ismert: %s) — a napló így rögzíti." % (agent, ", ".join(KNOWN_AGENTS)))
@@ -231,15 +267,18 @@ def _prepare(agent, stage, kb_refs, kb_db, strict, warnings, check_kb=True):
 
 
 def log_decision(project_dir, agent, decision, rationale=None, stage=None, kb_refs=None,
-                 alternatives=None, supersedes=None, kb_db=None, strict=False, warnings=None, check_kb=True):
+                 alternatives=None, supersedes=None, kb_db=None, strict=False, warnings=None, check_kb=True,
+                 actor=None):
     """Döntés naplózása. strict=True: ismeretlen KB-azonosító → ValueError; különben figyelmeztetés
     (warnings listába) és a kb_unverified oszlopban jelölve."""
+    actor = check_actor(actor)
     con = connect(project_dir)
     try:
         stage_value, refs, unverified = _prepare(agent, stage, kb_refs, kb_db, strict, warnings, check_kb)
         cur = con.execute("INSERT INTO decision (ts, agent, stage_id, decision, rationale, alternatives, kb_refs, "
-                          "supersedes, kb_unverified) VALUES (?,?,?,?,?,?,?,?,?)",
-                          (_now(), agent, stage_value, decision, rationale, alternatives, refs, supersedes, unverified))
+                          "supersedes, kb_unverified, actor) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                          (_now(), agent, stage_value, decision, rationale, alternatives, refs, supersedes, unverified,
+                           actor))
         if supersedes:
             con.execute("UPDATE decision SET status='superseded' WHERE id=?", (supersedes,))
         con.commit()
@@ -249,15 +288,16 @@ def log_decision(project_dir, agent, decision, rationale=None, stage=None, kb_re
 
 
 def add_finding(project_dir, agent, severity, title, detail=None, stage=None, evidence=None, kb_refs=None,
-                kb_db=None, strict=False, warnings=None, check_kb=True):
+                kb_db=None, strict=False, warnings=None, check_kb=True, actor=None):
     if severity not in SEVERITIES:
         raise ValueError("súlyosság: %s" % ", ".join(SEVERITIES))
+    actor = check_actor(actor)
     con = connect(project_dir)
     try:
         stage_value, refs, unverified = _prepare(agent, stage, kb_refs, kb_db, strict, warnings, check_kb)
         cur = con.execute("INSERT INTO finding (ts, agent, stage_id, severity, title, detail, evidence, kb_refs, "
-                          "kb_unverified) VALUES (?,?,?,?,?,?,?,?,?)",
-                          (_now(), agent, stage_value, severity, title, detail, evidence, refs, unverified))
+                          "kb_unverified, actor) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                          (_now(), agent, stage_value, severity, title, detail, evidence, refs, unverified, actor))
         con.commit()
         return cur.lastrowid
     finally:
@@ -267,11 +307,13 @@ def add_finding(project_dir, agent, severity, title, detail=None, stage=None, ev
 RESOLVE_STATUSES = ("fixed", "wontfix", "invalid", "open")
 
 
-def resolve_finding(project_dir, finding_id, status, resolution):
+def resolve_finding(project_dir, finding_id, status, resolution, actor=None):
     """Megállapítás lezárása (fixed | wontfix | invalid) vagy újranyitása (open). Blocker csak fixed vagy
-    indokolt invalid státusszal zárható. Újranyitáskor a korábbi lezárás a megoldás szövegében megmarad."""
+    indokolt invalid státusszal zárható. Újranyitáskor a korábbi lezárás a megoldás szövegében megmarad.
+    actor: a lezáró / újranyitó szereplő (resolved_actor oszlop)."""
     if status not in RESOLVE_STATUSES:
         raise ValueError("státusz: %s" % ", ".join(RESOLVE_STATUSES))
+    actor = check_actor(actor)
     con = connect(project_dir)
     try:
         row = con.execute("SELECT severity, status, resolution FROM finding WHERE id=?", (finding_id,)).fetchone()
@@ -285,12 +327,12 @@ def resolve_finding(project_dir, finding_id, status, resolution):
         if status == "open":
             if row["status"] == "open":
                 raise ValueError("a #%s megállapítás már nyitott" % finding_id)
-            con.execute("UPDATE finding SET status='open', resolution=?, resolved_ts=NULL WHERE id=?",
+            con.execute("UPDATE finding SET status='open', resolution=?, resolved_ts=NULL, resolved_actor=? WHERE id=?",
                         ("újranyitva: %s (korábban %s: %s)" % (resolution, row["status"], row["resolution"] or "–"),
-                         finding_id))
+                         actor, finding_id))
         else:
-            con.execute("UPDATE finding SET status=?, resolution=?, resolved_ts=? WHERE id=?",
-                        (status, resolution, _now(), finding_id))
+            con.execute("UPDATE finding SET status=?, resolution=?, resolved_ts=?, resolved_actor=? WHERE id=?",
+                        (status, resolution, _now(), actor, finding_id))
         con.commit()
     finally:
         con.close()
@@ -308,7 +350,7 @@ def open_blockers(con, stages):
     return [r for r in rows if _stored_stages(r["stage_id"]) is None or want & set(_stored_stages(r["stage_id"]))]
 
 
-def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None):
+def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None, actor=None):
     """Ellenőrzőpont rögzítése. Tartomány (pl. S01-S02) szakaszonként külön sort kap.
     Visszaad: az (utolsó) beszúrt sor azonosítója."""
     stages = parse_stage(stage)
@@ -316,6 +358,7 @@ def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None):
         raise ValueError("Az ellenőrzőponthoz szakaszkód kell (S00–S14, tartomány vagy FINAL).")
     if verdict not in VERDICTS:
         raise ValueError("ítélet: %s" % ", ".join(VERDICTS))
+    actor = check_actor(actor)
     _check_agent(agent, warnings)
     con = connect(project_dir)
     try:
@@ -338,8 +381,8 @@ def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None):
                                 "blocker; javítás: új döntés --supersedes-szel, --kb … --strict): %s" % "; ".join(unverified))
         rid = None
         for st in stages:
-            rid = con.execute("INSERT INTO checkpoint (ts, stage_id, agent, verdict, summary) VALUES (?,?,?,?,?)",
-                              (_now(), st, agent, verdict, summary)).lastrowid
+            rid = con.execute("INSERT INTO checkpoint (ts, stage_id, agent, verdict, summary, actor) VALUES (?,?,?,?,?,?)",
+                              (_now(), st, agent, verdict, summary, actor)).lastrowid
         con.commit()
         return rid
     finally:
@@ -412,9 +455,11 @@ def grade_consistency(certainty, **domains):
             % (certainty, ("−%d" % down) if down else "0", ("+%d" % up) if up else "0", rng))
 
 
-def add_grade(project_dir, outcome, certainty, kb_db=None, strict=False, warnings=None, check_kb=True, **kw):
+def add_grade(project_dir, outcome, certainty, kb_db=None, strict=False, warnings=None, check_kb=True, actor=None,
+              **kw):
     cols = ["k", "participants", "effect", "risk_of_bias", "inconsistency", "indirectness", "imprecision",
-            "publication_bias", "upgrades", "rationale", "kb_refs", "kb_unverified"]
+            "publication_bias", "upgrades", "rationale", "kb_refs", "kb_unverified", "actor"]
+    kw["actor"] = check_actor(actor)
     if warnings is not None:
         msg = grade_consistency(certainty, **{d: kw.get(d) for d in _GRADE_DOWN + ("upgrades",)})
         if msg:
@@ -431,21 +476,38 @@ def add_grade(project_dir, outcome, certainty, kb_db=None, strict=False, warning
         con.close()
 
 
-def log_run(project_dir, command, data_path, outdir, engine_version, summary=None):
+def log_run(project_dir, command, data_path, outdir, engine_version, summary=None, actor=None):
+    actor = check_actor(actor)
     digest = None
     if data_path and os.path.exists(data_path):
         with open(data_path, "rb") as fh:
             digest = hashlib.sha256(fh.read()).hexdigest()
     con = connect(project_dir)
-    con.execute("INSERT INTO run (ts, command, data_path, data_sha256, outdir, engine_version, summary) "
-                "VALUES (?,?,?,?,?,?,?)", (_now(), command, data_path, digest, outdir, engine_version,
-                                          json.dumps(summary, ensure_ascii=False) if summary is not None else None))
-    con.commit()
-    con.close()
+    try:
+        con.execute("INSERT INTO run (ts, command, data_path, data_sha256, outdir, engine_version, summary, actor) "
+                    "VALUES (?,?,?,?,?,?,?,?)", (_now(), command, data_path, digest, outdir, engine_version,
+                                                 json.dumps(summary, ensure_ascii=False) if summary is not None else None,
+                                                 actor))
+        con.commit()
+    finally:
+        con.close()
     return digest
 
 
 # ------------------------------------------------------------------ lekérdezés
+def _json_value(v):
+    """SQLite-érték → JSON-képes érték: nem véges szám → None, BLOB → UTF-8 szöveg."""
+    if isinstance(v, float) and not math.isfinite(v):
+        return None
+    if isinstance(v, (bytes, bytearray, memoryview)):
+        return bytes(v).decode("utf-8", "replace")
+    return v
+
+
+def _json_row(row):
+    return {k: _json_value(row[k]) for k in row.keys()}
+
+
 _ITEM_TABLES = {"finding": "finding", "decision": "decision", "checkpoint": "checkpoint", "grade": "grade",
                 "run": "run"}
 _LIST_KINDS = {"findings": "finding", "decisions": "decision", "checkpoints": "checkpoint", "grades": "grade",
@@ -464,7 +526,7 @@ def get_item(project_dir, kind, item_id):
         con.close()
     if row is None:
         raise ValueError("nincs ilyen %s: #%s" % (kind, item_id))
-    return dict(row)
+    return _json_row(row)
 
 
 def list_items(project_dir, kind, status=None, severity=None, stage=None):
@@ -489,7 +551,7 @@ def list_items(project_dir, kind, status=None, severity=None, stage=None):
         args.append(severity)
     con = connect(project_dir)
     try:
-        rows = [dict(r) for r in con.execute(sql + " ORDER BY id", args)]
+        rows = [_json_row(r) for r in con.execute(sql + " ORDER BY id", args)]
     finally:
         con.close()
     if stage and table in ("finding", "decision", "checkpoint"):
@@ -541,25 +603,31 @@ def _log_warnings(con):
 
 def status(project_dir):
     con = connect(project_dir)
-    info = {r["key"]: r["value"] for r in con.execute("SELECT key, value FROM project")}
-    out = {
+    try:
+        return _status(con)
+    finally:
+        con.close()
+
+
+def _status(con):
+    info = {r["key"]: _json_value(r["value"]) for r in con.execute("SELECT key, value FROM project")}
+    return {
         "project": info,
-        "open_findings": [dict(r) for r in con.execute(
+        "open_findings": [_json_row(r) for r in con.execute(
             "SELECT id, severity, stage_id, title, agent, ts FROM finding WHERE status='open' "
             "ORDER BY CASE severity WHEN 'blocker' THEN 0 WHEN 'major' THEN 1 WHEN 'minor' THEN 2 ELSE 3 END, id")],
         "findings_by_status": {r[0]: r[1] for r in con.execute(
             "SELECT status, COUNT(*) FROM finding GROUP BY status ORDER BY status")},
-        "checkpoints": [dict(r) for r in con.execute(
+        "checkpoints": [_json_row(r) for r in con.execute(
             "SELECT stage_id, verdict, agent, ts FROM checkpoint c WHERE id = "
             "(SELECT MAX(id) FROM checkpoint WHERE stage_id = c.stage_id) "
             "ORDER BY CASE stage_id WHEN 'FINAL' THEN 1 ELSE 0 END, stage_id")],
         "decisions": con.execute("SELECT COUNT(*) FROM decision WHERE status='active'").fetchone()[0],
-        "runs": [dict(r) for r in con.execute("SELECT id, ts, command, data_sha256, outdir FROM run ORDER BY id DESC LIMIT 5")],
-        "grade": [dict(r) for r in con.execute("SELECT outcome, certainty, ts FROM grade ORDER BY id")],
+        "runs": [_json_row(r) for r in con.execute(
+            "SELECT id, ts, command, data_sha256, outdir FROM run ORDER BY id DESC LIMIT 5")],
+        "grade": [_json_row(r) for r in con.execute("SELECT outcome, certainty, ts FROM grade ORDER BY id")],
         "warnings": _log_warnings(con),
     }
-    con.close()
-    return out
 
 
 # ------------------------------------------------------------------ export
@@ -627,3 +695,359 @@ def export_markdown(project_dir):
                                                  ("`%s`" % h) if h else "", _cell(r["outdir"])))
     con.close()
     return "\n".join(L) + "\n"
+
+
+EXPORT_SCHEMA = "szk.ma.journal-export/v1"
+_EXPORT_TABLES = (("decisions", "decision"), ("findings", "finding"), ("checkpoints", "checkpoint"),
+                  ("grades", "grade"), ("runs", "run"))
+
+
+def export_json(project_dir):
+    """A teljes napló JSON-képes szótárként (szk.ma.journal-export/v1; E7, `project export --format json`):
+    {schema, project: {title, question, created, …}, decisions, findings, checkpoints, grades, runs,
+    warnings}. A tételek minden oszlopukat tartalmazzák (mint a get_item; a run.summary a naplóban tárolt
+    JSON-szöveg), azonosító szerint rendezve; nem véges szám helyett null. Időbélyeget nem tesz bele:
+    ugyanaz a naplóállapot ugyanazt a dokumentumot adja (determinisztikus audit-csomag)."""
+    con = connect(project_dir)
+    try:
+        out = {"schema": EXPORT_SCHEMA,
+               "project": {r["key"]: _json_value(r["value"]) for r in con.execute(
+                   "SELECT key, value FROM project ORDER BY key")}}
+        for key, table in _EXPORT_TABLES:
+            out[key] = [_json_row(r) for r in con.execute("SELECT * FROM %s ORDER BY id" % table)]
+        out["warnings"] = _log_warnings(con)
+    finally:
+        con.close()
+    return out
+
+
+# ------------------------------------------------------------------ változásfigyelés (csak olvasás)
+_REV_TABLES = ("project", "decision", "finding", "checkpoint", "grade", "run")
+_UNSET = object()
+
+
+def _ro_connect(project_dir, timeout=0.2):
+    """Csak olvasó kapcsolat (nem bővíti a sémát, nem ír)."""
+    p = os.path.abspath(db_path(project_dir))
+    if not os.path.isfile(p):
+        raise FileNotFoundError("Nincs projektnapló: %s (futtasd: project init)" % p)
+    uri = Path(p).as_uri() + "?mode=ro"
+    return sqlite3.connect(uri, uri=True, timeout=timeout, check_same_thread=False)
+
+
+def _table_marks(con):
+    """{tábla: [sorok száma, legnagyobb rowid]} — a hiányzó tábla [0, 0]."""
+    out = {}
+    for t in _REV_TABLES:
+        try:
+            n, mx = con.execute("SELECT COUNT(*), MAX(rowid) FROM %s" % t).fetchall()[0]   # végig: nincs nyitva hagyott olvasás
+        except sqlite3.OperationalError:
+            n, mx = 0, None
+        out[t] = [n, mx or 0]
+    return out
+
+
+def journal_marks(project_dir):
+    """Folyamatok között összevethető, csak olvasó állapotjel: {"tables": {tábla: [db, max rowid]},
+    "change_counter": az SQLite-fejléc fájlváltozás-számlálója (rollback-journal módban minden
+    véglegesített írás növeli; UPDATE-et is jelez) vagy None, "wal": [méret, mtime_ns] | None}.
+    Két hívás eredményének egyezése: nincs (észlelhető) változás köztük."""
+    p = db_path(project_dir)
+    con = _ro_connect(project_dir)
+    try:
+        tables = _table_marks(con)
+    finally:
+        con.close()
+    counter = None
+    try:
+        with open(p, "rb") as fh:
+            header = fh.read(100)
+        if len(header) >= 28 and header[:16] == b"SQLite format 3\x00":
+            counter = int.from_bytes(header[24:28], "big")
+    except OSError:
+        pass
+    try:
+        st = os.stat(p + "-wal")
+        wal = [st.st_size, st.st_mtime_ns]
+    except OSError:
+        wal = None
+    return {"tables": tables, "change_counter": counter, "wal": wal}
+
+
+class JournalRev(object):
+    """Csak olvasó változásszámláló a projektnaplóhoz (a munkapad változásfigyelőjéhez, long-poll).
+
+    poll() → (rev, változott-e). A rev egész szám, amely minden észlelt változásnál eggyel nő (0-ról
+    indul; csak ugyanazon példány értékei vethetők össze). Észlelés: a nyitva tartott, csak olvasó
+    kapcsolat PRAGMA data_version-je (más kapcsolat véglegesített írása, UPDATE is), a táblák
+    sorszáma és legnagyobb rowid-je, valamint a fájl cseréje vagy törlése (st_dev, st_ino). Írni
+    nem ír, a sémát nem bővíti. Szálbiztos; close()-zal (vagy with-blokkal) zárható."""
+
+    def __init__(self, project_dir):
+        self.project_dir = os.path.abspath(project_dir)
+        self._con = None
+        self._ident = None
+        self._last = _UNSET
+        self._rev = 0
+        self._lock = threading.Lock()
+
+    def _close(self):
+        if self._con is not None:
+            try:
+                self._con.close()
+            except sqlite3.Error:
+                pass
+        self._con = None
+        self._ident = None
+
+    def _snapshot(self):
+        try:
+            st = os.stat(db_path(self.project_dir))
+        except OSError:
+            self._close()
+            return None
+        ident = (st.st_dev, st.st_ino)
+        if self._con is None or ident != self._ident:
+            self._close()
+            self._con = _ro_connect(self.project_dir)
+            self._ident = ident
+        version = self._con.execute("PRAGMA data_version").fetchall()[0][0]
+        return ident, version, _table_marks(self._con)
+
+    def poll(self):
+        with self._lock:
+            try:
+                snap = self._snapshot()
+            except sqlite3.Error:           # foglalt vagy épp helyreálló napló: a következő körben újra
+                self._close()
+                return self._rev, False
+            if self._last is _UNSET:
+                self._last = snap
+                return self._rev, False
+            if snap != self._last:
+                self._last = snap
+                self._rev += 1
+                return self._rev, True
+            return self._rev, False
+
+    def rev(self):
+        return self.poll()[0]
+
+    def close(self):
+        with self._lock:
+            self._close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+        return False
+
+
+# ------------------------------------------------------------------ ma-projekt.json (szk.ma.project/v1)
+PROJECT_META = "ma-projekt.json"
+PROJECT_SCHEMA = "szk.ma.project/v1"
+REVIEW_TYPES = ("intervention", "exposure", "diagnostic", "prognostic_factor", "prediction_model")
+DATA_CLASSES = ("A", "B", "C")
+LOCALES = ("hu", "en")
+GRADE_STARTS = ("high", "low")
+CONVENTIONS = {"amstar2_partial_yes_critical": ("meets", "weakness"), "grade_suspected": ("unresolved",)}
+DEFAULT_CONVENTIONS = {"amstar2_partial_yes_critical": "meets", "grade_suspected": "unresolved"}
+_META_ORDER = ("schema", "title", "question", "review_type", "data_class", "outcomes", "appraisal_tools",
+               "composer", "doc_roots", "locale", "conventions")
+_OUTCOME_ORDER = ("id", "name", "data", "measure", "critical", "primary_spec", "grade_start")
+_OUTCOME_ID = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$")
+_RELPATH = re.compile(r"^(?!/)(?![A-Za-z]:)(?!.*\.\.)[^\\:]+$")
+
+
+def project_meta_path(project_dir):
+    return os.path.join(project_dir, PROJECT_META)
+
+
+def _opt_str(errors, where, v):
+    if v is not None and not isinstance(v, str):
+        errors.append("%s: szöveg (vagy null) legyen" % where)
+
+
+def _relpath_ok(errors, where, v):
+    if v is None:
+        return
+    if not isinstance(v, str) or not v or not _RELPATH.match(v):
+        errors.append("%s: projekt-relatív, '/'-elválasztós út legyen ('..', meghajtó és '\\' nélkül): %r"
+                      % (where, v))
+
+
+def _i18n(errors, where, v):
+    if isinstance(v, str):
+        return {"hu": v, "en": v}
+    if isinstance(v, dict) and isinstance(v.get("hu"), str) and isinstance(v.get("en"), str):
+        return dict(v)
+    errors.append("%s: {hu, en} szövegpár (vagy egyetlen szöveg) legyen" % where)
+    return v
+
+
+def _str_list(errors, where, v, unique=True):
+    if v is None:
+        return []
+    if not isinstance(v, list) or not all(isinstance(x, str) and x.strip() and "\x00" not in x for x in v):
+        errors.append("%s: nem üres szövegek listája legyen" % where)
+        return v
+    if unique and len(set(v)) != len(v):
+        errors.append("%s: ismétlődő elem" % where)
+    return list(v)
+
+
+def _ordered(d, order):
+    out = {k: d[k] for k in order if k in d}
+    out.update((k, v) for k, v in d.items() if k not in out)
+    return out
+
+
+def validate_project_meta(meta):
+    """A ma-projekt.json (szk.ma.project/v1) ellenőrzése és normalizálása → (normalizált szótár, hibák).
+    Kötelező: title, data_class (A | B | C; kisbetű is). Ellenőrzött, ha megvan: review_type
+    (intervention | exposure | diagnostic | prognostic_factor | prediction_model), question {P, I, C, O},
+    outcomes[{id (egyedi), name (i18n; szövegből {hu, en} lesz), data, measure, critical, primary_spec,
+    grade_start: high | low}], appraisal_tools[], composer {project, outdir}, doc_roots[], locale (hu | en),
+    conventions {amstar2_partial_yes_critical: meets | weakness, grade_suspected: unresolved}, plugins {}.
+    Alapértékek: schema, locale 'hu', conventions (meets, unresolved), üres listák. Az ismeretlen kulcsok
+    megmaradnak (a fogyasztó figyelmen kívül hagyja őket)."""
+    errors = []
+    if not isinstance(meta, dict):
+        return meta, ["a gyökér objektum legyen"]
+    m = dict(meta)
+    if m.get("schema", PROJECT_SCHEMA) != PROJECT_SCHEMA:
+        errors.append("schema: csak %s lehet (kapott: %r)" % (PROJECT_SCHEMA, m.get("schema")))
+    m["schema"] = PROJECT_SCHEMA
+    if not isinstance(m.get("title"), str) or not m["title"].strip():
+        errors.append("title: kötelező, nem üres szöveg")
+    dc = m.get("data_class")
+    if isinstance(dc, str) and dc.strip().upper() in DATA_CLASSES:
+        m["data_class"] = dc.strip().upper()
+    else:
+        errors.append("data_class: kötelező; A, B vagy C lehet (kapott: %r)" % (dc,))
+    rt = m.get("review_type")
+    if rt is not None and rt not in REVIEW_TYPES:
+        errors.append("review_type: %s lehet (kapott: %r)" % (" | ".join(REVIEW_TYPES), rt))
+    q = m.get("question")
+    if q is not None:
+        if not isinstance(q, dict):
+            errors.append("question: {P, I, C, O} objektum legyen")
+        else:
+            for k, v in q.items():
+                _opt_str(errors, "question.%s" % k, v)
+    outcomes = m.get("outcomes")
+    if outcomes is None:
+        m["outcomes"] = []
+    elif not isinstance(outcomes, list):
+        errors.append("outcomes: lista legyen")
+    else:
+        seen, norm = set(), []
+        for i, o in enumerate(outcomes):
+            where = "outcomes[%d]" % i
+            if not isinstance(o, dict):
+                errors.append("%s: objektum legyen" % where)
+                norm.append(o)
+                continue
+            o = dict(o)
+            oid = o.get("id")
+            if not isinstance(oid, str) or not _OUTCOME_ID.match(oid):
+                errors.append("%s.id: kötelező; betű, szám, '_', '.', '-' (legfeljebb 64 karakter): %r" % (where, oid))
+            elif oid in seen:
+                errors.append("%s.id: ismétlődő kimenet-azonosító: %s" % (where, oid))
+            else:
+                seen.add(oid)
+            if o.get("name") is not None:
+                o["name"] = _i18n(errors, where + ".name", o["name"])
+            _relpath_ok(errors, where + ".data", o.get("data"))
+            _relpath_ok(errors, where + ".primary_spec", o.get("primary_spec"))
+            _opt_str(errors, where + ".measure", o.get("measure"))
+            if not isinstance(o.get("critical", False), bool):
+                errors.append("%s.critical: true vagy false legyen" % where)
+            if o.get("grade_start") is not None and o["grade_start"] not in GRADE_STARTS:
+                errors.append("%s.grade_start: high vagy low lehet (kapott: %r)" % (where, o["grade_start"]))
+            norm.append(_ordered(o, _OUTCOME_ORDER))
+        m["outcomes"] = norm
+    m["appraisal_tools"] = _str_list(errors, "appraisal_tools", m.get("appraisal_tools"))
+    m["doc_roots"] = _str_list(errors, "doc_roots", m.get("doc_roots"))
+    comp = m.get("composer")
+    if comp is not None:
+        if not isinstance(comp, dict):
+            errors.append("composer: {project, outdir} objektum legyen")
+        else:
+            for k in ("project", "outdir"):
+                _opt_str(errors, "composer.%s" % k, comp.get(k))
+    plugins = m.get("plugins")
+    if plugins is not None and not (isinstance(plugins, dict) and all(isinstance(v, str) for v in plugins.values())):
+        errors.append("plugins: {név: út} objektum legyen")
+    loc = m.get("locale", "hu")
+    if loc not in LOCALES:
+        errors.append("locale: hu vagy en lehet (kapott: %r)" % (loc,))
+    m["locale"] = loc
+    conv = m.get("conventions")
+    if conv is None:
+        conv = {}
+    if not isinstance(conv, dict):
+        errors.append("conventions: objektum legyen")
+    else:
+        conv = dict(DEFAULT_CONVENTIONS, **conv)
+        for k, allowed in CONVENTIONS.items():
+            if conv.get(k) not in allowed:
+                errors.append("conventions.%s: %s lehet (kapott: %r)" % (k, " | ".join(allowed), conv.get(k)))
+        m["conventions"] = _ordered(conv, tuple(CONVENTIONS))
+    try:
+        json.dumps(m, allow_nan=False)
+    except (TypeError, ValueError):
+        errors.append("a tartalom nem JSON-képes (vagy NaN/végtelen számot tartalmaz)")
+    return _ordered(m, _META_ORDER), errors
+
+
+def _meta_error(errors):
+    return ValueError("Érvénytelen %s: %s." % (PROJECT_META, "; ".join(errors)))
+
+
+def load_project_meta(project_dir):
+    """A ma-projekt.json ellenőrzött, alapértékekkel kiegészített tartalma; None, ha nincs ilyen fájl.
+    Hibás JSON vagy séma → ValueError (magyar üzenet, minden hibával)."""
+    p = project_meta_path(project_dir)
+    try:
+        with open(p, encoding="utf-8-sig") as fh:
+            text = fh.read()
+    except FileNotFoundError:
+        return None
+
+    def bad_constant(name):
+        raise ValueError("nem véges szám: %s" % name)
+    try:
+        meta = json.loads(text, parse_constant=bad_constant)
+    except ValueError as exc:
+        raise ValueError("Érvénytelen %s: nem érvényes JSON (%s)." % (PROJECT_META, exc)) from None
+    norm, errors = validate_project_meta(meta)
+    if errors:
+        raise _meta_error(errors)
+    return norm
+
+
+def save_project_meta(project_dir, meta):
+    """A ma-projekt.json ellenőrzött kiírása (atomikus csere, UTF-8, 2 szóközös behúzás, záró újsor)
+    → a normalizált szótár. Érvénytelen tartalom → ValueError, és a fájl nem változik."""
+    norm, errors = validate_project_meta(meta)
+    if errors:
+        raise _meta_error(errors)
+    text = json.dumps(norm, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
+    os.makedirs(project_dir, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".ma-projekt.", suffix=".tmp", dir=project_dir)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp, project_meta_path(project_dir))
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+    return norm

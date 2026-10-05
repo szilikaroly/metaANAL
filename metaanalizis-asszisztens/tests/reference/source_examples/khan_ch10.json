@@ -2808,41 +2808,6 @@
     "note": "printed sum of the per-study variance contributions W* = Var_IVhet (4 dp), Table 10.6"
    },
    {
-    "path": "se",
-    "value": 0.046716,
-    "tol": 1.21e-06,
-    "transform": null,
-    "note": "printed SE (6 dp), p. 234; the book used tau^2 rounded to 0.008633 (SE 0.0467157): tol = half unit + max 6-dp tau^2-rounding shift of SE (7e-07)"
-   },
-   {
-    "path": "ci_lower",
-    "value": 0.451061,
-    "tol": 3.57e-06,
-    "transform": null,
-    "note": "printed LL* (6 dp), p. 234; tol = half unit + 1.96 x tau^2-rounding shift of SE (1.4e-06) + |1.96 - z_.975|*SE (1.7e-06)"
-   },
-   {
-    "path": "ci_upper",
-    "value": 0.63419,
-    "tol": 8.07e-06,
-    "transform": null,
-    "note": "printed UL* (5 dp), p. 234; tol = half unit + tau^2-rounding + 1.96-vs-quantile"
-   },
-   {
-    "path": "ci_lower",
-    "value": 0.422771,
-    "tol": 3.02e-06,
-    "transform": "tanh",
-    "note": "printed LL r = 1.46483/3.46483 (6 dp), p. 234; tol = half unit + (tau^2-rounding + 1.96-vs-quantile) x (1 - r^2)"
-   },
-   {
-    "path": "ci_upper",
-    "value": 0.56093,
-    "tol": 7.1e-06,
-    "transform": "tanh",
-    "note": "printed UL r (5 dp), p. 234; tol = half unit + (tau^2-rounding + 1.96-vs-quantile) x (1 - r^2)"
-   },
-   {
     "path": "estimate",
     "value": 0.495,
     "tol": 0.0005,
@@ -2997,7 +2962,131 @@
     "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
    }
   ],
-  "note": "The engine's IVhet ignores tau2_fixed, so only the full-precision DL tau^2 chain can be run; the book's 6-dp SE 0.046716 and LL* 0.451061 come from tau^2 = 0.008633 (verifier: SE 0.0467157, LL* 0.4510607) - covered by the tau^2-rounding allowance. Not checked (no engine path): per-study variance contributions W* (Moore 0.0003, ..., Baker 9E-05), WZ, sum wZ = 517.66, exp(2*LL*) = 2.46483 and exp(2*UL*) printed 3.55506 (a typo for 3.55509 = exp(2*0.63419); the downstream UL r 0.56093 is unaffected). The text's claim that RE and IVhet give the same CI holds only at 2 dp.",
+  "note": "The book's 6-dp SE 0.046716, LL* 0.451061 and UL* 0.63419 (and the r-scale limits derived from them) come from tau^2 rounded to 0.008633 and z = 1.96; they are checked at half-unit precision in khan_ch10__ivhet_tau2_rounded (tau2_fixed). This case runs the full-precision DL tau^2 chain. Not checked (no engine path): per-study variance contributions W* (Moore 0.0003, ..., Baker 9E-05), WZ, sum wZ = 517.66, exp(2*LL*) = 2.46483 and exp(2*UL*) printed 3.55506 (a typo for 3.55509 = exp(2*0.63419); the downstream UL r 0.56093 is unaffected). The text's claim that RE and IVhet give the same CI holds only at 2 dp.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__ivhet_tau2_rounded",
+  "example_id": "khan_ch10__ivhet_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.6 Example 10.7: Table 10.6 p. 233, results pp. 233-234 (tau^2 = 0.008633 from Example 10.5 p. 229)",
+  "description": "IVhet pooling with tau^2 fixed at the printed 0.008633 and z = 1.96 (the book's chain): SE, CI on the Fisher z and r scales at the printed precision.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet",
+   "tau2_fixed": 0.008633,
+   "level": 0.950004209703559
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5426,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed theta_IVhet = 517.66/954 (4 dp), p. 234 (FE estimate, tau^2-independent)"
+   },
+   {
+    "path": "se",
+    "value": 0.0022,
+    "tol": 5e-05,
+    "transform": "square",
+    "note": "printed sum of the per-study variance contributions W* = Var_IVhet (4 dp), Table 10.6"
+   },
+   {
+    "path": "se",
+    "value": 0.046716,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed SE (6 dp), p. 234; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.451061,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed LL* (6 dp), p. 234; level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96; tol = half unit"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.63419,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), p. 234; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.422771,
+    "tol": 1.333e-06,
+    "transform": "tanh",
+    "note": "printed LL r = 1.46483/3.46483 (6 dp), p. 234: the book goes through the 5-dp intermediate exp(2*LL*) = 2.46483, so tol = half unit (5e-7) + its half unit x dr/dE = 5e-6 x 2/3.46483^2 (8.33e-7)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.56093,
+    "tol": 5e-06,
+    "transform": "tanh",
+    "note": "printed UL r (5 dp), p. 234; tol = half unit (the 5-dp intermediate exp(2*UL*) shifts r by at most 4.8e-7)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.495,
+    "tol": 0.0005,
+    "transform": "tanh",
+    "note": "printed rho_IVhet (3 dp), p. 234"
+   },
+   {
+    "path": "tau2",
+    "value": 0.008633,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "the fixed tau^2 (Example 10.5, 6 dp) is used as given"
+   }
+  ],
+  "note": "Same data as khan_ch10__ivhet_fisher_z. tau2_fixed = 0.008633 and level = 2*Phi(1.96) - 1 = 0.950004209703559 (z = 1.96) reproduce the book's IVhet chain, so every printed tau^2-dependent decimal is checked at half-unit precision (no tau^2-rounding or 1.96-vs-quantile allowance); see also tests/test_backlog_Z.py test_ivhet_tau2_fixed_khan_ch10.",
   "status": "active"
  }
 ]

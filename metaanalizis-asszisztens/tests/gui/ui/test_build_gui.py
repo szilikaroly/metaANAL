@@ -73,10 +73,12 @@ class BuildOutputTests(unittest.TestCase):
                 self.assertNotIn("Math.", part, name)
 
     def test_i18n_embedded_and_parity(self):
-        m = re.search(r'<script type="application/json" id="ma-i18n"[^>]*>(.*?)</script>', self.prod, re.S)
-        data = json.loads(m.group(1))
-        self.assertEqual(set(data["hu"]), set(data["en"]))
-        self.assertGreater(len(data["hu"]), 100)
+        for html in (self.prod, self.dev):
+            m = re.search(r'<script type="text/plain" id="ma-i18n" data-enc="lz1"[^>]*>(.*?)</script>', html, re.S)
+            data = bg.unpack_i18n(m.group(1))
+            self.assertEqual(set(data["hu"]), set(data["en"]))
+            self.assertGreater(len(data["hu"]), 100)
+            self.assertEqual(data, bg.load_i18n(SRC))
 
 
 class StaticSourceTests(unittest.TestCase):

@@ -11,7 +11,10 @@
 - Oldalfájlok: <tábla>.prov.json (szk.ma.provenance/v1), documents.json, studies.json — minimális
   alakellenőrzéssel, atomikus írással.
 - ChangeWatcher: sha256/mtime és a projekt.sqlite PRAGMA data_version-je alapján rev-számláló,
-  long-pollhoz (wait).
+  long-pollhoz (wait). Figyeli a mintákat (a _privat/ és a 03_adatok/ almappáit is) és minden
+  fájlt, amelyet a tároló megnyitott vagy írt (watch).
+- T11: a teljes értelmezés (fejléc-kanonizálás) előtt a fejléc szélessége legfeljebb MAX_COLUMNS
+  (különben TooLarge, 413). Ideiglenes fájl: '.ma-tmp-<név>-….tmp' (a kezelt .gitignore-blokk fedi).
 
 Számot nem értelmez és nem számol (a cellák szövegek; a számparszolás a motoré). Cellaértéket
 soha nem naplóz és hibaüzenetbe sem tesz (T10): az értékek csak a hívónak visszaadott adatban
@@ -36,11 +39,14 @@ from pathlib import Path
 
 from metaelemzes import tableio
 
+from . import security
+
 UID_COLUMN = "row_uid"
 UID_RE = re.compile(r"^r[0-9a-z]{4,12}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 DOCUMENTS_REL = "03_adatok/documents.json"
+PRIVATE_DOCUMENTS_REL = "_privat/documents.json"     # C osztályú projekt dokumentum-jegyzéke
 STUDIES_REL = "03_adatok/studies.json"
 PROV_SUFFIX = ".prov.json"
 DB_NAME = "projekt.sqlite"          # metaelemzes.projekt.db_path
@@ -74,8 +80,12 @@ _REPLACE_RETRY_DELAYS = (0.05, 0.15, 0.4)
 _VERSION_CACHE = 32                 # (tábla, etag) → tartalom, a háromutas diffhez
 _DIFF_LIMIT = 5000
 _EXPECT_TTL = 120.0                 # saját írás várt hash-e ennyi ideig érvényes (s)
-_WIN_RESERVED = ({"con", "prn", "aux", "nul"} | {"com%d" % i for i in range(1, 10)}
-                 | {"lpt%d" % i for i in range(1, 10)})
+MAX_COLUMNS = security.MAX_COLUMNS  # T11: a fejléc legfeljebb ennyi oszlopos (a kanonizálás előtt)
+TMP_PREFIX = security.TMP_PREFIX
+TMP_SWEEP_AGE = 300.0               # s; ennél régebbi árva ideiglenes fájl indításkor törölhető
+_MAX_WATCHED = 2000                 # a tárolón át megnyitott, külön figyelt fájlok felső korlátja
+# egy forrásból a security.check_relpath-szal (COM0, LPT¹, CONIN$ … is)
+_WIN_RESERVED = frozenset(n.lower() for n in security.WINDOWS_RESERVED_NAMES)
 _BAD_PATH_CHARS = set('<>:"|?*\\') | {chr(i) for i in range(32)}
 
 
@@ -114,6 +124,10 @@ class Invalid(StoreError):
     code, http = "VALIDATION", 422
 
 
+class TooLarge(StoreError):
+    code, http = "PAYLOAD_TOO_LARGE", 413
+
+
 class Locked(StoreError):
     code, http = "LOCKED", 423
 
@@ -140,6 +154,15 @@ class Conflict(StoreError):
                                "truncated": truncated})
         self.diff = diff
         self.etag = etag
+
+
+def _provenance_conflict(prel, dataset, etag):
+    exc = Conflict(prel, etag)
+    exc.message = ("Az eredet-oldalfájl (%s) időközben megváltozott (például egy másik lapon vagy egy "
+                   "ágens írta). Töltsd be újra az eredetet, majd mentsd újra." % prel)
+    exc.args = (exc.message,)
+    exc.details.update(kind="provenance", dataset=dataset, path=prel)
+    return exc
 
 
 # ------------------------------------------------------------------ utak
@@ -425,8 +448,11 @@ def _read_records(text, delim):
     return out
 
 
-def parse_csv_bytes(raw):
-    """CSV-bájtok → belső, formátumtartó szerkezet (nyers rekordokkal). Üres bájtsor: üres tábla."""
+def parse_csv_bytes(raw, max_columns=MAX_COLUMNS):
+    """CSV-bájtok → belső, formátumtartó szerkezet (nyers rekordokkal). Üres bájtsor: üres tábla.
+
+    max_columns: a fejléc legfeljebb ennyi oszlopos lehet (különben TooLarge, 413) — a lineáris
+    beolvasás után, a fejléc-kanonizálás (ismétlődő nevekre négyzetes) előtt; None: nincs korlát."""
     if not raw:
         return _Parsed(default_format())
     try:
@@ -450,6 +476,8 @@ def parse_csv_bytes(raw):
         cells, raw_text, line = recs[i]
         objs.append(_Rec(cells, raw_text, line, "".join(r for _, r, _ in recs[i + 1:nxt])))
     header, rows = objs[0], objs[1:]
+    if max_columns is not None and len(header.cells) > max_columns:
+        raise TooLarge("Túl sok oszlop (legfeljebb %d)." % max_columns, {"max_columns": max_columns})
     # tizedesjel: a tableio döntése a szám-oszlopok celláiból
     mapping = tableio.canonical_columns(header.cells)
     numeric = [v for r in rows for col, v in zip(header.cells, r.cells) if mapping.get(col) in tableio.NUMERIC]
@@ -521,6 +549,7 @@ class Table(object):
         self.etag = etag
         self.uid_column = uid_column
         self.uid_issues = uid_issues
+        self.provenance_etag = None     # a mentéssel együtt írt .prov.json új etagje (ha volt)
 
     @property
     def row_uids(self):
@@ -959,7 +988,9 @@ def json_bytes(doc):
 
 # ------------------------------------------------------------------ atomikus írás
 def _write_tmp(path, data):
-    fd, tmp = tempfile.mkstemp(prefix="." + path.name + ".", suffix=".tmp", dir=str(path.parent))
+    # megkülönböztető előtag: a kezelt .gitignore-blokk '.ma-tmp-*' mintája fedi (egy összeomlás után
+    # itt maradt másolatot a vault sem tolja fel), és az indításkori takarítás csak ilyet töröl
+    fd, tmp = tempfile.mkstemp(prefix=TMP_PREFIX + path.name + "-", suffix=".tmp", dir=str(path.parent))
     try:
         with os.fdopen(fd, "wb") as fh:
             fh.write(data)
@@ -992,6 +1023,37 @@ def _replace(tmp, path):
             if attempt >= len(delays):
                 raise
             time.sleep(delays[attempt])
+
+
+def sweep_temp_files(root, max_age=TMP_SWEEP_AGE, limit=200000, now=None):
+    """Árva ideiglenes fájlok ('.ma-tmp-….tmp', pl. összeomlás után) törlése a projektmappában →
+    a törölt fájlok projekt-relatív útjai. Csak max_age másodpercnél régebbi, szabályos fájlt töröl
+    (a futó írásokat nem zavarja); a .git mappába nem lép be; legfeljebb limit bejegyzést néz meg."""
+    root = os.path.realpath(str(root))
+    now = time.time() if now is None else now
+    removed = []
+    seen = 0
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d != ".git"]
+        for name in filenames:
+            seen += 1
+            if seen > limit:
+                return removed
+            if not (name.startswith(TMP_PREFIX) and name.endswith(".tmp")):
+                continue
+            full = os.path.join(dirpath, name)
+            try:
+                st = os.lstat(full)
+            except OSError:
+                continue
+            if not stat.S_ISREG(st.st_mode) or now - st.st_mtime < max_age:
+                continue
+            try:
+                os.unlink(full)
+            except OSError:
+                continue
+            removed.append(Path(os.path.relpath(full, root)).as_posix())
+    return removed
 
 
 def _fsync_dir(d):
@@ -1108,6 +1170,7 @@ class ProjectStore(object):
         done = []
         for i, (rel, path, tmp, sha) in enumerate(prepared):
             if self.watcher is not None:
+                self.watcher.watch(rel)
                 self.watcher.note_write(rel, sha)
             try:
                 _replace(tmp, path)
@@ -1157,11 +1220,22 @@ class ProjectStore(object):
         if raw is None:
             raise NotFound("Nincs ilyen adattábla: %s" % rel, {"dataset": rel})
         table = _to_table(rel, parse_csv_bytes(raw), sha256_bytes(raw))
+        self._watch(rel, table.etag)
         with self._lock:
             self._remember(table)
         return table
 
-    def save_table(self, dataset, header, rows, if_match, provenance=None, write_uids=True, fmt=None):
+    def _watch(self, rel, sha=None):
+        """A megnyitott/írt fájl a változásfigyelőbe kerül (a látott hash az alapállapota), így a
+        külső szerkesztése bárhol (_privat/, almappa, .txt) 'external' lesz (4.16)."""
+        if self.watcher is not None:
+            try:
+                self.watcher.watch(rel, sha)
+            except Exception:
+                pass                    # a figyelő hibája ne rontsa el a betöltést
+
+    def save_table(self, dataset, header, rows, if_match, provenance=None, write_uids=True, fmt=None,
+                   provenance_if_match=ANY):
         """Mentés If-Match-csel → az új Table (a visszaadott uid-ok az érvényesek).
 
         header: oszlopnevek (a row_uid nélkül; ha benne van, a helyét megtartjuk); rows:
@@ -1170,6 +1244,9 @@ class ProjectStore(object):
         Eltérésnél Conflict
         cellaszintű diffel. write_uids: a row_uid oszlop (ha még nincs) a fájlba kerül.
         provenance: ha adott, a .prov.json is íródik (table_sha256 = az új CSV hash-e), a CSV után.
+        provenance_if_match: az oldalfájl betöltött etagje (a CSV-éhez hasonló feltétel: None = csak
+        ha még nincs oldalfájl; ANY = feltétel nélkül); eltérésnél Conflict (details.kind: provenance).
+        Részleges írásnál (a CSV kész, az oldalfájl zárolt) Locked: details {partial, written, etag}.
         fmt: új fájl formátuma (CsvFormat vagy dict); meglévő fájlnál a fájlé marad."""
         rel = self.rel(dataset)
         path = self.path(rel)
@@ -1200,6 +1277,15 @@ class ProjectStore(object):
                 return d, known, trunc
 
             self._precondition(rel, if_match, cur_etag, diff_fn)
+            prel = provenance_relpath(rel)
+            prov_etag = None
+            if provenance is not None:
+                prov_raw = _read_bytes(self.path(prel), prel)
+                prov_etag = None if prov_raw is None else sha256_bytes(prov_raw)
+                try:
+                    self._precondition(prel, provenance_if_match, prov_etag)
+                except Conflict as exc:
+                    raise _provenance_conflict(prel, rel, exc.etag) from None
             out_fmt = orig.fmt if orig is not None else (fmt or default_format())
             data = _encode(_render(orig, hdr, sub_rows, out_fmt, write_uids, uid_pos), out_fmt, hdr, sub_rows)
             parsed = _reads_back(data, hdr, sub_rows)
@@ -1217,17 +1303,31 @@ class ProjectStore(object):
             writes = []
             if cur is None or data != cur:
                 writes.append((rel, path, data))
+            prov_bytes = None
             if provenance is not None:
                 doc = dict(provenance)
                 if doc.get("table") not in (None, rel):
                     raise Invalid("Az eredet-oldalfájl másik táblához tartozik.", {"dataset": rel})
                 doc["table"], doc["table_sha256"] = rel, new_etag
-                prel = provenance_relpath(rel)
                 check_provenance(doc, prel)
-                writes.append((prel, self.path(prel), json_bytes(doc)))
-            if writes:
-                self._write_many(writes, expect={rel: cur_etag})
+                prov_bytes = json_bytes(doc)
+                writes.append((prel, self.path(prel), prov_bytes))
             table = _to_table(rel, parsed, new_etag)
+            if writes:
+                expect = {rel: cur_etag}
+                if provenance is not None:
+                    expect[prel] = prov_etag        # az oldalfájl sem íródhat felül vakon (a CSV-hez hasonlóan)
+                try:
+                    self._write_many(writes, expect=expect)
+                except Locked as exc:
+                    if exc.details.get("partial") and rel in (exc.details.get("written") or ()):
+                        # a CSV már az új változat: a hívó ezzel az etaggel folytathatja
+                        exc.details.update(dataset=rel, etag=new_etag)
+                        self._remember(table)
+                    raise
+            if prov_bytes is not None:
+                table.provenance_etag = sha256_bytes(prov_bytes)
+            self._watch(rel, new_etag)
             self._remember(table)
         return table
 
@@ -1239,6 +1339,7 @@ class ProjectStore(object):
         """(dokumentum, etag); ha nincs fájl: (default(), None)."""
         rel = self.rel(rel)
         raw = _read_bytes(self.path(rel), rel)
+        self._watch(rel, None if raw is None else sha256_bytes(raw))
         if raw is None:
             return (default() if callable(default) else default), None
         try:
@@ -1283,11 +1384,12 @@ class ProjectStore(object):
         doc.setdefault("table_sha256", None)
         return self.save_json(provenance_relpath(rel), doc, if_match, check_provenance)
 
-    def load_documents(self):
-        return self.load_json(DOCUMENTS_REL, check_documents, empty_documents)
+    def load_documents(self, rel=DOCUMENTS_REL):
+        """rel: a jegyzék helye (C osztályban PRIVATE_DOCUMENTS_REL — ezt a hívó dönti el)."""
+        return self.load_json(rel, check_documents, empty_documents)
 
-    def save_documents(self, doc, if_match):
-        return self.save_json(DOCUMENTS_REL, doc, if_match, check_documents)
+    def save_documents(self, doc, if_match, rel=DOCUMENTS_REL):
+        return self.save_json(rel, doc, if_match, check_documents)
 
     def load_studies(self):
         return self.load_json(STUDIES_REL, check_studies, empty_studies)
@@ -1295,9 +1397,9 @@ class ProjectStore(object):
     def save_studies(self, doc, if_match):
         return self.save_json(STUDIES_REL, doc, if_match, check_studies)
 
-    def document_path(self, doc_id, composer_outdir=None):
+    def document_path(self, doc_id, composer_outdir=None, rel=DOCUMENTS_REL):
         """A documents.json-ban szereplő dokumentum abszolút útja (az aláírt fájl-URL allowlistje)."""
-        doc, _ = self.load_documents()
+        doc, _ = self.load_documents(rel)
         for d in doc["docs"]:
             if d["id"] == doc_id:
                 break
@@ -1314,8 +1416,10 @@ class ProjectStore(object):
 WATCH_PATTERNS = (
     "ma-projekt.json",
     "02_szures/*.json",
-    "03_adatok/*.csv", "03_adatok/*.tsv", "03_adatok/*.json",
-    "03_adatok/kettos/*.csv", "03_adatok/kettos/*.json",
+    # az adattáblák bármely almappában (a '**' nulla mappát is jelent): 03_adatok/ és a C osztály
+    # egyetlen engedett helye, a _privat/ (4.16: a külső írás ott is 'external' sort kap)
+    "03_adatok/**/*.csv", "03_adatok/**/*.tsv", "03_adatok/**/*.txt", "03_adatok/**/*.json",
+    "_privat/**/*.csv", "_privat/**/*.tsv", "_privat/**/*.txt", "_privat/**/*.json",
     "04_torzitas_kockazat/appraisals/*.json",
     "05_elemzes/specs/*.json",
     "05_elemzes/*/*/run.json",
@@ -1330,11 +1434,11 @@ def classify_key(key):
         return "db"
     if key.endswith(PROV_SUFFIX):
         return "provenance"
-    if key == DOCUMENTS_REL:
+    if key in (DOCUMENTS_REL, PRIVATE_DOCUMENTS_REL):
         return "documents"
     if key == STUDIES_REL:
         return "studies"
-    if key.lower().endswith((".csv", ".tsv")):
+    if key.lower().endswith((".csv", ".tsv", ".txt")):
         return "table"
     if key.endswith("activity.jsonl"):
         return "activity"
@@ -1349,12 +1453,16 @@ class ChangeWatcher(object):
     rev-je mindig „túl régi” → reset (teljes újratöltés). A saját írásokat a ProjectStore
     note_write-tal jelzi; minden más fájlváltozás 'external' (a szerver erre ír actor: external
     sort, 4.16) — kivéve a projekt.sqlite-ot és az activity.jsonl-t, amelyek csak 'changed'-ben
-    szerepelnek."""
+    szerepelnek. A mintákon túl a watch(rel)-lel felvett fájlokat is figyeli (amit a tároló
+    megnyitott vagy írt)."""
 
     def __init__(self, project_root, patterns=WATCH_PATTERNS, extra_files=(), history=1000, interval=1.5):
         self.root = Path(os.path.realpath(str(project_root)))
         self._patterns = tuple(patterns)
         self._extra = [Path(p) for p in extra_files]
+        self._extra_lock = threading.Lock()
+        self._pending = {}              # kulcs → (Path, a tároló által látott sha vagy None)
+        self._watched = {}              # kulcs → Path (csak a _scan_lock alatt változik)
         self.interval = float(interval)
         self._cond = threading.Condition()
         self._scan_lock = threading.Lock()
@@ -1382,6 +1490,35 @@ class ChangeWatcher(object):
             return Path(os.path.relpath(full, str(self.root))).as_posix()
         return "ext:" + Path(full).as_posix()
 
+    def watch(self, rel, sha256=None):
+        """Projekt-relatív fájl felvétele a figyeltek közé (a következő körtől). sha256: a hívó által
+        látott tartalom hash-e — ez az alapállapot, így a felvétel maga nem változás; None: nincs
+        alapállapot (új vagy épp írt fájl: a saját írást a note_write jelzi)."""
+        if not isinstance(rel, str) or not rel:
+            return
+        parts = rel.split("/")
+        if any(p in ("", ".", "..") for p in parts) or parts[-1].startswith(".") or parts[-1].endswith(".tmp"):
+            return
+        path = self.root.joinpath(*parts)
+        key = self._key(path)
+        if key.startswith("ext:"):
+            return
+        with self._extra_lock:
+            if key in self._pending or len(self._watched) + len(self._pending) >= _MAX_WATCHED:
+                return
+            if key in self._watched and sha256 is None:
+                return
+            self._pending[key] = (path, sha256)
+
+    def _take_pending(self):
+        """A watch()-csal felvett fájlok átvétele (a _scan_lock alatt hívandó)."""
+        with self._extra_lock:
+            pending, self._pending = self._pending, {}
+        for key, (path, sha) in pending.items():
+            self._watched[key] = path
+            if sha is not None and key not in self._files:
+                self._files[key] = (None, sha)          # alapállapot: a tároló által látott tartalom
+
     def _iter_files(self):
         seen = set()
         for pat in self._patterns:
@@ -1397,8 +1534,13 @@ class ChangeWatcher(object):
             if key not in seen:
                 seen.add(key)
                 yield key, p
+        for key, p in list(self._watched.items()):
+            if key not in seen:
+                seen.add(key)
+                yield key, p
 
     def _scan_files(self):
+        self._take_pending()
         changed = set()
         current = {}
         now = time.time()
