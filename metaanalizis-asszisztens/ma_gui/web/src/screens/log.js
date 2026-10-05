@@ -27,6 +27,8 @@
   var L = null;          // képernyő-állapot (csak memóriában)
   var filters = { finding: { status: 'open', severity: '', stage: '', agent: '' }, decision: { status: '', stage: '', agent: '' } };
 
+  /** ismert értéknél a fordítás, ismeretlennél (pl. régi napló ágensneve) a nyers érték */
+  function lbl(prefix, v) { return MA.i18n.has(prefix + v) ? t(prefix + v) : String(v === null || v === undefined ? '—' : v); }
   function short(v, n) { v = v === null || v === undefined ? '' : String(v); return v.length > n ? v.slice(0, n) + '…' : v; }
   function opts(list, allKey, prefix) {
     var o = list.map(function (v) { return { value: v, label: prefix ? t(prefix + v) : v }; });
@@ -76,11 +78,11 @@
         h('td', { 'class': 'num' }, '#' + String(f.id)),
         h('td', null, MA.i18n.ts(f.ts)),
         h('td', null, f.stage_id || '—'),
-        h('td', null, MA.ui.badge(P.sevKind(f.severity), t('log.sev.' + f.severity))),
+        h('td', null, MA.ui.badge(P.sevKind(f.severity), lbl('log.sev.', f.severity))),
         h('td', null, h('span', { 'class': 'log-title' }, f.title || ''), f.detail ? h('span', { 'class': 'log-detail muted' }, f.detail) : null,
           f.resolution ? h('span', { 'class': 'log-detail' }, t('log.resolution', { text: f.resolution })) : null),
-        h('td', null, t('log.agent.' + f.agent)),
-        h('td', null, MA.ui.badge(f.status === 'open' ? 'warning' : 'ok', t('log.status.' + f.status))),
+        h('td', null, lbl('log.agent.', f.agent)),
+        h('td', null, MA.ui.badge(f.status === 'open' ? 'warning' : 'ok', lbl('log.status.', f.status))),
         h('td', null, kbCell(f.kb_refs), ids.length ? MA.why.button({ kb: ids, title: f.title, detail: f.detail }, { compact: true }) : null),
         h('td', null, h('button', { type: 'button', 'class': 'btn btn-sm log-resolve', onclick: function (ev) { resolveDialog(f, ev.currentTarget); } },
           t(f.status === 'open' ? 'log.resolve' : 'log.reopen'))));
@@ -91,10 +93,10 @@
     return items.map(function (d) {
       return h('tr', { dataset: { id: d.id } },
         h('td', { 'class': 'num' }, '#' + String(d.id)), h('td', null, MA.i18n.ts(d.ts)), h('td', null, d.stage_id || '—'),
-        h('td', null, t('log.agent.' + d.agent)),
+        h('td', null, lbl('log.agent.', d.agent)),
         h('td', null, h('span', { 'class': 'log-title' }, d.decision || ''), d.alternatives ? h('span', { 'class': 'log-detail muted' }, t('log.alternatives', { text: d.alternatives })) : null),
         h('td', null, d.rationale || '—'), h('td', null, kbCell(d.kb_refs)),
-        h('td', null, MA.ui.badge(d.status === 'active' ? 'ok' : 'neutral', t('log.status.' + (d.status || 'active')))));
+        h('td', null, MA.ui.badge(d.status === 'active' ? 'ok' : 'neutral', lbl('log.status.', d.status || 'active'))));
     });
   }
 
@@ -102,8 +104,8 @@
     return items.map(function (c) {
       return h('tr', { dataset: { id: c.id, stage: c.stage_id } },
         h('td', { 'class': 'num' }, '#' + String(c.id)), h('td', null, MA.i18n.ts(c.ts)), h('td', null, c.stage_id),
-        h('td', null, MA.ui.badge(c.verdict === 'FAIL' ? 'error' : 'ok', t('overview.verdict.' + c.verdict))),
-        h('td', null, t('log.agent.' + c.agent)), h('td', null, c.summary || '—'));
+        h('td', null, MA.ui.badge(c.verdict === 'FAIL' ? 'error' : 'ok', lbl('overview.verdict.', c.verdict))),
+        h('td', null, lbl('log.agent.', c.agent)), h('td', null, c.summary || '—'));
     });
   }
 
