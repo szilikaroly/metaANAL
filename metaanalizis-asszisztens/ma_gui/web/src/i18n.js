@@ -23,22 +23,22 @@
 
   function lzDecode(z) {
     var n = LZ_ALPHABET.length;
-    var s = '';
+    var out = [];                 // karaktertömb: a visszahivatkozás indexelése O(1) (sztring-ropé helyett)
     var i = 0;
     while (i < z.length) {
       var c = z.charAt(i);
-      if (c !== '~') { s += c; i += 1; continue; }
-      if (z.charAt(i + 1) === '~') { s += '~'; i += 2; continue; }
+      if (c !== '~') { out.push(c); i += 1; continue; }
+      if (z.charAt(i + 1) === '~') { out.push('~'); i += 2; continue; }
       var a = LZ_ALPHABET.indexOf(z.charAt(i + 1));
       var b = LZ_ALPHABET.indexOf(z.charAt(i + 2));
       var len = LZ_ALPHABET.indexOf(z.charAt(i + 3)) + LZ_MIN;
       if (a < 0 || b < 0 || len < LZ_MIN) { throw new Error('i18n: hibás lz1-csomag'); }
-      var from = s.length - (a * n + b + 1);
+      var from = out.length - (a * n + b + 1);
       if (from < 0) { throw new Error('i18n: hibás lz1-hivatkozás'); }
-      for (var k = 0; k < len; k++) { s += s.charAt(from + k); }   // átfedő másolás is helyes
+      for (var k = 0; k < len; k++) { out.push(out[from + k]); }   // átfedő másolás is helyes
       i += 4;
     }
-    return s;
+    return out.join('');
   }
 
   function untree(node, prefix, out) {
