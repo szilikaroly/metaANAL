@@ -316,7 +316,8 @@ ugyanazt az utat használják.
   - Billentyűzetes navigáció; TSV-beillesztés Excelből; oszloprögzítés.
   - Cella-dekoráció: hiba, figyelmeztetés, becsült, egyeztetett, külső szerkesztés.
   - Akadálymentesség: `role="grid"`, `aria-invalid`, `aria-describedby`.
-  - Virtualizáció csak a v1-ben jön (az MVP-ben legfeljebb 1000 sor).
+  - Virtualizáció (v1, 2026-10-05: kész): 1000 sor fölött ablakos kirajzolás (a DOM-ban csak a görgetési ablak sorai),
+    az `aria-rowcount`/`aria-rowindex` a teljes táblára; legfeljebb 5000 sor (= a szerver `MAX_ROWS`-a).
   - A cellák **szövegként** maradnak; a számokat a motor értelmezi.
 - **Méretkeret (2.3):** a termék-build legfeljebb 900 KB (`build_gui.MAX_BYTES`; v1, 2026-10-05: 600-ról emelve az
   értékelő űrlapok, a GRADE/SoF és a protokoll kezdőknek szóló magyarázatai miatt). A keretet a build és a

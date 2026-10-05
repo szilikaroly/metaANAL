@@ -991,7 +991,8 @@ class ModuleHygieneTests(unittest.TestCase):
     FORBIDDEN = {"math", "cmath", "statistics", "random", "decimal"}
     ALLOWED = {"argparse", "contextlib", "csv", "datetime", "hashlib", "hmac", "http", "io", "json", "os", "platform", "re",
                "secrets", "signal", "socket", "socketserver", "sqlite3", "sys", "threading", "time", "urllib",
-               "webbrowser", "pathlib", "fcntl", "msvcrt", "metaelemzes", "ma_gui", "inspect"}
+               "webbrowser", "pathlib", "fcntl", "msvcrt", "metaelemzes", "ma_gui", "inspect",
+               "base64"}                               # v1: a kettős kinyerés fájlcseréje (A/B CSV base64-ben)
 
     def _files(self):
         base = Path(ROOT) / "ma_gui"

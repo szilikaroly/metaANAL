@@ -433,3 +433,86 @@ Szerver-alakok (`ma_gui/routes/grade*.py`; a motor-függvényeket a `grade_engin
 - `GET/PUT /api/protocol` (`{title?, question{P,I,C,O}?, review_type?, registration{registry, id}|null}` + If-Match) — a
   ma-projekt.json protokoll-mezői; a kimenetek a `POST /api/project {action: 'outcome', replace?}`, az adatosztály a
   `{action: 'data_class'}`, az előre rögzített jelölés a `PUT /api/specs/<név>` útján megy.
+
+## KIEGÉSZÍTÉS (kinyerés-ágens, v1, 2026-10-05) — kettős kinyerés (3.5.5), rács-virtualizáció, kumulatív és buborékábra
+
+Fájlok: `src/screens/extraction_dual.js` (`dual` képernyő a 3 Kinyerés fül alatt, `#/dual?outcome=&view=items|tables&item=`),
+`src/components/extraction_vtable.js` (`MA.vtable`), `src/plots/{cumulative,bubble}.js`, `src/css/extraction_dual.css`,
+`src/i18n/{hu,en}/extraction_{dual,plots}.json`, `src/dev/extraction_dual_backend.js` (csak dev; `MA.dev.dual.{state(),
+engineMissing(bool), bumpEtag(kimenet), reset()}` — a döntések hozzárendelését szimulálja, az összevetés a fixture-é),
+`fixtures/extraction_{dual,plots}.json` (generálja: `python3 tests/gui/ui/gen_extraction_fixtures.py [--check]` — a munkapad
+VALÓDI szerverével; az összevetés a homlokzat `compare`-je, ennek hiányában a motor `metaelemzes/kettos.py` modulja, végső
+tartalékként a teszt-csonk). Szerver: `ma_gui/routes/extraction_dual{,_common}.py`. Tesztek: `tests/gui/test_v1_extraction_dual.py`,
+`tests/gui/ui/test_extraction_dual_fixtures.py`, `node tests/gui/ui/extraction_dual.spec.js` (dev-fixture + valódi szerver a
+termék-builddel: `tests/gui/ui/extraction_dual_server.py [--stub|--no-engine]`).
+
+| Modul | API |
+|---|---|
+| `MA.vtable` | `create({label, columns: [{id, label, header?, cls?, title?}], rows, key(row), cell(row, col, i) → Node \| szöveg \| {node\|text, cls?, title?}, rowClass?, rowLabel?, onSelect?, onActivate?, onKey?(ev, row, i) → true, virtualMin? (1000), emptyKey?}) → {el, table, rows(), setRows(list, keep?), select(key, {focus?, silent?}), selected(), selectedIndex(), refresh(), focus(), active(), virtual(), renderedCount(), row(i)}` — csak olvasható WAI-ARIA grid (roving tabindex a cellákon, aria-rowcount/-rowindex a teljes listára, aria-selected), 1000 sor fölött ablakos kirajzolással |
+| `MA.grid` (bővítés) | 1000 sor (`VIRTUAL_MIN`) fölött ablakos kirajzolás: a modell teljes, a DOM-ban csak a görgetési ablak (+15 sor ráhagyás) és két térkitöltő sor; a billentyűzet a célsort előbb az ablakba görgeti; a kigörgetett aktív cella helyett a rács (`table`) kap fókuszt, a következő billentyű visszagörget; a dekorációk a kirajzolt sorokra kerülnek. `MAX_ROWS` = 5000 (= `security.MAX_ROWS`). Új: `virtual()`, `renderedCount()`, `opts.virtualMin`. Az API többi része változatlan. |
+| `MA.plots.cumulative` | `render(host, plot, {onDrill, signal})` — a `plot.cumulative` (a motor tengelye, becslései, `display_text`/`i2_text`/`tau2_text`/`key_text`, `k`) kumulatív forestként; a végső sor gyémánt, a referencia-vonal a végső becslés; sorok `.cu-row.sr-row[data-uid][data-y][data-lo][data-hi][data-k]` |
+| `MA.plots.bubble` | `render(host, plot, opts)`, `layout(plot)`, `available(plot)`, `bandPolygon(bubble)` — a `plot.bubble` (lent) buborék-/pontdiagramként; a sáv a motor `band` rácsából (felső él előre, alsó vissza) vagy kész `band_polygon`-ból, az egyenes a motor `line` pontjaiból; buborék-terület ∝ `weight_pct` |
+
+A `screens/results.js` (4 Elemzés · Eredmények) a „Kumulatív” fület a `MA.plots.cumulative`-vel rajzolja (tartalék: `MA.plots.series`),
+és új „Buborék” fület kap, ha a futás plot-dokumentumában van `bubble` blokk.
+
+**Szerver-alakok** (`ma_gui/routes/extraction_dual.py`; a motor-függvényeket az `extraction_dual_common.ENGINE` keresi név
+szerint — `compare` | `kettos_compare` …, `consensus_table`, `agreement_report` —, hiányuknál 424 `CAPABILITY_MISSING`):
+- `GET /api/kettos` → `szk.ma.dual-list/v1`: `{outcomes[{id, name, measure, data, dir, a|b|csv: {path, exists, etag, bytes}, consensus{path,
+  exists, etag, decisions, raters, csv}}], inbox[{path, name, bytes, side_guess, outcome_guess}], engine{available, functions, missing},
+  default_dir}`. A fájlok helye a kimenet adattáblája melletti `kettos/` mappa (`_privat/o1.csv` → `_privat/kettos/`).
+- `POST /api/compare` `{outcome, key?, tolerance?, tables?}` → `szk.ma.dual-view/v1` + ETag (a konszenzus-fájlé): `{outcome, dir, key,
+  key_candidates, columns[{field, a, b}], files, raters, compare (szk.ma.compare-result/v1, változatlanul), pairs, pairs_source,
+  items[{id, level: cell|row, key, field ('*' = egész sor), kind, a, b, row_uid_a, row_uid_b, hint, hint_code, kb, impact, auto,
+  needs_decision, decision{chosen, value, reason, actor, ts}|null, stale}], progress{total, decided, unresolved, auto, stale, orphans},
+  gate{code: 'X009', blocked, message}, agreement_text{hu, en}|null, consensus{exists, etag, csv, decisions}, engine, a?, b? (nyers
+  cellák: {header, rows[{row_uid, cells}], n_rows, etag, format})}`.
+- `POST /api/reconcile` `{outcome, decisions[{key, field, chosen: a|b|other, value?, reason}], clear?[{key, field}], write?: null|'kettos'|
+  'outcome', outcome_if_match?, actor?, dry_run?}` + If-Match → ugyanez a nézet + `written{csv{path, sha256, prov, rows, reconciled,
+  builder: engine|server, preview?}, changed, cleared, decision_id}`. Indoklás nélkül / ismeretlen tétel / formátum-eltérés /
+  sorszintű „other” → 422; feloldatlan eltérésnél a CSV-írás 409 `GATE_BLOCKED` (`details.code` = X009); a kimenet táblájába írás
+  `outcome_if_match` nélkül 409. Atomikus (konszenzus-JSON + CSV + eredet-oldalfájl `reconciled` módszerrel; A és B közben nem
+  változhatott). Activity: utak, hash-ek, darabszámok és mezőnevek — cellaérték, kulcs és indoklás nélkül.
+- `POST /api/kettos/import` `{outcome, side: A|B, rater?, content_b64 | path (kettos/beerkezett/…), filename?, replace?}` →
+  `szk.ma.dual-import/v1` `{state: new|same|replaced, path, etag, rows, columns, header, format, rater, source}` (bájthű mentés,
+  PHI-szkenner értékek nélkül, meglévő eltérő fájl csak `replace`-szel). `POST /api/kettos/export` `{outcome, side: A|B|consensus,
+  template?}` → `{filename, content_b64, sha256, bytes, rows, media_type}` (a sablon: fejléc + kulcsoszlopok, row_uid nélkül).
+
+**`plot.bubble` (E4c — a motor már írja; a felület által olvasott mezők):** `{moderator{name, label, type: continuous|categorical},
+x_axis, y_axis ($defs/axis; y az elemzési skálán, refs[] a referencia-vonalakhoz), points[{row_uid, label, x, y, weight_pct, weight_text?,
+x_text{hu,en}, display_text, flags?, group?}], line[[x, ŷ]…], band[[x, alsó, felső]…] (vagy kész band_polygon[[x, y]…]),
+pi_band?[[x, alsó, felső]…], coef_text{hu,en}, line_label?, band_label?, pi_band_label?, note?, groups?[{id, label, x, estimate,
+ci_lower, ci_upper, display_text, k}]}` (kategóriás moderátornál `line`/`band` üres, `groups` a csoport-összesítők — ezt a motor még
+nem írja; a fixture a motor alcsoport-összesítőiből építi). A `plot.cumulative`-ből a `note` és az `order.text` is megjelenik.
+
+## KIEGÉSZÍTÉS (adapter-ágens, v1, 2026-10-05) — plugin-adapterek, Ábra-export (3.5.9), Composer-forrás (3.5.14), Képességek (3.5.16)
+
+Fájlok: `src/components/adapters_{caps,validator}.js`, `src/screens/adapters_{figures,composer}.js`, `src/css/adapters.css`,
+`src/i18n/{hu,en}/adapters.json` (`adp.*`), `src/dev/adapters_backend.js` (csak dev; `MA.dev.adapters.{scenario('legacy'|'h5'|'ok'),
+manualNumbers(bool), configure(), state()}`), `fixtures/adapters_{caps,figures,composer,validator}.json` (generálja:
+`python3 tests/gui/ui/gen_adapters_fixtures.py [--check]` — a VALÓDI szerver válaszai a BCG valódi commit-futásán, stub-pluginokkal);
+szerver: `ma_gui/adapters/{validator,figureforge,composer,svgaudit}.py`, `ma_gui/routes/adapters{,_figures,_composer}.py`;
+tesztek: `tests/gui/test_v1_adapters.py` (stub-pluginok minden állapotban, `tests/gui/_adapters_stubs.py`),
+`tests/gui/test_v1_adapters_real.py` (a valódi szk-plugins: `MA_GUI_PLUGIN_DIRS=…/plugins`, figure-forge-hoz `MA_GUI_TEST_FF_PYTHON`
+vagy `MA_GUI_TEST_FF_INSTALL=1`; hiányzó függőségnél kimarad), `tests/gui/ui/test_adapters_fixtures.py`, `node tests/gui/ui/adapters.spec.js`.
+A validator 1.0.0 rögzített kimenetei (H1–H4 reprodukció): `tests/gui/adapters_golden/validator-1.0.0/`.
+
+Képernyők: `figures` (4 Elemzés › Ábra-export; `?run=&kind=`), `prisma-composer` (2 PRISMA › Composer-forrás). A Képességek képernyő
+(`screens/capabilities.js`) egy sorral illeszti be az `MA.adaptersCaps.panel(ctx)`-et.
+
+| Modul | API |
+|---|---|
+| `MA.adaptersCaps` | `panel(ctx) → <section>` (GET /api/adapters táblája: funkció, plugin, állapot ●◑◐○ + szöveg, mód, tartalék, teendő, H-őrök; átalakítók), `stateCell(state, extra?)`, `modeText(mode)` |
+| `MA.adaptersValidator` | `box(getDoc, {id?}) → <section>` („Ellenőrzés a validatorral” → POST /api/validator/check; CSAK a válaszértékek mennek), `render(result)`, `minimal(doc)` — az értékelő panel `extra` horgába illeszthető |
+
+Szerver-alakok:
+- `GET /api/adapters` → `szk.ma.adapters/v1` `{plugins{validator, figure-forge, composer}, features[{id, plugin, label, state:
+  ok|legacy|unusable|absent, mode: json|bridge|null, remedy{hu,en}|null, guards[{id, text}], standalone, fallback, fallback_used?}],
+  converters[{name, ok, formats}], converter_remedy, composer_location}`.
+- `POST /api/validator/check` `{doc}` → `szk.appraisal-result/v1` + `mode`, `legacy`, `validator_reported{answered, expected, trusted,
+  agrees}`, `completeness_source: workbench`, `guards[{id, message, effect}]`; 424 a teendővel.
+- `GET /api/figures[?run=]` → `szk.ma.figure-options/v1`; `POST /api/figures/export` → `szk.ma.figure-export/v1` (`qc.badge` a szerver
+  döntése: zöld csak hiánytalan számhűségnél); 409 `details.needs_overwrite`; `POST /api/figures/audit` `{path}` | `{run_id, kind}`.
+- `GET /api/prisma/composer` → `szk.ma.prisma-composer/v1` + ETag (a PRISMA-fájlé); `PUT /api/prisma/composer/config` `{outdir, project}`;
+  `POST /api/prisma/composer/refresh` `{dry_run?, confirm_replace_manual?}` + If-Match → `{flow, check, status_warnings, written, …}`;
+  409 `details.needs_confirm` kézi számoknál. A tárolt fájl `source.kind: composer`, `source.status[]` (a composer figyelmeztetései).

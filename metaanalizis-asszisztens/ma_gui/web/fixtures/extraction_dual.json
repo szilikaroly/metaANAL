@@ -1,0 +1,5957 @@
+{
+ "description": "Kettős kinyerés (3.5.5): a munkapad VALÓDI szerverének borítékai (tests/gui/ui/gen_extraction_fixtures.py) egy ideiglenes projekten — o1: BCG, A/B eltérésekkel (10×, felcserélt karok, csak írásmód, kategória, hiányzó, nem szám, csak A / csak B sor, HTML-címke); o2: Normand (SE/SD csere); o3: csak az A tábla, a B a beérkezett mappában. Az összevetést a VALÓDI motor kettős kinyerés-modulja (metaelemzes/kettos.py: compare, consensus_table, agreement_report; a homlokzatba kötése az integrátoré) adja. A döntéseket, a visszavonást, a CSV-írást és az importot a src/dev/extraction_dual_backend.js állapottartóan szimulálja (nem a szerver).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/kettos",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-list/v1",
+    "data": {
+     "outcomes": [
+      {
+       "id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "measure": "RR",
+       "data": "03_adatok/o1.csv",
+       "dir": "03_adatok/kettos",
+       "a": {
+        "path": "03_adatok/kettos/o1.A.csv",
+        "exists": true,
+        "etag": "6fb2b5283e6fe946737f1ca3d1b5c38133dd8d4f9dffb07d882c81a1be06dcce",
+        "bytes": 809
+       },
+       "b": {
+        "path": "03_adatok/kettos/o1.B.csv",
+        "exists": true,
+        "etag": "c68e16732a1a3131023d2316a1b65b8699730e251bdb96f44b4b190302a972e9",
+        "bytes": 787
+       },
+       "consensus": {
+        "path": "03_adatok/kettos/o1.consensus.json",
+        "exists": true,
+        "etag": "2b39fd8d833bf1149f05b5a9bb7b46b846559125b5f4ee5afe8e3ea40286ed3e",
+        "decisions": 0,
+        "raters": {
+         "a": "SzK",
+         "b": "KP"
+        },
+        "csv": null
+       },
+       "csv": {
+        "path": "03_adatok/kettos/o1.consensus.csv",
+        "exists": false,
+        "etag": null,
+        "bytes": null
+       }
+      },
+      {
+       "id": "o2",
+       "name": {
+        "hu": "Kórházi napok",
+        "en": "Hospital days"
+       },
+       "measure": "MD",
+       "data": "03_adatok/o2.csv",
+       "dir": "03_adatok/kettos",
+       "a": {
+        "path": "03_adatok/kettos/o2.A.csv",
+        "exists": true,
+        "etag": "26965237a03b2a0c83deb511284d8ef5c3b885a6abfce9c3311a9d83b0b8e0d0",
+        "bytes": 375
+       },
+       "b": {
+        "path": "03_adatok/kettos/o2.B.csv",
+        "exists": true,
+        "etag": "9eb5266e673c97a7251f6ae18e8b9da4c4d244621c5f7439008e98a6a890ac6c",
+        "bytes": 377
+       },
+       "consensus": {
+        "path": "03_adatok/kettos/o2.consensus.json",
+        "exists": true,
+        "etag": "0ef7ab325a3eb40002574ab43e05208062c62f9afb47d170f1a0af8a4b4c3ebc",
+        "decisions": 0,
+        "raters": {
+         "a": "SzK",
+         "b": "KP"
+        },
+        "csv": null
+       },
+       "csv": {
+        "path": "03_adatok/kettos/o2.consensus.csv",
+        "exists": false,
+        "etag": null,
+        "bytes": null
+       }
+      },
+      {
+       "id": "o3",
+       "name": {
+        "hu": "Súlyos TBC",
+        "en": "Severe TB"
+       },
+       "measure": "RR",
+       "data": "03_adatok/o3.csv",
+       "dir": "03_adatok/kettos",
+       "a": {
+        "path": "03_adatok/kettos/o3.A.csv",
+        "exists": true,
+        "etag": "039e2867c82adf7649d7da5fa817940a05100db58419e408d8c906b899047c6e",
+        "bytes": 749
+       },
+       "b": {
+        "path": "03_adatok/kettos/o3.B.csv",
+        "exists": false,
+        "etag": null,
+        "bytes": null
+       },
+       "consensus": {
+        "path": "03_adatok/kettos/o3.consensus.json",
+        "exists": true,
+        "etag": "4329c8852d8a6b6dccc96c8dc1728f356cfc401940802bb8a846e7f07edfb6f3",
+        "decisions": 0,
+        "raters": {
+         "a": "SzK"
+        },
+        "csv": null
+       },
+       "csv": {
+        "path": "03_adatok/kettos/o3.consensus.csv",
+        "exists": false,
+        "etag": null,
+        "bytes": null
+       }
+      }
+     ],
+     "inbox": [
+      {
+       "path": "03_adatok/kettos/beerkezett/o3.B.csv",
+       "name": "o3.B.csv",
+       "bytes": 749,
+       "side_guess": "B",
+       "outcome_guess": "o3"
+      }
+     ],
+     "engine": {
+      "available": true,
+      "functions": {
+       "compare": "compare",
+       "consensus_table": "consensus_table",
+       "agreement_report": "agreement_report"
+      },
+      "missing": [],
+      "engine_version": "0.1.0"
+     },
+     "default_dir": "03_adatok/kettos"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 71,
+     "request_id": "q_dx001"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/kettos/export",
+   "body": {
+    "outcome": "o1",
+    "side": "A",
+    "template": false
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-export/v1",
+    "data": {
+     "outcome": "o1",
+     "side": "A",
+     "path": "03_adatok/kettos/o1.A.csv",
+     "filename": "o1.A.csv",
+     "template": false,
+     "content_b64": "cm93X3VpZDt2aXpzZ8OhbGF0O2VzZW3DqW55MTtuMTtlc2Vtw6lueTI7bjI7w6l2O3JvYgpyZHhhMDE7QXJvbnNvbiAxOTQ4OzQ7MTIzOzExOzEzOTsxOTQ4O2xvdwpyZHhhMDI7RmVyZ3Vzb24gJiBTaW1lcyAxOTQ5OzY7MzA2OzI5OzMwMzsxOTQ5O3NvbWUKcmR4YTAzO1Jvc2VudGhhbCBldCBhbCAxOTYwOzM7MjMxOzExOzIyMDsxOTYwO2xvdwpyZHhhMDQ7SGFydCAmIFN1dGhlcmxhbmQgMTk3Nzs2MjsxMzU5ODsyNDg7MTI4Njc7MTk3NztoaWdoCnJkeGEwNTtGcmltb2R0LU1vbGxlciBldCBhbCAxOTczOzMzOzUwNjk7NDc7NTgwODsxOTczO3NvbWUKcmR4YTA2O1N0ZWluICYgQXJvbnNvbiAxOTUzOzE4MDsxNTQxOzM3MjsxNDUxOzE5NTM7c29tZQpyZHhhMDc7VmFuZGl2aWVyZSBldCBhbCAxOTczOzg7MjU0NTsxMDs2Mjk7MTk3Mztsb3cKcmR4YTA4O1RQVCBNYWRyYXMgMTk4MDs1MDU7ODgzOTE7NDk5Ozg4MzkxOzE5ODA7bG93CnJkeGEwOTtDb2V0emVlICYgQmVyamFrIDE5Njg7Mjk7NzQ5OTs0NTs3Mjc3OzE5Njg7c29tZQpyZHhhMTA7Um9zZW50aGFsIGV0IGFsIDE5NjE7MTc7MTcxNjs2NTsxNjY1OzE5NjE7aGlnaApyZHhhMTE7Q29tc3RvY2sgZXQgYWwgMTk3NDsxODY7NTA2MzQ7MTQxOzI3MzM4OzE5NzQ7bG93CnJkeGExMjtDb21zdG9jayAmIFdlYnN0ZXIgMTk2OTs1OzI0OTg7MzsyMzQxOzE5Njk7c29tZQpyZHhhMTM7Q29tc3RvY2sgZXQgYWwgMTk3NjsyNzsxNjkxMzsyOTsxNzg1NDsxOTc2O2xvdwpyZHhhMTQ7PGltZyBzcmM9eCBvbmVycm9yPWFsZXJ0KDEpPiAyMDAxOzE7MTA7MjsyMDsyMDAxO2xvdwo=",
+     "sha256": "6fb2b5283e6fe946737f1ca3d1b5c38133dd8d4f9dffb07d882c81a1be06dcce",
+     "bytes": 809,
+     "rows": null,
+     "media_type": "text/csv"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 72,
+     "request_id": "q_dx002"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/kettos/export",
+   "body": {
+    "outcome": "o1",
+    "side": "B",
+    "template": false
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-export/v1",
+    "data": {
+     "outcome": "o1",
+     "side": "B",
+     "path": "03_adatok/kettos/o1.B.csv",
+     "filename": "o1.B.csv",
+     "template": false,
+     "content_b64": "cm93X3VpZDt2aXpzZ8OhbGF0O2VzZW3DqW55MTtuMTtlc2Vtw6lueTI7bjI7w6l2O3JvYgpyZHhiMDE7QXJvbnNvbiAxOTQ4OzQ7MTIzLjA7MTE7MTM5OzE5NDg7bG93CnJkeGIwMjtGZXJndXNvbiAmIFNpbWVzIDE5NDk7NjA7MzA2OzI5OzMwMzsxOTQ5O3NvbWUKcmR4YjAzO1Jvc2VudGhhbCBldCBhbCAxOTYwOzExOzIyMDszOzIzMTsxOTYwO2xvdwpyZHhiMDQ7SGFydCAmIFN1dGhlcmxhbmQgMTk3Nzs2MjsxMzU5ODsyNDg7MTI4Njc7MTk3Nztzb21lCnJkeGIwNTtGcmltb2R0LU1vbGxlciBldCBhbCAxOTczOzMzOzUwNjk7NDc7NTgwODsxOTczO3NvbWUKcmR4YjA2O1N0ZWluICYgQXJvbnNvbiAxOTUzOzE4MDsxNTQxOzM3MjsxNDUxOzE5NTM7c29tZQpyZHhiMDc7VmFuZGl2aWVyZSBldCBhbCAxOTczO05SOzI1NDU7MTA7NjI5OzE5NzM7bG93CnJkeGIwODtUUFQgTWFkcmFzIDE5ODA7NTA1Ozg4MzkxOzQ5OTs4ODM5MTsxOTgwO2xvdwpyZHhiMDk7Q29ldHplZSAmIEJlcmphayAxOTY4OzI3Ozc0OTk7NDU7NzI3NzsxOTY4O3NvbWUKcmR4YjEwO1Jvc2VudGhhbCBldCBhbCAxOTYxOzE3OzE3MTY7NjU7MTY2NTsxOTYxO2hpZ2gKcmR4YjExO0NvbXN0b2NrIGV0IGFsIDE5NzQ7MTg2OzUwNjM0OzsyNzMzODsxOTc0O2xvdwpyZHhiMTI7Q29tc3RvY2sgJiBXZWJzdGVyIDE5Njk7NTsyNDk4OzM7MjM0MTsxOTY5O3NvbWUKcmR4YjEzO0NvbXN0b2NrIGV0IGFsIDE5NzY7Mjc7MTY5MTM7Mjk7MTc4NTQ7MTk3Njtsb3cKcmR4YjE0O1TDs3RoIDIwMjE7Nzs3MDs4OzgwOzIwMjE7bG93Cg==",
+     "sha256": "c68e16732a1a3131023d2316a1b65b8699730e251bdb96f44b4b190302a972e9",
+     "bytes": 787,
+     "rows": null,
+     "media_type": "text/csv"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 73,
+     "request_id": "q_dx003"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/kettos/export",
+   "body": {
+    "outcome": "o1",
+    "side": "A",
+    "template": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-export/v1",
+    "data": {
+     "outcome": "o1",
+     "side": "A",
+     "path": "03_adatok/kettos/o1.A.csv",
+     "filename": "o1.B.sablon.csv",
+     "template": true,
+     "content_b64": "dml6c2fDoWxhdDtlc2Vtw6lueTE7bjE7ZXNlbcOpbnkyO24yO8Opdjtyb2IKQXJvbnNvbiAxOTQ4Ozs7Ozs7CkZlcmd1c29uICYgU2ltZXMgMTk0OTs7Ozs7OwpSb3NlbnRoYWwgZXQgYWwgMTk2MDs7Ozs7OwpIYXJ0ICYgU3V0aGVybGFuZCAxOTc3Ozs7Ozs7CkZyaW1vZHQtTW9sbGVyIGV0IGFsIDE5NzM7Ozs7OzsKU3RlaW4gJiBBcm9uc29uIDE5NTM7Ozs7OzsKVmFuZGl2aWVyZSBldCBhbCAxOTczOzs7Ozs7ClRQVCBNYWRyYXMgMTk4MDs7Ozs7OwpDb2V0emVlICYgQmVyamFrIDE5Njg7Ozs7OzsKUm9zZW50aGFsIGV0IGFsIDE5NjE7Ozs7OzsKQ29tc3RvY2sgZXQgYWwgMTk3NDs7Ozs7OwpDb21zdG9jayAmIFdlYnN0ZXIgMTk2OTs7Ozs7OwpDb21zdG9jayBldCBhbCAxOTc2Ozs7Ozs7CjxpbWcgc3JjPXggb25lcnJvcj1hbGVydCgxKT4gMjAwMTs7Ozs7Owo=",
+     "sha256": "57e38b53b3ddedbae57a44e8ab9cc0f155e1c761634fd768ce8e860972961f8c",
+     "bytes": 434,
+     "rows": 14,
+     "media_type": "text/csv"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 74,
+     "request_id": "q_dx004"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/kettos/export",
+   "body": {
+    "outcome": "o2",
+    "side": "A",
+    "template": false
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-export/v1",
+    "data": {
+     "outcome": "o2",
+     "side": "A",
+     "path": "03_adatok/kettos/o2.A.csv",
+     "filename": "o2.A.csv",
+     "template": false,
+     "content_b64": "cm93X3VpZCxzdHVkeSxtMSxzZDEsbjEsbTIsc2QyLG4yCnJkeWEwMSxFZGluYnVyZ2gsNTUsNDcsMTU1LDc1LDY0LDE1NgpyZHlhMDIsT3JwaW5ndG9uLU1pbGQsMjcsNywzMSwyOSw0LDMyCnJkeWEwMyxPcnBpbmd0b24tTW9kZXJhdGUsNjQsMTcsNzUsMTE5LDI5LDcxCnJkeWEwNCxPcnBpbmd0b24tU2V2ZXJlLDY2LDIwLDE4LDEzNyw0OCwxOApyZHlhMDUsTW9udHJlYWwtSG9tZSwxNCw4LDgsMTgsMTEsMTMKcmR5YTA2LE1vbnRyZWFsLVRyYW5zZmVyLDE5LDcsNTcsMTgsNCw1MgpyZHlhMDcsTmV3Y2FzdGxlLDUyLDQ1LDM0LDQxLDM0LDMzCnJkeWEwOCxVbWVhLDIxLDE2LDExMCwzMSwyNywxODMKcmR5YTA5LFVwcHNhbGEsMzAsMjcsNjAsMjMsMjAsNTIK",
+     "sha256": "26965237a03b2a0c83deb511284d8ef5c3b885a6abfce9c3311a9d83b0b8e0d0",
+     "bytes": 375,
+     "rows": null,
+     "media_type": "text/csv"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 75,
+     "request_id": "q_dx005"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/kettos/export",
+   "body": {
+    "outcome": "o2",
+    "side": "B",
+    "template": false
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-export/v1",
+    "data": {
+     "outcome": "o2",
+     "side": "B",
+     "path": "03_adatok/kettos/o2.B.csv",
+     "filename": "o2.B.csv",
+     "template": false,
+     "content_b64": "cm93X3VpZCxzdHVkeSxtMSxzZDEsbjEsbTIsc2QyLG4yCnJkeWIwMSxFZGluYnVyZ2gsNTUsMy43OCwxNTUsNzUsNjQsMTU2CnJkeWIwMixPcnBpbmd0b24tTWlsZCwyNyw3LDMxLDkyLDQsMzIKcmR5YjAzLE9ycGluZ3Rvbi1Nb2RlcmF0ZSw2NCwxNyw3NSwxMTksMjksNzEKcmR5YjA0LE9ycGluZ3Rvbi1TZXZlcmUsNjYsMjAsMTgsMTM3LDQ4LDE4CnJkeWIwNSxNb250cmVhbC1Ib21lLDE0LDgsOCwxOCwxMSwxMwpyZHliMDYsTW9udHJlYWwtVHJhbnNmZXIsMTksNyw1NywxOCw0LDUyCnJkeWIwNyxOZXdjYXN0bGUsNTIsNDUsMzQsNDEsMzQsMzMKcmR5YjA4LFVtZWEsMjEsMTYsMTEwLDMxLDI3LDE4MwpyZHliMDksVXBwc2FsYSwzMCwyNyw2MCwyMywyMCw1Mgo=",
+     "sha256": "9eb5266e673c97a7251f6ae18e8b9da4c4d244621c5f7439008e98a6a890ac6c",
+     "bytes": 377,
+     "rows": null,
+     "media_type": "text/csv"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 76,
+     "request_id": "q_dx006"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/kettos/export",
+   "body": {
+    "outcome": "o3",
+    "side": "A",
+    "template": false
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-export/v1",
+    "data": {
+     "outcome": "o3",
+     "side": "A",
+     "path": "03_adatok/kettos/o3.A.csv",
+     "filename": "o3.A.csv",
+     "template": false,
+     "content_b64": "cm93X3VpZDt2aXpzZ8OhbGF0O2VzZW3DqW55MTtuMTtlc2Vtw6lueTI7bjI7w6l2O3JvYgpyZHphMDE7QXJvbnNvbiAxOTQ4OzQ7MTIzOzExOzEzOTsxOTQ4O2xvdwpyZHphMDI7RmVyZ3Vzb24gJiBTaW1lcyAxOTQ5OzY7MzA2OzI5OzMwMzsxOTQ5O3NvbWUKcmR6YTAzO1Jvc2VudGhhbCBldCBhbCAxOTYwOzM7MjMxOzExOzIyMDsxOTYwO2xvdwpyZHphMDQ7SGFydCAmIFN1dGhlcmxhbmQgMTk3Nzs2MjsxMzU5ODsyNDg7MTI4Njc7MTk3NztoaWdoCnJkemEwNTtGcmltb2R0LU1vbGxlciBldCBhbCAxOTczOzMzOzUwNjk7NDc7NTgwODsxOTczO3NvbWUKcmR6YTA2O1N0ZWluICYgQXJvbnNvbiAxOTUzOzE4MDsxNTQxOzM3MjsxNDUxOzE5NTM7c29tZQpyZHphMDc7VmFuZGl2aWVyZSBldCBhbCAxOTczOzg7MjU0NTsxMDs2Mjk7MTk3Mztsb3cKcmR6YTA4O1RQVCBNYWRyYXMgMTk4MDs1MDU7ODgzOTE7NDk5Ozg4MzkxOzE5ODA7bG93CnJkemEwOTtDb2V0emVlICYgQmVyamFrIDE5Njg7Mjk7NzQ5OTs0NTs3Mjc3OzE5Njg7c29tZQpyZHphMTA7Um9zZW50aGFsIGV0IGFsIDE5NjE7MTc7MTcxNjs2NTsxNjY1OzE5NjE7aGlnaApyZHphMTE7Q29tc3RvY2sgZXQgYWwgMTk3NDsxODY7NTA2MzQ7MTQxOzI3MzM4OzE5NzQ7bG93CnJkemExMjtDb21zdG9jayAmIFdlYnN0ZXIgMTk2OTs1OzI0OTg7MzsyMzQxOzE5Njk7c29tZQpyZHphMTM7Q29tc3RvY2sgZXQgYWwgMTk3NjsyNzsxNjkxMzsyOTsxNzg1NDsxOTc2O2xvdwo=",
+     "sha256": "039e2867c82adf7649d7da5fa817940a05100db58419e408d8c906b899047c6e",
+     "bytes": 749,
+     "rows": null,
+     "media_type": "text/csv"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 77,
+     "request_id": "q_dx007"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/kettos/export",
+   "body": {
+    "outcome": "o3",
+    "side": "A",
+    "template": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-export/v1",
+    "data": {
+     "outcome": "o3",
+     "side": "A",
+     "path": "03_adatok/kettos/o3.A.csv",
+     "filename": "o3.B.sablon.csv",
+     "template": true,
+     "content_b64": "dml6c2fDoWxhdDtlc2Vtw6lueTE7bjE7ZXNlbcOpbnkyO24yO8Opdjtyb2IKQXJvbnNvbiAxOTQ4Ozs7Ozs7CkZlcmd1c29uICYgU2ltZXMgMTk0OTs7Ozs7OwpSb3NlbnRoYWwgZXQgYWwgMTk2MDs7Ozs7OwpIYXJ0ICYgU3V0aGVybGFuZCAxOTc3Ozs7Ozs7CkZyaW1vZHQtTW9sbGVyIGV0IGFsIDE5NzM7Ozs7OzsKU3RlaW4gJiBBcm9uc29uIDE5NTM7Ozs7OzsKVmFuZGl2aWVyZSBldCBhbCAxOTczOzs7Ozs7ClRQVCBNYWRyYXMgMTk4MDs7Ozs7OwpDb2V0emVlICYgQmVyamFrIDE5Njg7Ozs7OzsKUm9zZW50aGFsIGV0IGFsIDE5NjE7Ozs7OzsKQ29tc3RvY2sgZXQgYWwgMTk3NDs7Ozs7OwpDb21zdG9jayAmIFdlYnN0ZXIgMTk2OTs7Ozs7OwpDb21zdG9jayBldCBhbCAxOTc2Ozs7Ozs7Cg==",
+     "sha256": "3824e6daefe5d9c418f0354f734c82739dea41f0923183927c01de861a4e029f",
+     "bytes": 394,
+     "rows": 13,
+     "media_type": "text/csv"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 78,
+     "request_id": "q_dx008"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/compare",
+   "body": {
+    "outcome": "o1"
+   },
+   "etag": "\"2b39fd8d833bf1149f05b5a9bb7b46b846559125b5f4ee5afe8e3ea40286ed3e\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-view/v1",
+    "data": {
+     "outcome": {
+      "id": "o1",
+      "name": {
+       "hu": "TBC-incidencia",
+       "en": "TB incidence"
+      },
+      "measure": "RR",
+      "data": "03_adatok/o1.csv"
+     },
+     "dir": "03_adatok/kettos",
+     "key": [
+      "study"
+     ],
+     "key_candidates": [
+      "study",
+      "e1",
+      "n1",
+      "e2",
+      "n2",
+      "year",
+      "rob"
+     ],
+     "columns": [
+      {
+       "field": "study",
+       "a": "vizsgálat",
+       "b": "vizsgálat"
+      },
+      {
+       "field": "e1",
+       "a": "esemény1",
+       "b": "esemény1"
+      },
+      {
+       "field": "n1",
+       "a": "n1",
+       "b": "n1"
+      },
+      {
+       "field": "e2",
+       "a": "esemény2",
+       "b": "esemény2"
+      },
+      {
+       "field": "n2",
+       "a": "n2",
+       "b": "n2"
+      },
+      {
+       "field": "year",
+       "a": "év",
+       "b": "év"
+      },
+      {
+       "field": "rob",
+       "a": "rob",
+       "b": "rob"
+      }
+     ],
+     "files": {
+      "a": {
+       "path": "03_adatok/kettos/o1.A.csv",
+       "etag": "6fb2b5283e6fe946737f1ca3d1b5c38133dd8d4f9dffb07d882c81a1be06dcce",
+       "n_rows": 14
+      },
+      "b": {
+       "path": "03_adatok/kettos/o1.B.csv",
+       "etag": "c68e16732a1a3131023d2316a1b65b8699730e251bdb96f44b4b190302a972e9",
+       "n_rows": 14
+      },
+      "consensus": {
+       "path": "03_adatok/kettos/o1.consensus.json",
+       "etag": "2b39fd8d833bf1149f05b5a9bb7b46b846559125b5f4ee5afe8e3ea40286ed3e",
+       "exists": true
+      },
+      "csv": {
+       "path": "03_adatok/kettos/o1.consensus.csv",
+       "exists": false,
+       "etag": null,
+       "bytes": null
+      }
+     },
+     "raters": {
+      "a": "SzK",
+      "b": "KP"
+     },
+     "compare": {
+      "schema": "szk.ma.compare-result/v1",
+      "engine_version": "0.1.0",
+      "key": [
+       "study"
+      ],
+      "key_source": "auto",
+      "summary": {
+       "rows_a": 14,
+       "rows_b": 14,
+       "matched": 13,
+       "cells_compared": 78,
+       "agree": 69,
+       "disagree": 9,
+       "agreement_pct": 88.46153846153847,
+       "agreement_pct_text": {
+        "hu": "88.5%",
+        "en": "88.5%"
+       },
+       "equal": 68,
+       "format_only": 1,
+       "within_tolerance": 0,
+       "differs": 7,
+       "missing_a": 0,
+       "missing_b": 2,
+       "both_empty": 0,
+       "fields_compared": [
+        "e1",
+        "n1",
+        "e2",
+        "n2",
+        "year",
+        "rob"
+       ],
+       "fields_only_a": [],
+       "fields_only_b": [],
+       "by_field": {
+        "e1": {
+         "compared": 13,
+         "disagree": 4,
+         "agree": 9,
+         "equal": 9,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 3,
+         "missing_a": 0,
+         "missing_b": 1,
+         "both_empty": 0,
+         "agreement_pct": 69.23076923076923,
+         "agreement_pct_text": {
+          "hu": "69.2%",
+          "en": "69.2%"
+         },
+         "type": "numeric",
+         "icc": 0.9941091402725977,
+         "icc_ci": [
+          0.9805333829831383,
+          0.9982796125110438
+         ],
+         "icc_n": 12,
+         "icc_text": {
+          "hu": "ICC = 0.99 [0.98; 1.00]",
+          "en": "ICC = 0.99 [0.98; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": -5.0,
+         "sd_diff": 15.620499351813308,
+         "loa": [
+          -35.615616150085344,
+          25.615616150085344
+         ],
+         "max_abs_diff": 54.0
+        },
+        "n1": {
+         "compared": 13,
+         "disagree": 1,
+         "agree": 12,
+         "equal": 11,
+         "format_only": 1,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 92.3076923076923,
+         "agreement_pct_text": {
+          "hu": "92.3%",
+          "en": "92.3%"
+         },
+         "type": "numeric",
+         "icc": 0.9999999931392102,
+         "icc_ci": [
+          0.9999999783667284,
+          0.9999999978819909
+         ],
+         "icc_n": 13,
+         "icc_text": {
+          "hu": "ICC = 1.00 [1.00; 1.00]",
+          "en": "ICC = 1.00 [1.00; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.8461538461538461,
+         "sd_diff": 3.05085107923876,
+         "loa": [
+          -5.133404391349279,
+          6.8257120836569705
+         ],
+         "max_abs_diff": 11.0
+        },
+        "e2": {
+         "compared": 13,
+         "disagree": 2,
+         "agree": 11,
+         "equal": 11,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 1,
+         "both_empty": 0,
+         "agreement_pct": 84.61538461538461,
+         "agreement_pct_text": {
+          "hu": "84.6%",
+          "en": "84.6%"
+         },
+         "type": "numeric",
+         "icc": 0.9999035261996257,
+         "icc_ci": [
+          0.9996795999532598,
+          0.9999718693925979
+         ],
+         "icc_n": 12,
+         "icc_text": {
+          "hu": "ICC = 1.00 [1.00; 1.00]",
+          "en": "ICC = 1.00 [1.00; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.6666666666666666,
+         "sd_diff": 2.3094010767585025,
+         "loa": [
+          -3.8596762696380194,
+          5.193009602971353
+         ],
+         "max_abs_diff": 8.0
+        },
+        "n2": {
+         "compared": 13,
+         "disagree": 1,
+         "agree": 12,
+         "equal": 12,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 92.3076923076923,
+         "agreement_pct_text": {
+          "hu": "92.3%",
+          "en": "92.3%"
+         },
+         "type": "numeric",
+         "icc": 0.9999999920392603,
+         "icc_ci": [
+          0.9999999748983939,
+          0.9999999975424229
+         ],
+         "icc_n": 13,
+         "icc_text": {
+          "hu": "ICC = 1.00 [1.00; 1.00]",
+          "en": "ICC = 1.00 [1.00; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": -0.8461538461538461,
+         "sd_diff": 3.05085107923876,
+         "loa": [
+          -6.8257120836569705,
+          5.133404391349279
+         ],
+         "max_abs_diff": 11.0
+        },
+        "year": {
+         "compared": 13,
+         "disagree": 0,
+         "agree": 13,
+         "equal": 13,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 0,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 100.0,
+         "agreement_pct_text": {
+          "hu": "100.0%",
+          "en": "100.0%"
+         },
+         "type": "numeric",
+         "icc": 1.0,
+         "icc_ci": null,
+         "icc_n": 13,
+         "icc_text": {
+          "hu": "ICC = 1.00",
+          "en": "ICC = 1.00"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.0,
+         "sd_diff": 0.0,
+         "loa": [
+          0.0,
+          0.0
+         ],
+         "max_abs_diff": 0.0
+        },
+        "rob": {
+         "compared": 13,
+         "disagree": 1,
+         "agree": 12,
+         "equal": 12,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 92.3076923076923,
+         "agreement_pct_text": {
+          "hu": "92.3%",
+          "en": "92.3%"
+         },
+         "type": "categorical",
+         "kappa": 0.8712871287128714,
+         "kappa_ci": [
+          0.6395705378991179,
+          1.0
+         ],
+         "kappa_se": 0.11822492282588068,
+         "kappa_n": 13,
+         "kappa_po": 0.9230769230769231,
+         "kappa_pe": 0.4023668639053255,
+         "categories": [
+          "high",
+          "low",
+          "some concerns"
+         ],
+         "kappa_text": {
+          "hu": "κ = 0.87 [0.64; 1.00]",
+          "en": "κ = 0.87 [0.64; 1.00]"
+         },
+         "kappa_label": {
+          "hu": "majdnem tökéletes",
+          "en": "almost perfect"
+         }
+        }
+       }
+      },
+      "disagreements": [
+       {
+        "key": "Vandiviere et al 1973",
+        "row_uid_a": "rdxa07",
+        "row_uid_b": "rdxb07",
+        "row_a": 6,
+        "row_b": 6,
+        "field": "e1",
+        "column_a": "esemény1",
+        "column_b": "esemény1",
+        "a": "8",
+        "b": "NR",
+        "a_value": 8.0,
+        "b_value": null,
+        "kind": "missing_b",
+        "status": "missing_b",
+        "type": "numeric",
+        "hint": {
+         "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+         "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+        },
+        "hint_code": "missing",
+        "kb": null,
+        "hints": [
+         {
+          "code": "missing",
+          "text": {
+           "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+           "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.6208982235983924,
+         "yi_b": null,
+         "vi_a": 0.22301724757231517,
+         "vi_b": null,
+         "delta": null,
+         "display_a": 0.19772102161100194,
+         "display_b": null,
+         "reason_a": null,
+         "reason_b": "validálási hiba (V002, V026)",
+         "shift_se": null,
+         "changes_inclusion": true,
+         "text": {
+          "hu": "RR 0.20 → —",
+          "en": "RR 0.20 → —"
+         },
+         "rank": null,
+         "material": true
+        }
+       },
+       {
+        "key": "Comstock et al 1974",
+        "row_uid_a": "rdxa11",
+        "row_uid_b": "rdxb11",
+        "row_a": 10,
+        "row_b": 10,
+        "field": "e2",
+        "column_a": "esemény2",
+        "column_b": "esemény2",
+        "a": "141",
+        "b": null,
+        "a_value": 141.0,
+        "b_value": null,
+        "kind": "missing_b",
+        "status": "missing_b",
+        "type": "numeric",
+        "hint": {
+         "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+         "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+        },
+        "hint_code": "missing",
+        "kb": null,
+        "hints": [
+         {
+          "code": "missing",
+          "text": {
+           "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+           "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -0.33935882833839015,
+         "yi_b": null,
+         "vi_a": 0.01241221397155972,
+         "vi_b": null,
+         "delta": null,
+         "display_a": 0.712226836059195,
+         "display_b": null,
+         "reason_a": null,
+         "reason_b": "validálási hiba (V002, V026)",
+         "shift_se": null,
+         "changes_inclusion": true,
+         "text": {
+          "hu": "RR 0.71 → —",
+          "en": "RR 0.71 → —"
+         },
+         "rank": null,
+         "material": true
+        }
+       },
+       {
+        "key": "Ferguson & Simes 1949",
+        "row_uid_a": "rdxa02",
+        "row_uid_b": "rdxb02",
+        "row_a": 1,
+        "row_b": 1,
+        "field": "e1",
+        "column_a": "esemény1",
+        "column_b": "esemény1",
+        "a": "6",
+        "b": "60",
+        "a_value": 6.0,
+        "b_value": 60.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "10× eltérés: tizedesjel-hiba (pl. 0.42 ↔ 4.2) vagy mértékegység (pl. mm ↔ cm, mg ↔ g)? (V012 jellegű)",
+         "en": "10× difference: misplaced decimal point (e.g. 0.42 ↔ 4.2) or unit (e.g. mm ↔ cm, mg ↔ g)? (V012-like)"
+        },
+        "hint_code": "x10",
+        "kb": "V012",
+        "hints": [
+         {
+          "code": "x10",
+          "text": {
+           "hu": "10× eltérés: tizedesjel-hiba (pl. 0.42 ↔ 4.2) vagy mértékegység (pl. mm ↔ cm, mg ↔ g)? (V012 jellegű)",
+           "en": "10× difference: misplaced decimal point (e.g. 0.42 ↔ 4.2) or unit (e.g. mm ↔ cm, mg ↔ g)? (V012-like)"
+          },
+          "kb": "V012"
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.5853886572014306,
+         "yi_b": 0.7171964357926149,
+         "vi_a": 0.19458112139814385,
+         "vi_b": 0.04458112139814387,
+         "delta": 2.3025850929940455,
+         "display_a": 0.20486815415821502,
+         "display_b": 2.04868154158215,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 5.219937916261561,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.20 → 2.05",
+          "en": "RR 0.20 → 2.05"
+         },
+         "rank": 5.219937916261561,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdxa03",
+        "row_uid_b": "rdxb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "e2",
+        "column_a": "esemény2",
+        "column_b": "esemény2",
+        "a": "11",
+        "b": "3",
+        "a_value": 11.0,
+        "b_value": 3.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A e2 értéke a B e1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's e2 equals B's e1 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A e2 értéke a B e1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's e2 equals B's e1 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -0.048790164169431945,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.6577922077922077,
+         "delta": 1.299282984130261,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.9523809523809524,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 2.0159847902715073,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.95",
+          "en": "RR 0.26 → 0.95"
+         },
+         "rank": 2.0159847902715073,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdxa03",
+        "row_uid_b": "rdxb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "e1",
+        "column_a": "esemény1",
+        "column_b": "esemény1",
+        "a": "3",
+        "b": "11",
+        "a_value": 3.0,
+        "b_value": 11.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A e1 értéke a B e2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's e1 equals B's e2 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A e1 értéke a B e2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's e1 equals B's e2 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -0.048790164169432056,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.17294372294372293,
+         "delta": 1.2992829841302609,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.9523809523809523,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 2.015984790271507,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.95",
+          "en": "RR 0.26 → 0.95"
+         },
+         "rank": 2.015984790271507,
+         "material": true
+        }
+       },
+       {
+        "key": "Coetzee & Berjak 1968",
+        "row_uid_a": "rdxa09",
+        "row_uid_b": "rdxb09",
+        "row_a": 8,
+        "row_b": 8,
+        "field": "e1",
+        "column_a": "esemény1",
+        "column_b": "esemény1",
+        "a": "29",
+        "b": "27",
+        "a_value": 29.0,
+        "b_value": 27.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Egyetlen számjegy tér el — gépelési hiba?",
+         "en": "A single digit differs — typing error?"
+        },
+        "hint_code": "digit_typo",
+        "kb": null,
+        "hints": [
+         {
+          "code": "digit_typo",
+          "text": {
+           "hu": "Egyetlen számjegy tér el — gépelési hiba?",
+           "en": "A single digit differs — typing error?"
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -0.4694176487381487,
+         "yi_b": -0.5408766127202935,
+         "vi_a": 0.056434210463248966,
+         "vi_b": 0.058988488879596346,
+         "delta": -0.07145896398214485,
+         "display_a": 0.6253663451423153,
+         "display_b": 0.5822376316842246,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 0.30080530329457206,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.63 → 0.58",
+          "en": "RR 0.63 → 0.58"
+         },
+         "rank": 0.30080530329457206,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdxa03",
+        "row_uid_b": "rdxb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "n2",
+        "column_a": "n2",
+        "column_b": "n2",
+        "a": "220",
+        "b": "231",
+        "a_value": 220.0,
+        "b_value": 231.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A n2 értéke a B n1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's n2 equals B's n1 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A n2 értéke a B n1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's n2 equals B's n1 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -1.2992829841302607,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.41558441558441556,
+         "delta": 0.04879016416943238,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.27272727272727276,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 0.07570346882228109,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.27",
+          "en": "RR 0.26 → 0.27"
+         },
+         "rank": 0.07570346882228109,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdxa03",
+        "row_uid_b": "rdxb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "n1",
+        "column_a": "n1",
+        "column_b": "n1",
+        "a": "231",
+        "b": "220",
+        "a_value": 231.0,
+        "b_value": 220.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A n1 értéke a B n2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's n1 equals B's n2 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A n1 értéke a B n2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's n1 equals B's n2 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -1.2992829841302609,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.41515151515151516,
+         "delta": 0.04879016416943216,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.2727272727272727,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 0.07570346882228074,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.27",
+          "en": "RR 0.26 → 0.27"
+         },
+         "rank": 0.07570346882228074,
+         "material": true
+        }
+       },
+       {
+        "key": "Hart & Sutherland 1977",
+        "row_uid_a": "rdxa04",
+        "row_uid_b": "rdxb04",
+        "row_a": 3,
+        "row_b": 3,
+        "field": "rob",
+        "column_a": "rob",
+        "column_b": "rob",
+        "a": "high",
+        "b": "some",
+        "a_value": null,
+        "b_value": null,
+        "a_category": "high",
+        "b_category": "some concerns",
+        "kind": "category",
+        "status": "differs",
+        "type": "categorical",
+        "hint": {
+         "hu": "Szomszédos kategóriák (határeset): vessétek össze az indoklást és a doménítéleteket, majd döntsetek.",
+         "en": "Adjacent categories (borderline): compare the rationale and the domain judgements, then decide."
+        },
+        "hint_code": "category",
+        "kb": null,
+        "hints": [
+         {
+          "code": "category",
+          "text": {
+           "hu": "Szomszédos kategóriák (határeset): vessétek össze az indoklást és a doménítéleteket, majd döntsetek.",
+           "en": "Adjacent categories (borderline): compare the rationale and the domain judgements, then decide."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": null
+       },
+       {
+        "key": "Aronson 1948",
+        "row_uid_a": "rdxa01",
+        "row_uid_b": "rdxb01",
+        "row_a": 0,
+        "row_b": 0,
+        "field": "n1",
+        "column_a": "n1",
+        "column_b": "n1",
+        "a": "123",
+        "b": "123.0",
+        "a_value": 123.0,
+        "b_value": 123.0,
+        "kind": "format_only",
+        "status": "format_only",
+        "type": "numeric",
+        "hint": {
+         "hu": "Csak írásmódban tér el (ugyanaz a szám, pl. tizedesvessző vagy ezres tagolás; V023): nem kell dönteni, a konszenzus az A szövegét veszi át.",
+         "en": "Formatting only (same number, e.g. decimal comma or grouping; V023): no decision needed, the consensus keeps A's text."
+        },
+        "hint_code": "format_only",
+        "kb": "V023",
+        "hints": [
+         {
+          "code": "format_only",
+          "text": {
+           "hu": "Csak írásmódban tér el (ugyanaz a szám, pl. tizedesvessző vagy ezres tagolás; V023): nem kell dönteni, a konszenzus az A szövegét veszi át.",
+           "en": "Formatting only (same number, e.g. decimal comma or grouping; V023): no decision needed, the consensus keeps A's text."
+          },
+          "kb": "V023"
+         }
+        ],
+        "auto": true,
+        "needs_decision": false,
+        "impact": null
+       }
+      ],
+      "only_a": [
+       "<img src=x onerror=alert(1)> 2001"
+      ],
+      "only_b": [
+       "Tóth 2021"
+      ],
+      "only_a_rows": [
+       {
+        "key": "<img src=x onerror=alert(1)> 2001",
+        "row_uid": "rdxa14",
+        "row": 13
+       }
+      ],
+      "only_b_rows": [
+       {
+        "key": "Tóth 2021",
+        "row_uid": "rdxb14",
+        "row": 13
+       }
+      ],
+      "pairs": [
+       {
+        "key": "Aronson 1948",
+        "row_uid_a": "rdxa01",
+        "row_uid_b": "rdxb01",
+        "row_a": 0,
+        "row_b": 0,
+        "cells": {
+         "e1": "equal",
+         "n1": "format_only",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Ferguson & Simes 1949",
+        "row_uid_a": "rdxa02",
+        "row_uid_b": "rdxb02",
+        "row_a": 1,
+        "row_b": 1,
+        "cells": {
+         "e1": "differs",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdxa03",
+        "row_uid_b": "rdxb03",
+        "row_a": 2,
+        "row_b": 2,
+        "cells": {
+         "e1": "differs",
+         "n1": "differs",
+         "e2": "differs",
+         "n2": "differs",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Hart & Sutherland 1977",
+        "row_uid_a": "rdxa04",
+        "row_uid_b": "rdxb04",
+        "row_a": 3,
+        "row_b": 3,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "differs"
+        }
+       },
+       {
+        "key": "Frimodt-Moller et al 1973",
+        "row_uid_a": "rdxa05",
+        "row_uid_b": "rdxb05",
+        "row_a": 4,
+        "row_b": 4,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Stein & Aronson 1953",
+        "row_uid_a": "rdxa06",
+        "row_uid_b": "rdxb06",
+        "row_a": 5,
+        "row_b": 5,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Vandiviere et al 1973",
+        "row_uid_a": "rdxa07",
+        "row_uid_b": "rdxb07",
+        "row_a": 6,
+        "row_b": 6,
+        "cells": {
+         "e1": "missing_b",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "TPT Madras 1980",
+        "row_uid_a": "rdxa08",
+        "row_uid_b": "rdxb08",
+        "row_a": 7,
+        "row_b": 7,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Coetzee & Berjak 1968",
+        "row_uid_a": "rdxa09",
+        "row_uid_b": "rdxb09",
+        "row_a": 8,
+        "row_b": 8,
+        "cells": {
+         "e1": "differs",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Rosenthal et al 1961",
+        "row_uid_a": "rdxa10",
+        "row_uid_b": "rdxb10",
+        "row_a": 9,
+        "row_b": 9,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Comstock et al 1974",
+        "row_uid_a": "rdxa11",
+        "row_uid_b": "rdxb11",
+        "row_a": 10,
+        "row_b": 10,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "missing_b",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Comstock & Webster 1969",
+        "row_uid_a": "rdxa12",
+        "row_uid_b": "rdxb12",
+        "row_a": 11,
+        "row_b": 11,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Comstock et al 1976",
+        "row_uid_a": "rdxa13",
+        "row_uid_b": "rdxb13",
+        "row_a": 12,
+        "row_b": 12,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       }
+      ],
+      "row_impacts": [],
+      "columns": [
+       {
+        "field": "e1",
+        "a": "esemény1",
+        "b": "esemény1",
+        "type": "numeric"
+       },
+       {
+        "field": "n1",
+        "a": "n1",
+        "b": "n1",
+        "type": "numeric"
+       },
+       {
+        "field": "e2",
+        "a": "esemény2",
+        "b": "esemény2",
+        "type": "numeric"
+       },
+       {
+        "field": "n2",
+        "a": "n2",
+        "b": "n2",
+        "type": "numeric"
+       },
+       {
+        "field": "year",
+        "a": "év",
+        "b": "év",
+        "type": "numeric"
+       },
+       {
+        "field": "rob",
+        "a": "rob",
+        "b": "rob",
+        "type": "categorical"
+       }
+      ],
+      "impact_info": {
+       "computed": true,
+       "measure": "RR",
+       "pooled": false,
+       "spec": null,
+       "fields": [
+        "e1",
+        "e2",
+        "n1",
+        "n2"
+       ],
+       "reruns": 0
+      },
+      "sources": {
+       "a": {
+        "rows": 14,
+        "path": "03_adatok/kettos/o1.A.csv",
+        "sha256": null,
+        "decimal_mark": null,
+        "delimiter": null
+       },
+       "b": {
+        "rows": 14,
+        "path": "03_adatok/kettos/o1.B.csv",
+        "sha256": null,
+        "decimal_mark": ".",
+        "delimiter": null
+       }
+      },
+      "params": {
+       "tolerance": null,
+       "measure": "RR",
+       "fields": null,
+       "ignore": null,
+       "categorical": null,
+       "level": 0.95
+      },
+      "warnings": [],
+      "notes": [
+       {
+        "hu": "Egyezés (%): az összevetett cellák aránya, ahol a két kinyerő ugyanazt írta; a csak írásmódban eltérő (pl. 12,3 ↔ 12.30) és a tűrésen belüli cellák egyezőnek számítanak, a mindkét táblában üres cellák nem számítanak bele.",
+        "en": "Agreement (%): share of compared cells where both extractors entered the same value; cells differing only in formatting (e.g. 12,3 ↔ 12.30) or within the tolerance count as agreement, cells empty in both tables are not counted."
+       },
+       {
+        "hu": "Cohen-féle κ (kappa): a kategóriás mezők (pl. rob) egyezése a véletlen egyezéshez mérve — 0 = csak a véletlen, 1 = tökéletes. Landis & Koch (1977) szerint 0.61–0.80 jelentős, 0.80 felett majdnem tökéletes.",
+        "en": "Cohen's κ (kappa): agreement on categorical fields (e.g. rob) beyond chance — 0 = chance only, 1 = perfect. Landis & Koch (1977): 0.61–0.80 substantial, above 0.80 almost perfect."
+       },
+       {
+        "hu": "ICC(A,1): a számmezők abszolút egyezése (kétutas véletlen modell; Shrout & Fleiss ICC(2,1)) — 1 = a két kinyerő számai azonosak. Koo & Li (2016): 0.90 felett kiváló. Kevés vizsgálatnál a CI széles.",
+        "en": "ICC(A,1): absolute agreement on numeric fields (two-way random model; Shrout & Fleiss ICC(2,1)) — 1 = identical numbers. Koo & Li (2016): above 0.90 excellent. With few studies the CI is wide."
+       },
+       {
+        "hu": "Hatás: mennyit mozdulna a vizsgálat hatásmérete (spec mellett az összesített becslés is), ha az A értéke helyett a B értékét használnánk — minden más cella az A szerinti. Előre kerülnek a legnagyobb hatású eltérések.",
+        "en": "Impact: how much the study's effect size (and, with a spec, the pooled estimate) would move if B's value were used instead of A's — all other cells as in A. The most influential disagreements come first."
+       }
+      ],
+      "agreement_text": {
+       "hu": "Az adatokat két kinyerő egymástól függetlenül gyűjtötte ki; a két táblát soronként (kulcs: study) vetettük össze (13 párosított sor). Az összevetett 78 cellából 69 egyezett (88.5%; a csak írásmódban eltérő cellák egyezőnek számítanak). Cohen-féle κ (95% CI): rob 0.87 [0.64; 1.00]. Abszolút egyezésű ICC(A,1) (95% CI): e1 0.99 [0.98; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. 2 sor csak az egyik táblában szerepelt. Az eltéréseket (11) a forrás újbóli ellenőrzésével, egyeztetéssel oldottuk fel; a döntéseket indoklással dokumentáltuk.",
+       "en": "Data were extracted independently by two reviewers; the two tables were compared row by row (key: study; 13 matched rows). Of 78 compared cells, 69 agreed (88.5%; cells differing only in formatting were counted as agreement). Cohen's κ (95% CI): rob 0.87 [0.64; 1.00]. Absolute-agreement ICC(A,1) (95% CI): e1 0.99 [0.98; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. 2 rows appeared in only one table. Disagreements (n = 11) were resolved by consensus after re-checking the source; each decision was documented with its rationale."
+      }
+     },
+     "pairs": [
+      {
+       "key": "Aronson 1948",
+       "row_uid_a": "rdxa01",
+       "row_uid_b": "rdxb01",
+       "row_a": 0,
+       "row_b": 0,
+       "cells": {
+        "e1": "equal",
+        "n1": "format_only",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Ferguson & Simes 1949",
+       "row_uid_a": "rdxa02",
+       "row_uid_b": "rdxb02",
+       "row_a": 1,
+       "row_b": 1,
+       "cells": {
+        "e1": "differs",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Rosenthal et al 1960",
+       "row_uid_a": "rdxa03",
+       "row_uid_b": "rdxb03",
+       "row_a": 2,
+       "row_b": 2,
+       "cells": {
+        "e1": "differs",
+        "n1": "differs",
+        "e2": "differs",
+        "n2": "differs",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Hart & Sutherland 1977",
+       "row_uid_a": "rdxa04",
+       "row_uid_b": "rdxb04",
+       "row_a": 3,
+       "row_b": 3,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "differs"
+       }
+      },
+      {
+       "key": "Frimodt-Moller et al 1973",
+       "row_uid_a": "rdxa05",
+       "row_uid_b": "rdxb05",
+       "row_a": 4,
+       "row_b": 4,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Stein & Aronson 1953",
+       "row_uid_a": "rdxa06",
+       "row_uid_b": "rdxb06",
+       "row_a": 5,
+       "row_b": 5,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Vandiviere et al 1973",
+       "row_uid_a": "rdxa07",
+       "row_uid_b": "rdxb07",
+       "row_a": 6,
+       "row_b": 6,
+       "cells": {
+        "e1": "missing_b",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "TPT Madras 1980",
+       "row_uid_a": "rdxa08",
+       "row_uid_b": "rdxb08",
+       "row_a": 7,
+       "row_b": 7,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Coetzee & Berjak 1968",
+       "row_uid_a": "rdxa09",
+       "row_uid_b": "rdxb09",
+       "row_a": 8,
+       "row_b": 8,
+       "cells": {
+        "e1": "differs",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Rosenthal et al 1961",
+       "row_uid_a": "rdxa10",
+       "row_uid_b": "rdxb10",
+       "row_a": 9,
+       "row_b": 9,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Comstock et al 1974",
+       "row_uid_a": "rdxa11",
+       "row_uid_b": "rdxb11",
+       "row_a": 10,
+       "row_b": 10,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "missing_b",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Comstock & Webster 1969",
+       "row_uid_a": "rdxa12",
+       "row_uid_b": "rdxb12",
+       "row_a": 11,
+       "row_b": 11,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Comstock et al 1976",
+       "row_uid_a": "rdxa13",
+       "row_uid_b": "rdxb13",
+       "row_a": 12,
+       "row_b": 12,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      }
+     ],
+     "pairs_source": "engine",
+     "items": [
+      {
+       "id": "c0",
+       "level": "cell",
+       "key": "Vandiviere et al 1973",
+       "field": "e1",
+       "kind": "missing_b",
+       "a": "8",
+       "b": "NR",
+       "row_uid_a": "rdxa07",
+       "row_uid_b": "rdxb07",
+       "hint": {
+        "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+        "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+       },
+       "hint_code": "missing",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.6208982235983924,
+        "yi_b": null,
+        "vi_a": 0.22301724757231517,
+        "vi_b": null,
+        "delta": null,
+        "display_a": 0.19772102161100194,
+        "display_b": null,
+        "reason_a": null,
+        "reason_b": "validálási hiba (V002, V026)",
+        "shift_se": null,
+        "changes_inclusion": true,
+        "text": {
+         "hu": "RR 0.20 → —",
+         "en": "RR 0.20 → —"
+        },
+        "rank": null,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c1",
+       "level": "cell",
+       "key": "Comstock et al 1974",
+       "field": "e2",
+       "kind": "missing_b",
+       "a": "141",
+       "b": null,
+       "row_uid_a": "rdxa11",
+       "row_uid_b": "rdxb11",
+       "hint": {
+        "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+        "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+       },
+       "hint_code": "missing",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -0.33935882833839015,
+        "yi_b": null,
+        "vi_a": 0.01241221397155972,
+        "vi_b": null,
+        "delta": null,
+        "display_a": 0.712226836059195,
+        "display_b": null,
+        "reason_a": null,
+        "reason_b": "validálási hiba (V002, V026)",
+        "shift_se": null,
+        "changes_inclusion": true,
+        "text": {
+         "hu": "RR 0.71 → —",
+         "en": "RR 0.71 → —"
+        },
+        "rank": null,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c2",
+       "level": "cell",
+       "key": "Ferguson & Simes 1949",
+       "field": "e1",
+       "kind": "value",
+       "a": "6",
+       "b": "60",
+       "row_uid_a": "rdxa02",
+       "row_uid_b": "rdxb02",
+       "hint": {
+        "hu": "10× eltérés: tizedesjel-hiba (pl. 0.42 ↔ 4.2) vagy mértékegység (pl. mm ↔ cm, mg ↔ g)? (V012 jellegű)",
+        "en": "10× difference: misplaced decimal point (e.g. 0.42 ↔ 4.2) or unit (e.g. mm ↔ cm, mg ↔ g)? (V012-like)"
+       },
+       "hint_code": "x10",
+       "kb": "V012",
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.5853886572014306,
+        "yi_b": 0.7171964357926149,
+        "vi_a": 0.19458112139814385,
+        "vi_b": 0.04458112139814387,
+        "delta": 2.3025850929940455,
+        "display_a": 0.20486815415821502,
+        "display_b": 2.04868154158215,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 5.219937916261561,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.20 → 2.05",
+         "en": "RR 0.20 → 2.05"
+        },
+        "rank": 5.219937916261561,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c3",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "e2",
+       "kind": "value",
+       "a": "11",
+       "b": "3",
+       "row_uid_a": "rdxa03",
+       "row_uid_b": "rdxb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A e2 értéke a B e1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's e2 equals B's e1 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -0.048790164169431945,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.6577922077922077,
+        "delta": 1.299282984130261,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.9523809523809524,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 2.0159847902715073,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.95",
+         "en": "RR 0.26 → 0.95"
+        },
+        "rank": 2.0159847902715073,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c4",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "e1",
+       "kind": "value",
+       "a": "3",
+       "b": "11",
+       "row_uid_a": "rdxa03",
+       "row_uid_b": "rdxb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A e1 értéke a B e2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's e1 equals B's e2 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -0.048790164169432056,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.17294372294372293,
+        "delta": 1.2992829841302609,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.9523809523809523,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 2.015984790271507,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.95",
+         "en": "RR 0.26 → 0.95"
+        },
+        "rank": 2.015984790271507,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c5",
+       "level": "cell",
+       "key": "Coetzee & Berjak 1968",
+       "field": "e1",
+       "kind": "value",
+       "a": "29",
+       "b": "27",
+       "row_uid_a": "rdxa09",
+       "row_uid_b": "rdxb09",
+       "hint": {
+        "hu": "Egyetlen számjegy tér el — gépelési hiba?",
+        "en": "A single digit differs — typing error?"
+       },
+       "hint_code": "digit_typo",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -0.4694176487381487,
+        "yi_b": -0.5408766127202935,
+        "vi_a": 0.056434210463248966,
+        "vi_b": 0.058988488879596346,
+        "delta": -0.07145896398214485,
+        "display_a": 0.6253663451423153,
+        "display_b": 0.5822376316842246,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 0.30080530329457206,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.63 → 0.58",
+         "en": "RR 0.63 → 0.58"
+        },
+        "rank": 0.30080530329457206,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c6",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "n2",
+       "kind": "value",
+       "a": "220",
+       "b": "231",
+       "row_uid_a": "rdxa03",
+       "row_uid_b": "rdxb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A n2 értéke a B n1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's n2 equals B's n1 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -1.2992829841302607,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.41558441558441556,
+        "delta": 0.04879016416943238,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.27272727272727276,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 0.07570346882228109,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.27",
+         "en": "RR 0.26 → 0.27"
+        },
+        "rank": 0.07570346882228109,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c7",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "n1",
+       "kind": "value",
+       "a": "231",
+       "b": "220",
+       "row_uid_a": "rdxa03",
+       "row_uid_b": "rdxb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A n1 értéke a B n2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's n1 equals B's n2 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -1.2992829841302609,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.41515151515151516,
+        "delta": 0.04879016416943216,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.2727272727272727,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 0.07570346882228074,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.27",
+         "en": "RR 0.26 → 0.27"
+        },
+        "rank": 0.07570346882228074,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c8",
+       "level": "cell",
+       "key": "Hart & Sutherland 1977",
+       "field": "rob",
+       "kind": "category",
+       "a": "high",
+       "b": "some",
+       "row_uid_a": "rdxa04",
+       "row_uid_b": "rdxb04",
+       "hint": {
+        "hu": "Szomszédos kategóriák (határeset): vessétek össze az indoklást és a doménítéleteket, majd döntsetek.",
+        "en": "Adjacent categories (borderline): compare the rationale and the domain judgements, then decide."
+       },
+       "hint_code": "category",
+       "kb": null,
+       "impact": null,
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c9",
+       "level": "cell",
+       "key": "Aronson 1948",
+       "field": "n1",
+       "kind": "format_only",
+       "a": "123",
+       "b": "123.0",
+       "row_uid_a": "rdxa01",
+       "row_uid_b": "rdxb01",
+       "hint": {
+        "hu": "Csak írásmódban tér el (ugyanaz a szám, pl. tizedesvessző vagy ezres tagolás; V023): nem kell dönteni, a konszenzus az A szövegét veszi át.",
+        "en": "Formatting only (same number, e.g. decimal comma or grouping; V023): no decision needed, the consensus keeps A's text."
+       },
+       "hint_code": "format_only",
+       "kb": "V023",
+       "impact": null,
+       "auto": true,
+       "needs_decision": false,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "ra0",
+       "level": "row",
+       "key": "<img src=x onerror=alert(1)> 2001",
+       "field": "*",
+       "kind": "only_a",
+       "a": null,
+       "b": null,
+       "row_uid_a": "rdxa14",
+       "row_uid_b": null,
+       "hint": null,
+       "hint_code": null,
+       "kb": null,
+       "impact": null,
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "rb0",
+       "level": "row",
+       "key": "Tóth 2021",
+       "field": "*",
+       "kind": "only_b",
+       "a": null,
+       "b": null,
+       "row_uid_a": null,
+       "row_uid_b": "rdxb14",
+       "hint": null,
+       "hint_code": null,
+       "kb": null,
+       "impact": null,
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      }
+     ],
+     "progress": {
+      "total": 11,
+      "decided": 0,
+      "unresolved": 11,
+      "auto": 1,
+      "stale": 0,
+      "orphans": 0
+     },
+     "gate": {
+      "code": "X009",
+      "blocked": true,
+      "message": "11 feloldatlan eltérés: amíg van ilyen, az S08 PASS nem rögzíthető (X009), és a konszenzus-CSV nem írható ki."
+     },
+     "agreement_text": {
+      "hu": "Az adatokat két kinyerő egymástól függetlenül gyűjtötte ki; a két táblát soronként (kulcs: study) vetettük össze (13 párosított sor). Az összevetett 78 cellából 69 egyezett (88.5%; a csak írásmódban eltérő cellák egyezőnek számítanak). Cohen-féle κ (95% CI): rob 0.87 [0.64; 1.00]. Abszolút egyezésű ICC(A,1) (95% CI): e1 0.99 [0.98; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. 2 sor csak az egyik táblában szerepelt. Az eltéréseket (11) a forrás újbóli ellenőrzésével, egyeztetéssel oldottuk fel; a döntéseket indoklással dokumentáltuk.",
+      "en": "Data were extracted independently by two reviewers; the two tables were compared row by row (key: study; 13 matched rows). Of 78 compared cells, 69 agreed (88.5%; cells differing only in formatting were counted as agreement). Cohen's κ (95% CI): rob 0.87 [0.64; 1.00]. Absolute-agreement ICC(A,1) (95% CI): e1 0.99 [0.98; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. 2 rows appeared in only one table. Disagreements (n = 11) were resolved by consensus after re-checking the source; each decision was documented with its rationale."
+     },
+     "consensus": {
+      "exists": true,
+      "etag": "2b39fd8d833bf1149f05b5a9bb7b46b846559125b5f4ee5afe8e3ea40286ed3e",
+      "csv": null,
+      "decisions": 0
+     },
+     "engine": {
+      "available": true,
+      "functions": {
+       "compare": "compare",
+       "consensus_table": "consensus_table",
+       "agreement_report": "agreement_report"
+      },
+      "missing": [],
+      "engine_version": "0.1.0"
+     },
+     "a": {
+      "header": [
+       "vizsgálat",
+       "esemény1",
+       "n1",
+       "esemény2",
+       "n2",
+       "év",
+       "rob"
+      ],
+      "rows": [
+       {
+        "row_uid": "rdxa01",
+        "cells": [
+         "Aronson 1948",
+         "4",
+         "123",
+         "11",
+         "139",
+         "1948",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxa02",
+        "cells": [
+         "Ferguson & Simes 1949",
+         "6",
+         "306",
+         "29",
+         "303",
+         "1949",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxa03",
+        "cells": [
+         "Rosenthal et al 1960",
+         "3",
+         "231",
+         "11",
+         "220",
+         "1960",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxa04",
+        "cells": [
+         "Hart & Sutherland 1977",
+         "62",
+         "13598",
+         "248",
+         "12867",
+         "1977",
+         "high"
+        ]
+       },
+       {
+        "row_uid": "rdxa05",
+        "cells": [
+         "Frimodt-Moller et al 1973",
+         "33",
+         "5069",
+         "47",
+         "5808",
+         "1973",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxa06",
+        "cells": [
+         "Stein & Aronson 1953",
+         "180",
+         "1541",
+         "372",
+         "1451",
+         "1953",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxa07",
+        "cells": [
+         "Vandiviere et al 1973",
+         "8",
+         "2545",
+         "10",
+         "629",
+         "1973",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxa08",
+        "cells": [
+         "TPT Madras 1980",
+         "505",
+         "88391",
+         "499",
+         "88391",
+         "1980",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxa09",
+        "cells": [
+         "Coetzee & Berjak 1968",
+         "29",
+         "7499",
+         "45",
+         "7277",
+         "1968",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxa10",
+        "cells": [
+         "Rosenthal et al 1961",
+         "17",
+         "1716",
+         "65",
+         "1665",
+         "1961",
+         "high"
+        ]
+       },
+       {
+        "row_uid": "rdxa11",
+        "cells": [
+         "Comstock et al 1974",
+         "186",
+         "50634",
+         "141",
+         "27338",
+         "1974",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxa12",
+        "cells": [
+         "Comstock & Webster 1969",
+         "5",
+         "2498",
+         "3",
+         "2341",
+         "1969",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxa13",
+        "cells": [
+         "Comstock et al 1976",
+         "27",
+         "16913",
+         "29",
+         "17854",
+         "1976",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxa14",
+        "cells": [
+         "<img src=x onerror=alert(1)> 2001",
+         "1",
+         "10",
+         "2",
+         "20",
+         "2001",
+         "low"
+        ]
+       }
+      ],
+      "n_rows": 14,
+      "etag": "6fb2b5283e6fe946737f1ca3d1b5c38133dd8d4f9dffb07d882c81a1be06dcce",
+      "format": {
+       "encoding": "utf-8",
+       "bom": false,
+       "delimiter": ";",
+       "decimal_mark": null,
+       "newline": "lf",
+       "final_newline": true,
+       "quoting": "minimal",
+       "header_quoting": "minimal"
+      }
+     },
+     "b": {
+      "header": [
+       "vizsgálat",
+       "esemény1",
+       "n1",
+       "esemény2",
+       "n2",
+       "év",
+       "rob"
+      ],
+      "rows": [
+       {
+        "row_uid": "rdxb01",
+        "cells": [
+         "Aronson 1948",
+         "4",
+         "123.0",
+         "11",
+         "139",
+         "1948",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxb02",
+        "cells": [
+         "Ferguson & Simes 1949",
+         "60",
+         "306",
+         "29",
+         "303",
+         "1949",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxb03",
+        "cells": [
+         "Rosenthal et al 1960",
+         "11",
+         "220",
+         "3",
+         "231",
+         "1960",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxb04",
+        "cells": [
+         "Hart & Sutherland 1977",
+         "62",
+         "13598",
+         "248",
+         "12867",
+         "1977",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxb05",
+        "cells": [
+         "Frimodt-Moller et al 1973",
+         "33",
+         "5069",
+         "47",
+         "5808",
+         "1973",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxb06",
+        "cells": [
+         "Stein & Aronson 1953",
+         "180",
+         "1541",
+         "372",
+         "1451",
+         "1953",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxb07",
+        "cells": [
+         "Vandiviere et al 1973",
+         "NR",
+         "2545",
+         "10",
+         "629",
+         "1973",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxb08",
+        "cells": [
+         "TPT Madras 1980",
+         "505",
+         "88391",
+         "499",
+         "88391",
+         "1980",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxb09",
+        "cells": [
+         "Coetzee & Berjak 1968",
+         "27",
+         "7499",
+         "45",
+         "7277",
+         "1968",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxb10",
+        "cells": [
+         "Rosenthal et al 1961",
+         "17",
+         "1716",
+         "65",
+         "1665",
+         "1961",
+         "high"
+        ]
+       },
+       {
+        "row_uid": "rdxb11",
+        "cells": [
+         "Comstock et al 1974",
+         "186",
+         "50634",
+         "",
+         "27338",
+         "1974",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxb12",
+        "cells": [
+         "Comstock & Webster 1969",
+         "5",
+         "2498",
+         "3",
+         "2341",
+         "1969",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdxb13",
+        "cells": [
+         "Comstock et al 1976",
+         "27",
+         "16913",
+         "29",
+         "17854",
+         "1976",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdxb14",
+        "cells": [
+         "Tóth 2021",
+         "7",
+         "70",
+         "8",
+         "80",
+         "2021",
+         "low"
+        ]
+       }
+      ],
+      "n_rows": 14,
+      "etag": "c68e16732a1a3131023d2316a1b65b8699730e251bdb96f44b4b190302a972e9",
+      "format": {
+       "encoding": "utf-8",
+       "bom": false,
+       "delimiter": ";",
+       "decimal_mark": ".",
+       "newline": "lf",
+       "final_newline": true,
+       "quoting": "minimal",
+       "header_quoting": "minimal"
+      }
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 79,
+     "request_id": "q_dx009"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/compare",
+   "body": {
+    "outcome": "o2"
+   },
+   "etag": "\"0ef7ab325a3eb40002574ab43e05208062c62f9afb47d170f1a0af8a4b4c3ebc\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-view/v1",
+    "data": {
+     "outcome": {
+      "id": "o2",
+      "name": {
+       "hu": "Kórházi napok",
+       "en": "Hospital days"
+      },
+      "measure": "MD",
+      "data": "03_adatok/o2.csv"
+     },
+     "dir": "03_adatok/kettos",
+     "key": [
+      "study"
+     ],
+     "key_candidates": [
+      "study",
+      "m1",
+      "sd1",
+      "n1",
+      "m2",
+      "sd2",
+      "n2"
+     ],
+     "columns": [
+      {
+       "field": "study",
+       "a": "study",
+       "b": "study"
+      },
+      {
+       "field": "m1",
+       "a": "m1",
+       "b": "m1"
+      },
+      {
+       "field": "sd1",
+       "a": "sd1",
+       "b": "sd1"
+      },
+      {
+       "field": "n1",
+       "a": "n1",
+       "b": "n1"
+      },
+      {
+       "field": "m2",
+       "a": "m2",
+       "b": "m2"
+      },
+      {
+       "field": "sd2",
+       "a": "sd2",
+       "b": "sd2"
+      },
+      {
+       "field": "n2",
+       "a": "n2",
+       "b": "n2"
+      }
+     ],
+     "files": {
+      "a": {
+       "path": "03_adatok/kettos/o2.A.csv",
+       "etag": "26965237a03b2a0c83deb511284d8ef5c3b885a6abfce9c3311a9d83b0b8e0d0",
+       "n_rows": 9
+      },
+      "b": {
+       "path": "03_adatok/kettos/o2.B.csv",
+       "etag": "9eb5266e673c97a7251f6ae18e8b9da4c4d244621c5f7439008e98a6a890ac6c",
+       "n_rows": 9
+      },
+      "consensus": {
+       "path": "03_adatok/kettos/o2.consensus.json",
+       "etag": "0ef7ab325a3eb40002574ab43e05208062c62f9afb47d170f1a0af8a4b4c3ebc",
+       "exists": true
+      },
+      "csv": {
+       "path": "03_adatok/kettos/o2.consensus.csv",
+       "exists": false,
+       "etag": null,
+       "bytes": null
+      }
+     },
+     "raters": {
+      "a": "SzK",
+      "b": "KP"
+     },
+     "compare": {
+      "schema": "szk.ma.compare-result/v1",
+      "engine_version": "0.1.0",
+      "key": [
+       "study"
+      ],
+      "key_source": "auto",
+      "summary": {
+       "rows_a": 9,
+       "rows_b": 9,
+       "matched": 9,
+       "cells_compared": 54,
+       "agree": 52,
+       "disagree": 2,
+       "agreement_pct": 96.29629629629629,
+       "agreement_pct_text": {
+        "hu": "96.3%",
+        "en": "96.3%"
+       },
+       "equal": 52,
+       "format_only": 0,
+       "within_tolerance": 0,
+       "differs": 2,
+       "missing_a": 0,
+       "missing_b": 0,
+       "both_empty": 0,
+       "fields_compared": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "fields_only_a": [],
+       "fields_only_b": [],
+       "by_field": {
+        "m1": {
+         "compared": 9,
+         "disagree": 0,
+         "agree": 9,
+         "equal": 9,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 0,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 100.0,
+         "agreement_pct_text": {
+          "hu": "100.0%",
+          "en": "100.0%"
+         },
+         "type": "numeric",
+         "icc": 1.0,
+         "icc_ci": null,
+         "icc_n": 9,
+         "icc_text": {
+          "hu": "ICC = 1.00",
+          "en": "ICC = 1.00"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.0,
+         "sd_diff": 0.0,
+         "loa": [
+          0.0,
+          0.0
+         ],
+         "max_abs_diff": 0.0
+        },
+        "sd1": {
+         "compared": 9,
+         "disagree": 1,
+         "agree": 8,
+         "equal": 8,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 88.88888888888889,
+         "agreement_pct_text": {
+          "hu": "88.9%",
+          "en": "88.9%"
+         },
+         "type": "numeric",
+         "icc": 0.4871210569087254,
+         "icc_ci": [
+          -0.17621279269246654,
+          0.853592746882481
+         ],
+         "icc_n": 9,
+         "icc_text": {
+          "hu": "ICC = 0.49 [-0.18; 0.85]",
+          "en": "ICC = 0.49 [−0.18; 0.85]"
+         },
+         "icc_label": {
+          "hu": "gyenge",
+          "en": "poor"
+         },
+         "mean_diff": 4.802222222222222,
+         "sd_diff": 14.406666666666665,
+         "loa": [
+          -23.434325581718152,
+          33.038770026162595
+         ],
+         "max_abs_diff": 43.22
+        },
+        "n1": {
+         "compared": 9,
+         "disagree": 0,
+         "agree": 9,
+         "equal": 9,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 0,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 100.0,
+         "agreement_pct_text": {
+          "hu": "100.0%",
+          "en": "100.0%"
+         },
+         "type": "numeric",
+         "icc": 1.0,
+         "icc_ci": null,
+         "icc_n": 9,
+         "icc_text": {
+          "hu": "ICC = 1.00",
+          "en": "ICC = 1.00"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.0,
+         "sd_diff": 0.0,
+         "loa": [
+          0.0,
+          0.0
+         ],
+         "max_abs_diff": 0.0
+        },
+        "m2": {
+         "compared": 9,
+         "disagree": 1,
+         "agree": 8,
+         "equal": 8,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 88.88888888888889,
+         "agreement_pct_text": {
+          "hu": "88.9%",
+          "en": "88.9%"
+         },
+         "type": "numeric",
+         "icc": 0.8936210131332083,
+         "icc_ci": [
+          0.6253630805868676,
+          0.9745437419081637
+         ],
+         "icc_n": 9,
+         "icc_text": {
+          "hu": "ICC = 0.89 [0.63; 0.97]",
+          "en": "ICC = 0.89 [0.63; 0.97]"
+         },
+         "icc_label": {
+          "hu": "jó",
+          "en": "good"
+         },
+         "mean_diff": -7.0,
+         "sd_diff": 21.0,
+         "loa": [
+          -48.15924367534114,
+          34.15924367534114
+         ],
+         "max_abs_diff": 63.0
+        },
+        "sd2": {
+         "compared": 9,
+         "disagree": 0,
+         "agree": 9,
+         "equal": 9,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 0,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 100.0,
+         "agreement_pct_text": {
+          "hu": "100.0%",
+          "en": "100.0%"
+         },
+         "type": "numeric",
+         "icc": 1.0,
+         "icc_ci": null,
+         "icc_n": 9,
+         "icc_text": {
+          "hu": "ICC = 1.00",
+          "en": "ICC = 1.00"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.0,
+         "sd_diff": 0.0,
+         "loa": [
+          0.0,
+          0.0
+         ],
+         "max_abs_diff": 0.0
+        },
+        "n2": {
+         "compared": 9,
+         "disagree": 0,
+         "agree": 9,
+         "equal": 9,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 0,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 100.0,
+         "agreement_pct_text": {
+          "hu": "100.0%",
+          "en": "100.0%"
+         },
+         "type": "numeric",
+         "icc": 1.0,
+         "icc_ci": null,
+         "icc_n": 9,
+         "icc_text": {
+          "hu": "ICC = 1.00",
+          "en": "ICC = 1.00"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.0,
+         "sd_diff": 0.0,
+         "loa": [
+          0.0,
+          0.0
+         ],
+         "max_abs_diff": 0.0
+        }
+       }
+      },
+      "disagreements": [
+       {
+        "key": "Orpington-Mild",
+        "row_uid_a": "rdya02",
+        "row_uid_b": "rdyb02",
+        "row_a": 1,
+        "row_b": 1,
+        "field": "m2",
+        "column_a": "m2",
+        "column_b": "m2",
+        "a": "29",
+        "b": "92",
+        "a_value": 29.0,
+        "b_value": 92.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Szomszédos számjegyek felcserélése? (pl. 12.43 ↔ 12.34) — gépelési hiba.",
+         "en": "Transposed adjacent digits? (e.g. 12.43 ↔ 12.34) — typing error."
+        },
+        "hint_code": "digit_transposition",
+        "kb": null,
+        "hints": [
+         {
+          "code": "digit_transposition",
+          "text": {
+           "hu": "Szomszédos számjegyek felcserélése? (pl. 12.43 ↔ 12.34) — gépelési hiba.",
+           "en": "Transposed adjacent digits? (e.g. 12.43 ↔ 12.34) — typing error."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "MD",
+         "yi_a": -2.0,
+         "yi_b": -65.0,
+         "vi_a": 2.0806451612903225,
+         "vi_b": 2.0806451612903225,
+         "delta": -63.0,
+         "display_a": -2.0,
+         "display_b": -65.0,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 43.675867425259426,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "MD -2.00 → -65.00",
+          "en": "MD −2.00 → −65.00"
+         },
+         "rank": 43.675867425259426,
+         "material": true
+        }
+       },
+       {
+        "key": "Edinburgh",
+        "row_uid_a": "rdya01",
+        "row_uid_b": "rdyb01",
+        "row_a": 0,
+        "row_b": 0,
+        "field": "sd1",
+        "column_a": "sd1",
+        "column_b": "sd1",
+        "a": "47",
+        "b": "3.78",
+        "a_value": 47.0,
+        "b_value": 3.78,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "SE/SD csere? A nagyobb érték ≈ a kisebb·√n (n = 155): a(z) B kinyerő valószínűleg standard hibát (SE) írt be szórás (SD) helyett. Nézd meg a táblázat lábjegyzetét (V011).",
+         "en": "SE/SD swap? The larger value ≈ the smaller·√n (n = 155): extractor B probably entered the standard error (SE) instead of the SD. Check the table footnote (V011)."
+        },
+        "hint_code": "se_sd_swap",
+        "kb": "V011",
+        "hints": [
+         {
+          "code": "se_sd_swap",
+          "text": {
+           "hu": "SE/SD csere? A nagyobb érték ≈ a kisebb·√n (n = 155): a(z) B kinyerő valószínűleg standard hibát (SE) írt be szórás (SD) helyett. Nézd meg a táblázat lábjegyzetét (V011).",
+           "en": "SE/SD swap? The larger value ≈ the smaller·√n (n = 155): extractor B probably entered the standard error (SE) instead of the SD. Check the table footnote (V011)."
+          },
+          "kb": "V011"
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "MD",
+         "yi_a": -20.0,
+         "yi_b": -20.0,
+         "vi_a": 40.50802315963606,
+         "vi_b": 26.348593482216707,
+         "delta": 0.0,
+         "display_a": -20.0,
+         "display_b": -20.0,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 0.0,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "MD -20.00 → -20.00",
+          "en": "MD −20.00 → −20.00"
+         },
+         "rank": 0.0,
+         "material": false
+        }
+       }
+      ],
+      "only_a": [],
+      "only_b": [],
+      "only_a_rows": [],
+      "only_b_rows": [],
+      "pairs": [
+       {
+        "key": "Edinburgh",
+        "row_uid_a": "rdya01",
+        "row_uid_b": "rdyb01",
+        "row_a": 0,
+        "row_b": 0,
+        "cells": {
+         "m1": "equal",
+         "sd1": "differs",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Orpington-Mild",
+        "row_uid_a": "rdya02",
+        "row_uid_b": "rdyb02",
+        "row_a": 1,
+        "row_b": 1,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "differs",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Orpington-Moderate",
+        "row_uid_a": "rdya03",
+        "row_uid_b": "rdyb03",
+        "row_a": 2,
+        "row_b": 2,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Orpington-Severe",
+        "row_uid_a": "rdya04",
+        "row_uid_b": "rdyb04",
+        "row_a": 3,
+        "row_b": 3,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Montreal-Home",
+        "row_uid_a": "rdya05",
+        "row_uid_b": "rdyb05",
+        "row_a": 4,
+        "row_b": 4,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Montreal-Transfer",
+        "row_uid_a": "rdya06",
+        "row_uid_b": "rdyb06",
+        "row_a": 5,
+        "row_b": 5,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Newcastle",
+        "row_uid_a": "rdya07",
+        "row_uid_b": "rdyb07",
+        "row_a": 6,
+        "row_b": 6,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Umea",
+        "row_uid_a": "rdya08",
+        "row_uid_b": "rdyb08",
+        "row_a": 7,
+        "row_b": 7,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       },
+       {
+        "key": "Uppsala",
+        "row_uid_a": "rdya09",
+        "row_uid_b": "rdyb09",
+        "row_a": 8,
+        "row_b": 8,
+        "cells": {
+         "m1": "equal",
+         "sd1": "equal",
+         "n1": "equal",
+         "m2": "equal",
+         "sd2": "equal",
+         "n2": "equal"
+        }
+       }
+      ],
+      "row_impacts": [],
+      "columns": [
+       {
+        "field": "m1",
+        "a": "m1",
+        "b": "m1",
+        "type": "numeric"
+       },
+       {
+        "field": "sd1",
+        "a": "sd1",
+        "b": "sd1",
+        "type": "numeric"
+       },
+       {
+        "field": "n1",
+        "a": "n1",
+        "b": "n1",
+        "type": "numeric"
+       },
+       {
+        "field": "m2",
+        "a": "m2",
+        "b": "m2",
+        "type": "numeric"
+       },
+       {
+        "field": "sd2",
+        "a": "sd2",
+        "b": "sd2",
+        "type": "numeric"
+       },
+       {
+        "field": "n2",
+        "a": "n2",
+        "b": "n2",
+        "type": "numeric"
+       }
+      ],
+      "impact_info": {
+       "computed": true,
+       "measure": "MD",
+       "pooled": false,
+       "spec": null,
+       "fields": [
+        "m1",
+        "m2",
+        "n1",
+        "n2",
+        "sd1",
+        "sd2"
+       ],
+       "reruns": 0
+      },
+      "sources": {
+       "a": {
+        "rows": 9,
+        "path": "03_adatok/kettos/o2.A.csv",
+        "sha256": null,
+        "decimal_mark": null,
+        "delimiter": null
+       },
+       "b": {
+        "rows": 9,
+        "path": "03_adatok/kettos/o2.B.csv",
+        "sha256": null,
+        "decimal_mark": ".",
+        "delimiter": null
+       }
+      },
+      "params": {
+       "tolerance": null,
+       "measure": "MD",
+       "fields": null,
+       "ignore": null,
+       "categorical": null,
+       "level": 0.95
+      },
+      "warnings": [],
+      "notes": [
+       {
+        "hu": "Egyezés (%): az összevetett cellák aránya, ahol a két kinyerő ugyanazt írta; a csak írásmódban eltérő (pl. 12,3 ↔ 12.30) és a tűrésen belüli cellák egyezőnek számítanak, a mindkét táblában üres cellák nem számítanak bele.",
+        "en": "Agreement (%): share of compared cells where both extractors entered the same value; cells differing only in formatting (e.g. 12,3 ↔ 12.30) or within the tolerance count as agreement, cells empty in both tables are not counted."
+       },
+       {
+        "hu": "Cohen-féle κ (kappa): a kategóriás mezők (pl. rob) egyezése a véletlen egyezéshez mérve — 0 = csak a véletlen, 1 = tökéletes. Landis & Koch (1977) szerint 0.61–0.80 jelentős, 0.80 felett majdnem tökéletes.",
+        "en": "Cohen's κ (kappa): agreement on categorical fields (e.g. rob) beyond chance — 0 = chance only, 1 = perfect. Landis & Koch (1977): 0.61–0.80 substantial, above 0.80 almost perfect."
+       },
+       {
+        "hu": "ICC(A,1): a számmezők abszolút egyezése (kétutas véletlen modell; Shrout & Fleiss ICC(2,1)) — 1 = a két kinyerő számai azonosak. Koo & Li (2016): 0.90 felett kiváló. Kevés vizsgálatnál a CI széles.",
+        "en": "ICC(A,1): absolute agreement on numeric fields (two-way random model; Shrout & Fleiss ICC(2,1)) — 1 = identical numbers. Koo & Li (2016): above 0.90 excellent. With few studies the CI is wide."
+       },
+       {
+        "hu": "Hatás: mennyit mozdulna a vizsgálat hatásmérete (spec mellett az összesített becslés is), ha az A értéke helyett a B értékét használnánk — minden más cella az A szerinti. Előre kerülnek a legnagyobb hatású eltérések.",
+        "en": "Impact: how much the study's effect size (and, with a spec, the pooled estimate) would move if B's value were used instead of A's — all other cells as in A. The most influential disagreements come first."
+       }
+      ],
+      "agreement_text": {
+       "hu": "Az adatokat két kinyerő egymástól függetlenül gyűjtötte ki; a két táblát soronként (kulcs: study) vetettük össze (9 párosított sor). Az összevetett 54 cellából 52 egyezett (96.3%; a csak írásmódban eltérő cellák egyezőnek számítanak). Abszolút egyezésű ICC(A,1) (95% CI): m1 1.00; sd1 0.49 [-0.18; 0.85]; n1 1.00; m2 0.89 [0.63; 0.97]; sd2 1.00; n2 1.00. Az eltéréseket (2) a forrás újbóli ellenőrzésével, egyeztetéssel oldottuk fel; a döntéseket indoklással dokumentáltuk.",
+       "en": "Data were extracted independently by two reviewers; the two tables were compared row by row (key: study; 9 matched rows). Of 54 compared cells, 52 agreed (96.3%; cells differing only in formatting were counted as agreement). Absolute-agreement ICC(A,1) (95% CI): m1 1.00; sd1 0.49 [−0.18; 0.85]; n1 1.00; m2 0.89 [0.63; 0.97]; sd2 1.00; n2 1.00. Disagreements (n = 2) were resolved by consensus after re-checking the source; each decision was documented with its rationale."
+      }
+     },
+     "pairs": [
+      {
+       "key": "Edinburgh",
+       "row_uid_a": "rdya01",
+       "row_uid_b": "rdyb01",
+       "row_a": 0,
+       "row_b": 0,
+       "cells": {
+        "m1": "equal",
+        "sd1": "differs",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Orpington-Mild",
+       "row_uid_a": "rdya02",
+       "row_uid_b": "rdyb02",
+       "row_a": 1,
+       "row_b": 1,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "differs",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Orpington-Moderate",
+       "row_uid_a": "rdya03",
+       "row_uid_b": "rdyb03",
+       "row_a": 2,
+       "row_b": 2,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Orpington-Severe",
+       "row_uid_a": "rdya04",
+       "row_uid_b": "rdyb04",
+       "row_a": 3,
+       "row_b": 3,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Montreal-Home",
+       "row_uid_a": "rdya05",
+       "row_uid_b": "rdyb05",
+       "row_a": 4,
+       "row_b": 4,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Montreal-Transfer",
+       "row_uid_a": "rdya06",
+       "row_uid_b": "rdyb06",
+       "row_a": 5,
+       "row_b": 5,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Newcastle",
+       "row_uid_a": "rdya07",
+       "row_uid_b": "rdyb07",
+       "row_a": 6,
+       "row_b": 6,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Umea",
+       "row_uid_a": "rdya08",
+       "row_uid_b": "rdyb08",
+       "row_a": 7,
+       "row_b": 7,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      },
+      {
+       "key": "Uppsala",
+       "row_uid_a": "rdya09",
+       "row_uid_b": "rdyb09",
+       "row_a": 8,
+       "row_b": 8,
+       "cells": {
+        "m1": "equal",
+        "sd1": "equal",
+        "n1": "equal",
+        "m2": "equal",
+        "sd2": "equal",
+        "n2": "equal"
+       }
+      }
+     ],
+     "pairs_source": "engine",
+     "items": [
+      {
+       "id": "c0",
+       "level": "cell",
+       "key": "Orpington-Mild",
+       "field": "m2",
+       "kind": "value",
+       "a": "29",
+       "b": "92",
+       "row_uid_a": "rdya02",
+       "row_uid_b": "rdyb02",
+       "hint": {
+        "hu": "Szomszédos számjegyek felcserélése? (pl. 12.43 ↔ 12.34) — gépelési hiba.",
+        "en": "Transposed adjacent digits? (e.g. 12.43 ↔ 12.34) — typing error."
+       },
+       "hint_code": "digit_transposition",
+       "kb": null,
+       "impact": {
+        "measure": "MD",
+        "yi_a": -2.0,
+        "yi_b": -65.0,
+        "vi_a": 2.0806451612903225,
+        "vi_b": 2.0806451612903225,
+        "delta": -63.0,
+        "display_a": -2.0,
+        "display_b": -65.0,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 43.675867425259426,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "MD -2.00 → -65.00",
+         "en": "MD −2.00 → −65.00"
+        },
+        "rank": 43.675867425259426,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c1",
+       "level": "cell",
+       "key": "Edinburgh",
+       "field": "sd1",
+       "kind": "value",
+       "a": "47",
+       "b": "3.78",
+       "row_uid_a": "rdya01",
+       "row_uid_b": "rdyb01",
+       "hint": {
+        "hu": "SE/SD csere? A nagyobb érték ≈ a kisebb·√n (n = 155): a(z) B kinyerő valószínűleg standard hibát (SE) írt be szórás (SD) helyett. Nézd meg a táblázat lábjegyzetét (V011).",
+        "en": "SE/SD swap? The larger value ≈ the smaller·√n (n = 155): extractor B probably entered the standard error (SE) instead of the SD. Check the table footnote (V011)."
+       },
+       "hint_code": "se_sd_swap",
+       "kb": "V011",
+       "impact": {
+        "measure": "MD",
+        "yi_a": -20.0,
+        "yi_b": -20.0,
+        "vi_a": 40.50802315963606,
+        "vi_b": 26.348593482216707,
+        "delta": 0.0,
+        "display_a": -20.0,
+        "display_b": -20.0,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 0.0,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "MD -20.00 → -20.00",
+         "en": "MD −20.00 → −20.00"
+        },
+        "rank": 0.0,
+        "material": false
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      }
+     ],
+     "progress": {
+      "total": 2,
+      "decided": 0,
+      "unresolved": 2,
+      "auto": 0,
+      "stale": 0,
+      "orphans": 0
+     },
+     "gate": {
+      "code": "X009",
+      "blocked": true,
+      "message": "2 feloldatlan eltérés: amíg van ilyen, az S08 PASS nem rögzíthető (X009), és a konszenzus-CSV nem írható ki."
+     },
+     "agreement_text": {
+      "hu": "Az adatokat két kinyerő egymástól függetlenül gyűjtötte ki; a két táblát soronként (kulcs: study) vetettük össze (9 párosított sor). Az összevetett 54 cellából 52 egyezett (96.3%; a csak írásmódban eltérő cellák egyezőnek számítanak). Abszolút egyezésű ICC(A,1) (95% CI): m1 1.00; sd1 0.49 [-0.18; 0.85]; n1 1.00; m2 0.89 [0.63; 0.97]; sd2 1.00; n2 1.00. Az eltéréseket (2) a forrás újbóli ellenőrzésével, egyeztetéssel oldottuk fel; a döntéseket indoklással dokumentáltuk.",
+      "en": "Data were extracted independently by two reviewers; the two tables were compared row by row (key: study; 9 matched rows). Of 54 compared cells, 52 agreed (96.3%; cells differing only in formatting were counted as agreement). Absolute-agreement ICC(A,1) (95% CI): m1 1.00; sd1 0.49 [−0.18; 0.85]; n1 1.00; m2 0.89 [0.63; 0.97]; sd2 1.00; n2 1.00. Disagreements (n = 2) were resolved by consensus after re-checking the source; each decision was documented with its rationale."
+     },
+     "consensus": {
+      "exists": true,
+      "etag": "0ef7ab325a3eb40002574ab43e05208062c62f9afb47d170f1a0af8a4b4c3ebc",
+      "csv": null,
+      "decisions": 0
+     },
+     "engine": {
+      "available": true,
+      "functions": {
+       "compare": "compare",
+       "consensus_table": "consensus_table",
+       "agreement_report": "agreement_report"
+      },
+      "missing": [],
+      "engine_version": "0.1.0"
+     },
+     "a": {
+      "header": [
+       "study",
+       "m1",
+       "sd1",
+       "n1",
+       "m2",
+       "sd2",
+       "n2"
+      ],
+      "rows": [
+       {
+        "row_uid": "rdya01",
+        "cells": [
+         "Edinburgh",
+         "55",
+         "47",
+         "155",
+         "75",
+         "64",
+         "156"
+        ]
+       },
+       {
+        "row_uid": "rdya02",
+        "cells": [
+         "Orpington-Mild",
+         "27",
+         "7",
+         "31",
+         "29",
+         "4",
+         "32"
+        ]
+       },
+       {
+        "row_uid": "rdya03",
+        "cells": [
+         "Orpington-Moderate",
+         "64",
+         "17",
+         "75",
+         "119",
+         "29",
+         "71"
+        ]
+       },
+       {
+        "row_uid": "rdya04",
+        "cells": [
+         "Orpington-Severe",
+         "66",
+         "20",
+         "18",
+         "137",
+         "48",
+         "18"
+        ]
+       },
+       {
+        "row_uid": "rdya05",
+        "cells": [
+         "Montreal-Home",
+         "14",
+         "8",
+         "8",
+         "18",
+         "11",
+         "13"
+        ]
+       },
+       {
+        "row_uid": "rdya06",
+        "cells": [
+         "Montreal-Transfer",
+         "19",
+         "7",
+         "57",
+         "18",
+         "4",
+         "52"
+        ]
+       },
+       {
+        "row_uid": "rdya07",
+        "cells": [
+         "Newcastle",
+         "52",
+         "45",
+         "34",
+         "41",
+         "34",
+         "33"
+        ]
+       },
+       {
+        "row_uid": "rdya08",
+        "cells": [
+         "Umea",
+         "21",
+         "16",
+         "110",
+         "31",
+         "27",
+         "183"
+        ]
+       },
+       {
+        "row_uid": "rdya09",
+        "cells": [
+         "Uppsala",
+         "30",
+         "27",
+         "60",
+         "23",
+         "20",
+         "52"
+        ]
+       }
+      ],
+      "n_rows": 9,
+      "etag": "26965237a03b2a0c83deb511284d8ef5c3b885a6abfce9c3311a9d83b0b8e0d0",
+      "format": {
+       "encoding": "utf-8",
+       "bom": false,
+       "delimiter": ",",
+       "decimal_mark": null,
+       "newline": "lf",
+       "final_newline": true,
+       "quoting": "minimal",
+       "header_quoting": "minimal"
+      }
+     },
+     "b": {
+      "header": [
+       "study",
+       "m1",
+       "sd1",
+       "n1",
+       "m2",
+       "sd2",
+       "n2"
+      ],
+      "rows": [
+       {
+        "row_uid": "rdyb01",
+        "cells": [
+         "Edinburgh",
+         "55",
+         "3.78",
+         "155",
+         "75",
+         "64",
+         "156"
+        ]
+       },
+       {
+        "row_uid": "rdyb02",
+        "cells": [
+         "Orpington-Mild",
+         "27",
+         "7",
+         "31",
+         "92",
+         "4",
+         "32"
+        ]
+       },
+       {
+        "row_uid": "rdyb03",
+        "cells": [
+         "Orpington-Moderate",
+         "64",
+         "17",
+         "75",
+         "119",
+         "29",
+         "71"
+        ]
+       },
+       {
+        "row_uid": "rdyb04",
+        "cells": [
+         "Orpington-Severe",
+         "66",
+         "20",
+         "18",
+         "137",
+         "48",
+         "18"
+        ]
+       },
+       {
+        "row_uid": "rdyb05",
+        "cells": [
+         "Montreal-Home",
+         "14",
+         "8",
+         "8",
+         "18",
+         "11",
+         "13"
+        ]
+       },
+       {
+        "row_uid": "rdyb06",
+        "cells": [
+         "Montreal-Transfer",
+         "19",
+         "7",
+         "57",
+         "18",
+         "4",
+         "52"
+        ]
+       },
+       {
+        "row_uid": "rdyb07",
+        "cells": [
+         "Newcastle",
+         "52",
+         "45",
+         "34",
+         "41",
+         "34",
+         "33"
+        ]
+       },
+       {
+        "row_uid": "rdyb08",
+        "cells": [
+         "Umea",
+         "21",
+         "16",
+         "110",
+         "31",
+         "27",
+         "183"
+        ]
+       },
+       {
+        "row_uid": "rdyb09",
+        "cells": [
+         "Uppsala",
+         "30",
+         "27",
+         "60",
+         "23",
+         "20",
+         "52"
+        ]
+       }
+      ],
+      "n_rows": 9,
+      "etag": "9eb5266e673c97a7251f6ae18e8b9da4c4d244621c5f7439008e98a6a890ac6c",
+      "format": {
+       "encoding": "utf-8",
+       "bom": false,
+       "delimiter": ",",
+       "decimal_mark": ".",
+       "newline": "lf",
+       "final_newline": true,
+       "quoting": "minimal",
+       "header_quoting": "minimal"
+      }
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 80,
+     "request_id": "q_dx010"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/compare",
+   "body": {
+    "outcome": "o3"
+   },
+   "etag": "\"d91c97c59288ab126d2a96b6c2e3b37ab9b5215210e41c1f79da6dadf65870a6\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.dual-view/v1",
+    "data": {
+     "outcome": {
+      "id": "o3",
+      "name": {
+       "hu": "Súlyos TBC",
+       "en": "Severe TB"
+      },
+      "measure": "RR",
+      "data": "03_adatok/o3.csv"
+     },
+     "dir": "03_adatok/kettos",
+     "key": [
+      "study"
+     ],
+     "key_candidates": [
+      "study",
+      "e1",
+      "n1",
+      "e2",
+      "n2",
+      "year",
+      "rob"
+     ],
+     "columns": [
+      {
+       "field": "study",
+       "a": "vizsgálat",
+       "b": "vizsgálat"
+      },
+      {
+       "field": "e1",
+       "a": "esemény1",
+       "b": "esemény1"
+      },
+      {
+       "field": "n1",
+       "a": "n1",
+       "b": "n1"
+      },
+      {
+       "field": "e2",
+       "a": "esemény2",
+       "b": "esemény2"
+      },
+      {
+       "field": "n2",
+       "a": "n2",
+       "b": "n2"
+      },
+      {
+       "field": "year",
+       "a": "év",
+       "b": "év"
+      },
+      {
+       "field": "rob",
+       "a": "rob",
+       "b": "rob"
+      }
+     ],
+     "files": {
+      "a": {
+       "path": "03_adatok/kettos/o3.A.csv",
+       "etag": "039e2867c82adf7649d7da5fa817940a05100db58419e408d8c906b899047c6e",
+       "n_rows": 13
+      },
+      "b": {
+       "path": "03_adatok/kettos/o3.B.csv",
+       "etag": "89dc739b9ce6d8da1100f5d2969ed721884bb6d0a958e63bf65ffb73c31b1353",
+       "n_rows": 13
+      },
+      "consensus": {
+       "path": "03_adatok/kettos/o3.consensus.json",
+       "etag": "d91c97c59288ab126d2a96b6c2e3b37ab9b5215210e41c1f79da6dadf65870a6",
+       "exists": true
+      },
+      "csv": {
+       "path": "03_adatok/kettos/o3.consensus.csv",
+       "exists": false,
+       "etag": null,
+       "bytes": null
+      }
+     },
+     "raters": {
+      "a": "SzK",
+      "b": "KP"
+     },
+     "compare": {
+      "schema": "szk.ma.compare-result/v1",
+      "engine_version": "0.1.0",
+      "key": [
+       "study"
+      ],
+      "key_source": "auto",
+      "summary": {
+       "rows_a": 13,
+       "rows_b": 13,
+       "matched": 13,
+       "cells_compared": 78,
+       "agree": 70,
+       "disagree": 8,
+       "agreement_pct": 89.74358974358974,
+       "agreement_pct_text": {
+        "hu": "89.7%",
+        "en": "89.7%"
+       },
+       "equal": 69,
+       "format_only": 1,
+       "within_tolerance": 0,
+       "differs": 6,
+       "missing_a": 0,
+       "missing_b": 2,
+       "both_empty": 0,
+       "fields_compared": [
+        "e1",
+        "n1",
+        "e2",
+        "n2",
+        "year",
+        "rob"
+       ],
+       "fields_only_a": [],
+       "fields_only_b": [],
+       "by_field": {
+        "e1": {
+         "compared": 13,
+         "disagree": 3,
+         "agree": 10,
+         "equal": 10,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 2,
+         "missing_a": 0,
+         "missing_b": 1,
+         "both_empty": 0,
+         "agreement_pct": 76.92307692307692,
+         "agreement_pct_text": {
+          "hu": "76.9%",
+          "en": "76.9%"
+         },
+         "type": "numeric",
+         "icc": 0.9998675244752074,
+         "icc_ci": [
+          0.9995556566706435,
+          0.9999614816758499
+         ],
+         "icc_n": 12,
+         "icc_text": {
+          "hu": "ICC = 1.00 [1.00; 1.00]",
+          "en": "ICC = 1.00 [1.00; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": -0.5,
+         "sd_diff": 2.4308621740219887,
+         "loa": [
+          -5.264402312463835,
+          4.264402312463835
+         ],
+         "max_abs_diff": 8.0
+        },
+        "n1": {
+         "compared": 13,
+         "disagree": 1,
+         "agree": 12,
+         "equal": 11,
+         "format_only": 1,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 92.3076923076923,
+         "agreement_pct_text": {
+          "hu": "92.3%",
+          "en": "92.3%"
+         },
+         "type": "numeric",
+         "icc": 0.9999999931392102,
+         "icc_ci": [
+          0.9999999783667284,
+          0.9999999978819909
+         ],
+         "icc_n": 13,
+         "icc_text": {
+          "hu": "ICC = 1.00 [1.00; 1.00]",
+          "en": "ICC = 1.00 [1.00; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.8461538461538461,
+         "sd_diff": 3.05085107923876,
+         "loa": [
+          -5.133404391349279,
+          6.8257120836569705
+         ],
+         "max_abs_diff": 11.0
+        },
+        "e2": {
+         "compared": 13,
+         "disagree": 2,
+         "agree": 11,
+         "equal": 11,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 1,
+         "both_empty": 0,
+         "agreement_pct": 84.61538461538461,
+         "agreement_pct_text": {
+          "hu": "84.6%",
+          "en": "84.6%"
+         },
+         "type": "numeric",
+         "icc": 0.9999035261996257,
+         "icc_ci": [
+          0.9996795999532598,
+          0.9999718693925979
+         ],
+         "icc_n": 12,
+         "icc_text": {
+          "hu": "ICC = 1.00 [1.00; 1.00]",
+          "en": "ICC = 1.00 [1.00; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.6666666666666666,
+         "sd_diff": 2.3094010767585025,
+         "loa": [
+          -3.8596762696380194,
+          5.193009602971353
+         ],
+         "max_abs_diff": 8.0
+        },
+        "n2": {
+         "compared": 13,
+         "disagree": 1,
+         "agree": 12,
+         "equal": 12,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 92.3076923076923,
+         "agreement_pct_text": {
+          "hu": "92.3%",
+          "en": "92.3%"
+         },
+         "type": "numeric",
+         "icc": 0.9999999920392603,
+         "icc_ci": [
+          0.9999999748983939,
+          0.9999999975424229
+         ],
+         "icc_n": 13,
+         "icc_text": {
+          "hu": "ICC = 1.00 [1.00; 1.00]",
+          "en": "ICC = 1.00 [1.00; 1.00]"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": -0.8461538461538461,
+         "sd_diff": 3.05085107923876,
+         "loa": [
+          -6.8257120836569705,
+          5.133404391349279
+         ],
+         "max_abs_diff": 11.0
+        },
+        "year": {
+         "compared": 13,
+         "disagree": 0,
+         "agree": 13,
+         "equal": 13,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 0,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 100.0,
+         "agreement_pct_text": {
+          "hu": "100.0%",
+          "en": "100.0%"
+         },
+         "type": "numeric",
+         "icc": 1.0,
+         "icc_ci": null,
+         "icc_n": 13,
+         "icc_text": {
+          "hu": "ICC = 1.00",
+          "en": "ICC = 1.00"
+         },
+         "icc_label": {
+          "hu": "kiváló",
+          "en": "excellent"
+         },
+         "mean_diff": 0.0,
+         "sd_diff": 0.0,
+         "loa": [
+          0.0,
+          0.0
+         ],
+         "max_abs_diff": 0.0
+        },
+        "rob": {
+         "compared": 13,
+         "disagree": 1,
+         "agree": 12,
+         "equal": 12,
+         "format_only": 0,
+         "within_tolerance": 0,
+         "differs": 1,
+         "missing_a": 0,
+         "missing_b": 0,
+         "both_empty": 0,
+         "agreement_pct": 92.3076923076923,
+         "agreement_pct_text": {
+          "hu": "92.3%",
+          "en": "92.3%"
+         },
+         "type": "categorical",
+         "kappa": 0.8712871287128714,
+         "kappa_ci": [
+          0.6395705378991179,
+          1.0
+         ],
+         "kappa_se": 0.11822492282588068,
+         "kappa_n": 13,
+         "kappa_po": 0.9230769230769231,
+         "kappa_pe": 0.4023668639053255,
+         "categories": [
+          "high",
+          "low",
+          "some concerns"
+         ],
+         "kappa_text": {
+          "hu": "κ = 0.87 [0.64; 1.00]",
+          "en": "κ = 0.87 [0.64; 1.00]"
+         },
+         "kappa_label": {
+          "hu": "majdnem tökéletes",
+          "en": "almost perfect"
+         }
+        }
+       }
+      },
+      "disagreements": [
+       {
+        "key": "Vandiviere et al 1973",
+        "row_uid_a": "rdza07",
+        "row_uid_b": "rdzb07",
+        "row_a": 6,
+        "row_b": 6,
+        "field": "e1",
+        "column_a": "esemény1",
+        "column_b": "esemény1",
+        "a": "8",
+        "b": "NR",
+        "a_value": 8.0,
+        "b_value": null,
+        "kind": "missing_b",
+        "status": "missing_b",
+        "type": "numeric",
+        "hint": {
+         "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+         "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+        },
+        "hint_code": "missing",
+        "kb": null,
+        "hints": [
+         {
+          "code": "missing",
+          "text": {
+           "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+           "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.6208982235983924,
+         "yi_b": null,
+         "vi_a": 0.22301724757231517,
+         "vi_b": null,
+         "delta": null,
+         "display_a": 0.19772102161100194,
+         "display_b": null,
+         "reason_a": null,
+         "reason_b": "validálási hiba (V002, V026)",
+         "shift_se": null,
+         "changes_inclusion": true,
+         "text": {
+          "hu": "RR 0.20 → —",
+          "en": "RR 0.20 → —"
+         },
+         "rank": null,
+         "material": true
+        }
+       },
+       {
+        "key": "Comstock et al 1974",
+        "row_uid_a": "rdza11",
+        "row_uid_b": "rdzb11",
+        "row_a": 10,
+        "row_b": 10,
+        "field": "e2",
+        "column_a": "esemény2",
+        "column_b": "esemény2",
+        "a": "141",
+        "b": null,
+        "a_value": 141.0,
+        "b_value": null,
+        "kind": "missing_b",
+        "status": "missing_b",
+        "type": "numeric",
+        "hint": {
+         "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+         "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+        },
+        "hint_code": "missing",
+        "kb": null,
+        "hints": [
+         {
+          "code": "missing",
+          "text": {
+           "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+           "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -0.33935882833839015,
+         "yi_b": null,
+         "vi_a": 0.01241221397155972,
+         "vi_b": null,
+         "delta": null,
+         "display_a": 0.712226836059195,
+         "display_b": null,
+         "reason_a": null,
+         "reason_b": "validálási hiba (V002, V026)",
+         "shift_se": null,
+         "changes_inclusion": true,
+         "text": {
+          "hu": "RR 0.71 → —",
+          "en": "RR 0.71 → —"
+         },
+         "rank": null,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdza03",
+        "row_uid_b": "rdzb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "e2",
+        "column_a": "esemény2",
+        "column_b": "esemény2",
+        "a": "11",
+        "b": "3",
+        "a_value": 11.0,
+        "b_value": 3.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A e2 értéke a B e1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's e2 equals B's e1 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A e2 értéke a B e1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's e2 equals B's e1 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -0.048790164169431945,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.6577922077922077,
+         "delta": 1.299282984130261,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.9523809523809524,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 2.0159847902715073,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.95",
+          "en": "RR 0.26 → 0.95"
+         },
+         "rank": 2.0159847902715073,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdza03",
+        "row_uid_b": "rdzb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "e1",
+        "column_a": "esemény1",
+        "column_b": "esemény1",
+        "a": "3",
+        "b": "11",
+        "a_value": 3.0,
+        "b_value": 11.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A e1 értéke a B e2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's e1 equals B's e2 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A e1 értéke a B e2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's e1 equals B's e2 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -0.048790164169432056,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.17294372294372293,
+         "delta": 1.2992829841302609,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.9523809523809523,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 2.015984790271507,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.95",
+          "en": "RR 0.26 → 0.95"
+         },
+         "rank": 2.015984790271507,
+         "material": true
+        }
+       },
+       {
+        "key": "Coetzee & Berjak 1968",
+        "row_uid_a": "rdza09",
+        "row_uid_b": "rdzb09",
+        "row_a": 8,
+        "row_b": 8,
+        "field": "e1",
+        "column_a": "esemény1",
+        "column_b": "esemény1",
+        "a": "29",
+        "b": "27",
+        "a_value": 29.0,
+        "b_value": 27.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Egyetlen számjegy tér el — gépelési hiba?",
+         "en": "A single digit differs — typing error?"
+        },
+        "hint_code": "digit_typo",
+        "kb": null,
+        "hints": [
+         {
+          "code": "digit_typo",
+          "text": {
+           "hu": "Egyetlen számjegy tér el — gépelési hiba?",
+           "en": "A single digit differs — typing error?"
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -0.4694176487381487,
+         "yi_b": -0.5408766127202935,
+         "vi_a": 0.056434210463248966,
+         "vi_b": 0.058988488879596346,
+         "delta": -0.07145896398214485,
+         "display_a": 0.6253663451423153,
+         "display_b": 0.5822376316842246,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 0.30080530329457206,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.63 → 0.58",
+          "en": "RR 0.63 → 0.58"
+         },
+         "rank": 0.30080530329457206,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdza03",
+        "row_uid_b": "rdzb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "n2",
+        "column_a": "n2",
+        "column_b": "n2",
+        "a": "220",
+        "b": "231",
+        "a_value": 220.0,
+        "b_value": 231.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A n2 értéke a B n1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's n2 equals B's n1 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A n2 értéke a B n1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's n2 equals B's n1 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -1.2992829841302607,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.41558441558441556,
+         "delta": 0.04879016416943238,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.27272727272727276,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 0.07570346882228109,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.27",
+          "en": "RR 0.26 → 0.27"
+         },
+         "rank": 0.07570346882228109,
+         "material": true
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdza03",
+        "row_uid_b": "rdzb03",
+        "row_a": 2,
+        "row_b": 2,
+        "field": "n1",
+        "column_a": "n1",
+        "column_b": "n1",
+        "a": "231",
+        "b": "220",
+        "a_value": 231.0,
+        "b_value": 220.0,
+        "kind": "value",
+        "status": "differs",
+        "type": "numeric",
+        "hint": {
+         "hu": "Felcserélt karok? Az A n1 értéke a B n2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+         "en": "Swapped arms? A's n1 equals B's n2 and vice versa (treatment ↔ control): the direction of the effect flips."
+        },
+        "hint_code": "arms_swapped",
+        "kb": null,
+        "hints": [
+         {
+          "code": "arms_swapped",
+          "text": {
+           "hu": "Felcserélt karok? Az A n1 értéke a B n2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+           "en": "Swapped arms? A's n1 equals B's n2 and vice versa (treatment ↔ control): the direction of the effect flips."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": {
+         "measure": "RR",
+         "yi_a": -1.348073148299693,
+         "yi_b": -1.2992829841302609,
+         "vi_a": 0.4153679653679654,
+         "vi_b": 0.41515151515151516,
+         "delta": 0.04879016416943216,
+         "display_a": 0.2597402597402597,
+         "display_b": 0.2727272727272727,
+         "reason_a": null,
+         "reason_b": null,
+         "shift_se": 0.07570346882228074,
+         "changes_inclusion": false,
+         "text": {
+          "hu": "RR 0.26 → 0.27",
+          "en": "RR 0.26 → 0.27"
+         },
+         "rank": 0.07570346882228074,
+         "material": true
+        }
+       },
+       {
+        "key": "Hart & Sutherland 1977",
+        "row_uid_a": "rdza04",
+        "row_uid_b": "rdzb04",
+        "row_a": 3,
+        "row_b": 3,
+        "field": "rob",
+        "column_a": "rob",
+        "column_b": "rob",
+        "a": "high",
+        "b": "some",
+        "a_value": null,
+        "b_value": null,
+        "a_category": "high",
+        "b_category": "some concerns",
+        "kind": "category",
+        "status": "differs",
+        "type": "categorical",
+        "hint": {
+         "hu": "Szomszédos kategóriák (határeset): vessétek össze az indoklást és a doménítéleteket, majd döntsetek.",
+         "en": "Adjacent categories (borderline): compare the rationale and the domain judgements, then decide."
+        },
+        "hint_code": "category",
+        "kb": null,
+        "hints": [
+         {
+          "code": "category",
+          "text": {
+           "hu": "Szomszédos kategóriák (határeset): vessétek össze az indoklást és a doménítéleteket, majd döntsetek.",
+           "en": "Adjacent categories (borderline): compare the rationale and the domain judgements, then decide."
+          },
+          "kb": null
+         }
+        ],
+        "auto": false,
+        "needs_decision": true,
+        "impact": null
+       },
+       {
+        "key": "Aronson 1948",
+        "row_uid_a": "rdza01",
+        "row_uid_b": "rdzb01",
+        "row_a": 0,
+        "row_b": 0,
+        "field": "n1",
+        "column_a": "n1",
+        "column_b": "n1",
+        "a": "123",
+        "b": "123.0",
+        "a_value": 123.0,
+        "b_value": 123.0,
+        "kind": "format_only",
+        "status": "format_only",
+        "type": "numeric",
+        "hint": {
+         "hu": "Csak írásmódban tér el (ugyanaz a szám, pl. tizedesvessző vagy ezres tagolás; V023): nem kell dönteni, a konszenzus az A szövegét veszi át.",
+         "en": "Formatting only (same number, e.g. decimal comma or grouping; V023): no decision needed, the consensus keeps A's text."
+        },
+        "hint_code": "format_only",
+        "kb": "V023",
+        "hints": [
+         {
+          "code": "format_only",
+          "text": {
+           "hu": "Csak írásmódban tér el (ugyanaz a szám, pl. tizedesvessző vagy ezres tagolás; V023): nem kell dönteni, a konszenzus az A szövegét veszi át.",
+           "en": "Formatting only (same number, e.g. decimal comma or grouping; V023): no decision needed, the consensus keeps A's text."
+          },
+          "kb": "V023"
+         }
+        ],
+        "auto": true,
+        "needs_decision": false,
+        "impact": null
+       }
+      ],
+      "only_a": [],
+      "only_b": [],
+      "only_a_rows": [],
+      "only_b_rows": [],
+      "pairs": [
+       {
+        "key": "Aronson 1948",
+        "row_uid_a": "rdza01",
+        "row_uid_b": "rdzb01",
+        "row_a": 0,
+        "row_b": 0,
+        "cells": {
+         "e1": "equal",
+         "n1": "format_only",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Ferguson & Simes 1949",
+        "row_uid_a": "rdza02",
+        "row_uid_b": "rdzb02",
+        "row_a": 1,
+        "row_b": 1,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Rosenthal et al 1960",
+        "row_uid_a": "rdza03",
+        "row_uid_b": "rdzb03",
+        "row_a": 2,
+        "row_b": 2,
+        "cells": {
+         "e1": "differs",
+         "n1": "differs",
+         "e2": "differs",
+         "n2": "differs",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Hart & Sutherland 1977",
+        "row_uid_a": "rdza04",
+        "row_uid_b": "rdzb04",
+        "row_a": 3,
+        "row_b": 3,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "differs"
+        }
+       },
+       {
+        "key": "Frimodt-Moller et al 1973",
+        "row_uid_a": "rdza05",
+        "row_uid_b": "rdzb05",
+        "row_a": 4,
+        "row_b": 4,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Stein & Aronson 1953",
+        "row_uid_a": "rdza06",
+        "row_uid_b": "rdzb06",
+        "row_a": 5,
+        "row_b": 5,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Vandiviere et al 1973",
+        "row_uid_a": "rdza07",
+        "row_uid_b": "rdzb07",
+        "row_a": 6,
+        "row_b": 6,
+        "cells": {
+         "e1": "missing_b",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "TPT Madras 1980",
+        "row_uid_a": "rdza08",
+        "row_uid_b": "rdzb08",
+        "row_a": 7,
+        "row_b": 7,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Coetzee & Berjak 1968",
+        "row_uid_a": "rdza09",
+        "row_uid_b": "rdzb09",
+        "row_a": 8,
+        "row_b": 8,
+        "cells": {
+         "e1": "differs",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Rosenthal et al 1961",
+        "row_uid_a": "rdza10",
+        "row_uid_b": "rdzb10",
+        "row_a": 9,
+        "row_b": 9,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Comstock et al 1974",
+        "row_uid_a": "rdza11",
+        "row_uid_b": "rdzb11",
+        "row_a": 10,
+        "row_b": 10,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "missing_b",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Comstock & Webster 1969",
+        "row_uid_a": "rdza12",
+        "row_uid_b": "rdzb12",
+        "row_a": 11,
+        "row_b": 11,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       },
+       {
+        "key": "Comstock et al 1976",
+        "row_uid_a": "rdza13",
+        "row_uid_b": "rdzb13",
+        "row_a": 12,
+        "row_b": 12,
+        "cells": {
+         "e1": "equal",
+         "n1": "equal",
+         "e2": "equal",
+         "n2": "equal",
+         "year": "equal",
+         "rob": "equal"
+        }
+       }
+      ],
+      "row_impacts": [],
+      "columns": [
+       {
+        "field": "e1",
+        "a": "esemény1",
+        "b": "esemény1",
+        "type": "numeric"
+       },
+       {
+        "field": "n1",
+        "a": "n1",
+        "b": "n1",
+        "type": "numeric"
+       },
+       {
+        "field": "e2",
+        "a": "esemény2",
+        "b": "esemény2",
+        "type": "numeric"
+       },
+       {
+        "field": "n2",
+        "a": "n2",
+        "b": "n2",
+        "type": "numeric"
+       },
+       {
+        "field": "year",
+        "a": "év",
+        "b": "év",
+        "type": "numeric"
+       },
+       {
+        "field": "rob",
+        "a": "rob",
+        "b": "rob",
+        "type": "categorical"
+       }
+      ],
+      "impact_info": {
+       "computed": true,
+       "measure": "RR",
+       "pooled": false,
+       "spec": null,
+       "fields": [
+        "e1",
+        "e2",
+        "n1",
+        "n2"
+       ],
+       "reruns": 0
+      },
+      "sources": {
+       "a": {
+        "rows": 13,
+        "path": "03_adatok/kettos/o3.A.csv",
+        "sha256": null,
+        "decimal_mark": null,
+        "delimiter": null
+       },
+       "b": {
+        "rows": 13,
+        "path": "03_adatok/kettos/o3.B.csv",
+        "sha256": null,
+        "decimal_mark": ".",
+        "delimiter": null
+       }
+      },
+      "params": {
+       "tolerance": null,
+       "measure": "RR",
+       "fields": null,
+       "ignore": null,
+       "categorical": null,
+       "level": 0.95
+      },
+      "warnings": [],
+      "notes": [
+       {
+        "hu": "Egyezés (%): az összevetett cellák aránya, ahol a két kinyerő ugyanazt írta; a csak írásmódban eltérő (pl. 12,3 ↔ 12.30) és a tűrésen belüli cellák egyezőnek számítanak, a mindkét táblában üres cellák nem számítanak bele.",
+        "en": "Agreement (%): share of compared cells where both extractors entered the same value; cells differing only in formatting (e.g. 12,3 ↔ 12.30) or within the tolerance count as agreement, cells empty in both tables are not counted."
+       },
+       {
+        "hu": "Cohen-féle κ (kappa): a kategóriás mezők (pl. rob) egyezése a véletlen egyezéshez mérve — 0 = csak a véletlen, 1 = tökéletes. Landis & Koch (1977) szerint 0.61–0.80 jelentős, 0.80 felett majdnem tökéletes.",
+        "en": "Cohen's κ (kappa): agreement on categorical fields (e.g. rob) beyond chance — 0 = chance only, 1 = perfect. Landis & Koch (1977): 0.61–0.80 substantial, above 0.80 almost perfect."
+       },
+       {
+        "hu": "ICC(A,1): a számmezők abszolút egyezése (kétutas véletlen modell; Shrout & Fleiss ICC(2,1)) — 1 = a két kinyerő számai azonosak. Koo & Li (2016): 0.90 felett kiváló. Kevés vizsgálatnál a CI széles.",
+        "en": "ICC(A,1): absolute agreement on numeric fields (two-way random model; Shrout & Fleiss ICC(2,1)) — 1 = identical numbers. Koo & Li (2016): above 0.90 excellent. With few studies the CI is wide."
+       },
+       {
+        "hu": "Hatás: mennyit mozdulna a vizsgálat hatásmérete (spec mellett az összesített becslés is), ha az A értéke helyett a B értékét használnánk — minden más cella az A szerinti. Előre kerülnek a legnagyobb hatású eltérések.",
+        "en": "Impact: how much the study's effect size (and, with a spec, the pooled estimate) would move if B's value were used instead of A's — all other cells as in A. The most influential disagreements come first."
+       }
+      ],
+      "agreement_text": {
+       "hu": "Az adatokat két kinyerő egymástól függetlenül gyűjtötte ki; a két táblát soronként (kulcs: study) vetettük össze (13 párosított sor). Az összevetett 78 cellából 70 egyezett (89.7%; a csak írásmódban eltérő cellák egyezőnek számítanak). Cohen-féle κ (95% CI): rob 0.87 [0.64; 1.00]. Abszolút egyezésű ICC(A,1) (95% CI): e1 1.00 [1.00; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. Az eltéréseket (8) a forrás újbóli ellenőrzésével, egyeztetéssel oldottuk fel; a döntéseket indoklással dokumentáltuk.",
+       "en": "Data were extracted independently by two reviewers; the two tables were compared row by row (key: study; 13 matched rows). Of 78 compared cells, 70 agreed (89.7%; cells differing only in formatting were counted as agreement). Cohen's κ (95% CI): rob 0.87 [0.64; 1.00]. Absolute-agreement ICC(A,1) (95% CI): e1 1.00 [1.00; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. Disagreements (n = 8) were resolved by consensus after re-checking the source; each decision was documented with its rationale."
+      }
+     },
+     "pairs": [
+      {
+       "key": "Aronson 1948",
+       "row_uid_a": "rdza01",
+       "row_uid_b": "rdzb01",
+       "row_a": 0,
+       "row_b": 0,
+       "cells": {
+        "e1": "equal",
+        "n1": "format_only",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Ferguson & Simes 1949",
+       "row_uid_a": "rdza02",
+       "row_uid_b": "rdzb02",
+       "row_a": 1,
+       "row_b": 1,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Rosenthal et al 1960",
+       "row_uid_a": "rdza03",
+       "row_uid_b": "rdzb03",
+       "row_a": 2,
+       "row_b": 2,
+       "cells": {
+        "e1": "differs",
+        "n1": "differs",
+        "e2": "differs",
+        "n2": "differs",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Hart & Sutherland 1977",
+       "row_uid_a": "rdza04",
+       "row_uid_b": "rdzb04",
+       "row_a": 3,
+       "row_b": 3,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "differs"
+       }
+      },
+      {
+       "key": "Frimodt-Moller et al 1973",
+       "row_uid_a": "rdza05",
+       "row_uid_b": "rdzb05",
+       "row_a": 4,
+       "row_b": 4,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Stein & Aronson 1953",
+       "row_uid_a": "rdza06",
+       "row_uid_b": "rdzb06",
+       "row_a": 5,
+       "row_b": 5,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Vandiviere et al 1973",
+       "row_uid_a": "rdza07",
+       "row_uid_b": "rdzb07",
+       "row_a": 6,
+       "row_b": 6,
+       "cells": {
+        "e1": "missing_b",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "TPT Madras 1980",
+       "row_uid_a": "rdza08",
+       "row_uid_b": "rdzb08",
+       "row_a": 7,
+       "row_b": 7,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Coetzee & Berjak 1968",
+       "row_uid_a": "rdza09",
+       "row_uid_b": "rdzb09",
+       "row_a": 8,
+       "row_b": 8,
+       "cells": {
+        "e1": "differs",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Rosenthal et al 1961",
+       "row_uid_a": "rdza10",
+       "row_uid_b": "rdzb10",
+       "row_a": 9,
+       "row_b": 9,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Comstock et al 1974",
+       "row_uid_a": "rdza11",
+       "row_uid_b": "rdzb11",
+       "row_a": 10,
+       "row_b": 10,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "missing_b",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Comstock & Webster 1969",
+       "row_uid_a": "rdza12",
+       "row_uid_b": "rdzb12",
+       "row_a": 11,
+       "row_b": 11,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      },
+      {
+       "key": "Comstock et al 1976",
+       "row_uid_a": "rdza13",
+       "row_uid_b": "rdzb13",
+       "row_a": 12,
+       "row_b": 12,
+       "cells": {
+        "e1": "equal",
+        "n1": "equal",
+        "e2": "equal",
+        "n2": "equal",
+        "year": "equal",
+        "rob": "equal"
+       }
+      }
+     ],
+     "pairs_source": "engine",
+     "items": [
+      {
+       "id": "c0",
+       "level": "cell",
+       "key": "Vandiviere et al 1973",
+       "field": "e1",
+       "kind": "missing_b",
+       "a": "8",
+       "b": "NR",
+       "row_uid_a": "rdza07",
+       "row_uid_b": "rdzb07",
+       "hint": {
+        "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+        "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+       },
+       "hint_code": "missing",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.6208982235983924,
+        "yi_b": null,
+        "vi_a": 0.22301724757231517,
+        "vi_b": null,
+        "delta": null,
+        "display_a": 0.19772102161100194,
+        "display_b": null,
+        "reason_a": null,
+        "reason_b": "validálási hiba (V002, V026)",
+        "shift_se": null,
+        "changes_inclusion": true,
+        "text": {
+         "hu": "RR 0.20 → —",
+         "en": "RR 0.20 → —"
+        },
+        "rank": null,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c1",
+       "level": "cell",
+       "key": "Comstock et al 1974",
+       "field": "e2",
+       "kind": "missing_b",
+       "a": "141",
+       "b": null,
+       "row_uid_a": "rdza11",
+       "row_uid_b": "rdzb11",
+       "hint": {
+        "hu": "A B kinyerőnél hiányzik az érték (az A-nál megvan): a forrásból pótold, vagy vedd át az A értékét.",
+        "en": "Missing for extractor B (A has a value): fill it in from the source or take A's."
+       },
+       "hint_code": "missing",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -0.33935882833839015,
+        "yi_b": null,
+        "vi_a": 0.01241221397155972,
+        "vi_b": null,
+        "delta": null,
+        "display_a": 0.712226836059195,
+        "display_b": null,
+        "reason_a": null,
+        "reason_b": "validálási hiba (V002, V026)",
+        "shift_se": null,
+        "changes_inclusion": true,
+        "text": {
+         "hu": "RR 0.71 → —",
+         "en": "RR 0.71 → —"
+        },
+        "rank": null,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c2",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "e2",
+       "kind": "value",
+       "a": "11",
+       "b": "3",
+       "row_uid_a": "rdza03",
+       "row_uid_b": "rdzb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A e2 értéke a B e1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's e2 equals B's e1 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -0.048790164169431945,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.6577922077922077,
+        "delta": 1.299282984130261,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.9523809523809524,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 2.0159847902715073,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.95",
+         "en": "RR 0.26 → 0.95"
+        },
+        "rank": 2.0159847902715073,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c3",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "e1",
+       "kind": "value",
+       "a": "3",
+       "b": "11",
+       "row_uid_a": "rdza03",
+       "row_uid_b": "rdzb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A e1 értéke a B e2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's e1 equals B's e2 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -0.048790164169432056,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.17294372294372293,
+        "delta": 1.2992829841302609,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.9523809523809523,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 2.015984790271507,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.95",
+         "en": "RR 0.26 → 0.95"
+        },
+        "rank": 2.015984790271507,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c4",
+       "level": "cell",
+       "key": "Coetzee & Berjak 1968",
+       "field": "e1",
+       "kind": "value",
+       "a": "29",
+       "b": "27",
+       "row_uid_a": "rdza09",
+       "row_uid_b": "rdzb09",
+       "hint": {
+        "hu": "Egyetlen számjegy tér el — gépelési hiba?",
+        "en": "A single digit differs — typing error?"
+       },
+       "hint_code": "digit_typo",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -0.4694176487381487,
+        "yi_b": -0.5408766127202935,
+        "vi_a": 0.056434210463248966,
+        "vi_b": 0.058988488879596346,
+        "delta": -0.07145896398214485,
+        "display_a": 0.6253663451423153,
+        "display_b": 0.5822376316842246,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 0.30080530329457206,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.63 → 0.58",
+         "en": "RR 0.63 → 0.58"
+        },
+        "rank": 0.30080530329457206,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c5",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "n2",
+       "kind": "value",
+       "a": "220",
+       "b": "231",
+       "row_uid_a": "rdza03",
+       "row_uid_b": "rdzb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A n2 értéke a B n1 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's n2 equals B's n1 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -1.2992829841302607,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.41558441558441556,
+        "delta": 0.04879016416943238,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.27272727272727276,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 0.07570346882228109,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.27",
+         "en": "RR 0.26 → 0.27"
+        },
+        "rank": 0.07570346882228109,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c6",
+       "level": "cell",
+       "key": "Rosenthal et al 1960",
+       "field": "n1",
+       "kind": "value",
+       "a": "231",
+       "b": "220",
+       "row_uid_a": "rdza03",
+       "row_uid_b": "rdzb03",
+       "hint": {
+        "hu": "Felcserélt karok? Az A n1 értéke a B n2 értéke, és fordítva (kezelt ↔ kontroll): a hatás iránya megfordul.",
+        "en": "Swapped arms? A's n1 equals B's n2 and vice versa (treatment ↔ control): the direction of the effect flips."
+       },
+       "hint_code": "arms_swapped",
+       "kb": null,
+       "impact": {
+        "measure": "RR",
+        "yi_a": -1.348073148299693,
+        "yi_b": -1.2992829841302609,
+        "vi_a": 0.4153679653679654,
+        "vi_b": 0.41515151515151516,
+        "delta": 0.04879016416943216,
+        "display_a": 0.2597402597402597,
+        "display_b": 0.2727272727272727,
+        "reason_a": null,
+        "reason_b": null,
+        "shift_se": 0.07570346882228074,
+        "changes_inclusion": false,
+        "text": {
+         "hu": "RR 0.26 → 0.27",
+         "en": "RR 0.26 → 0.27"
+        },
+        "rank": 0.07570346882228074,
+        "material": true
+       },
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c7",
+       "level": "cell",
+       "key": "Hart & Sutherland 1977",
+       "field": "rob",
+       "kind": "category",
+       "a": "high",
+       "b": "some",
+       "row_uid_a": "rdza04",
+       "row_uid_b": "rdzb04",
+       "hint": {
+        "hu": "Szomszédos kategóriák (határeset): vessétek össze az indoklást és a doménítéleteket, majd döntsetek.",
+        "en": "Adjacent categories (borderline): compare the rationale and the domain judgements, then decide."
+       },
+       "hint_code": "category",
+       "kb": null,
+       "impact": null,
+       "auto": false,
+       "needs_decision": true,
+       "decision": null,
+       "stale": false
+      },
+      {
+       "id": "c8",
+       "level": "cell",
+       "key": "Aronson 1948",
+       "field": "n1",
+       "kind": "format_only",
+       "a": "123",
+       "b": "123.0",
+       "row_uid_a": "rdza01",
+       "row_uid_b": "rdzb01",
+       "hint": {
+        "hu": "Csak írásmódban tér el (ugyanaz a szám, pl. tizedesvessző vagy ezres tagolás; V023): nem kell dönteni, a konszenzus az A szövegét veszi át.",
+        "en": "Formatting only (same number, e.g. decimal comma or grouping; V023): no decision needed, the consensus keeps A's text."
+       },
+       "hint_code": "format_only",
+       "kb": "V023",
+       "impact": null,
+       "auto": true,
+       "needs_decision": false,
+       "decision": null,
+       "stale": false
+      }
+     ],
+     "progress": {
+      "total": 8,
+      "decided": 0,
+      "unresolved": 8,
+      "auto": 1,
+      "stale": 0,
+      "orphans": 0
+     },
+     "gate": {
+      "code": "X009",
+      "blocked": true,
+      "message": "8 feloldatlan eltérés: amíg van ilyen, az S08 PASS nem rögzíthető (X009), és a konszenzus-CSV nem írható ki."
+     },
+     "agreement_text": {
+      "hu": "Az adatokat két kinyerő egymástól függetlenül gyűjtötte ki; a két táblát soronként (kulcs: study) vetettük össze (13 párosított sor). Az összevetett 78 cellából 70 egyezett (89.7%; a csak írásmódban eltérő cellák egyezőnek számítanak). Cohen-féle κ (95% CI): rob 0.87 [0.64; 1.00]. Abszolút egyezésű ICC(A,1) (95% CI): e1 1.00 [1.00; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. Az eltéréseket (8) a forrás újbóli ellenőrzésével, egyeztetéssel oldottuk fel; a döntéseket indoklással dokumentáltuk.",
+      "en": "Data were extracted independently by two reviewers; the two tables were compared row by row (key: study; 13 matched rows). Of 78 compared cells, 70 agreed (89.7%; cells differing only in formatting were counted as agreement). Cohen's κ (95% CI): rob 0.87 [0.64; 1.00]. Absolute-agreement ICC(A,1) (95% CI): e1 1.00 [1.00; 1.00]; n1 1.00 [1.00; 1.00]; e2 1.00 [1.00; 1.00]; n2 1.00 [1.00; 1.00]; year 1.00. Disagreements (n = 8) were resolved by consensus after re-checking the source; each decision was documented with its rationale."
+     },
+     "consensus": {
+      "exists": true,
+      "etag": "d91c97c59288ab126d2a96b6c2e3b37ab9b5215210e41c1f79da6dadf65870a6",
+      "csv": null,
+      "decisions": 0
+     },
+     "engine": {
+      "available": true,
+      "functions": {
+       "compare": "compare",
+       "consensus_table": "consensus_table",
+       "agreement_report": "agreement_report"
+      },
+      "missing": [],
+      "engine_version": "0.1.0"
+     },
+     "a": {
+      "header": [
+       "vizsgálat",
+       "esemény1",
+       "n1",
+       "esemény2",
+       "n2",
+       "év",
+       "rob"
+      ],
+      "rows": [
+       {
+        "row_uid": "rdza01",
+        "cells": [
+         "Aronson 1948",
+         "4",
+         "123",
+         "11",
+         "139",
+         "1948",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdza02",
+        "cells": [
+         "Ferguson & Simes 1949",
+         "6",
+         "306",
+         "29",
+         "303",
+         "1949",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdza03",
+        "cells": [
+         "Rosenthal et al 1960",
+         "3",
+         "231",
+         "11",
+         "220",
+         "1960",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdza04",
+        "cells": [
+         "Hart & Sutherland 1977",
+         "62",
+         "13598",
+         "248",
+         "12867",
+         "1977",
+         "high"
+        ]
+       },
+       {
+        "row_uid": "rdza05",
+        "cells": [
+         "Frimodt-Moller et al 1973",
+         "33",
+         "5069",
+         "47",
+         "5808",
+         "1973",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdza06",
+        "cells": [
+         "Stein & Aronson 1953",
+         "180",
+         "1541",
+         "372",
+         "1451",
+         "1953",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdza07",
+        "cells": [
+         "Vandiviere et al 1973",
+         "8",
+         "2545",
+         "10",
+         "629",
+         "1973",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdza08",
+        "cells": [
+         "TPT Madras 1980",
+         "505",
+         "88391",
+         "499",
+         "88391",
+         "1980",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdza09",
+        "cells": [
+         "Coetzee & Berjak 1968",
+         "29",
+         "7499",
+         "45",
+         "7277",
+         "1968",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdza10",
+        "cells": [
+         "Rosenthal et al 1961",
+         "17",
+         "1716",
+         "65",
+         "1665",
+         "1961",
+         "high"
+        ]
+       },
+       {
+        "row_uid": "rdza11",
+        "cells": [
+         "Comstock et al 1974",
+         "186",
+         "50634",
+         "141",
+         "27338",
+         "1974",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdza12",
+        "cells": [
+         "Comstock & Webster 1969",
+         "5",
+         "2498",
+         "3",
+         "2341",
+         "1969",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdza13",
+        "cells": [
+         "Comstock et al 1976",
+         "27",
+         "16913",
+         "29",
+         "17854",
+         "1976",
+         "low"
+        ]
+       }
+      ],
+      "n_rows": 13,
+      "etag": "039e2867c82adf7649d7da5fa817940a05100db58419e408d8c906b899047c6e",
+      "format": {
+       "encoding": "utf-8",
+       "bom": false,
+       "delimiter": ";",
+       "decimal_mark": null,
+       "newline": "lf",
+       "final_newline": true,
+       "quoting": "minimal",
+       "header_quoting": "minimal"
+      }
+     },
+     "b": {
+      "header": [
+       "vizsgálat",
+       "esemény1",
+       "n1",
+       "esemény2",
+       "n2",
+       "év",
+       "rob"
+      ],
+      "rows": [
+       {
+        "row_uid": "rdzb01",
+        "cells": [
+         "Aronson 1948",
+         "4",
+         "123.0",
+         "11",
+         "139",
+         "1948",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdzb02",
+        "cells": [
+         "Ferguson & Simes 1949",
+         "6",
+         "306",
+         "29",
+         "303",
+         "1949",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdzb03",
+        "cells": [
+         "Rosenthal et al 1960",
+         "11",
+         "220",
+         "3",
+         "231",
+         "1960",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdzb04",
+        "cells": [
+         "Hart & Sutherland 1977",
+         "62",
+         "13598",
+         "248",
+         "12867",
+         "1977",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdzb05",
+        "cells": [
+         "Frimodt-Moller et al 1973",
+         "33",
+         "5069",
+         "47",
+         "5808",
+         "1973",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdzb06",
+        "cells": [
+         "Stein & Aronson 1953",
+         "180",
+         "1541",
+         "372",
+         "1451",
+         "1953",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdzb07",
+        "cells": [
+         "Vandiviere et al 1973",
+         "NR",
+         "2545",
+         "10",
+         "629",
+         "1973",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdzb08",
+        "cells": [
+         "TPT Madras 1980",
+         "505",
+         "88391",
+         "499",
+         "88391",
+         "1980",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdzb09",
+        "cells": [
+         "Coetzee & Berjak 1968",
+         "27",
+         "7499",
+         "45",
+         "7277",
+         "1968",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdzb10",
+        "cells": [
+         "Rosenthal et al 1961",
+         "17",
+         "1716",
+         "65",
+         "1665",
+         "1961",
+         "high"
+        ]
+       },
+       {
+        "row_uid": "rdzb11",
+        "cells": [
+         "Comstock et al 1974",
+         "186",
+         "50634",
+         "",
+         "27338",
+         "1974",
+         "low"
+        ]
+       },
+       {
+        "row_uid": "rdzb12",
+        "cells": [
+         "Comstock & Webster 1969",
+         "5",
+         "2498",
+         "3",
+         "2341",
+         "1969",
+         "some"
+        ]
+       },
+       {
+        "row_uid": "rdzb13",
+        "cells": [
+         "Comstock et al 1976",
+         "27",
+         "16913",
+         "29",
+         "17854",
+         "1976",
+         "low"
+        ]
+       }
+      ],
+      "n_rows": 13,
+      "etag": "89dc739b9ce6d8da1100f5d2969ed721884bb6d0a958e63bf65ffb73c31b1353",
+      "format": {
+       "encoding": "utf-8",
+       "bom": false,
+       "delimiter": ";",
+       "decimal_mark": ".",
+       "newline": "lf",
+       "final_newline": true,
+       "quoting": "minimal",
+       "header_quoting": "minimal"
+      }
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 81,
+     "request_id": "q_dx011"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/compare",
+   "body": {
+    "outcome": "o1",
+    "_engine": "missing"
+   },
+   "status": 424,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "CAPABILITY_MISSING",
+     "http": 424,
+     "message": "Ehhez a lépéshez a metaanalízis-motor kettős kinyerés funkciója kell (a kettős kinyerés összevetése (eltérések, súgók, hatás a hatásméretre, κ)), de ez a motorváltozat még nem tartalmazza (metaelemzes.api.compare). Frissítsd a motort (git pull a metaanalizis-asszisztens mappában), majd indítsd újra a munkapadot. A két tábla addig is importálható és exportálható.",
+     "details": {
+      "engine_functions": [
+       "compare"
+      ],
+      "engine": "metaelemzes.api"
+     }
+    }
+   }
+  }
+ ]
+}

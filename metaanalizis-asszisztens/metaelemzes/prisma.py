@@ -45,7 +45,9 @@ Vizsgálat-térkép és folyamatábra (E9; terv 4.10, 4.12, 4.13):
                                        nyilak, a „Studies included in review (n = I)” és „Reports of included studies
                                        (n = J)” felirat, regiszterek, egyéb módszerek ága, frissített áttekintés);
                                        write_flowchart(spec, út) — `prisma check --emit-flowchart`
-  undecided_count(flow), reason_key(okok)   X020 / X021 segédek (composer undecided, okok összevetése)
+  undecided_count(flow)                X020: a composer elbírálásra váró rekordjai (undecided / awaiting)
+  reason_key, reason_counts,           X021: kizárási okok összevetési kulcsa; a 02_szures döntési naplója
+  decision_log_rows / _reasons         (rec_id | pmid, decision, reason, phase) → teljes szöveg szintű kizárások okonként
 A composer folyamatábrájának „Studies included” doboza a jelentések számát (J) mutatja (H7); itt az I a
 vizsgálat-térképből jön, a J a jelentésekből, külön sorban.
 """
@@ -54,6 +56,7 @@ import json
 import os
 import re
 import tempfile
+import unicodedata
 
 from . import __version__
 
@@ -710,9 +713,10 @@ def from_composer(data):
     excluded_eligibility, excluded_eligibility_reasons, included (bevont REKORD = jelentés, J),
     undecided (elbírálásra vár), retrieval_gap (azonosított, de be nem hozott)."""
     flow, _, _ = normalize(data)
-    reasons = (data or {}).get("excluded_eligibility_reasons")
-    if reasons is not None:
-        flow["excluded_eligibility_reasons"] = _reasons_dict(reasons)
+    for rf in REASON_FIELDS:
+        reasons = (data or {}).get(rf)
+        if reasons is not None:
+            flow[rf] = _reasons_dict(reasons)
     return flow
 
 
@@ -862,3 +866,532 @@ def load(path, template=None):
         data = json.loads(text)
         return check_flow(from_composer(data) if "dedup_removed" in data else data, template)
     return check_flow(parse_markdown_table(text), template)
+
+
+# ------------------------------------------------- vizsgálat-térkép (E9; terv 4.10, 4.13)
+STUDIES_SCHEMA = "szk.ma.studies/v1"
+FLOWCHART_SCHEMA = "szk.ff.flowchart/v1"
+
+
+def load_studies(src):
+    """szk.ma.studies/v1 (dict vagy fájlút) → dict; hibás alak → PrismaError (magyar üzenettel)."""
+    doc = src
+    if isinstance(src, (str, os.PathLike)):
+        try:
+            with open(src, encoding="utf-8-sig") as fh:
+                doc = json.load(fh)
+        except (OSError, ValueError) as exc:
+            raise PrismaError("a vizsgálat-térkép (%s) nem olvasható: %s" % (os.fspath(src), exc))
+    lst = doc.get("studies") if isinstance(doc, dict) else None
+    if not isinstance(lst, list):
+        raise PrismaError("studies: szk.ma.studies/v1 dokumentum kell ({studies: [...]})")
+    return doc
+
+
+def studies_counts(studies):
+    """A vizsgálat-térkép (03_adatok/studies.json) PRISMA-számai.
+
+    → {I: a vizsgálatok száma (egyedi study_id), J: a jelentések rec_id-jeinek uniója (None, ha egy jelentés sincs
+    megadva), study_ids, report_ids (rendezve), per_outcome: {kimenet: vizsgálatszám} (None, ha egyik vizsgálat sem
+    sorolja fel a kimeneteit; X015), duplicates: kétszer szereplő study_id-k, without_reports: jelentés nélküli
+    vizsgálatok (a J ilyenkor alulbecsülhet)}."""
+    lst = load_studies(studies)["studies"]
+    ids, seen, dups, without = [], set(), [], []
+    recs = set()
+    per_outcome = None
+    for s in lst:
+        if not isinstance(s, dict) or s.get("study_id") in (None, ""):
+            continue
+        sid = str(s["study_id"])
+        reps = [str(r.get("rec_id")) for r in (s.get("reports") or []) if isinstance(r, dict)
+                and r.get("rec_id") not in (None, "")]
+        recs.update(reps)           # a kétszer felvett vizsgálat jelentései is a bevont vizsgálat jelentései (J)
+        if sid in seen:
+            dups.append(sid)
+            continue
+        seen.add(sid)
+        ids.append(sid)
+        if not reps:
+            without.append(sid)
+        outs = s.get("outcomes")
+        if isinstance(outs, list):
+            per_outcome = per_outcome if per_outcome is not None else collections.OrderedDict()
+            for o in dict.fromkeys(str(x) for x in outs if isinstance(x, str) and x):
+                per_outcome[o] = per_outcome.get(o, 0) + 1
+    return {"I": len(ids), "J": len(recs) if recs else None, "study_ids": sorted(ids), "report_ids": sorted(recs),
+            "per_outcome": dict(per_outcome) if per_outcome is not None else None, "duplicates": dups,
+            "without_reports": without}
+
+
+def _flow_input(flow):
+    if not isinstance(flow, dict):
+        raise PrismaError("a flow objektum legyen")
+    return from_composer(flow) if "dedup_removed" in flow else dict(flow)
+
+
+def apply_studies(flow, studies):
+    """`prisma check --studies`: (flow, P017-találatok, számok). A flow-ból hiányzó vagy üres I / J a vizsgálat-
+    térképből töltődik; ha a flow-ban más érték áll, P017 (a források eltérnek). Az értelmezhetetlen doboz (P001)
+    nem vethető össze — azt a check_flow jelzi. A composer prisma-flow.json-ja közvetlenül is megadható."""
+    flow = _flow_input(flow)
+    counts = studies_counts(studies)
+    vals, _reasons, _seen = normalize(flow)
+    sev, title, advice, ref = RULES["P017"]
+    extra = []
+    for field, n in (("included_studies", counts["I"]), ("included_reports", counts["J"])):
+        if n is None:
+            continue
+        try:
+            # a doboz szövegként is érkezhet (a felület '15'-öt küld): ugyanaz az értelmezés, mint a P001-é
+            have = _as_count(vals.get(field))
+        except ValueError:
+            continue
+        if have is None:
+            flow[field] = n
+        elif have != n:
+            extra.append({"code": "P017", "severity": sev, "title": title, "study": None,
+                          "detail": "%s: flow = %d, studies.json = %d" % (box_label(field), have, n),
+                          "advice": advice, "source": ref, "fields": [field]})
+    return flow, extra, counts
+
+
+def check_with_studies(flow, studies=None, template=None):
+    """check_flow a vizsgálat-térképpel kiegészítve (lásd apply_studies); a P017 a lista elejére kerül. A FlowCheck
+    'studies' attribútuma a studies_counts eredménye (térkép nélkül None)."""
+    counts = None
+    extra = []
+    if studies is not None:
+        flow, extra, counts = apply_studies(flow, studies)
+    else:
+        flow = _flow_input(flow)
+    res = check_flow(flow, template)
+    res.findings = extra + res.findings
+    res.studies = counts
+    return res
+
+
+# ------------------------------------------------- X020 / X021 adatforrások
+def undecided_count(flow):
+    """A composer elbírálásra váró (undecided / awaiting) rekordjainak száma; nincs vagy értelmezhetetlen → None."""
+    vals, _r, _s = normalize(flow if isinstance(flow, dict) else {})
+    try:
+        return _as_count(vals.get("awaiting"))
+    except ValueError:
+        return None
+
+
+def reason_key(label):
+    """Kizárási ok összevetési kulcsa: kisbetű, ékezet és fölös szóköz nélkül, a záró írásjel nélkül; az ok nélküli
+    kizárás minden alakja („ok nélkül”, „no reason”, üres) → NO_REASON."""
+    if _is_no_reason(label):
+        return NO_REASON
+    t = unicodedata.normalize("NFKD", str(label)).encode("ascii", "ignore").decode("ascii").lower()
+    return re.sub(r"\s+", " ", t).strip().rstrip(".;:,")
+
+
+def reason_counts(reasons):
+    """{ok: n} (vagy a composer [{reason, count}] listája) → OrderedDict(kulcs → [első címke, összeg])."""
+    out = collections.OrderedDict()
+    for label, n in (_reasons_dict(reasons) or {}).items():
+        try:
+            cnt = _as_count(n)
+        except ValueError:
+            continue
+        if cnt is None:
+            continue
+        k = reason_key(label)
+        if k in out:
+            out[k][1] += cnt
+        else:
+            out[k] = [NO_REASON if k == NO_REASON else str(label).strip(), cnt]
+    return out
+
+
+_LOG_COLUMNS = {
+    "decision": ("decision", "dontes", "döntés", "verdict", "include exclude"),
+    "reason": ("reason", "ok", "exclusion reason", "kizarasi ok", "kizárási ok", "reason for exclusion"),
+    "phase": ("phase", "fazis", "fázis", "szakasz", "stage", "level"),
+    "key": ("rec id", "rec_id", "record id", "pmid", "doi", "id"),
+}
+# a fejlécek és értékek ékezet nélkül, kisbetűvel (_fold_header) vetendők össze
+_EXCLUDE_PREFIX = ("exclud", "kizar")
+_EXCLUDE_EXACT = ("no", "n")
+_FULLTEXT_PREFIX = ("eligib", "fulltext", "full text", "full-text", "teljes szoveg")
+
+
+def _fold_header(h):
+    t = unicodedata.normalize("NFKD", str(h or "")).encode("ascii", "ignore").decode("ascii").lower()
+    return re.sub(r"[\s_]+", " ", t).strip()
+
+
+DECISION_LOG_HEADER = ("rec_id", "decision", "reason", "phase")
+
+
+def decision_log_rows(header, rows):
+    """Szűrési döntési napló (a composer döntés-CSV-je és a szűrőeszközök exportja; oszlopok: rec_id | pmid | doi,
+    decision, reason, phase — magyar fejléccel is) → kanonikus sorok [rec_id, decision, reason, phase] (a
+    DECISION_LOG_HEADER sorrendjében), vagy None, ha a fejléc nem döntési napló (nincs decision és reason oszlop)."""
+    idx = {}
+    folded = [_fold_header(h) for h in header or []]
+    for role, names in _LOG_COLUMNS.items():
+        want = {_fold_header(n) for n in names}
+        idx[role] = next((i for i, h in enumerate(folded) if h in want), None)
+    if idx["decision"] is None or idx["reason"] is None:
+        return None
+
+    def cell(row, role):
+        i = idx[role]
+        return str(row[i]).strip() if i is not None and i < len(row) and row[i] is not None else ""
+    return [[cell(r, "key"), cell(r, "decision"), cell(r, "reason"), cell(r, "phase")] for r in rows or []]
+
+
+def decision_log_reasons(header, rows):
+    """A döntési napló teljes szöveg szintű kizárásai okonként (X021), vagy None, ha a fejléc nem döntési napló.
+
+    A composer szabálya szerint a phase nélküli kizárás cím/absztrakt szintű; rekordazonosítónként (rec_id, pmid,
+    doi) a későbbi sor felülírja a korábbit (több napló: a sorokat név szerinti fájlsorrendben fűzd össze). →
+    {"reasons": OrderedDict(kulcs → [címke, n]), "rows": a teljes szöveg szintű kizárások száma, "records": a napló
+    rekordjainak száma}."""
+    canon = decision_log_rows(header, rows)
+    if canon is None:
+        return None
+    latest = collections.OrderedDict()
+    for n, row in enumerate(canon):
+        latest[row[0] or "#%d" % n] = row
+    reasons = collections.OrderedDict()
+    total = 0
+    for _key, decision, label, phase in latest.values():
+        dec = _fold_header(decision)
+        if not (dec in _EXCLUDE_EXACT or dec.startswith(_EXCLUDE_PREFIX)):
+            continue
+        if not _fold_header(phase).startswith(_FULLTEXT_PREFIX):
+            continue
+        total += 1
+        k = reason_key(label)
+        if k in reasons:
+            reasons[k][1] += 1
+        else:
+            reasons[k] = [NO_REASON if k == NO_REASON else label, 1]
+    return {"reasons": reasons, "rows": total, "records": len(latest)}
+
+
+# ------------------------------------------------- PRISMA 2020 folyamatábra (szk.ff.flowchart/v1; terv 4.12, E9)
+# A figure-forge flowchart-specifikációja: 0–100-as vászon, a csomópont x/y-ja a doboz KÖZEPE, az y felfelé nő (a
+# matplotlib-tengely); a vászon magassága min(247, 18 · csomópontszám) mm, szélessége single 89 / double 183 mm. A
+# dobozméret ebből és a 7 pt-os betűből becsült; a figure-forge QC-hurka a feliratot a dobozon belül tartja.
+_FF_MAX_H_MM = 247.0
+_FF_MM_PER_NODE = 18.0
+_FF_WIDTH_MM = {"single": 89.0, "double": 183.0}
+_CHAR_MM = 1.55           # 7 pt átlagos karakterszélesség (a DejaVu tartalék-betűvel is), ráhagyással
+_LINE_MM = 3.1            # 7 pt, 1,25-ös sorköz
+_PAD_MM = 3.2
+_MIN_H = 4.2
+_MAX_REASON_LINES = 10
+_MIN_REASON_LINES = 4
+_TOP, _BOTTOM = 98.0, 2.0
+_HEADER_FILL = "#FDF1C7"
+_INCLUDED_FILL = "#E3EEF9"
+# (x-közép, szélesség) oszloponként; mindkét elrendezés kéthasábos (double, 183 mm) ábrára méretezett
+_COLUMNS = {
+    "main": {"spine": (27.0, 46.0), "side": (75.0, 42.0), "hdr_db": (50.0, 96.0), "included": (27.0, 46.0)},
+    "full": {"spine": (15.0, 26.0), "side": (41.0, 22.0), "om_spine": (65.0, 22.0), "om_side": (88.5, 21.0),
+             "hdr_db": (27.0, 50.0), "hdr_om": (76.5, 45.0), "included": (29.0, 48.0), "previous": (65.0, 22.0),
+             "total": (29.0, 48.0)},
+}
+_FC_TEXT = {
+    "en": {"hdr_db": "Identification of studies via databases and registers",
+           "hdr_om": "Identification of studies via other methods",
+           "identified": "Records identified from:", "databases": "Databases", "registers": "Registers",
+           "other_sources": "Other sources",
+           "removed": "Records removed before screening:", "dup": "Duplicate records removed",
+           "auto": "Records marked as ineligible by automation tools", "other_rm": "Records removed for other reasons",
+           "screened": "Records screened", "excl_screen": "Records excluded",
+           "sought": "Reports sought for retrieval", "not_retrieved": "Reports not retrieved",
+           "assessed": "Reports assessed for eligibility", "excl_elig": "Reports excluded",
+           "om_identified": "Records identified from other methods (websites, organisations, citation searching)",
+           "studies": "Studies included in review", "reports": "Reports of included studies",
+           "prev_studies": "Studies included in previous version of review",
+           "prev_reports": "Reports of studies included in previous version of review",
+           "total_studies": "Total studies included in review", "total_reports": "Reports of total included studies",
+           "more_reasons": "Other reasons", "no_reason": "No reason recorded"},
+    "hu": {"hdr_db": "Vizsgálatok azonosítása adatbázisokból és regiszterekből",
+           "hdr_om": "Vizsgálatok azonosítása egyéb módszerekkel",
+           "identified": "Azonosított rekordok:", "databases": "Adatbázisok", "registers": "Regiszterek",
+           "other_sources": "Egyéb források",
+           "removed": "Szűrés előtt eltávolított rekordok:", "dup": "Duplikátumok",
+           "auto": "Automatizált eszközzel alkalmatlannak jelölt", "other_rm": "Egyéb okból eltávolított",
+           "screened": "Szűrt rekordok", "excl_screen": "Kizárt rekordok",
+           "sought": "Teljes szövegre keresett jelentések", "not_retrieved": "Nem elérhető jelentések",
+           "assessed": "Teljes szövegben értékelt jelentések", "excl_elig": "Kizárt jelentések",
+           "om_identified": "Egyéb módszerekkel azonosított rekordok (weboldal, szervezet, hivatkozáskövetés)",
+           "studies": "Bevont vizsgálatok", "reports": "A bevont vizsgálatok jelentései",
+           "prev_studies": "Az áttekintés előző változatában bevont vizsgálatok",
+           "prev_reports": "Az előző változatban bevont vizsgálatok jelentései",
+           "total_studies": "Összes bevont vizsgálat", "total_reports": "Az összes bevont vizsgálat jelentései",
+           "more_reasons": "Egyéb okok", "no_reason": "Ok nélkül"},
+}
+
+
+def _n(v):
+    return "n = %d" % v if isinstance(v, int) and not isinstance(v, bool) else "n = ?"
+
+
+def _line(label, v):
+    return "%s (%s)" % (label, _n(v))
+
+
+def _wrap(text, width):
+    """Szótördelés legfeljebb `width` karakteres sorokra; a „(n = …)” egyben marad."""
+    out = []
+    for para in str(text).split("\n"):
+        tokens = re.findall(r"\(n = [^)]*\)\S*|\S+", para)
+        line = ""
+        for tok in tokens:
+            if line and len(line) + 1 + len(tok) > width:
+                out.append(line)
+                line = tok
+            else:
+                line = (line + " " + tok) if line else tok
+        out.append(line)
+    return out
+
+
+def _reason_lines(reasons, label, total, t, cap=_MAX_REASON_LINES):
+    """„Reports excluded (n = H):” + okonként egy sor (legfeljebb `cap`; a ritkábbak „Other reasons” sorba vonva)."""
+    if not reasons:
+        return [_line(label, total)], False
+    items = sorted(reasons.items(), key=lambda kv: (-kv[1], str(kv[0])))
+    lines = ["%s (%s):" % (label, _n(total if total is not None else sum(v for _, v in items)))]
+    cut = False
+    if len(items) > cap:
+        rest = sum(v for _, v in items[cap - 1:])
+        items = items[:cap - 1] + [(t["more_reasons"], rest)]
+        cut = True
+    lines += [_line(t["no_reason"] if _is_no_reason(k) else str(k), v) for k, v in items]
+    return lines, cut
+
+
+def flowchart(flow, studies=None, template=None, lang="en", title=None):
+    """Teljes PRISMA 2020 folyamatábra-specifikáció a figure-forge-nak (`prisma check --emit-flowchart`;
+    szk.ff.flowchart/v1).
+
+    flow: kanonikus / 2009-es mezőnevek vagy a composer prisma-flow.json-ja; studies: szk.ma.studies/v1 (dict vagy
+    út) — ebből az I (és a hiányzó J; eltérésnél P017 a 'check'-ben). Dobozok: az adatbázisok és regiszterek ága
+    (azonosítás A1/A2 — a composer adatbázis-listájával —, szűrés előtti eltávolítás D1–D3, B/C, E/F, G/H okokkal),
+    ha van, az egyéb módszerek ága (azonosított, keresett, nem elérhető, értékelt, kizárt okokkal), a bevonás doboza
+    a „Studies included in review (n = I)” és „Reports of included studies (n = J)” sorral (a composer folyamatábrája
+    itt a J-t mutatja — H7), frissített áttekintésnél az előző változat és az összesítés. A hiányzó szám „n = ?”; a
+    számok ellenőrzése (check_flow) a 'check' mezőben. lang: 'en' (kézirat) | 'hu'."""
+    if lang not in _FC_TEXT:
+        raise PrismaError("ismeretlen nyelv: %r (en | hu)" % (lang,))
+    t = _FC_TEXT[lang]
+    raw = flow if isinstance(flow, dict) else {}
+    res = check_with_studies(flow, studies, template)
+    smap = res.studies
+
+    def val(field):
+        v = res.counts.get(field)
+        return v if v is not None else res.derived.get(field)
+    i_val = smap["I"] if smap is not None else val("included_studies")
+    j_val = val("included_reports")
+    if j_val is None and smap is not None:
+        j_val = smap["J"]
+    om_fields = ("other_methods_identified", "other_methods_sought", "other_methods_not_retrieved",
+                 "other_methods_assessed", "other_methods_excluded")
+    has_om = any(res.counts.get(f) is not None for f in om_fields) or bool(
+        res.reasons.get("other_methods_excluded_reasons"))
+    updated = any(res.counts.get(f) is not None for f in ("previous_studies", "previous_reports"))
+    width = "double"
+    arrangement = "full" if (has_om or updated) else "main"
+    cols = _COLUMNS[arrangement]
+    notes = []
+
+    # --- dobozszövegek
+    ident = [t["identified"], _line(t["databases"], val("identified_databases"))]
+    for db in raw.get("databases") or []:
+        if isinstance(db, dict) and (db.get("source") or db.get("name")):
+            try:
+                cnt = _as_count(db.get("count_total", db.get("count")))
+            except ValueError:
+                cnt = None
+            ident.append("– " + _line(str(db.get("source") or db.get("name")), cnt))
+    ident.append(_line(t["registers"], val("identified_registers")))
+    if res.counts.get("identified_other"):
+        ident.append(_line(t["other_sources"], res.counts["identified_other"]))
+    removed = [t["removed"], _line(t["dup"], val("duplicates_removed")), _line(t["auto"], val("automation_removed")),
+               _line(t["other_rm"], val("other_removed"))]
+    mm_x = _FF_WIDTH_MM[width] / 100.0
+
+    def build(cap):
+        excl_lines, cut = _reason_lines(res.reasons.get("excluded_eligibility_reasons"), t["excl_elig"],
+                                        val("excluded_eligibility"), t, cap)
+        specs = [  # (id, sor, oszlop, szöveg-sorok, betűjel, fázis, kitöltés, alak)
+            ("hdr_db", "header", "hdr_db", [t["hdr_db"]], None, "identification", _HEADER_FILL, "sharp"),
+            ("identified", "ident", "spine", ident, "A1+A2", "identification", None, None),
+            ("removed", "ident", "side", removed, "D1-D3", "identification", None, None),
+            ("screened", "screen", "spine", [_line(t["screened"], val("screened"))], "B", "screening", None, None),
+            ("excluded_screening", "screen", "side", [_line(t["excl_screen"], val("excluded_screening"))], "C",
+             "screening", None, None),
+            ("sought", "retrieve", "spine", [_line(t["sought"], val("sought"))], "E", "screening", None, None),
+            ("not_retrieved", "retrieve", "side", [_line(t["not_retrieved"], val("not_retrieved"))], "F",
+             "screening", None, None),
+            ("assessed", "assess", "spine", [_line(t["assessed"], val("assessed"))], "G", "screening", None, None),
+            ("excluded_eligibility", "assess", "side", excl_lines, "H", "screening", None, None),
+            ("included", "included", "included", [_line(t["studies"], i_val), _line(t["reports"], j_val)], "I+J",
+             "included", _INCLUDED_FILL, None),
+        ]
+        if has_om:
+            om_excl, cut2 = _reason_lines(res.reasons.get("other_methods_excluded_reasons"), t["excl_elig"],
+                                          val("other_methods_excluded"), t, cap)
+            cut = cut or cut2
+            specs += [
+                ("hdr_om", "header", "hdr_om", [t["hdr_om"]], None, "identification", _HEADER_FILL, "sharp"),
+                ("om_identified", "ident", "om_spine", [_line(t["om_identified"], val("other_methods_identified"))],
+                 "OM", "identification", None, None),
+                ("om_sought", "retrieve", "om_spine", [_line(t["sought"], val("other_methods_sought"))], "OM-E",
+                 "screening", None, None),
+                ("om_not_retrieved", "retrieve", "om_side",
+                 [_line(t["not_retrieved"], val("other_methods_not_retrieved"))], "OM-F", "screening", None, None),
+                ("om_assessed", "assess", "om_spine", [_line(t["assessed"], val("other_methods_assessed"))], "OM-G",
+                 "screening", None, None),
+                ("om_excluded", "assess", "om_side", om_excl, "OM-H", "screening", None, None),
+            ]
+        if updated:
+            specs += [
+                ("previous", "included", "previous", [_line(t["prev_studies"], res.counts.get("previous_studies")),
+                                                      _line(t["prev_reports"], res.counts.get("previous_reports"))],
+                 "prev", "included", None, None),
+                ("total", "total", "total", [_line(t["total_studies"], val("total_studies")),
+                                             _line(t["total_reports"], val("total_reports"))], "total", "included",
+                 _INCLUDED_FILL, None),
+            ]
+        mm_y = min(_FF_MAX_H_MM, _FF_MM_PER_NODE * len(specs)) / 100.0
+        nodes, heights = [], {}
+        for nid, row, col, lines, box, phase, fill, shape in specs:
+            x, w = cols[col]
+            wrapped = _wrap("\n".join(lines), max(10, int(w * mm_x / _CHAR_MM) - 2))
+            # a figure-forge lekerekítése 2 egység: ennél alacsonyabb dobozon a sarok kilóg
+            h = max(_MIN_H, round((len(wrapped) * _LINE_MM + _PAD_MM) / mm_y, 1))
+            node = collections.OrderedDict((("id", nid), ("text", "\n".join(wrapped)), ("x", x), ("y", None),
+                                            ("w", w), ("h", h)))
+            if shape:
+                node["shape"] = shape
+            if fill:
+                node["color"] = fill
+            node["box"] = box
+            node["phase"] = phase
+            nodes.append((row, node))
+            heights[row] = max(heights.get(row, 0.0), h)
+        return nodes, heights, cut, mm_y
+
+    def clearance(nodes, heights):
+        """A bevonás-doboz feletti szükséges távolság (sorköz + többlet), hogy az egyéb ág ferde nyila ne messe a
+        kizárt-dobozt; egyéb ág nélkül 0."""
+        if not has_om:
+            return 0.0
+        excl_h = max((n["h"] for _r, n in nodes if n["id"] == "excluded_eligibility"), default=0.0)
+        return 1.45 * excl_h + 2.0 - (heights["assess"] / 2 + heights["included"] / 2)
+
+    def need(nodes, heights, gap):
+        """(sorok, a szükséges magasság adott sorközzel, a bevonás-doboz feletti többlet)."""
+        order = [r for r in ("header", "ident", "screen", "retrieve", "assess", "included", "total") if r in heights]
+        extra = max(0.0, clearance(nodes, heights) - gap)
+        return order, sum(heights[r] for r in order) + (len(order) - 1) * gap + extra, extra
+
+    avail = _TOP - _BOTTOM
+    cap = _MAX_REASON_LINES
+    while True:
+        nodes, heights, cut, mm_y = build(cap)
+        order, total_need, _ = need(nodes, heights, 2.5)
+        if total_need <= avail or cap <= _MIN_REASON_LINES:
+            break
+        cap -= 1
+    gaps = len(order) - 1
+    free = avail - sum(heights[r] for r in order)
+    gap = free / gaps if gaps else 0.0
+    c0 = clearance(nodes, heights)
+    if gaps > 1 and c0 > gap:
+        gap = (free - c0) / (gaps - 1)          # a többlet a bevonás-doboz feletti sorközt növeli
+    gap = max(2.5, min(10.0, gap)) if gaps else 0.0
+    order, total_need, extra = need(nodes, heights, gap)
+    scale = 1.0
+    if total_need > avail:
+        # a szöveg így sem fér el: arányos zsugorítás (a geometria érvényes marad, a figure-forge QC jelzi a szűk dobozt)
+        scale = avail / total_need
+        notes.append({"hu": "A dobozok magassága meghaladja a vásznat, ezért arányosan kisebbek; a figure-forge QC-je "
+                            "jelezni fogja a szűk dobozt — rövidítsd a feliratokat (pl. az okok listáját).",
+                      "en": "The boxes exceed the canvas height and were scaled down; shorten the labels (e.g. the "
+                            "list of reasons)."})
+        for _r, n in nodes:
+            n["h"] = round(n["h"] * scale, 2)
+        heights = {r: h * scale for r, h in heights.items()}
+        gap *= scale
+        extra *= scale
+    if cut:
+        notes.append({"hu": "A kizárási okok közül csak a %d leggyakoribb látszik külön sorban; a teljes lista a "
+                            "kiegészítő anyagba kerüljön (PRISMA 2020 16a)." % (cap - 1),
+                      "en": "Only the %d most frequent exclusion reasons are shown separately; give the full list in the "
+                            "supplement (PRISMA 2020 item 16a)." % (cap - 1)})
+    centers, top = {}, _TOP
+    for r in order:
+        if r == "included":
+            top -= extra
+        centers[r] = round(top - heights[r] / 2, 2)
+        top -= heights[r] + gap
+    out_nodes = []
+    for _row, node in nodes:
+        node["y"] = centers[_row]
+        out_nodes.append(node)
+    edges = [("identified", "removed"), ("identified", "screened"), ("screened", "excluded_screening"),
+             ("screened", "sought"), ("sought", "not_retrieved"), ("sought", "assessed"),
+             ("assessed", "excluded_eligibility"), ("assessed", "included")]
+    if has_om:
+        edges += [("om_identified", "om_sought"), ("om_sought", "om_not_retrieved"), ("om_sought", "om_assessed"),
+                  ("om_assessed", "om_excluded"), ("om_assessed", "included")]
+    if updated:
+        edges += [("included", "total"), ("previous", "total")]
+    counts = collections.OrderedDict()
+    for letter, field in (("A1", "identified_databases"), ("A2", "identified_registers"), ("D1", "duplicates_removed"),
+                          ("D2", "automation_removed"), ("D3", "other_removed"), ("B", "screened"),
+                          ("C", "excluded_screening"), ("E", "sought"), ("F", "not_retrieved"), ("G", "assessed"),
+                          ("H", "excluded_eligibility")):
+        counts[letter] = val(field)
+    counts["I"] = i_val
+    counts["J"] = j_val
+    unknown = [k for k, v in counts.items() if v is None]
+    if unknown:
+        notes.append({"hu": "Hiányzó doboz-érték(ek) „n = ?” jelöléssel: %s." % ", ".join(unknown),
+                      "en": "Missing box value(s) shown as “n = ?”: %s." % ", ".join(unknown)})
+    spec = collections.OrderedDict()
+    spec["schema"] = FLOWCHART_SCHEMA
+    spec["kind"] = "prisma2020"
+    spec["title"] = title
+    spec["lang"] = lang
+    spec["direction"] = "TB"
+    spec["nodes"] = out_nodes
+    spec["edges"] = [collections.OrderedDict((("from", a), ("to", b))) for a, b in edges]
+    spec["layout"] = {"width": width, "arrangement": arrangement, "canvas_height_mm": round(mm_y * 100.0, 1),
+                      "updated_review": updated, "other_methods": has_om}
+    spec["counts"] = counts
+    spec["check"] = {"ok": res.ok, "summary": res.summary(), "codes": sorted({f["code"] for f in res.findings})}
+    spec["source"] = {"engine_version": __version__, "template": res.template,
+                      "studies_map": smap is not None}
+    spec["render_hint"] = ("python3 <figure-forge>/scripts/ff.py flowchart --spec <ez a fájl> --out prisma_flow "
+                           "--formats svg,pdf,tiff --width %s" % width)
+    spec["notes"] = notes
+    return spec
+
+
+def write_flowchart(spec, path):
+    """A folyamatábra-specifikáció atomikus írása (UTF-8, 2 szóközös behúzás, záró újsor) → az út."""
+    d = os.path.dirname(os.path.abspath(path)) or "."
+    os.makedirs(d, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".prisma_flow.", suffix=".tmp", dir=d)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(json.dumps(spec, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
+        os.replace(tmp, path)
+    finally:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+    return path

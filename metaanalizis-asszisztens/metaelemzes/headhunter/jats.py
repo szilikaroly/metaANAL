@@ -28,7 +28,8 @@ Biztonság: belső DTD-entitás (``<!ENTITY``) esetén elutasít (entitás-robba
 Nyilvános API (a ``included.py`` és a későbbi ``extract.py``/``facade.show_text`` ezt használja)::
 
     doc = parse(xml_text_or_bytes, container="PMC6488980")
-    doc.meta            # {'title','journal','year','ids':{'pmid','pmcid','doi'},'license','article_type','cochrane':{...}}
+    doc.meta            # {'title','journal','year','pub_date','ids':{'pmid','pmcid','doi'},'license','article_type',
+                        #  'is_cochrane','cochrane':{'cd_number','version'}}
     doc.refs            # {ref_id: Ref}, doc.ref_order: [ref_id …] dokumentum-sorrendben
     doc.groups          # {group_id: RefGroup}; doc.ref_sections: [RefSection]
     doc.tables          # [Table]; doc.figures: [Figure]; doc.paragraphs: [Paragraph]; doc.sections: [Section]
@@ -403,7 +404,9 @@ _SKIP_TAGS = frozenset(["object-id", "graphic", "inline-graphic", "media", "alt-
                         "processing-meta", "tex-math"])
 _CITE_MARK = re.compile(r"^[\[(]?\s*\d{1,4}(?:\s*[-\u2010-\u2015,;]\s*\d{1,4})*\s*[\])]?$")
 _CITATION_PARTS = frozenset(["source", "year", "article-title", "person-group", "collab", "etal",
-                             "publisher-name", "publisher-loc", "conf-name", "chapter-title", "date-in-citation"])
+                             "publisher-name", "publisher-loc", "conf-name", "chapter-title", "date-in-citation",
+                             "volume", "issue", "fpage", "lpage", "elocation-id", "edition", "comment", "uri",
+                             "name", "string-name"])
 
 
 class _Render(object):
@@ -466,8 +469,11 @@ class _Render(object):
             txt = sub.tb.text().strip()
             start = self.tb.length
             if txt:
-                cite = bool(_CITE_MARK.match(txt))
-                self._add(txt, in_sup, cite)
+                rtype = (el.get("ref-type") or "").lower()
+                cite = bool(_CITE_MARK.match(txt)) or (rtype in ("table-fn", "fn") and len(txt) <= 4)
+                # a teljes egészében felső indexes xref ('Egeland<xref><sup>i</sup></xref>') felső index marad
+                sup_only = not sub.nosup.text().strip()
+                self._add(txt, in_sup or sup_only, cite)
                 start = self.tb.length - len(txt)
             end = self.tb.length
             for rid in (el.get("rid") or "").split():
@@ -639,13 +645,14 @@ class Table(object):
     """Táblázat: ``header`` és ``body`` sorok rácsként (minden sor ``ncols`` cella; a kifeszített cellák
     másolatai ``spanned=True``), ``columns[c]`` = a fejléc-útvonal ' / '-lel összefűzve."""
 
-    __slots__ = ("element_id", "label", "caption", "caption_xrefs", "footer", "section_path", "header",
-                 "body", "ncols", "columns", "column_paths", "in_back", "order")
+    __slots__ = ("element_id", "label", "caption", "caption_plain", "caption_xrefs", "footer", "section_path",
+                 "header", "body", "ncols", "columns", "column_paths", "in_back", "order")
 
     def __init__(self):
         self.element_id = None
         self.label = None
         self.caption = ""
+        self.caption_plain = ""  # felső indexek és számos hivatkozás-jelek nélkül (osztályozáshoz)
         self.caption_xrefs = []
         self.footer = ""
         self.section_path = []
@@ -967,7 +974,8 @@ def _iter_local(el, tag):
 
 
 def _parse_meta(doc, root):
-    meta = {"title": None, "journal": None, "year": None, "ids": {}, "license": None, "license_url": None,
+    meta = {"title": None, "journal": None, "year": None, "pub_date": None, "ids": {}, "license": None,
+            "license_url": None,
             "article_type": root.get("article-type"), "is_cochrane": False, "cochrane": None,
             "root_id": root.get("id")}
     front = _find(root, ["front"])
@@ -993,14 +1001,20 @@ def _parse_meta(doc, root):
                     meta["ids"].setdefault("doi", v)
         tg = _find(am, ["title-group", "article-title"])
         meta["title"] = _render(tg) or None
+        dates = []
         for pd in am:
             if _local(pd.tag) == "pub-date":
                 y = pd.find("year") if pd.find("year") is not None else _find(pd, ["year"])
                 if y is not None and (y.text or "").strip()[:4].isdigit():
                     yy = int((y.text or "").strip()[:4])
-                    if meta["year"] is None or (pd.get("pub-type") or pd.get("date-type") or "") in (
-                            "epub", "pub", "ppub", "collection"):
+                    ptype = (pd.get("pub-type") or pd.get("date-type") or "").lower()
+                    if meta["year"] is None or ptype in ("epub", "pub", "ppub", "collection"):
                         meta["year"] = yy if meta["year"] is None else min(meta["year"], yy)
+                    if ptype in ("", "epub", "pub", "ppub", "collection", "electronic", "print", "epub-ppub"):
+                        dates.append(_date_parts(pd, yy))
+        if dates:
+            # a legkorábbi közlési dátum (a tartalék keresési dátumhoz: korábbi = szélesebb frissítési ablak)
+            meta["pub_date"] = _date_str(sorted(dates, key=lambda d: (d[0], d[1] or 0, d[2] or 0))[0])
         perm = _find(am, ["permissions"])
         if perm is not None:
             for lic in perm:
@@ -1048,6 +1062,28 @@ def _parse_meta(doc, root):
     doc.meta = meta
 
 
+def _date_parts(pd, year):
+    """<pub-date> → (év, hó|None, nap|None); a hibás hó/nap elhagyva (nem találgatunk)."""
+    def num(tag, lo, hi):
+        el = _find(pd, [tag])
+        txt = (el.text or "").strip() if el is not None else ""
+        if txt.isdigit() and lo <= int(txt) <= hi:
+            return int(txt)
+        return None
+    month = num("month", 1, 12)
+    day = num("day", 1, 31) if month else None
+    return (year, month, day)
+
+
+def _date_str(parts):
+    y, m, d = parts
+    if m and d:
+        return "%04d-%02d-%02d" % (y, m, d)
+    if m:
+        return "%04d-%02d" % (y, m)
+    return "%04d" % y
+
+
 def _license_name(ltype, href, text=""):
     h = (href or "").lower()
     m = re.search(r"creativecommons\.org/licenses/([a-z\-]+)/", h)
@@ -1058,6 +1094,18 @@ def _license_name(ltype, href, text=""):
     m = re.search(r"\bCC[ -]?(BY(?:-N[CD])*(?:-SA)?)\b", text or "", flags=re.I)
     if m:
         return "cc " + m.group(1).lower()
+    m = re.search(r"Creative\s+Commons\s+Attribution((?:[\s-]+(?:Non-?Commercial|No-?Derivs|No-?Derivatives|"
+                  r"Share-?Alike))*)", text or "", flags=re.I)
+    if m:
+        parts = ["by"]
+        tail = m.group(1).lower()
+        if "commercial" in tail:
+            parts.append("nc")
+        if "deriv" in tail:
+            parts.append("nd")
+        if "share" in tail:
+            parts.append("sa")
+        return "cc " + "-".join(parts)
     lt = (ltype or "").strip().lower()
     if lt:
         return lt.replace("open-access", "open access")
@@ -1257,6 +1305,7 @@ class _Walker(object):
             elif tag == "caption":
                 rr = _render_full(ch)
                 t.caption = rr.text().strip()
+                t.caption_plain = normalize_ws(rr.nocite.text())
                 t.caption_xrefs = rr.xrefs
             elif tag == "table-wrap-foot":
                 t.footer = _render(ch)
@@ -1624,10 +1673,10 @@ def _fill_grid(t, tbl):
 # ---------------------------------------------------------------------------
 
 _KEEP_SENTENCE_DEFAULT = (
-    re.compile(r"\b(?:we\s+)?includ(?:ed|ing)\b|\bmet\s+(?:the|our)\s+(?:inclusion|eligibility)\s+criteria\b|"
-               r"\bwere\s+eligible\b", re.I),
-    re.compile(r"\bsearch(?:ed|es)?\b.{0,120}\b(?:(?:19|20)\d{2})\b|\bdate of (?:the )?(?:last )?search\b|"
-               r"\blast search", re.I),
+    re.compile(r"\binclud(?:ed|ing)\b|\bcriteria\b|\bwere\s+eligible\b", re.I),
+    re.compile(r"(?=.*(?:19|20)\d{2})(?:.*\bsearch\w*|.*\bdatabases?\b|.*\binception\b|.*\b(?:medline|embase|pubmed|"
+               r"cinahl|psycinfo|scopus|web of science|central)\b)", re.I | re.S),
+    re.compile(r"\bdate of (?:the )?(?:last )?search\b|\blast search", re.I),
 )
 _NUMERIC_CELL = re.compile(r"^[\s\d.,±/()\[\]%;:<>=+\-‐-―−·NRA*†‡§¶a-dto]{0,40}$")
 
@@ -1671,7 +1720,7 @@ def _trim_paragraph(p, keep_rx, max_sentence=300):
     keep = []
     for a, b in _sentence_spans(full):
         sent = full[a:b].strip()
-        if 0 < len(sent) <= max_sentence and any(rx.search(sent) for rx in keep_rx):
+        if 0 < len(sent) <= max_sentence and any((rx(sent) if callable(rx) else rx.search(sent)) for rx in keep_rx):
             keep.append((a, b))
     new = ET.Element(p.tag, {k: v for k, v in p.attrib.items() if k == "id"})
     if not keep:
@@ -1725,14 +1774,19 @@ def _trim_cell(cell, first_col, keep_all):
         cell.text = "…"
 
 
-def trim_for_fixture(source, keep_patterns=None, max_additional_refs=5, source_note=None):
+def trim_for_fixture(source, keep_patterns=None, max_additional_refs=5, source_note=None, max_authors=3,
+                     drop_uncited_refs=False):
     """Valós JATS → kis, jogtiszta teszt-fixture (str).
 
     Megtartja: article-meta azonosítók, cím, folyóirat, év, licenc-hivatkozás; szakaszcímek; a mintákra
     illeszkedő rövid (≤ 300 karakter) mondatok xref-ekkel; táblázatok szerkezete (fejléc, első oszlop, rövid
-    számcellák; a többi cella '…'); ábra-címkék; az összes hivatkozás (bibliográfiai adat) — a Cochrane
+    számcellák; a többi cella '…'; vizsgálat-sor nélküli táblából csak a fejléc és az első sor); ábra-címkék; az
+    összes hivatkozás (bibliográfiai adat; hivatkozásonként az első ``max_authors`` szerző + 'et al.') — a Cochrane
     „Additional references" szakaszból csak ``max_additional_refs`` darab. Eldobja: absztrakt-, bekezdés- és
-    cellaszöveg, függelékek, köszönetnyilvánítás, kiegészítő anyag, google-scholar linkek."""
+    cellaszöveg, függelékek, köszönetnyilvánítás, kiegészítő anyag, google-scholar linkek, formázási attribútumok.
+    ``keep_patterns``: regexek vagy egyargumentumú függvények (mondat → bool). ``drop_uncited_refs``: a vágás után
+    sehonnan nem hivatkozott (és nem Cochrane-szakaszbeli) hivatkozások is kimaradnak — a hívó ellenőrizze, hogy
+    a kinyerés eredménye nem változott."""
     keep_rx = tuple(keep_patterns) if keep_patterns else _KEEP_SENTENCE_DEFAULT
     text = _prepare(_decode(source))
     root = ET.fromstring(text)
@@ -1787,10 +1841,76 @@ def trim_for_fixture(source, keep_patterns=None, max_additional_refs=5, source_n
         el = _find(root, [part])
         if el is not None:
             _trim_container(el, keep_rx, max_additional_refs=max_additional_refs)
+    _compact_tree(root, max_authors)
+    if drop_uncited_refs:
+        _drop_uncited_refs(root)
     out = ET.tostring(root, encoding="unicode")
     note = source_note or "trimmed JATS fixture"
     note = note.replace("--", "-")
     return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- %s -->\n%s\n" % (note, out)
+
+
+_DROP_ATTRS = frozenset(["style", "{http://www.w3.org/XML/1998/namespace}lang", "name-style", "valign", "align",
+                         "frame", "rules", "border", "orientation", "position", "content-type", "specific-use"])
+
+
+def _compact_tree(root, max_authors=3):
+    """Fixture-tömörítés: formázási attribútumok és oszlopdefiníciók le, szóközök összevonva, hivatkozásonként az
+    első ``max_authors`` szerző marad (a többi helyén 'et al.')."""
+    for parent in root.iter():
+        for ch in list(parent):
+            if _local(ch.tag) in ("col", "colgroup"):
+                parent.remove(ch)
+    for r in [x for x in root.iter() if _local(x.tag) == "ref"]:
+        for holder in [r] + list(r.iter()):
+            kids = [k for k in holder if _local(k.tag) in ("name", "string-name")]
+            if max_authors and len(kids) > max_authors:
+                for k in kids[max_authors:]:
+                    holder.remove(k)
+                kids[max_authors - 1].tail = ", et al. "
+    for el in root.iter():
+        for a in list(el.attrib):
+            if a in _DROP_ATTRS:
+                del el.attrib[a]
+        if el.text:
+            el.text = _WS.sub(" ", el.text)
+        if el.tail:
+            el.tail = _WS.sub(" ", el.tail)
+
+
+def _drop_uncited_refs(root):
+    cited = set()
+    for x in root.iter():
+        if _local(x.tag) == "xref":
+            cited.update((x.get("rid") or "").split())
+    # a hivatkozott tartományok ('[24–28]') közbülső tagjai is kellenek: a két végpont közti összes hivatkozás
+    order = [r.get("id") for r in root.iter() if _local(r.tag) == "ref"]
+    pos = {rid: i for i, rid in enumerate(order)}
+    hit = sorted(pos[r] for r in cited if r in pos)
+    keep = set(cited)
+    for a, b in zip(hit, hit[1:]):
+        if b - a <= 60:
+            keep.update(order[a:b + 1])
+
+    def walk(el, protected):
+        for ch in list(el):
+            tag = _local(ch.tag)
+            prot = protected
+            if tag in ("ref-list", "sec"):
+                title = None
+                for x in ch:
+                    if _local(x.tag) == "title":
+                        title = _render(x)
+                kind = classify_ref_section(title) if title else None
+                if kind in ("included", "excluded", "awaiting", "ongoing"):
+                    prot = True
+            if tag == "ref":
+                if not prot and ch.get("id") not in keep:
+                    el.remove(ch)
+                continue
+            walk(ch, prot)
+
+    walk(root, False)
 
 
 def _trim_container(el, keep_rx, max_additional_refs=5, depth=0, refkind=None):
@@ -1922,6 +2042,26 @@ def _trim_table(tw):
             if _local(sec.tag) == "thead":
                 for tr in sec:
                     thead_rows.add(id(tr))
+        # vizsgálat-sorok nélküli tábla (pl. összefoglaló, 'Summary of findings'): a fejléc és az első sor marad
+        relevant = False
+        body_rows = [tr for tr in rows if id(tr) not in thead_rows]
+        for tr in body_rows:
+            cells = [c for c in tr if _local(c.tag) in ("td", "th")]
+            if not cells:
+                continue
+            first = cells[0]
+            if any(_local(x.tag) == "xref" and (x.get("ref-type") or "") not in _NON_REF_XREF for x in first.iter()) \
+                    or parse_author_year(normalize_ws("".join(first.itertext()))):
+                relevant = True
+                break
+        if not relevant:
+            kept = 0
+            for parent in tbl.iter():
+                for tr in [x for x in parent if _local(x.tag) == "tr" and id(x) not in thead_rows]:
+                    kept += 1
+                    if kept > 1:
+                        parent.remove(tr)
+            rows = [x for x in tbl.iter() if _local(x.tag) == "tr"]
         for ri, tr in enumerate(rows):
             cells = [c for c in tr if _local(c.tag) in ("td", "th")]
             is_head = id(tr) in thead_rows or all(

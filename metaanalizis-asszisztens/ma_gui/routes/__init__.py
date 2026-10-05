@@ -25,6 +25,8 @@ from . import grade  # noqa: E402 — v1: GRADE, SoF, AMSTAR 2, Protokoll (grade
 MODULES += (grade,)
 from . import extraction_dual  # noqa: E402 — v1: kettős kinyerés (compare, reconcile, A/B import/export)
 MODULES += (extraction_dual,)
+from . import adapters, adapters_composer, adapters_figures  # noqa: E402 — v1: plugin-adapterek, ábra-export, composer
+MODULES += (adapters, adapters_figures, adapters_composer)
 
 
 def register_all(router):

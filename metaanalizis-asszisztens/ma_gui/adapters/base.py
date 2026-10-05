@@ -436,8 +436,11 @@ class Adapter:
         state = cap.get("state") or "absent"
         details = {"plugin": self.plugin, "state": state, "problems": cap.get("problems") or [],
                    "todo": cap.get("todo")}
-        return error("CAPABILITY_MISSING",
-                     "A(z) %s plugin nem érhető el (állapot: %s)." % (self.plugin, state), details)
+        msg = "A(z) %s plugin nem érhető el (állapot: %s)." % (self.plugin, state)
+        todo = cap.get("todo")
+        if isinstance(todo, dict) and isinstance(todo.get("hu"), str) and todo["hu"]:
+            msg += " Teendő: " + todo["hu"]               # kezdőknek: a pontos teendő az üzenetben is (5.1)
+        return error("CAPABILITY_MISSING", msg, details)
 
     def run(self, argv, stdin_json=None, timeout=None, *, script=None, parse="json", cwd=None,
             extra_env=None):

@@ -1,0 +1,1024 @@
+{
+ "description": "POST /api/validator/check — a validator keresztellenőrzése (szk.appraisal-result/v1). fx: legacy (1.0.0 golden-kimenetek: H1 üres TRIPOD 1/52, H2 PROBAST 32/34, H3 GRADE, H4 AMSTAR 2 — az őrök javításával; query.tool szerint), json (V1), absent (424).",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/validator/check",
+   "query": {
+    "tool": "rob2",
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.appraisal-result/v1",
+    "data": {
+     "schema": "szk.appraisal-result/v1",
+     "tool": "rob2",
+     "validator_version": "1.0.0",
+     "legacy": true,
+     "mode": "bridge",
+     "scope": "assignment",
+     "target": {},
+     "invalid": [],
+     "domains": [
+      {
+       "domain": "1",
+       "level": "low",
+       "forced_by": [],
+       "unknown_at": [],
+       "routers": [],
+       "algorithm": "conservative",
+       "implied": "low",
+       "missing": []
+      },
+      {
+       "domain": "2",
+       "level": "high",
+       "forced_by": [
+        "2.6"
+       ],
+       "unknown_at": [],
+       "routers": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4"
+       ],
+       "algorithm": "conservative",
+       "implied": "high",
+       "missing": []
+      },
+      {
+       "domain": "3",
+       "level": "some",
+       "forced_by": [],
+       "unknown_at": [
+        "3.1"
+       ],
+       "routers": [
+        "3.3"
+       ],
+       "algorithm": "conservative",
+       "implied": "some_concerns",
+       "missing": []
+      },
+      {
+       "domain": "4",
+       "level": "low",
+       "forced_by": [],
+       "unknown_at": [],
+       "routers": [
+        "4.3",
+        "4.4"
+       ],
+       "algorithm": "conservative",
+       "implied": "low",
+       "missing": []
+      },
+      {
+       "domain": "5",
+       "level": "low",
+       "forced_by": [],
+       "unknown_at": [],
+       "routers": [],
+       "algorithm": "conservative",
+       "implied": "low",
+       "missing": [
+        "5.3"
+       ],
+       "flags": [
+        "validator_low_with_missing"
+       ]
+      }
+     ],
+     "amstar2": null,
+     "grade": null,
+     "nos": null,
+     "tripod": null,
+     "conventions": {},
+     "validator_reported": {
+      "answered": 21,
+      "expected": 22,
+      "unanswered": [
+       "5.3"
+      ],
+      "trusted": true,
+      "agrees": true
+     },
+     "complete": false,
+     "expected": 22,
+     "answered": 21,
+     "completeness_text": "21/22",
+     "missing": [
+      {
+       "item": "5.3",
+       "pass": null,
+       "key": "5.3"
+      }
+     ],
+     "per_pass": null,
+     "completeness_source": "workbench",
+     "overall": {
+      "implied": "high",
+      "level": "high",
+      "algorithm": "conservative",
+      "official": false,
+      "basis": "validator",
+      "lines": [
+       "ROLLUP — RoB 2 (Cochrane risk-of-bias tool for randomised trials, version 2, 22 August 2019)   (21/22 answered)",
+       "----------------------------------------------------------------------",
+       "Domain 1 (Randomisation process): LOW  — no signalling question flags a problem",
+       "Domain 2 (Deviations from intended interventions): HIGH / SERIOUS  — 'No' or 'Probably no' at 2.6",
+       "routing questions answered, not scored: 2.1, 2.2, 2.3, 2.4",
+       "Domain 3 (Missing outcome data): SOME CONCERNS / UNCLEAR  — no information at 3.1",
+       "routing questions answered, not scored: 3.3",
+       "Domain 4 (Measurement of the outcome): LOW  — no signalling question flags a problem",
+       "routing questions answered, not scored: 4.3, 4.4",
+       "Domain 5 (Selection of the reported result): LOW  — no signalling question flags a problem",
+       "Implied overall: HIGH / SERIOUS — one domain at high risk sets the overall.",
+       "This is what the recorded answers force. It is NOT the published flowchart: the official algorithms branch on particular questions (RoB 2 domain 2 on 2.6/2.7, ROBINS-I on the confounding domain). Check the borderline domains against the source algorithm and say so if you override this."
+      ],
+      "provisional": true,
+      "label": {
+       "hu": "Ez a validator implikált ítélete (konzervatív szabály) — NEM a hivatalos folyamatábra eredménye; az ítélet a Tiéd.",
+       "en": "This is the validator's implied judgement (conservative rule) — NOT the official flowchart result; the judgement is yours."
+      }
+     },
+     "guards": [],
+     "notes": [
+      {
+       "hu": "Ez a validator implikált ítélete (konzervatív szabály) — NEM a hivatalos folyamatábra eredménye; az ítélet a Tiéd.",
+       "en": "This is the validator's implied judgement (conservative rule) — NOT the official flowchart result; the judgement is yours."
+      }
+     ]
+    },
+    "warnings": [
+     "A validator régi (bridge) módban fut; az eredményt a H1–H4 őrök javítják (5.0)."
+    ],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp015"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/validator/check",
+   "query": {
+    "tool": "probast-ai",
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.appraisal-result/v1",
+    "data": {
+     "schema": "szk.appraisal-result/v1",
+     "tool": "probast-ai",
+     "validator_version": "1.0.0",
+     "legacy": true,
+     "mode": "bridge",
+     "scope": "both",
+     "target": {},
+     "invalid": [],
+     "domains": [],
+     "amstar2": null,
+     "grade": null,
+     "nos": null,
+     "tripod": null,
+     "conventions": {},
+     "validator_reported": {
+      "answered": 32,
+      "expected": 34,
+      "unanswered": [
+       "evaluation/4.6",
+       "evaluation/4.7"
+      ],
+      "trusted": false,
+      "agrees": false
+     },
+     "complete": false,
+     "expected": 34,
+     "answered": 16,
+     "completeness_text": "16/34",
+     "missing": [
+      {
+       "item": "1.1",
+       "pass": "evaluation",
+       "key": "evaluation/1.1"
+      },
+      {
+       "item": "1.2",
+       "pass": "evaluation",
+       "key": "evaluation/1.2"
+      },
+      {
+       "item": "1.3",
+       "pass": "evaluation",
+       "key": "evaluation/1.3"
+      },
+      {
+       "item": "2.1",
+       "pass": "evaluation",
+       "key": "evaluation/2.1"
+      },
+      {
+       "item": "2.2",
+       "pass": "evaluation",
+       "key": "evaluation/2.2"
+      },
+      {
+       "item": "2.3",
+       "pass": "evaluation",
+       "key": "evaluation/2.3"
+      },
+      {
+       "item": "2.4",
+       "pass": "evaluation",
+       "key": "evaluation/2.4"
+      },
+      {
+       "item": "3.1",
+       "pass": "evaluation",
+       "key": "evaluation/3.1"
+      },
+      {
+       "item": "3.2",
+       "pass": "evaluation",
+       "key": "evaluation/3.2"
+      },
+      {
+       "item": "3.3",
+       "pass": "evaluation",
+       "key": "evaluation/3.3"
+      },
+      {
+       "item": "3.4",
+       "pass": "evaluation",
+       "key": "evaluation/3.4"
+      },
+      {
+       "item": "4.1",
+       "pass": "evaluation",
+       "key": "evaluation/4.1"
+      },
+      {
+       "item": "4.2",
+       "pass": "evaluation",
+       "key": "evaluation/4.2"
+      },
+      {
+       "item": "4.3",
+       "pass": "evaluation",
+       "key": "evaluation/4.3"
+      },
+      {
+       "item": "4.4",
+       "pass": "evaluation",
+       "key": "evaluation/4.4"
+      },
+      {
+       "item": "4.5",
+       "pass": "evaluation",
+       "key": "evaluation/4.5"
+      },
+      {
+       "item": "4.6",
+       "pass": "evaluation",
+       "key": "evaluation/4.6"
+      },
+      {
+       "item": "4.7",
+       "pass": "evaluation",
+       "key": "evaluation/4.7"
+      }
+     ],
+     "per_pass": {
+      "development": {
+       "expected": 16,
+       "answered": 16,
+       "complete": true,
+       "text": "16/16"
+      },
+      "evaluation": {
+       "expected": 18,
+       "answered": 0,
+       "complete": false,
+       "text": "0/18"
+      }
+     },
+     "completeness_source": "workbench",
+     "overall": {
+      "implied": null,
+      "level": null,
+      "algorithm": "none",
+      "official": false,
+      "basis": "validator",
+      "lines": [],
+      "provisional": true,
+      "label": {
+       "hu": "HOLISZTIKUS — a PROBAST+AI-nak nincs algoritmusa; az összítélet a Tiéd.",
+       "en": "HOLISTIC — PROBAST+AI has no algorithm; the overall judgement is yours."
+      }
+     },
+     "guards": [
+      {
+       "id": "H2",
+       "message": {
+        "hu": "H2: a validator 1.0.0 PROBAST+AI-számlálásában a két menet egymást teljesíti, és a bizonyíték-szövegben álló „no” is válasznak számít; a teljességet a munkapad számolja, menetenként.",
+        "en": "H2: in validator 1.0.0 the two PROBAST+AI passes satisfy each other and a 'no' in evidence text counts as an answer; completeness is counted by the workbench, per pass."
+       },
+       "effect": "completeness_recomputed"
+      }
+     ],
+     "notes": []
+    },
+    "warnings": [
+     "A validator régi (bridge) módban fut; az eredményt a H1–H4 őrök javítják (5.0)."
+    ],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp016"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/validator/check",
+   "query": {
+    "tool": "tripod-ai",
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.appraisal-result/v1",
+    "data": {
+     "schema": "szk.appraisal-result/v1",
+     "tool": "tripod-ai",
+     "validator_version": "1.0.0",
+     "legacy": true,
+     "mode": "bridge",
+     "scope": "both",
+     "target": {},
+     "invalid": [],
+     "domains": [],
+     "amstar2": null,
+     "grade": null,
+     "nos": null,
+     "tripod": {
+      "scope": "both",
+      "counts": {
+       "present": 0,
+       "partial": 0,
+       "missing": 0,
+       "not_applicable": 0
+      }
+     },
+     "conventions": {},
+     "validator_reported": {
+      "answered": 1,
+      "expected": 52,
+      "unanswered": [
+       "1",
+       "2",
+       "3a",
+       "3b",
+       "3c",
+       "4",
+       "5a",
+       "5b",
+       "6a",
+       "6b",
+       "6c",
+       "7",
+       "8a",
+       "8b",
+       "8c",
+       "9a",
+       "9b",
+       "9c",
+       "10",
+       "12a",
+       "12b",
+       "12c",
+       "12d",
+       "12e",
+       "12f",
+       "12g",
+       "13",
+       "14",
+       "15",
+       "16",
+       "17",
+       "18a",
+       "18b",
+       "18c",
+       "18d",
+       "18e",
+       "18f",
+       "19",
+       "20a",
+       "20b",
+       "20c",
+       "21",
+       "22",
+       "23a",
+       "23b",
+       "24",
+       "25",
+       "26",
+       "27a",
+       "27b",
+       "27c"
+      ],
+      "trusted": false,
+      "agrees": false
+     },
+     "complete": false,
+     "expected": 52,
+     "answered": 0,
+     "completeness_text": "0/52",
+     "missing": [
+      {
+       "item": "1",
+       "pass": null,
+       "key": "1"
+      },
+      {
+       "item": "2",
+       "pass": null,
+       "key": "2"
+      },
+      {
+       "item": "3a",
+       "pass": null,
+       "key": "3a"
+      },
+      {
+       "item": "3b",
+       "pass": null,
+       "key": "3b"
+      },
+      {
+       "item": "3c",
+       "pass": null,
+       "key": "3c"
+      },
+      {
+       "item": "4",
+       "pass": null,
+       "key": "4"
+      },
+      {
+       "item": "5a",
+       "pass": null,
+       "key": "5a"
+      },
+      {
+       "item": "5b",
+       "pass": null,
+       "key": "5b"
+      },
+      {
+       "item": "6a",
+       "pass": null,
+       "key": "6a"
+      },
+      {
+       "item": "6b",
+       "pass": null,
+       "key": "6b"
+      },
+      {
+       "item": "6c",
+       "pass": null,
+       "key": "6c"
+      },
+      {
+       "item": "7",
+       "pass": null,
+       "key": "7"
+      },
+      {
+       "item": "8a",
+       "pass": null,
+       "key": "8a"
+      },
+      {
+       "item": "8b",
+       "pass": null,
+       "key": "8b"
+      },
+      {
+       "item": "8c",
+       "pass": null,
+       "key": "8c"
+      },
+      {
+       "item": "9a",
+       "pass": null,
+       "key": "9a"
+      },
+      {
+       "item": "9b",
+       "pass": null,
+       "key": "9b"
+      },
+      {
+       "item": "9c",
+       "pass": null,
+       "key": "9c"
+      },
+      {
+       "item": "10",
+       "pass": null,
+       "key": "10"
+      },
+      {
+       "item": "11",
+       "pass": null,
+       "key": "11"
+      },
+      {
+       "item": "12a",
+       "pass": null,
+       "key": "12a"
+      },
+      {
+       "item": "12b",
+       "pass": null,
+       "key": "12b"
+      },
+      {
+       "item": "12c",
+       "pass": null,
+       "key": "12c"
+      },
+      {
+       "item": "12d",
+       "pass": null,
+       "key": "12d"
+      },
+      {
+       "item": "12e",
+       "pass": null,
+       "key": "12e"
+      },
+      {
+       "item": "12f",
+       "pass": null,
+       "key": "12f"
+      },
+      {
+       "item": "12g",
+       "pass": null,
+       "key": "12g"
+      },
+      {
+       "item": "13",
+       "pass": null,
+       "key": "13"
+      },
+      {
+       "item": "14",
+       "pass": null,
+       "key": "14"
+      },
+      {
+       "item": "15",
+       "pass": null,
+       "key": "15"
+      },
+      {
+       "item": "16",
+       "pass": null,
+       "key": "16"
+      },
+      {
+       "item": "17",
+       "pass": null,
+       "key": "17"
+      },
+      {
+       "item": "18a",
+       "pass": null,
+       "key": "18a"
+      },
+      {
+       "item": "18b",
+       "pass": null,
+       "key": "18b"
+      },
+      {
+       "item": "18c",
+       "pass": null,
+       "key": "18c"
+      },
+      {
+       "item": "18d",
+       "pass": null,
+       "key": "18d"
+      },
+      {
+       "item": "18e",
+       "pass": null,
+       "key": "18e"
+      },
+      {
+       "item": "18f",
+       "pass": null,
+       "key": "18f"
+      },
+      {
+       "item": "19",
+       "pass": null,
+       "key": "19"
+      },
+      {
+       "item": "20a",
+       "pass": null,
+       "key": "20a"
+      },
+      {
+       "item": "20b",
+       "pass": null,
+       "key": "20b"
+      },
+      {
+       "item": "20c",
+       "pass": null,
+       "key": "20c"
+      },
+      {
+       "item": "21",
+       "pass": null,
+       "key": "21"
+      },
+      {
+       "item": "22",
+       "pass": null,
+       "key": "22"
+      },
+      {
+       "item": "23a",
+       "pass": null,
+       "key": "23a"
+      },
+      {
+       "item": "23b",
+       "pass": null,
+       "key": "23b"
+      },
+      {
+       "item": "24",
+       "pass": null,
+       "key": "24"
+      },
+      {
+       "item": "25",
+       "pass": null,
+       "key": "25"
+      },
+      {
+       "item": "26",
+       "pass": null,
+       "key": "26"
+      },
+      {
+       "item": "27a",
+       "pass": null,
+       "key": "27a"
+      },
+      {
+       "item": "27b",
+       "pass": null,
+       "key": "27b"
+      },
+      {
+       "item": "27c",
+       "pass": null,
+       "key": "27c"
+      }
+     ],
+     "per_pass": null,
+     "completeness_source": "workbench",
+     "overall": {
+      "implied": null,
+      "level": null,
+      "algorithm": "none",
+      "official": false,
+      "basis": "validator",
+      "lines": [],
+      "provisional": true
+     },
+     "guards": [
+      {
+       "id": "H1",
+       "message": {
+        "hu": "H1: a validator 1.0.0 TRIPOD+AI-számlálása nem megbízható (a tétel címében álló „Missing” szót is válasznak veszi); a teljességet a munkapad számolja a saját JSON-jából.",
+        "en": "H1: validator 1.0.0 miscounts TRIPOD+AI completeness (it reads 'Missing' in an item title as an answer); completeness is counted by the workbench from its own JSON."
+       },
+       "effect": "completeness_recomputed"
+      }
+     ],
+     "notes": [
+      {
+       "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+       "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+      }
+     ]
+    },
+    "warnings": [
+     "A validator régi (bridge) módban fut; az eredményt a H1–H4 őrök javítják (5.0)."
+    ],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp017"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/validator/check",
+   "query": {
+    "tool": "grade",
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.appraisal-result/v1",
+    "data": {
+     "schema": "szk.appraisal-result/v1",
+     "tool": "grade",
+     "validator_version": "1.0.0",
+     "legacy": true,
+     "mode": "bridge",
+     "scope": "all",
+     "target": {},
+     "invalid": [],
+     "domains": [],
+     "amstar2": null,
+     "grade": {
+      "certainty": null,
+      "unresolved": [],
+      "start": "high",
+      "reliable": false,
+      "validator_certainty": "high"
+     },
+     "nos": null,
+     "tripod": null,
+     "conventions": {},
+     "validator_reported": {
+      "answered": 9,
+      "expected": 9,
+      "unanswered": [],
+      "trusted": true,
+      "agrees": true
+     },
+     "complete": true,
+     "expected": 9,
+     "answered": 9,
+     "completeness_text": "9/9",
+     "missing": [],
+     "per_pass": null,
+     "completeness_source": "workbench",
+     "overall": {
+      "implied": null,
+      "level": null,
+      "algorithm": "published",
+      "official": true,
+      "basis": "validator",
+      "lines": [
+       "ROLLUP — GRADE — certainty (quality) of a body of evidence, rated per outcome   (9/9 answered)",
+       "----------------------------------------------------------------------",
+       "Start: HIGH (RCT)",
+       "Adjustments: none",
+       "CERTAINTY: HIGH",
+       "Certainty is rated PER OUTCOME, never per study and never per review. If more than one outcome matters, this table has to be repeated for each, and the Summary of Findings reports them separately."
+      ],
+      "provisional": false
+     },
+     "guards": [
+      {
+       "id": "H3",
+       "message": {
+        "hu": "H3: a validator 1.0.0 GRADE-rollupja a publikációs torzítás „Suspected/Strongly suspected” értékénél sosem minősít le — a bizonyossága itt nem megbízható. A „Suspected” feloldatlan, amíg nem döntesz 0 vagy −1 között indoklással; a bizonyosságot a motor számolja.",
+        "en": "H3: the validator 1.0.0 GRADE roll-up never downgrades publication bias 'Suspected/Strongly suspected' — its certainty is unreliable here. 'Suspected' stays unresolved until you choose 0 or −1 with a reason; certainty comes from the engine."
+       },
+       "effect": "rollup_unreliable"
+      }
+     ],
+     "notes": []
+    },
+    "warnings": [
+     "A validator régi (bridge) módban fut; az eredményt a H1–H4 őrök javítják (5.0)."
+    ],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp018"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/validator/check",
+   "query": {
+    "tool": "amstar2",
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.appraisal-result/v1",
+    "data": {
+     "schema": "szk.appraisal-result/v1",
+     "tool": "amstar2",
+     "validator_version": "1.0.0",
+     "legacy": true,
+     "mode": "bridge",
+     "scope": "all",
+     "target": {},
+     "invalid": [],
+     "domains": [],
+     "amstar2": {
+      "rating": "moderate",
+      "critical_flaws": [],
+      "weaknesses": [
+       "2",
+       "4"
+      ],
+      "provisional": true,
+      "convention": "weakness"
+     },
+     "grade": null,
+     "nos": null,
+     "tripod": null,
+     "conventions": {
+      "amstar2.partial_yes_critical": "weakness"
+     },
+     "validator_reported": {
+      "answered": 15,
+      "expected": 16,
+      "unanswered": [
+       "11"
+      ],
+      "trusted": true,
+      "agrees": false
+     },
+     "complete": true,
+     "expected": 16,
+     "answered": 16,
+     "completeness_text": "16/16",
+     "missing": [],
+     "per_pass": null,
+     "completeness_source": "workbench",
+     "overall": {
+      "implied": "moderate",
+      "level": null,
+      "algorithm": "published",
+      "official": true,
+      "basis": "validator",
+      "lines": [
+       "ROLLUP — AMSTAR 2 (A MeaSurement Tool to Assess systematic Reviews, version 2)   (15/16 answered)",
+       "----------------------------------------------------------------------",
+       "Critical flaws (0): none",
+       "Non-critical weaknesses (2): 2, 4",
+       "OVERALL CONFIDENCE IN THE RESULTS: MODERATE",
+       "1 item(s) unanswered (11) — the rating above is provisional until they are filled.",
+       "AMSTAR 2 rates CONFIDENCE IN THE RESULTS of the review, not the quality of the included studies and not the certainty of the evidence. Say that explicitly; readers conflate it with GRADE constantly."
+      ],
+      "provisional": true
+     },
+     "guards": [
+      {
+       "id": "H4",
+       "message": {
+        "hu": "H4: a „Részben igen” kanonikusan ment át („Partial yes”, nem „PY”); a validator 1.0.0 besorolása a „weakness” konvenció szerinti (a projekt konvenciója „meets”, KB AMSTAR2-00).",
+        "en": "H4: 'Partial yes' was sent canonically ('Partial yes', never 'PY'); the validator 1.0.0 rating follows the 'weakness' convention (the project convention is 'meets', KB AMSTAR2-00)."
+       },
+       "effect": "convention_weakness"
+      }
+     ],
+     "notes": [
+      {
+       "hu": "A „Nem alkalmazható” AMSTAR 2-választ a validator 1.0.0 nem ismeri (hibának számolná), ezért üresen ment át: a validator besorolása ideiglenes.",
+       "en": "validator 1.0.0 has no 'Not applicable' answer for AMSTAR 2 (it would count it as a flaw), so it was left blank: the validator rating is provisional."
+      }
+     ]
+    },
+    "warnings": [
+     "A validator régi (bridge) módban fut; az eredményt a H1–H4 őrök javítják (5.0)."
+    ],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp019"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/validator/check",
+   "query": {
+    "fx": "absent"
+   },
+   "status": 424,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "CAPABILITY_MISSING",
+     "http": 424,
+     "message": "A(z) validator plugin nem érhető el (állapot: absent). Teendő: Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+     "details": {
+      "plugin": "validator",
+      "state": "absent",
+      "problems": [],
+      "todo": {
+       "hu": "Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+       "en": "Install: claude plugin install validator@szk-plugins — or set SZK_VALIDATOR_HOME to the plugin folder."
+      }
+     }
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/validator/check",
+   "query": {
+    "fx": "json"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.appraisal-result/v1",
+    "data": {
+     "tool": "rob2",
+     "legacy": false,
+     "complete": false,
+     "expected": 22,
+     "answered": 21,
+     "completeness_text": "21/22",
+     "missing": [
+      {
+       "item": "5.3",
+       "pass": null,
+       "key": "5.3"
+      }
+     ],
+     "invalid": [],
+     "domains": [
+      {
+       "domain": "2",
+       "implied": "high",
+       "level": "high",
+       "algorithm": "conservative",
+       "forced_by": [
+        "2.6"
+       ],
+       "unknown_at": [],
+       "routers": [
+        "2.1"
+       ]
+      }
+     ],
+     "overall": {
+      "implied": "high",
+      "level": "high",
+      "algorithm": "conservative",
+      "official": false
+     },
+     "guards": [],
+     "notes": [
+      {
+       "hu": "Ez NEM a hivatalos RoB 2 folyamatábra.",
+       "en": "This is NOT the published RoB 2 flowchart."
+      }
+     ],
+     "schema": "szk.appraisal-result/v1",
+     "validator_version": "1.1.0",
+     "mode": "json",
+     "scope": "assignment"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp029"
+    }
+   }
+  }
+ ]
+}

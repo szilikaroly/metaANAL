@@ -93,8 +93,213 @@
                 "items": {
                   "$ref": "urn:szk:contract:common:1#/$defs/num"
                 }
+              },
+              "agree": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "equal": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "format_only": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "within_tolerance": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "differs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "missing_a": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "missing_b": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "both_empty": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "agreement_pct": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "agreement_pct_text": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  }
+                ]
+              },
+              "type": {
+                "enum": [
+                  "numeric",
+                  "categorical",
+                  "text"
+                ]
+              },
+              "kappa_se": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "kappa_n": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "kappa_po": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "kappa_pe": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "kappa_text": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  }
+                ]
+              },
+              "kappa_label": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  }
+                ]
+              },
+              "icc": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "icc_ci": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              },
+              "icc_n": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "icc_text": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  }
+                ]
+              },
+              "icc_label": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  }
+                ]
+              },
+              "mean_diff": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "sd_diff": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
+              },
+              "loa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              },
+              "max_abs_diff": {
+                "$ref": "urn:szk:contract:common:1#/$defs/num"
               }
             }
+          }
+        },
+        "agreement_pct_text": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "equal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "format_only": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "within_tolerance": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "differs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_a": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_b": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "both_empty": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fields_compared": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields_only_a": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields_only_b": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
@@ -184,31 +389,81 @@
             "description": "a motor súgója (V011/V012 heurisztikák)"
           },
           "impact": {
+            "$ref": "#/$defs/impact"
+          },
+          "row_a": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "row_b": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "column_a": {
             "type": [
-              "object",
+              "string",
               "null"
-            ],
-            "properties": {
-              "measure": {
-                "type": "string"
-              },
-              "yi_a": {
-                "$ref": "urn:szk:contract:common:1#/$defs/num"
-              },
-              "yi_b": {
-                "$ref": "urn:szk:contract:common:1#/$defs/num"
-              },
-              "text": {
-                "oneOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
-                  }
-                ]
-              }
+            ]
+          },
+          "column_b": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "a_category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "b_category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "equal",
+              "format_only",
+              "within_tolerance",
+              "differs",
+              "missing_a",
+              "missing_b",
+              "both_empty"
+            ]
+          },
+          "type": {
+            "enum": [
+              "numeric",
+              "categorical",
+              "text"
+            ]
+          },
+          "hint_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kb": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/hint"
             }
+          },
+          "auto": {
+            "type": "boolean"
+          },
+          "needs_decision": {
+            "type": "boolean"
           }
         }
       }
@@ -223,6 +478,401 @@
       "type": "array",
       "items": {
         "type": "string"
+      }
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "key_source": {
+      "enum": [
+        "given",
+        "auto"
+      ]
+    },
+    "pairs": {
+      "type": "array",
+      "description": "a párosított sorok; cells: mezőnként a cella státusza",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "row_uid_a",
+          "row_uid_b"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "row_uid_a": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+              }
+            ]
+          },
+          "row_uid_b": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+              }
+            ]
+          },
+          "row_a": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "row_b": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cells": {
+            "type": "object",
+            "additionalProperties": {
+              "enum": [
+                "equal",
+                "format_only",
+                "within_tolerance",
+                "differs",
+                "missing_a",
+                "missing_b",
+                "both_empty"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "only_a_rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "row_uid": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+              }
+            ]
+          },
+          "row": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "only_b_rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "row_uid": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+              }
+            ]
+          },
+          "row": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "row_impacts": {
+      "type": "array",
+      "description": "csak az egyik táblában szereplő sor hatása az összesített becslésre",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "side",
+          "impact"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "a",
+              "b"
+            ]
+          },
+          "impact": {
+            "$ref": "#/$defs/impact"
+          }
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field"
+        ],
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "b": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "enum": [
+              "numeric",
+              "categorical",
+              "text"
+            ]
+          }
+        }
+      }
+    },
+    "impact_info": {
+      "type": "object",
+      "properties": {
+        "computed": {
+          "type": "boolean"
+        },
+        "measure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pooled": {
+          "type": "boolean"
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "baseline": {
+          "$ref": "#/$defs/pooled"
+        }
+      }
+    },
+    "sources": {
+      "type": "object"
+    },
+    "params": {
+      "type": "object"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      }
+    },
+    "agreement_text": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "pooled": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "az elsődleges összesített becslés (elemzési skála) és a megjelenítési hármas (display)",
+      "properties": {
+        "k": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "estimate": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "ci_lower": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "ci_upper": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "se": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "display": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          }
+        }
+      }
+    },
+    "impact": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "a hatás: a vizsgálat hatásmérete (yi, elemzési skála) az A, illetve a B értékével (a többi cella az A szerinti); spec mellett az összesített becslés is (pooled_a/b). display_*: megjelenítési skála; rank: a becslés elmozdulása SE-egységben",
+      "properties": {
+        "measure": {
+          "type": "string"
+        },
+        "yi_a": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "yi_b": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "text": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "vi_a": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "vi_b": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "delta": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "display_a": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "display_b": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "reason_a": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason_b": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shift_se": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "changes_inclusion": {
+          "type": "boolean"
+        },
+        "pooled_a": {
+          "$ref": "#/$defs/pooled"
+        },
+        "pooled_b": {
+          "$ref": "#/$defs/pooled"
+        },
+        "pooled_delta": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "pooled_shift_se": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "pooled_text": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "rank": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "material": {
+          "type": "boolean"
+        }
+      }
+    },
+    "hint": {
+      "type": "object",
+      "required": [
+        "code",
+        "text"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "kb": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     }
   }

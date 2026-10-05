@@ -226,7 +226,7 @@ class Client(BaseClient):
             resp = self._get(SEARCH_URL, params)
             if resp.status != 200:
                 return [], 0, None
-            sr = resp.json().get("search-results") or {}
+            sr = net.as_dict(resp.json_dict().get("search-results"))
             total = to_int(sr.get("opensearch:totalResults"), 0)
             entries = [e for e in as_list(sr.get("entry")) if isinstance(e, dict) and not e.get("error")]
             if use_cursor:
@@ -261,8 +261,8 @@ class Client(BaseClient):
         resp = self._get(url, [("view", view)], bucket="scopus:abstract")
         if resp.status != 200:
             return None
-        data = resp.json().get("abstracts-retrieval-response") or {}
-        core = data.get("coredata") or {}
+        data = net.as_dict(resp.json_dict().get("abstracts-retrieval-response"))
+        core = net.as_dict(data.get("coredata"))
         return {
             "eid": norm_eid(core.get("eid")),
             "doi": norm_doi(core.get("prism:doi")),
@@ -292,7 +292,7 @@ class Client(BaseClient):
                              bucket="scopus:abstract")
             if resp.status != 200:
                 return [], 0, None
-            refs = get_path(resp.json(), "abstracts-retrieval-response", "references") or {}
+            refs = net.as_dict(get_path(resp.json_dict(), "abstracts-retrieval-response", "references"))
             total = to_int(refs.get("@total-references"))
             items = [r for r in as_list(refs.get("reference")) if isinstance(r, dict)]
             nxt = start + len(items)
@@ -327,6 +327,15 @@ class Client(BaseClient):
         e = norm_eid(eid)
         return "REFEID(%s)" % e if e else None
 
+    def citing_works(self, eid, since_year=None, max_results=None, normalize=True):
+        """Idéző közlemények (``REFEID(…)`` [+ ``AND PUBYEAR > <év − 1>``]) ``Paged`` iterátorként — TERV 12.3."""
+        q = self.citing_query(eid)
+        if not q:
+            return Paged(SOURCE, lambda state: ([], 0, None), query="REFEID ?")
+        if since_year:
+            q += " AND PUBYEAR > %d" % (int(since_year) - 1)
+        return self.search(q, max_results=max_results, normalize=normalize)
+
     # -- állapot -----------------------------------------------------------------------------
 
     def quota(self, headers):
@@ -350,7 +359,21 @@ class Client(BaseClient):
     def check(self):
         """Próba: ``search?query=PMID(8309034)&count=1&field=dc:identifier,eid``; ha van EID:
         ``abstract/eid/{eid}?view=REF&refcount=1`` → ``entitlement`` = ``search_and_ref`` | ``search_only``.
-        Kulcs nélkül nincs hálózati kérés: ``not_configured``."""
+        Kulcs nélkül nincs hálózati kérés: ``not_configured``. Váratlan válasz sem állítja meg."""
+        try:
+            return self._check()
+        except net.ParseError:
+            return self._result("unreachable", entitlement="unknown", detail_text={
+                "hu": "A válasz nem értelmezhető (proxy hibaoldal?).",
+                "en": "The response could not be parsed (proxy error page?)."})
+        except net.SHAPE_ERRORS as exc:
+            return self._result("unreachable", entitlement="unknown", detail_text={
+                "hu": "Váratlan válaszszerkezet (%s) — API-változás? (a Scopus-kliens élőben még nem igazolt)"
+                      % type(exc).__name__,
+                "en": "Unexpected response structure (%s) — API change? (the Scopus client is not yet verified live)"
+                      % type(exc).__name__})
+
+    def _check(self):
         if not self.key_configured():
             return self._result("not_configured", entitlement="none")
         try:
@@ -365,7 +388,8 @@ class Client(BaseClient):
                                 detail_text={"hu": "Váratlan válasz (HTTP %s)." % exc.status,
                                              "en": "Unexpected response (HTTP %s)." % exc.status})
         details = {"quota": self.quota(resp.headers)}
-        entries = [e for e in as_list(get_path(resp.json(), "search-results", "entry")) if not e.get("error")]
+        entries = [e for e in as_list(get_path(resp.json_dict(), "search-results", "entry"))
+                   if isinstance(e, dict) and not e.get("error")]
         eid = norm_eid(entries[0].get("eid")) if entries else None
         if not eid:
             return self._result("ok", http_status=200, entitlement="search_only", details=details, detail_text={
@@ -419,6 +443,20 @@ def build_review_query(p_terms, i_terms, since_year=None):
     q = " AND ".join(parts)
     if since_year:
         q += " AND PUBYEAR > %d" % (int(since_year) - 1)
+    return q
+
+
+def title_query(title, author_lastname=None, year=None):
+    """Feloldási segéd (TERV 7. fejezet, 6. lépés): ``TITLE("…") AND AUTHLASTNAME(…) AND PUBYEAR = …``."""
+    t = re.sub(r"[\"{}]", " ", str(title or "")).strip()
+    t = re.sub(r"\s+", " ", t)
+    if not t:
+        return None
+    q = 'TITLE("%s")' % t
+    if author_lastname:
+        q += " AND AUTHLASTNAME(%s)" % quote_term(author_lastname)
+    if year:
+        q += " AND PUBYEAR = %d" % int(year)
     return q
 
 

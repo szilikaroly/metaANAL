@@ -144,8 +144,8 @@ class StubEngine(object):
                     self._hint(d, f, va, vb, ca, cb)
                     d["impact"] = {"measure": measure or "MD", "yi_a": round(va / 10.0, 4), "yi_b": round(vb / 10.0, 4),
                                    "text": i18n("%s %s → %s" % (measure or "MD", _fmt(va / 10.0), _fmt(vb / 10.0))),
-                                   "pooled_text": i18n("összesített: 0.49 → %s" % _fmt(0.49 + (vb - va) / 100.0),
-                                                       "pooled: 0.49 → %s" % _fmt(0.49 + (vb - va) / 100.0)),
+                                   "pooled_text": i18n("0.49 → %s" % _fmt(0.49 + (vb - va) / 100.0),
+                                                       "0.49 → %s" % _fmt(0.49 + (vb - va) / 100.0)),
                                    "rank": round(abs(va - vb), 4)}
                 if d["kind"] != "format_only":
                     bf["disagree"] += 1

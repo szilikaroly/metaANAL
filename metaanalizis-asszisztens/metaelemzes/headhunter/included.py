@@ -31,17 +31,35 @@ megerősítendő; szám csak idézve (nem számolunk, nem becsülünk); idézet 
 
 Nyilvános API::
 
-    result = extract_included(doc, "rv-pmid-31038197", at="2026-10-05T10:13:02Z")
+    result = extract_included(doc, "rv-pmid-31038197", at="2026-10-05T10:13:02Z", pub_date="2019-04-29")
     result["candidates"], result["evidence"], result["excluded_by_review"]
     result["k_reported"], result["search_date"], result["k_statements"], result["search_date_statements"]
-    result["strategies"], result["n_study_groups"], result["warnings"], result["stats"]
+    result["strategies"], result["n_study_groups"], result["completeness"], result["warnings"], result["stats"]
     review = merge_into_review(review, result)            # idempotens beillesztés a review-dokumentumba
-    candidates_from_reference_records(review_id, records, source="europepmc")   # API-irodalomjegyzékből
-    inclusion_statements(doc), search_date_statements(doc), classify_table(table), classify_column(parts)
+    candidates_from_reference_records(review_id, records, source="europepmc")   # API-irodalomjegyzékből (6.2)
+    candidates_from_agent_classification(doc_or_text, agent_doc, review_id)    # ágens-import: H004, ID-eldobás
+    extract_counts_from_text(pages, review_id)            # (c) út: k + keresési dátum a PDF oldalaiból
+    text_statements(pages), inclusion_statements(doc), search_date_statements(doc), fallback_search_date(d)
+    classify_table(table, doc), classify_column(parts), parse_cell_values(text, measure)
+
+A ``warnings[]`` tételei ``{code, hu, en, detail?}`` alakúak; kódok: ``no_included_structure``,
+``included_table_not_structured``, ``table_row_unmatched``, ``statement_refs_unclaimed``, ``k_statements_differ``,
+``k_mismatch`` (→ H006), ``search_date_fallback`` / ``search_date_unknown`` (→ H008),
+``search_date_from_introduction``, ``search_date_ambiguous``.
 
 A jelöltek a sémán túl (additív, a séma megengedi) ezeket a mezőket is viszik: ``extract_key`` (újrafuttatás-
 stabil kulcs), ``ref_id``, ``needs_review`` + ``review_reasons`` (EP2-sor), ``ref_hint`` (bizonytalan
-illesztésnél a lehetséges hivatkozás — azonosító NÉLKÜL), ``study_registry_in_review``, ``context``.
+illesztésnél a lehetséges hivatkozás — azonosító NÉLKÜL), ``study_registry_in_review``, ``context``,
+``primary_marked``, ``role_alternatives``; a másodlagos értékek: ``raw``, ``data_source: secondary``,
+``column``, ``measure``. ``review_reasons`` kódjai: ``author_year_match``, ``ambiguous_ref_match``,
+``no_ref_match``, ``ref_hint_available``, ``implicit_study_table``, ``statement_only``,
+``statement_count_mismatch``, ``role_unknown``, ``agent_classified``, ``role_conflict``, ``confidence_medium``,
+``confidence_low``.
+
+Eltérés a terv 6.1 a4-pontjától (build-döntés): nem Cochrane-áttekintésnél, ha a „We included N studies
+[hivatkozások]" mondat KONZISZTENS (a hivatkozások száma = N) és N nagyobb a táblázatból kinyert
+vizsgálatszámnál, a táblázatból hiányzó hivatkozások is jelöltek lesznek (``medium``, ``statement_only``,
+EP2) — különben a hiányos táblázat (pl. csak a mellékhatásokat közlő vizsgálatok) vizsgálatokat veszítene.
 """
 import copy
 import datetime
@@ -53,9 +71,10 @@ from . import jats as _jats
 from .jats import normalize_ws, norm_name, norm_text, parse_author_year
 
 __all__ = [
-    "extract_included", "merge_into_review", "candidates_from_reference_records", "inclusion_statements",
-    "search_date_statements", "classify_table", "classify_column", "parse_cell_values", "QUOTE_MAX",
-    "TOOL_ACTOR",
+    "extract_included", "merge_into_review", "candidates_from_reference_records",
+    "candidates_from_agent_classification", "extract_counts_from_text", "text_statements", "inclusion_statements",
+    "search_date_statements", "fallback_search_date", "fixture_sentence_filter", "classify_table",
+    "classify_column", "parse_cell_values", "summarize_result", "QUOTE_MAX", "TOOL_ACTOR", "ROLES",
 ]
 
 QUOTE_MAX = 300
@@ -69,7 +88,7 @@ _CELL_SEP = " | "
 # ---------------------------------------------------------------------------
 
 def _now():
-    return datetime.datetime.utcnow().replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _clip(s, n=QUOTE_MAX):
@@ -139,6 +158,9 @@ class _Builder(object):
         self.warnings = []
         self.strategies = []
         self.stats = {"tables_included": [], "tables_data": [], "rows_skipped": 0, "secondary_values": 0}
+        # a szöveges állítások (k, keresési dátum) bizonyítékának fajtája: JATS → text/jats_text, PDF → user_pdf
+        self.text_kind = "text"
+        self.text_strategy = "jats_text"
 
     # -- bizonyíték ----------------------------------------------------------
     def ev(self, kind, strategy, locator, quote, confidence):
@@ -391,7 +413,7 @@ def _cochrane_excluded_reasons(doc):
 _INCLUDED_CAPTION = re.compile(
     r"characteristics of (the )?(included|eligible|selected) (studies|trials|rcts|articles)|"
     r"(studies|trials|rcts|articles|papers) included|included (studies|trials|rcts|articles)|"
-    r"study characteristics|characteristics of (the )?(individual )?(studies|trials|rcts)|"
+    r"study characteristics|characteristics of (the )?(?:[\w-]+ ){0,4}(studies|trials|rcts)|"
     r"characteristics of (each|the individual) (study|trial)|"
     r"summary of (the )?(included |eligible )?(studies|trials|rcts)|"
     r"description of (the )?(included )?(studies|trials)|"
@@ -402,6 +424,7 @@ _NOT_INCLUDED_CAPTION = re.compile(r"excluded|ongoing|awaiting|search strateg|su
                                    r"meta-?regression|sensitivity")
 _STUDY_TOKENS = frozenset(["study", "studies", "id", "name", "names", "author", "authors", "first", "year", "years",
                            "publication", "published", "ref", "reference", "references", "trial", "trials", "code",
+                           "sources", "acronyms",
                            "country", "countries", "citation", "source", "no", "and", "s", "et", "al", "acronym",
                            "label", "identifier", "date", "of", "the", "included", "rct", "rcts", "location",
                            "pub", "publ", "sample", "size", "n", "y", "yr"])
@@ -465,7 +488,7 @@ def classify_table(t, doc=None):
         if cc is not None:
             info["columns"][ci] = cc
     _resolve_arms(info["columns"])
-    cap = norm_text("%s %s" % (t.label or "", t.caption or ""))
+    cap = norm_text("%s %s" % (t.label or "", t.caption_plain or t.caption or ""))
     label_head = heads[label_col] if label_col < len(heads) else ""
     head_ok = (not label_head) or bool(_STUDY_COL.match(label_head))
     parsed_rows = 0
@@ -473,7 +496,8 @@ def classify_table(t, doc=None):
         cell = row[label_col] if label_col < len(row) else None
         if cell is None or (cell.spanned and cell.origin[0] != cell.row):
             continue
-        if _row_xref_targets(doc, row, label_col, info["ref_cols"]) or parse_author_year(_label_text(cell, row, info)):
+        lt = _label_text(cell, row, info)
+        if _row_xref_targets(doc, row, label_col, info["ref_cols"], label_text=lt) or parse_author_year(lt):
             parsed_rows += 1
     info["parsed_rows"] = parsed_rows
     if _INCLUDED_CAPTION.search(cap) and not _NOT_INCLUDED_CAPTION.search(cap) and head_ok and parsed_rows >= 1:
@@ -509,7 +533,7 @@ def _label_text(cell, row=None, info=None):
     return txt
 
 
-def _row_xref_targets(doc, row, label_col, ref_cols, with_mode=False):
+def _row_xref_targets(doc, row, label_col, ref_cols, with_mode=False, label_text=None):
     """A sor hivatkozásai: <xref> (bibr/ref/ref-list/sec) a címke- és hivatkozás-oszlopban, valamint a címke
     számos felső indexe ('Almeida 2013<sup>11</sup>') a hivatkozás-címke alapján. ``with_mode``: [(ref_id, mód)],
     mód ∈ {'xref', 'sup_label', 'sup_id'}."""
@@ -525,9 +549,11 @@ def _row_xref_targets(doc, row, label_col, ref_cols, with_mode=False):
             if rid not in seen:
                 seen.add(rid)
                 out.append((rid, "xref"))
-    if not out:
-        lab = row[label_col] if label_col < len(row) else None
-        for sup in (lab.sups if lab is not None else []):
+    lab = row[label_col] if label_col < len(row) else None
+    if not out and lab is not None and lab.sups and \
+            parse_author_year(label_text if label_text is not None else (lab.text_label or lab.text_nosup)):
+        # csak szerző+év címke felső indexe hivatkozás ('Almeida 2013¹¹'); a 'mm²', 'kg/m²' NEM
+        for sup in lab.sups:
             sup_n = _jats._fix_dashes(sup)
             if not re.fullmatch(r"\d{1,4}(?:\s*[-,]\s*\d{1,4})*", sup_n.strip()):
                 continue
@@ -562,6 +588,9 @@ _EFFECT_MEASURES = (
     ("HR", re.compile(r"\b(hazard ratio)\b", re.I), re.compile(r"\bHR\b")),
     ("RD", re.compile(r"\b(risk difference)\b", re.I), re.compile(r"\bRD\b")),
 )
+# 'g' / "Hedges' g" / 'Hedges g' fejléc önmagában (a hosszú alakot az _EFFECT_MEASURES kezeli)
+_SMD_BARE = re.compile(r"^(?:hedges[\u2019']?s?\s*)?g(?:\s*\(\s*95\s?%\s*ci\s*\))?$", re.I)
+_CI_HEADER = re.compile(r"^(?:\d{2}\s?%\s*)?(?:ci|cri|confidence intervals?|credible intervals?)$")
 _GENERIC = frozenset(["group", "groups", "arm", "arms", "n", "no", "of", "the", "value", "values", "number",
                       "total", "data", "per", "in", "all"])
 
@@ -627,9 +656,15 @@ def classify_column(parts):
         return None
     norm_parts = [_norm_header(p) for p in raw_parts]
     last_raw, last = raw_parts[-1], norm_parts[-1]
+    # külön konfidencia-intervallum oszlop ('95% CI') — a becslés egy másik oszlopban
+    if _CI_HEADER.match(last):
+        return {"measure": "ci", "field": "ci", "effect_measure": None, "arm_label": None, "arm_index": None,
+                "arm_candidate": None, "outcome": " / ".join(raw_parts[:-1]) or None, "ambiguous": False,
+                "header": " / ".join(raw_parts)}
     # hatásméret-oszlop (a rövidítés csak nagybetűvel: az 'or' kötőszó NEM esélyhányados)
     for code, rx_long, rx_abbr in _EFFECT_MEASURES:
-        if (rx_long.search(last_raw) or rx_abbr.search(last_raw)) and \
+        if (rx_long.search(last_raw) or rx_abbr.search(last_raw) or
+                (code == "SMD" and _SMD_BARE.match(last_raw.strip()))) and \
                 not re.search(r"\bweight\b|\bp ?value\b|\bp\b$|heterogen|\bi2\b|\btau|\bno\b|\bnumber\b", last):
             return {"measure": "effect", "field": "effect", "effect_measure": code, "arm_label": None,
                     "arm_index": None, "arm_candidate": None, "outcome": " / ".join(raw_parts[:-1]) or None,
@@ -684,7 +719,7 @@ def _resolve_arms(columns):
     """Kar-feloldás táblaszinten: ha a számoszlopok pontosan KÉT kar-címke alá tartoznak, és ezek közül legalább
     az egyik felismerhető (kísérleti/kontroll), a másik a komplementer (pl. 'MVA85A' ↔ 'Placebo'). Kettőnél több
     vagy felismerhetetlen kar → a mező kétértelmű marad (nem rögzítünk számot)."""
-    arm_cols = [c for c in columns.values() if c.get("measure") not in (None, "effect") and
+    arm_cols = [c for c in columns.values() if c.get("measure") not in (None, "effect", "ci") and
                 (c.get("arm_index") in (1, 2) or c.get("arm_candidate"))]
     labels = []
     idx = {}
@@ -772,10 +807,21 @@ def parse_cell_values(cell_text, measure, sups=()):
             sd = mm.group(2) if mm.group(2) is not None else mm.group(3)
             out.extend([("m", _num(mm.group(1)), raw), ("sd", _num(sd), raw)])
     elif measure == "effect":
-        mm = re.fullmatch(r"(%s)\s*[\[(]\s*(%s)\s*(?:,|;|to|-)\s*(%s)\s*[\])]" % (_NUM, _NUM, _NUM), t)
+        mm = re.fullmatch(r"(%s)\s*[\[(]\s*(%s)\s*(?:,|;|to|-|~)\s*(%s)\s*[\])]" % (_NUM, _NUM, _NUM), t)
         if mm:
-            out.extend([("effect", _num(mm.group(1)), raw), ("ci_lo", _num(mm.group(2)), raw),
-                        ("ci_hi", _num(mm.group(3)), raw)])
+            lo, hi = _num(mm.group(2)), _num(mm.group(3))
+            if lo <= hi:
+                out.extend([("effect", _num(mm.group(1)), raw), ("ci_lo", lo, raw), ("ci_hi", hi, raw)])
+        else:
+            v = _num(t)
+            if v is not None:
+                out.append(("effect", v, raw))
+    elif measure == "ci":
+        mm = re.fullmatch(r"[\[(]?\s*(%s)\s*(?:,|;|to|-|~)\s*(%s)\s*[\])]?" % (_NUM, _NUM), t)
+        if mm:
+            lo, hi = _num(mm.group(1)), _num(mm.group(2))
+            if lo <= hi:
+                out.extend([("ci_lo", lo, raw), ("ci_hi", hi, raw)])
     return out
 
 
@@ -806,12 +852,16 @@ def _row_groups(t, info):
             last_key = None
             heading = cell.text or None
             continue
-        if cell.spanned and cell.origin[1] == lc and cell.origin[0] != ri:
+        if cell.spanned and cell.origin[1] == lc and cell.origin[0] != cell.row:
             # függőleges kifeszítés: ugyanaz a vizsgálat
             if groups:
                 groups[-1][1].append(ri)
             continue
         label_text = _label_text(cell, row, info)
+        if groups and _is_continuation_row(t, row, cell, ri, info, groups[-1]):
+            # többsoros címke ('Fleming,' / '2012 [47]'): a többi cella a fenti sor kifeszítése
+            groups[-1][1].append(ri)
+            continue
         code = None
         if info.get("code_col") is not None:
             code = normalize_ws(row[info["code_col"]].text) or None
@@ -829,6 +879,60 @@ def _row_groups(t, info):
             groups.append((key, [ri], heading))
         last_key = key
     return groups
+
+
+def _is_continuation_row(t, row, cell, ri, info, prev_group):
+    """Igaz, ha a sor csak a címke folytatása: a címkecella saját (nem kifeszített), minden más kitöltött cella
+    egy FENTI sor kifeszítése (rowspan), és legalább egy ilyen van. Két teljes, eltérő szerző+év címke soha nem
+    olvad össze (pl. két vizsgálat azonos országgal és dizájnnal)."""
+    others = [c for c in row if c.origin != cell.origin]
+    if cell.text and prev_group[0].startswith("text:"):
+        # a sortörés a címkén belül van ('Fleming,' / '2012 [47]'): külön-külön egyik sem vizsgálat-címke, együtt igen
+        prev_label = _group_label(t, prev_group[1], info)[0]
+        cur_label = _label_text(cell, row, info)
+        if not parse_author_year(prev_label) and not parse_author_year(cur_label) and \
+                parse_author_year(normalize_ws(prev_label + " " + cur_label)):
+            return True
+    # (a cellák 'row'/'origin' értéke a teljes rács sorindexe — a fejléc-sorokkal együtt; 'ri' a törzs indexe)
+    from_above = [c for c in others if c.spanned and c.origin[0] < c.row and c.text]
+    own = [c for c in others if c.text and not (c.spanned and c.origin[0] < c.row)]
+    if not from_above or own:
+        return False
+    if not cell.text:
+        return True
+    prev_row = t.body[prev_group[1][0]]
+    lc = info["label_col"]
+    prev_pay = parse_author_year(_label_text(prev_row[lc], prev_row, info)) if lc < len(prev_row) else None
+    cur_pay = parse_author_year(_label_text(cell, row, info))
+    if prev_pay and cur_pay:
+        return False
+    # a kifeszítés forrása a csoport valamelyik sora legyen (ne egy korábbi vizsgálaté)
+    rows = set(prev_group[1])
+    offset = cell.row - ri
+    return all((c.origin[0] - offset) in rows for c in from_above)
+
+
+def _group_label(t, rows, info):
+    """Egy sorcsoport címke-szövege: az első sor címkéje, vagy ha az nem értelmezhető, a sorok címkéinek
+    összefűzése ('Fleming,' + '2012 [47]' → 'Fleming, 2012'). Visszaad: (címke-szöveg, nyers szöveg)."""
+    lc = info["label_col"]
+    first = t.body[rows[0]]
+    label_text = _label_text(first[lc], first, info)
+    raw = first[lc].text
+    if len(rows) > 1 and not parse_author_year(label_text):
+        parts, raws = [], []
+        for r in rows:
+            c = t.body[r][lc]
+            if c.spanned and c.origin[0] != c.row:
+                continue
+            if c.text:
+                parts.append(_label_text(c, t.body[r], info))
+                raws.append(c.text)
+        joined = normalize_ws(" ".join(parts))
+        if parse_author_year(joined):
+            # az idézet cellánként szó szerinti marad ('Papa, | 2016')
+            return joined, _CELL_SEP.join(normalize_ws(x) for x in raws)
+    return label_text, raw
 
 
 def _match_author_year(doc, pool_index, surname, year, suffix):
@@ -849,8 +953,9 @@ def _pool_index(doc):
     return idx
 
 
-def _row_quote(row, label_col):
-    first = row[label_col].text if label_col < len(row) else ""
+def _row_quote(row, label_col, first=None):
+    if first is None:
+        first = row[label_col].text if label_col < len(row) else ""
     nxt = None
     for c in row[label_col + 1:]:
         if c.text and not (c.spanned and c.origin[1] != c.col):
@@ -880,11 +985,12 @@ def _process_table(b, t, info, pool_idx, strategy, mode):
         first_ri = rows[0]
         row = t.body[first_ri]
         cell = row[lc]
-        label_text = _label_text(cell, row, info)
+        label_text, label_raw = _group_label(t, rows, info)
         targets = []
         how = {}
         for ri in rows:
-            for rid, mode_ in _row_xref_targets(doc, t.body[ri], lc, info["ref_cols"], with_mode=True):
+            for rid, mode_ in _row_xref_targets(doc, t.body[ri], lc, info["ref_cols"], with_mode=True,
+                                                label_text=_label_text(t.body[ri][lc], t.body[ri], info)):
                 if rid not in how:
                     targets.append(rid)
                     how[rid] = mode_
@@ -897,7 +1003,7 @@ def _process_table(b, t, info, pool_idx, strategy, mode):
                    "row": first_ri + 1, "column": t.columns[lc] if lc < len(t.columns) and t.columns[lc] else None}
         if len(rows) > 1:
             locator["rows"] = [r + 1 for r in rows]
-        quote = _row_quote(row, lc)
+        quote = _row_quote(row, lc, label_raw)
         label = pay["label"] if pay else None
         cands = []
         if targets:
@@ -983,11 +1089,18 @@ def _process_table(b, t, info, pool_idx, strategy, mode):
         if not cands:
             continue
         used += 1
+        for cand in cands:
+            cand["_from_table"] = True
         if implicit:
             for cand in cands:
-                _reason(cand, "implicit_study_table")
+                if cand["status"] == "proposed":
+                    _reason(cand, "implicit_study_table")
         if info["columns"]:
-            _secondary_from_rows(b, t, info, rows, cands, strategy, kind, heading)
+            # egy sor = egy vizsgálat számai: több közleményre mutató sornál (társközlemények, Cochrane-csoport)
+            # csak az elsődlegesnek jelölt, ennek hiányában az első közleményhez kerülnek (a többi a bizonyítékot
+            # kapja) — így a másodlagos adat nem duplázódik
+            sec_targets = [c for c in cands if c.get("primary_marked")][:1] or cands[:1]
+            _secondary_from_rows(b, t, info, rows, sec_targets, strategy, kind, heading, also=cands)
     return used
 
 
@@ -1026,18 +1139,25 @@ def _arm_level_rows(t, info, groups):
             vals = set()
             for ri in rows:
                 c = t.body[ri][ci] if ci < len(t.body[ri]) else None
-                if c is not None and c.text and not (c.spanned and c.origin[0] != ri):
+                if c is not None and c.text and not (c.spanned and c.origin[0] != c.row):
                     vals.add(c.text)
             if len(vals) > 1:
                 return True
     return False
 
 
-def _secondary_from_rows(b, t, info, rows, cands, strategy, kind, heading=None):
+def _secondary_from_rows(b, t, info, rows, cands, strategy, kind, heading=None, also=()):
     """A sor-csoport egyértelmű fejlécű számcellái → másodlagos értékek (status: unverified), cellánkénti
     bizonyítékkal. A kifeszített (rowspan) és a csoporton belül ismétlődő cellák csak egyszer számítanak."""
     lc = info["label_col"]
-    outcome_default = _clip(heading, 200) if heading else (_clip(t.caption, 200) if t.caption else None)
+    # alapértelmezett kimenet: az alcím-sor; adattáblánál (a3) a felirat is (pl. 'Analysis 1.1 … Outcome 1 TB');
+    # a jellemzők táblájának felirata NEM kimenet (pl. az 'N' oszlop a vizsgálat létszáma)
+    if heading:
+        outcome_default = _clip(heading, 200)
+    elif strategy == "jats_forest" and t.caption:
+        outcome_default = _clip(t.caption, 200)
+    else:
+        outcome_default = None
     seen = set()
     conf = "medium" if strategy == "jats_forest" else "high"
     for ri in rows:
@@ -1046,7 +1166,7 @@ def _secondary_from_rows(b, t, info, rows, cands, strategy, kind, heading=None):
             if ci >= len(row) or not col.get("field"):
                 continue
             cell = row[ci]
-            if cell.spanned and (cell.origin[0] != ri or cell.origin[1] != ci):
+            if cell.spanned and (cell.origin[0] != cell.row or cell.origin[1] != ci):
                 continue
             if col["field"] == "n_total" and info.get("arm_level_rows"):
                 continue
@@ -1065,7 +1185,7 @@ def _secondary_from_rows(b, t, info, rows, cands, strategy, kind, heading=None):
             e = b.ev(kind, strategy, loc, quote, conf)
             items = []
             for base, value, raw in vals:
-                if col["measure"] == "effect":
+                if col["measure"] in ("effect", "ci"):
                     field = base
                 elif col["field"] == "n_total":
                     field = "n_total"
@@ -1085,7 +1205,7 @@ def _secondary_from_rows(b, t, info, rows, cands, strategy, kind, heading=None):
                 for cand in cands:
                     cand["_sec"].append(sv)
                     b.stats["secondary_values"] += 1
-            for cand in cands:
+            for cand in list(cands) + [c for c in also if c not in cands]:
                 b.attach(cand, e)
 
 
@@ -1127,9 +1247,13 @@ _STATEMENTS = (
         r"eligible\s+for\s+inclusion)\b" % (_NUMBER, _MODS, _UNIT, _PAREN, _FILL, _ADV), re.I)),
     ("review", re.compile(
         r"\b%s\s+%s%s%s\s+(?:\w+\s+){0,4}?(?:met|fulfilled|satisfied|meeting|fulfilling)\s+(?:the\s+|our\s+|all\s+"
-        r"(?:the\s+)?)?(?:inclusion|eligibility|selection)\s+criteria" % (_NUMBER, _MODS, _UNIT, _PAREN), re.I)),
+        r"(?:the\s+)?)?(?:inclusion|eligibility|selection|entry|study)\s+criteria" % (_NUMBER, _MODS, _UNIT, _PAREN), re.I)),
     ("review", re.compile(
         r"\b%s\s+%s%s\s+included\s+in\s+(?:the|this|our)\s+(?:systematic\s+)?(?:review|analysis|overview)" %
+        (_NUMBER, _MODS, _UNIT), re.I)),
+    # utótagos alak: 'the five studies included were all RCTs', 'Of the 13 studies included, …'
+    ("review", re.compile(
+        r"\b(?:the|all|these|our)\s+%s\s+%s%s\s+(?:(?:that|which)\s+(?:were|was)\s+)?(?:finally\s+)?included\b" %
         (_NUMBER, _MODS, _UNIT), re.I)),
 )
 _NUM_UNIT = re.compile(r"\b%s\s+%s%s\b" % (_NUMBER, _MODS, _UNIT), re.I)
@@ -1154,13 +1278,23 @@ def _word_number(s):
     return None
 
 
+_SENT_SPLIT = re.compile(
+    # a pont után álló felső indexes hivatkozásszámok ('case.12 27 Three …') az ELŐZŐ mondathoz tartoznak
+    r"(?<=[.!?])(?:(?P<cites>\d{1,4}(?:(?:[ \t]+|[ \t]*[,\u2013\u2014-][ \t]*)\d{1,4}){0,60})\s+"
+    r"(?=[A-Z(\[\u201c\"])|"
+    r"\s+(?=[A-Z0-9(\[\u201c\"]))")
+_ABBREV_END = re.compile(r"(?:\b(?:et al|Fig|Figs|Tab|vs|e\.g|i\.e|approx|ref|refs|No|no|p)\.)$")
+
+
 def _sentences(text):
+    """Mondathatárok [(kezdet, vég)] — a rövidítések ('et al.', 'Fig.') után nem vág."""
     out = []
     start = 0
-    for m in re.finditer(r"(?<=[.!?])\s+(?=[A-Z0-9(\[\u201c\"])", text):
-        if re.search(r"(?:\b(?:et al|Fig|Figs|Tab|vs|e\.g|i\.e|approx|ref|refs|No|no|p)\.)$", text[max(0, m.start() - 8):m.start()]):
+    for m in _SENT_SPLIT.finditer(text):
+        if _ABBREV_END.search(text[max(0, m.start() - 8):m.start()]):
             continue
-        out.append((start, m.start()))
+        end = m.end("cites") if m.group("cites") else m.start()
+        out.append((start, end))
         start = m.end()
     out.append((start, len(text)))
     return out
@@ -1223,11 +1357,14 @@ def inclusion_statements(doc):
                                                    r"meta-?analys", tail):
                         k = "meta_analysis"
                     refs = _xref_cluster(doc, p, a, b, a + m.start())
+                    loc = {"container": doc.container, "element_id": p.element_id,
+                           "section": " > ".join(p.section_path) if p.section_path else None}
+                    if getattr(p, "page", None) is not None:
+                        loc["page"] = p.page
                     base = {
                         "kind": k,
                         "quote": _quote_window(p.text, a, b, a + m.start(), a + m.end()),
-                        "locator": {"container": doc.container, "element_id": p.element_id,
-                                    "section": " > ".join(p.section_path) if p.section_path else None},
+                        "locator": loc,
                         "ref_ids": refs,
                         "in_abstract": p.in_abstract,
                         "section_kind": p.kind,
@@ -1255,24 +1392,37 @@ _MONTHS = {"jan": 1, "january": 1, "feb": 2, "february": 2, "mar": 3, "march": 3
 _MON = r"(?P<mon>jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|" \
        r"oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?"
 _DATE_FORMS = (
-    re.compile(r"(?P<day>\d{1,2})(?:st|nd|rd|th)?\s+%s,?\s+(?P<year>(?:19|20)\d{2})" % _MON, re.I),
+    re.compile(r"(?P<day>\d{1,2})(?:st|nd|rd|th)?\s+(?:of\s+)?%s,?\s+(?P<year>(?:19|20)\d{2})" % _MON, re.I),
     re.compile(r"%s\s+(?P<day>\d{1,2})(?:st|nd|rd|th)?,?\s+(?P<year>(?:19|20)\d{2})" % _MON, re.I),
     re.compile(r"(?P<year>(?:19|20)\d{2})-(?P<mnum>\d{2})-(?P<day>\d{2})"),
-    re.compile(r"%s,?\s+(?P<year>(?:19|20)\d{2})" % _MON, re.I),
+    # számos alakok: 31/01/2019, 31.01.2019 (nap-hó vagy hó-nap: ha nem dönthető el → csak az év), 2019/01/31, 01/2019
+    re.compile(r"(?<![\d/.])(?P<n1>\d{1,2})[/.](?P<n2>\d{1,2})[/.](?P<year>(?:19|20)\d{2})(?![\d/])"),
+    re.compile(r"(?<![\d/.])(?P<year>(?:19|20)\d{2})[/.](?P<mnum>\d{1,2})[/.](?P<day>\d{1,2})(?![\d/.])"),
+    re.compile(r"(?<![\d/.])(?P<mnum>\d{1,2})/(?P<year>(?:19|20)\d{2})(?![\d/])"),
+    re.compile(r"%s,?\s+(?:of\s+)?(?P<year>(?:19|20)\d{2})" % _MON, re.I),
     re.compile(r"(?P<year>(?:19|20)\d{2})(?![\d-])"),
 )
-_SEARCH_CUE = re.compile(
-    r"\b(searched|search(?:es)?\s+(?:was|were)\s+(?:conducted|performed|run|carried\s+out|updated|completed)|"
-    r"last\s+search(?:ed)?|date\s+of\s+(?:the\s+)?(?:last\s+|most\s+recent\s+|final\s+)?search|"
-    r"(?:literature|database|electronic)\s+search(?:es)?|search(?:es)?\s+(?:up\s+)?to|search\s+date|"
-    r"(?:were|was)\s+searched)\b", re.I)
-_DATE_LEAD = re.compile(r"\b(?:up\s+to|until|till|through|thru|to|on|in|as\s+of|before|by|ending)\s+$|"
-                        r"date\s+of\s+(?:the\s+)?(?:last\s+|most\s+recent\s+|final\s+)?search\s*[:,]?\s*(?:was\s+)?$|"
-                        r"search\s+date\s*[:,]?\s*$|[-–]\s*$", re.I)
+# 1. szint: a mondat kifejezetten keresésről szól; 2. szint: csak adatbázis-név/„inception" (pl. 'all RCTs were
+# included from the available databases … up to April, 2016') — ha van 1. szintű állítás, a 2. szint nem számít
+_SEARCH_CUE = re.compile(r"\bsearch\w*|\bretriev\w*\s+(?:up\s+)?(?:to|until)\b", re.I)
+_DB_CUE = re.compile(r"\bdatabases?\b|\binception\b|\b(?:medline|embase|pubmed|cochrane|central|cinahl|psycinfo|"
+                     r"web of science|scopus|lilacs|cnki|wanfang|google scholar|clinicaltrials\.gov)\b", re.I)
+# erős bevezetés: a dátum a keresés (vagy lefedett időszak) VÉGE
+_STRONG_LEAD = re.compile(
+    r"\b(?:up\s+(?:un)?to|until|till|through|thru|to|as\s+of|before|ending(?:\s+(?:on|in))?)\s+(?:the\s+)?"
+    r"(?:end\s+of\s+)?$|"
+    r"\bdate\s+of\s+(?:the\s+)?(?:last\s+|latest\s+|most\s+recent\s+|final\s+)?search(?:es)?\s*(?:was|were)?\s*"
+    r"[:,]?\s*$|\bsearch\s+date\s*[:,]?\s*(?:was\s+)?$|\bbetween\b[^.;]{3,40}?\band\s+$|[-–]\s*$", re.I)
+# gyenge bevezetés ('on 15 July 2016', 'in March 2016'): csak ha előtte nem közlési/regisztrációs/kezdő dátum áll
+_WEAK_LEAD = re.compile(r"\b(?:on|in|by|during)\s+(?:the\s+)?$", re.I)
+_WEAK_BLOCK = re.compile(r"publish|publication|regist(?:ered|ration)|protocol|prospero|approv|accept|submit|receiv|"
+                         r"\bfrom\b|"
+                         r"\bsince\b|between|start|begin|after|launch|introduc|guideline|version|founded|"
+                         r"establish|languages?\b|english", re.I)
 
 
-def _parse_date_at(text, pos_limit):
-    """Az összes dátum a szövegben: [(start, end, value, precision)]."""
+def _parse_date_at(text, pos_limit=None):
+    """Az összes dátum a szövegben: [(start, end, value, precision, ambiguous)]."""
     found = []
     taken = []
     for rx in _DATE_FORMS:
@@ -1282,13 +1432,24 @@ def _parse_date_at(text, pos_limit):
             gd = m.groupdict()
             year = int(gd["year"])
             month = None
+            day = int(gd["day"]) if gd.get("day") else None
+            ambiguous = False
             if gd.get("mon"):
                 month = _MONTHS.get(gd["mon"].lower().rstrip("."))
                 if month is None:
                     month = _MONTHS.get(gd["mon"].lower()[:3])
             elif gd.get("mnum"):
                 month = int(gd["mnum"])
-            day = int(gd["day"]) if gd.get("day") else None
+            elif gd.get("n1"):
+                n1, n2 = int(gd["n1"]), int(gd["n2"])
+                if n1 > 12 and n2 <= 12:
+                    day, month = n1, n2
+                elif n2 > 12 and n1 <= 12:
+                    month, day = n1, n2
+                elif n1 == n2 and n1 <= 12:
+                    month, day = n1, n2
+                else:
+                    ambiguous = True  # 03/04/2019: nap-hó vagy hó-nap? → csak az évet vesszük (nem találgatunk)
             if month is not None and not 1 <= month <= 12:
                 continue
             if day is not None and not 1 <= day <= 31:
@@ -1300,43 +1461,86 @@ def _parse_date_at(text, pos_limit):
             else:
                 val, prec = "%04d" % year, "year"
             taken.append((m.start(), m.end()))
-            found.append((m.start(), m.end(), val, prec))
+            found.append((m.start(), m.end(), val, prec, ambiguous))
     found.sort()
     return found
 
 
+def _date_is_search_end(sent, s, prev_end):
+    """A dátum keresési (vég)dátum-e a bevezető szavai alapján."""
+    lead = sent[max(0, s - 60):s]
+    if _STRONG_LEAD.search(lead):
+        return True
+    if prev_end is not None and re.fullmatch(r"\s*(?:,|and|,\s*and|&|or|and\s+(?:again\s+)?(?:updated\s+)?on)\s*",
+                                             sent[prev_end:s]):
+        return True
+    m = _WEAK_LEAD.search(lead)
+    if m:
+        before = lead[:m.start()][-45:]
+        return not _WEAK_BLOCK.search(before)
+    return False
+
+
 def search_date_statements(doc):
     """A keresés (utolsó) dátuma az absztrakt/módszertan mondataiból: [{value, precision, quote, locator,
-    in_abstract}] — csak olyan dátum, amelyet 'to/until/through/on/in/as of …' vagy 'date of search' vezet be."""
+    in_abstract, tier, ambiguous}] — csak olyan dátum, amelyet 'to/until/through/as of …', 'date of search', vagy
+    (közlési/regisztrációs összefüggés nélkül) 'on/in …' vezet be. ``tier`` 1: a mondat keresésről szól;
+    2: csak adatbázis-név / 'inception' utal rá."""
     out = []
     for p in doc.paragraphs:
-        if not (p.in_abstract or p.kind in ("methods", None)):
+        intro = not p.in_abstract and p.kind == "introduction"
+        if not (p.in_abstract or p.kind in ("methods", None) or intro):
             continue
         text = p.text
         for a, b in _sentences(text):
             sent = text[a:b]
-            if not _SEARCH_CUE.search(sent):
+            tier = 1 if _SEARCH_CUE.search(sent) else (2 if _DB_CUE.search(sent) else None)
+            if intro:
+                # 3. szint: a Bevezetés (pl. Lancet „Research in context", EBCTCG) keresés-mondata — csak ha
+                # máshol nincs; más áttekintések keresését is leírhatja, ezért figyelmeztetéssel
+                tier = 3 if tier == 1 else None
+            if tier is None:
                 continue
             prev_end = None
-            for s, e, val, prec in _parse_date_at(sent, len(sent)):
-                lead = sent[max(0, s - 60):s]
-                listed = prev_end is not None and re.fullmatch(r"\s*(?:,|and|,\s*and|&|or)\s*", sent[prev_end:s])
-                if not (_DATE_LEAD.search(lead) or listed):
+            for s, e, val, prec, amb in _parse_date_at(sent):
+                if not _date_is_search_end(sent, s, prev_end):
                     continue
-                if prec == "year" and re.match(r"\s*[-–]\s*\d", sent[e:e + 3]):
+                if prec == "year" and not amb and re.match(r"\s*[-–]\s*\d", sent[e:e + 3]):
                     continue
                 prev_end = e
-                out.append({"value": val, "precision": prec,
-                            "quote": _quote_window(text, a, b, a + s, a + e),
-                            "locator": {"container": doc.container, "element_id": p.element_id,
-                                        "section": " > ".join(p.section_path) if p.section_path else None},
-                            "in_abstract": p.in_abstract, "order": p.order})
+                st = {"value": val, "precision": prec,
+                      "quote": _quote_window(text, a, b, a + s, a + e),
+                      "locator": {"container": doc.container, "element_id": p.element_id,
+                                  "section": " > ".join(p.section_path) if p.section_path else None},
+                      "in_abstract": p.in_abstract, "order": p.order, "tier": tier}
+                if amb:
+                    st["ambiguous"] = True
+                if getattr(p, "page", None) is not None:
+                    st["locator"]["page"] = p.page
+                out.append(st)
     return out
+
+
+def fixture_sentence_filter(sentence):
+    """Fejlesztői segéd a ``jats.trim_for_fixture``-höz: igaz, ha a mondatot a kinyerés használja (bevont-szám
+    állítás vagy keresési dátum) — a fixture csak ezeket a rövid mondatokat tartja meg (N4)."""
+    sent = _jats._fix_dashes(normalize_ws(sentence))
+    if any(rx.search(sent) for _, rx in _STATEMENTS):
+        return True
+    if not (_SEARCH_CUE.search(sent) or _DB_CUE.search(sent)):
+        return False
+    prev = None
+    for s0, e0, _v, _p, _a in _parse_date_at(sent):
+        if _date_is_search_end(sent, s0, prev):
+            return True
+    return False
 
 
 def _best_search_date(stmts):
     if not stmts:
         return None
+    top = min(s.get("tier", 1) for s in stmts)
+    stmts = [s for s in stmts if s.get("tier", 1) == top]
     # a legkésőbbi dátum; azonos dátumnál a pontosabb
     rank = {"day": 3, "month": 2, "year": 1}
 
@@ -1351,46 +1555,73 @@ _UNIT_RANK = {"studies": 3, "trials": 3, "reports": 1, "unknown": 0}
 
 
 def _best_k(stmts):
-    best, conflicts = _best_k_of(stmts, "review")
-    if best is None:
-        # nincs „included in the review" állítás: a metaanalízisbe bevont szám (gyakran ugyanaz) a tartalék
-        best, conflicts = _best_k_of(stmts, "meta_analysis")
-    return best, conflicts
+    """A közölt vizsgálatszám (6.0/3) kiválasztása. Sorrend: (1) az absztrakt első „bevont" állítása; (2) az
+    Eredmények „bevont" ÉS „metaanalízisbe bevont" állításainak legnagyobbika (a részszámok — 'TSA included 13
+    RCTs', 'one study for inpatients' — kisebbek, a metaanalízis k-ja legfeljebb a bevontaké); (3) az absztrakt
+    metaanalízis-állítása; (4) cím nélküli szakaszok legnagyobbika. Bevezetés/megbeszélés (más áttekintések
+    számai) kimarad. Visszaad: (állítás, eltérések) — eltérés, ha az absztrakt és az Eredmények „bevont"
+    maximuma különbözik."""
+    def rank(s):
+        return _UNIT_RANK.get(s["unit"], 0)
 
+    def first_of(lst):
+        first = lst[0]
+        same = [s for s in lst if s["order"] == first["order"] and s["quote"] == first["quote"]]
+        return sorted(same, key=lambda s: (rank(s), -lst.index(s)))[-1]
 
-def _best_k_of(stmts, kind):
-    """A közölt vizsgálatszám: elsőként az absztrakt első állítása, különben az Eredmények legnagyobb értéke
-    (a részszámok — 'one study for inpatients' — kisebbek). Bevezetés/megbeszélés (más áttekintések számai) kimarad.
-    Visszaad: (állítás, eltérések) — eltérés, ha az absztrakt és az Eredmények maximuma különbözik."""
-    rev = [s for s in stmts if s["kind"] == kind]
-    abstract = [s for s in rev if s["in_abstract"]]
-    results = [s for s in rev if not s["in_abstract"] and s["section_kind"] == "results"]
-    other = [s for s in rev if not s["in_abstract"] and s["section_kind"] in (None, "other")]
-    best = None
-    if abstract:
-        first = abstract[0]
-        same = [s for s in abstract if s["order"] == first["order"] and s["quote"] == first["quote"]]
-        best = sorted(same, key=lambda s: (_UNIT_RANK.get(s["unit"], 0), -abstract.index(s)))[-1]
+    def max_of(lst):
+        return sorted(lst, key=lambda s: (rank(s), s["value"], -s["order"]))[-1]
+
+    rev_abs = [s for s in stmts if s["kind"] == "review" and s["in_abstract"]]
+    ma_abs = [s for s in stmts if s["kind"] == "meta_analysis" and s["in_abstract"]]
+    results = [s for s in stmts if not s["in_abstract"] and s["section_kind"] == "results"]
+    other = [s for s in stmts if not s["in_abstract"] and s["section_kind"] in (None, "other")]
+    if rev_abs:
+        best = first_of(rev_abs)
     elif results:
-        best = sorted(results, key=lambda s: (_UNIT_RANK.get(s["unit"], 0), s["value"], -s["order"]))[-1]
+        best = max_of(results)
+    elif ma_abs:
+        best = first_of(ma_abs)
     elif other:
-        best = sorted(other, key=lambda s: (_UNIT_RANK.get(s["unit"], 0), s["value"], -s["order"]))[-1]
-    if best is None:
+        best = max_of(other)
+    else:
         return None, []
     conflicts = []
-    if abstract and results:
-        rmax = max(s["value"] for s in results if _UNIT_RANK.get(s["unit"], 0) >= _UNIT_RANK.get(best["unit"], 0)) \
-            if any(_UNIT_RANK.get(s["unit"], 0) >= _UNIT_RANK.get(best["unit"], 0) for s in results) else 0
+    res_rev = [s for s in results if s["kind"] == "review" and rank(s) >= rank(best)]
+    if rev_abs and res_rev:
+        rmax = max(s["value"] for s in res_rev)
         if rmax > best["value"]:
             conflicts = sorted(set([(best["value"], best["unit"])] +
-                                   [(s["value"], s["unit"]) for s in results if s["value"] == rmax]))
+                                   [(s["value"], s["unit"]) for s in res_rev if s["value"] == rmax]))
     return best, conflicts
 
 
-def _a4_statements(b, have_candidates):
+_A4_SECTIONS = (None, "other", "methods", "results", "abstract")
+
+
+def _stmt_section_ok(s):
+    """A bevont-állítás saját vizsgálatokra vonatkozik-e (absztrakt, módszertan, eredmények, cím nélküli rész) —
+    a bevezetés/megbeszélés/következtetés mondatai más áttekintésekről is szólhatnak."""
+    return (s.get("section_kind") if not s.get("in_abstract") else "abstract") in _A4_SECTIONS
+
+
+def _included_groups(b):
+    return set(c.get("group_key") or c["extract_key"] for c in b.cands
+               if c["role_in_review"] in ("included", "included_companion"))
+
+
+def _a4_statements(b, stmts, have_candidates, has_a1=False):
+    """a4: „We included N studies [12–24]" — a hivatkozás-tartomány megerősíti a meglévő jelölteket.
+
+    Új jelöltet ad, ha (1) nincs a1/a2/a3 jelölt, vagy (2) nem Cochrane-áttekintésnél a mondat KONZISZTENS
+    (a hivatkozások száma = a közölt szám) és a közölt szám nagyobb a táblázatokból kinyert vizsgálatszámnál
+    (a táblázat hiányos, pl. csak a mellékhatásokat közlő vizsgálatokat sorolja fel). Ilyenkor a kiegészítő
+    jelölt oka 'statement_only' (EP2-ben emberi megerősítés kell). A bevezetés/megbeszélés mondatai (más
+    áttekintések számai) soha nem adnak jelöltet. A táblázat-sorhoz már tippként (ref_hint) rendelt hivatkozás
+    nem lesz külön jelölt."""
     doc = b.doc
-    stmts = inclusion_statements(doc)
     used = False
+    hinted = set(r for c in b.cands for r in ((c.get("ref_hint") or {}).get("ref_ids") or []))
     for s in stmts:
         if s["kind"] != "review" or not s["ref_ids"]:
             continue
@@ -1398,19 +1629,28 @@ def _a4_statements(b, have_candidates):
         if not refset:
             continue
         consistent = len(refset) == s["value"]
+        plausible = consistent or (len(refset) >= 2 and 2 * len(refset) >= s["value"])
+        if not plausible:
+            # pl. 'Three of the 14 studies included stated … [11–13]': a hivatkozások nem a bevont vizsgálatok
+            continue
+        may_create = _stmt_section_ok(s)
+        residual_ok = may_create and not has_a1 and consistent and s["value"] > len(_included_groups(b))
         for rid in refset:
             ref = doc.refs[rid]
             key = "ref:%s" % rid
             cand = b.get(key)
-            if cand is None and have_candidates:
-                continue
             conf = "medium" if consistent else "low"
             if cand is None:
-                cand = b.add(key, _new_cand(_cited_from_ref(ref), _ref_label(ref), "stmt:%s" % (
-                    s["locator"].get("element_id") or s["order"]), _ids_from_ref(ref, b.at), "included", conf,
-                    "proposed", ref_id=rid))
+                if not may_create or (have_candidates and not residual_ok):
+                    continue
+                if rid in hinted or ref.section in ("excluded", "additional", "other_versions"):
+                    continue
+                cand = b.add(key, _new_cand(_cited_from_ref(ref), _ref_label(ref), None, _ids_from_ref(ref, b.at),
+                                            "included", conf, "proposed", ref_id=rid))
                 if not consistent:
                     _reason(cand, "statement_count_mismatch")
+                if have_candidates:
+                    _reason(cand, "statement_only")
             e = b.ev("text", "jats_xref", {"element_id": s["locator"].get("element_id"),
                                           "section": s["locator"].get("section"), "ref_id": rid},
                      s["quote"], conf)
@@ -1419,6 +1659,24 @@ def _a4_statements(b, have_candidates):
     if used:
         b.use("jats_xref")
     return stmts
+
+
+def _warn_unstructured_tables(b):
+    """A bevont vizsgálatok táblázata csak képként van meg (üres tábla-törzs) → figyelmeztetés: a (c) út (saját
+    PDF) vagy az ágens-osztályozás kell."""
+    for t in b.doc.tables:
+        if t.body:
+            continue
+        cap = norm_text("%s %s" % (t.label or "", t.caption_plain or t.caption or ""))
+        if _INCLUDED_CAPTION.search(cap) and not _NOT_INCLUDED_CAPTION.search(cap):
+            b.warn("included_table_not_structured",
+                   "A(z) %s („%s”) a bevont vizsgálatok táblázata, de a teljes szövegben csak képként szerepel, "
+                   "ezért nem olvasható ki. Töltsd fel az áttekintés PDF-jét (extract --pdf), vagy kérd az ágens "
+                   "osztályozását az irodalomjegyzékre." % (t.display_label or t.element_id, _clip(t.caption, 80)),
+                   "%s ('%s') lists the included studies but is only an image in the full text; supply the PDF "
+                   "(extract --pdf) or use agent classification of the reference list." % (
+                       t.display_label or t.element_id, _clip(t.caption, 80)),
+                   table=t.element_id)
 
 
 # ---------------------------------------------------------------------------
@@ -1453,8 +1711,8 @@ def _fallback_reflist(b, only_missing=False):
     n = 0
     for rid in doc.ref_order:
         ref = doc.refs[rid]
-        if ref.section in ("other_versions",):
-            continue
+        if ref.section in ("other_versions", "excluded"):
+            continue  # a Cochrane-kizártak az excluded_by_review-ban vannak, nem ismeretlen szerepű jelöltek
         key = "ref:%s" % rid
         if b.get(key) is not None:
             continue
@@ -1476,11 +1734,14 @@ def _fallback_reflist(b, only_missing=False):
 # fő belépési pont
 # ---------------------------------------------------------------------------
 
-def extract_included(doc, review_id, at=None, actor=TOOL_ACTOR, fallback="auto", strategies=None):
+def extract_included(doc, review_id, at=None, actor=TOOL_ACTOR, fallback="auto", strategies=None, pub_date=None,
+                     search_date_fallback=True):
     """A bevont-vizsgálat jelöltek kinyerése egy JATS-dokumentumból (a1 → a2/a3 → a4 → tartalék).
 
     ``fallback``: 'auto' (irodalomjegyzék csak ha nincs bevont-jelölt), 'always' (a nem-jelölt hivatkozások
     is, ``unknown`` szereppel), 'never'. ``strategies``: a futtatandók részhalmaza ('a1','a2','a3','a4').
+    ``pub_date``: az áttekintés megjelenési dátuma ('ÉÉÉÉ[-HH[-NN]]', pl. a PubMed-ből) a tartalék keresési
+    dátumhoz; ha nincs megadva, a JATS ``<pub-date>``-ből. ``search_date_fallback=False``: nincs tartalék.
     A kimenet determinisztikus (azonos bemenet → azonos azonosítók és sorrend; csak ``at`` változhat)."""
     at = at or _now()
     strategies = set(strategies or ("a1", "a2", "a3", "a4"))
@@ -1489,11 +1750,17 @@ def extract_included(doc, review_id, at=None, actor=TOOL_ACTOR, fallback="auto",
     has_a1 = _a1_cochrane(b) if "a1" in strategies else False
     if "a2" in strategies or "a3" in strategies:
         _tables_selected(b, pool_idx, strategies, has_a1)
+    _warn_unstructured_tables(b)
     have = any(c["role_in_review"] in ("included", "included_companion") for c in b.cands)
-    stmts = _a4_statements(b, have) if "a4" in strategies else inclusion_statements(doc)
+    stmts = inclusion_statements(doc)
     _hints_from_statements(b, stmts)
+    if "a4" in strategies:
+        _a4_statements(b, stmts, have, has_a1)
     _warn_unclaimed(b, stmts)
-    have = any(c["role_in_review"] in ("included", "included_companion") for c in b.cands)
+    # a csak gyenge (low) a4-jelöltek nem „szerkezet": ilyenkor az irodalomjegyzék is jelölt-lista lesz
+    have = any(c["role_in_review"] in ("included", "included_companion") and c["confidence"] != "low" or
+               c["role_in_review"] in ("included", "included_companion") and c.get("_from_table")
+               for c in b.cands)
     if fallback == "always" or (fallback == "auto" and not have):
         _fallback_reflist(b)
         if not have:
@@ -1503,27 +1770,118 @@ def extract_included(doc, review_id, at=None, actor=TOOL_ACTOR, fallback="auto",
                    "szerepű jelöltek: az ágens vagy te döntöd el, melyik bevont vizsgálat (EP2).",
                    "No structured list of included studies was found; reference-list items are 'unknown' "
                    "candidates for agent/human classification (EP2).")
-    # k és keresési dátum bizonyítékkal
-    best_k, k_conf = _best_k(stmts)
-    k_reported = None
-    if best_k is not None:
-        e = b.ev("text", "jats_text", best_k["locator"], best_k["quote"], "medium")
-        k_reported = {"value": best_k["value"], "unit": best_k["unit"], "evidence_id": e}
-        if k_conf:
-            b.warn("k_statements_differ",
-                   "Az áttekintés több, eltérő vizsgálatszámot közöl: %s." % ", ".join(
-                       "%d %s" % kv for kv in k_conf),
-                   "The review states differing study counts: %s." % ", ".join("%d %s" % kv for kv in k_conf),
-                   values=[list(kv) for kv in k_conf])
+    k_reported = _k_from_statements(b, stmts)
     sd_stmts = search_date_statements(doc)
-    best_sd = _best_search_date(sd_stmts)
-    search_date = None
-    if best_sd is not None:
-        e = b.ev("text", "jats_text", best_sd["locator"], best_sd["quote"], "medium")
-        search_date = {"value": best_sd["value"], "precision": best_sd["precision"], "fallback": False,
-                       "evidence_id": e}
+    search_date = _search_date_from_statements(b, sd_stmts, pub_date or (doc.meta or {}).get("pub_date"),
+                                               search_date_fallback)
+    completeness = _completeness(b, k_reported)
     _flag_review_needs(b)
-    return _finalize(b, k_reported, search_date, stmts, sd_stmts)
+    res = _finalize(b, k_reported, search_date, stmts, sd_stmts)
+    res["completeness"] = completeness
+    return res
+
+
+def _k_from_statements(b, stmts):
+    """A közölt vizsgálatszám (6.0/3) bizonyítékkal; eltérő állításoknál figyelmeztetés."""
+    best_k, k_conf = _best_k(stmts)
+    if best_k is None:
+        return None
+    loc = dict(best_k["locator"])
+    loc.pop("container", None)
+    e = b.ev(b.text_kind, b.text_strategy, loc, best_k["quote"], "medium")
+    if k_conf:
+        b.warn("k_statements_differ",
+               "Az áttekintés több, eltérő vizsgálatszámot közöl: %s." % ", ".join("%d %s" % kv for kv in k_conf),
+               "The review states differing study counts: %s." % ", ".join("%d %s" % kv for kv in k_conf),
+               values=[list(kv) for kv in k_conf])
+    return {"value": best_k["value"], "unit": best_k["unit"], "evidence_id": e}
+
+
+def fallback_search_date(pub_date):
+    """Tartalék keresési dátum (6.0/2, H008): a megjelenés dátuma − 12 hónap, ugyanazzal a pontossággal.
+    '2019-04-29' → ('2018-04-29', 'day'); '2019-04' → ('2018-04', 'month'); '2019' → ('2018', 'year');
+    érvénytelenre (None, None). A korábbi dátum szélesebb frissítési ablakot ad (érzékenyebb)."""
+    m = re.fullmatch(r"((?:18|19|20)\d{2})(?:-(\d{2})(?:-(\d{2}))?)?", str(pub_date or "").strip())
+    if not m:
+        return None, None
+    y = int(m.group(1)) - 1
+    if m.group(3):
+        mo, d = int(m.group(2)), int(m.group(3))
+        if mo == 2 and d == 29:
+            d = 28
+        return "%04d-%02d-%02d" % (y, mo, d), "day"
+    if m.group(2):
+        return "%04d-%s" % (y, m.group(2)), "month"
+    return "%04d" % y, "year"
+
+
+def _search_date_from_statements(b, sd_stmts, pub_date, allow_fallback):
+    best_sd = _best_search_date(sd_stmts)
+    if best_sd is not None:
+        loc = dict(best_sd["locator"])
+        loc.pop("container", None)
+        e = b.ev(b.text_kind, b.text_strategy, loc, best_sd["quote"], "medium")
+        out = {"value": best_sd["value"], "precision": best_sd["precision"], "fallback": False, "evidence_id": e}
+        if best_sd.get("ambiguous"):
+            out["ambiguous_numeric_date"] = True
+        if best_sd.get("tier") == 3:
+            out["from_introduction"] = True
+            b.warn("search_date_from_introduction",
+                   "A keresési dátumot (%s) csak a Bevezetésben találtam („%s”); ellenőrizd, hogy az áttekintés "
+                   "saját keresésére vonatkozik-e (H008)." % (best_sd["value"], _clip(best_sd["quote"], 120)),
+                   "The search date (%s) was found only in the Introduction; check that it refers to this "
+                   "review's own search (H008)." % best_sd["value"])
+        if best_sd.get("ambiguous"):
+            b.warn("search_date_ambiguous",
+                   "A keresési dátum számos alakja nem egyértelmű (nap/hó vagy hó/nap) — csak az évet vettük: %s. "
+                   "Pontosítsd kézzel, ha kell." % best_sd["value"],
+                   "The numeric search date is ambiguous (day/month vs month/day); only the year was kept: %s." %
+                   best_sd["value"])
+        return out
+    if not allow_fallback:
+        return None
+    value, prec = fallback_search_date(pub_date)
+    if value is None:
+        b.warn("search_date_unknown",
+               "Az áttekintés keresési dátuma nem található, és a megjelenés dátuma sem ismert: a frissítő keresés "
+               "ablakát kézzel kell megadni (H008).",
+               "The review's search date was not found and the publication date is unknown; set the update "
+               "window manually (H008).")
+        return {"value": None, "precision": "unknown", "fallback": True, "evidence_id": None}
+    b.warn("search_date_fallback",
+           "Az áttekintés nem közli a keresés dátumát (vagy nem találtam): tartalékként a megjelenés dátuma "
+           "(%s) − 12 hónap = %s. Ez szélesebb frissítési ablakot ad; hagyd jóvá vagy javítsd (H008)." % (
+               pub_date, value),
+           "The review's search date was not found; fallback = publication date (%s) minus 12 months = %s "
+           "(wider update window); confirm or correct it (H008)." % (pub_date, value),
+           pub_date=pub_date, value=value)
+    return {"value": value, "precision": prec, "fallback": True, "evidence_id": None, "basis": "pub_date_minus_12m",
+            "pub_date": pub_date}
+
+
+def _completeness(b, k_reported):
+    """6.4: a kinyert különálló vizsgálat-csoportok (és közlemények) száma vs a közölt k → eltérésnél
+    figyelmeztetés (H006) és EP2-tétel. Visszaad: {'k_reported','unit','n_study_groups','n_reports','match'}."""
+    inc = [c for c in b.cands if c["role_in_review"] in ("included", "included_companion")]
+    groups = set(c.get("group_key") or c["extract_key"] for c in inc)
+    reports = set(c.get("ref_id") or c["extract_key"] for c in inc)
+    out = {"k_reported": None, "unit": None, "n_study_groups": len(groups), "n_reports": len(reports),
+           "match": None}
+    if not k_reported:
+        return out
+    k, unit = k_reported["value"], k_reported.get("unit")
+    out["k_reported"], out["unit"] = k, unit
+    out["match"] = (len(groups) == k) or (len(reports) == k)
+    if not out["match"] and inc:
+        b.warn("k_mismatch",
+               "Az áttekintés %d %s bevonását közli, a kinyerés %d vizsgálat-csoportot (%d közleményt) talált. "
+               "Nézd át a jelölteket (EP2): hiányzó sor, összevont vizsgálatok vagy több közleményes vizsgálat? "
+               "(H006)" % (k, {"studies": "vizsgálat", "trials": "vizsgálat", "reports": "közlemény"}.get(
+                   unit, "tétel"), len(groups), len(reports)),
+               "The review reports %d %s; extraction found %d study groups (%d reports). Review the candidates "
+               "(EP2) (H006)." % (k, unit or "items", len(groups), len(reports)),
+               k_reported=k, unit=unit, n_study_groups=len(groups), n_reports=len(reports))
+    return out
 
 
 _CONFIRM_ONLY_CAPTION = re.compile(r"quality|risk of bias|bias assessment|appraisal|grade")
@@ -1540,7 +1898,7 @@ def _tables_selected(b, pool_idx, strategies, has_a1):
     inc = [(t, i) for t, i in infos if i["kind"] == "included"]
 
     def prio(t):
-        cap = norm_text("%s %s" % (t.label or "", t.caption or ""))
+        cap = norm_text("%s %s" % (t.label or "", t.caption_plain or t.caption or ""))
         if _CONFIRM_ONLY_CAPTION.search(cap):
             return 2
         return 0 if _PRIMARY_CAPTION.search(cap) else 1
@@ -1588,12 +1946,11 @@ def _hints_from_statements(b, stmts):
     claimed = set(c.get("ref_id") for c in b.cands if c.get("ref_id"))
     residual = []
     for s in stmts:
-        if s["kind"] != "review":
+        if s["kind"] != "review" or not _stmt_section_ok(s):
             continue
         for rid in s["ref_ids"]:
             if rid in doc.refs and rid not in claimed and rid not in residual:
                 residual.append(rid)
-    claimed_hints = set()
     for c in b.cands:
         if c.get("ref_id") or c.get("ref_hint") or c["role_in_review"] != "included":
             continue
@@ -1608,7 +1965,6 @@ def _hints_from_statements(b, stmts):
                              "texts": [_clip(r.text, 200)], "year_in_ref": r.year,
                              "year_in_table": c["cited_as"].get("year")}
             _reason(c, "ref_hint_available")
-            claimed_hints.add(r.ref_id)
         else:
             pool = [r for r in _pool_refs(doc) if r.first_author and norm_name(r.first_author) == norm_name(fa)]
             year = c["cited_as"].get("year")
@@ -1639,7 +1995,7 @@ def _warn_unclaimed(b, stmts):
     hinted = set(r for c in b.cands for r in ((c.get("ref_hint") or {}).get("ref_ids") or []))
     left = []
     for s_ in stmts:
-        if s_["kind"] != "review":
+        if s_["kind"] != "review" or not _stmt_section_ok(s_):
             continue
         for rid in s_["ref_ids"]:
             if rid in doc.refs and rid not in claimed and rid not in hinted and rid not in left:
@@ -1700,9 +2056,9 @@ def _finalize(b, k_reported, search_date, stmts, sd_stmts):
             d["reason_evidence_id"] = x["reason_evidence_id"]["evidence_id"]
         excluded.append(d)
     if k_reported:
-        k_reported = dict(k_reported, evidence_id=k_reported["evidence_id"]["evidence_id"])
+        k_reported = dict(k_reported, evidence_id=_ev_id(k_reported.get("evidence_id")))
     if search_date:
-        search_date = dict(search_date, evidence_id=search_date["evidence_id"]["evidence_id"])
+        search_date = dict(search_date, evidence_id=_ev_id(search_date.get("evidence_id")))
     groups = set()
     for c in cands:
         if c["role_in_review"] in ("included", "included_companion"):
@@ -1733,8 +2089,32 @@ def _finalize(b, k_reported, search_date, stmts, sd_stmts):
     }
 
 
+def _ev_id(e):
+    return e["evidence_id"] if isinstance(e, dict) else e
+
+
 def _public_stmt(s):
     return {k: v for k, v in s.items() if k != "order"}
+
+
+def summarize_result(res):
+    """Szöveg nélküli összefoglaló egy kinyerési eredményről (regressziós összevetéshez, naplóhoz, a felület
+    áttekintőjéhez): stratégiák, jelöltek (ref-id, szerep, bizonyosság, állapot, címke, csoport, másodlagos
+    értékek száma, azonosító-fajták), k, keresési dátum, figyelmeztetés-kódok."""
+    return {
+        "strategies": list(res.get("strategies") or []),
+        "candidates": [[c.get("ref_id"), c["role_in_review"], c["confidence"], c["status"],
+                        c.get("study_label_in_review"), c.get("group_key"), len(c.get("secondary_data") or []),
+                        sorted(k for k in (c.get("ids") or {}))] for c in res.get("candidates") or []],
+        "n_study_groups": res.get("n_study_groups"),
+        "k_reported": (res.get("k_reported") or {}).get("value"),
+        "k_unit": (res.get("k_reported") or {}).get("unit"),
+        "search_date": (res.get("search_date") or {}).get("value"),
+        "search_date_fallback": (res.get("search_date") or {}).get("fallback"),
+        "warnings": [w["code"] for w in res.get("warnings") or []],
+        "n_excluded_by_review": len(res.get("excluded_by_review") or []),
+        "n_secondary_values": sum(len(c.get("secondary_data") or []) for c in res.get("candidates") or []),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -1874,6 +2254,231 @@ def candidates_from_reference_records(review_id, records, source, at=None, actor
 
 
 # ---------------------------------------------------------------------------
+# ágens-osztályozás importja (6.2) — szó szerinti idézet-ellenőrzés (H004), azonosító eldobása (N1)
+# ---------------------------------------------------------------------------
+
+ROLES = ("included", "included_companion", "excluded", "ongoing", "awaiting", "background", "unknown")
+_AGENT_RE = re.compile(r"^agent:[^\s].{0,99}$")
+_ID_FIELDS = ("pmid", "doi", "pmcid", "pmc", "nct", "eid", "openalex", "ids", "identifiers", "registry", "isrctn",
+              "url", "link", "rec_id")
+_LOC_KEYS = ("section", "page", "element_id", "label", "row", "column")
+
+
+class _TextPara(object):
+    __slots__ = ("element_id", "text", "xrefs", "section_path", "in_abstract", "kind", "order", "page")
+
+    def __init__(self, text, order, page=None, kind=None, in_abstract=False, section_path=None):
+        self.element_id = None
+        self.text = text
+        self.xrefs = []
+        self.section_path = list(section_path or [])
+        self.in_abstract = in_abstract
+        self.kind = kind
+        self.order = order
+        self.page = page
+
+
+class _TextDoc(object):
+    """Sima szöveg (felhasználói PDF kinyert oldalai, show-text kimenet) a JatsDoc felületének részhalmazával."""
+
+    def __init__(self, pages, container=None):
+        self.container = container
+        self.meta = {}
+        self.refs = {}
+        self.groups = {}
+        self.ref_order = []
+        self.tables = []
+        self.paragraphs = []
+        self._chunks = []
+        if isinstance(pages, str):
+            pages = [(None, pages)]
+        kind, in_abs, path = None, False, []
+        order = 0
+        for page, text in pages or ():
+            text = str(text or "")
+            self._chunks.append(text)
+            for block in re.split(r"\n\s*\n", text):
+                para = normalize_ws(block)
+                if not para:
+                    continue
+                k = _jats.section_kind(para) if len(para) <= 40 else None
+                if k is not None and not re.search(r"[.;:]\s", para):
+                    # szakaszcím ('Methods', 'Results', 'Abstract') → a következő bekezdések fajtája
+                    kind, in_abs, path = k, k == "abstract", [para]
+                    continue
+                order += 1
+                self.paragraphs.append(_TextPara(para, order, page=None if page is None else str(page),
+                                                 kind=None if in_abs else kind, in_abstract=in_abs,
+                                                 section_path=path))
+
+    def bibr_refs(self, xrefs, text=None):
+        return []
+
+    def all_text_normalized(self):
+        return normalize_ws(" \n ".join(self._chunks))
+
+
+def text_statements(pages, container=None):
+    """(c) út / sima szöveg: a közölt vizsgálatszám és a keresési dátum állításai. ``pages``: str vagy
+    [(oldalszám, szöveg)] — a szöveg csak memóriában él (N4); a lokátor az oldalszámot viszi."""
+    doc = _TextDoc(pages, container)
+    return {"k_statements": [_public_stmt(x) for x in inclusion_statements(doc)],
+            "search_date_statements": [_public_stmt(x) for x in search_date_statements(doc)]}
+
+
+def extract_counts_from_text(pages, review_id, at=None, actor=TOOL_ACTOR, container=None, pub_date=None,
+                             search_date_fallback=True):
+    """A felhasználó PDF-jének (vagy más sima szövegnek) oldalaiból a közölt k és a keresési dátum bizonyítékkal
+    (``kind``/``strategy``: ``user_pdf``, lokátor: ``page`` + idézet). Jelöltet NEM ad (a táblázatok a PDF-ben
+    szerkezet nélküliek; a bevont vizsgálatokat az ágens-osztályozás adja). Kimenet: az ``extract_included``
+    alakja (``candidates`` üres)."""
+    at = at or _now()
+    doc = _TextDoc(pages, container)
+    b = _Builder(doc, review_id, at, actor)
+    b.text_kind, b.text_strategy = "user_pdf", "user_pdf"
+    stmts = inclusion_statements(doc)
+    k_reported = _k_from_statements(b, stmts)
+    sd_stmts = search_date_statements(doc)
+    search_date = _search_date_from_statements(b, sd_stmts, pub_date, search_date_fallback)
+    res = _finalize(b, k_reported, search_date, stmts, sd_stmts)
+    res["completeness"] = {"k_reported": (k_reported or {}).get("value"), "unit": (k_reported or {}).get("unit"),
+                           "n_study_groups": 0, "n_reports": 0, "match": None}
+    return res
+
+
+def _agent_reject(rejected, i, item, code, hu, en):
+    rejected.append({"index": i, "ref_key": item.get("ref_key") if isinstance(item, dict) else None,
+                     "code": code, "hu": hu, "en": en})
+
+
+def candidates_from_agent_classification(source, agent_doc, review_id=None, at=None, container=None):
+    """Az ``agent_classification/<review_id>.json`` (6.2) importja jelöltekké — szigorú ellenőrzéssel.
+
+    ``source``: a ``jats.parse()`` dokumentuma, vagy sima szöveg (str / [(oldal, szöveg)]) — ugyanaz, amit az ágens
+    a ``show-text``-ben látott. Szabályok (N1, 6.2):
+
+    1. az idézet szóközre normalizálva SZÓ SZERINT megvan a forrásszövegben, különben a tétel elutasítva (H004);
+       ≤ 300 karakter; üres idézet elutasítva;
+    2. az ágenstől azonosítót NEM veszünk át (pmid/doi/pmcid/nct/… mezők eldobva, ``dropped``-ban jelezve); JATS
+       forrásnál a ``ref_key`` a dokumentum hivatkozása (vagy Cochrane-csoport), és az azonosítók a dokumentumból
+       jönnek (``source: review``, L4-ben API-val megerősítendők); sima szövegnél a ``cited_as`` szövegnek is szó
+       szerint meg kell lennie a forrásban;
+    3. minden tétel ``confidence: low``, ``status: proposed``, ``needs_review: true`` (EP2).
+
+    Visszaad: az ``extract_included`` alakja + ``rejected`` [{index, ref_key, code, hu, en}] + ``dropped``
+    [{index, fields}]."""
+    if not isinstance(agent_doc, dict):
+        raise ValueError("Az ágens-osztályozás nem JSON-objektum.")
+    rid = review_id or agent_doc.get("review_id")
+    if not rid:
+        raise ValueError("Hiányzik a review_id.")
+    if review_id and agent_doc.get("review_id") and agent_doc["review_id"] != review_id:
+        raise ValueError("Az ágens-osztályozás más áttekintésre szól (%s ≠ %s)." % (agent_doc["review_id"], review_id))
+    actor = agent_doc.get("agent") or "agent:ma-metaheadhunter"
+    if not isinstance(actor, str) or not _AGENT_RE.match(actor):
+        raise ValueError("Az ágens azonosítója 'agent:<név>' alakú legyen.")
+    at = at or _now()
+    is_jats = isinstance(source, _jats.JatsDoc)
+    doc = source if is_jats else _TextDoc(source, container)
+    hay = doc.all_text_normalized()
+    b = _Builder(doc, rid, at, actor)
+    if container is not None:
+        b.container = container
+    rejected, dropped = [], []
+    items = agent_doc.get("items")
+    if not isinstance(items, list):
+        raise ValueError("Az ágens-osztályozás 'items' mezője lista legyen.")
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            _agent_reject(rejected, i, {}, "invalid_item", "A tétel nem objektum.", "Item is not an object.")
+            continue
+        bad = sorted(k for k in item if k.lower() in _ID_FIELDS)
+        if bad:
+            dropped.append({"index": i, "fields": bad})
+        role = item.get("role")
+        if role not in ROLES:
+            _agent_reject(rejected, i, item, "invalid_role", "Ismeretlen szerep: %r." % (role,),
+                          "Unknown role: %r." % (role,))
+            continue
+        quote = normalize_ws(item.get("quote") or "")
+        if not quote:
+            _agent_reject(rejected, i, item, "missing_quote", "Hiányzik a szó szerinti idézet.",
+                          "The verbatim quote is missing.")
+            continue
+        if len(quote) > QUOTE_MAX:
+            _agent_reject(rejected, i, item, "quote_too_long",
+                          "Az idézet hosszabb %d karakternél (rövid, szó szerinti idézet kell)." % QUOTE_MAX,
+                          "The quote is longer than %d characters." % QUOTE_MAX)
+            continue
+        if quote not in hay:
+            _agent_reject(rejected, i, item, "H004",
+                          "Az ágens idézete nem található szó szerint az áttekintés szövegében — a tételt "
+                          "elutasítottuk (H004). Az ágens csak a show-text kimenetből idézhet, változtatás nélkül.",
+                          "The agent's quote is not found verbatim in the review text — item rejected (H004).")
+            continue
+        loc_in = item.get("locator") if isinstance(item.get("locator"), dict) else {}
+        loc = {}
+        for k in _LOC_KEYS:
+            v = loc_in.get(k)
+            if v is None:
+                continue
+            if k == "row" and isinstance(v, int) and not isinstance(v, bool) and v >= 0:
+                loc[k] = v
+            elif k != "row" and isinstance(v, (str, int)) and not isinstance(v, bool):
+                loc[k] = _clip(str(v), 200)
+        targets = []
+        if is_jats:
+            key = item.get("ref_key")
+            if isinstance(key, str) and key in doc.refs:
+                targets = [key]
+            elif isinstance(key, str) and key in doc.groups:
+                targets = list(doc.groups[key].ref_ids)
+            if not targets:
+                _agent_reject(rejected, i, item, "unknown_ref_key",
+                              "A ref_key (%r) nem hivatkozás ebben az áttekintésben." % (key,),
+                              "ref_key %r is not a reference of this review." % (key,))
+                continue
+            for r in targets:
+                ref = doc.refs[r]
+                ckey = "ref:%s" % r
+                cand = b.get(ckey)
+                if cand is None:
+                    cand = b.add(ckey, _new_cand(_cited_from_ref(ref), _ref_label(ref), ref.group_id,
+                                                 _ids_from_ref(ref, at), role, "low", "proposed", ref_id=r))
+                _reason(cand, "agent_classified")
+                eloc = dict(loc)
+                eloc["ref_id"] = r
+                b.attach(cand, b.ev("text", "reflist_agent", eloc, quote, "low"))
+        else:
+            cited = normalize_ws(item.get("cited_as") if isinstance(item.get("cited_as"), str) else
+                                 (item.get("cited_as") or {}).get("text") if isinstance(item.get("cited_as"), dict)
+                                 else "")
+            if not cited or len(cited) > TEXT_MAX or cited not in hay:
+                _agent_reject(rejected, i, item, "H004",
+                              "A hivatkozás szövege (cited_as) nem található szó szerint a forrásban (H004).",
+                              "The cited_as text is not found verbatim in the source (H004).")
+                continue
+            ckey = "agent:%s" % norm_text(cited)[:80]
+            cand = b.get(ckey)
+            if cand is None:
+                fa = _jats.first_author_from_text(cited)
+                y, suf = _jats.year_from_text(cited)
+                cand = b.add(ckey, _new_cand({"text": cited, "first_author": fa, "year": y, "title": None,
+                                              "journal": None},
+                                             ("%s %d%s" % (fa, y, suf or "")) if fa and y else None, None, {},
+                                             role, "low", "proposed"))
+            _reason(cand, "agent_classified")
+            b.attach(cand, b.ev("text", "reflist_agent", loc, quote, "low"))
+    if b.cands:
+        b.use("reflist_agent")
+    _flag_review_needs(b)
+    res = _finalize(b, None, None, [], [])
+    res["rejected"] = rejected
+    res["dropped"] = dropped
+    return res
+
+
+# ---------------------------------------------------------------------------
 # beillesztés a review-dokumentumba (idempotens)
 # ---------------------------------------------------------------------------
 
@@ -1946,6 +2551,25 @@ def merge_into_review(review, result):
         for k in ("ref_hint", "context", "study_registry_in_review"):
             if nc.get(k) and not old.get(k):
                 old[k] = nc[k]
+        for r in nc.get("review_reasons") or ():
+            if r not in old.setdefault("review_reasons", []):
+                old["review_reasons"].append(r)
+        new_role, old_role = nc.get("role_in_review"), old.get("role_in_review")
+        if new_role and new_role != old_role and new_role != "unknown":
+            if old_role == "unknown" and old.get("status") == "proposed" and not old.get("decision_ids"):
+                # pl. irodalomjegyzék-tétel ('unknown'), amelyet az ágens/táblázat besorolt — továbbra is javaslat
+                old["role_in_review"] = new_role
+                old["review_reasons"] = [r for r in old.get("review_reasons", []) if r != "role_unknown"]
+            else:
+                alts = old.setdefault("role_alternatives", [])
+                alt = {"role": new_role, "evidence_ids": list(nc["evidence_ids"])}
+                if alt not in alts:
+                    alts.append(alt)
+                if "role_conflict" not in old.setdefault("review_reasons", []):
+                    old["review_reasons"].append("role_conflict")
+        if "role_conflict" in old.get("review_reasons", []) or \
+                (old.get("status") == "proposed" and nc.get("needs_review")):
+            old["needs_review"] = True
     if result.get("excluded_by_review"):
         ex = rv.setdefault("excluded_by_review", [])
         sigs = set((x.get("cited_as"), x.get("group_key")) for x in ex)
@@ -1954,6 +2578,8 @@ def merge_into_review(review, result):
                 continue
             d = dict(x)
             d["evidence_id"] = id_map.get(x["evidence_id"], x["evidence_id"])
+            if d.get("reason_evidence_id"):
+                d["reason_evidence_id"] = id_map.get(d["reason_evidence_id"], d["reason_evidence_id"])
             ex.append(d)
             sigs.add((x.get("cited_as"), x.get("group_key")))
     for fld in ("k_reported", "search_date"):

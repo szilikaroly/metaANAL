@@ -452,6 +452,7 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     check(/[■▣□]/.test(await txt(p, '#tr-heat tbody')), 'állapot-jelek (alak + szín)');
     check((await txt(p, '#tr-note')).indexOf('NEM a módszertan') >= 0, 'kiírja: a jelentés teljességét méri, nem a módszertant');
     await p.click('#tr-filter-E');
+    await p.waitForSelector('#tr-filter-E[aria-pressed="true"]');   // a navigáció (hashchange) aszinkron: az új nézetre várunk
     await screen(p, 'appraisal-tripod');
     await p.waitForSelector('#tr-heat');
     const nE = (await p.$$('#tr-heat thead th.tr-col')).length;

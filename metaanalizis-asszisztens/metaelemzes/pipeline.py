@@ -1531,12 +1531,14 @@ def plot_document(out, es, opt=None, run_info=None, data=None, provenance=None):
                  "tau2_text": _i18n(lambda lg, mn: _g3(r["tau2"], mn) if r["k"] > 1 and not fixed_model else "–")}
             if measure == "PFT" and axis_n:
                 e["analysis"] = {"estimate": r["estimate"], "ci_lower": r["ci_lower"], "ci_upper": r["ci_upper"]}
+            e["row_index"] = tix[i]         # E4c: a hozzáadott vizsgálat táblabeli sora (lefúrás, data-row)
             entries.append(e)
         lab = (out.get("column_labels") or {}).get("cumulative") or opt.get("cumulative")
         doc["cumulative"] = {"key_label": _same(lab), "entries": entries,
                              "axis": _series_axis([(e["ci_lower"], e["ci_upper"]) for e in entries], measure, axis_n,
                                                   [null], axis_title, pref)}
-    doc["bubble"] = None
+        doc["cumulative"].update(_cumulative_extras([r.get(col) for r in es.rows], col, lab, entries))
+    doc["bubble"] = _bubble_doc(out, es, studies, uids, tix, axis_title, pref, null, nh)
     notes = []
     sn = (out.get("back_transformed") or {}).get("scale_note")
     if sn:
@@ -1547,6 +1549,245 @@ def plot_document(out, es, opt=None, run_info=None, data=None, provenance=None):
         notes.append({"hu": hu_n, "en": en_n})
     doc["notes"] = notes
     return doc
+
+
+# ------------------------------------------------------------------ E4c: kumulatív sorrend, buborékábra, motor-SVG
+BUBBLE_GRID_N = 51      # a buborékábra rácsa: ennyi egyenközű pont a moderátor megfigyelt [min; max] tartományán
+
+
+def _cumulative_extras(keys, col, lab, entries):
+    """A kumulatív blokk kiegészítései: a rendezés leírása (oszlop, irány, rendezés típusa, hiányzó kulcsok) és
+    kezdőbarát magyarázat (a sensitivity.cumulative_order szabályai szerint)."""
+    present = [kk for kk in keys if not _blank(kk)]
+    n_missing = len(keys) - len(present)
+    is_num = [isinstance(kk, (int, float)) and not isinstance(kk, bool) for kk in present]
+    numeric = all(is_num)
+    mixed = any(is_num) and not numeric
+    name = lab or col
+    hu = "Sorrend: a(z) „%s” oszlop szerint növekvő (%s)" % (name, "számként" if numeric else
+                                                            "szövegként, természetes rendezéssel")
+    en = "Order: ascending by '%s' (%s)" % (name, "numeric" if numeric else "as text, natural sort")
+    if n_missing:
+        hu += "; %d vizsgálatnál hiányzik a rendezőkulcs, ezek a sor végére kerültek" % n_missing
+        en += "; %d stud%s without a sorting key placed last" % (n_missing, "y" if n_missing == 1 else "ies")
+    if mixed:
+        hu += "; az oszlop vegyesen tartalmaz számot és szöveget — ellenőrizd a sorrendet"
+        en += "; the column mixes numbers and text — check the order"
+    order = {"column": col, "label": _same(name), "direction": "ascending", "sort": "numeric" if numeric else "natural",
+             "missing_last": True, "n_missing": n_missing, "mixed_types": mixed,
+             "row_uids": [e["added_row_uid"] for e in entries], "text": {"hu": hu + ".", "en": en + "."}}
+    note = {"hu": "Kumulatív metaanalízis: minden sor az addig (a rendezőkulcs szerint) bevont vizsgálatok együttes "
+                  "becslése, így látszik, hogyan változott a becslés és a bizonytalansága, ahogy újabb vizsgálatok "
+                  "jelentek meg. Az utolsó sor (gyémánt) a teljes elemzés. A sorok nem független eredmények "
+                  "(ugyanazokat az adatokat elemzik újra), ezért a „mikortól szignifikáns” kérdésre nem adnak "
+                  "megbízható választ.",
+            "en": "Cumulative meta-analysis: each row pools the studies included up to that point (in the order of "
+                  "the sorting key), showing how the estimate and its uncertainty changed as new studies appeared. "
+                  "The last row (diamond) is the full analysis. The rows are not independent results (the same data "
+                  "are re-analysed), so they cannot reliably answer 'from when was it significant'."}
+    return {"order": order, "note": note}
+
+
+def bubble_moderator(out, es=None):
+    """(oszlopkulcs, címke), ha a meta-regresszió pontosan egy folytonos (numerikus) moderátorral futott (a kimaradt,
+    állandó moderátorok nélkül; kategóriás moderátor dummy-kódolt — együtthatója 'név=szint' —, ezért nem ilyen);
+    különben None. es nélkül (pl. a riportból) az együtthatók neve dönt; es-sel az értékek végességét is nézi."""
+    mr = out.get("metaregression")
+    if mr is None or mr.get("_vcov") is None:
+        return None
+    coefs = mr.get("coefficients") or []
+    if len(coefs) != 2 or coefs[0].get("name") != "intercept":
+        return None
+    keys = (out.get("columns") or {}).get("moderators") or []
+    labs = (out.get("column_labels") or {}).get("moderators") or []
+    dropped = set(out.get("metaregression_dropped") or [])
+    mods = [(key, lab) for key, lab in zip(keys, labs) if lab not in dropped]
+    if len(mods) != 1 or coefs[1].get("name") != mods[0][1]:
+        return None
+    if es is None:
+        return mods[0]
+    vals = [r.get(mods[0][0]) for r in es.rows]
+    if not vals or not all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) for v in vals):
+        return None
+    return mods[0]
+
+
+def _bubble_doc(out, es, studies, uids, tix, axis_title, pref, null, nh):
+    """A v2 'bubble' blokkja (E4c) egy folytonos moderátoros meta-regresszióhoz, különben None. Pontok: x = moderátor,
+    y = hatás az elemzési skálán, weight_pct = a meta-regresszió súlya (1/(v_i + τ²), %-ban; a buborék területe);
+    line / band / pi_band: [[x, …]] a moderátor megfigyelt tartományának egyenközű rácsán, a moderators.predict
+    (= metafor predict(rma(yi, vi, mods = ~x), newmods = …)) értékei: CI = ŷ ± krit·√(x0ᵀVx0), PI = ŷ ±
+    krit·√(x0ᵀVx0 + τ²), V a próba szerinti együttható-kovariancia (vcov), krit t(k − p) (knha) vagy z."""
+    mod = bubble_moderator(out, es)
+    if mod is None:
+        return None
+    key, lab = mod
+    mr = out["metaregression"]
+    measure = out["effect_sizes"]["measure"]
+    k = len(es)
+    xs = [float(r.get(key)) for r in es.rows]
+    tau2 = mr.tau2 or 0.0
+    w = [1.0 / (v + tau2) for v in es.vi]
+    sw = sum(w)
+    wp = [100.0 * a / sw for a in w]
+    lo, hi = min(xs), max(xs)
+    n = BUBBLE_GRID_N
+    grid = [lo + (hi - lo) * j / (n - 1.0) for j in range(n)]
+    grid[-1] = hi
+    pred = MO.predict(mr, [[1.0, g] for g in grid])
+    level = mr.get("level") or 0.95
+    lv = int(round(level * 100))
+    crit = MO.prediction_crit(mr, level)
+    df = mr.k - mr.p
+    points = []
+    for i in range(k):
+        st = studies[i] if i < len(studies) else {}
+        fl = st.get("flags") or {}
+        xt = _num_cell(xs[i])
+        points.append({"row_uid": uids[i], "row_index": tix[i], "label": es.labels[i], "x": xs[i], "y": es.yi[i],
+                       "se": math.sqrt(es.vi[i]), "weight_pct": wp[i], "weight_text": _same("%.1f%%" % wp[i]),
+                       "x_text": {"hu": xt, "en": P.num_text(xt, P.MINUS)},
+                       "display": st.get("display"), "display_text": st.get("display_text"),
+                       "flags": {"estimated": bool(fl.get("estimated")), "rob": fl.get("rob")}})
+    band = [[g, p_["ci_lower"], p_["ci_upper"]] for g, p_ in zip(grid, pred)]
+    x0, x1, y0, y1 = P.BUBBLE_FRAME
+    xax = P._Axis(lo, hi, x0, x1)
+    yvals = list(es.yi) + [v for b_ in band for v in b_[1:]] + ([null] if null is not None else [])
+    yax = P._Axis(min(yvals), max(yvals), 0, y1 - y0, measure in E.RATIO_MEASURES, measure, nh)
+    c0, c1 = mr.coefficients
+    test_txt = "t(%d)" % df if mr.test == "knha" else "z"
+    ratio = None
+    if measure in E.RATIO_MEASURES:
+        try:
+            ratio = [math.exp(c1[f]) for f in ("estimate", "ci_lower", "ci_upper")]
+        except (OverflowError, TypeError, ValueError):
+            ratio = None
+
+    def coef_text(lg, mn):
+        s = {"hu": "Meredekség (%s): %s / egység; p %s (%s); maradék τ² = %s; R² = %s",
+             "en": "Slope (%s): %s per unit; p %s (%s); residual τ² = %s; R² = %s"}[lg] % (
+            lab, P.fmt_triple(c1["estimate"], c1["ci_lower"], c1["ci_upper"], mn), _p(c1.get("p")), test_txt,
+            _g3(tau2, mn), "–" if mr.get("R2") is None else "%.0f%%" % mr.R2)
+        if ratio is not None and all(math.isfinite(v) for v in ratio):
+            s += {"hu": "; %s-szorzó / egység: %s", "en": "; %s ratio per unit: %s"}[lg] % (
+                measure, P.fmt_triple(ratio[0], ratio[1], ratio[2], mn))
+        return s
+
+    rng = {lg: "%s–%s" % (P.num_text(_num_cell(lo), mn), P.num_text(_num_cell(hi), mn))
+           for lg, mn in (("hu", "-"), ("en", P.MINUS))}
+    note = {"hu": "Buborékábra: minden kör egy vizsgálat — vízszintesen a moderátor (%s) értéke, függőlegesen a "
+                  "hatásméret; a kör területe a vizsgálat meta-regressziós súlyával arányos. A folytonos vonal a modell "
+                  "szerinti átlagos hatás a moderátor függvényében; a kitöltött sáv ennek %d%%-os konfidenciasávja (az "
+                  "együtthatók kovarianciájából), a szaggatott vonalak a %d%%-os predikciós sáv: ide esne egy új, hasonló "
+                  "vizsgálat valódi hatása. A vonal csak a megfigyelt tartományban (%s) értelmezhető. A meta-regresszió "
+                  "vizsgálatok közötti, megfigyelési összefüggés: nem bizonyít ok-okozatot (ökológiai torzítás), és "
+                  "kevés vizsgálatnál (ökölszabály: legalább 10 vizsgálat moderátoronként) bizonytalan."
+                  % (lab, lv, lv, rng["hu"]),
+            "en": "Bubble plot: each circle is a study — horizontally the moderator (%s), vertically the effect size; "
+                  "the circle's area is proportional to the study's meta-regression weight. The solid line is the "
+                  "model's mean effect as a function of the moderator; the shaded band is its %d%% confidence band "
+                  "(from the coefficient covariance), the dashed lines the %d%% prediction band: where the true effect "
+                  "of a new, similar study would be expected. The line is interpretable only within the observed range "
+                  "(%s). Meta-regression is an observational, between-study association: it does not prove causation "
+                  "(ecological bias) and is uncertain with few studies (rule of thumb: at least 10 studies per "
+                  "moderator)." % (lab, lv, lv, rng["en"])}
+    if k < 10:
+        note["hu"] += " Itt k = %d < 10, ezért az összefüggés különösen bizonytalan." % k
+        note["en"] += " Here k = %d < 10, so the association is particularly uncertain." % k
+    if mr.get("robust") is not None:
+        note["hu"] += " A sávok a modell-alapú kovarianciából készültek (a robusztus SE-k az eredménytáblában)."
+        note["en"] += " The bands use the model-based covariance (the robust SEs are in the results table)."
+    return {
+        "moderator": {"name": key, "label": _same(lab), "type": "continuous", "coefficient": lab},
+        "model": {"k": mr.k, "p": mr.p, "tau2": tau2, "tau2_method": mr.tau2_method, "test": mr.test,
+                  "df": df if mr.test == "knha" else None, "crit": crit, "level": level, "R2": mr.get("R2"),
+                  "QM": mr.get("QM"), "QM_p": mr.get("QM_p")},
+        "coefficients": [{"name": c["name"], "estimate": c["estimate"], "se": c["se"], "ci_lower": c["ci_lower"],
+                          "ci_upper": c["ci_upper"], "p": c.get("p")} for c in (c0, c1)],
+        "vcov": [list(row) for row in mr._vcov],
+        "points": points,
+        "line": [[g, p_["pred"]] for g, p_ in zip(grid, pred)],
+        "band": band,
+        "pi_band": [[g, p_["pi_lower"], p_["pi_upper"]] for g, p_ in zip(grid, pred)],
+        "grid_n": n, "x_range": [lo, hi],
+        "x_axis": _axis_doc(xax, _same(lab), pref),
+        "y_axis": _axis_doc(yax, axis_title, pref, {"refs": [{"at": null, "text": None}] if null is not None else []}),
+        "coef_text": _i18n(coef_text),
+        "line_label": {"hu": "Illesztett meta-regressziós egyenes", "en": "Fitted meta-regression line"},
+        "band_label": {"hu": "%d%%-os konfidenciasáv" % lv, "en": "%d%% confidence band" % lv},
+        "pi_band_label": {"hu": "%d%%-os predikciós sáv" % lv, "en": "%d%% prediction band" % lv},
+        "note": note,
+    }
+
+
+FIGURE_KINDS = ("cumulative", "loo", "bubble")
+EXTRA_PLOT_FILES = ("cumulative.svg", "bubble.svg")
+_RUN_FILE_KINDS = ("forest", "funnel", "doi")
+_FIGURE_TITLES = {"cumulative": {"hu": "Kumulatív metaanalízis", "en": "Cumulative meta-analysis"},
+                  "loo": {"hu": "Leave-one-out érzékenységi elemzés", "en": "Leave-one-out sensitivity analysis"},
+                  "bubble": {"hu": "Buborékábra (meta-regresszió)", "en": "Bubble plot (meta-regression)"}}
+
+
+def render_figure(plot, kind, lang="hu", annotate=False):
+    """A motor SVG-je egy szk.ma.plot/v2 dokumentum kész blokkjából (E4c; a munkapad ábra-exportja és a
+    write_outputs ugyanezt hívja): {'svg', 'lang', 'kind'}. kind: 'cumulative' | 'loo' | 'bubble'. A forest, a
+    funnel és a Doi-plot a futás saját SVG-je (make_plots / make_doi_plot) — ezekre None (a hívó a futás fájljára
+    vált). Hiányzó blokk, ismeretlen fajta vagy nem v2 dokumentum → ValueError (magyar üzenet)."""
+    lang = P.check_lang(lang or "hu")
+    if kind in _RUN_FILE_KINDS:
+        return None
+    if kind not in FIGURE_KINDS:
+        raise ValueError("ismeretlen ábrafajta: %r (a dokumentumból rajzolható: %s)" % (kind, ", ".join(FIGURE_KINDS)))
+    if not isinstance(plot, dict) or plot.get("schema") != PLOT_SCHEMA_V2:
+        raise ValueError("a %s ábrához szk.ma.plot/v2 dokumentum kell (plot_data.json)" % kind)
+    null = (plot.get("scale") or {}).get("null_analysis")
+    null = null if isinstance(null, (int, float)) and not isinstance(null, bool) else None
+    effect = P._pick((plot.get("labels") or {}).get("effect"), lang) or None
+    title = _FIGURE_TITLES[kind][lang]
+    annotate = bool(annotate)
+    if kind == "cumulative":
+        cum = plot.get("cumulative")
+        ents = (cum or {}).get("entries") or []
+        if not ents:
+            raise ValueError("ebben a futásban nincs kumulatív elemzés (adj meg rendező oszlopot: --cumulative)")
+        footer = [P._pick(t, lang) for t in ((cum.get("order") or {}).get("text"), cum.get("note")) if t]
+        svg = P.series_svg(ents, cum.get("axis") or plot.get("axis"), "cumulative", cum.get("key_label"), effect, null,
+                           ents[-1].get("estimate"), title, footer, lang, annotate)
+    elif kind == "loo":
+        loo = plot.get("loo") or []
+        if not loo:
+            raise ValueError("ebben a futásban nincs leave-one-out elemzés (legalább 3 vizsgálat kell)")
+        ref = next((s.get("estimate") for s in plot.get("summaries") or [] if s.get("primary")), None)
+        rix = {s.get("row_uid"): s.get("row_index") for s in plot.get("studies") or []}
+        svg = P.series_svg(loo, plot.get("loo_axis") or plot.get("axis"), "loo", None, effect, null, ref, title,
+                           None, lang, annotate, row_index=rix)
+    else:
+        bub = plot.get("bubble")
+        if not bub or not bub.get("points"):
+            raise ValueError("ebben a futásban nincs buborékábra (egyetlen folytonos moderátoros meta-regresszió kell: "
+                             "--moderators <oszlop>)")
+        svg = P.bubble_svg(bub, null, title, lang, annotate)
+    return {"svg": svg, "lang": lang, "kind": kind}
+
+
+def make_extra_plots(out, es, doc=None, lang=None, annotate=None, run_info=None, provenance=None):
+    """Az E4c motor-SVG-k fájlnév szerint: {'cumulative.svg': …, 'bubble.svg': …} — csak a ténylegesen futtatott
+    elemzésekre (kumulatív elemzés; egyetlen folytonos moderátoros meta-regresszió); egyébként üres dict (a
+    kimenet így bájtra azonos a korábbival). doc: a futás v2 dokumentuma (újraszámolás nélkül); lang / annotate:
+    alapból a plot_locale / svg_annotate opció."""
+    has_cum = bool((out.get("sensitivity") or {}).get("cumulative"))
+    if out.get("primary") is None or not (has_cum or bubble_moderator(out, es) is not None):
+        return {}
+    opt = _plot_opt(out)
+    lang = P.check_lang(lang or opt.get("plot_locale") or "hu")
+    annotate = bool(opt.get("svg_annotate")) if annotate is None else bool(annotate)
+    if not isinstance(doc, dict) or doc.get("schema") != PLOT_SCHEMA_V2:
+        doc = plot_document(out, es, run_info=run_info, provenance=provenance)
+    res = {}
+    for kind, name in (("cumulative", "cumulative.svg"), ("bubble", "bubble.svg")):
+        if doc.get(kind):
+            res[name] = render_figure(doc, kind, lang, annotate)["svg"]
+    return res
 
 
 def plot_data(out, es, opt=None, run_info=None, data=None, provenance=None):
@@ -1584,11 +1825,17 @@ def write_outputs(out, es, outdir, report_md=None, plots=True, run_info=None, pr
                 fh.write(content)
             paths[name] = p
         p = os.path.join(outdir, "plot_data.json")
+        pdoc = plot_data(out, es, run_info=run_info, data=data, provenance=provenance)
         with open(p, "w", encoding="utf-8") as fh:
-            json.dump(to_jsonable(plot_data(out, es, run_info=run_info, data=data, provenance=provenance)), fh,
-                      ensure_ascii=False, indent=1)
+            json.dump(to_jsonable(pdoc), fh, ensure_ascii=False, indent=1)
         paths["plot_data.json"] = p
-    for name in PLOT_FILES:
+        # E4c: kumulatív és buborék-SVG csak a ténylegesen futtatott elemzésekhez (különben nincs új fájl)
+        for name, content in sorted(make_extra_plots(out, es, pdoc, run_info=run_info, provenance=provenance).items()):
+            p = os.path.join(outdir, name)
+            with open(p, "w", encoding="utf-8") as fh:
+                fh.write(content)
+            paths[name] = p
+    for name in PLOT_FILES + EXTRA_PLOT_FILES:
         p = os.path.join(outdir, name)
         if name not in paths and os.path.isfile(p):
             os.remove(p)

@@ -167,10 +167,12 @@ def secret_values(env=None, extra=()):
 
 
 _PARAM_RE = re.compile(r"(?i)\b(api_key|apikey|insttoken|mailto|email|access_token)(=|%3D)([^&\s\"'<>\\]+)")
-_HEADER_RE = re.compile(r"(?i)\b(authorization|x-els-apikey|x-els-insttoken|cookie|set-cookie)(\s*[:=]\s*)"
-                        r"([^\r\n,;\"'\\]+)")
+_HEADER_RE = re.compile(r"(?i)\b(authorization|proxy-authorization|x-els-apikey|x-els-insttoken|cookie|set-cookie)"
+                        r"([\"']?\s*[:=]\s*[\"']?)([^\r\n,;\"'\\]+)")
 _BEARER_RE = re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]+")
 _MAILTO_RE = re.compile(r"(?i)mailto:[^\s);,\"'<>\\]+")
+#: URL-ba ágyazott hitelesítő adat (pl. ``http://felhasznalo:jelszo@proxy:3128``) — a proxy jelszava is titok
+_USERINFO_RE = re.compile(r"(?i)(\b[a-z][a-z0-9+.-]*://)[^/\s:@\"'<>]+:[^/\s@\"'<>]+@")
 
 
 def redact(text, env=None, extra=()):
@@ -190,6 +192,7 @@ def redact(text, env=None, extra=()):
     s = _HEADER_RE.sub(lambda m: m.group(1) + m.group(2) + REDACTED, s)
     s = _BEARER_RE.sub("Bearer " + REDACTED, s)
     s = _MAILTO_RE.sub("mailto:" + REDACTED, s)
+    s = _USERINFO_RE.sub(lambda m: m.group(1) + REDACTED + "@", s)
     return s
 
 
@@ -219,6 +222,45 @@ def find_secret_leaks(data, env=None, extra=()):
 
 class SecretLeakError(RuntimeError):
     """Titok került volna kimenetbe (kazetta, napló) — az írás elmaradt."""
+
+
+class SecretRegistry(object):
+    """A titkos értékek nyilvántartása (TERV 3.5: ``SecretRegistry``, ``redact()``) — egy helyen olvassa a
+    környezeti változókat, és minden kimenő szöveget ezen át lehet redaktálni.
+
+    ``SecretRegistry(env=None, extra=())``; ``redact(szöveg)``, ``leaks(adat)`` (a szivárgó változók NEVEI),
+    ``status()`` (csak igen/nem), ``assert_clean(adat, hol)`` (``SecretLeakError``, ha titok van benne).
+    Az ``extra`` további (pl. tesztben hamis) titok-értékek listája."""
+
+    def __init__(self, env=None, extra=()):
+        self.env = env
+        self.extra = tuple(str(v) for v in (extra or ()) if v)
+
+    def add(self, value):
+        """Egy további titkos érték felvétele (pl. futás közben kapott token)."""
+        if value and len(str(value)) >= 4:
+            self.extra = self.extra + (str(value),)
+
+    def values(self):
+        return secret_values(self.env, self.extra)
+
+    def redact(self, text):
+        return redact(text, self.env, self.extra)
+
+    def redact_url(self, url):
+        return redact(redact_url(url, self.env), self.env, self.extra)
+
+    def leaks(self, data):
+        return find_secret_leaks(data, self.env, self.extra)
+
+    def status(self):
+        return secret_status(self.env)
+
+    def assert_clean(self, data, where="output"):
+        found = self.leaks(data)
+        if found:
+            raise SecretLeakError("Titok kerülne ide (%s): %s — az írás elmaradt." % (where, ", ".join(found)))
+        return True
 
 
 def _split_query(query):
@@ -521,6 +563,13 @@ class Response(object):
     def json(self):
         return parse_json(self.text, source=self.source, endpoint=self.url)
 
+    def json_dict(self):
+        """A válasz JSON-objektumként; ha nem objektum (pl. proxy-hibaoldal, lista), ``ParseError``."""
+        data = self.json()
+        if not isinstance(data, dict):
+            raise ParseError(redact("%s: a válasz nem JSON-objektum (%s)" % (self.source or "?", self.url or "?")))
+        return data
+
     def xml(self):
         return parse_xml(self.text, source=self.source, endpoint=self.url)
 
@@ -607,6 +656,15 @@ def as_list(x):
     if x is None:
         return []
     return list(x) if isinstance(x, (list, tuple)) else [x]
+
+
+def as_dict(x):
+    """``x``, ha szótár; különben üres szótár (váratlan válaszszerkezet ellen)."""
+    return x if isinstance(x, dict) else {}
+
+
+#: váratlan válaszszerkezetből eredő hibák (a forrás ilyenkor „unreachable"/részleges, nem omlik össze a lépés)
+SHAPE_ERRORS = (AttributeError, TypeError, KeyError, IndexError, ValueError)
 
 
 def to_int(x, default=None):
@@ -1015,19 +1073,62 @@ class CassettePlayer(object):
         return int(resp.get("status", 200)), headers, body_bytes
 
 
+#: a környezeti változóval kért kazetták folyamatonként közösek (több HttpClient ugyanabba a fájlba rögzít,
+#: illetve ugyanabból a sorból játszik le)
+_ENV_CASSETTES = {}
+_ENV_CASSETTES_LOCK = threading.Lock()
+
+
+def _save_env_recorder(recorder):
+    """``atexit``: a környezeti változóval kért rögzítő kiírása a folyamat végén (titok esetén nem ír)."""
+    try:
+        recorder.save()
+    except SecretLeakError as exc:  # pragma: no cover - csak hibás környezetben
+        try:
+            import sys
+            sys.stderr.write(redact(str(exc)) + "\n")
+        except Exception:
+            pass
+    except OSError:  # pragma: no cover
+        pass
+
+
 def cassette_from_env(env=None):
-    """``(player, recorder)`` a ``MA_HH_CASSETTE`` / ``MA_HH_CASSETTE_FILE`` alapján (``off``: ``(None, None)``)."""
+    """``(player, recorder)`` a ``MA_HH_CASSETTE`` / ``MA_HH_CASSETTE_FILE`` alapján (``off``: ``(None, None)``).
+
+    ``replay``: a fájl(ok)/mappa kazettáiból játszik le (ismeretlen kérés → ``CassetteMiss``, nincs hálózat).
+    ``record``: élő kérések rögzítése; ha a ``MA_HH_CASSETTE_FILE`` mappa, a fájl
+    ``<mappa>/recorded-<időbélyeg>.json``. A rögzítő folyamatonként közös, és a folyamat végén (``atexit``)
+    automatikusan kiíródik (a ``HttpClient.close()`` azonnal is kiírja)."""
     mode = (get_env(ENV_CASSETTE, env) or "off").lower()
     if mode in ("", "off", "0", "no", "none"):
         return None, None
     path = get_env(ENV_CASSETTE_FILE, env)
     if not path:
         raise ValueError("MA_HH_CASSETTE=%s mellé add meg a kazettát: MA_HH_CASSETTE_FILE=<fájl vagy mappa>." % mode)
-    if mode == "replay":
-        return CassettePlayer(path, env=env), None
-    if mode == "record":
-        return None, CassetteRecorder(path, env=env)
-    raise ValueError("Ismeretlen MA_HH_CASSETTE érték: %r (record|replay|off)." % mode)
+    if mode not in ("replay", "record"):
+        raise ValueError("Ismeretlen MA_HH_CASSETTE érték: %r (record|replay|off)." % mode)
+    key = (mode, os.path.abspath(path))
+    with _ENV_CASSETTES_LOCK:
+        obj = _ENV_CASSETTES.get(key)
+        if obj is None:
+            if mode == "replay":
+                obj = CassettePlayer(path, env=env)
+            else:
+                target = path
+                if os.path.isdir(path) or path.endswith(("/", os.sep)):
+                    target = os.path.join(path, "recorded-%s.json" % compact_ts())
+                obj = CassetteRecorder(target, env=env)
+                import atexit
+                atexit.register(_save_env_recorder, obj)
+            _ENV_CASSETTES[key] = obj
+    return (obj, None) if mode == "replay" else (None, obj)
+
+
+def reset_env_cassettes():
+    """A folyamatonként közös (környezeti változós) kazetták elfelejtése — tesztekhez."""
+    with _ENV_CASSETTES_LOCK:
+        _ENV_CASSETTES.clear()
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1371,7 +1472,8 @@ class HttpClient(object):
             now = self._clock()
             if net_exc is not None:
                 msg = str(getattr(net_exc, "reason", net_exc)).lower()
-                retryable = not any(s in msg for s in _NONRETRY_NET) and not isinstance(net_exc, ssl.SSLError)
+                retryable = (not any(s in msg for s in _NONRETRY_NET)
+                             and not isinstance(net_exc, (ssl.SSLError, ValueError)))
                 if retryable and attempt < self.max_retries:
                     self._stat(source, "retries")
                     self._sleep(self._backoff(attempt))
@@ -1399,7 +1501,10 @@ class HttpClient(object):
                                 at=utc_ts(now))
 
             lower = dict((str(k).lower(), v) for k, v in (hdrs or {}).items())
-            excerpt = raw[:600].decode("utf-8", "replace") if raw else None
+            # a hibaszöveg-részletet a kliens SAJÁT titkaival redaktáljuk, MIELŐTT csonkolnánk (a szerver
+            # visszhangozhatja a kérést — a kivétel már nem tudja, mely értékek titkosak)
+            excerpt = redact(raw[:2000].decode("utf-8", "replace"), self.env)[:600] if raw else None
+            lower = redact_headers(lower, self.env)
             if status == 401:
                 self._stat(source, "errors")
                 err = SourceUnavailable(source, "unauthorized", http_status=401, endpoint=canon,
@@ -1468,8 +1573,11 @@ class HttpClient(object):
         data = body.encode("utf-8") if body is not None else None
         if data is not None:
             req_headers.setdefault("Content-Type", "application/x-www-form-urlencoded")
-        req = urllib.request.Request(full_url, data=data, headers=req_headers, method=method)
         status, hdrs, raw = None, {}, b""
+        try:
+            req = urllib.request.Request(full_url, data=data, headers=req_headers, method=method)
+        except ValueError as exc:  # hibás URL — a kivétel szövege az URL-t (és benne kulcsot) tartalmazhatna
+            raise HttpError(source, 0, endpoint=canon, body_excerpt=redact(str(exc), self.env)[:120])
         try:
             resp = self.opener.open(req, timeout=timeout or self.timeout)
             try:
@@ -1485,7 +1593,8 @@ class HttpClient(object):
                 raw = exc.read() or b""
             except Exception:
                 raw = b""
-        except (urllib.error.URLError, socket.timeout, ConnectionError, http.client.HTTPException, OSError) as exc:
+        except (urllib.error.URLError, socket.timeout, ConnectionError, http.client.HTTPException, OSError,
+                ValueError) as exc:  # ValueError: pl. hibás proxy-URL a környezetben
             return None, {}, b"", exc
         if self.recorder is not None:
             self.recorder.record(method, full_url, body, status, hdrs, raw, accept=self._accept(accept))
@@ -1581,8 +1690,13 @@ class BaseClient(object):
         raise NotImplementedError
 
     def check(self):
-        """Olcsó próbakérés; az eredmény a ``state.sources.<kulcs>`` mezőibe írható (``sources.apply_checks``)."""
+        """Olcsó próbakérés; az eredmény a ``state.sources.<kulcs>`` mezőibe írható (``sources.apply_checks``).
+        Hálózati hiba, hibakód vagy váratlan válaszszerkezet sem állítja meg: állapotot ad vissza."""
         try:
             return self._probe()
         except (SourceUnavailable, HttpError, ParseError) as exc:
             return self._result_from_exc(exc)
+        except SHAPE_ERRORS as exc:
+            return self._result("unreachable", detail_text={
+                "hu": "Váratlan válaszszerkezet (%s) — proxy hibaoldal vagy API-változás?" % type(exc).__name__,
+                "en": "Unexpected response structure (%s) — proxy error page or API change?" % type(exc).__name__})

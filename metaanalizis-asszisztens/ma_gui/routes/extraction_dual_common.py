@@ -22,7 +22,6 @@ ha a tábla azóta változott, a döntés ELAVULT, és újra kell dönteni (a fe
 Adatvédelem (T10): naplóba és activity-be cellaérték, kulcsérték és indoklás-szöveg nem kerül — csak út, sha256,
 kimenet, mezőnevek és darabszámok."""
 import base64
-import posixpath
 import re
 
 from metaelemzes import api
@@ -189,7 +188,7 @@ def _dir_for(app, data):
         except store.StoreError:
             rel = None
         if rel:
-            head = posixpath.dirname(rel)
+            head = rel.rsplit("/", 1)[0] if "/" in rel else ""
             return (head + "/" if head else "") + KETTOS
     return DEFAULT_DIR
 
@@ -274,8 +273,12 @@ def consensus_problems(doc):
 
 
 def empty_consensus(outcome_id, key=None):
-    return {"schema": CONSENSUS_SCHEMA, "outcome": outcome_id, "key": list(key) if key else None, "raters": {},
-            "sources": {}, "decisions": [], "csv": None}
+    """Új konszenzus-dokumentum; a ``key`` csak akkor kerül bele, ha ismert (a szerződésben nem üres lista)."""
+    doc = {"schema": CONSENSUS_SCHEMA, "outcome": outcome_id, "raters": {}, "sources": {}, "decisions": [],
+           "csv": None}
+    if key:
+        doc["key"] = list(key)
+    return doc
 
 
 # ---------------------------------------------------------------------------- oszlopok és kulcsok
@@ -353,15 +356,26 @@ def build_items(result, doc, ta=None, tb=None):
         if it["row_uid_b"] is None and it["key"] in rows_b:
             it["row_uid_b"] = rows_b[it["key"]]["row_uid"]
         items.append(it)
+    # a csak az egyik táblában szereplő sor hatása az összesített becslésre (a motor row_impacts-e, ha adja)
+    row_imp = {}
+    for ri in result.get("row_impacts") or []:
+        if isinstance(ri, dict) and isinstance(ri.get("key"), str) and ri.get("side") in ("a", "b"):
+            row_imp[(ri["key"], ri["side"])] = ri.get("impact")
+    row_uid_of = {}
+    for side, lst in (("a", result.get("only_a_rows") or []), ("b", result.get("only_b_rows") or [])):
+        for r in lst:
+            if isinstance(r, dict) and isinstance(r.get("key"), str) and r.get("row_uid"):
+                row_uid_of[(r["key"], side)] = r["row_uid"]
     for side, keys in (("a", result.get("only_a") or []), ("b", result.get("only_b") or [])):
         for j, k in enumerate(keys):
             src = rows_a.get(k) if side == "a" else rows_b.get(k)
+            uid = src["row_uid"] if src else row_uid_of.get((k, side))
             items.append({"id": "r%s%d" % (side, j), "level": "row", "key": k, "field": ROW_FIELD,
                           "kind": "only_" + side, "a": None, "b": None,
-                          "row_uid_a": src["row_uid"] if side == "a" and src else None,
-                          "row_uid_b": src["row_uid"] if side == "b" and src else None,
-                          "hint": None, "hint_code": None, "kb": None, "impact": None, "auto": False,
-                          "needs_decision": True})
+                          "row_uid_a": uid if side == "a" else None,
+                          "row_uid_b": uid if side == "b" else None,
+                          "hint": None, "hint_code": None, "kb": None, "impact": row_imp.get((k, side)),
+                          "auto": False, "needs_decision": True})
     total = decided = auto = stale = 0
     for it in items:
         dk = _dkey(it["key"], it["field"])
@@ -499,10 +513,11 @@ def engine_consensus(fn, ta, tb, rel_a, rel_b, abs_a, abs_b, doc, key):
 
 
 # ---------------------------------------------------------------------------- CSV-bájtok és atomikus írás
-def csv_bytes(app, rel, header, rows, fmt=None):
+def csv_bytes(app, rel, header, rows, fmt=None, write_uids=True):
     """A tábla bájtjai a tároló formátumtartó CSV-írójával (a meglévő fájl formátuma — a változatlan sorok bájtra
     azonosak —, különben ``fmt``), a visszaolvashatóság ellenőrzésével. ``rel`` None: új fájl (pl. letöltendő
-    sablon). → (bájtok, a visszaolvasott Table)."""
+    sablon). ``write_uids`` False: row_uid oszlop nélkül (a második kinyerő sablonja — a B tábla a betöltéskor kap
+    azonosítókat; így a sablon determinisztikus, és nem visz át A-azonosítókat). → (bájtok, a visszaolvasott Table)."""
     cur = None
     if rel is not None:
         path = app.store.path(rel)
@@ -517,12 +532,12 @@ def csv_bytes(app, rel, header, rows, fmt=None):
             taken.add(uid)
         sub.append((uid, cells))
     out_fmt = orig.fmt if orig is not None else (fmt.copy() if fmt is not None else store.default_format())
-    data = store._encode(store._render(orig, hdr, sub, out_fmt, True, uid_pos), out_fmt, hdr, sub)
+    data = store._encode(store._render(orig, hdr, sub, out_fmt, write_uids, uid_pos), out_fmt, hdr, sub)
     parsed = store._reads_back(data, hdr, sub)
     if parsed is None:
         alt = out_fmt.copy()
         alt.quoting = alt.header_quoting = "all"
-        data = store._encode(store._render(orig, hdr, sub, alt, True, uid_pos), alt, hdr, sub)
+        data = store._encode(store._render(orig, hdr, sub, alt, write_uids, uid_pos), alt, hdr, sub)
         parsed = store._reads_back(data, hdr, sub)
     if parsed is None:
         raise ApiError("VALIDATION", "A tábla így nem olvasható vissza egyértelműen (elválasztó karakter a cellákban?). "

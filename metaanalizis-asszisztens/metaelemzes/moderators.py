@@ -550,12 +550,53 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
             warnings.append("Robusztus (HC1) SE kevés vizsgálatnál (k = %d) alulbecsülheti a "
                             "bizonytalanságot; kis mintás korrekció (pl. CR2, clubSandwich) "
                             "megbízhatóbb." % k)
+    # _vcov: a próba szerinti együttható-kovariancia (KH-nál s²-tel skálázva) — a predict() sávjaihoz; az
+    # aláhúzásos mező nem kerül a results.json-ba (MetaResult.to_dict)
     return MetaResult(
         kind="meta_regression", tau2=tau2, tau2_method=method, tau2_info=tau2_info, test=test, k=k, p=p,
         coefficients=coefs, QM=qm, QM_df=len(idx), QM_p=qm_p, QM_type="F" if test == "knha" else "chi2",
         QE=qe, QE_df=df_res, QE_p=dist.chi2_sf(qe, df_res), I2_res=i2_res, R2=r2,
-        robust=rob, warnings=warnings, level=level,
+        robust=rob, warnings=warnings, level=level, _vcov=vb,
     )
+
+
+def prediction_crit(mr, level=None):
+    """A predict() sávjainak kritikus értéke: t(k − p) a 'knha' próbánál, különben z (level: alapból a
+    meta-regresszióé, ennek hiányában 0.95)."""
+    lv = mr.get("level") if level is None else level
+    lv = 0.95 if lv is None else lv
+    if mr.test == "knha":
+        return dist.t_ppf(0.5 + lv / 2.0, mr.k - mr.p)
+    return dist.norm_ppf(0.5 + lv / 2.0)
+
+
+def predict(mr, xnew, level=None):
+    """Az illesztett meta-regresszió előrejelzése új moderátor-értékeknél — a metafor
+    predict(rma(yi, vi, mods = …), newmods = …) megfelelője.
+
+    xnew: a modellmátrix új sorai (tengelymetszetes modellnél az első elem 1.0), pl. [[1.0, x], …].
+    Soronként: pred = x0ᵀb; se = √(x0ᵀ V x0), ahol V a próba szerinti együttható-kovariancia (Knapp–Hartung
+    esetén s²-tel skálázva); CI = pred ± krit·se; PI (predikciós sáv: ahol egy új vizsgálat valódi hatása
+    várható) = pred ± krit·√(se² + τ²). krit: t(k − p) a 'knha' próbánál, különben z (mint a metaforban).
+    level: alapból a meta-regresszióé. → [{pred, se, ci_lower, ci_upper, pi_lower, pi_upper}]"""
+    vb = mr.get("_vcov")
+    if vb is None:
+        raise ModelError("a meta-regresszió eredményéből hiányzik az együttható-kovariancia (régi eredmény?)")
+    b = [c["estimate"] for c in mr.coefficients]
+    p = len(b)
+    crit = prediction_crit(mr, level)
+    tau2 = mr.tau2 or 0.0
+    out = []
+    for x0 in xnew:
+        if len(x0) != p:
+            raise ModelError("predict: az új sor hossza (%d) eltér az együtthatók számától (%d)" % (len(x0), p))
+        pred = sum(a * c for a, c in zip(x0, b))
+        var = sum(x0[i] * sum(vb[i][j] * x0[j] for j in range(p)) for i in range(p))
+        se = math.sqrt(max(var, 0.0))
+        pse = math.sqrt(max(var, 0.0) + tau2)
+        out.append({"pred": pred, "se": se, "ci_lower": pred - crit * se, "ci_upper": pred + crit * se,
+                    "pi_lower": pred - crit * pse, "pi_upper": pred + crit * pse})
+    return out
 
 
 def design_matrix(rows, moderators, intercept=True):

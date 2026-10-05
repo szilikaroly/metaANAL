@@ -15,7 +15,7 @@ from __future__ import absolute_import
 import urllib.parse
 
 from . import net
-from .net import BaseClient, SourceUnavailable, get_env, get_path, as_list, to_int, norm_doi
+from .net import BaseClient, SourceUnavailable, get_env, get_path, as_list, as_dict, to_int, norm_doi
 
 SOURCE = "crossref"
 PLATFORM = "Crossref REST API"
@@ -27,6 +27,8 @@ def work_record(m):
     """Egy Crossref-munka normalizált alakja (bibliográfiai tények; az absztraktot eldobjuk)."""
     authors = []
     for a in as_list(m.get("author")):
+        if not isinstance(a, dict):
+            continue
         fam = a.get("family")
         if fam:
             authors.append(("%s %s" % (fam, "".join(p[0] for p in (a.get("given") or "").split() if p))).strip())
@@ -83,7 +85,9 @@ class Client(BaseClient):
         resp = self.http.get(SOURCE, url, params=self._params(), accept="json", allow_status=(400,))
         if resp.status != 200:
             return None
-        msg = resp.json().get("message") or {}
+        msg = as_dict(resp.json_dict().get("message"))
+        if not msg:
+            return None
         rec = work_record(msg)
         return rec if rec["doi"] == d else None
 
@@ -93,8 +97,8 @@ class Client(BaseClient):
         params = self._params([("query.bibliographic", text), ("rows", int(rows)),
                                ("select", "DOI,title,author,issued,container-title,short-container-title,volume,"
                                           "issue,page,type,ISSN,score,update-to,published-print,published-online")])
-        data = self.http.get(SOURCE, BASE + "works", params=params, accept="json").json()
-        return [work_record(m) for m in as_list(get_path(data, "message", "items"))]
+        data = self.http.get(SOURCE, BASE + "works", params=params, accept="json").json_dict()
+        return [work_record(m) for m in as_list(get_path(data, "message", "items")) if isinstance(m, dict)]
 
     def try_work(self, doi):
         """``(rekord|None, SourceUnavailable|None)`` — sosem dob elérhetetlenség miatt."""

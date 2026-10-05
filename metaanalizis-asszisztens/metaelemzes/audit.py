@@ -2,47 +2,65 @@
 """Projekt-audit: kereszt-artefaktum X-szabályok a projektmappán (szk.ma.project-audit/v1; terv 6.4, 4.15; E8).
 
 Az X-szabályok a fájlok ÖSSZHANGJÁT ellenőrzik (adattábla ↔ eredet-oldalfájl ↔ spec ↔ commit-futás ↔ értékelés ↔
-PRISMA), nem az adat helyességét (az a V-szabályoké). A kódok — a V- és P-szabályokhoz hasonlóan — tudásbázis-
-azonosítók: a RULES szótár formátuma a validate.RULES-é (súlyosság, cím, teendő, forrás), a szakaszt a RULE_STAGES,
-a kapcsolódó KB-szabályokat a KB_REFS adja.
+GRADE / SoF ↔ ábra ↔ PRISMA), nem az adat helyességét (az a V-szabályoké). A kódok — a V- és P-szabályokhoz
+hasonlóan — tudásbázis-azonosítók: a RULES szótár formátuma a validate.RULES-é (súlyosság, cím, teendő, forrás), a
+szakaszt a RULE_STAGES, a kapcsolódó KB-szabályokat a KB_REFS, az angol címet a TITLES_EN adja.
 
 A projektmappa (terv 2.4; minden fájl opcionális — ami hiányzik, azt a szabály nem tudja ellenőrizni, és ezt a
-kimenet `not_checked` listája indokkal sorolja fel, találat helyett):
+kimenet `not_checked` listája indokkal sorolja fel, találat helyett; ha a projektben sehol sincs ilyen fájl, a tétel
+projektszintű, outcome: null):
 
-  ma-projekt.json                          kimenetek (id, data, measure, primary_spec)
-  projekt.sqlite                           ellenőrzőpontok (szakasz-kontextus), döntések (X016)
-  02_szures/prisma_flow.json | prisma_folyamat.md     bevont vizsgálatok száma (I; X014)
-  03_adatok/<kimenet>.csv                  adattábla (row_uid, estimated, rob, forras_oldal …)
+  ma-projekt.json                          kimenetek (id, data, measure, primary_spec), review_type, appraisal_tools,
+                                           conventions
+  projekt.sqlite                           ellenőrzőpontok (szakasz-kontextus), döntések (X016), grade-sorok (X007, X019)
+  02_szures/prisma_flow.json | prisma_folyamat.md     I (X014), included_meta (X015), undecided (X020), kizárási
+                                           okok (X021)
+  02_szures/*.csv|*.tsv                    szűrési döntési napló (rec_id | pmid, decision, reason, phase; X021)
+  03_adatok/<kimenet>.csv                  adattábla (row_uid, study_id, estimated, rob, forras_oldal …)
   03_adatok/<kimenet>.prov.json            szk.ma.provenance/v1 (X010, X013, X022)
-  03_adatok/studies.json                   szk.ma.studies/v1 (I; vizsgálat-címkék)
-  04_torzitas_kockazat/appraisals/*.json   szk.appraisal/v1 (X003)
+  03_adatok/studies.json                   szk.ma.studies/v1 (I; címkék; design; kimenetenkénti vizsgálatok — X015)
+  03_adatok/kettos/<kimenet>.{A,B}.csv     kettős kinyerés + <kimenet>.consensus.json (szk.ma.consensus/v1; X009)
+  04_torzitas_kockazat/appraisals/*.json   szk.appraisal/v1 (X003, X004, X011, X012, X017)
   05_elemzes/specs/*.json                  szk.ma.analysis-spec/v1 (X005, X006, X016)
-  05_elemzes/<kimenet>/<run_id>/run.json   szk.ma.run/v1 (+ results.json: a futás tényleges szűrői); a commit-futás
-                                           05_elemzes/<kimenet>/run.json-ban, vagy — a projektnapló futásai között —
-                                           bárhol (pl. a --project melletti alapértelmezett <adatmappa>/eredmeny) is
-                                           lehet
+  05_elemzes/<kimenet>/<run_id>/run.json   szk.ma.run/v1 (+ results.json: a futás tényleges szűrői és számai,
+                                           plot_data.json); a commit-futás 05_elemzes/<kimenet>/run.json-ban, vagy — a
+                                           projektnapló futásai között — bárhol (pl. a --project melletti
+                                           alapértelmezett <adatmappa>/eredmeny) is lehet
+  06_kezirat/grade/<kimenet>.grade.json    szk.ma.grade/v1 (X007, X019)
+  06_kezirat/sof/<kimenet>.sof.json        szk.ma.sof/v1 (X008)
+  06_kezirat/abrak/<név>.result.json       szk.figure-result/v1 (source.plot_sha256, run_id; clean, numbers; X002, X018)
 
 A futás kimenete: a specje kimenete (a spec-fájl vagy a spec neve alapján), ennek hiányában a 05_elemzes/<kimenet>/
 <futás> mappa, majd az adatfájlja szerinti ismert kimenet, végül az adatfájl neve. A futás-csoport (X001, X005,
 X006, X014: csak a csoport legutóbbi futása számít) a spec-fájl; spec-fájl nélkül a spec neve és az elemzés tartalma
-(adatfájl, opciók, szűrők) — így két különböző CLI-elemzés ugyanazon a táblán nem takarja el egymást.
+(adatfájl, opciók, szűrők) — így két különböző CLI-elemzés ugyanazon a táblán nem takarja el egymást. Az elsődleges
+commit-futás (X007, X008, X015, X004 szűrői) az elsődleges spec legutóbbi futása.
+
+A párhuzamosan fejlődő v1-modulokat (metaelemzes.appraisal: implikált ítélet, AMSTAR 2-besorolás; metaelemzes.
+grade_help: abszolút hatás; metaelemzes.kettos / api.compare: a kettős kinyerés összevetése) az audit lustán tölti
+be; ha egy modul hiányzik, a ráépülő rész kimarad (not_checked, okkal), vagy — ahol a terv rögzíti a tárolt alakot
+(pl. a dokumentumba mentett implikált ítélet) — a fájlból dolgozik.
 
 Belépési pontok: project_audit(mappa, stage=None) → szk.ma.project-audit/v1 szótár; audit_gate_errors(mappa) →
-a FINAL audit-kaput elutasító (error szintű) találatok; require_gate(mappa) → ValueError, ha van ilyen;
-format_text(jelentés) → a CLI szöveges kimenete; audit_schema() → a szerződés JSON Schemája.
+a FINAL audit-kaput elutasító (error szintű) találatok; checkpoint_gate_errors(mappa, szakasz) → egy szakasz PASS-át
+blokkoló találatok (FINAL: minden error; S08-tól az X009 — GATE_STAGES); require_gate(mappa) → ValueError, ha van
+ilyen; format_text(jelentés) → a CLI szöveges kimenete; audit_schema() → a szerződés JSON Schemája.
 
-Szakasz-kontextus: az X001 S08-tól hiba, előtte figyelmeztetés (ESCALATION). A szakasz a `stage` paraméter
-(a FINAL kapu 'FINAL'-lal hív), ennek hiányában a projektnapló ellenőrzőpontjaiból adódik (a legnagyobb rögzített
-szakasz; PASS / PASS_WITH_FIXES után a következő); napló vagy ellenőrzőpont nélkül ismeretlen — ilyenkor a
-szigorúbb (RULES szerinti) súlyosság érvényes.
+Szakasz-kontextus: az X001 S08-tól, az X004 és az X019 S13-tól hiba, előtte figyelmeztetés (ESCALATION); az X012
+hiányosság-része és az X020 az S14-től (és a FINAL kéréskor) számít. A szakasz a `stage` paraméter (a FINAL kapu
+'FINAL'-lal hív), ennek hiányában a projektnapló ellenőrzőpontjaiból adódik (a legnagyobb rögzített szakasz; PASS /
+PASS_WITH_FIXES után a következő); napló vagy ellenőrzőpont nélkül ismeretlen — ilyenkor a szigorúbb (RULES szerinti)
+súlyosság érvényes, és a késői (S14-es) ellenőrzések is futnak.
 """
 import collections
 import copy
 import datetime
 import hashlib
+import importlib
 import json
 import math
 import os
+import posixpath
 import re
 import sqlite3
 import unicodedata
@@ -100,19 +118,135 @@ RULES = {
              "szerkesztés), és van olyan eredet-bejegyzés, amely nem egyeztethető a táblával (hiányzó sor vagy "
              "oszlop, eltérő érték). Ellenőrizd az érintett cellákat a forrással, majd mentsd újra az eredetet "
              "(mentéskor a table_sha256 frissül).", "engine"),
+    # ---- v1 (E8 teljes; terv 6.4)
+    "X002": ("warning", "Elavult ábra: az exportált ábra nem a legutóbbi futás adataiból készült",
+             "Az ábra (06_kezirat/abrak/<név>.result.json) olyan plot_data.json-ból készült, amely már nem a kimenet "
+             "legutóbbi commit-futásáé, vagy a futás plot_data.json-ja azóta megváltozott. A kéziratban így más számok "
+             "állhatnak, mint az elemzésben. Rajzold újra az ábrát a legutóbbi futásból (Ábra-export), és cseréld le a "
+             "kéziratban.", "PRISMA 2020 20b; terv 5.3"),
+    "X004": ("error", "Elemzett vizsgálat torzításikockázat-értékelés nélkül",
+             "Minden elemzett vizsgálathoz kell egy lezárt (complete vagy konszenzusos) értékelés a kimenethez rögzített "
+             "eszközzel (ma-projekt.json appraisal_tools; pl. randomizált vizsgálatnál RoB 2). Enélkül a „magas RoB "
+             "nélkül” érzékenységi futás és a GRADE torzítási kockázat doménje nem megalapozott. Töltsd ki és zárd le "
+             "az értékelést a Torzítási kockázat lapon (a vázlat és a jóvá nem hagyott AI-vázlat nem számít). Az S13 "
+             "(bizonyosság) szakasztól hiba, előtte figyelmeztetés.", "Cochrane Handbook 7–8; RoB 2 / ROBINS-I"),
+    "X007": ("error", "A GRADE-ítélet számai eltérnek az elsődleges commit-futástól",
+             "A projektnapló GRADE-sorában (vagy a rögzített 06_kezirat/grade/<kimenet>.grade.json-ban) álló "
+             "vizsgálatszám (k), résztvevőszám vagy hatás-szöveg nem az, amit a kimenet elsődleges elemzésének legutóbbi "
+             "commit-futása ad: a GRADE egy régebbi eredményre épül. Nyisd meg a GRADE-lapot, frissítsd a futásra, nézd "
+             "át a doménítéleteket, és rögzítsd újra.", "GRADE Handbook 5; Cochrane Handbook 14"),
+    "X008": ("error", "A SoF-táblázat egy cellája eltér a motor eredményétől",
+             "A 06_kezirat/sof/<kimenet>.sof.json egy cellája (k, résztvevők, a relatív hatás szövege vagy az abszolút "
+             "hatás /1000) nem egyezik azzal, amit a motor a kimenet elsődleges commit-futásából számol: kézzel írt vagy "
+             "régi futásból maradt szám került a táblázatba. Generáld újra a SoF-ot a GRADE-lapon (a számokat a motor "
+             "sof() függvénye adja), ne szerkeszd kézzel.", "Cochrane Handbook 14.1; GRADE Handbook 5.2"),
+    "X009": ("error", "Kettős kinyerés lezáratlan eltéréssel",
+             "A két független kinyerő táblája (03_adatok/kettos/<kimenet>.A.csv és .B.csv) eltér, és nem minden "
+             "eltérésre van érvényes egyeztetési döntés a <kimenet>.consensus.json-ban — vagy egy döntés óta valamelyik "
+             "tábla megváltozott, így a döntés elavult. Amíg ez így van, a szintézis (S08) nem indulhat. Döntsd el az "
+             "eltéréseket a Kettős kinyerés lapon (röviden indokolva), majd írd ki a konszenzus-táblát.",
+             "Cochrane Handbook 5.5.2"),
+    "X011": ("error", "Predikciósmodell-áttekintés: vizsgálat PROBAST+AI-értékelés nélkül",
+             "A ma-projekt.json szerint az áttekintés predikciós modellekről szól (review_type: prediction_model), ezért "
+             "minden bevont vizsgálat modelljének torzítási kockázatát és alkalmazhatóságát PROBAST+AI-jal kell "
+             "értékelni — a RoB 2 vagy a ROBINS-I erre nem alkalmas. Töltsd ki és zárd le a PROBAST+AI-értékelést a "
+             "felsorolt vizsgálatokra; az AI-vázlat csak emberi jóváhagyás után számít.",
+             "PROBAST+AI (Moons et al. 2025); Cochrane Prognosis Methods"),
+    "X012": ("warning", "AMSTAR 2 önellenőrzés hiányos, vagy a besorolás nem egyezik a válaszokkal",
+             "A saját áttekintés AMSTAR 2 önellenőrzésében (04_torzitas_kockazat/appraisals/review.amstar2.*.json) nincs "
+             "mind a 16 tétel megválaszolva, vagy a rögzített összbesorolás egyik konvencióval sem az, ami a válaszokból "
+             "adódik (a projekt konvenciója a KB AMSTAR2-00 szerint: kritikus tételen a „részben igen” nem hiba). "
+             "Válaszold meg a hiányzó tételeket, és a besorolást igazítsd a motor által számolthoz (vagy javítsd a "
+             "válaszokat). A hiányosság az S14 (jelentés) szakasztól és a FINAL kéréskor számít.",
+             "AMSTAR 2 (Shea et al. 2017); KB AMSTAR2-00"),
+    "X015": ("warning", "A metaanalízisbe vont vizsgálatok száma eltér a commit-futásétól",
+             "A kimenetenként közölt „metaanalízisben” szám (a studies.json vizsgálatainak outcomes listája, illetve a "
+             "PRISMA-folyamat included_meta mezője) nem egyezik azzal, ahány vizsgálat a kimenet elsődleges commit-"
+             "futásában ténylegesen szerepel. Javítsd a vizsgálat-térképet (melyik vizsgálat melyik kimenethez tartozik) "
+             "vagy a PRISMA-számot, és a különbség okát a kéziratban közöld.", "PRISMA 2020 16b, 20b"),
+    "X017": ("error", "Az implikálttól eltérő ítélet indoklás nélkül",
+             "Egy domén- vagy összítélet eltér attól, amit a válaszok a motor szabálya szerint kikényszerítenek "
+             "(implikált ítélet), de nincs megadva a felülbírálás oka (override_reason). Az eltérés nem tilos — az "
+             "ítélet emberi döntés —, de indokolni kell, és döntésként naplózni. Az értékelőlapon írd be röviden, miért "
+             "tér el az ítéleted (pl. „a hiányzó adat aránya elhanyagolható”), vagy igazítsd az ítéletet a válaszokhoz.",
+             "RoB 2 útmutató (Sterne et al. 2019); Cochrane Handbook 8"),
+    "X018": ("warning", "Kéziratba szánt ábra minőségellenőrzése nem tiszta",
+             "A 06_kezirat/abrak/<név>.result.json szerint az ábra QC-je nem tiszta (felirat lóg ki a dobozából, vagy "
+             "görbét, nyilat takar), egy karakter hiányzik a betűkészletből, vagy a számhűség-ellenőrzés eltérést talált "
+             "(egy szám nem pontosan az, amit a motor számolt). Rajzold újra az ábrát (pl. szélesebb doboz, más "
+             "elrendezés), és csak tiszta QC-vel tedd a kéziratba.", "terv 5.3, 6.7"),
+    "X019": ("error", "A GRADE publikációs torzítás doménje feloldatlan („suspected”)",
+             "A „gyanított” (suspected) publikációs torzítás addig feloldatlan, amíg ember nem választ 0-t (nem minősít "
+             "le) vagy −1-et (leminősít) indoklással; az ilyen kimenet GRADE-je nem rögzíthető, és nem kerülhet a "
+             "SoF-ba. Döntsd el a GRADE-lapon (a „Miért?” panel mutatja a tesztek értelmezhetőségét és a keresés "
+             "teljességét), vagy válaszd a „nem észlelt” / „erősen gyanított” ítéletet. Az S13 (bizonyosság) szakasztól "
+             "hiba, előtte figyelmeztetés.", "GRADE Handbook 5.2.5; 11. döntés, 4. pont"),
+    "X020": ("warning", "A szűrésben még elbírálatlan rekord van",
+             "A composer PRISMA-exportja (02_szures/prisma_flow.json) szerint vannak még döntésre váró (undecided) "
+             "rekordok. A végleges áttekintés előtt minden teljes szöveget be kell vonni vagy okkal kizárni, különben a "
+             "PRISMA-számok nem véglegesek. Zárd le a döntéseket a composerben és frissítsd az exportot, vagy a "
+             "folyamatábrán jelöld őket „folyamatban lévő” vizsgálatként. Az S14-től és a FINAL kéréskor számít.",
+             "PRISMA 2020 1. ábra; composer"),
+    "X021": ("warning", "A teljes szöveg szintű kizárási okok eltérnek a szűrési döntési naplótól",
+             "A PRISMA-folyamat okonkénti kizárási számai (02_szures/prisma_flow.json vagy prisma_folyamat.md) nem "
+             "egyeznek a 02_szures mappába exportált döntési naplóval (a teljes szöveg szintű kizárások okonként "
+             "összeszámolva). A folyamatábra számainak a naplóból kell jönniük: exportáld újra a naplót a szűrőeszközből "
+             "(vagy frissítsd a composer-exportot), és javítsd az eltérő számot.", "PRISMA 2020 16a"),
 }
 
 # kód → a szabály szakasza (a KB decision_rule.stage_id-je és a találat 'stage' mezője)
 RULE_STAGES = {"X001": "S08", "X003": "S06", "X005": "S12", "X006": "S12", "X010": "S05", "X013": "S05",
-               "X014": "S04", "X016": "S12", "X022": "S05"}
+               "X014": "S04", "X016": "S12", "X022": "S05",
+               "X002": "S14", "X004": "S06", "X007": "S13", "X008": "S13", "X009": "S05", "X011": "S06",
+               "X012": "S14", "X015": "S04", "X017": "S06", "X018": "S14", "X019": "S13", "X020": "S04",
+               "X021": "S04"}
 
 # kód → kapcsolódó tudásbázis-szabályok (a találat 'kb_refs' mezője)
 KB_REFS = {"X001": (), "X003": ("D-S06-008", "D-S13-003"), "X005": ("D-S12-003", "D-S05-023"),
            "X006": ("D-S12-002",), "X010": ("D-S05-001", "D-S05-002"), "X013": ("D-S05-023",),
-           "X014": ("P010",), "X016": ("D-S12-006", "D-S02-017"), "X022": ("D-S05-001",)}
+           "X014": ("P010",), "X016": ("D-S12-006", "D-S02-017"), "X022": ("D-S05-001",),
+           "X002": ("D-S14-008", "D-S14-012"), "X004": ("D-S06-008", "D-S06-016"), "X007": ("D-S13-026", "D-S13-002"),
+           "X008": ("D-S13-011", "D-S13-012"), "X009": ("D-S05-001",), "X011": ("D-S13-023", "D-S02-011"),
+           "X012": ("D-S13-021", "D-S04-014"), "X015": ("D-S04-015", "P010"), "X017": ("D-S06-004", "D-S06-005"),
+           "X018": ("D-S14-008", "D-S14-012"), "X019": ("D-S13-008",), "X020": ("D-S04-008", "P013"),
+           "X021": ("D-S04-008", "D-S04-013", "P007")}
 
-# kód → a szakasz, amelytől a RULES szerinti súlyosság érvényes; előtte 'warning' (6.4: „error (S08-tól)”)
-ESCALATION = {"X001": "S08"}
+# kód → a szakasz, amelytől a RULES szerinti súlyosság érvényes; előtte 'warning' (6.4: „error (S08-tól)”,
+# „warning → error S13-tól”)
+ESCALATION = {"X001": "S08", "X004": "S13", "X019": "S13"}
+
+# kód → a szakasz, amelynek PASS-át a szabály error-találata már a FINAL előtt blokkolja (6.4: „error (S08 PASS
+# előtt)”); a FINAL audit-kapu minden error-találatra elutasít
+GATE_STAGES = {"X009": "S08"}
+
+# az S14-től (és a FINAL kéréskor, illetve ismeretlen szakasznál) futó ellenőrzések: X012 hiányosság, X020
+LATE_STAGE = "S14"
+
+# a szabályok angol címe (api.rules_export, KB; a magyar a RULES-ban)
+TITLES_EN = {
+    "X001": "Stale commit run: the data table changed after the run",
+    "X002": "Stale figure: the exported figure was not drawn from the latest run",
+    "X003": "Table rob value differs from the final appraisal judgement",
+    "X004": "Analysed study without a risk-of-bias appraisal",
+    "X005": "Estimated rows present but no sensitivity run without them",
+    "X006": "High-RoB rows present but no sensitivity run without them",
+    "X007": "GRADE numbers differ from the primary commit run",
+    "X008": "Summary-of-findings cell differs from the engine result",
+    "X009": "Double data extraction has unresolved disagreements",
+    "X010": "Analysed cell has no source page",
+    "X011": "Prediction-model review: study without a PROBAST+AI appraisal",
+    "X012": "AMSTAR 2 self-assessment incomplete or rating inconsistent with the answers",
+    "X013": "Row estimated flag contradicts cell provenance",
+    "X014": "More analysed studies than included studies (I)",
+    "X015": "Number of studies in the meta-analysis differs from the commit run",
+    "X016": "Protocol deviation without decision: primary analysis is not the prespecified one",
+    "X017": "Judgement differs from the implied one without a reason",
+    "X018": "Manuscript figure did not pass quality control",
+    "X019": "GRADE publication bias domain unresolved ('suspected')",
+    "X020": "Screening still has undecided records",
+    "X021": "Full-text exclusion reasons differ from the screening decision log",
+    "X022": "Provenance sidecar does not belong to the current data table",
+}
 
 DATA_DIR = "03_adatok"
 ANALYSIS_DIR = "05_elemzes"
@@ -123,6 +257,14 @@ PRISMA_JSON = "02_szures/prisma_flow.json"
 PRISMA_MD = "02_szures/prisma_folyamat.md"
 META_FILE = "ma-projekt.json"
 JOURNAL_FILE = "projekt.sqlite"
+SCREENING_DIR = "02_szures"
+KETTOS = "kettos"
+GRADE_DIR = "06_kezirat/grade"
+SOF_DIR = "06_kezirat/sof"
+FIGURES_DIR = "06_kezirat/abrak"
+GRADE_SCHEMA = "szk.ma.grade/v1"
+SOF_SCHEMA = "szk.ma.sof/v1"
+CONSENSUS_SCHEMA = "szk.ma.consensus/v1"
 FINAL = "FINAL"
 
 SEVERITIES = ("error", "warning", "info")
@@ -367,6 +509,8 @@ class _Outcome(object):
         self.data = None
         self.measure = None
         self.primary_spec = None
+        self.names = []          # a ma-projekt.json name {hu, en} értékei (a GRADE-napló outcome-mezőjéhez)
+        self.raw = {}            # a ma-projekt.json kimenet-bejegyzése
         self.runs = []
         self.specs = []
 
@@ -512,6 +656,9 @@ def _outcomes(ctx, meta, specs, runs):
             if not isinstance(o, dict) or not isinstance(o.get("id"), str) or not o["id"]:
                 continue
             oc = get(o["id"])
+            oc.raw = o
+            nm = o.get("name")
+            oc.names = [v for v in (nm.values() if isinstance(nm, dict) else [nm]) if isinstance(v, str) and v.strip()]
             oc.data = o.get("data") if _relpath_ok(o.get("data")) else None
             oc.measure = o.get("measure") if isinstance(o.get("measure"), str) else None
             oc.primary_spec = o.get("primary_spec") if _relpath_ok(o.get("primary_spec")) else None
@@ -626,26 +773,32 @@ def _same_path(ctx, a, b):
 
 
 def _journal(ctx):
-    """(checkpointok, aktív döntések) a projektnaplóból, csak olvasva; napló nélkül (None, None)."""
+    """(checkpointok, aktív döntések, GRADE-sorok) a projektnaplóból, csak olvasva; napló nélkül (None, None, None)."""
     p = ctx.abs(JOURNAL_FILE)
     if not os.path.isfile(p):
-        return None, None
+        return None, None, None
     ctx.sha(JOURNAL_FILE)
     try:
         con = sqlite3.connect(Path(p).as_uri() + "?mode=ro", uri=True, timeout=0.5)
     except sqlite3.Error as exc:
         ctx.skip(None, None, "%s nem nyitható meg: %s" % (JOURNAL_FILE, _exc_text(exc)))
-        return None, None
+        return None, None, None
     try:
         con.row_factory = sqlite3.Row
         cps = [dict(r) for r in con.execute("SELECT stage_id, verdict FROM checkpoint ORDER BY id")]
         decs = [dict(r) for r in con.execute(
             "SELECT id, stage_id, decision, rationale, alternatives, kb_refs FROM decision "
             "WHERE status = 'active' ORDER BY id")]
-        return cps, decs
+        try:
+            grades = [dict(r) for r in con.execute(
+                "SELECT id, outcome, k, participants, effect, risk_of_bias, publication_bias, certainty FROM grade "
+                "ORDER BY id")]
+        except sqlite3.Error:
+            grades = None           # nagyon régi napló grade-tábla nélkül
+        return cps, decs, grades
     except sqlite3.Error as exc:
         ctx.skip(None, None, "%s nem olvasható: %s" % (JOURNAL_FILE, _exc_text(exc)))
-        return None, None
+        return None, None, None
     finally:
         con.close()
 
@@ -1247,6 +1400,1094 @@ def _x016(ctx, oc, decisions, single):
     ctx.add("X016", oc.id, "; ".join(reasons), [p["rel"]] + [q["rel"] for q in prespec], None, spec=p["name"])
 
 
+# ------------------------------------------------------------------ v1: közös segédek
+def _module(name):
+    """A párhuzamosan fejlődő v1-modulok (appraisal, grade_help, kettos, api) lusta betöltése; a hiányzó vagy
+    betöltéskor hibás modul → None (a ráépülő ellenőrzés kimarad, a not_checked okkal jelzi)."""
+    try:
+        return importlib.import_module("%s.%s" % (__package__, name))
+    except Exception:       # noqa: BLE001 — ImportError és a félkész modul bármely betöltési hibája
+        return None
+
+
+def _late(stage):
+    """Fut-e a késői (S14-es / FINAL) ellenőrzés: ismeretlen szakasznál igen (a szigorúbb eset)."""
+    idx = _stage_index(stage)
+    return idx is None or idx >= _stage_index(LATE_STAGE)
+
+
+def _isnum(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _whole(v):
+    """Egész értékű szám → int (a JSON 357347.0 is); más → None."""
+    if _isnum(v) and float(v).is_integer():
+        return int(v)
+    return None
+
+
+def _close(a, b, rel=1e-9):
+    if a is None or b is None:
+        return a is None and b is None
+    return abs(float(a) - float(b)) <= rel * max(1.0, abs(float(a)), abs(float(b)))
+
+
+def _nonempty(v):
+    return isinstance(v, str) and bool(v.strip())
+
+
+_FINAL_APPRAISAL = ("complete", "final", "consensus")
+_REVIEW_TOOLS = ("amstar2", "grade", "tripod-ai", "tripod")       # nem vizsgálatonkénti RoB-eszközök (X004)
+_NON_PLOT_KINDS = ("flowchart", "rob_traffic", "rob_summary")       # nem plot_data.json-ból készülő ábrák (X002)
+_FIG_FORMATS = (".svg", ".pdf", ".png", ".tif", ".tiff", ".pptx", ".eps")
+
+
+def _all_appraisals(ctx):
+    """Minden értékelés, bármely státusszal: [{rel, doc, tool, unit, outcome, status, final, ai, updated}]; mappa
+    nélkül None. Lezárt (final): complete / consensus, az AI-vázlat csak emberi jóváhagyással (approved_by; 6. döntés)."""
+    d = ctx.abs(APPRAISAL_DIR)
+    if not os.path.isdir(d):
+        return None
+    out = []
+    for name in sorted(os.listdir(d)):
+        if not name.lower().endswith(".json") or name.startswith("."):
+            continue
+        rel = APPRAISAL_DIR + "/" + name
+        doc = ctx.load_json(rel, None, None, "értékelés")
+        if not isinstance(doc, dict) or doc.get("schema") not in (None, "szk.appraisal/v1"):
+            continue
+        target = doc.get("target") if isinstance(doc.get("target"), dict) else {}
+        stem = name[:-5].split(".")
+        tool = doc.get("tool") if isinstance(doc.get("tool"), str) else (stem[1] if len(stem) > 1 else "")
+        unit = next((target[k] for k in ("unit", "study_id") if _nonempty(target.get(k))), stem[0])
+        status = str(doc.get("status") or "").strip().lower()
+        ai = doc.get("origin") == "ai_draft"
+        out.append({"rel": rel, "doc": doc, "tool": tool.strip().lower(), "unit": unit,
+                    "outcome": target.get("outcome") if _nonempty(target.get("outcome")) else None,
+                    "status": status, "ai": ai,
+                    "final": status in _FINAL_APPRAISAL and (not ai or _nonempty(doc.get("approved_by"))),
+                    "updated": str(doc.get("updated") or "")})
+    return out
+
+
+def _run_numbers(ctx, run):
+    """A futás közölt számai: {k, participants, display_text {hu, en} | None, estimate_ci [3] (megjelenítési skála) |
+    None, measure} — run.json + results.json."""
+    if "numbers" not in run:
+        doc = run["doc"]
+        res = ctx.load_json(run["dir"] + "/results.json", what="futás-eredmény")
+        res = res if isinstance(res, dict) else {}
+        totals = res.get("totals") if isinstance(res.get("totals"), dict) else {}
+        bt = res.get("back_transformed") if isinstance(res.get("back_transformed"), dict) else {}
+        est = bt.get("estimate_ci")
+        est = [x if _isnum(x) else None for x in est] if isinstance(est, list) and len(est) == 3 else None
+        prim = doc.get("primary") if isinstance(doc.get("primary"), dict) else {}
+        disp = prim.get("display_text") if isinstance(prim.get("display_text"), dict) else None
+        part = _whole(totals.get("participants"))
+        if part is None and isinstance(doc.get("participants_text"), dict):
+            m = re.fullmatch(r"\s*(\d+)\s*", str(doc["participants_text"].get("en") or ""))
+            part = int(m.group(1)) if m else None
+        opts = res.get("options") if isinstance(res.get("options"), dict) else {}
+        measure = doc.get("measure") if isinstance(doc.get("measure"), str) else opts.get("measure")
+        k = run["k"]
+        if k is None and isinstance(res.get("primary"), dict):
+            k = _int(res["primary"].get("k"))
+        run["numbers"] = {"k": k, "participants": part, "display_text": disp, "estimate_ci": est,
+                          "measure": measure.upper() if isinstance(measure, str) else None}
+    return run["numbers"]
+
+
+def _primary_run(ctx, oc, specs_by_path):
+    """A kimenet elsődleges commit-futása: az elsődleges spec (ma-projekt.json primary_spec vagy purpose: primary)
+    legutóbbi futása; ennek hiányában a futás-leíró szerint 'primary' célú legutóbbi futás; végül, ha a kimenetnek
+    egyetlen futás-csoportja van, annak legutóbbi futása. Nem egyértelmű → None."""
+    prim = _primary_candidates(oc)
+    rels = {sp["rel"] for sp in prim}
+    names = {sp["name"] for sp in prim if sp["name"]}
+    hits = [r for r in oc.runs if (r["spec_path"] and r["spec_path"] in rels) or (r["spec_name"] in names)]
+    if hits:
+        return hits[-1]
+
+    def purpose(r):
+        sp = r["doc"].get("spec") if isinstance(r["doc"].get("spec"), dict) else {}
+        p = sp.get("purpose")
+        if p is None and r["spec_path"] in specs_by_path:
+            p = specs_by_path[r["spec_path"]]["purpose"]
+        return p
+    hits = [r for r in oc.runs if purpose(r) == "primary"]
+    if hits:
+        return hits[-1]
+    latest = _latest_runs(ctx, oc.runs)
+    return latest[0] if len(latest) == 1 else None
+
+
+def _analysed_rows(ctx, tab, run, specs_by_path, data):
+    """Az elemzett sorok indexei: a tábla (data) sorai a futás tényleges szűrőivel; futás nélkül, vagy ha a futás más
+    adatfájlból készült, az összes sor."""
+    rows, meta, _uids = tab
+    idx = list(range(len(rows)))
+    if run is None or (run["data_path"] and not _same_path(ctx, run["data_path"], data)):
+        return idx
+    f = _run_filters(ctx, run, specs_by_path)
+    if f is not None and (f[0] or f[1]):
+        try:
+            kept = {id(r) for r in tableio.apply_filters(rows, f[0] or None, f[1] or None, meta=meta)}
+        except ValueError:
+            return idx
+        idx = [i for i in idx if id(rows[i]) in kept]
+    return idx
+
+
+def _study_groups(rows, idx, label_to_id):
+    """Sorok → vizsgálatok: OrderedDict(első kulcs → {keys, rows, label}) (többkarú vizsgálat: egy csoport)."""
+    groups = collections.OrderedDict()
+    for i in idx:
+        keys = _study_keys(rows[i], label_to_id)
+        if not keys:
+            continue
+        g = groups.get(keys[0])
+        if g is None:
+            sid = rows[i].get("study_id")
+            g = groups[keys[0]] = {"keys": set(), "rows": [], "label": str(sid) if _present(sid) else _row_label(
+                rows[i], i)}
+        g["keys"].update(keys)
+        g["rows"].append(i)
+    return groups
+
+
+# ------------------------------------------------------------------ X004
+def _outcome_tools(meta, oc):
+    """A kimenet vizsgálatonkénti értékelő eszközei: a kimenet saját appraisal_tool(s) mezője, különben a
+    ma-projekt.json appraisal_tools-ából a nem áttekintés-szintűek (predikciósmodell-áttekintésnél a PROBAST+AI-t az
+    X011 ellenőrzi)."""
+    raw = oc.raw if isinstance(oc.raw, dict) else {}
+    if _nonempty(raw.get("appraisal_tool")):
+        return [raw["appraisal_tool"].strip().lower()]
+    own = [t.strip().lower() for t in raw.get("appraisal_tools") or () if _nonempty(t)] \
+        if isinstance(raw.get("appraisal_tools"), list) else []
+    if own:
+        return list(dict.fromkeys(own))
+    meta = meta if isinstance(meta, dict) else {}
+    tools = meta.get("appraisal_tools") if isinstance(meta.get("appraisal_tools"), list) else []
+    pm = meta.get("review_type") == "prediction_model"
+    return list(dict.fromkeys(t.strip().lower() for t in tools if _nonempty(t) and t.strip().lower() not in
+                              _REVIEW_TOOLS and not (pm and t.strip().lower() == "probast-ai")))
+
+
+def _expected_tools(tools, keys, design_of, AP):
+    """Több eszköznél a vizsgálat elrendezése (studies.json design) szerinti eszköz, ha az a kimenet eszközei közt
+    van (appraisal.instrument_route); különben bármelyik."""
+    if len(tools) <= 1 or AP is None or not callable(getattr(AP, "instrument_route", None)):
+        return tools
+    design = next((design_of[k] for k in keys if k in design_of), None)
+    if not design:
+        return tools
+    try:
+        routed = [h.get("tool") for h in AP.instrument_route(design) if isinstance(h, dict)]
+    except Exception:       # noqa: BLE001 — a javaslat csak szűkítés; hibánál bármelyik eszköz elfogadható
+        return tools
+    hit = next((t for t in routed if t in tools), None)
+    return [hit] if hit else tools
+
+
+def _x004(ctx, oc, tab, prun, specs_by_path, entries, tools, label_to_id, design_of, coverage):
+    rows, _meta, uids = tab
+    have, drafts = collections.defaultdict(set), collections.defaultdict(set)
+    for e in entries:
+        if e["tool"] not in tools or (e["outcome"] is not None and e["outcome"] != oc.id):
+            continue
+        (have if e["final"] else drafts)[_fold(e["unit"])].add(e["tool"])
+    AP = _module("appraisal")
+    groups = _study_groups(rows, _analysed_rows(ctx, tab, prun, specs_by_path, oc.data), label_to_id)
+    missing = []
+    for g in groups.values():
+        want = _expected_tools(tools, g["keys"], design_of, AP)
+        if any(t in have.get(k, ()) for k in g["keys"] for t in want):
+            continue
+        g["draft"] = any(t in drafts.get(k, ()) for k in g["keys"] for t in want)
+        g["want"] = want
+        missing.append(g)
+    coverage[oc.id] = (len(groups) - len(missing), len(groups), tools)
+    if not missing:
+        return
+    drafted = [g["label"] for g in missing if g["draft"]]
+    detail = "%d/%d elemzett vizsgálatnak nincs lezárt értékelése a kimenet eszközével (%s): %s" % (
+        len(missing), len(groups), ", ".join(tools), _plural_list(g["label"] for g in missing))
+    if drafted:
+        detail += "; csak vázlat (vagy jóvá nem hagyott AI-vázlat) van: %s" % _plural_list(drafted)
+    if prun is not None:
+        detail += " (az elemzett sorok a(z) %s futás szűrőivel)" % prun["run_id"]
+    ctx.add("X004", oc.id, detail, [oc.data, APPRAISAL_DIR], None, studies=[g["label"] for g in missing],
+            row_uids=[uids[i] for g in missing for i in g["rows"]])
+
+
+# ------------------------------------------------------------------ X007 / X008
+_NUM_RE = re.compile(r"[-−]?\d+(?:[.,]\d+)?")
+
+
+def _numbers_in(text):
+    return [float(x.replace("−", "-").replace(",", ".")) for x in _NUM_RE.findall(str(text or ""))]
+
+
+def _effect_matches(text, display):
+    """A hatás-szöveg tartalmazza-e a futás display_text-jének számait (sorrendben; tizedesvessző, U+2212 is jó).
+    Szám nélküli szöveg (pl. „csökkenti”) nem vethető össze → egyezőnek számít."""
+    if not _nonempty(text) or not _nonempty(display):
+        return True
+    if display in text:
+        return True
+    want, have = _numbers_in(display), _numbers_in(text)
+    if not want or not have:
+        return True
+    pos = 0
+    for w in want:
+        while pos < len(have) and not _close(have[pos], w, 1e-12):
+            pos += 1
+        if pos >= len(have):
+            return False
+        pos += 1
+    return True
+
+
+def _number_mismatches(k, participants, effect, nums):
+    """A GRADE / SoF rögzített számai (k, résztvevők, hatás-szöveg) vs. a futás → ['k: 12 ≠ 13', …]."""
+    out = []
+    kk = _whole(k) if not isinstance(k, str) else (int(k) if re.fullmatch(r"\s*\d+\s*", k) else None)
+    if kk is not None and nums["k"] is not None and kk != nums["k"]:
+        out.append("k: %d ≠ %d" % (kk, nums["k"]))
+    pp = _whole(participants) if not isinstance(participants, str) else (
+        int(participants) if re.fullmatch(r"\s*\d+\s*", participants) else None)
+    if pp is not None and nums["participants"] is not None and pp != nums["participants"]:
+        out.append("résztvevők: %d ≠ %d" % (pp, nums["participants"]))
+    disp = nums["display_text"] or {}
+    if isinstance(effect, dict):
+        for lang in ("hu", "en"):
+            if _nonempty(effect.get(lang)) and not _effect_matches(effect[lang], disp.get(lang)):
+                out.append("hatás-szöveg (%s): %r — a futásé: %r" % (lang, effect[lang], disp.get(lang)))
+    elif _nonempty(effect) and disp:
+        if not any(_effect_matches(effect, disp.get(lang)) for lang in ("hu", "en") if disp.get(lang)):
+            out.append("hatás-szöveg: %r — a futásé: %r" % (effect, disp.get("hu") or disp.get("en")))
+    return out
+
+
+def _grade_docs(ctx):
+    """06_kezirat/grade/*.grade.json → [{rel, doc, outcome, status}]; mappa nélkül None."""
+    d = ctx.abs(GRADE_DIR)
+    if not os.path.isdir(d):
+        return None
+    out = []
+    for fn in sorted(os.listdir(d)):
+        if not fn.endswith(".grade.json") or fn.startswith("."):
+            continue
+        rel = GRADE_DIR + "/" + fn
+        doc = ctx.load_json(rel, None, None, "GRADE-dokumentum")
+        if not isinstance(doc, dict) or doc.get("schema") not in (None, GRADE_SCHEMA):
+            continue
+        oid = doc.get("outcome_id") if _nonempty(doc.get("outcome_id")) else fn[:-len(".grade.json")]
+        out.append({"rel": rel, "doc": doc, "outcome": oid, "status": doc.get("status")})
+    return out
+
+
+def _grade_rows_for(grade_rows, oc):
+    keys = {_fold(oc.id)} | {_fold(n) for n in oc.names}
+    return [g for g in grade_rows or () if _fold(g.get("outcome")) in keys]
+
+
+def _x007(ctx, oc, prun, rows_for, docs_for, runs_by_id):
+    probs, artifacts = [], []
+    if not rows_for and not docs_for:
+        ctx.skip("X007", oc.id, "nincs GRADE-ítélet ehhez a kimenethez (projektnapló grade-sor vagy %s/%s.grade.json)"
+                 % (GRADE_DIR, oc.id))
+        return
+    if not rows_for and not any(e["doc"].get("status") == "recorded" for e in docs_for):
+        ctx.skip("X007", oc.id, "a GRADE-ítélet még piszkozat (%s); a rögzített ítéletet vetjük össze a futással" %
+                 ", ".join(e["rel"] for e in docs_for))
+        return
+    if prun is None:
+        ctx.skip("X007", oc.id, "nincs (egyértelmű) elsődleges commit-futás, amellyel a GRADE számai összevethetők")
+        return
+    nums = _run_numbers(ctx, prun)
+    if rows_for:
+        g = rows_for[-1]
+        for p in _number_mismatches(g.get("k"), g.get("participants"), g.get("effect"), nums):
+            probs.append("napló grade #%s: %s" % (g.get("id"), p))
+        artifacts.append(JOURNAL_FILE)
+    for e in docs_for:
+        doc = e["doc"]
+        if doc.get("status") != "recorded":
+            continue                    # a piszkozatot a GRADE-lap frissíti; az X007 a rögzített ítéletet nézi
+        rs = doc.get("run_summary") if isinstance(doc.get("run_summary"), dict) else None
+        if rs is None and doc.get("run_id") in runs_by_id:
+            r = runs_by_id[doc["run_id"]]
+            n2 = _run_numbers(ctx, r)
+            rs = {"k": n2["k"], "participants": n2["participants"], "display_text": n2["display_text"]}
+        if rs is None:
+            ctx.skip("X007", oc.id, "%s: nincs run_summary, és a hivatkozott futás (%s) nem található" % (
+                e["rel"], doc.get("run_id") or "–"))
+            continue
+        found = _number_mismatches(rs.get("k"), rs.get("participants"), rs.get("display_text"), nums)
+        if found:
+            ref = " (a GRADE a(z) %s futásra hivatkozik)" % doc["run_id"] if doc.get("run_id") and doc.get(
+                "run_id") != prun["run_id"] else ""
+            probs += ["%s: %s%s" % (e["rel"], p, ref) for p in found]
+            artifacts.append(e["rel"])
+    if probs:
+        ctx.add("X007", oc.id, "a GRADE számai eltérnek a(z) %s elsődleges commit-futástól: %s" % (
+            prun["run_id"], "; ".join(probs[:12]) + (" … (+%d)" % (len(probs) - 12) if len(probs) > 12 else "")),
+            artifacts + [prun["rel"]], None, run_id=prun["run_id"])
+
+
+def _absolute(measure, rel, acr):
+    """Abszolút hatás /1000 (GRADE-10a; D-S13-012): a grade_help.absolute_effect, ennek hiányában ugyanaz a képlet
+    (RR: ACR·RR; OR: ACR·OR / (1 − ACR + ACR·OR); RD: ACR + RD; a [0; 1]-en kívüli kockázat None)."""
+    GH = _module("grade_help")
+    if GH is not None and callable(getattr(GH, "absolute_effect", None)):
+        return GH.absolute_effect(measure, rel, acr)
+    if measure not in ("RR", "OR", "RD") or not _isnum(acr) or not 0 < acr < 1:
+        raise ValueError("nem számolható")
+    risks, diffs = [], []
+    for x in rel:
+        if not _isnum(x) or (measure in ("RR", "OR") and x < 0):
+            risks.append(None)
+            diffs.append(None)
+            continue
+        r = acr * x if measure == "RR" else (acr * x / (1 - acr + acr * x) if measure == "OR" else acr + x)
+        if not 0.0 <= r <= 1.0:
+            risks.append(None)
+            diffs.append(1000.0 * x if measure == "RD" else None)
+            continue
+        risks.append(1000.0 * r)
+        diffs.append(1000.0 * (x if measure == "RD" else r - acr))
+    return {"risk_per_1000": risks, "difference_per_1000": diffs}
+
+
+def _lists_close(a, b):
+    if not isinstance(a, list) or not isinstance(b, list) or len(a) != len(b):
+        return False
+    return all(_close(x, y, 1e-6) for x, y in zip(a, b))
+
+
+def _x008(ctx, oc, prun, runs_by_id):
+    rel = "%s/%s.sof.json" % (SOF_DIR, oc.id)
+    if not ctx.isfile(rel):
+        ctx.skip("X008", oc.id, "nincs SoF-táblázat ehhez a kimenethez (%s)" % rel)
+        return
+    doc = ctx.load_json(rel, "X008", oc.id, "SoF")
+    if not isinstance(doc, dict) or not isinstance(doc.get("rows"), list):
+        if doc is not None:
+            ctx.skip("X008", oc.id, "%s nem szk.ma.sof/v1 (hiányzó rows lista)" % rel)
+        return
+    target = prun or runs_by_id.get(doc.get("run_id"))
+    if target is None:
+        ctx.skip("X008", oc.id, "%s: nincs elsődleges commit-futás, és a hivatkozott futás (%s) nem található" % (
+            rel, doc.get("run_id") or "–"))
+        return
+    nums = _run_numbers(ctx, target)
+    bt = nums["estimate_ci"]
+    probs = []
+    for i, row in enumerate(doc["rows"]):
+        if not isinstance(row, dict) or row.get("outcome_id") not in (None, oc.id):
+            continue
+        where = "%d. sor" % (i + 1)
+        for p in _number_mismatches(row.get("k"), row.get("participants"), None, nums):
+            probs.append("%s: %s" % (where, p))
+        eff = row.get("relative") if isinstance(row.get("relative"), dict) else (
+            row.get("effect") if isinstance(row.get("effect"), dict) else None)
+        if eff is not None:
+            dt, want = eff.get("display_text"), nums["display_text"]
+            if isinstance(dt, dict) and isinstance(want, dict):
+                for lang in ("hu", "en"):
+                    if dt.get(lang) is not None and want.get(lang) is not None and dt[lang] != want[lang]:
+                        probs.append("%s: hatás (%s) %r ≠ a motoré %r" % (where, lang, dt[lang], want[lang]))
+            if bt is not None and not _lists_close([eff.get("estimate"), eff.get("ci_lower"), eff.get("ci_upper")],
+                                                   bt):
+                probs.append("%s: a hatás számai (becslés, CI) ≠ a futás back_transformed.estimate_ci-je" % where)
+        for a in row.get("absolute") or []:
+            if not isinstance(a, dict) or not _isnum(a.get("assumed_risk_per_1000")) or bt is None:
+                continue
+            label = a.get("label")
+            label = (label.get("hu") or label.get("en")) if isinstance(label, dict) else (label or "?")
+            try:
+                again = _absolute(nums["measure"], bt, a["assumed_risk_per_1000"] / 1000.0)
+            except (ValueError, TypeError, KeyError):
+                continue            # nem bináris mérték vagy érvénytelen alapkockázat: a sof() sem számol ilyet
+            if not (_lists_close(a.get("difference_per_1000"), again.get("difference_per_1000")) and
+                    _lists_close(a.get("risk_per_1000"), again.get("risk_per_1000"))):
+                probs.append("%s: abszolút hatás (%s) ≠ az újraszámolt" % (where, label))
+    if probs:
+        ref = (" (a SoF a(z) %s futásra hivatkozik)" % doc["run_id"]) if doc.get("run_id") and doc.get(
+            "run_id") != target["run_id"] else ""
+        ctx.add("X008", oc.id, "a SoF %d cellája eltér a(z) %s commit-futás motor-számaitól%s: %s" % (
+            len(probs), target["run_id"], ref, "; ".join(probs[:12]) + (
+                " … (+%d)" % (len(probs) - 12) if len(probs) > 12 else "")),
+            [rel, target["rel"]], None, run_id=target["run_id"])
+
+
+# ------------------------------------------------------------------ X009
+_COMPARE_NAMES = ("compare", "kettos_compare", "compare_tables", "dual_compare")
+
+
+def _compare_fn():
+    """A kettős kinyerés összevetése: metaelemzes.kettos.compare, ennek hiányában az api homlokzat (a munkapad
+    ugyanezeket a neveket keresi; E6)."""
+    for modname in ("kettos", "api"):
+        mod = _module(modname)
+        for n in _COMPARE_NAMES:
+            fn = getattr(mod, n, None) if mod is not None else None
+            if callable(fn) and not isinstance(fn, type):
+                return fn
+    return None
+
+
+def _raw_table(ctx, rel):
+    raw = ctx.read_bytes(rel)
+    header, rows_text, fmt = tableio.read_raw(raw=raw)
+    uids = None
+    try:
+        rows, meta = tableio.read_table_bytes(raw, rel)
+        u = tableio.row_uids(rows, meta)
+        uids = list(u) if len(u) == len(rows_text) else None
+    except Exception:       # noqa: BLE001 — az összevetés a nyers cellákkal is megy
+        uids = None
+    return {"header": list(header), "rows": [list(r) for r in rows_text], "row_uids": uids, "dataset": rel,
+            "decimal_mark": fmt.get("decimal_mark")}
+
+
+def _call_compare(fn, ctx, rel_a, rel_b, key, measure):
+    import inspect
+    try:
+        params = inspect.signature(fn).parameters
+    except (TypeError, ValueError):
+        params = {}
+    pos = [p for p in params.values() if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
+    if pos and "path" in pos[0].name:
+        a, b = ctx.abs(rel_a), ctx.abs(rel_b)
+        ctx.sha(rel_a)
+        ctx.sha(rel_b)
+    else:
+        a, b = _raw_table(ctx, rel_a), _raw_table(ctx, rel_b)
+    var_kw = any(p.kind == p.VAR_KEYWORD for p in params.values())
+    kw = {k: v for k, v in (("key", key), ("measure", measure)) if v is not None and (k in params or var_kw)}
+    return fn(a, b, **kw)
+
+
+def _x009(ctx, oc, kettos_dirs):
+    base = posixpath.dirname(oc.data) if oc.data else DATA_DIR
+    kdir = (base + "/" if base else "") + KETTOS
+    if not os.path.isdir(ctx.abs(kdir)):
+        kettos_dirs.append(kdir)
+        return
+    rel_a, rel_b = "%s/%s.A.csv" % (kdir, oc.id), "%s/%s.B.csv" % (kdir, oc.id)
+    have_a, have_b = ctx.isfile(rel_a), ctx.isfile(rel_b)
+    if not have_a and not have_b:
+        ctx.skip("X009", oc.id, "ehhez a kimenethez nincs kettős kinyerés (%s, %s)" % (rel_a, rel_b))
+        return
+    if not (have_a and have_b):
+        ctx.skip("X009", oc.id, "csak az egyik kinyerő táblája van meg (%s); az összevetéshez mindkettő kell" % (
+            rel_a if have_a else rel_b))
+        return
+    cons_rel = "%s/%s.consensus.json" % (kdir, oc.id)
+    command = ["ma.py", "kettos", "compare", "--project", ".", "--outcome", oc.id]
+    KT = _module("kettos")
+    status_fn = getattr(KT, "outcome_status", None) if KT is not None else None
+    if callable(status_fn):
+        # az E6 saját állapota (összevetés + döntések + elavulás): ugyanaz, amit a Kettős kinyerés lap mutat
+        for rel in (rel_a, rel_b, cons_rel):
+            if ctx.isfile(rel):
+                ctx.sha(rel)
+        try:
+            st = status_fn(ctx.root, oc.id, oc.data)
+        except Exception as exc:    # noqa: BLE001 — a motor hibája nem állíthatja le az auditot
+            ctx.skip("X009", oc.id, "a két tábla nem vethető össze: %s" % _exc_text(exc))
+            return
+        if not isinstance(st, dict) or st.get("error") or st.get("unresolved") is None:
+            ctx.skip("X009", oc.id, "a két tábla nem vethető össze: %s" % (
+                (st or {}).get("error") if isinstance(st, dict) else "ismeretlen állapot"))
+            return
+        if st["unresolved"]:
+            detail = "%d feloldatlan eltérés a két kinyerő táblája között (%s döntést igénylő tételből)" % (
+                st["unresolved"], st.get("total") if st.get("total") is not None else "?")
+            if st.get("stale"):
+                detail += "; ebből %d döntés elavult, mert a tábla a döntés óta megváltozott" % st["stale"]
+            ctx.add("X009", oc.id, detail, [rel_a, rel_b] + ([cons_rel] if ctx.isfile(cons_rel) else []), command)
+        return
+    fn = _compare_fn()
+    if fn is None:
+        ctx.skip("X009", oc.id, "a kettős kinyerés összevetése (metaelemzes.kettos.compare / api.compare, E6) ebben "
+                                "a motorváltozatban nem érhető el")
+        return
+    cons = ctx.load_json(cons_rel, "X009", oc.id, "konszenzus") if ctx.isfile(cons_rel) else None
+    cons = cons if isinstance(cons, dict) else {}
+    key = cons.get("key") if isinstance(cons.get("key"), list) and cons["key"] else None
+    try:
+        res = _call_compare(fn, ctx, rel_a, rel_b, key, oc.measure)
+    except Exception as exc:        # noqa: BLE001 — a motor hibája nem állíthatja le az auditot
+        ctx.skip("X009", oc.id, "a két tábla nem vethető össze: %s" % _exc_text(exc))
+        return
+    if not isinstance(res, dict) or not isinstance(res.get("disagreements"), list):
+        ctx.skip("X009", oc.id, "az összevetés eredménye nem szk.ma.compare-result/v1")
+        return
+    decisions = {}
+    for d in cons.get("decisions") or []:
+        if isinstance(d, dict) and isinstance(d.get("key"), str) and isinstance(d.get("field"), str):
+            decisions[(d["key"], d["field"])] = d
+    unresolved, stale, cells, fields = 0, 0, [], collections.Counter()
+    for d in res["disagreements"]:
+        if not isinstance(d, dict) or d.get("kind") == "format_only":
+            continue                    # csak írásmódban tér el: a konszenzus az A szövegét veszi át
+        dec = decisions.get((d.get("key"), d.get("field")))
+        is_stale = dec is not None and (("a" in dec and dec.get("a") != d.get("a")) or
+                                        ("b" in dec and dec.get("b") != d.get("b")))
+        if dec is not None and not is_stale:
+            continue
+        unresolved += 1
+        stale += 1 if is_stale else 0
+        fields[str(d.get("field"))] += 1
+        uid = d.get("row_uid_a") or d.get("row_uid_b")
+        if isinstance(uid, str) and isinstance(d.get("field"), str):
+            cells.append({"row_uid": uid, "field": d["field"]})
+    rows_only = 0
+    for side in ("only_a", "only_b"):
+        for k in res.get(side) or []:
+            if (k, "*") not in decisions:
+                unresolved += 1
+                rows_only += 1
+    if not unresolved:
+        return
+    parts = ["%d feloldatlan eltérés" % unresolved]
+    if fields:
+        parts.append("mezőnként: %s" % ", ".join("%s %d" % kv for kv in sorted(fields.items())))
+    if rows_only:
+        parts.append("%d sor csak az egyik táblában van, döntés nélkül" % rows_only)
+    if stale:
+        parts.append("ebből %d döntés elavult (a tábla a döntés óta megváltozott)" % stale)
+    ctx.add("X009", oc.id, "; ".join(parts), [rel_a, rel_b] + ([cons_rel] if ctx.isfile(cons_rel) else []), command,
+            cells=cells or None)
+
+
+# ------------------------------------------------------------------ X011
+def _x011(ctx, meta, entries, smap, study_ids_from_tables):
+    if not isinstance(meta, dict) or meta.get("review_type") != "prediction_model":
+        return
+    if smap is not None:
+        ids = list(smap["study_ids"])
+        src = STUDIES_FILE
+    else:
+        ids, src = list(study_ids_from_tables), "az adattáblák study_id-i"
+    if not ids:
+        ctx.skip("X011", None, "a bevont vizsgálatok listája ismeretlen (%s, illetve study_id oszlop)" % STUDIES_FILE)
+        return
+    have = {_fold(e["unit"]) for e in entries or () if e["tool"] == "probast-ai" and e["final"]}
+    drafts = {_fold(e["unit"]) for e in entries or () if e["tool"] == "probast-ai" and not e["final"]}
+    missing = [s for s in ids if _fold(s) not in have]
+    if not missing:
+        return
+    detail = "%d/%d bevont vizsgálatnak nincs lezárt PROBAST+AI-értékelése (a vizsgálatok forrása: %s): %s" % (
+        len(missing), len(ids), src, _plural_list(missing))
+    only_draft = [s for s in missing if _fold(s) in drafts]
+    if only_draft:
+        detail += "; csak vázlat (vagy jóvá nem hagyott AI-vázlat) van: %s" % _plural_list(only_draft)
+    ctx.add("X011", None, detail, [APPRAISAL_DIR] + ([STUDIES_FILE] if smap is not None else []), None,
+            studies=missing)
+
+
+# ------------------------------------------------------------------ X012
+_AMSTAR_RATINGS = {"high": "high", "magas": "high", "moderate": "moderate", "mersekelt": "moderate", "low": "low",
+                   "alacsony": "low", "critically low": "critically_low", "critically_low": "critically_low",
+                   "kritikusan alacsony": "critically_low"}
+
+
+def _rating_key(v):
+    return _AMSTAR_RATINGS.get(re.sub(r"[_\-]+", " ", _fold(v)).strip()) if _nonempty(v) else None
+
+
+def _amstar2_ratings(answers, convention):
+    """(a projekt konvenciója szerinti, a másik konvenció szerinti) besorolás a motor algoritmusával
+    (appraisal.amstar2_rating, ennek hiányában grade_help.amstar2_consistency); egyik sem érhető el → None."""
+    AP = _module("appraisal")
+    if AP is not None and callable(getattr(AP, "amstar2_rating", None)):
+        try:
+            blk = AP.amstar2_rating(answers, convention)
+            alt = blk.get("alternative") if isinstance(blk.get("alternative"), dict) else {}
+            return blk.get("rating"), alt.get("rating", blk.get("rating"))
+        except Exception:       # noqa: BLE001
+            pass
+    GH = _module("grade_help")
+    if GH is not None and callable(getattr(GH, "amstar2_consistency", None)):
+        try:
+            out = GH.amstar2_consistency(answers, convention=convention)
+            other = "weakness" if convention == "meets" else "meets"
+            alt = (out.get("by_convention") or {}).get(other)
+            alt = alt.get("rating") if isinstance(alt, dict) else alt
+            return _rating_key(out.get("rating")), _rating_key(alt) or _rating_key(out.get("rating"))
+        except Exception:       # noqa: BLE001
+            pass
+    return None
+
+
+def _x012(ctx, meta, entries, stage):
+    meta = meta if isinstance(meta, dict) else {}
+    docs = [e for e in entries or () if e["tool"] == "amstar2"]
+    declared = "amstar2" in [str(t).lower() for t in meta.get("appraisal_tools") or [] if isinstance(t, str)]
+    if not docs and not declared:
+        ctx.skip("X012", None, "nincs AMSTAR 2 önellenőrzés (%s/review.amstar2.*.json), és a ma-projekt.json "
+                               "appraisal_tools sem kéri" % APPRAISAL_DIR)
+        return
+    late = _late(stage)
+    if not docs:
+        if late:
+            ctx.add("X012", None, "a ma-projekt.json az AMSTAR 2-t kéri (appraisal_tools), de nincs önellenőrzés "
+                                  "(%s/review.amstar2.<monogram>.json)" % APPRAISAL_DIR, [META_FILE], None)
+        else:
+            ctx.skip("X012", None, "még nincs AMSTAR 2 önellenőrzés; az S14-től és a FINAL kéréskor számít")
+        return
+    rank = {"consensus": 2}
+    pick = sorted(docs, key=lambda e: (rank.get(e["status"], 1 if e["final"] else 0), e["updated"], e["rel"]))[-1]
+    doc = pick["doc"]
+    answers = doc.get("answers") if isinstance(doc.get("answers"), dict) else {}
+    vals = {}
+    for i in range(1, 17):
+        a = answers.get(str(i))
+        v = a.get("value") if isinstance(a, dict) else a
+        if _nonempty(v):
+            vals[str(i)] = v
+    missing = [str(i) for i in range(1, 17) if str(i) not in vals]
+    problems = []
+    if missing:
+        if late:
+            problems.append("hiányos: %d/16 tétel megválaszolva (hiányzik: %s)" % (16 - len(missing),
+                                                                                   ", ".join(missing)))
+        else:
+            ctx.skip("X012", None, "az AMSTAR 2 még hiányos (%d/16); a hiányosság az S14-től és a FINAL kéréskor "
+                                   "számít" % (16 - len(missing)))
+    ov = doc.get("overall") if isinstance(doc.get("overall"), dict) else {}
+    claimed = _rating_key(ov.get("judgement"))
+    if claimed and not missing:
+        conv = (meta.get("conventions") or {}).get("amstar2_partial_yes_critical") if isinstance(
+            meta.get("conventions"), dict) else None
+        conv = conv if conv in ("meets", "weakness") else "meets"
+        got = _amstar2_ratings(vals, conv)
+        if got is None:
+            ctx.skip("X012", None, "a besorolás nem számolható újra: az AMSTAR 2-algoritmus (metaelemzes.appraisal / "
+                                   "grade_help) nem érhető el")
+        elif claimed not in got:
+            problems.append("a rögzített besorolás (%s) nem egyezik a válaszokból adódóval: %s (konvenció: %s)%s" % (
+                ov.get("judgement"), got[0], conv,
+                ("; a másik konvencióval: %s" % got[1]) if got[1] != got[0] else ""))
+    if problems:
+        ctx.add("X012", None, "%s: %s" % (pick["rel"], "; ".join(problems)), [pick["rel"]], None)
+
+
+# ------------------------------------------------------------------ X015
+def _run_study_count(ctx, run, oc, tab, specs_by_path, label_to_id):
+    """A futásban ténylegesen szereplő vizsgálatok száma: a plot_data.json vizsgálatai (egyedi study_id / címke), ennek
+    hiányában a tábla futás-szűrt sorainak egyedi study_id-i, végül a futás k-ja. → (n, forrás) vagy (None, None)."""
+    plot = ctx.load_json(run["dir"] + "/plot_data.json", what="ábra-adat")
+    if isinstance(plot, dict) and isinstance(plot.get("studies"), list) and plot["studies"]:
+        keys = set()
+        for st in plot["studies"]:
+            if isinstance(st, dict):
+                k = st.get("study_id") if _present(st.get("study_id")) else st.get("label")
+                if _present(k):
+                    keys.add(label_to_id.get(_fold(k), _fold(k)))
+        if keys:
+            return len(keys), "plot_data.json"
+    if tab is not None and "study_id" in set(_columns(tab[1])) and (
+            not run["data_path"] or _same_path(ctx, run["data_path"], oc.data)):
+        rows = tab[0]
+        keys = {_fold(rows[i]["study_id"]) for i in _analysed_rows(ctx, tab, run, specs_by_path, oc.data)
+                if _present(rows[i].get("study_id"))}
+        if keys:
+            return len(keys), "az adattábla study_id-i"
+    if run["k"] is not None:
+        return run["k"], "k"
+    return None, None
+
+
+def _x015(ctx, oc, prun, tab, specs_by_path, label_to_id, smap, flow_meta, n_outcomes):
+    expected = []
+    if smap is not None and smap.get("per_outcome") is not None:
+        expected.append((STUDIES_FILE, smap["per_outcome"].get(oc.id, 0)))
+    if flow_meta is not None:
+        rel, im = flow_meta
+        if isinstance(im, dict):
+            v = _count(im.get(oc.id))
+            if v is not None:
+                expected.append((rel, v))
+        elif _count(im) is not None:
+            if n_outcomes == 1:
+                expected.append((rel, _count(im)))
+            else:
+                ctx.skip("X015", oc.id, "a %s included_meta-ja egyetlen szám, de %d kimenet van — kimenetenként a "
+                                        "studies.json outcomes listája adja" % (rel, n_outcomes))
+    if not expected:
+        return False
+    if prun is None:
+        ctx.skip("X015", oc.id, "nincs (egyértelmű) elsődleges commit-futás")
+        return True
+    n_run, how = _run_study_count(ctx, prun, oc, tab, specs_by_path, label_to_id)
+    if n_run is None:
+        ctx.skip("X015", oc.id, "a(z) %s futás vizsgálatszáma ismeretlen" % prun["run_id"])
+        return True
+    bad = [(rel, n) for rel, n in expected if n != n_run]
+    if bad:
+        ctx.add("X015", oc.id, "a(z) %s elsődleges commit-futásban %d vizsgálat szerepel (%s), de %s" % (
+            prun["run_id"], n_run, how, "; ".join("a %s szerint %d" % (rel, n) for rel, n in bad)),
+            [rel for rel, _ in bad] + [prun["rel"]], None, run_id=prun["run_id"])
+    return True
+
+
+# ------------------------------------------------------------------ X017
+def _same_judgement(a, b):
+    ca, cb = tableio.rob_category(a), tableio.rob_category(b)
+    if ca and cb:
+        return ca == cb
+    return re.sub(r"[_\-\s]+", " ", _fold(a)) == re.sub(r"[_\-\s]+", " ", _fold(b))
+
+
+def _stored_overrides(doc):
+    """A dokumentumba mentett implikált ítéletből (domain_judgements[].implied, overall.implied) — ha a motor
+    implikált-ítélet számítása (appraisal.check) nem érhető el."""
+    out = []
+    items = [(dj, str(dj.get("domain")), dj.get("pass")) for dj in doc.get("domain_judgements") or ()
+             if isinstance(dj, dict)]
+    if isinstance(doc.get("overall"), dict):
+        items.append((doc["overall"], "overall", None))
+    for d, dom, ps in items:
+        j, imp = d.get("judgement"), d.get("implied")
+        if _nonempty(j) and _nonempty(imp) and not _same_judgement(j, imp):
+            out.append({"domain": dom, "pass": ps, "judgement": j, "implied": imp,
+                        "reason_missing": not _nonempty(d.get("override_reason"))})
+    return out
+
+
+def _x017(ctx, entries, conventions):
+    finals = [e for e in entries or () if e["final"]]
+    if not finals:
+        ctx.skip("X017", None, "nincs lezárt értékelés (%s)" % APPRAISAL_DIR)
+        return
+    AP = _module("appraisal")
+    check = getattr(AP, "check", None) if AP is not None else None
+    for e in finals:
+        overrides = None
+        if callable(check):
+            try:
+                res = check(e["doc"], conventions=conventions or None)
+            except Exception:   # noqa: BLE001 — ismeretlen eszköz vagy hibás dokumentum: a tárolt implikált ítélet
+                res = None
+            if isinstance(res, dict) and isinstance(res.get("overrides"), list):
+                overrides = res["overrides"]
+        if overrides is None:
+            overrides = _stored_overrides(e["doc"])
+        bad = [o for o in overrides if isinstance(o, dict) and o.get("reason_missing")]
+        if not bad:
+            continue
+        what = ["%s: %s ≠ implikált %s" % ("összítélet" if o.get("domain") == "overall" else "D%s%s" % (
+            o.get("domain"), ("/" + o["pass"]) if o.get("pass") else ""), o.get("judgement"), o.get("implied"))
+                for o in bad]
+        ctx.add("X017", e["outcome"], "%s (%s, %s): %s — felülbírálási indoklás (override_reason) nélkül" % (
+            e["rel"], e["tool"], e["unit"], "; ".join(what)), [e["rel"]], None, studies=[str(e["unit"])])
+
+
+# ------------------------------------------------------------------ X019
+_PB_SIGNED = re.compile(r"^\s*(?:[+\-−–]\s*[0-3]|0)(?![0-9.,])")
+_PB_SUSPECTED = re.compile(r"^\s*(?:suspected|gyan[ií]tott|gyan[ií]that[óo])", re.I)
+
+
+def _pb_unresolved_doc(doc):
+    pb = (doc.get("domains") or {}).get("publication_bias") if isinstance(doc.get("domains"), dict) else None
+    if not isinstance(pb, dict):
+        return False
+    return pb.get("status") == "unresolved" or (pb.get("rating") == "suspected" and pb.get("step") is None)
+
+
+def _x019(ctx, grade_docs, grade_rows):
+    if not grade_docs and not grade_rows:
+        ctx.skip("X019", None, "nincs GRADE-ítélet (%s/*.grade.json vagy projektnapló grade-sor)" % GRADE_DIR)
+        return
+    seen = set()
+    for e in grade_docs or ():
+        seen.add(_fold(e["outcome"]))
+        if _pb_unresolved_doc(e["doc"]):
+            ctx.add("X019", e["outcome"], "%s: a publikációs torzítás „gyanított” (suspected), de nincs 0 / −1 döntés "
+                                          "indoklással (futás: %s)" % (e["rel"], e["doc"].get("run_id") or "–"),
+                    [e["rel"]], None)
+    latest = collections.OrderedDict()
+    for g in grade_rows or ():
+        latest[_fold(g.get("outcome"))] = g
+    for key, g in latest.items():
+        if key in seen:
+            continue
+        text = g.get("publication_bias")
+        if _nonempty(text) and not _PB_SIGNED.match(text) and _PB_SUSPECTED.match(text):
+            ctx.add("X019", g.get("outcome"), "projektnapló grade #%s: a publikációs torzítás („%s”) előjeles lépés "
+                                              "nélkül feloldatlan" % (g.get("id"), text.strip()[:80]),
+                    [JOURNAL_FILE], None)
+
+
+# ------------------------------------------------------------------ X020 / X021 (PRISMA)
+def _flow_doc(ctx):
+    """(út, flow-szótár) — a composer-export (prisma_flow.json), ennek hiányában a prisma_folyamat.md; nincs: None."""
+    from . import prisma
+    flow = ctx.load_json(PRISMA_JSON, None, None, "PRISMA-folyamat")
+    if isinstance(flow, dict):
+        return PRISMA_JSON, flow
+    if ctx.isfile(PRISMA_MD):
+        try:
+            return PRISMA_MD, prisma.parse_markdown_table(ctx.read_bytes(PRISMA_MD).decode("utf-8-sig"))
+        except (OSError, UnicodeDecodeError, ValueError):
+            return None
+    return None
+
+
+def _x020(ctx, stage):
+    from . import prisma
+    flow = ctx.load_json(PRISMA_JSON, "X020", None, "PRISMA-folyamat")
+    if not isinstance(flow, dict):
+        ctx.skip("X020", None, "nincs composer PRISMA-export (%s)" % PRISMA_JSON)
+        return
+    n = prisma.undecided_count(flow)
+    if n is None:
+        ctx.skip("X020", None, "a %s nem közli az elbírálásra váró rekordok számát (undecided)" % PRISMA_JSON)
+    elif n > 0:
+        if _late(stage):
+            ctx.add("X020", None, "a composer-export szerint %d rekord még elbírálásra vár (undecided)" % n,
+                    [PRISMA_JSON], None)
+        else:
+            ctx.skip("X020", None, "%d rekord még elbírálásra vár; az S14-től és a FINAL kéréskor számít" % n)
+
+
+def _decision_logs(ctx):
+    """A 02_szures mappa döntési naplói (CSV/TSV, a composer döntés-CSV-jének oszlopaival) → ([utak], összesítés) —
+    a fájlok név szerinti sorrendben, rekordazonosítónként a későbbi döntés érvényes."""
+    from . import prisma
+    d = ctx.abs(SCREENING_DIR)
+    if not os.path.isdir(d):
+        return [], None
+    rels, rows = [], []
+    for name in sorted(os.listdir(d)):
+        if name.startswith(".") or not name.lower().endswith((".csv", ".tsv")):
+            continue
+        rel = SCREENING_DIR + "/" + name
+        try:
+            header, rows_text, _fmt = tableio.read_raw(raw=ctx.read_bytes(rel))
+        except Exception:       # noqa: BLE001 — nem döntési napló (pl. bináris vagy hibás CSV): kimarad
+            continue
+        canon = prisma.decision_log_rows(header, rows_text)
+        if canon is None:
+            continue
+        rels.append(rel)
+        rows.extend(canon)
+    if not rels:
+        return [], None
+    return rels, prisma.decision_log_reasons(prisma.DECISION_LOG_HEADER, rows)
+
+
+def _x021(ctx, flow_src):
+    from . import prisma
+    if flow_src is None:
+        ctx.skip("X021", None, "nincs PRISMA-folyamat (%s vagy %s)" % (PRISMA_JSON, PRISMA_MD))
+        return
+    rel, flow = flow_src
+    logs, agg = _decision_logs(ctx)
+    if agg is None:
+        ctx.skip("X021", None, "nincs szűrési döntési napló a %s mappában (CSV: rec_id | pmid, decision, reason, "
+                               "phase — a szűrőeszköz vagy a composer exportja)" % SCREENING_DIR)
+        return
+    vals, reasons, _seen = prisma.normalize(flow)
+    flow_r = prisma.reason_counts(reasons.get("excluded_eligibility_reasons")) if reasons.get(
+        "excluded_eligibility_reasons") else None
+    log_r = agg["reasons"]
+    problems = []
+    if flow_r:
+        for k in list(flow_r) + [k for k in log_r if k not in flow_r]:
+            fn = flow_r.get(k, [None, 0])[1]
+            ln = log_r.get(k, [None, 0])[1]
+            if fn != ln:
+                label = (flow_r.get(k) or log_r.get(k))[0]
+                problems.append("„%s”: folyamat %d, napló %d" % (label, fn, ln))
+    else:
+        try:
+            h = prisma._as_count(vals.get("excluded_eligibility"))
+        except ValueError:
+            h = None
+        if h is None:
+            ctx.skip("X021", None, "a %s nem közli a teljes szöveg szintű kizárásokat (H) okonként sem" % rel)
+            return
+        if h != agg["rows"]:
+            problems.append("H = %d, a naplóban %d teljes szöveg szintű kizárás" % (h, agg["rows"]))
+    if problems:
+        ctx.add("X021", None, "a %s kizárási okai eltérnek a döntési naplótól (%s): %s" % (
+            rel, ", ".join(logs), "; ".join(problems[:15]) + (" … (+%d)" % (len(problems) - 15) if len(problems) > 15
+                                                               else "")), [rel] + logs, None)
+
+
+# ------------------------------------------------------------------ X002 / X018 (ábrák)
+def _figures(ctx):
+    """(06_kezirat/abrak/*.result.json → [{rel, stem, doc}], .result.json nélküli ábra-tövek) vagy None."""
+    d = ctx.abs(FIGURES_DIR)
+    if not os.path.isdir(d):
+        return None
+    names = [n for n in sorted(os.listdir(d)) if not n.startswith(".")]
+    results = [n for n in names if n.endswith(".result.json")]
+    stems = {n.split(".")[0] for n in results}
+    orphans = sorted({n.split(".")[0] for n in names if n.lower().endswith(_FIG_FORMATS)} - stems)
+    out = []
+    for n in results:
+        rel = FIGURES_DIR + "/" + n
+        doc = ctx.load_json(rel, None, None, "ábra-eredmény")
+        if isinstance(doc, dict):
+            out.append({"rel": rel, "stem": n[:-len(".result.json")], "doc": doc})
+    return out, orphans
+
+
+def _plot_sha(ctx, run):
+    rel = run["dir"] + "/plot_data.json"
+    if ctx.isfile(rel):
+        return ctx.sha(rel)
+    files = run["doc"].get("files") if isinstance(run["doc"].get("files"), dict) else {}
+    plot = files.get("plot") if isinstance(files.get("plot"), dict) else {}
+    sha = plot.get("sha256")
+    return sha.lower() if isinstance(sha, str) else None
+
+
+def _x002(ctx, figs, runs):
+    by_id = {r["run_id"]: r for r in runs}
+    last = {}
+    for r in runs:
+        last[_run_group(ctx, r)] = r
+    for f in figs:
+        src = f["doc"].get("source") if isinstance(f["doc"].get("source"), dict) else {}
+        psha = src.get("plot_sha256").lower() if _nonempty(src.get("plot_sha256")) else None
+        rid = src.get("run_id") if _nonempty(src.get("run_id")) else None
+        if psha is None:
+            if f["doc"].get("kind") not in _NON_PLOT_KINDS:
+                ctx.skip("X002", None, "%s: nincs source.plot_sha256" % f["rel"])
+            continue
+        if not runs:
+            ctx.skip("X002", None, "%s: nincs commit-futás, amellyel összevethető" % f["rel"])
+            continue
+        run = by_id.get(rid) if rid else None
+        if run is None:
+            run = next((r for r in reversed(runs) if _plot_sha(ctx, r) == psha), None)
+        if run is None:
+            ctx.add("X002", None, "a(z) %s ábra plot_sha256-ja (%s) egyik commit-futás plot_data.json-jához sem "
+                                  "tartozik%s" % (f["stem"], _short(psha), (" (a hivatkozott %s futás nem található)"
+                                                                            % rid) if rid else ""),
+                    [f["rel"]], None)
+            continue
+        latest = last.get(_run_group(ctx, run), run)
+        cur = _plot_sha(ctx, latest)
+        if cur is None or cur == psha:
+            if cur is None:
+                ctx.skip("X002", run["outcome"], "%s: a(z) %s futásnak nincs plot_data.json-ja" % (
+                    f["rel"], latest["run_id"]))
+            continue
+        if latest is run:
+            detail = "a(z) %s ábra a(z) %s futás plot_data.json-jából készült (%s), de az azóta megváltozott (%s)" % (
+                f["stem"], run["run_id"], _short(psha), _short(cur))
+        else:
+            detail = "a(z) %s ábra a(z) %s futásból készült; ugyanarra az elemzésre azóta újabb commit-futás van " \
+                     "(%s)" % (f["stem"], run["run_id"], latest["run_id"])
+        ctx.add("X002", run["outcome"], detail, [f["rel"], latest["dir"] + "/plot_data.json"], None,
+                run_id=latest["run_id"])
+
+
+def _x018(ctx, figs, runs):
+    by_id = {r["run_id"]: r for r in runs}
+    for f in figs:
+        doc = f["doc"]
+        probs = []
+        if doc.get("clean") is False:
+            probs.append("a QC nem tiszta")
+        rv = doc.get("residual_violations")
+        if isinstance(rv, list) and rv:
+            probs.append("%d maradék címke-ütközés" % len(rv))
+        gl = doc.get("glyphs") if isinstance(doc.get("glyphs"), dict) else {}
+        if gl.get("ok") is False:
+            miss = gl.get("missing") if isinstance(gl.get("missing"), list) else []
+            probs.append("hiányzó karakter a betűkészletben%s" % ((": " + " ".join(str(x) for x in miss[:10]))
+                                                                 if miss else ""))
+        nb = doc.get("numbers") if isinstance(doc.get("numbers"), dict) else {}
+        mism = nb.get("mismatches") if isinstance(nb.get("mismatches"), list) else []
+        if nb.get("ok") is False or mism:
+            probs.append("számhűség: %d eltérés%s" % (len(mism), (" (%s ellenőrzött szám)" % nb["checked"])
+                                                      if _int(nb.get("checked")) is not None else ""))
+        for k in ("server_check", "recheck"):
+            sc = doc.get(k) if isinstance(doc.get(k), dict) else {}
+            if sc.get("ok") is False:
+                probs.append("a szerver újraellenőrzése eltérést talált")
+        if not probs:
+            continue
+        src = doc.get("source") if isinstance(doc.get("source"), dict) else {}
+        run = by_id.get(src.get("run_id")) if src.get("run_id") else None
+        ctx.add("X018", run["outcome"] if run else None, "a(z) %s ábra (%s): %s" % (
+            f["stem"], doc.get("kind") or "?", "; ".join(probs)), [f["rel"]], None)
+
+
+# ------------------------------------------------------------------ AMSTAR 2-javaslatok (4.15 amstar2_hints)
+def _amstar2_hints(ctx, flow_src, coverage, grade_docs, grade_rows, outcomes):
+    """Javaslatok az AMSTAR 2 önellenőrzéshez a projekt fájljaiból (csak tájékoztató; az ítélet emberi): 4 (átfogó
+    keresés), 7 (kizárt vizsgálatok okokkal), 9 (RoB megfelelő eszközzel), 13 (RoB az értelmezésben), 15 (publikációs
+    torzítás vizsgálata)."""
+    from . import prisma
+    hints = collections.OrderedDict()
+    if flow_src is not None:
+        rel, flow = flow_src
+        vals, reasons, _ = prisma.normalize(flow)
+        try:
+            a1, a2, h = (prisma._as_count(vals.get(k)) for k in ("identified_databases", "identified_registers",
+                                                                 "excluded_eligibility"))
+        except ValueError:
+            a1 = a2 = h = None
+        dbs = [x for x in flow.get("databases") or [] if isinstance(x, dict)] if isinstance(
+            flow.get("databases"), list) else []
+        if a1:
+            ev = "%s: adatbázisokból %d rekord (A1)%s, regiszterekből %s (A2)" % (
+                rel, a1, (", %d adatbázis" % len(dbs)) if dbs else "", a2 if a2 is not None else "?")
+            hints["4"] = {"suggested": "no" if len(dbs) == 1 else "partial_yes", "evidence": [ev]}
+        rs = reasons.get("excluded_eligibility_reasons")
+        if h:
+            rc = prisma.reason_counts(rs) if rs else {}
+            no_reason = rc.get(prisma.NO_REASON, [None, 0])[1] if rc else 0
+            if rc and sum(v[1] for v in rc.values()) == h and not no_reason:
+                hints["7"] = {"suggested": "partial_yes", "evidence": [
+                    "%s: H = %d, %d okkal (a kizárt vizsgálatok listája a kiegészítő anyagban adja az „igen”-t)" % (
+                        rel, h, len(rc))]}
+            else:
+                hints["7"] = {"suggested": "no", "evidence": ["%s: H = %d, okonkénti bontás nélkül vagy ok nélküli "
+                                                              "kizárással (P008)" % (rel, h)]}
+    if coverage and all(tot for _c, tot, _t in coverage.values()):
+        if all(c == tot for c, tot, _t in coverage.values()):
+            hints["9"] = {"suggested": "yes", "evidence": ["értékelések: %s" % "; ".join(
+                "%s %d/%d (%s)" % (oid, c, tot, ", ".join(t)) for oid, (c, tot, t) in coverage.items())]}
+        elif all(c == 0 for c, _tot, _t in coverage.values()):
+            hints["9"] = {"suggested": "no", "evidence": ["egyik elemzett vizsgálatnak sincs lezárt értékelése"]}
+    if outcomes:
+        decided_rob, decided_pb = [], []
+        for oc in outcomes:
+            gd = next((e["doc"] for e in reversed(grade_docs or []) if e["outcome"] == oc.id), None)
+            rows = _grade_rows_for(grade_rows, oc)
+            doms = gd.get("domains") if isinstance(gd, dict) and isinstance(gd.get("domains"), dict) else {}
+            rob = (doms.get("risk_of_bias") or {}).get("rating") if isinstance(doms.get("risk_of_bias"), dict) else None
+            if rob or (rows and _nonempty(rows[-1].get("risk_of_bias"))):
+                decided_rob.append(oc.id)
+            if (isinstance(gd, dict) and not _pb_unresolved_doc(gd) and isinstance(doms.get("publication_bias"), dict)
+                    and doms["publication_bias"].get("step") is not None) or (
+                        rows and _nonempty(rows[-1].get("publication_bias"))
+                        and not _PB_SUSPECTED.match(rows[-1]["publication_bias"])):
+                decided_pb.append(oc.id)
+        ids = [oc.id for oc in outcomes]
+        if decided_rob == ids:
+            hints["13"] = {"suggested": "yes", "evidence": ["GRADE torzítási kockázat doménje kitöltve: %s" %
+                                                            ", ".join(ids)]}
+        if decided_pb == ids:
+            hints["15"] = {"suggested": "yes", "evidence": ["GRADE publikációs torzítás eldöntve: %s" %
+                                                            ", ".join(ids)]}
+    return hints
+
+
 # ------------------------------------------------------------------ fő belépési pont
 def project_audit(project_dir, stage=None, now=None):
     """A projektmappa X-szabályai → szk.ma.project-audit/v1 szótár.
@@ -1257,7 +2498,7 @@ def project_audit(project_dir, stage=None, now=None):
     if not os.path.isdir(project_dir):
         raise FileNotFoundError("Nincs ilyen projektmappa: %s" % project_dir)
     ctx = _Ctx(project_dir, None)
-    checkpoints, decisions = _journal(ctx)
+    checkpoints, decisions, grade_rows = _journal(ctx)
     ctx.stage = _norm_stage(stage) if stage is not None else _journal_stage(checkpoints)
     meta = _load_meta(ctx)
     specs = _load_specs(ctx)
@@ -1270,16 +2511,44 @@ def project_audit(project_dir, stage=None, now=None):
     appraisals = _appraisals(ctx) if outcomes else None
     included = _included_studies(ctx) if outcomes else (None, None)
     st = ctx.load_json(STUDIES_FILE)
-    label_to_id = {}
+    label_to_id, design_of, smap = {}, {}, None
     if isinstance(st, dict) and isinstance(st.get("studies"), list):
         for s in st["studies"]:
             if isinstance(s, dict) and _present(s.get("label")) and _present(s.get("study_id")):
                 label_to_id[_fold(s["label"])] = _fold(s["study_id"])
+            if isinstance(s, dict) and _nonempty(s.get("design")) and _present(s.get("study_id")):
+                design_of[_fold(s["study_id"])] = s["design"]
+        from . import prisma
+        try:
+            smap = prisma.studies_counts(st)
+        except prisma.PrismaError:
+            smap = None
+    # v1-bemenetek: minden értékelés, GRADE-dokumentumok, PRISMA-folyamat
+    entries = _all_appraisals(ctx)
+    grade_docs = _grade_docs(ctx)
+    runs_by_id = {r["run_id"]: r for r in runs}
+    flow_src = _flow_doc(ctx)
+    flow_meta = None
+    if flow_src is not None:
+        im = flow_src[1].get("included_meta")
+        if not isinstance(im, dict):
+            from . import prisma
+            im = prisma.normalize(flow_src[1])[0].get("included_meta")
+        flow_meta = (flow_src[0], im) if im is not None else None
+    conventions = meta.get("conventions") if isinstance(meta, dict) and isinstance(meta.get("conventions"),
+                                                                                   dict) else None
+    grade_any = bool(grade_docs) or bool(grade_rows)
+    sof_any = os.path.isdir(ctx.abs(SOF_DIR))
+    coverage, no_kettos, x015_any, tools_any = collections.OrderedDict(), [], False, False
+    table_ids = set()
     single = len(outcomes) == 1
     for oc in outcomes:
         _x001(ctx, oc)
-        tab = ctx.table(oc.data, oc.id, ("X003", "X005", "X006", "X010", "X013"))
+        tools = _outcome_tools(meta, oc)
+        tools_any = tools_any or bool(tools)
+        tab = ctx.table(oc.data, oc.id, ("X003", "X005", "X006", "X010", "X013") + (("X004",) if tools else ()))
         prov = _prov(ctx, oc, ("X013", "X022") if tab is not None else ())
+        prun = _primary_run(ctx, oc, specs_by_path)
         if tab is not None:
             if appraisals:
                 _x003(ctx, oc, tab, appraisals, label_to_id)
@@ -1287,9 +2556,56 @@ def project_audit(project_dir, stage=None, now=None):
             _x005_x006(ctx, oc, "X006", tab, specs_by_path)
             _x010(ctx, oc, tab, prov)
             _x013(ctx, oc, tab, prov)
+            if tools:
+                _x004(ctx, oc, tab, prun, specs_by_path, entries or [], tools, label_to_id, design_of, coverage)
+            if "study_id" in set(_columns(tab[1])):
+                table_ids.update(str(r["study_id"]) for r in tab[0] if _present(r.get("study_id")))
         _x014(ctx, oc, tab, included)
         _x016(ctx, oc, decisions, single)
         _x022(ctx, oc, tab, prov)
+        if grade_any:
+            _x007(ctx, oc, prun, _grade_rows_for(grade_rows, oc),
+                  [e for e in grade_docs or () if e["outcome"] == oc.id], runs_by_id)
+        if sof_any:
+            _x008(ctx, oc, prun, runs_by_id)
+        _x009(ctx, oc, no_kettos)
+        x015_any = _x015(ctx, oc, prun, tab, specs_by_path, label_to_id, smap, flow_meta, len(outcomes)) or x015_any
+    if outcomes:
+        if not tools_any:
+            ctx.skip("X004", None, "a kimenetek értékelő eszköze nincs megadva (ma-projekt.json appraisal_tools, pl. "
+                                   "[\"rob2\"]); így nem dönthető el, melyik eszközzel kell értékelni")
+        if not grade_any:
+            ctx.skip("X007", None, "nincs GRADE-ítélet (projektnapló grade-sor vagy %s/*.grade.json)" % GRADE_DIR)
+        if not sof_any:
+            ctx.skip("X008", None, "nincs SoF-táblázat (%s/*.sof.json)" % SOF_DIR)
+        if len(no_kettos) == len(outcomes):
+            ctx.skip("X009", None, "nincs kettős kinyerés (%s)" % ", ".join(sorted(set(no_kettos))))
+        else:
+            for kdir in sorted(set(no_kettos)):
+                ctx.skip("X009", None, "nincs kettős kinyerés ebben a mappában: %s" % kdir)
+        if not x015_any:
+            ctx.skip("X015", None, "a metaanalízisbe vont vizsgálatok kimenetenkénti száma nincs megadva (studies.json "
+                                   "outcomes lista vagy a PRISMA included_meta)")
+    _x011(ctx, meta, entries, smap, sorted(table_ids))
+    _x012(ctx, meta, entries, ctx.stage)
+    _x017(ctx, entries, conventions)
+    _x019(ctx, grade_docs, grade_rows)
+    _x020(ctx, ctx.stage)
+    _x021(ctx, flow_src)
+    figs = _figures(ctx)
+    if figs is None:
+        for code in ("X002", "X018"):
+            ctx.skip(code, None, "nincs exportált ábra (%s)" % FIGURES_DIR)
+    else:
+        figs, orphans = figs
+        for code in ("X002", "X018"):
+            if orphans:
+                ctx.skip(code, None, "%d ábrához nincs <név>.result.json (szk.figure-result/v1), így nem ellenőrizhető: "
+                                     "%s" % (len(orphans), _plural_list(orphans)))
+            elif not figs:
+                ctx.skip(code, None, "nincs exportált ábra (%s/*.result.json)" % FIGURES_DIR)
+        _x002(ctx, figs, runs)
+        _x018(ctx, figs, runs)
     order = {o.id: i for i, o in enumerate(outcomes)}
     findings = sorted(ctx.findings, key=lambda f: (SEVERITIES.index(f["severity"]), f["code"],
                                                    order.get(f["outcome"], -1)))
@@ -1307,13 +2623,30 @@ def project_audit(project_dir, stage=None, now=None):
     rep["rules_checked"] = sorted(RULES)
     rep["outcomes"] = [o.id for o in outcomes]
     rep["inputs"] = collections.OrderedDict(sorted((k, v) for k, v in ctx.inputs.items() if _relpath_ok(k)))
-    rep["amstar2_hints"] = {}
+    rep["amstar2_hints"] = _amstar2_hints(ctx, flow_src, coverage, grade_docs, grade_rows, outcomes)
     return _clean(rep)
 
 
 def audit_gate_errors(project_dir):
-    """A FINAL audit-kaput elutasító találatok (error szintű X-találatok FINAL szakasz-kontextusban)."""
+    """A FINAL audit-kaput elutasító találatok (minden error szintű X-találat FINAL szakasz-kontextusban)."""
     return [f for f in project_audit(project_dir, stage=FINAL)["findings"] if f["severity"] == "error"]
+
+
+def checkpoint_gate_errors(project_dir, stage):
+    """Egy szakasz PASS-át blokkoló X-találatok: FINAL-nál minden error szintű (audit_gate_errors); egyébként azok az
+    error-találatok, amelyek szabálya (GATE_STAGES) erre vagy egy korábbi szakaszra kapuz — pl. az X009 (lezáratlan
+    kettős kinyerés) az S08 (szintézis) PASS-át. Ismeretlen / érvénytelen szakasz → ValueError (projekt.parse_stage)."""
+    st = _norm_stage(stage)
+    if st is None:
+        raise ValueError("A kapuhoz szakaszkód kell (S00–S14 vagy FINAL).")
+    if st == FINAL:
+        return audit_gate_errors(project_dir)
+    idx = _stage_index(st)
+    gated = [c for c, g in GATE_STAGES.items() if _stage_index(g) <= idx]
+    if not gated:
+        return []
+    return [f for f in project_audit(project_dir, stage=st)["findings"]
+            if f["severity"] == "error" and f["code"] in gated]
 
 
 def _data_tables(project_dir):

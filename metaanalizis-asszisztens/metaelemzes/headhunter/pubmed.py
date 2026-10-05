@@ -241,8 +241,8 @@ class Client(BaseClient):
                 params.append(("mindate", str(mindate).replace("-", "/")))
             params.append(("maxdate", str(maxdate or "3000").replace("-", "/")))
         resp = self._call("esearch.fcgi", params)
-        data = resp.json()
-        res = data.get("esearchresult") or {}
+        data = resp.json_dict()
+        res = net.as_dict(data.get("esearchresult"))
         if res.get("ERROR"):
             raise HttpError(SOURCE, resp.status, endpoint=resp.url, body_excerpt=str(res.get("ERROR")))
         warnings = []
@@ -305,10 +305,10 @@ class Client(BaseClient):
         for i in range(0, len(ids), 200):
             chunk = ids[i:i + 200]
             resp = self._call("esummary.fcgi", [("db", "pubmed"), ("id", ",".join(chunk)), ("retmode", "json")])
-            result = resp.json().get("result") or {}
+            result = net.as_dict(resp.json_dict().get("result"))
             for pmid in chunk:
                 doc = result.get(pmid)
-                if not doc or doc.get("error"):
+                if not isinstance(doc, dict) or doc.get("error"):
                     continue
                 rec = summary_record(doc)
                 rec["raw"] = doc
@@ -347,10 +347,11 @@ class Client(BaseClient):
             db = parts[1] if len(parts) > 2 else "pubmed"
         resp = self._call("elink.fcgi", [("dbfrom", dbfrom), ("db", db), ("id", p), ("linkname", linkname),
                                          ("retmode", "json")])
-        data = resp.json()
+        data = resp.json_dict()
         out = []
-        for ls in data.get("linksets", []) or []:
-            for lsdb in ls.get("linksetdbs", []) or []:
+        for ls in as_list(data.get("linksets")):
+            for lsdb in as_list(net.as_dict(ls).get("linksetdbs")):
+                lsdb = net.as_dict(lsdb)
                 if lsdb.get("linkname") == linkname:
                     out.extend(str(x) for x in lsdb.get("links", []) or [])
         return out
@@ -367,8 +368,9 @@ class Client(BaseClient):
             rows.append("|".join(clean + [key]) + "|")
             keys.append(key)
         out = {}
-        for i in range(0, len(rows), 100):
-            chunk = rows[i:i + 100]
+        # kis kötegek: az ecitmatch.cgi GET-tel megy (a POST-ot az NCBI nem dokumentálja ehhez a végponthoz)
+        for i in range(0, len(rows), 20):
+            chunk = rows[i:i + 20]
             resp = self._call("ecitmatch.cgi", [("db", "pubmed"), ("retmode", "xml"), ("bdata", "\r".join(chunk))],
                               accept="text")
             for line in resp.text.splitlines():
@@ -427,7 +429,8 @@ class Client(BaseClient):
                 resp = self.http.get("pmc", IDCONV_URL, params=params, bucket="pmc:idconv")
                 if resp.status != 200:
                     raise SourceUnavailable("pmc", "unreachable", http_status=resp.status, endpoint=resp.url)
-                for rec in resp.json().get("records", []) or []:
+                for rec in as_list(resp.json_dict().get("records")):
+                    rec = net.as_dict(rec)
                     req = str(rec.get("requested-id") or "")
                     match = next((x for x in chunk if x.lower() == req.lower()), req)
                     if rec.get("status") == "error":
@@ -436,8 +439,10 @@ class Client(BaseClient):
                         out[match] = {"pmid": norm_pmid(rec.get("pmid")), "pmcid": norm_pmcid(rec.get("pmcid")),
                                       "doi": norm_doi(rec.get("doi")), "via": "pmc.idconv"}
             return out
-        except (SourceUnavailable, HttpError, ParseError):
-            pass
+        except (SourceUnavailable, HttpError, ParseError) + net.SHAPE_ERRORS as exc:
+            # a konverter ebben a munkamenetben ne terhelődjön újra (pl. proxy blokkolja) — tartalék út
+            if isinstance(exc, SourceUnavailable) and exc.status == "unreachable":
+                self.http._block("pmc:idconv", exc, until=self.http.now() + 3600.0)
         # tartalék: esearch + esummary (a sandboxban ez működik)
         for item in items:
             pmid = norm_pmid(item) if re.match(r"^\d+$", item) else None

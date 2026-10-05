@@ -22,7 +22,7 @@
   (a fájlcseréhez; ``template``: üres sablon a második kinyerőnek — fejléc + kulcsoszlopok).
 
 Számot a szerver nem számol és cellát nem értelmez: az összevetés a motoré (``extraction_dual_common.ENGINE``)."""
-import copy
+import json
 
 from metaelemzes import api
 
@@ -81,6 +81,11 @@ _VIEW_RESP = {"type": "object", "required": ["outcome", "compare", "items", "pro
 
 
 # ---------------------------------------------------------------------------- segédek
+def _clone(doc):
+    """Mély másolat (a konszenzus-dokumentum JSON-ból jön, így a JSON oda-vissza pontos)."""
+    return json.loads(json.dumps(doc, ensure_ascii=False))
+
+
 def _norm_etag(tag):
     if tag is None:
         return None
@@ -256,7 +261,7 @@ def _apply_decisions(body, doc, items, actor):
     """(új dokumentum, megváltozott döntések, törölt darabszám). Ismeretlen / formátum-eltérés / indoklás nélküli
     döntés: 422 — az üzenet a mezőt és a sorszámot nevezi meg, cellaértéket és kulcsot nem."""
     by = {C._dkey(it["key"], it["field"]): it for it in items}
-    new = copy.deepcopy(doc) if doc is not None else None
+    new = _clone(doc) if doc is not None else None
     decisions = [d for d in ((new or {}).get("decisions") or []) if isinstance(d, dict)]
     index = {C._dkey(d.get("key"), d.get("field")): i for i, d in enumerate(decisions)}
     cleared = 0
@@ -338,8 +343,11 @@ def _build_table(app, info, ta, tb, result, items, decisions, target):
         doc = {"schema": C.CONSENSUS_SCHEMA, "key": list(result.get("key") or []),
                "decisions": [{k: d.get(k) for k in ("key", "field", "chosen", "value", "reason", "actor", "ts")}
                              for d in decisions]}
-        header, rows, rec = C.engine_consensus(fn, ta, tb, info["a"], info["b"], app.store.path(info["a"]),
-                                               app.store.path(info["b"]), doc, list(result.get("key") or []))
+        try:
+            header, rows, rec = C.engine_consensus(fn, ta, tb, info["a"], info["b"], app.store.path(info["a"]),
+                                                   app.store.path(info["b"]), doc, list(result.get("key") or []))
+        except (KeyError, ValueError) as exc:          # a motor magyar üzenete (cellaérték nélkül)
+            raise ApiError("VALIDATION", "A motor nem tudta összeállítani a konszenzus-táblát: %s" % exc) from None
         reconciled = []
         for r in rec:
             if isinstance(r, dict) and r.get("row_uid") and r.get("field"):
@@ -400,7 +408,7 @@ def post_reconcile(req):
     result = _compare(app, info, ta, tb, key, None)
     items, _p0 = C.build_items(result, doc, ta, tb)
     decisions, changed, cleared = _apply_decisions(body, doc, items, actor)
-    new_doc = copy.deepcopy(doc) if doc is not None else C.empty_consensus(info["id"])
+    new_doc = _clone(doc) if doc is not None else C.empty_consensus(info["id"])
     new_doc.update({"schema": C.CONSENSUS_SCHEMA, "outcome": info["id"], "key": list(result.get("key") or []),
                     "decisions": decisions,
                     "sources": {"a": {"path": info["a"], "sha256": ta.etag}, "b": {"path": info["b"], "sha256": tb.etag}}})
@@ -612,7 +620,7 @@ def post_import(req):
         items.append((side_rel, raw, cur["etag"]))
     new_doc = None
     if rater and (doc is None or (doc.get("raters") or {}).get(side.lower()) != rater):
-        new_doc = copy.deepcopy(doc) if doc is not None else C.empty_consensus(info["id"])
+        new_doc = _clone(doc) if doc is not None else C.empty_consensus(info["id"])
         new_doc.setdefault("raters", {})[side.lower()] = rater
         items.append((info["json"], store.json_bytes(new_doc), doc_etag))
     if doc is not None and (doc.get("decisions") or []) and state == "replaced":
@@ -621,8 +629,8 @@ def post_import(req):
     etags = C.atomic_write(app, items) if items else {}
     outputs = [{"path": rel, "sha256": etags[app.store.rel(rel)]} for rel, _d, _im in items]
     log_activity_or_warn(app, "kettos.import", warnings, inputs=[src] if src else (), outputs=outputs,
-                         details={"outcome": info["id"], "side": side, "state": state, "rows": len(table.rows),
-                                  "columns": len(table.header), "phi_findings": len(findings),
+                         details={"outcome": info["id"], "side": side, "state": state, "n_rows": len(table.rows),
+                                  "n_columns": len(table.header), "phi_findings": len(findings),
                                   "from_inbox": src is not None, "replace": replace})
     return Result({"outcome": info["id"], "side": side, "path": side_rel, "state": state, "etag": table.etag,
                    "rows": len(table.rows), "columns": len(table.header), "header": list(table.header),
@@ -658,7 +666,7 @@ def post_export(req):
             key = [f for f in ("study_id", "study", "arm") if f in fields]
         keep = {i for i, f in enumerate(fields) if f in key}
         rows = [{"row_uid": None, "cells": [c if i in keep else "" for i, c in enumerate(r["cells"])]} for r in t.rows]
-        raw, tt = C.csv_bytes(app, None, t.header, rows, t.fmt)
+        raw, tt = C.csv_bytes(app, None, t.header, rows, t.fmt, write_uids=False)
         rows_n = len(tt.rows)
         name = "%s.%s.sablon.csv" % (info["id"], "B" if side == "A" else "A")
     warnings = []

@@ -18,7 +18,7 @@
   var t = function (k, a) { return MA.i18n.t(k, a); };
   var pick = function (v, fb) { return MA.i18n.pick(v, fb === undefined ? '—' : fb); };
 
-  var VIEWS = ['forest', 'funnel', 'doi', 'loo', 'influence', 'cumulative'];
+  var VIEWS = ['forest', 'funnel', 'doi', 'loo', 'influence', 'cumulative', 'bubble'];
   var KB_FIELDS = [
     { field: 'model', key: 'results.kb.model' },
     { field: 'pi', key: 'results.kb.pi' },
@@ -34,6 +34,7 @@
     if (view === 'loo') { return Array.isArray(plot.loo) && plot.loo.length > 0; }
     if (view === 'influence') { return Array.isArray(plot.influence) && plot.influence.length > 0; }
     if (view === 'cumulative') { return !!(plot.cumulative && plot.cumulative.entries && plot.cumulative.entries.length); }
+    if (view === 'bubble') { return !!(MA.plots.bubble && MA.plots.bubble.available(plot)); }   // v1: plots/bubble.js
     return false;
   }
 
@@ -208,7 +209,9 @@
       if (v === 'funnel') { return MA.plots.funnel.render(host, plot, opts); }
       if (v === 'doi') { return MA.plots.doi.render(host, plot, opts); }
       if (v === 'loo') { return MA.plots.series.render(host, plot, Object.assign({ kind: 'loo' }, opts)); }
-      if (v === 'cumulative') { return MA.plots.series.render(host, plot, Object.assign({ kind: 'cumulative' }, opts)); }
+      // v1: a kumulatív forest külön rajzolóval (plots/cumulative.js), tartalékként a sorozat-ábra
+      if (v === 'cumulative') { return MA.plots.cumulative ? MA.plots.cumulative.render(host, plot, opts) : MA.plots.series.render(host, plot, Object.assign({ kind: 'cumulative' }, opts)); }
+      if (v === 'bubble') { return MA.plots.bubble.render(host, plot, opts); }
       if (v === 'influence') { return MA.plots.influence.render(host, plot, opts); }
       return null;
     }

@@ -39,14 +39,15 @@
           },
           "field": {
             "type": "string",
-            "description": "kanonikus oszlopnév"
+            "description": "kanonikus oszlopnév; '*' = sorszintű döntés (csak az egyik táblában szereplő sor)"
           },
           "chosen": {
             "enum": [
               "a",
               "b",
               "other"
-            ]
+            ],
+            "description": "a: az A szövege, b: a B szövege (az A formátumában), other: saját érték; sorszintű döntésnél csak a vagy b"
           },
           "value": {
             "type": [
@@ -65,9 +66,138 @@
           "ts": {
             "type": "string",
             "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+          },
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "az A cella szövege a döntéskor (eltérésnél a döntés elavult)"
+          },
+          "b": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "a B cella szövege a döntéskor"
+          },
+          "kind": {
+            "enum": [
+              "value",
+              "missing_a",
+              "missing_b",
+              "format_only",
+              "parse",
+              "category",
+              "only_a",
+              "only_b"
+            ]
           }
         }
       }
+    },
+    "outcome": {
+      "type": "string"
+    },
+    "unresolved": {
+      "type": "array",
+      "description": "döntés nélküli (vagy elavult döntésű) eltérések — X009",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "field"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "value",
+              "missing_a",
+              "missing_b",
+              "format_only",
+              "parse",
+              "category",
+              "only_a",
+              "only_b"
+            ]
+          },
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "b": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stale": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "orphans": {
+      "type": "array",
+      "description": "már nem eltéréshez tartozó korábbi döntések",
+      "items": {
+        "type": "object"
+      }
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decided": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "auto": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "orphans": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "sources": {
+      "type": "object"
+    },
+    "raters": {
+      "type": "object"
+    },
+    "csv": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "engine_version": {
+      "type": "string"
     }
   }
 }

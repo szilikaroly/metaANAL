@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SZINTETIKUS tesztfixture / SYNTHETIC test fixture. Fictitious studies - never use outside tests.
+     Strategy a4 only: no table, the included studies are cited in a "We included five trials [3-7]" sentence
+     (xref range with an en dash -> five references, consistent with the stated number -> medium candidates).
+     The Introduction cites another review's studies ("A previous review included four trials [8-11]") and must
+     NOT produce candidates; the Discussion sentence must not either. Search date: "date of the last search". -->
+<article xmlns:xlink="http://www.w3.org/1999/xlink" article-type="review-article">
+<front>
+<journal-meta><journal-title-group><journal-title>Synthetic Systematic Reviews</journal-title></journal-title-group></journal-meta>
+<article-meta>
+<article-id pub-id-type="pmid">99990600</article-id>
+<title-group><article-title>Treatment S for condition U: a systematic review</article-title></title-group>
+<pub-date pub-type="epub"><day>01</day><month>06</month><year>2022</year></pub-date>
+</article-meta>
+</front>
+<body>
+<sec><title>Introduction</title>
+<p>A previous review included four trials [<xref ref-type="bibr" rid="r8">8</xref>–<xref ref-type="bibr" rid="r11">11</xref>] and searched databases up to 2015 [<xref ref-type="bibr" rid="r1">1</xref>].</p>
+</sec>
+<sec><title>Methods</title>
+<p>The date of the last search was 14 February 2021.</p>
+</sec>
+<sec><title>Results</title>
+<p>We included five trials [<xref ref-type="bibr" rid="r3">3</xref>–<xref ref-type="bibr" rid="r7">7</xref>] with 640 participants.</p>
+</sec>
+<sec><title>Discussion</title>
+<p>Our review included two more trials than the previous one [<xref ref-type="bibr" rid="r2">2</xref>, <xref ref-type="bibr" rid="r12">12</xref>].</p>
+</sec>
+</body>
+<back>
+<ref-list><title>References</title>
+<ref id="r1"><label>1</label><mixed-citation>Able A. A previous review of treatment S. Synthetic Rev. 2016;1:1-5.</mixed-citation></ref>
+<ref id="r2"><label>2</label><mixed-citation>Baker B. Commentary on treatment S. Synthetic Comment. 2020;2:6-7.</mixed-citation></ref>
+<ref id="r3"><label>3</label><mixed-citation>Cable C, Dodge D. Treatment S versus placebo: a randomized trial. Synthetic Trials. 2016;3:8-15.</mixed-citation></ref>
+<ref id="r4"><label>4</label><mixed-citation>Easy E. Treatment S in adults. Synthetic Trials. 2017;4:16-25.</mixed-citation></ref>
+<ref id="r5"><label>5</label><mixed-citation>Fox F. Treatment S in older adults. Synthetic Trials. 2018;5:26-35.</mixed-citation></ref>
+<ref id="r6"><label>6</label><mixed-citation>George G. Treatment S, a pragmatic trial. Synthetic Trials. 2019;6:36-45.</mixed-citation></ref>
+<ref id="r7"><label>7</label><mixed-citation>How H. Treatment S, a crossover trial. Synthetic Trials. 2020;7:46-55.</mixed-citation></ref>
+<ref id="r8"><label>8</label><mixed-citation>Item I. An early trial of treatment S. Synthetic Trials. 2001;1:1-9.</mixed-citation></ref>
+<ref id="r9"><label>9</label><mixed-citation>Jig J. Another early trial. Synthetic Trials. 2003;2:1-9.</mixed-citation></ref>
+<ref id="r10"><label>10</label><mixed-citation>King K. A third early trial. Synthetic Trials. 2005;3:1-9.</mixed-citation></ref>
+<ref id="r11"><label>11</label><mixed-citation>Love L. A fourth early trial. Synthetic Trials. 2007;4:1-9.</mixed-citation></ref>
+<ref id="r12"><label>12</label><mixed-citation>Mike M. Editorial. Synthetic Comment. 2021;8:1.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

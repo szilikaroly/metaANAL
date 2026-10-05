@@ -1,7 +1,13 @@
 /* components/grid.js — szerkeszthető adattábla (terv 3.3, 3.5.3, 6.2, 7.1 T6).
  *
  * MA.grid.create(opts) → rács. A cellák SZÖVEGKÉNT maradnak (a számot a motor értelmezi);
- * a rács csak „számnak látszik-e” halvány előjelzést ad (UX, 6.2). Virtualizáció nincs (≤ 1000 sor).
+ * a rács csak „számnak látszik-e” halvány előjelzést ad (UX, 6.2).
+ * Virtualizáció (v1, terv 3.3): VIRTUAL_MIN (1000) sor fölött csak a görgetési ablak sorai (+ ráhagyás) vannak a
+ * DOM-ban, a többit két térkitöltő sor helyettesíti; a modell (rows) teljes marad. Az aria-rowcount a teljes
+ * sorszám, az aria-rowindex a sor helye a teljes táblában (WAI-ARIA virtualizált rács). A billentyűzetes
+ * navigáció a cél sort előbb az ablakba görgeti; az aktív (és a szerkesztett) cella sora mindig kirajzolt; a
+ * dekorációk (setDecorations) a modellben élnek, és a kirajzolt sorokra kerülnek. Legfeljebb MAX_ROWS (5000,
+ * = a szerver security.MAX_ROWS-a) sor.
  * Akadálymentesség: role=grid / row / columnheader / rowheader / gridcell, roving tabindex,
  * aria-invalid + aria-describedby a jelzett cellákon; a jelzés mindig szimbólum is (nem csak szín).
  *
@@ -20,8 +26,12 @@
   var MA = window.MA;
   var h = MA.dom.h;
   var t = function (k, a) { return MA.i18n.t(k, a); };
+  var G = MA.geom;
 
-  var MAX_ROWS = 1000;
+  var MAX_ROWS = 5000;
+  var VIRTUAL_MIN = 1000;   // ennél több sor: ablakos kirajzolás
+  var OVERSCAN = 15;        // ráhagyás az ablak két szélén (sor)
+  var ROW_H = 27;           // alapértelmezett sormagasság (px), az első kirajzolt sorról mérve pontosítjuk
   var PAGE = 10;
   var SYM = { error: '✖', warning: '⚠', info: 'ℹ', ack: '✓', estimated: '◆', reconciled: '≡', external: '⟳' };
   var KINDS = ['error', 'warning', 'info', 'ack', 'estimated', 'reconciled', 'external'];
@@ -92,8 +102,17 @@
     var anc = null;          // tartomány-horgony
     var edit = null;         // {uid, col, input, before}
     var decorated = [];
+    var decoMap = {};        // az utolsó setDecorations-térkép (virtuális módban a kirajzolt sorokra kerül)
     var descSeq = 0;
     var maxRows = opts.maxRows || MAX_ROWS;
+    var virtualMin = opts.virtualMin === undefined ? VIRTUAL_MIN : opts.virtualMin;
+    var virtual = false;
+    var win = { start: 0, end: 0 };   // a kirajzolt látható-sor tartomány (virtuális módban)
+    var rowPos = {};                  // uid → index a teljes táblában (virtuális módban, a sorszámokhoz)
+    var rowH = ROW_H;
+    var padTop = null, padBottom = null;
+    var rafPending = false;
+    var quietFocus = false;  // a rácsra tett fókusz (kigörgetett aktív sor) ne görgessen vissza
 
     var thead = h('thead');
     var tbody = h('tbody');
@@ -101,6 +120,11 @@
       'aria-readonly': opts.readOnly ? 'true' : null }, thead, tbody);
     var descBox = h('div', { 'class': 'mg-desc', hidden: true });
     var el = h('div', { 'class': 'mg' }, table, descBox);
+    el.addEventListener('scroll', function () {
+      if (!virtual || rafPending) { return; }
+      rafPending = true;
+      window.requestAnimationFrame(function () { rafPending = false; if (virtual) { renderWindow(); } });
+    });
 
     function frozenLeft(i) {
       var em = 3.2;
@@ -152,31 +176,155 @@
       return tr;
     }
 
+    function numberRow(r, i) {
+      var tr = trs[r.uid];
+      if (!tr) { return; }
+      tr.setAttribute('aria-rowindex', String(i + 2));
+      tr.querySelector('.mg-rn').textContent = String(i + 1);
+    }
+
     function renumber() {
       visible = rows.filter(function (r) { return !filterFn || filterFn(r); });
       var vis = {};
       visible.forEach(function (r) { vis[r.uid] = true; });
-      rows.forEach(function (r, i) {
-        var tr = trs[r.uid];
-        tr.setAttribute('aria-rowindex', String(i + 2));
-        tr.querySelector('.mg-rn').textContent = String(i + 1);
-        tr.hidden = !vis[r.uid];
-      });
+      if (virtual) {
+        rowPos = {};
+        rows.forEach(function (r, i) { rowPos[r.uid] = i; });
+        if (edit && !vis[edit.uid]) { commitEdit(0, 0, false); }
+        renderWindow(true);
+      } else {
+        rows.forEach(function (r, i) {
+          numberRow(r, i);
+          trs[r.uid].hidden = !vis[r.uid];
+        });
+      }
       table.setAttribute('aria-rowcount', String(rows.length + 1));
       table.setAttribute('aria-colcount', String(cols.length + 1));
       if (act && (!byUid[act.uid] || !vis[act.uid])) { act = null; }
       if (!act && visible.length && cols.length) { setActive(visible[0].uid, cols[0].id, false); }
     }
 
-    function render() {
+    function render(keepDeco) {
       buildHead();
       trs = {};
       tds = {};
       byUid = {};
       MA.dom.clear(tbody);
-      rows.forEach(function (r) { byUid[r.uid] = r; tbody.appendChild(buildRow(r)); });
-      decorated = [];
+      clearDeco();
+      if (!keepDeco) { decoMap = {}; }
+      rows.forEach(function (r) { byUid[r.uid] = r; });
+      virtual = rows.length > virtualMin;
+      el.classList.toggle('is-virtual', virtual);
+      if (virtual) {
+        padTop = spacer('top');
+        padBottom = spacer('bottom');
+        tbody.appendChild(padTop);
+        tbody.appendChild(padBottom);
+        win = { start: 0, end: 0 };
+      } else {
+        padTop = padBottom = null;
+        table.removeAttribute('tabindex');
+        rows.forEach(function (r) { tbody.appendChild(buildRow(r)); });
+      }
       renumber();
+      if (!virtual) { applyDeco(); }
+    }
+
+    // ---------------------------------------------------------------- virtuális ablak
+    function spacer(which) {
+      return h('tr', { 'class': 'mg-spacer', 'aria-hidden': 'true', role: 'presentation', dataset: { pad: which } },
+        h('td', { colspan: String(cols.length + 1), role: 'presentation' }));
+    }
+
+    function setPad(tr, px) {
+      tr.firstChild.style.height = String(px) + 'px';
+      tr.hidden = px <= 0;
+    }
+
+    function measureRow() {
+      var any = tbody.querySelector('tr[data-uid]');
+      var hh = any && any.getBoundingClientRect ? any.getBoundingClientRect().height : 0;
+      if (hh > 4) { rowH = hh; }
+    }
+
+    function visIndex(uid) {
+      for (var i = 0; i < visible.length; i++) { if (visible[i].uid === uid) { return i; } }
+      return -1;
+    }
+
+    /** A látható (szűrt) sorok [start, end) tartománya a görgetési helyzetből (+ ráhagyás). Ha az aktív cella
+     *  sora kigörgetődik, a fókusz a rácsra (table, tabindex) kerül: a következő billentyű visszagörget hozzá. */
+    function windowRange() {
+      var headH = thead.getBoundingClientRect ? thead.getBoundingClientRect().height : 0;
+      var viewH = el.clientHeight || 600;
+      var first = G.floor(G.max(0, el.scrollTop - headH) / rowH);
+      var count = G.ceil(viewH / rowH) + 1;
+      var start = G.min(G.max(0, first - OVERSCAN), visible.length);
+      var end = G.min(visible.length, first + count + OVERSCAN);
+      return { start: start, end: G.max(start, end) };
+    }
+
+    function unrender(uid) {
+      var tr = trs[uid];
+      if (tr && tr.parentNode) { tr.parentNode.removeChild(tr); }
+      delete trs[uid];
+      delete tds[uid];
+    }
+
+    /** Ablakos kirajzolás: a tartományon kívüli sorok kikerülnek, a hiányzók bekerülnek (sorrendben). */
+    function renderWindow(force) {
+      if (!virtual) { return; }
+      var r = windowRange();
+      if (!force && r.start === win.start && r.end === win.end) { return; }
+      var keep = {};
+      for (var i = r.start; i < r.end; i++) { keep[visible[i].uid] = true; }
+      var focusLost = false;
+      Object.keys(trs).forEach(function (uid) {
+        if (keep[uid]) { return; }
+        if (edit && edit.uid === uid) { commitEdit(0, 0, false); }
+        if (trs[uid].contains(document.activeElement)) { focusLost = true; }
+        unrender(uid);
+      });
+      var ref = padBottom;
+      for (var j = r.end - 1; j >= r.start; j--) {
+        var row = visible[j];
+        if (!trs[row.uid]) { tbody.insertBefore(buildRow(row), ref); }
+        ref = trs[row.uid];
+      }
+      win = r;
+      setPad(padTop, r.start * rowH);
+      setPad(padBottom, (visible.length - r.end) * rowH);
+      for (var k = r.start; k < r.end; k++) { numberRow(visible[k], rowPos[visible[k].uid]); }
+      if (r.end > r.start) {
+        var before = rowH;
+        measureRow();
+        if (before !== rowH) {
+          setPad(padTop, r.start * rowH);
+          setPad(padBottom, (visible.length - r.end) * rowH);
+        }
+      }
+      var a = act ? td(act.uid, act.col) : null;
+      if (a) { a.tabIndex = 0; }
+      // ha az aktív cella nincs kirajzolva, maga a rács fókuszálható (Tab-bal is elérhető marad)
+      table.tabIndex = a ? -1 : 0;
+      applyDeco();
+      paintSelection();
+      if (focusLost) {
+        quietFocus = true;
+        try { table.focus({ preventScroll: true }); } finally { quietFocus = false; }
+      }
+    }
+
+    /** A sor kirajzolása (virtuális módban az ablak odagörgetésével). */
+    function ensureRendered(uid) {
+      if (!virtual || trs[uid]) { return; }
+      var i = visIndex(uid);
+      if (i < 0) { return; }
+      var headH = thead.getBoundingClientRect ? thead.getBoundingClientRect().height : 0;
+      var viewH = el.clientHeight || 600;
+      var top = i * rowH;
+      if (top < el.scrollTop) { el.scrollTop = top; } else { el.scrollTop = G.max(0, top + headH + rowH - viewH); }
+      renderWindow(true);
     }
 
     // ---------------------------------------------------------------- aktív cella, tartomány
@@ -212,8 +360,17 @@
     }
 
     function setActive(uid, col, focus, extend) {
+      if (focus || !act) { ensureRendered(uid); }
       var next = td(uid, col);
-      if (!next) { return; }
+      if (!next) {
+        if (virtual && byUid[uid] && colIdx[col] !== undefined) {   // kirajzolatlan sor: a modellben aktív
+          if (act) { var p0 = td(act.uid, act.col); if (p0) { p0.tabIndex = -1; } }
+          anc = extend ? (anc || act || { uid: uid, col: col }) : null;
+          act = { uid: uid, col: col };
+          if (opts.onActive) { opts.onActive(posOf(uid, col)); }
+        }
+        return;
+      }
       if (act) { var prev = td(act.uid, act.col); if (prev) { prev.tabIndex = -1; } }
       if (extend) { anc = anc || act || { uid: uid, col: col }; } else { anc = null; }
       act = { uid: uid, col: col };
@@ -270,13 +427,24 @@
       if (rows.length + list.length > maxRows) { throw new Error(t('grid.tooManyRows', { max: String(maxRows) })); }
       var at = index < 0 || index > rows.length ? rows.length : index;
       var ref = at < rows.length ? trs[rows[at].uid] : null;
+      var goVirtual = !virtual && rows.length + list.length > virtualMin;
       list.forEach(function (r, k) {
         var row = { uid: r.uid, cells: Object.assign({}, r.cells) };
         rows.splice(at + k, 0, row);
         byUid[row.uid] = row;
-        tbody.insertBefore(buildRow(row), ref);
+        if (!virtual && !goVirtual) { tbody.insertBefore(buildRow(row), ref); }
       });
+      if (goVirtual) { relayout(); return; }
       renumber();
+    }
+
+    /** Teljes újrarajzolás a módváltáskor (virtuális ↔ teljes), az aktív cella és a dekorációk megtartásával. */
+    function relayout() {
+      var keepAct = act, keepAnc = anc;
+      if (edit) { commitEdit(0, 0, false); }
+      act = null;
+      render(true);
+      if (keepAct && byUid[keepAct.uid]) { anc = keepAnc; setActive(keepAct.uid, keepAct.col, false); }
     }
 
     function deleteRows(uids) {
@@ -287,16 +455,14 @@
       var actCol = act ? act.col : (cols[0] && cols[0].id);
       rows = rows.filter(function (r) {
         if (!set[r.uid]) { return true; }
-        if (trs[r.uid] && trs[r.uid].parentNode) { trs[r.uid].parentNode.removeChild(trs[r.uid]); }
-        delete trs[r.uid];
-        delete tds[r.uid];
+        unrender(r.uid);
         delete byUid[r.uid];
         return false;
       });
       decorated = decorated.filter(function (x) { return document.body.contains(x) || tbody.contains(x); });
       if (act && set[act.uid]) { act = null; }
       anc = null;
-      renumber();
+      if (virtual && rows.length <= virtualMin) { render(true); } else { renumber(); }
       if (!act && visible.length && actCol) {
         var i = actIdx > visible.length - 1 ? visible.length - 1 : actIdx;
         setActive(visible[i].uid, actCol, false);
@@ -311,7 +477,9 @@
         if (initial === undefined && opts.onActivate) { opts.onActivate(posOf(act.uid, act.col)); }
         return;
       }
+      ensureRendered(act.uid);
       var cell = td(act.uid, act.col);
+      if (!cell) { return; }
       var r = byUid[act.uid];
       var before = r.cells[act.col] === undefined || r.cells[act.col] === null ? '' : String(r.cells[act.col]);
       var input = h('input', { type: 'text', 'class': 'mg-input', value: initial === undefined ? before : initial, spellcheck: 'false', autocomplete: 'off',
@@ -438,6 +606,10 @@
       if (p && !edit) { setActive(p.uid, p.col, true); beginEdit(); }
     });
     table.addEventListener('focusin', function (ev) {
+      if (ev.target === table && act && virtual && !quietFocus) {     // a rácsra került fókusz: vissza az aktív cellához
+        setActive(act.uid, act.col, true);
+        return;
+      }
       var p = cellFromEvent(ev);
       if (p && !edit && (!act || act.uid !== p.uid || act.col !== p.col)) { setActive(p.uid, p.col, false); }
     });
@@ -487,6 +659,11 @@
      * kinds: error (aria-invalid) | warning | info | ack | estimated | reconciled | external.
      */
     function setDecorations(map) {
+      decoMap = map || {};
+      applyDeco();
+    }
+
+    function clearDeco() {
       decorated.forEach(function (x) {
         x.removeAttribute('aria-invalid');
         x.removeAttribute('aria-describedby');
@@ -502,8 +679,15 @@
       decorated = [];
       MA.dom.clear(descBox);
       descSeq = 0;
+    }
+
+    /** A dekorációs térkép a KIRAJZOLT sorokra (teljes módban: mindre). */
+    function applyDeco() {
+      clearDeco();
+      var map = decoMap;
       var cellMap = (map && map.cells) || {};
       Object.keys(cellMap).forEach(function (uid) {
+        if (!tds[uid]) { return; }
         Object.keys(cellMap[uid]).forEach(function (col) {
           var x = td(uid, col);
           var d = cellMap[uid][col];
@@ -592,6 +776,8 @@
         render();
       },
       setColumns: function (list) { if (edit) { cancelEdit(); } setColumns(list); act = null; render(); },
+      virtual: function () { return virtual; },
+      renderedCount: function () { return Object.keys(trs).length; },
       updateColumns: updateColumns,
       insertRows: insertRows,
       deleteRows: deleteRows,
@@ -610,7 +796,7 @@
     };
   }
 
-  MA.grid = { create: create, parseTSV: parseTSV, toTSV: toTSV, newUid: newUid, MAX_ROWS: MAX_ROWS, SYMBOLS: SYM };
+  MA.grid = { create: create, parseTSV: parseTSV, toTSV: toTSV, newUid: newUid, MAX_ROWS: MAX_ROWS, VIRTUAL_MIN: VIRTUAL_MIN, SYMBOLS: SYM };
 
   // ================================================================ önteszt (?selftest=1; termékben is fut)
   MA.selftest.register('grid: TSV (Excel-idézés)', function (tt) {
@@ -670,6 +856,48 @@
       tt.ok(g.cell('rt0001', 'a').parentNode.classList.contains('is-blocked'), 'blokkolt sor');
       g.setDecorations({});
       tt.eq(c.getAttribute('aria-invalid'), null, 'a dekoráció törölhető');
+    } finally {
+      host.parentNode.removeChild(host);
+    }
+  });
+
+  MA.selftest.register('grid: virtualizáció (> 1000 sor), billentyűzet és aria', function (tt) {
+    var list = [];
+    for (var i = 0; i < 1500; i++) { list.push({ uid: 'rv' + String(10000 + i), cells: { a: 'S' + String(i + 1), b: String(i) } }); }
+    var changes = [];
+    var g = create({ label: 'selftest-virtual', columns: [{ id: 'a', label: 'study' }, { id: 'b', label: 'e1', numeric: true }], rows: list,
+      onChange: function (b) { changes.push(b); } });
+    var host = h('div', { 'class': 'mg-selftest-host' }, g.el);
+    document.body.appendChild(host);
+    try {
+      tt.ok(g.virtual(), 'virtuális mód 1000 sor fölött');
+      tt.eq(g.table.getAttribute('aria-rowcount'), '1501', 'aria-rowcount = a teljes sorszám + fejléc');
+      tt.ok(g.renderedCount() < 200, 'csak az ablak sorai vannak a DOM-ban (' + String(g.renderedCount()) + ')');
+      g.setDecorations({ cells: { rv11400: { b: { kinds: ['error'], messages: ['V006'] } } } });
+      g.focusCell('rv11400', 'b');
+      var cell = g.cell('rv11400', 'b');
+      tt.ok(!!cell && document.activeElement === cell, 'a fókuszált sor kirajzolva és fókuszban');
+      tt.eq(cell.parentNode.getAttribute('aria-rowindex'), '1402', 'aria-rowindex a teljes táblában');
+      tt.eq(cell.getAttribute('aria-invalid'), 'true', 'a dekoráció a később kirajzolt sorra is rákerül');
+      var key = function (k, o) { document.activeElement.dispatchEvent(new KeyboardEvent('keydown', Object.assign({ key: k, bubbles: true, cancelable: true }, o || {}))); };
+      key('End', { ctrlKey: true });
+      tt.eq(g.active().rowIndex, 1499, 'Ctrl+End → az utolsó sor');
+      tt.ok(document.activeElement === g.cell('rv11499', 'b'), 'az utolsó sor kirajzolva, fókuszban');
+      key('Home', { ctrlKey: true });
+      tt.ok(document.activeElement === g.cell('rv10000', 'a'), 'Ctrl+Home → az első cella');
+      key('PageDown');
+      tt.eq(g.active().row, 10, 'PageDown');
+      key('7');
+      document.activeElement.value = '77';
+      key('Enter');
+      tt.eq(g.get('rv10010', 'a'), '77', 'szerkesztés virtuális módban');
+      tt.eq(changes.length, 1, 'onChange');
+      g.setFilter(function (r) { return r.cells.b === '1200' || r.cells.b === '3'; });
+      tt.eq(g.visibleCount(), 2, 'szűrés virtuális módban');
+      g.setFilter(null);
+      g.deleteRows(list.slice(0, 600).map(function (r) { return r.uid; }));
+      tt.ok(!g.virtual(), 'a küszöb alá csökkenve teljes kirajzolás');
+      tt.eq(g.renderedCount(), 900, 'minden sor a DOM-ban');
     } finally {
       host.parentNode.removeChild(host);
     }

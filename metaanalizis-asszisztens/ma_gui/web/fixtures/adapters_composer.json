@@ -1,0 +1,614 @@
+{
+ "description": "GET /api/prisma/composer, PUT …/config, POST …/refresh — a valódi szerver válaszai a composer stub-pluginnal (1.4.1 bridge: explicit interpreter, H7). fx: unconfigured, configured, preview, needs-confirm (409), manual, written, composer, absent.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/prisma/composer",
+   "query": {
+    "fx": "unconfigured"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma-composer/v1",
+    "data": {
+     "schema": "szk.ma.prisma-composer/v1",
+     "status": {
+      "plugin": "composer",
+      "state": "legacy",
+      "version": "1.4.1",
+      "mode": "bridge",
+      "python": [
+       "python3"
+      ],
+      "guards": [
+       "H7"
+      ],
+      "explicit_interpreter": true,
+      "remedy": {
+       "hu": "Add meg a composer kimeneti mappáját (ahol a collect/prisma dolgozik) és a projekt nevét — a munkapad ezután onnan olvassa a PRISMA-számokat.",
+       "en": "Set the composer output folder (where collect/prisma work) and the project name — the workbench then reads the PRISMA numbers from there."
+      },
+      "can_refresh": false
+     },
+     "location": {
+      "configured": false,
+      "outdir": null,
+      "project": null,
+      "source": null,
+      "state_exists": false,
+      "problems": []
+     },
+     "current": {
+      "path": "02_szures/prisma_flow.json",
+      "mode": "manual",
+      "etag": null,
+      "has_numbers": false,
+      "source": {
+       "kind": null,
+       "composer_version": null,
+       "project": null,
+       "refreshed": null,
+       "export_sha256": null,
+       "mode": null,
+       "actor": null,
+       "updated": null
+      },
+      "status_warnings": []
+     },
+     "can_refresh": false,
+     "reason": {
+      "hu": "Add meg a composer kimeneti mappáját (ahol a collect/prisma dolgozik) és a projekt nevét — a munkapad ezután onnan olvassa a PRISMA-számokat.",
+      "en": "Set the composer output folder (where collect/prisma work) and the project name — the workbench then reads the PRISMA numbers from there."
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp008"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/composer/config",
+   "query": {
+    "fx": "configured"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma-composer/v1",
+    "data": {
+     "schema": "szk.ma.prisma-composer/v1",
+     "status": {
+      "plugin": "composer",
+      "state": "legacy",
+      "version": "1.4.1",
+      "mode": "bridge",
+      "python": [
+       "python3"
+      ],
+      "guards": [
+       "H7"
+      ],
+      "explicit_interpreter": true,
+      "remedy": null,
+      "can_refresh": true
+     },
+     "location": {
+      "configured": true,
+      "outdir": "/home/szk/Documents/PubMed_Downloads",
+      "project": "glp1",
+      "source": "ma-projekt.json",
+      "state_exists": true,
+      "problems": []
+     },
+     "current": {
+      "path": "02_szures/prisma_flow.json",
+      "mode": "manual",
+      "etag": null,
+      "has_numbers": false,
+      "source": {
+       "kind": null,
+       "composer_version": null,
+       "project": null,
+       "refreshed": null,
+       "export_sha256": null,
+       "mode": null,
+       "actor": null,
+       "updated": null
+      },
+      "status_warnings": []
+     },
+     "can_refresh": true,
+     "reason": null
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp009"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/prisma/composer/refresh",
+   "query": {
+    "fx": "preview"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma-composer-refresh/v1",
+    "data": {
+     "schema": "szk.ma.prisma-composer-refresh/v1",
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 1234,
+      "identified_registers": 12,
+      "identified_other": 0,
+      "dedup_removed": 300,
+      "automation_removed": null,
+      "removed_before_screening_n": 0,
+      "screened": 946,
+      "excluded_screening": 860,
+      "sought_for_retrieval": 86,
+      "not_retrieved": 4,
+      "assessed_eligibility": 82,
+      "excluded_eligibility": 57,
+      "included_reports": 25,
+      "included_studies": null,
+      "undecided": 0,
+      "retrieval_gap": 12,
+      "included": 25,
+      "excluded_eligibility_reasons": {
+       "wrong population": 30,
+       "wrong outcome": 27
+      },
+      "other_methods": null,
+      "project": "glp1",
+      "composer_version": "1.4.1",
+      "generated": null
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": true,
+      "summary": {
+       "error": 0,
+       "warning": 0,
+       "info": 0
+      },
+      "counts": {
+       "identified_databases": 1234,
+       "identified_registers": 12,
+       "identified_other": 0,
+       "duplicates_removed": 300,
+       "automation_removed": null,
+       "other_removed": 0,
+       "screened": 946,
+       "excluded_screening": 860,
+       "sought": 86,
+       "not_retrieved": 4,
+       "assessed": 82,
+       "excluded_eligibility": 57,
+       "included_reports": 25,
+       "included_studies": null,
+       "awaiting": 0,
+       "not_imported": 12
+      },
+      "reasons": {
+       "excluded_eligibility_reasons": {
+        "wrong population": 30,
+        "wrong outcome": 27
+       }
+      },
+      "derived": {
+       "identified_total": 1246,
+       "removed_before_screening_total": 300,
+       "screened_expected": 946,
+       "excluded_eligibility_reasons_sum": 57,
+       "included_reports_expected": 25
+      },
+      "findings": []
+     },
+     "status_warnings": [
+      {
+       "code": "retmax",
+       "level": "warning",
+       "n": 12,
+       "hu": "FIGYELEM: 12 azonosított rekord NEM került be a korpuszba (retmax-korlát, vagy szűrés előtt eltávolított duplikátum). A lenti szűrés a behozott 1234 rekordon történt.",
+       "en": "12 identified record(s) were not imported into the corpus (retmax limit or duplicates removed before screening); if it is the retmax limit, the search was not exhaustive."
+      },
+      {
+       "code": "pending_5d",
+       "level": "warning",
+       "n": 3,
+       "hu": "A függőben lévők nem hivatkozhatók ellenőrzöttként. Vagy szerezd meg a teljes szöveget, vagy vedd ki őket.",
+       "en": "3 record(s) are pending at the 5D bibliographic gate and cannot be cited as verified."
+      }
+     ],
+     "composer_version": "1.4.1",
+     "mode": "bridge",
+     "export_sha256": "e85464711910e942147aac626bb2b7cfec6ea05c54f5f4826088ebdfd87b03b8",
+     "attempts": 1,
+     "written": false,
+     "path": "02_szures/prisma_flow.json"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp010"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/prisma/composer/refresh",
+   "query": {
+    "fx": "needs-confirm"
+   },
+   "status": 409,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "CONFLICT",
+     "http": 409,
+     "message": "A PRISMA-számok most kézi bevitelből jönnek; a composer-mód felülírja őket. Ha ezt akarod, erősítsd meg (a kézi számok a tevékenységnapló korábbi változatában megmaradnak).",
+     "details": {
+      "needs_confirm": true,
+      "path": "02_szures/prisma_flow.json"
+     }
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/prisma/composer",
+   "query": {
+    "fx": "manual"
+   },
+   "status": 200,
+   "etag": "\"da15774839b45770a0354c242c397c258ceec40691a0a38cf8cd85d971c98e65\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma-composer/v1",
+    "data": {
+     "schema": "szk.ma.prisma-composer/v1",
+     "status": {
+      "plugin": "composer",
+      "state": "legacy",
+      "version": "1.4.1",
+      "mode": "bridge",
+      "python": [
+       "python3"
+      ],
+      "guards": [
+       "H7"
+      ],
+      "explicit_interpreter": true,
+      "remedy": null,
+      "can_refresh": true
+     },
+     "location": {
+      "configured": true,
+      "outdir": "/home/szk/Documents/PubMed_Downloads",
+      "project": "glp1",
+      "source": "ma-projekt.json",
+      "state_exists": true,
+      "problems": []
+     },
+     "current": {
+      "path": "02_szures/prisma_flow.json",
+      "mode": "manual",
+      "etag": "da15774839b45770a0354c242c397c258ceec40691a0a38cf8cd85d971c98e65",
+      "has_numbers": true,
+      "source": {
+       "kind": "manual",
+       "composer_version": null,
+       "project": null,
+       "refreshed": null,
+       "export_sha256": null,
+       "mode": null,
+       "actor": "user",
+       "updated": "2026-10-05T10:00:00Z"
+      },
+      "status_warnings": []
+     },
+     "can_refresh": true,
+     "reason": null
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp012"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/prisma/composer/refresh",
+   "query": {
+    "fx": "written"
+   },
+   "status": 200,
+   "etag": "\"521b1ae51493e922d21786b2cdcdbdb94f8323f1c04f714c65f122143196ad86\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma-composer-refresh/v1",
+    "data": {
+     "schema": "szk.ma.prisma-composer-refresh/v1",
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 1234,
+      "identified_registers": 12,
+      "identified_other": 0,
+      "dedup_removed": 300,
+      "automation_removed": null,
+      "removed_before_screening_n": 0,
+      "screened": 946,
+      "excluded_screening": 860,
+      "sought_for_retrieval": 86,
+      "not_retrieved": 4,
+      "assessed_eligibility": 82,
+      "excluded_eligibility": 57,
+      "included_reports": 25,
+      "included_studies": null,
+      "undecided": 0,
+      "retrieval_gap": 12,
+      "included": 25,
+      "excluded_eligibility_reasons": {
+       "wrong population": 30,
+       "wrong outcome": 27
+      },
+      "other_methods": null,
+      "project": "glp1",
+      "composer_version": "1.4.1",
+      "generated": null
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": true,
+      "summary": {
+       "error": 0,
+       "warning": 0,
+       "info": 0
+      },
+      "counts": {
+       "identified_databases": 1234,
+       "identified_registers": 12,
+       "identified_other": 0,
+       "duplicates_removed": 300,
+       "automation_removed": null,
+       "other_removed": 0,
+       "screened": 946,
+       "excluded_screening": 860,
+       "sought": 86,
+       "not_retrieved": 4,
+       "assessed": 82,
+       "excluded_eligibility": 57,
+       "included_reports": 25,
+       "included_studies": null,
+       "awaiting": 0,
+       "not_imported": 12
+      },
+      "reasons": {
+       "excluded_eligibility_reasons": {
+        "wrong population": 30,
+        "wrong outcome": 27
+       }
+      },
+      "derived": {
+       "identified_total": 1246,
+       "removed_before_screening_total": 300,
+       "screened_expected": 946,
+       "excluded_eligibility_reasons_sum": 57,
+       "included_reports_expected": 25
+      },
+      "findings": []
+     },
+     "status_warnings": [
+      {
+       "code": "retmax",
+       "level": "warning",
+       "n": 12,
+       "hu": "FIGYELEM: 12 azonosított rekord NEM került be a korpuszba (retmax-korlát, vagy szűrés előtt eltávolított duplikátum). A lenti szűrés a behozott 1234 rekordon történt.",
+       "en": "12 identified record(s) were not imported into the corpus (retmax limit or duplicates removed before screening); if it is the retmax limit, the search was not exhaustive."
+      },
+      {
+       "code": "pending_5d",
+       "level": "warning",
+       "n": 3,
+       "hu": "A függőben lévők nem hivatkozhatók ellenőrzöttként. Vagy szerezd meg a teljes szöveget, vagy vedd ki őket.",
+       "en": "3 record(s) are pending at the 5D bibliographic gate and cannot be cited as verified."
+      }
+     ],
+     "composer_version": "1.4.1",
+     "mode": "bridge",
+     "export_sha256": "e85464711910e942147aac626bb2b7cfec6ea05c54f5f4826088ebdfd87b03b8",
+     "attempts": 1,
+     "written": true,
+     "path": "02_szures/prisma_flow.json",
+     "sha256": "521b1ae51493e922d21786b2cdcdbdb94f8323f1c04f714c65f122143196ad86"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp013"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/prisma/composer",
+   "query": {
+    "fx": "composer"
+   },
+   "status": 200,
+   "etag": "\"521b1ae51493e922d21786b2cdcdbdb94f8323f1c04f714c65f122143196ad86\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma-composer/v1",
+    "data": {
+     "schema": "szk.ma.prisma-composer/v1",
+     "status": {
+      "plugin": "composer",
+      "state": "legacy",
+      "version": "1.4.1",
+      "mode": "bridge",
+      "python": [
+       "python3"
+      ],
+      "guards": [
+       "H7"
+      ],
+      "explicit_interpreter": true,
+      "remedy": null,
+      "can_refresh": true
+     },
+     "location": {
+      "configured": true,
+      "outdir": "/home/szk/Documents/PubMed_Downloads",
+      "project": "glp1",
+      "source": "ma-projekt.json",
+      "state_exists": true,
+      "problems": []
+     },
+     "current": {
+      "path": "02_szures/prisma_flow.json",
+      "mode": "composer",
+      "etag": "521b1ae51493e922d21786b2cdcdbdb94f8323f1c04f714c65f122143196ad86",
+      "has_numbers": true,
+      "source": {
+       "kind": "composer",
+       "composer_version": "1.4.1",
+       "project": "glp1",
+       "refreshed": "2026-10-05T10:00:00Z",
+       "export_sha256": "e85464711910e942147aac626bb2b7cfec6ea05c54f5f4826088ebdfd87b03b8",
+       "mode": "bridge",
+       "actor": "user",
+       "updated": null
+      },
+      "status_warnings": [
+       {
+        "code": "retmax",
+        "level": "warning",
+        "n": 12,
+        "hu": "FIGYELEM: 12 azonosított rekord NEM került be a korpuszba (retmax-korlát, vagy szűrés előtt eltávolított duplikátum). A lenti szűrés a behozott 1234 rekordon történt.",
+        "en": "12 identified record(s) were not imported into the corpus (retmax limit or duplicates removed before screening); if it is the retmax limit, the search was not exhaustive."
+       },
+       {
+        "code": "pending_5d",
+        "level": "warning",
+        "n": 3,
+        "hu": "A függőben lévők nem hivatkozhatók ellenőrzöttként. Vagy szerezd meg a teljes szöveget, vagy vedd ki őket.",
+        "en": "3 record(s) are pending at the 5D bibliographic gate and cannot be cited as verified."
+       }
+      ]
+     },
+     "can_refresh": true,
+     "reason": null
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp014"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/prisma/composer",
+   "query": {
+    "fx": "absent"
+   },
+   "status": 200,
+   "etag": "\"521b1ae51493e922d21786b2cdcdbdb94f8323f1c04f714c65f122143196ad86\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma-composer/v1",
+    "data": {
+     "schema": "szk.ma.prisma-composer/v1",
+     "status": {
+      "plugin": "composer",
+      "state": "absent",
+      "version": null,
+      "mode": null,
+      "python": null,
+      "guards": [],
+      "explicit_interpreter": true,
+      "remedy": {
+       "hu": "Telepítés: claude plugin install composer@szk-plugins — vagy add meg a plugin mappáját az SZK_COMPOSER_HOME környezeti változóban.",
+       "en": "Install: claude plugin install composer@szk-plugins — or set SZK_COMPOSER_HOME to the plugin folder."
+      },
+      "can_refresh": false
+     },
+     "location": {
+      "configured": true,
+      "outdir": "/home/szk/Documents/PubMed_Downloads",
+      "project": "glp1",
+      "source": "ma-projekt.json",
+      "state_exists": true,
+      "problems": []
+     },
+     "current": {
+      "path": "02_szures/prisma_flow.json",
+      "mode": "composer",
+      "etag": "521b1ae51493e922d21786b2cdcdbdb94f8323f1c04f714c65f122143196ad86",
+      "has_numbers": true,
+      "source": {
+       "kind": "composer",
+       "composer_version": "1.4.1",
+       "project": "glp1",
+       "refreshed": "2026-10-05T10:00:00Z",
+       "export_sha256": "e85464711910e942147aac626bb2b7cfec6ea05c54f5f4826088ebdfd87b03b8",
+       "mode": "bridge",
+       "actor": "user",
+       "updated": null
+      },
+      "status_warnings": [
+       {
+        "code": "retmax",
+        "level": "warning",
+        "n": 12,
+        "hu": "FIGYELEM: 12 azonosított rekord NEM került be a korpuszba (retmax-korlát, vagy szűrés előtt eltávolított duplikátum). A lenti szűrés a behozott 1234 rekordon történt.",
+        "en": "12 identified record(s) were not imported into the corpus (retmax limit or duplicates removed before screening); if it is the retmax limit, the search was not exhaustive."
+       },
+       {
+        "code": "pending_5d",
+        "level": "warning",
+        "n": 3,
+        "hu": "A függőben lévők nem hivatkozhatók ellenőrzöttként. Vagy szerezd meg a teljes szöveget, vagy vedd ki őket.",
+        "en": "3 record(s) are pending at the 5D bibliographic gate and cannot be cited as verified."
+       }
+      ]
+     },
+     "can_refresh": false,
+     "reason": {
+      "hu": "Telepítés: claude plugin install composer@szk-plugins — vagy add meg a plugin mappáját az SZK_COMPOSER_HOME környezeti változóban.",
+      "en": "Install: claude plugin install composer@szk-plugins — or set SZK_COMPOSER_HOME to the plugin folder."
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp023"
+    }
+   }
+  }
+ ]
+}

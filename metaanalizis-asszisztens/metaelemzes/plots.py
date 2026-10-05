@@ -799,3 +799,295 @@ def doi_svg(points, lfk, category, measure, labels=None, title=None, n_harmonic=
         items.append(("legend", '<text x="%d" y="%d" fill="%s" font-size="10">%s</text>'
                       % (x0 - 50, y1 + 56 + 13 * i, MUTED, line)))
     return "\n".join(head + _layered(items, "doi", DOI_LAYERS, annotate) + ["</svg>"])
+
+
+# ------------------------------------------------------------------ E4c: kumulatív / LOO-sorozat és buborékábra
+# Ezek a rajzolók a szk.ma.plot/v2 dokumentum kész blokkjait képezik pixelre (számot nem formáznak, nem számolnak):
+# a becslés/CI az elemzési skálán, minden szöveg (display_text, tickek, I², τ², koefficiens-szöveg) a motoré, a kért
+# nyelven. Így a motor-SVG, a felület és a figure-forge ugyanazt a számot mutatja.
+SERIES_LAYERS = ("title", "header", "null", "reference", "rows", "axis", "labels", "footer")
+BUBBLE_LAYERS = ("title", "frame", "null", "pi-band", "band", "line", "studies", "axis", "legend")
+# a buborékábra kerete: x0, x1, y0 (felül), y1 (alul) — a pipeline tengelyosztása is ezzel ritkít
+BUBBLE_FRAME = (70, 610, 40, 410)
+BUBBLE_R_MAX, BUBBLE_R_MIN = 18.0, 2.5
+BAND_FILL = "#c5d3e3"
+
+TEXTS.update({
+    "added_study": {"hu": "Hozzáadott vizsgálat", "en": "Added study"},
+    "omitted_study": {"hu": "Kihagyott vizsgálat", "en": "Omitted study"},
+    "bubble_keys": {"hu": "Folytonos vonal: illesztett egyenes · kitöltött sáv: %s · szaggatott vonalak: %s · "
+                          "kör: vizsgálat (területe a súllyal arányos)",
+                    "en": "Solid line: fitted line · shaded band: %s · dashed lines: %s · "
+                          "circle: study (area proportional to weight)"},
+})
+
+# kötőjel-mínusz egy szám előtt, ha nem azonosító része (vegyes szövegben: 'IL-6' marad, '-0.03' → U+2212)
+_MIXED_MINUS = re.compile(r"(?<![\w.\-])-(?=\d)")
+
+
+def _pick(v, lang):
+    """A motor kétnyelvű szövegéből ({hu, en}) a kért nyelvű; sima szöveg változatlanul; None → ''."""
+    if isinstance(v, dict):
+        s = v.get(lang)
+        return s if isinstance(s, str) else (v.get("hu") if isinstance(v.get("hu"), str) else "")
+    return v if isinstance(v, str) else ""
+
+
+def _num_pick(v, lang, minus):
+    """Csak számot tartalmazó motorszöveg (display_text, tick, I², τ²): annotált magyar ábrán U+2212 mínusszal."""
+    s = _pick(v, lang)
+    return num_text(s, minus) if lang == "hu" else s
+
+
+def _mixed_pick(v, lang, minus):
+    """Szavakat és számokat vegyesen tartalmazó motorszöveg: a mínusz csak a számok előtt cserélődik."""
+    s = _pick(v, lang)
+    return _MIXED_MINUS.sub(minus, s) if (lang == "hu" and minus != "-") else s
+
+
+def _finite(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _wrap(text, width):
+    import textwrap
+    return textwrap.wrap(str(text), width) or [""]
+
+
+class _DocAxis(object):
+    """A v2 dokumentum kész tengelye ({domain, ticks}) pixelre: a tartomány és a tickek a motoréi."""
+
+    def __init__(self, axis, p0, p1):
+        dom = (axis or {}).get("domain") or [0.0, 1.0]
+        self.lo, self.hi = float(dom[0]), float(dom[1])
+        if not self.hi > self.lo:
+            self.lo, self.hi = self.lo - 0.5, self.hi + 0.5
+        self.p0, self.p1 = p0, p1
+        self.ticks = []
+        for t in (axis or {}).get("ticks") or []:
+            if isinstance(t, dict) and _finite(t.get("at")) and self.lo - 1e-12 <= t["at"] <= self.hi + 1e-12:
+                self.ticks.append((t["at"], t.get("text_i18n") or t.get("text")))
+        self.title = (axis or {}).get("title")
+
+    def __call__(self, v):
+        v = min(max(v, self.lo), self.hi)
+        return self.p0 + (v - self.lo) / (self.hi - self.lo) * (self.p1 - self.p0)
+
+    def inside(self, v):
+        return _finite(v) and self.lo <= v <= self.hi
+
+
+def series_svg(entries, axis, kind="cumulative", key_label=None, effect_label=None, null=None, ref=None,
+               title=None, footer=None, lang="hu", annotate=False, row_index=None):
+    """Kumulatív (kind='cumulative') vagy leave-one-out (kind='loo') forest-szerű sorozat a v2 blokkjából.
+
+    entries: a v2 'cumulative.entries' / 'loo' sorai (estimate, ci_lower, ci_upper az elemzési skálán; display_text,
+    i2_text, tau2_text, key_text, k — a motor kész szövegei); axis: a blokk tengelye ({domain, ticks, title});
+    null: a nullhatás az elemzési skálán (None: nincs vonal); ref: referencia-vonal (kumulatívnál a végső becslés,
+    LOO-nál a teljes elemzés becslése); footer: lábjegyzet-sorok (a hívó nyelvén). A kumulatív sorozat utolsó sora
+    (a teljes adat) gyémánt. lang / annotate: mint a forest_svg-nél; annotate=True: rétegek és soronként
+    <g id="cumulative-step-<row_uid>" data-row data-k data-y data-lo data-hi> (LOO: loo-study-<row_uid>);
+    row_index: {row_uid: táblabeli sorindex} a data-row-hoz."""
+    check_lang(lang)
+    if kind not in ("cumulative", "loo"):
+        raise ValueError("series_svg: kind 'cumulative' vagy 'loo' lehet (kapott: %r)" % (kind,))
+    minus = minus_for(lang, annotate)
+    cum = kind == "cumulative"
+    row_h = 22
+    width = 940
+    label_x, key_x, k_x, est_x, i2_x, tau_x = 12, 262, 292, 660, 850, 925
+    ax = _DocAxis(axis, FOREST_X0, FOREST_X1)
+    top = 40 if title else 16
+    header_y = top + 14
+    body_top = header_y + 14
+    items = []
+    if title:
+        items.append(("title", '<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>'
+                      % (label_x, INK, escape(title))))
+    head = [(label_x, "start", tr("added_study" if cum else "omitted_study", lang))]
+    if cum:
+        head += [(key_x, "end", _pick(key_label, lang)), (k_x, "end", "k")]
+    head += [(est_x, "start", effect_label or tr("effect", lang)), (i2_x, "end", "I²"), (tau_x, "end", "τ²")]
+    for x, anchor, txt in head:
+        items.append(("header", '<text x="%d" y="%d" font-weight="bold" fill="%s"%s>%s</text>'
+                      % (x, header_y, INK, ' text-anchor="end"' if anchor == "end" else "", escape(txt))))
+    items.append(("header", '<line x1="%d" x2="%d" y1="%d" y2="%d" stroke="%s"/>'
+                  % (label_x, tau_x, header_y + 6, header_y + 6, INK)))
+    y = body_top + row_h * 0.6
+    n = len(entries)
+    for i, e in enumerate(entries):
+        final = cum and i == n - 1
+        est, lo, hi = e.get("estimate"), e.get("ci_lower"), e.get("ci_upper")
+        parts = ['<text x="%d" y="%.1f" fill="%s"%s>%s</text>' % (
+            label_x, y + 4, INK, ' font-weight="bold"' if final else "", escape(_clip(e.get("label") or "", 34)))]
+        if cum:
+            parts.append('<text x="%d" y="%.1f" fill="%s" text-anchor="end">%s</text>'
+                         % (key_x, y + 4, MUTED, escape(e.get("key_text") or "")))
+            parts.append('<text x="%d" y="%.1f" fill="%s" text-anchor="end">%s</text>'
+                         % (k_x, y + 4, MUTED, "" if e.get("k") is None else int(e["k"])))
+        if _finite(lo) and _finite(hi):
+            if final and _finite(est):
+                parts.append('<polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f %.1f,%.1f" fill="%s" stroke="%s"/>'
+                             % (ax(lo), y, ax(est), y - 7, ax(hi), y, ax(est), y + 7, INK, INK))
+            else:
+                parts.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s" stroke-width="1.2"/>'
+                             % (ax(lo), ax(hi), y, y, INK))
+            if lo < ax.lo:
+                parts.append(_arrow(ax.p0, y, -1))
+            if hi > ax.hi:
+                parts.append(_arrow(ax.p1, y, 1))
+        if not final and ax.inside(est):
+            parts.append('<rect x="%.1f" y="%.1f" width="7.0" height="7.0" fill="%s"/>' % (ax(est) - 3.5, y - 3.5, ACCENT))
+        parts.append('<text x="%d" y="%.1f" fill="%s"%s>%s</text>' % (
+            est_x, y + 4, INK, ' font-weight="bold"' if final else "", escape(_num_pick(e.get("display_text"), lang,
+                                                                                         minus))))
+        parts.append('<text x="%d" y="%.1f" fill="%s" text-anchor="end">%s</text>'
+                     % (i2_x, y + 4, MUTED, escape(_num_pick(e.get("i2_text"), lang, minus))))
+        parts.append('<text x="%d" y="%.1f" fill="%s" text-anchor="end">%s</text>'
+                     % (tau_x, y + 4, MUTED, escape(_num_pick(e.get("tau2_text"), lang, minus))))
+        if annotate:
+            uid = e.get("added_row_uid" if cum else "omitted_row_uid")
+            rix = e.get("row_index")
+            if rix is None and row_index is not None:
+                rix = row_index.get(uid)
+            gid = ("cumulative-step-%s" if cum else "loo-study-%s") % escape(uid if uid is not None else "i%d" % i)
+            extra = (' data-k="%s"' % ("" if e.get("k") is None else int(e["k"]))) if cum else ""
+            parts = ['<g id="%s" data-row="%s"%s data-y="%s" data-lo="%s" data-hi="%s">' % (
+                gid, "" if rix is None else int(rix), extra, attr_num(est), attr_num(lo), attr_num(hi))] + parts + ["</g>"]
+        items += [("rows", p) for p in parts]
+        y += row_h
+    plot_bottom = y - row_h * 0.4
+    if null is not None and ax.inside(null):
+        xn = ax(null)
+        items.append(("null", '<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s" stroke-dasharray="3,3"/>'
+                      % (xn, xn, body_top, plot_bottom, MUTED)))
+    if ref is not None and ax.inside(ref):
+        xr = ax(ref)
+        items.append(("reference", '<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s" stroke-dasharray="1,3"/>'
+                      % (xr, xr, body_top, plot_bottom, ACCENT)))
+    ay = plot_bottom + 6
+    items.append(("axis", '<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (ax.p0, ax.p1, ay, ay, INK)))
+    for pos, txt in ax.ticks:
+        xt = ax(pos)
+        items.append(("axis", '<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" stroke="%s"/>' % (xt, xt, ay, ay + 5, INK)))
+        items.append(("axis", '<text x="%.1f" y="%.1f" text-anchor="middle" fill="%s">%s</text>'
+                      % (xt, ay + 18, INK, escape(_num_pick(txt, lang, minus)))))
+    ly = ay + 34
+    if ax.title:
+        items.append(("labels", '<text x="%.1f" y="%.1f" text-anchor="middle" fill="%s" font-size="11">%s</text>'
+                      % ((ax.p0 + ax.p1) / 2.0, ly, INK, escape(_pick(ax.title, lang)))))
+        ly += 16
+    fy = ly + 8
+    for line in footer or []:
+        for part in _wrap(line, 150):
+            items.append(("footer", '<text x="%d" y="%.1f" fill="%s" font-size="11">%s</text>'
+                          % (label_x, fy, MUTED, escape(part))))
+            fy += 15
+    total_h = int(fy + 10)
+    head_svg = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
+                'font-family="%s" font-size="12" role="img">' % (width, total_h, width, total_h, FONT),
+                '<rect width="100%" height="100%" fill="#ffffff"/>']
+    return "\n".join(head_svg + _layered(items, kind, SERIES_LAYERS, annotate) + ["</svg>"])
+
+
+def bubble_svg(bubble, null=None, title=None, lang="hu", annotate=False):
+    """Buborékábra a meta-regresszióhoz (egy folytonos moderátor) a v2 'bubble' blokkjából: x = moderátor, y = hatás
+    az elemzési skálán; a buborék TERÜLETE a meta-regressziós súllyal arányos; az illesztett egyenes (line), a
+    konfidenciasáv (band: [[x, alsó, felső], …]) és a predikciós sáv (pi_band) a motor rácspontjai — itt csak
+    összekötjük őket (a kereten kívüli rész levágva). A tengelyek (x_axis, y_axis), a koefficiens-szöveg és a
+    magyarázat a motoré. null: a nullhatás az elemzési skálán (vízszintes szaggatott vonal; None: nincs).
+    lang / annotate: mint a forest_svg-nél; annotate=True: rétegek és pontonként
+    <g id="bubble-study-<row_uid>" data-row data-x data-y data-w>."""
+    check_lang(lang)
+    minus = minus_for(lang, annotate)
+    b = bubble or {}
+    x0, x1, y0, y1 = BUBBLE_FRAME
+    width = 640
+    xa = _DocAxis(b.get("x_axis"), x0, x1)
+    ya = _DocAxis(b.get("y_axis"), y1, y0)        # felfelé nő
+    items = []
+    if title:
+        items.append(("title", '<text x="%d" y="22" font-size="15" font-weight="bold" fill="%s">%s</text>'
+                      % (x0, INK, escape(title))))
+    items.append(("frame", '<rect x="%d" y="%d" width="%d" height="%d" fill="none" stroke="%s"/>'
+                  % (x0, y0, x1 - x0, y1 - y0, GRID)))
+    clip = ' clip-path="url(#bubble-clip)"'
+    if null is not None and ya.inside(null):
+        yn = ya(null)
+        items.append(("null", '<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s" stroke-dasharray="3,3"/>'
+                      % (x0, x1, yn, yn, MUTED)))
+
+    def raw_pts(seq, col):
+        # a sávok a keret alatt/fölött is folytatódhatnak: nem vágjuk a tartományra (a clipPath vág)
+        out = []
+        for p in seq or []:
+            if isinstance(p, (list, tuple)) and len(p) > col and _finite(p[0]) and _finite(p[col]):
+                yv = y1 - (p[col] - ya.lo) / (ya.hi - ya.lo) * (y1 - y0)
+                out.append("%.1f,%.1f" % (xa(p[0]), yv))
+        return out
+
+    for col in (1, 2):
+        pts = raw_pts(b.get("pi_band"), col)
+        if len(pts) > 1:
+            items.append(("pi-band", '<polyline points="%s" fill="none" stroke="%s" stroke-dasharray="5,3"%s/>'
+                          % (" ".join(pts), PI_COLOR, clip)))
+    upper, lower = raw_pts(b.get("band"), 2), raw_pts(b.get("band"), 1)
+    if len(upper) > 1 and len(lower) > 1:
+        items.append(("band", '<polygon points="%s" fill="%s" stroke="none"%s/>'
+                      % (" ".join(upper + lower[::-1]), BAND_FILL, clip)))
+    line = raw_pts(b.get("line"), 1)
+    if len(line) > 1:
+        items.append(("line", '<polyline points="%s" fill="none" stroke="%s" stroke-width="1.8"%s/>'
+                      % (" ".join(line), ACCENT, clip)))
+    pts = [p for p in b.get("points") or [] if _finite(p.get("x")) and _finite(p.get("y"))]
+    maxw = max([p["weight_pct"] for p in pts if _finite(p.get("weight_pct"))] + [1e-12])
+    for i, p in sorted(enumerate(pts), key=lambda t: -(t[1].get("weight_pct") or 0.0)):
+        w = p.get("weight_pct") if _finite(p.get("weight_pct")) else 0.0
+        r = max(BUBBLE_R_MIN, BUBBLE_R_MAX * math.sqrt(max(w, 0.0) / maxw))
+        tip = "%s: %s; %s" % (p.get("label") or "", _num_pick(p.get("x_text"), lang, minus),
+                              _num_pick(p.get("display_text"), lang, minus))
+        dot = ('<circle cx="%.1f" cy="%.1f" r="%.1f" fill="%s" fill-opacity="0.35" stroke="%s" stroke-width="1">'
+               '<title>%s</title></circle>' % (xa(p["x"]), ya(p["y"]), r, ACCENT, ACCENT, escape(tip)))
+        if annotate:
+            uid, rix = p.get("row_uid"), p.get("row_index")
+            dot = '<g id="bubble-study-%s" data-row="%s" data-x="%s" data-y="%s" data-w="%s">%s</g>' % (
+                escape(uid if uid is not None else "i%d" % i), "" if rix is None else int(rix), attr_num(p["x"]),
+                attr_num(p["y"]), attr_num(p.get("weight_pct")), dot)
+        items.append(("studies", dot))
+    for pos, txt in xa.ticks:
+        xt = xa(pos)
+        items.append(("axis", '<line x1="%.1f" x2="%.1f" y1="%d" y2="%d" stroke="%s"/>' % (xt, xt, y1, y1 + 5, INK)))
+        items.append(("axis", '<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>'
+                      % (xt, y1 + 19, INK, escape(_num_pick(txt, lang, minus)))))
+    for pos, txt in ya.ticks:
+        yt = ya(pos)
+        items.append(("axis", '<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" stroke="%s"/>' % (x0 - 5, x0, yt, yt, INK)))
+        items.append(("axis", '<text x="%d" y="%.1f" text-anchor="end" fill="%s">%s</text>'
+                      % (x0 - 8, yt + 4, INK, escape(_num_pick(txt, lang, minus)))))
+    items.append(("axis", '<text x="%.1f" y="%d" text-anchor="middle" fill="%s">%s</text>'
+                  % ((x0 + x1) / 2.0, y1 + 38, INK, escape(_pick(xa.title, lang)))))
+    items.append(("axis", '<text x="18" y="%.1f" transform="rotate(-90 18 %.1f)" text-anchor="middle" fill="%s">%s</text>'
+                  % ((y0 + y1) / 2.0, (y0 + y1) / 2.0, INK, escape(_pick(ya.title, lang)))))
+    ly = y1 + 58
+    if b.get("coef_text"):
+        for part in _wrap(_mixed_pick(b["coef_text"], lang, minus), 95):
+            items.append(("legend", '<text x="%d" y="%d" fill="%s" font-size="12">%s</text>' % (x0 - 50, ly, INK,
+                                                                                               escape(part))))
+            ly += 15
+    keys = tr("bubble_keys", lang) % (_pick(b.get("band_label"), lang) or "CI", _pick(b.get("pi_band_label"), lang) or "PI")
+    for part in _wrap(_mixed_pick(keys, lang, minus), 118):
+        items.append(("legend", '<text x="%d" y="%d" fill="%s" font-size="10">%s</text>' % (x0 - 50, ly, MUTED,
+                                                                                           escape(part))))
+        ly += 13
+    ly += 4
+    for part in _wrap(_mixed_pick(b.get("note"), lang, minus), 118) if b.get("note") else []:
+        items.append(("legend", '<text x="%d" y="%d" fill="%s" font-size="10">%s</text>' % (x0 - 50, ly, MUTED,
+                                                                                           escape(part))))
+        ly += 13
+    height = ly + 8
+    head = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
+            'font-family="%s" font-size="12" role="img">' % (width, height, width, height, FONT),
+            '<defs><clipPath id="bubble-clip"><rect x="%d" y="%d" width="%d" height="%d"/></clipPath></defs>'
+            % (x0, y0, x1 - x0, y1 - y0),
+            '<rect width="100%" height="100%" fill="#ffffff"/>']
+    return "\n".join(head + _layered(items, "bubble", BUBBLE_LAYERS, annotate) + ["</svg>"])

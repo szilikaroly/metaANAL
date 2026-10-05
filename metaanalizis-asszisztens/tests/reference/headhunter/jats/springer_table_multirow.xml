@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SZINTETIKUS tesztfixture / SYNTHETIC test fixture. Fictitious studies; identifiers use unassigned ranges
+     (PMID 9999xxxx) and the 10.5555 test DOI prefix - never use them outside tests.
+     Structure modelled on a Springer/BMC review in PMC (cf. PMC12070792): the first cell of each row is split
+     into <p> pieces ("1" / "Kilo, S." / "2015" / "Israel"), a numbering column prefix, one study reported in
+     several rows ("2.1", "2.2" = one study; "3.1"/"3.2" vs "4.1" = two studies of the same author in different
+     years), a particle surname ("van Nielsen"), country before year ("Oscar, E. J. USA 2015"), a rowspan'd
+     label, a two-line label ("Papa," / "2016"), and an in-text inclusion statement with an xref range
+     [CR1-CR6] that confirms the table. -->
+<article xmlns:xlink="http://www.w3.org/1999/xlink" article-type="review-article">
+<front>
+<journal-meta><journal-title-group><journal-title>Synthetic BMC Nutrition</journal-title></journal-title-group></journal-meta>
+<article-meta>
+<article-id pub-id-type="pmid">99990300</article-id>
+<article-id pub-id-type="pmc">PMC99990300</article-id>
+<article-id pub-id-type="doi">10.5555/hh.0300</article-id>
+<title-group><article-title>Effect of food Z on an inflammatory marker: a systematic review and meta-analysis</article-title></title-group>
+<pub-date pub-type="epub"><day>10</day><month>05</month><year>2025</year></pub-date>
+<permissions><license license-type="open-access"><ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</ext-link></license></permissions>
+<abstract>
+<sec><title>Methods</title><p>Databases including PubMed, Scopus and Web of Science were systematically searched up to March 2025.</p></sec>
+</abstract>
+</article-meta>
+</front>
+<body>
+<sec><title>Results</title>
+<p>Out of eight RCTs included in our systematic review [<xref ref-type="bibr" rid="CR1">1</xref>–<xref ref-type="bibr" rid="CR8">8</xref>], two articles did not provide enough data [<xref ref-type="bibr" rid="CR3">3</xref>].</p>
+<table-wrap id="Tab1">
+<label>Table 1</label>
+<caption><p>Characteristics of included studies</p></caption>
+<table>
+<thead><tr><th>Code Author (year) (country)</th><th>Participants</th><th>Duration (weeks)</th></tr></thead>
+<tbody>
+<tr><td><p>1</p><p>Kilo, S.</p><p>2015</p><p>Israel</p></td><td>Women N = 87</td><td>24</td></tr>
+<tr><td><p>2.1</p><p>Lima, J. W.</p><p>2007</p><p>USA</p></td><td>Obese women N = 43</td><td>8</td></tr>
+<tr><td><p>2.2</p><p>Lima, J. W.</p><p>2007</p><p>USA</p></td><td>Obese women N = 43</td><td>8</td></tr>
+<tr><td><p>3.1</p><p>Mike, L.</p><p>2007</p><p>Iran</p></td><td>Women with syndrome W N = 42</td><td>8</td></tr>
+<tr><td><p>3.2</p><p>Mike, L.</p><p>2007</p><p>Iran</p></td><td>Women with syndrome W N = 42</td><td>8</td></tr>
+<tr><td><p>4.1</p><p>Mike, L.</p><p>2008</p><p>Iran</p></td><td>Patients with condition V N = 41</td><td>16</td></tr>
+<tr><td><p>5</p><p>van Nielsen, M.</p><p>2014</p><p>Netherlands</p></td><td>Older women N = 205</td><td>52</td></tr>
+<tr><td><p>6</p><p>Oscar, E. J.</p><p>USA</p><p>2015</p></td><td>Adults N = 30</td><td>4</td></tr>
+<tr><td rowspan="2"><p>7</p><p>Quebec, A.</p><p>2012</p><p>Brazil</p></td><td>Women, arm A N = 20</td><td>12</td></tr>
+<tr><td>Women, arm B N = 20</td><td>12</td></tr>
+<tr><td>Papa,</td><td rowspan="2">Adults N = 50</td><td rowspan="2">10</td></tr>
+<tr><td>2016</td></tr>
+</tbody>
+</table>
+</table-wrap>
+</sec>
+</body>
+<back>
+<ref-list id="Bib1"><title>References</title>
+<ref id="CR1"><label>1.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Kilo</surname><given-names>S</given-names></name><name><surname>Romeo</surname><given-names>T</given-names></name></person-group><article-title>Food Z and inflammation in women</article-title><source>Synthetic Metabolism</source><year>2015</year><volume>64</volume><fpage>1</fpage><lpage>9</lpage><pub-id pub-id-type="doi">10.5555/hh.0301</pub-id><pub-id pub-id-type="pmid">99990301</pub-id></mixed-citation></ref>
+<ref id="CR2"><label>2.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Lima</surname><given-names>JW</given-names></name></person-group><article-title>Food Z in obese women</article-title><source>Synthetic Metabolism</source><year>2007</year><volume>56</volume><fpage>2</fpage><lpage>8</lpage><pub-id pub-id-type="doi">10.5555/hh.0302</pub-id></mixed-citation></ref>
+<ref id="CR3"><label>3.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Mike</surname><given-names>L</given-names></name></person-group><article-title>Food Z in syndrome W</article-title><source>Synthetic Am J Clin Nutr</source><year>2007</year><volume>85</volume><fpage>735</fpage><lpage>41</lpage></mixed-citation></ref>
+<ref id="CR4"><label>4.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Mike</surname><given-names>L</given-names></name></person-group><article-title>Food Z in condition V</article-title><source>Synthetic Diabetes Care</source><year>2008</year><volume>31</volume><fpage>648</fpage><lpage>54</lpage></mixed-citation></ref>
+<ref id="CR5"><label>5.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>van Nielsen</surname><given-names>M</given-names></name></person-group><article-title>Food Z in older women</article-title><source>Synthetic J Nutr</source><year>2014</year><volume>144</volume><fpage>1</fpage><lpage>9</lpage></mixed-citation></ref>
+<ref id="CR6"><label>6.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Oscar</surname><given-names>EJ</given-names></name></person-group><article-title>Food Z in adults</article-title><source>Synthetic Mol Nutr Food Res</source><year>2015</year><volume>59</volume><fpage>1</fpage><lpage>9</lpage></mixed-citation></ref>
+<ref id="CR7"><label>7.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Quebec</surname><given-names>A</given-names></name></person-group><article-title>Food Z in women, two arms</article-title><source>Synthetic Nutrition</source><year>2012</year><volume>28</volume><fpage>1</fpage><lpage>9</lpage></mixed-citation></ref>
+<ref id="CR8"><label>8.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Papa</surname><given-names>R</given-names></name></person-group><article-title>Food Z in adults, crossover</article-title><source>Synthetic Nutrients</source><year>2016</year><volume>8</volume><fpage>1</fpage><lpage>9</lpage></mixed-citation></ref>
+<ref id="CR9"><label>9.</label><mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Sierra</surname><given-names>U</given-names></name><name><surname>Kilo</surname><given-names>S</given-names></name></person-group><article-title>Background on the inflammatory marker</article-title><source>Synthetic Reviews</source><year>2015</year><volume>1</volume><fpage>1</fpage><lpage>3</lpage></mixed-citation></ref>
+</ref-list>
+</back>
+</article>

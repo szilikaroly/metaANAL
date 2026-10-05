@@ -135,6 +135,7 @@
         componentTable(caps),
         h('p', { 'class': 'muted', i18n: 'legend.symbols' })),
       caps.matrix ? h('section', { 'class': 'panel', 'aria-labelledby': 'cap-m-h' }, h('h2', { 'class': 'panel-title', id: 'cap-m-h', i18n: 'capab.matrix' }), matrixTable(caps)) : null,
+      MA.adaptersCaps ? MA.adaptersCaps.panel(ctx) : null,   // v1: funkciónkénti adapter-állapot és teendő (components/adapters_caps.js)
       h('section', { 'class': 'panel', 'aria-labelledby': 'cap-p-h' }, h('h2', { 'class': 'panel-title', id: 'cap-p-h', i18n: 'capab.privacy' }), privacyPanel(MA.store.get('privacy'))));
   }
 

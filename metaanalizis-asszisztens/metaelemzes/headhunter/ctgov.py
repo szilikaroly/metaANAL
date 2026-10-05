@@ -28,6 +28,14 @@ def link_strength(ref_type):
     return "confirming" if t in ("RESULT", "DERIVED") else "weak"
 
 
+def date_filter(start, end=None, field="StudyFirstPostDate"):
+    """``filter.advanced`` dátumablak: ``AREA[StudyFirstPostDate]RANGE[2023-01-01,MAX]`` (frissítő keresés,
+    TERV 12.2; a ``ResultsFirstPostDate`` szerinti futáshoz ``field="ResultsFirstPostDate"``)."""
+    if field not in ("StudyFirstPostDate", "ResultsFirstPostDate", "LastUpdatePostDate", "StartDate"):
+        raise ValueError("Ismeretlen CT.gov dátummező: %r" % field)
+    return "AREA[%s]RANGE[%s,%s]" % (field, start or "MIN", end or "MAX")
+
+
 def references(study):
     """``[{"pmid", "type", "strength", "citation"}]`` egy vizsgálat hivatkozásaiból."""
     out = []
@@ -81,7 +89,7 @@ class Client(BaseClient):
     PLATFORM = PLATFORM
 
     def version(self):
-        return self.http.get(SOURCE, BASE + "version", accept="json", cache=False).json()
+        return self.http.get(SOURCE, BASE + "version", accept="json", cache=False).json_dict()
 
     def study(self, nct, fields=None):
         """Egy vizsgálat (nyers v2-alak) vagy ``None`` (nincs ilyen / érvénytelen NCT)."""
@@ -94,7 +102,7 @@ class Client(BaseClient):
         resp = self.http.get(SOURCE, BASE + "studies/" + n, params=params, accept="json", allow_status=(400,))
         if resp.status != 200:
             return None
-        return resp.json()
+        return resp.json_dict()
 
     def studies(self, term=None, cond=None, intr=None, advanced=None, fields=None, page_size=100, max_results=None,
                 count_total=True, sort=None):
@@ -122,7 +130,7 @@ class Client(BaseClient):
                 params.append(("countTotal", "true"))
             if state:
                 params.append(("pageToken", state))
-            data = self.http.get(SOURCE, BASE + "studies", params=params, accept="json").json()
+            data = self.http.get(SOURCE, BASE + "studies", params=params, accept="json").json_dict()
             items = as_list(data.get("studies"))
             return items, to_int(data.get("totalCount")), data.get("nextPageToken") or None
 

@@ -1,0 +1,1078 @@
+{
+ "description": "GET /api/adapters — az adapter-állapot funkciónként (absent/unusable/legacy/ok, mód, tartalék, magyar teendő, H-őrök). fx: legacy (validator 1.0.0 bridge, figure-forge 0.2.1, composer 1.4.1 beállítatlan) · h5 (figure-forge matplotlib nélkül, a többi hiányzik) · ok (V1/F2/C1). A valódi szerver válaszai stub-pluginokkal (tests/gui/ui/gen_adapters_fixtures.py).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/adapters",
+   "query": {
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.adapters/v1",
+    "data": {
+     "schema": "szk.ma.adapters/v1",
+     "generated": "2026-10-05T10:00:00Z",
+     "probing": false,
+     "plugins": {
+      "validator": {
+       "plugin": "validator",
+       "state": "legacy",
+       "version": "1.0.0",
+       "mode": "bridge",
+       "guards": [
+        "H1",
+        "H2",
+        "H3",
+        "H4"
+       ],
+       "tools": {
+        "amstar2": {
+         "mode": "bridge",
+         "feature": "amstar2",
+         "guards": [
+          "H4"
+         ]
+        },
+        "grade": {
+         "mode": "bridge",
+         "feature": "grade",
+         "guards": [
+          "H3"
+         ]
+        },
+        "jbi": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "nos": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "probast-ai": {
+         "mode": "bridge",
+         "feature": "probast",
+         "guards": [
+          "H2"
+         ]
+        },
+        "quadas2": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "quips": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "rob2": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "robins-e": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "robins-i": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "robis": {
+         "mode": "bridge",
+         "feature": "rob",
+         "guards": []
+        },
+        "tripod-ai": {
+         "mode": "bridge",
+         "feature": "tripod",
+         "guards": [
+          "H1"
+         ]
+        }
+       },
+       "remedy": {
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+       }
+      },
+      "figure-forge": {
+       "plugin": "figure-forge",
+       "state": "legacy",
+       "version": "0.2.1",
+       "mode": "bridge",
+       "handshake": "missing",
+       "python": [
+        "python3"
+       ],
+       "guards": [
+        "H5",
+        "H6"
+       ],
+       "missing_modules": [],
+       "audit": {
+        "mode": "bridge",
+        "available": true,
+        "fallback": "stdlib",
+        "guard": null,
+        "remedy": null
+       },
+       "export": {
+        "mode": null,
+        "available": false,
+        "fallback": "engine_svg",
+        "remedy": {
+         "hu": "A figure-forge 0.2.1 nem rajzol meta-analitikus ábrát (H6: nincs gyémánt, predikciós intervallum, alcsoport); a publikációs ábra addig a motor SVG-je. A figure-forge F2-es (meta) változatával itt automatikusan elérhető lesz.",
+         "en": "figure-forge 0.2.1 does not draw meta-analytic figures (H6: no diamond, prediction interval, subgroups); the publication figure is the engine SVG until then. It becomes available here with the figure-forge F2 (meta) release."
+        }
+       },
+       "flowchart": {
+        "mode": "bridge",
+        "available": true,
+        "remedy": null
+       }
+      },
+      "composer": {
+       "plugin": "composer",
+       "state": "legacy",
+       "version": "1.4.1",
+       "mode": "bridge",
+       "python": [
+        "python3"
+       ],
+       "guards": [
+        "H7"
+       ],
+       "explicit_interpreter": true,
+       "remedy": {
+        "hu": "Add meg a composer kimeneti mappáját (ahol a collect/prisma dolgozik) és a projekt nevét — a munkapad ezután onnan olvassa a PRISMA-számokat.",
+        "en": "Set the composer output folder (where collect/prisma work) and the project name — the workbench then reads the PRISMA numbers from there."
+       },
+       "can_refresh": false
+      }
+     },
+     "features": [
+      {
+       "id": "rob",
+       "plugin": "validator",
+       "label": {
+        "hu": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI",
+        "en": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": {
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+       },
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "doménszintű ítélettábla, forgalmi lámpa, a rob oszlop karbantartása",
+        "en": "domain-level judgement table, traffic light, upkeep of the rob column"
+       }
+      },
+      {
+       "id": "probast",
+       "plugin": "validator",
+       "label": {
+        "hu": "PROBAST+AI",
+        "en": "PROBAST+AI"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": {
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+       },
+       "guards": [
+        {
+         "id": "H2",
+         "text": {
+          "hu": "H2: menettel minősített kulcs, cella-alapú olvasás",
+          "en": "H2: pass-qualified keys, cell-based reading"
+         }
+        }
+       ],
+       "standalone": true,
+       "fallback": {
+        "hu": "doménszintű ítélet (4 domén × Low/High/Unclear, két menet) + alkalmazhatóság",
+        "en": "domain-level judgement (4 domains × Low/High/Unclear, two passes) + applicability"
+       }
+      },
+      {
+       "id": "tripod",
+       "plugin": "validator",
+       "label": {
+        "hu": "TRIPOD+AI",
+        "en": "TRIPOD+AI"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": {
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+       },
+       "guards": [
+        {
+         "id": "H1",
+         "text": {
+          "hu": "H1: a teljességet a munkapad számolja",
+          "en": "H1: completeness is computed by the workbench"
+         }
+        }
+       ],
+       "standalone": false,
+       "fallback": {
+        "hu": "nem elérhető (a tétellista a validator referenciájából jön)",
+        "en": "not available (the item list comes from the validator reference)"
+       }
+      },
+      {
+       "id": "grade",
+       "plugin": "validator",
+       "label": {
+        "hu": "GRADE + SoF",
+        "en": "GRADE + SoF"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": {
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+       },
+       "guards": [
+        {
+         "id": "H3",
+         "text": {
+          "hu": "H3: a „Suspected” publikációs torzítás feloldatlan, amíg ember nem dönt",
+          "en": "H3: publication bias 'Suspected' stays unresolved until a human decides"
+         }
+        }
+       ],
+       "standalone": true,
+       "fallback": {
+        "hu": "motor-tanácsadó (grade_help), grade_consistency, SoF a motorból",
+        "en": "engine advisor (grade_help), grade_consistency, SoF from the engine"
+       }
+      },
+      {
+       "id": "amstar2",
+       "plugin": "validator",
+       "label": {
+        "hu": "AMSTAR 2",
+        "en": "AMSTAR 2"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": {
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+       },
+       "guards": [
+        {
+         "id": "H4",
+         "text": {
+          "hu": "H4: kanonikus partial_yes, a besorolás „weakness” konvencióként címkézve",
+          "en": "H4: canonical partial_yes, rating labelled as the 'weakness' convention"
+         }
+        }
+       ],
+       "standalone": true,
+       "fallback": {
+        "hu": "KB AMSTAR2-lista + project audit bizonyíték-javaslatok + kézi besorolás + amstar2_consistency",
+        "en": "KB AMSTAR2 list + project audit evidence hints + manual rating + amstar2_consistency"
+       }
+      },
+      {
+       "id": "figure_audit",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "Ábra-audit",
+        "en": "Figure audit"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "stdlib SVG-ellenőrzés a motor-SVG-n",
+        "en": "stdlib SVG check of the engine SVG"
+       },
+       "fallback_used": false
+      },
+      {
+       "id": "pub_figure",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "Publikációs ábra",
+        "en": "Publication figure"
+       },
+       "state": "legacy",
+       "mode": null,
+       "remedy": {
+        "hu": "A figure-forge 0.2.1 nem rajzol meta-analitikus ábrát (H6: nincs gyémánt, predikciós intervallum, alcsoport); a publikációs ábra addig a motor SVG-je. A figure-forge F2-es (meta) változatával itt automatikusan elérhető lesz.",
+        "en": "figure-forge 0.2.1 does not draw meta-analytic figures (H6: no diamond, prediction interval, subgroups); the publication figure is the engine SVG until then. It becomes available here with the figure-forge F2 (meta) release."
+       },
+       "guards": [
+        {
+         "id": "H6",
+         "text": {
+          "hu": "H6: a meta-ábrák exportja az F2-ig a motor-SVG",
+          "en": "H6: meta-analytic figures are exported from the engine SVG until F2"
+         }
+        }
+       ],
+       "standalone": true,
+       "fallback": {
+        "hu": "motor-SVG (EN felirat, rétegek, U+2212) + böngészős PNG „ELŐNÉZET — QC NÉLKÜL” vízjellel",
+        "en": "engine SVG (EN labels, layers, U+2212) + browser PNG with a 'PREVIEW — NO QC' watermark"
+       },
+       "fallback_used": true
+      },
+      {
+       "id": "prisma_figure",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "PRISMA-folyamatábra",
+        "en": "PRISMA flow diagram"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": null,
+       "guards": [],
+       "standalone": false,
+       "fallback": {
+        "hu": "önállóan csak a számok és az ellenőrzésük; a rajzot a figure-forge készíti",
+        "en": "standalone: numbers and checks only; the drawing needs figure-forge"
+       }
+      },
+      {
+       "id": "prisma",
+       "plugin": "composer",
+       "label": {
+        "hu": "PRISMA",
+        "en": "PRISMA"
+       },
+       "state": "legacy",
+       "mode": "bridge",
+       "remedy": {
+        "hu": "Add meg a composer kimeneti mappáját (ahol a collect/prisma dolgozik) és a projekt nevét — a munkapad ezután onnan olvassa a PRISMA-számokat.",
+        "en": "Set the composer output folder (where collect/prisma work) and the project name — the workbench then reads the PRISMA numbers from there."
+       },
+       "guards": [
+        {
+         "id": "H7",
+         "text": {
+          "hu": "H7: explicit interpreterrel hívva, csak olvasunk, csonka JSON-nál újrapróbálunk",
+          "en": "H7: called with an explicit interpreter, read-only, retried on truncated JSON"
+         }
+        }
+       ],
+       "standalone": true,
+       "fallback": {
+        "hu": "kézi űrlap + élő P001–P016 + X014/X015",
+        "en": "manual form + live P001–P016 + X014/X015"
+       },
+       "configured": false,
+       "can_refresh": false
+      }
+     ],
+     "converters": [],
+     "converter_remedy": {
+      "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+      "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+     },
+     "composer_location": {
+      "configured": false,
+      "project": null,
+      "source": null,
+      "state_exists": false
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp001"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/adapters",
+   "query": {
+    "fx": "h5"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.adapters/v1",
+    "data": {
+     "schema": "szk.ma.adapters/v1",
+     "generated": "2026-10-05T10:00:00Z",
+     "probing": false,
+     "plugins": {
+      "validator": {
+       "plugin": "validator",
+       "state": "absent",
+       "version": null,
+       "mode": null,
+       "guards": [],
+       "tools": {
+        "amstar2": {
+         "mode": null,
+         "feature": "amstar2",
+         "guards": []
+        },
+        "grade": {
+         "mode": null,
+         "feature": "grade",
+         "guards": []
+        },
+        "jbi": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "nos": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "probast-ai": {
+         "mode": null,
+         "feature": "probast",
+         "guards": []
+        },
+        "quadas2": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "quips": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "rob2": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "robins-e": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "robins-i": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "robis": {
+         "mode": null,
+         "feature": "rob",
+         "guards": []
+        },
+        "tripod-ai": {
+         "mode": null,
+         "feature": "tripod",
+         "guards": []
+        }
+       },
+       "remedy": {
+        "hu": "Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+        "en": "Install: claude plugin install validator@szk-plugins — or set SZK_VALIDATOR_HOME to the plugin folder."
+       }
+      },
+      "figure-forge": {
+       "plugin": "figure-forge",
+       "state": "unusable",
+       "version": "0.2.1",
+       "mode": null,
+       "handshake": "failed",
+       "python": [
+        "python3"
+       ],
+       "guards": [],
+       "missing_modules": [
+        "matplotlib"
+       ],
+       "audit": {
+        "mode": null,
+        "available": false,
+        "fallback": "stdlib",
+        "guard": "H5",
+        "remedy": {
+         "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+         "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+        }
+       },
+       "export": {
+        "mode": null,
+        "available": false,
+        "fallback": "engine_svg",
+        "remedy": {
+         "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+         "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+        }
+       },
+       "flowchart": {
+        "mode": null,
+        "available": false,
+        "remedy": {
+         "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+         "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+        }
+       }
+      },
+      "composer": {
+       "plugin": "composer",
+       "state": "absent",
+       "version": null,
+       "mode": null,
+       "python": null,
+       "guards": [],
+       "explicit_interpreter": true,
+       "remedy": {
+        "hu": "Telepítés: claude plugin install composer@szk-plugins — vagy add meg a plugin mappáját az SZK_COMPOSER_HOME környezeti változóban.",
+        "en": "Install: claude plugin install composer@szk-plugins — or set SZK_COMPOSER_HOME to the plugin folder."
+       },
+       "can_refresh": false
+      }
+     },
+     "features": [
+      {
+       "id": "rob",
+       "plugin": "validator",
+       "label": {
+        "hu": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI",
+        "en": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI"
+       },
+       "state": "absent",
+       "mode": null,
+       "remedy": {
+        "hu": "Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+        "en": "Install: claude plugin install validator@szk-plugins — or set SZK_VALIDATOR_HOME to the plugin folder."
+       },
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "doménszintű ítélettábla, forgalmi lámpa, a rob oszlop karbantartása",
+        "en": "domain-level judgement table, traffic light, upkeep of the rob column"
+       }
+      },
+      {
+       "id": "probast",
+       "plugin": "validator",
+       "label": {
+        "hu": "PROBAST+AI",
+        "en": "PROBAST+AI"
+       },
+       "state": "absent",
+       "mode": null,
+       "remedy": {
+        "hu": "Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+        "en": "Install: claude plugin install validator@szk-plugins — or set SZK_VALIDATOR_HOME to the plugin folder."
+       },
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "doménszintű ítélet (4 domén × Low/High/Unclear, két menet) + alkalmazhatóság",
+        "en": "domain-level judgement (4 domains × Low/High/Unclear, two passes) + applicability"
+       }
+      },
+      {
+       "id": "tripod",
+       "plugin": "validator",
+       "label": {
+        "hu": "TRIPOD+AI",
+        "en": "TRIPOD+AI"
+       },
+       "state": "absent",
+       "mode": null,
+       "remedy": {
+        "hu": "Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+        "en": "Install: claude plugin install validator@szk-plugins — or set SZK_VALIDATOR_HOME to the plugin folder."
+       },
+       "guards": [],
+       "standalone": false,
+       "fallback": {
+        "hu": "nem elérhető (a tétellista a validator referenciájából jön)",
+        "en": "not available (the item list comes from the validator reference)"
+       }
+      },
+      {
+       "id": "grade",
+       "plugin": "validator",
+       "label": {
+        "hu": "GRADE + SoF",
+        "en": "GRADE + SoF"
+       },
+       "state": "absent",
+       "mode": null,
+       "remedy": {
+        "hu": "Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+        "en": "Install: claude plugin install validator@szk-plugins — or set SZK_VALIDATOR_HOME to the plugin folder."
+       },
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "motor-tanácsadó (grade_help), grade_consistency, SoF a motorból",
+        "en": "engine advisor (grade_help), grade_consistency, SoF from the engine"
+       }
+      },
+      {
+       "id": "amstar2",
+       "plugin": "validator",
+       "label": {
+        "hu": "AMSTAR 2",
+        "en": "AMSTAR 2"
+       },
+       "state": "absent",
+       "mode": null,
+       "remedy": {
+        "hu": "Telepítés: claude plugin install validator@szk-plugins — vagy add meg a plugin mappáját az SZK_VALIDATOR_HOME környezeti változóban.",
+        "en": "Install: claude plugin install validator@szk-plugins — or set SZK_VALIDATOR_HOME to the plugin folder."
+       },
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "KB AMSTAR2-lista + project audit bizonyíték-javaslatok + kézi besorolás + amstar2_consistency",
+        "en": "KB AMSTAR2 list + project audit evidence hints + manual rating + amstar2_consistency"
+       }
+      },
+      {
+       "id": "figure_audit",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "Ábra-audit",
+        "en": "Figure audit"
+       },
+       "state": "unusable",
+       "mode": null,
+       "remedy": {
+        "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+        "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+       },
+       "guards": [
+        {
+         "id": "H5",
+         "text": {
+          "hu": "H5: matplotlib nélkül az ábra-audit a motor-SVG stdlib-ellenőrzésével fut",
+          "en": "H5: without matplotlib the figure audit uses the stdlib check of the engine SVG"
+         }
+        }
+       ],
+       "standalone": true,
+       "fallback": {
+        "hu": "stdlib SVG-ellenőrzés a motor-SVG-n",
+        "en": "stdlib SVG check of the engine SVG"
+       },
+       "fallback_used": true
+      },
+      {
+       "id": "pub_figure",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "Publikációs ábra",
+        "en": "Publication figure"
+       },
+       "state": "unusable",
+       "mode": null,
+       "remedy": {
+        "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+        "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+       },
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "motor-SVG (EN felirat, rétegek, U+2212) + böngészős PNG „ELŐNÉZET — QC NÉLKÜL” vízjellel",
+        "en": "engine SVG (EN labels, layers, U+2212) + browser PNG with a 'PREVIEW — NO QC' watermark"
+       },
+       "fallback_used": true
+      },
+      {
+       "id": "prisma_figure",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "PRISMA-folyamatábra",
+        "en": "PRISMA flow diagram"
+       },
+       "state": "unusable",
+       "mode": null,
+       "remedy": {
+        "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+        "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+       },
+       "guards": [],
+       "standalone": false,
+       "fallback": {
+        "hu": "önállóan csak a számok és az ellenőrzésük; a rajzot a figure-forge készíti",
+        "en": "standalone: numbers and checks only; the drawing needs figure-forge"
+       }
+      },
+      {
+       "id": "prisma",
+       "plugin": "composer",
+       "label": {
+        "hu": "PRISMA",
+        "en": "PRISMA"
+       },
+       "state": "absent",
+       "mode": null,
+       "remedy": {
+        "hu": "Telepítés: claude plugin install composer@szk-plugins — vagy add meg a plugin mappáját az SZK_COMPOSER_HOME környezeti változóban.",
+        "en": "Install: claude plugin install composer@szk-plugins — or set SZK_COMPOSER_HOME to the plugin folder."
+       },
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "kézi űrlap + élő P001–P016 + X014/X015",
+        "en": "manual form + live P001–P016 + X014/X015"
+       },
+       "configured": true,
+       "can_refresh": false
+      }
+     ],
+     "converters": [],
+     "converter_remedy": {
+      "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+      "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+     },
+     "composer_location": {
+      "configured": true,
+      "project": "glp1",
+      "source": "ma-projekt.json",
+      "state_exists": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp020"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/adapters",
+   "query": {
+    "fx": "ok"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.adapters/v1",
+    "data": {
+     "schema": "szk.ma.adapters/v1",
+     "generated": "2026-10-05T10:00:00Z",
+     "probing": false,
+     "plugins": {
+      "validator": {
+       "plugin": "validator",
+       "state": "ok",
+       "version": "1.1.0",
+       "mode": "json",
+       "guards": [],
+       "tools": {
+        "amstar2": {
+         "mode": "json",
+         "feature": "amstar2",
+         "guards": []
+        },
+        "grade": {
+         "mode": "json",
+         "feature": "grade",
+         "guards": []
+        },
+        "jbi": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "nos": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "probast-ai": {
+         "mode": "json",
+         "feature": "probast",
+         "guards": []
+        },
+        "quadas2": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "quips": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "rob2": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "robins-e": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "robins-i": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "robis": {
+         "mode": "json",
+         "feature": "rob",
+         "guards": []
+        },
+        "tripod-ai": {
+         "mode": "json",
+         "feature": "tripod",
+         "guards": []
+        }
+       },
+       "remedy": null
+      },
+      "figure-forge": {
+       "plugin": "figure-forge",
+       "state": "ok",
+       "version": "0.3.0",
+       "mode": "json",
+       "handshake": "ok",
+       "python": [
+        "python3"
+       ],
+       "guards": [],
+       "missing_modules": [],
+       "audit": {
+        "mode": "json",
+        "available": true,
+        "fallback": "stdlib",
+        "guard": null,
+        "remedy": null
+       },
+       "export": {
+        "mode": "json",
+        "available": true,
+        "fallback": "engine_svg",
+        "remedy": null
+       },
+       "flowchart": {
+        "mode": "json",
+        "available": true,
+        "remedy": null
+       }
+      },
+      "composer": {
+       "plugin": "composer",
+       "state": "ok",
+       "version": "1.5.0",
+       "mode": "json",
+       "python": [
+        "python3"
+       ],
+       "guards": [],
+       "explicit_interpreter": true,
+       "remedy": null,
+       "can_refresh": true
+      }
+     },
+     "features": [
+      {
+       "id": "rob",
+       "plugin": "validator",
+       "label": {
+        "hu": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI",
+        "en": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "doménszintű ítélettábla, forgalmi lámpa, a rob oszlop karbantartása",
+        "en": "domain-level judgement table, traffic light, upkeep of the rob column"
+       }
+      },
+      {
+       "id": "probast",
+       "plugin": "validator",
+       "label": {
+        "hu": "PROBAST+AI",
+        "en": "PROBAST+AI"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "doménszintű ítélet (4 domén × Low/High/Unclear, két menet) + alkalmazhatóság",
+        "en": "domain-level judgement (4 domains × Low/High/Unclear, two passes) + applicability"
+       }
+      },
+      {
+       "id": "tripod",
+       "plugin": "validator",
+       "label": {
+        "hu": "TRIPOD+AI",
+        "en": "TRIPOD+AI"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": false,
+       "fallback": {
+        "hu": "nem elérhető (a tétellista a validator referenciájából jön)",
+        "en": "not available (the item list comes from the validator reference)"
+       }
+      },
+      {
+       "id": "grade",
+       "plugin": "validator",
+       "label": {
+        "hu": "GRADE + SoF",
+        "en": "GRADE + SoF"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "motor-tanácsadó (grade_help), grade_consistency, SoF a motorból",
+        "en": "engine advisor (grade_help), grade_consistency, SoF from the engine"
+       }
+      },
+      {
+       "id": "amstar2",
+       "plugin": "validator",
+       "label": {
+        "hu": "AMSTAR 2",
+        "en": "AMSTAR 2"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "KB AMSTAR2-lista + project audit bizonyíték-javaslatok + kézi besorolás + amstar2_consistency",
+        "en": "KB AMSTAR2 list + project audit evidence hints + manual rating + amstar2_consistency"
+       }
+      },
+      {
+       "id": "figure_audit",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "Ábra-audit",
+        "en": "Figure audit"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "stdlib SVG-ellenőrzés a motor-SVG-n",
+        "en": "stdlib SVG check of the engine SVG"
+       },
+       "fallback_used": false
+      },
+      {
+       "id": "pub_figure",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "Publikációs ábra",
+        "en": "Publication figure"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "motor-SVG (EN felirat, rétegek, U+2212) + böngészős PNG „ELŐNÉZET — QC NÉLKÜL” vízjellel",
+        "en": "engine SVG (EN labels, layers, U+2212) + browser PNG with a 'PREVIEW — NO QC' watermark"
+       },
+       "fallback_used": false
+      },
+      {
+       "id": "prisma_figure",
+       "plugin": "figure-forge",
+       "label": {
+        "hu": "PRISMA-folyamatábra",
+        "en": "PRISMA flow diagram"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": false,
+       "fallback": {
+        "hu": "önállóan csak a számok és az ellenőrzésük; a rajzot a figure-forge készíti",
+        "en": "standalone: numbers and checks only; the drawing needs figure-forge"
+       }
+      },
+      {
+       "id": "prisma",
+       "plugin": "composer",
+       "label": {
+        "hu": "PRISMA",
+        "en": "PRISMA"
+       },
+       "state": "ok",
+       "mode": "json",
+       "remedy": null,
+       "guards": [],
+       "standalone": true,
+       "fallback": {
+        "hu": "kézi űrlap + élő P001–P016 + X014/X015",
+        "en": "manual form + live P001–P016 + X014/X015"
+       },
+       "configured": true,
+       "can_refresh": true
+      }
+     ],
+     "converters": [],
+     "converter_remedy": {
+      "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+      "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+     },
+     "composer_location": {
+      "configured": true,
+      "project": "glp1",
+      "source": "ma-projekt.json",
+      "state_exists": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp025"
+    }
+   }
+  }
+ ]
+}

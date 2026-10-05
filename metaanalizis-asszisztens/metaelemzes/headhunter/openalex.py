@@ -99,6 +99,12 @@ def work_record(w):
     }
 
 
+def _short_id(value, prefix):
+    """``https://openalex.org/C123`` → ``C123`` (fogalom/téma-azonosító)."""
+    m = re.search(r"(?i)(?:^|/)(%s\d+)$" % prefix, str(value).strip())
+    return m.group(1).upper() if m else str(value).strip()
+
+
 def filter_string(flt):
     """``{"type": "review", "from_publication_date": "2020-01-01"}`` → ``"type:review,from_publication_date:2020-01-01"``.
     Szöveg változatlanul megy tovább."""
@@ -154,7 +160,7 @@ class Client(BaseClient):
         resp = self.work_response(identifier, select=select)
         if resp is None or resp.status != 200:
             return None
-        return resp.json()
+        return resp.json_dict()
 
     def referenced_works(self, identifier):
         """A munka irodalomjegyzéke OpenAlex-azonosítókként (``W…``) — JELÖLT-hivatkozások (TERV 6.2),
@@ -191,8 +197,8 @@ class Client(BaseClient):
                                  bucket=LIST_BUCKET)
             if resp.status != 200:
                 return [], 0, None
-            data = resp.json()
-            items = as_list(data.get("results"))
+            data = resp.json_dict()
+            items = [x for x in as_list(data.get("results")) if isinstance(x, dict)]
             nxt = get_path(data, "meta", "next_cursor")
             if not items or not nxt or nxt == cur:
                 nxt = None
@@ -202,17 +208,34 @@ class Client(BaseClient):
         return Paged(SOURCE, fetch, max_results=max_results, query=query)
 
     def search_reviews(self, search, from_date=None, to_date=None, extra_filter=None, max_results=200,
-                       select=DEFAULT_SELECT):
-        """Áttekintések keresése (``filter=type:review`` + dátum). A ``type:review`` narratív áttekintést is ad —
-        a rangsor ezt lejjebb sorolja, ha a cím nem SR/MA (TERV 5.1)."""
+                       select=DEFAULT_SELECT, concepts=None, topics=None):
+        """Áttekintések keresése (``filter=type:review`` + dátum, opcionálisan ``concepts.id`` / ``topics.id``
+        szűrő — több azonosító VAGY-kapcsolattal). A ``type:review`` narratív áttekintést is ad — a rangsor ezt
+        lejjebb sorolja, ha a cím nem SR/MA (TERV 5.1). LISTÁS lekérdezés (kredit!)."""
         flt = [("type", "review")]
         if from_date:
             flt.append(("from_publication_date", from_date))
         if to_date:
             flt.append(("to_publication_date", to_date))
+        if concepts:
+            flt.append(("concepts.id", [_short_id(c, "C") for c in as_list(concepts)]))
+        if topics:
+            flt.append(("topics.id", [_short_id(t, "T") for t in as_list(topics)]))
         for k, v in (extra_filter or {}).items():
             flt.append((k, v))
         return self.works(filter=flt, search=search, select=select, max_results=max_results)
+
+    def search_title(self, title, year=None, max_results=5, select=DEFAULT_SELECT):
+        """Feloldási segéd (TERV 7. fejezet, 5. lépés): ``filter=title.search:<cím>[,publication_year:<év>]``.
+        Csak JAVASLAT — a hívó cím-hasonlósággal ellenőrzi. LISTÁS lekérdezés (kredit!)."""
+        clean = re.sub(r"\s+", " ", re.sub(r"[,:|]+", " ", str(title or ""))).strip()
+        if not clean:
+            return []
+        flt = [("title.search", clean)]
+        if year:
+            flt.append(("publication_year", int(year)))
+        return self.works(filter=flt, select=select, per_page=max(1, min(int(max_results), 25)),
+                          max_results=max_results).all()
 
     def cited_by(self, identifier, from_date=None, to_date=None, select=DEFAULT_SELECT, max_results=None):
         """Idéző közlemények (``filter=cites:W…``) — előre irányú hivatkozáskövetés (12.3; kredit!)."""
@@ -245,7 +268,7 @@ class Client(BaseClient):
 
     def _probe(self):
         resp = self.work_response("pmid:" + PROBE_PMID, select="id")
-        if resp is None or resp.status != 200 or not norm_openalex((resp.json() or {}).get("id")):
+        if resp is None or resp.status != 200 or not norm_openalex(resp.json_dict().get("id")):
             return self._result("unreachable", http_status=getattr(resp, "status", None), detail_text={
                 "hu": "A próbalekérés váratlan eredményt adott.", "en": "The probe lookup returned an unexpected result."})
         budget = self.budget(resp)

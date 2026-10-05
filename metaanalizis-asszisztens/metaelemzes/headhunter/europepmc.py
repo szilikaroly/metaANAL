@@ -46,6 +46,14 @@ def query_pmcid(pmcid):
     return "PMCID:%s" % norm_pmcid(pmcid)
 
 
+def date_range(field, start=None, end=None):
+    """Dátumszűrő a keresőnyelven: ``CREATION_DATE:[2023-01-01 TO 3000-12-31]`` (frissítő keresés, TERV 12.2:
+    ``CREATION_DATE``; áttekintés-keresés: ``FIRST_PDATE``). A dátum ``ÉÉÉÉ-HH-NN``."""
+    if field not in ("CREATION_DATE", "FIRST_PDATE", "P_PDATE", "E_PDATE", "FIRST_IDATE"):
+        raise ValueError("Ismeretlen Europe PMC dátummező: %r" % field)
+    return "%s:[%s TO %s]" % (field, start or "1800-01-01", end or "3000-12-31")
+
+
 def _authors(r):
     lst = get_path(r, "authorList", "author") or []
     names = []
@@ -151,7 +159,7 @@ class Client(BaseClient):
                 params.append(("sort", sort))
             if synonym is not None:
                 params.append(("synonym", "true" if synonym else "false"))
-            data = self._get("search", params).json()
+            data = self._get("search", params).json_dict()
             items = as_list(get_path(data, "resultList", "result"))
             nxt = data.get("nextCursorMark")
             if not items or not nxt or nxt == cur:
@@ -229,7 +237,7 @@ class Client(BaseClient):
 
         def fetch(state):
             page = 1 if state is None else state
-            data = self._get("%s/%s/%s" % (src, ext, kind), [("page", page), ("pageSize", page_size)]).json()
+            data = self._get("%s/%s/%s" % (src, ext, kind), [("page", page), ("pageSize", page_size)]).json_dict()
             items = as_list(get_path(data, list_key, item_key))
             total = to_int(data.get("hitCount"))
             nxt = page + 1 if items and (total is None or page * page_size < total) else None

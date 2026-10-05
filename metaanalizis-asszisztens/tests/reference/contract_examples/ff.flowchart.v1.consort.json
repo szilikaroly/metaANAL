@@ -1,0 +1,45 @@
+{
+  "schema": "szk.ff.flowchart/v1",
+  "kind": "consort",
+  "direction": "TB",
+  "nodes": [
+    {
+      "id": "assessed",
+      "text": "Assessed for eligibility (n=210)",
+      "w": 44,
+      "h": 12
+    },
+    {
+      "id": "excluded",
+      "text": "Excluded (n=90):\nnot meeting criteria (n=70)\ndeclined (n=20)",
+      "w": 44,
+      "h": 16
+    },
+    {
+      "id": "randomised",
+      "text": "Randomised (n=120)",
+      "w": 44,
+      "h": 10
+    },
+    {
+      "id": "analysed",
+      "text": "Analysed (n=118)",
+      "w": 44,
+      "h": 10
+    }
+  ],
+  "edges": [
+    {
+      "from": "assessed",
+      "to": "excluded"
+    },
+    {
+      "from": "assessed",
+      "to": "randomised"
+    },
+    {
+      "from": "randomised",
+      "to": "analysed"
+    }
+  ]
+}

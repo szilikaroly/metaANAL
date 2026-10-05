@@ -194,6 +194,9 @@ _DATE_RES = (
     ("year", re.compile(r"\b((?:19|20)\d{2})\b"), "y"),
 )
 _SEARCH_CTX = re.compile(r"\bsearch(?:ed|es|ing)?\b|\bdate of (?:the )?(?:last )?search\b|\bup to date\b", re.I)
+_SEARCH_WORD = re.compile(r"\bsearch(?:ed|es|ing)?\b", re.I)
+#: megjelenési korlát („studies published from 2010 to 2020") — nem keresési dátum
+_PUB_LIMIT = re.compile(r"\b(?:published|publication(?:s| date)?|dated)\b", re.I)
 _DATE_LEAD = re.compile(r"(?:\b(?:to|until|till|through|thru|up to|on|in|as of|by)\s+|:\s*)$", re.I)
 
 
@@ -247,21 +250,38 @@ def _sentences(text):
 
 
 def _clip_quote(sentence, start=None, end=None, limit=QUOTE_MAX):
-    s = sentence.strip()
+    """Szó szerinti idézet ≤ ``limit`` karakter. Hosszú mondatnál a ``[start, end)`` találat (pl. a dátum)
+    biztosan benne marad; a levágott részeket „…" jelzi (az idézet többi része betű szerinti részlet)."""
+    s = sentence
     if len(s) <= limit:
         return s
     if start is None:
-        return s[:limit - 1].rstrip() + "…"
-    left = max(0, end - limit + 1)
-    left = min(left, start)
-    chunk = s[left:left + limit - 2]
-    return ("…" if left > 0 else "") + chunk.strip() + ("…" if left + limit - 2 < len(s) else "")
+        return s[:limit - 1] + "…"
+    width = limit - 2  # két „…" helye
+    left = max(0, min(start, end - width))
+    right = min(len(s), left + width)
+    if left == 0:
+        right = min(len(s), limit - 1)
+    elif right == len(s):
+        left = max(0, len(s) - (limit - 1))
+    return ("…" if left > 0 else "") + s[left:right] + ("…" if right < len(s) else "")
+
+
+def _is_publication_limit(before):
+    """A dátum előtti szövegrész szerint megjelenési korlát-e (az utolsó „search" szó UTÁN „published…" áll,
+    pl. „searched for studies published from January 2021 to February 2026")."""
+    last_search = None
+    for m in _SEARCH_WORD.finditer(before):
+        last_search = m.end()
+    tail = before[last_search:] if last_search is not None else before
+    return bool(_PUB_LIMIT.search(tail))
 
 
 def extract_search_date(text, section="Abstract", container=None):
     """A keresési dátum kiolvasása (TERV 6.0/2). Csak „search" szót tartalmazó mondatban, és csak olyan dátumot
     fogad el, amelyet ``to/until/through/up to/on/in/as of`` vagy kettőspont előz meg (a „published between
-    2000 and 2019" típusú korlát NEM keresési dátum). A mondat legkésőbbi ilyen dátumát adja.
+    2000 and 2019" / „searched for studies published from 2010 to 2020" típusú megjelenési korlát NEM keresési
+    dátum). A mondat legkésőbbi ilyen dátumát adja.
 
     Visszaad: ``{"value", "precision", "quote", "locator"}`` vagy ``None``."""
     best = None
@@ -271,6 +291,8 @@ def extract_search_date(text, section="Abstract", container=None):
         for start, end, val, prec in _parse_dates(sent):
             lead = sent[max(0, start - 12):start]
             if not _DATE_LEAD.search(lead):
+                continue
+            if _is_publication_limit(sent[:start]):
                 continue
             key = (val + "-99")[:10]
             if best is None or key > best[0]:
@@ -390,8 +412,9 @@ def extract_signals(text, section="Abstract", container=None):
 # Azonosítók és összevonás
 # ---------------------------------------------------------------------------------------------
 
-def review_id_for(ids):
-    """``rv-pmid-…`` → ``rv-doi-<sha1[:10]>`` → ``rv-eid-<számjegyek>`` → ``rv-oa-w…`` (TERV 4.2)."""
+def review_id_for(ids, fallback=None):
+    """``rv-pmid-…`` → ``rv-doi-<sha1[:10]>`` → ``rv-eid-<számjegyek>`` → ``rv-oa-w…`` (TERV 4.2) →
+    ``rv-pmc-…``; ha egyik sincs (pl. azonosító nélküli Europe PMC-rekord), ``rv-x-<sha1(fallback)[:10]>``."""
     def v(k):
         x = ids.get(k)
         return x.get("value") if isinstance(x, dict) else x
@@ -405,6 +428,8 @@ def review_id_for(ids):
         return "rv-oa-%s" % v("openalex").lower()
     if v("pmcid"):
         return "rv-pmc-%s" % v("pmcid").lower()[3:]
+    if fallback:
+        return "rv-x-%s" % hashlib.sha1(str(fallback).encode("utf-8")).hexdigest()[:10]
     return None
 
 
@@ -540,9 +565,12 @@ def find_reviews(query=None, filters=None, sources=None, http=None, state=None, 
                                  "reset_at": exc.reset_at}
             warnings.append({"code": "H014", "source": s, "hu": exc.explain["hu"], "en": exc.explain["en"]})
             continue
-        except (HttpError, ParseError) as exc:
-            msg = {"hu": "%s: a keresés hibát adott — %s" % (net.source_name(s), net.redact(str(exc), env)[:240]),
-                   "en": "%s: the search failed — %s" % (net.source_name(s), net.redact(str(exc), env)[:240])}
+        except (HttpError, ParseError) + net.SHAPE_ERRORS as exc:
+            detail = net.redact(str(exc), env)[:240]
+            if not isinstance(exc, (HttpError, ParseError)):
+                detail = "váratlan válaszszerkezet (%s)" % type(exc).__name__
+            msg = {"hu": "%s: a keresés hibát adott — %s" % (net.source_name(s), detail),
+                   "en": "%s: the search failed — %s" % (net.source_name(s), detail)}
             result_sources[s] = {"status": "unreachable", "searched": False, "message": msg}
             warnings.append({"code": "H014", "source": s, "hu": msg["hu"], "en": msg["en"]})
             continue
@@ -625,7 +653,7 @@ def _search_pubmed(cl, q, override, max_n):
         try:
             for r in cl.efetch_records(res["ids"]):
                 fetched[r["pmid"]] = r
-        except (SourceUnavailable, HttpError, ParseError):
+        except (SourceUnavailable, HttpError, ParseError) + net.SHAPE_ERRORS:
             fetched = {}
         for pmid in res["ids"]:
             s = summ.get(pmid)
@@ -789,7 +817,7 @@ def _enrich(clusters, client, use, env, warnings):
                 rec["_via"] = {"pmid": "pubmed.esummary", "doi": "pubmed.esummary", "pmcid": "pubmed.esummary"}
                 rec["_enriched"] = True
                 clusters[by_pmid[p]].append(("pubmed", rec, f.get("abstract") or "", retrieval, None))
-        except (SourceUnavailable, HttpError, ParseError):
+        except (SourceUnavailable, HttpError, ParseError) + net.SHAPE_ERRORS:
             pass
     if need_epmc and "europepmc" in use:
         try:
@@ -802,7 +830,7 @@ def _enrich(clusters, client, use, env, warnings):
                 rec["_epmc"] = True
                 rec["_enriched"] = True
                 clusters[by_pmid[p]].append(("europepmc", rec, abstract, None, None))
-        except (SourceUnavailable, HttpError, ParseError):
+        except (SourceUnavailable, HttpError, ParseError) + net.SHAPE_ERRORS:
             pass
 
 
@@ -901,8 +929,13 @@ def _candidate(cluster, rel_terms, today, weights, http):
                "registration_id": sig["registration_id"], "databases_searched_n": sig["databases_searched_n"],
                "rob_assessed": sig["rob_assessed"], "prisma_mentioned": sig["prisma_mentioned"],
                "retracted": retracted, "open_fulltext": fulltext["available"] and fulltext["route"] == "europepmc_oa"}
+    fb = None
+    if not ids:
+        ext = next(("%s:%s" % (rec.get("source_db"), rec.get("id")) for _s, rec, _a, _r, _sid in cluster
+                    if rec.get("source_db") and rec.get("id")), None)
+        fb = ext or "%s|%s|%s" % ((title or "").lower(), year, (bib.get("first_author") or "").lower())
     cand = {
-        "review_id": review_id_for(ids),
+        "review_id": review_id_for(ids, fallback=fb),
         "status": "candidate",
         "superseded_by": None,
         "ids": ids,
