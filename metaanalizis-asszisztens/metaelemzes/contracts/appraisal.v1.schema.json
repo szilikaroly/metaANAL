@@ -1,0 +1,464 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:appraisal:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.appraisal/v1 — egy értékelő egy értékelése (04_torzitas_kockazat/appraisals/<egység>.<eszköz>[.<cél>].<értékelő>.json; terv 4.11, 6.5, 11. fejezet 6. döntés)",
+  "type": "object",
+  "required": [
+    "schema",
+    "tool",
+    "target",
+    "assessor",
+    "status",
+    "origin",
+    "answers"
+  ],
+  "$defs": {
+    "answer": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 1000,
+                  "description": "rövid, szó szerinti idézet"
+                },
+                "doc": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "page": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "locator": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "comment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rationale": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "asks": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "because": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "change": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "uncertain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          ],
+          "description": "AI-vázlatnál kötelező (6. döntés): asks = mit kérdez a tétel, because = miért ez a javaslat, change = mi változtatná meg, uncertain = ha a cikk nem közli"
+        },
+        "resolution": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "step",
+                "rationale"
+              ],
+              "properties": {
+                "step": {
+                  "enum": [
+                    0,
+                    -1,
+                    -2
+                  ]
+                },
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "decision_id": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          ],
+          "description": "GRADE publikációs torzítás: a 'suspected' feloldása (0 vagy −1) indoklással"
+        }
+      }
+    },
+    "judgement": {
+      "type": "object",
+      "required": [
+        "domain"
+      ],
+      "properties": {
+        "domain": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pass": {
+          "enum": [
+            "development",
+            "evaluation",
+            null
+          ]
+        },
+        "judgement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "implied": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rationale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "override_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision_id": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema": {
+      "const": "szk.appraisal/v1"
+    },
+    "tool": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "scope": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "instrument_sha256": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "properties": {
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "study_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outcome": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "index_test": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "factor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+        }
+      }
+    },
+    "assessor": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,31}$"
+    },
+    "second_assessor": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,31}$"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "complete",
+        "consensus"
+      ]
+    },
+    "origin": {
+      "enum": [
+        "human",
+        "ai_draft"
+      ],
+      "description": "ai_draft: csak emberi jóváhagyással (approved_by) lehet complete; soha nem értékelő"
+    },
+    "approved_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,31}$"
+    },
+    "approved_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "answers": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/answer"
+      },
+      "description": "kulcs: ^((development|evaluation)/)?azonosító$ (a motor ellenőrzi)"
+    },
+    "domain_judgements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/judgement"
+      }
+    },
+    "applicability": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/judgement"
+      }
+    },
+    "overall": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "judgement": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rationale": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "implied": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "override_reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "decision_id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "overall_passes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/judgement"
+      }
+    },
+    "consensus_of": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "assessor": {
+            "type": "string"
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updated": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "resolutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "b": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "engine_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "updated": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

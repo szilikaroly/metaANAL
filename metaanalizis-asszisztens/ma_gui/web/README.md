@@ -35,7 +35,7 @@ web/
 ## Build és tesztek
 
 ```
-python3 ma_gui/web/build_gui.py           # dist/index.html  (termék, ≤ 600 KB, determinisztikus) + dist/snapshot.html
+python3 ma_gui/web/build_gui.py           # dist/index.html  (termék, ≤ 900 KB, determinisztikus) + dist/snapshot.html
 python3 ma_gui/web/build_gui.py --dev     # dist/index.dev.html (+ fixture-ök; megnyitás: ?fixtures=1)
 python3 ma_gui/web/build_gui.py --snapshot  # csak a dist/snapshot.html (a pillanatkép-sablon, lásd lent)
 python3 ma_gui/web/build_gui.py --check   # 1-es kód, ha a dist/index.html vagy a dist/snapshot.html nem naprakész
@@ -49,7 +49,7 @@ node tests/gui/ui/a11y.spec.js            # akadálymentesség: csak billentyűz
 node tests/gui/ui/snapshot.spec.js        # pillanatkép: nulla hálózati kérés, nulla CSP-sértés, író gomb → parancs
 ```
 
-**Termék-tömörítés (≤ 600 KB, terv 2.3; korábban 450 KB).** A termék-build a lint UTÁN veszteségmentesen tömörít
+**Termék-tömörítés (≤ 900 KB, terv 2.3; v1-ben emelve 600-ról, korábban 450 KB).** A termék-build a lint UTÁN veszteségmentesen tömörít
 (`build_gui.py` vége): `minify_js` tokenszinten elhagyja a megjegyzéseket és a fölös szóközöket (a
 sortörés ott marad, ahol az ASI számít), az idézőjeles azonosító-kulcsot idézőjel nélkül írja, és a
 névtelen függvénykifejezést nyílfüggvényre cseréli, ahol a jelentés biztosan azonos (nincs `this` /
@@ -346,7 +346,7 @@ ugyanúgy fut, mint élőben, csak semmi sem menthető.
 - nonce helyett `<meta http-equiv="Content-Security-Policy" content="{{SNAPSHOT_CSP}}">` — a `snapshot.py` a kész tartalom
   sha256-hash-eivel tölti ki (`script-src 'sha256-…'; style-src 'sha256-…'; connect-src 'none'` …);
 - `<script type="application/json" id="ma-snapshot">{{SNAPSHOT_DATA}}</script>` a futó szkript előtt;
-- mérete legfeljebb `SNAPSHOT_MAX_BYTES` (600 KB, adat nélkül); a termék-build kerete 600 KB (`MAX_BYTES`), így a
+- mérete legfeljebb `SNAPSHOT_MAX_BYTES` (900 KB, adat nélkül); a termék-build kerete 900 KB (`MAX_BYTES`), így a
   termék nem nőhet a pillanatkép-kliens (≈ 11 KB) helye fölé.
 
 **`src/snapshot/provider.js`** — a hálózati réteg helyett (`MA.__snapSetTransport`, csak a pillanatkép-buildben) a
@@ -373,3 +373,63 @@ beágyazott `manifest` rögzíti mindezt. Ugyanaz a projektállapot ugyanazt a b
 **Export-végpontok** (`ma_gui/routes/export.py`): `POST /api/export/audit` és `POST /api/export/snapshot` (`ack: true`
 kötelező) → `{kind, path, name, sha256, bytes, …, url, expires_at}`; az `url` aláírt, 10 perces letöltési cím
 (`/f/x/…`, mindig csatolmányként, sandbox CSP-vel). A felület az eredmény alatt „Letöltés” gombot mutat.
+
+## KIEGÉSZÍTÉS (értékelés-ágens, v1, 2026-10-05) — RoB-család, konszenzus, forgalmi lámpa, PROBAST+AI, TRIPOD+AI, AMSTAR 2
+
+Fájlok: `src/components/appraisal_{form,panel}.js`, `src/plots/appraisal_traffic.js`,
+`src/screens/appraisal{,_consensus,_summary,_probast,_tripod,_amstar2}.js`, `src/css/appraisal.css`,
+`src/i18n/{hu,en}/appraisal.json`, `src/dev/appraisal_backend.js` (csak dev; SZIMULÁLT ellenőrzés — nem a motor),
+`fixtures/appraisal_*.json` (generálja: `python3 tests/gui/ui/gen_appraisal_fixtures.py [--check]`), szerver:
+`ma_gui/routes/appraisal{,_common,_rob}.py`; tesztek: `tests/gui/test_v1_appraisal{,_drift}.py`, `node tests/gui/ui/appraisal.spec.js`.
+
+Képernyők: `appraisal` (5 Torzítás: RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI; `?tool=&target=&unit=&rater=`, álnevek:
+`?outcome=` → cél, `?study=` → egység), `appraisal-consensus`, `appraisal-summary` (forgalmi lámpa + rob-oszlop szinkron),
+`appraisal-probast`, `appraisal-tripod` (`?mode=studies|manuscript&filter=both|D|E`) és `appraisal-amstar2` (a 6 GRADE/SoF fül alatt).
+
+| Modul | API |
+|---|---|
+| `MA.appr` | `instrument(tool)`, `instruments()` (gyorsítótárral), `form(o) → {el, update(check), focusKey(key), refreshWhy()}`, `verdictBadge(inst, v, {implied})` (●◐○⊗ + szöveg; implikált = szaggatott keret), `algLabel(inst, alg)` / `algText(alg)` (a motor rollup.label-je, ennek hiányában általános címke — az implikált ítélet SOHA nem „hivatalos eredmény”), `itemsFor(inst, scope, pass)`, `scopes/scopeLabel`, `ans/setAns/judg/setJudg`, `rater()/raterField()` (`mag.pref.appraisal.rater` — csak monogram), `aiBanner`, `completeness(check, pass?)`, `missingList`, `download`, `pickJson`, `isRobFamily`, `domainShort` |
+| `MA.apprPanel` | `open(host, {tool, unit, target, rater, myRater, inst, passes?, applicability?, judgements?, overall?, extra?(view, check, doc), onSaved?, onRater?, consensusHref?}) → {dirty(), reload(), save(status?), view(), doc(), check()}`: betöltés, élő `POST …/check` (400 ms, legutolsó nyer), mentés If-Match-csel (422-nél a szerver üzenete + fókusz a hiányzó X017-indoklásra, 409-nél újratöltés), AI-vázlat jóváhagyása; `importBody/importFile/inbox/exportAll/exchangeBar/sourceLine` (5. döntés: fájlcsere) |
+| `MA.plots.robTraffic` | `matrix(summary, inst)`, `weighted(summary, inst)` — a motor `szk.rob-summary/v1`-éből; a súly és a százalék a motor kész szövege, a szélesség csak `MA.geom.linear` pixel-leképezés |
+
+Szerver-alakok: `GET /api/instruments` → `{instruments[], engine{available, missing[]}, validator{state, version, mode}}`;
+`GET /api/instruments/<tool>` → `szk.instrument/v1`; `GET /api/appraisals?tool=&unit=&target=&answers=1` → `{items[{unit, tool,
+target, rater, path, etag, human, origin, status, domain_judgements[], overall, check{complete, completeness_text, per_pass,
+domains[{domain, implied, algorithm}], overall{implied}, overrides_missing}, answers?}], studies[], outcomes[], engine}`;
+`GET|PUT /api/appraisals/<unit>/<tool>?rater=&target=` → `{doc, check, raters[], human_raters[], path, exists, study}` + ETag;
+`POST …/check` `{doc}` → `{check, problems}`; `POST …/approve` `{approver, note?, confirm}` + If-Match;
+`GET /api/appraisals/consensus/<unit>/<tool>?target=&a=&b=` → `{ready, a{rater, doc, check}, b, agreement (motor), consensus{exists,
+doc, etag}, excluded[AI-vázlatok]}`; `GET /api/appraisals/rob-summary?tool=&outcome=`; `POST /api/appraisals/rob-sync`
+`{tool, outcome|dataset, dry_run}` (+ If-Match a tábla ETag-jével); `GET /api/appraisals/inbox`; `POST /api/appraisals/import`
+`{doc | path, replace?}`; `POST /api/appraisals/export` `{unit, tool, target?, rater} | {all: true, rater?, tool?}`.
+A motor hiányzó értékelő függvényénél 424 `CAPABILITY_MISSING` (`details.engine_functions`).
+
+## KIEGÉSZÍTÉS (GRADE-ágens, v1, 2026-10-05) — GRADE / SoF (3.5.12) és Protokoll („1 Protokoll”)
+
+Fájlok: `src/screens/grade.js` (`grade` képernyő a 6-os fülön), `src/screens/grade_protocol.js` (`protocol` képernyő az
+1-es fülön), `src/css/grade.css`, `src/i18n/{hu,en}/grade.json` (`grade.*`, `sof.*`, `protocol.*`), `src/dev/grade_backend.js`
+(csak dev; `MA.dev.grade.{state(), engineMissing(on), bumpEtag('grade'|'protocol', kimenet?)}`), `fixtures/grade.json`
+(generálja: `python3 tests/gui/ui/gen_grade_fixtures.py` — a tanács és a SoF a VALÓDI motor `grade_help` kimenete; `--check`
+sodródás-őr: `tests/gui/ui/test_grade_fixtures.py`). Tesztek: `node tests/gui/ui/grade.spec.js` (dev-fixture + valódi szerver,
+`tests/gui/ui/grade_server.py [--stub]`), `python3 -m unittest tests/gui/test_v1_grade_routes.py`.
+
+Szerver-alakok (`ma_gui/routes/grade*.py`; a motor-függvényeket a `grade_engine.py` keresi név szerint, hiányuknál 424):
+- `GET /api/grade/<kimenet>[?run=]` → `szk.ma.grade-view/v1` + ETag (tartalom-ETag): `{outcome, run (rövid futás-leírás,
+  stale), grade (szk.ma.grade/v1 | null), journal, unresolved[], missing[], run_matches, conventions, vocab{domains, ratings,
+  upgrades, certainties, starts}, engine{…}}`; 424-nél a `details.view` ugyanez `grade: null`-lal.
+- `PUT /api/grade/<kimenet>` ← `{grade, record?, certainty?}` + If-Match; 422 (indoklás nélküli ítélet / felminősítés, „gyanított”
+  −2-vel), 409 `GATE_BLOCKED` (`details.code`: X019 feloldatlan publikációs torzítás, X007 nem a legutóbbi elsődleges futás,
+  X001 elavult futás; `missing`), 409 `CONFLICT`. A válasz a nézet + `recorded{id, certainty, warnings}`.
+- `GET /api/grade/<kimenet>/advice[?run=&mid=]` → `{run, mid, advice}` — az `advice` a motor `grade_help.advice` piszkozata
+  (doménenként `suggestion{rating, step, status, concern, summary, evidence[], flags[], why{asks, because, change,
+  uncertain}, kb_refs}`; `advice.upgrades.<szempont>`, `advice.notes`). A felület a mentéskor a futáshoz tartozó
+  `run_summary`-t és a doménenkénti `suggestion`/`advisory`-t is visszaküldi (a motor rögzítése és figyelmeztetései ebből dolgoznak).
+- `GET/PUT /api/sof/<kimenet>` (`{assumed_risks[{label, source: control_pool|external, per_1000 (nyers szöveg)}], footnotes[],
+  dry_run?}`) → `szk.ma.sof-view/v1` (`preview`: a motor `sof()`-ja; oszlopok a `columns`-ból, cellánként a motor kész
+  szövege, a forrásmező a `sources`-ból); `POST /api/sof/<kimenet>/export` `{format: csv|md, lang}` → `{path, url (aláírt),
+  content?}` (Excel-biztos CSV: `'` előtag, BOM, CRLF; hu `;`, en `,`).
+- `GET/PUT /api/amstar2[?rater=]` — AMSTAR 2 önellenőrzés (ugyanaz a fájl, mint az értékelés-végpontoké), a motor
+  besorolásával mindkét konvencióval; eltérő összítélethez `override_reason` (X017).
+- `GET/PUT /api/protocol` (`{title?, question{P,I,C,O}?, review_type?, registration{registry, id}|null}` + If-Match) — a
+  ma-projekt.json protokoll-mezői; a kimenetek a `POST /api/project {action: 'outcome', replace?}`, az adatosztály a
+  `{action: 'data_class'}`, az előre rögzített jelölés a `PUT /api/specs/<név>` útján megy.

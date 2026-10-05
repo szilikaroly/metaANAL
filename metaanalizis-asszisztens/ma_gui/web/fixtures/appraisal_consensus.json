@@ -1,0 +1,218 @@
+{
+ "description": "Konszenzus-nézet: két független emberi értékelés + κ (CSONK)",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/appraisals/consensus/ARONSON1948/rob2",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-consensus-view/v1",
+    "data": {
+     "agreement": {
+      "schema": "szk.ma.appraisal-agreement/v1",
+      "tool": "rob2",
+      "a": "KP",
+      "b": "SzK",
+      "items_compared": 22,
+      "agree": 21,
+      "disagree": 1,
+      "agreement_pct_text": "95.5%",
+      "kappa": 0.9123505976095619,
+      "kappa_ci": [
+       0.744510640162025,
+       1.080190555057099
+      ],
+      "kappa_text": {
+       "hu": "κ = 0.91 [0.74; 1.08]",
+       "en": "κ = 0.91 [0.74; 1.08]"
+      },
+      "items": [
+       {
+        "key": "1.1",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "1.2",
+        "a": "no_information",
+        "b": "probably_yes",
+        "agree": false
+       },
+       {
+        "key": "1.3",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       },
+       {
+        "key": "2.1",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "2.2",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "2.3",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "2.4",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "2.5",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "2.6",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "2.7",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       },
+       {
+        "key": "3.1",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "3.2",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "3.3",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "3.4",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       },
+       {
+        "key": "4.1",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       },
+       {
+        "key": "4.2",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       },
+       {
+        "key": "4.3",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "4.4",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "4.5",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       },
+       {
+        "key": "5.1",
+        "a": "yes",
+        "b": "yes",
+        "agree": true
+       },
+       {
+        "key": "5.2",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       },
+       {
+        "key": "5.3",
+        "a": "no",
+        "b": "no",
+        "agree": true
+       }
+      ],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": null,
+        "a": "some_concerns",
+        "b": "low",
+        "agree": false
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "a": "low",
+        "b": "low",
+        "agree": true
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "a": "low",
+        "b": "low",
+        "agree": true
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "a": "low",
+        "b": "low",
+        "agree": true
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "a": "low",
+        "b": "low",
+        "agree": true
+       }
+      ],
+      "overall": {
+       "a": "some_concerns",
+       "b": "low",
+       "agree": false
+      },
+      "excluded": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apc"
+    }
+   }
+  }
+ ]
+}

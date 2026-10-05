@@ -1,0 +1,159 @@
+{
+ "description": "Forgalmi lámpa (szk.rob-summary/v1, CSONK; súly: BCG-fixtúra)",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/appraisals/rob-summary",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.rob-summary/v1",
+    "data": {
+     "schema": "szk.rob-summary/v1",
+     "tool": "rob2",
+     "outcome": "o1",
+     "domains": [
+      {
+       "id": "1",
+       "title": {
+        "hu": "Randomizáció",
+        "en": "Randomisation process"
+       }
+      },
+      {
+       "id": "2",
+       "title": {
+        "hu": "Eltérés a tervezett beavatkozástól",
+        "en": "Deviations from intended interventions"
+       }
+      },
+      {
+       "id": "3",
+       "title": {
+        "hu": "Hiányzó kimeneti adatok",
+        "en": "Missing outcome data"
+       }
+      },
+      {
+       "id": "4",
+       "title": {
+        "hu": "A kimenet mérése",
+        "en": "Measurement of the outcome"
+       }
+      },
+      {
+       "id": "5",
+       "title": {
+        "hu": "Az eredmény szelektív közlése",
+        "en": "Selection of the reported result"
+       }
+      }
+     ],
+     "studies": [
+      {
+       "study_id": "ARONSON1948",
+       "label": "Aronson 1948",
+       "weight_pct": 5.059482734366633,
+       "weight_text": {
+        "hu": "5.1%",
+        "en": "5.1%"
+       },
+       "judgements": {
+        "1": "low",
+        "2": "low",
+        "3": "low",
+        "4": "low",
+        "5": "low"
+       },
+       "overall": "low",
+       "source": "single"
+      },
+      {
+       "study_id": "HART1977",
+       "label": "Hart & Sutherland 1977",
+       "weight_pct": 9.698747018920706,
+       "weight_text": {
+        "hu": "9.7%",
+        "en": "9.7%"
+       },
+       "judgements": {
+        "1": "some_concerns",
+        "2": "low",
+        "3": "low",
+        "4": "low",
+        "5": "low"
+       },
+       "overall": "some_concerns",
+       "source": "single"
+      }
+     ],
+     "scale": [
+      {
+       "value": "low",
+       "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+       },
+       "level": "low"
+      },
+      {
+       "value": "some_concerns",
+       "label": {
+        "hu": "Némi aggály",
+        "en": "Some concerns"
+       },
+       "level": "some"
+      },
+      {
+       "value": "high",
+       "label": {
+        "hu": "Magas",
+        "en": "High"
+       },
+       "level": "high"
+      }
+     ],
+     "weighted": [
+      {
+       "level": "low",
+       "n": 1,
+       "pct": 34.282449988554035,
+       "text": {
+        "hu": "34.3%",
+        "en": "34.3%"
+       }
+      },
+      {
+       "level": "some",
+       "n": 1,
+       "pct": 65.71755001144597,
+       "text": {
+        "hu": "65.7%",
+        "en": "65.7%"
+       }
+      },
+      {
+       "level": "high",
+       "n": 0,
+       "pct": 0.0,
+       "text": {
+        "hu": "0.0%",
+        "en": "0.0%"
+       }
+      }
+     ],
+     "source_run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "stale": false
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_aps"
+    }
+   }
+  }
+ ]
+}

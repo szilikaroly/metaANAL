@@ -1,0 +1,325 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "ctgov-study_nct00953927",
+  "recorded_at": "2026-10-05T11:08:12Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "NCT00953927 (MVA85A 020): a saját eredményközlését BACKGROUND-ként sorolja",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://clinicaltrials.gov/api/v2/studies/NCT00953927?fields=protocolSection&format=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "protocolSection": {
+            "identificationModule": {
+              "nctId": "NCT00953927",
+              "orgStudyIdInfo": {
+                "id": "C-020-485"
+              },
+              "secondaryIdInfos": [
+                {
+                  "id": "Oxford TB020",
+                  "type": "OTHER",
+                  "domain": "The University of Oxford"
+                }
+              ],
+              "organization": {
+                "fullName": "Aeras",
+                "class": "OTHER"
+              },
+              "briefTitle": "A Study of MVA85A in Healthy Infants",
+              "officialTitle": "Phase II Double-blinded Randomized Controlled Evaluation of MVA85A/AERAS-485 for Safety, Immunogenicity and Prevention of Tuberculosis in BCG-vaccinated, HIV-negative Infants"
+            },
+            "statusModule": {
+              "statusVerifiedDate": "2016-04",
+              "overallStatus": "COMPLETED",
+              "expandedAccessInfo": {
+                "hasExpandedAccess": false
+              },
+              "startDateStruct": {
+                "date": "2009-07"
+              },
+              "primaryCompletionDateStruct": {
+                "date": "2012-10",
+                "type": "ACTUAL"
+              },
+              "studyFirstSubmitDate": "2009-07-31",
+              "studyFirstSubmitQcDate": "2009-08-04",
+              "studyFirstPostDateStruct": {
+                "date": "2009-08-06",
+                "type": "ESTIMATED"
+              },
+              "resultsFirstSubmitDate": "2013-10-23",
+              "resultsFirstSubmitQcDate": "2013-10-23",
+              "resultsFirstPostDateStruct": {
+                "date": "2013-12-12",
+                "type": "ESTIMATED"
+              },
+              "lastUpdateSubmitDate": "2016-04-25",
+              "lastUpdatePostDateStruct": {
+                "date": "2016-05-24",
+                "type": "ESTIMATED"
+              }
+            },
+            "sponsorCollaboratorsModule": {
+              "responsibleParty": {
+                "type": "SPONSOR"
+              },
+              "leadSponsor": {
+                "name": "Aeras",
+                "class": "OTHER"
+              },
+              "collaborators": [
+                {
+                  "name": "University of Oxford",
+                  "class": "OTHER"
+                },
+                {
+                  "name": "University of Cape Town",
+                  "class": "OTHER"
+                }
+              ]
+            },
+            "oversightModule": {
+              "oversightHasDmc": true
+            },
+            "descriptionModule": {
+              "briefSummary": "This was a Phase II double-blinded randomized controlled evaluation of safety, immunogenicity and efficacy of MVA85A/AERAS-485 in Bacillus Calmette-Guérin (BCG) vaccinated infants without tuberculosis or HIV infection. This study planned to enroll 2784 infants (126 to 182 days of age) who received study vaccine or control and were followed for 15 - 36 months. The study was conducted at a single site in South Africa.",
+              "detailedDescription": "«redacted»"
+            },
+            "conditionsModule": {
+              "conditions": [
+                "Tuberculosis"
+              ]
+            },
+            "designModule": {
+              "studyType": "INTERVENTIONAL",
+              "phases": [
+                "PHASE2"
+              ],
+              "designInfo": {
+                "allocation": "RANDOMIZED",
+                "interventionModel": "PARALLEL",
+                "primaryPurpose": "PREVENTION",
+                "maskingInfo": {
+                  "masking": "QUADRUPLE",
+                  "whoMasked": [
+                    "PARTICIPANT",
+                    "CARE_PROVIDER",
+                    "INVESTIGATOR",
+                    "OUTCOMES_ASSESSOR"
+                  ]
+                }
+              },
+              "enrollmentInfo": {
+                "count": 2797,
+                "type": "ACTUAL"
+              }
+            },
+            "armsInterventionsModule": {
+              "armGroups": [
+                {
+                  "label": "Investigational Vaccine",
+                  "type": "EXPERIMENTAL",
+                  "description": "MVA85A/AERAS-485; subset into cohorts to explore different safety and immunogenicity tests.",
+                  "interventionNames": [
+                    "Biological: MVA85A/AERAS-485"
+                  ]
+                },
+                {
+                  "label": "Control Group",
+                  "type": "PLACEBO_COMPARATOR",
+                  "description": "Candida Skin Test Antigen control; subset into cohorts to explore different safety and immunogenicity tests.",
+                  "interventionNames": [
+                    "Biological: Candida Skin Test Antigen"
+                  ]
+                }
+              ],
+              "interventions": [
+                {
+                  "type": "BIOLOGICAL",
+                  "name": "MVA85A/AERAS-485",
+                  "description": "Attenuated virus MVA vector with insertion. Single dose vaccine, 1 x 10\\^8 pfu.",
+                  "armGroupLabels": [
+                    "Investigational Vaccine"
+                  ],
+                  "otherNames": [
+                    "Manufactured by IDT of Germany."
+                  ]
+                },
+                {
+                  "type": "BIOLOGICAL",
+                  "name": "Candida Skin Test Antigen",
+                  "description": "1 test, administered once as a placebo control.",
+                  "armGroupLabels": [
+                    "Control Group"
+                  ],
+                  "otherNames": [
+                    "Candin(R)",
+                    "Manufactured by Allermed Laboratories of USA."
+                  ]
+                }
+              ]
+            },
+            "outcomesModule": {
+              "primaryOutcomes": [
+                {
+                  "measure": "To Evaluate the Safety Profile of MVA85A/AERAS-485 in Bacillus Calmette-Guerin (BCG) -Vaccinated, HIV-negative Infants.",
+                  "description": "Adverse events (AE) were collected for 28 days after vaccination. The subject's parent or guardian recorded information regarding occurrences of solicited adverse events in diary cards through 7 days after vaccination. Serious adverse events (SAE) were collected from the time of study vaccine dosing throughout the entire study. A safety cohort (the first 330 infants enrolled) also had serum chemistry and hematology testing up to 28 days post-vaccination.",
+                  "timeFrame": "AEs recorded 28 days post-vaccination; SAEs recorded for entire study period."
+                }
+              ],
+              "secondaryOutcomes": [
+                {
+                  "measure": "To Evaluate the Efficacy of the MVA85A/AERAS-485 Vaccine Compared to Controls in Prevention of Tuberculosis Using an Endpoint Derived From Epidemiological Cohort Surveys in BCG Vaccinated Infants.",
+                  "description": "The number (percentage) of subjects with a diagnosis of tuberculosis based on clinically-derived tuberculosis (TB) diagnostic criteria were summarized by treatment group for all subjects.",
+                  "timeFrame": "15 to 36 months post-vaccination"
+                },
+                {
+                  "measure": "To Evaluate the Immunogenicity of the MVA85A/AERAS-485 Vaccine Compared to Controls as Described by Flow Cytometric Intracellular Cytokine Staining of CD4 and CD8 T Cells.",
+                  "description": "Intracellular cytokine staining (ICS) assay immune response was expressed as the percentage of cluster of differentiation 4 (CD4) and cluster of differentiation 8 (CD8) T cells producing any one of three cytokines (IFN-γ, TNF-α, or IL-2) or any combination of the three cytokines simultaneously after stimulation with an Ag85A peptide pool on a subset of infants.",
+                  "timeFrame": "28 days post-vaccination"
+                },
+                {
+                  "measure": "To Evaluate the Immunogenicity of the MVA85A/AERAS-485 Vaccine Compared to Controls as Described by the ex Vivo Enzyme Linked Immunospot (ELISPOT) Test Used in Previous MVA85A/AERAS-485 Human Trials.",
+                  "description": "An ex vivo IFN-γ ELISPOT assay was used to assess specific T cell responses to an Ag85A peptide pool for a subset of infants.",
+                  "timeFrame": "7 days post-vaccination"
+                },
+                {
+                  "measure": "To Evaluate the Immunogenicity of the MVA85A/AERAS-485 Vaccine Compared to Controls as Described by the University of Capetown (UCT) Whole Blood Intracellular Cytokine Assay.",
+                  "description": "Frequencies of CD4 and CD8 T cells expressing cytokines (IFN-γ, IL-2 and TNF-α) following stimulation of whole blood with an Ag85A peptide pool were also measured by flow cytometry for a subset of infants.",
+                  "timeFrame": "28 days post-vaccination"
+                },
+                {
+                  "measure": "To Discover Correlates of Protection From Tuberculosis in Infants Vaccinated With MVA85A/AERAS-485.",
+                  "description": "Investigations for determining correlates of immune protection to TB will not be completed as planned because the study did not show TB protection in MVA85A/AERAS-485 recipients.",
+                  "timeFrame": "15 to 36 months post-vaccination"
+                },
+                {
+                  "measure": "To Evaluate the QuantiFERON Conversion Rate at Final Study Assessment in MVA85A/AERAS-485 Recipients Compared to Controls in Infants Without a Diagnosis of Tuberculosis During the Trial.",
+                  "description": "The number (percentage) of infants with QuantiFERON conversions at any time on the study were summarized by treatment group.",
+                  "timeFrame": "15 to 36 months post-vaccination"
+                }
+              ]
+            },
+            "eligibilityModule": {
+              "eligibilityCriteria": "Inclusion Criteria:\n\n1. Age of 126 through 182 days on the day of randomization (Study Day 0)\n2. Written informed consent obtained from the parents/guardian\n3. Weight: by chart \\>3rd percentile on Study Day 0 or, if \\< 3rd percentile, infant has shown a stable growth pattern\n4. BCG vaccination within 7 days of birth\n5. Generally good health confirmed by medical history and physical examination within 35 days prior to Study Day 0\n6. Must have received age-appropriate doses of pneumococcal vaccine as recommended by the South African Department of Health but no injection within 14 day prior to Study Day 0\n7. Ability to complete follow-up period as required by the protocol\n8. Completed simultaneous enrollment in the Aeras Vaccine Development Registry protocol\n\nExclusion Criteria:\n\n1. Acute illness on Study Day 0\n2. Fever \\>=37.5 degrees Celsius on Study Day 0\n3. Evidence of significant active infection on Study Day 0\n4. Received a Expanded Program of Immunization (EPI) within 14 days prior to Study Day 0\n5. Historical or virological evidence of individual or maternal human immunodeficiency virus (HIV-1) infection\n6. History of allergic disease or reactions likely to be exacerbated by any component of the study vaccine\n7. Previous medical history, or evidence, of an intercurrent illness that may compromise the safety of the infant in the study\n8. Evidence of chronic hepatitis from any cause\n9. History or evidence of any systemic disease on physical examination or any acute, chronic or intercurrent illness that, in the opinion of the investigator, may interfere with the evaluation of the safety or immunogenicity of the vaccine\n10. History of or known tuberculosis or treatment for tuberculosis\n11. Shared residence since birth with an individual with active tuberculosis or on anti-tuberculosis treatment for less than 2 months",
+              "healthyVolunteers": true,
+              "sex": "ALL",
+              "minimumAge": "126 Days",
+              "maximumAge": "182 Days",
+              "stdAges": [
+                "CHILD"
+              ]
+            },
+            "contactsLocationsModule": {
+              "overallOfficials": [
+                {
+                  "name": "Michele Tameris, MD",
+                  "affiliation": "South African Tuberculosis Vaccine Initiative",
+                  "role": "PRINCIPAL_INVESTIGATOR"
+                },
+                {
+                  "name": "Bernard Landry, MPH",
+                  "affiliation": "Aeras",
+                  "role": "STUDY_DIRECTOR"
+                },
+                {
+                  "name": "Helen McShane, MD",
+                  "affiliation": "University of Oxford; Centre for Vaccinology & Tropical Medicine",
+                  "role": "STUDY_CHAIR"
+                }
+              ],
+              "locations": [
+                {
+                  "facility": "South African Tuberculosis Vaccine Initiative (Satellite)",
+                  "city": "Ceres",
+                  "zip": "6835",
+                  "country": "South Africa",
+                  "geoPoint": {
+                    "lat": -33.36889,
+                    "lon": 19.31095
+                  }
+                },
+                {
+                  "facility": "South African Tuberculosis Vaccine Initiative (Satellite)",
+                  "city": "Robertson",
+                  "zip": "6705",
+                  "country": "South Africa",
+                  "geoPoint": {
+                    "lat": -33.80342,
+                    "lon": 19.88537
+                  }
+                },
+                {
+                  "facility": "South African Tuberculosis Vaccine Initiative (Headquarters)",
+                  "city": "Worcester",
+                  "zip": "6850",
+                  "country": "South Africa",
+                  "geoPoint": {
+                    "lat": -33.64651,
+                    "lon": 19.44852
+                  }
+                }
+              ]
+            },
+            "referencesModule": {
+              "references": [
+                {
+                  "pmid": "23391465",
+                  "type": "BACKGROUND",
+                  "citation": "Tameris MD, Hatherill M, Landry BS, Scriba TJ, Snowden MA, Lockhart S, Shea JE, McClain JB, Hussey GD, Hanekom WA, Mahomed H, McShane H; MVA85A 020 Trial Study Team. Safety and efficacy of MVA85A, a new tuberculosis vaccine, in infants previously vaccinated with BCG: a randomised, placebo-controlled phase 2b trial. Lancet. 2013 Mar 23;381(9871):1021-8. doi: 10.1016/S0140-6736(13)60177-4."
+                },
+                {
+                  "pmid": "23410889",
+                  "type": "BACKGROUND",
+                  "citation": "Tameris M, McShane H, McClain JB, Landry B, Lockhart S, Luabeya AK, Geldenhuys H, Shea J, Hussey G, van der Merwe L, de Kock M, Scriba T, Walker R, Hanekom W, Hatherill M, Mahomed H. Lessons learnt from the first efficacy trial of a new infant tuberculosis vaccine since BCG. Tuberculosis (Edinb). 2013 Mar;93(2):143-9. doi: 10.1016/j.tube.2013.01.003. Epub 2013 Feb 12."
+                },
+                {
+                  "pmid": "26226446",
+                  "type": "BACKGROUND",
+                  "citation": "Mulenga H, Tameris MD, Luabeya KK, Geldenhuys H, Scriba TJ, Hussey GD, Mahomed H, Landry BS, Hanekom WA, McShane H, Hatherill M. The Role of Clinical Symptoms in the Diagnosis of Intrathoracic Tuberculosis in Young Children. Pediatr Infect Dis J. 2015 Nov;34(11):1157-62. doi: 10.1097/INF.0000000000000847."
+                },
+                {
+                  "pmid": "26252568",
+                  "type": "BACKGROUND",
+                  "citation": "Luabeya KK, Tameris MD, Geldenhuys HD, Mulenga H, Van Schalkwyk A, Hughes EJ, Toefey A, Scriba TJ, Hussey G, Mahomed H, McShane H, Landry B, Hanekom WA, Hatherill M. Risk of Disease After Isoniazid Preventive Therapy for Mycobacterium tuberculosis Exposure in Young HIV-uninfected Children. Pediatr Infect Dis J. 2015 Nov;34(11):1218-22. doi: 10.1097/INF.0000000000000874."
+                },
+                {
+                  "pmid": "31697647",
+                  "type": "DERIVED",
+                  "citation": "Muller J, Tanner R, Matsumiya M, Snowden MA, Landry B, Satti I, Harris SA, O'Shea MK, Stockdale L, Marsay L, Chomka A, Harrington-Kandt R, Thomas ZM, Naranbhai V, Stylianou E, Mbandi SK, Hatherill M, Hussey G, Mahomed H, Tameris M, McClain JB, Evans TG, Hanekom WA, Scriba TJ, McShane H, Fletcher HA. Cytomegalovirus infection is a risk factor for tuberculosis disease in infants. JCI Insight. 2019 Dec 5;4(23):e130090. doi: 10.1172/jci.insight.130090."
+                },
+                {
+                  "pmid": "26554383",
+                  "type": "DERIVED",
+                  "citation": "Bunyasi EW, Tameris M, Geldenhuys H, Schmidt BM, Luabeya AK, Mulenga H, Scriba TJ, Hanekom WA, Mahomed H, McShane H, Hatherill M. Evaluation of Xpert(R) MTB/RIF Assay in Induced Sputum and Gastric Lavage Samples from Young Children with Suspected Tuberculosis from the MVA85A TB Vaccine Trial. PLoS One. 2015 Nov 10;10(11):e0141623. doi: 10.1371/journal.pone.0141623. eCollection 2015."
+                },
+                {
+                  "pmid": "24912498",
+                  "type": "DERIVED",
+                  "citation": "Matsumiya M, Harris SA, Satti I, Stockdale L, Tanner R, O'Shea MK, Tameris M, Mahomed H, Hatherill M, Scriba TJ, Hanekom WA, McShane H, Fletcher HA. Inflammatory and myeloid-associated gene expression before and one day after infant vaccination with MVA85A correlates with induction of a T cell response. BMC Infect Dis. 2014 Jun 9;14:314. doi: 10.1186/1471-2334-14-314."
+                }
+              ]
+            }
+          }
+        },
+        "redactions": [
+          "detailedDescription"
+        ]
+      },
+      "delay_ms": null
+    }
+  ]
+}

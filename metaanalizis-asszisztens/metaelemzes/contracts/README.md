@@ -41,15 +41,25 @@ termelő megvalósításakor a sémát a tényleges kimenethez kell igazítani (
 | `szk.ma.project-audit/v1` | `ma.project-audit.v1.schema.json` | 4.15 | próza | out | motor (`project audit --json`, E8) | munkapad, `ma-ellenorzo`, FINAL audit-kapu |
 | `szk.ma.activity/v1` | `ma.activity.v1.schema.json` | 4.16 | próza | in, out | munkapad és motor (`MA_ACTIVITY_LOG=1`) | munkapad, audit-csomag (`verify`) |
 | `szk.ma.project/v1` | `ma.project.v1.schema.json` | 4.17 | próza | in, out | munkapad (`projekt.save_project_meta`) | motor (`projekt`, audit), munkapad |
+| `szk.instrument/v1` | `instrument.v1.schema.json` | 4.11 | próza | out | motor (`metaelemzes/instruments/*.json`, `appraisal.instrument_get`); validator `--schema` | munkapad (értékelő űrlapok), validator-adapter |
+| `szk.appraisal/v1` | `appraisal.v1.schema.json` | 4.11 | próza | in, out | munkapad és motor (`04_torzitas_kockazat/appraisals/*.json`, `appraisal.save`) | motor (`appraisal.check`, X003/X017), validator ≥ 1.1 |
+| `szk.appraisal-result/v1` | `appraisal-result.v1.schema.json` | 4.11 | próza | out | motor (`appraisal.check`); validator `--verify`/`--rollup --json` | munkapad (teljesség, implikált ítélet, X017) |
+| `szk.rob-summary/v1` | `rob-summary.v1.schema.json` | 3.5.10 | próza | out | motor (`appraisal.rob_summary`) | munkapad (forgalmi lámpa), figure-forge (`rob`) |
+| `szk.ma.appraisal-agreement/v1` | `ma.appraisal-agreement.v1.schema.json` | 5.4 | próza | out | motor (`appraisal.agreement`) | munkapad (konszenzus-nézet) |
+| `szk.ma.rob-sync-proposal/v1` | `ma.rob-sync-proposal.v1.schema.json` | 6.5 | próza | out | motor (`appraisal.rob_sync_proposal`) | munkapad (rob-oszlop szinkron), CLI `appraisal sync-rob` |
+| `szk.ma.grade/v1` | `ma.grade.v1.schema.json` | 4.14 | próza | in, out | motor (`grade_help.advice` piszkozat; `projekt.save_grade_doc` / `record_grade_doc`; `06_kezirat/grade/`) | munkapad (GRADE-lap), projektnapló (`add_grade`), `project audit` (X007, X019) |
+| `szk.ma.sof/v1` | `ma.sof.v1.schema.json` | 4.14 | próza | out | motor (`grade_help.sof`; `06_kezirat/sof/`) | munkapad (SoF-tábla, export), `project audit` (X008) |
 
 Ugyanez géppel olvashatóan: `python3 -m metaelemzes.contracts --json` (a `metaelemzes.contracts.CONTRACTS`
 táblából, a fájlok sha256-jával).
 
-**Még nincs séma** (más fázis vagy más tulajdonos): `szk.ma.grade/v1` és `szk.ma.sof/v1` (4.14, v1),
+**Még nincs séma** (más fázis vagy más tulajdonos):
 `szk.ma.audit-bundle/v1` és `szk.ma.documents/v1` (4.17, 4.8 — a munkapad írja), `szk.facts/v1` (4.18, v2),
-`szk.ma.journal-export/v1` (`project export --format json`, E7). A pluginok szerződései (`szk.instrument/v1`,
-`szk.appraisal/v1`, `szk.appraisal-result/v1`, `szk.figure-request/v1`, `szk.figure-result/v1`,
-`szk.prisma-flow/v1`) a saját `contracts/` mappájukban élnek.
+`szk.ma.journal-export/v1` (`project export --format json`, E7). A pluginok szerződései (`szk.figure-request/v1`,
+`szk.figure-result/v1`, `szk.prisma-flow/v1`) a saját `contracts/` mappájukban élnek. Az értékelő szerződések
+(`szk.instrument/v1`, `szk.appraisal/v1`, `szk.appraisal-result/v1`) a v1-től a motorban is élnek, mert a
+motornak natív eszköz-definíciói vannak (`metaelemzes/instruments/`, „forrás: szk-plugins validator 1.0.0”);
+a validator ≥ 1.1 ugyanezeket a fájlokat bájtra azonos másolatként viheti (4.20).
 
 ### Generált rész
 

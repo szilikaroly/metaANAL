@@ -7,7 +7,7 @@ A ``web/src/**`` forrásait rögzített sorrendben egyetlen önálló HTML-fájl
 (nincs időbélyeg, rendezett fájllista, LF sorvégek).
 
 Kimenet:
-  python3 ma_gui/web/build_gui.py            → ma_gui/web/dist/index.html      (termék; ≤ 600 KB)
+  python3 ma_gui/web/build_gui.py            → ma_gui/web/dist/index.html      (termék; ≤ 900 KB)
                                                + ma_gui/web/dist/snapshot.html (pillanatkép-sablon, lásd lent)
   python3 ma_gui/web/build_gui.py --dev      → ma_gui/web/dist/index.dev.html  (+ fixture-ök és fixture-háttér)
   python3 ma_gui/web/build_gui.py --snapshot → csak a dist/snapshot.html
@@ -52,12 +52,12 @@ DEV_OUT = DIST / "index.dev.html"
 SNAP_OUT = DIST / "snapshot.html"
 TEMPLATE = "index.template.html"
 
-# terv 2.3: ≤ 600 KB (korábban 450 KB; az MVP-bírálat kezdőknek szóló magyarázatai — következő lépések, KB-modál,
-# X016-döntés, csak olvasható pillanatkép-rács, biztonságos Windows-parancsok — 450 KB fölé vitték; egy helyi,
-# egyszer betöltött lapnál a 600 KB is azonnali)
-MAX_BYTES = 600 * 1024
+# terv 2.3: ≤ 900 KB (v1, 2026-10-05: az értékelő űrlapok — RoB-család, PROBAST+AI, TRIPOD+AI, AMSTAR 2 —, a GRADE/SoF
+# és a protokoll kezdőknek szóló „Miért?” magyarázatai 600 KB fölé vitték; korábban 600, előtte 450 KB). Helyi,
+# egyszer betöltött lapnál a 900 KB is azonnali.
+MAX_BYTES = 900 * 1024
 # a pillanatkép-sablon a termék-build + a pillanatkép-kliens (src/snapshot/); a beágyazott adat nélkül
-SNAPSHOT_MAX_BYTES = 600 * 1024
+SNAPSHOT_MAX_BYTES = 900 * 1024
 NONCE = "{{CSP_NONCE}}"
 SNAPSHOT_KEYS = ("SNAPSHOT_CSP", "SNAPSHOT_DATA")
 SNAPSHOT_DIR = "snapshot"
@@ -535,7 +535,7 @@ def main(argv=None):
         return 2
 
 
-# ================================================================ termék-tömörítés (≤ 600 KB, 2.3)
+# ================================================================ termék-tömörítés (≤ 900 KB, 2.3)
 # A termék-build a lint UTÁN tömörít; a --dev build az eredeti forrást adja (olvasható, hibakereséshez).
 # Mindhárom lépés determinisztikus, csak stdlib, és veszteségmentes:
 #   minify_js   — tokenszintű: megjegyzések és fölös szóközök/sortörések nélkül; a sortörés ott marad,
@@ -961,9 +961,16 @@ def lz_encode(s):
             literal(i)
             i += 1
             continue
+        token = None
         if length >= LZ_MIN:
             o = off - 1
-            out.append("~" + LZ_ALPHABET[o // _LZ_N] + LZ_ALPHABET[o % _LZ_N] + LZ_ALPHABET[length - LZ_MIN])
+            token = "~" + LZ_ALPHABET[o // _LZ_N] + LZ_ALPHABET[o % _LZ_N] + LZ_ALPHABET[length - LZ_MIN]
+            if "{" in token:
+                # a „{{” a sablon-helyőrzők jele ({{CSP_NONCE}}, {{SNAPSHOT_*}}): a csomagban nem keletkezhet — a
+                # JSON-szöveg maga nem tartalmaz „{{”-t, így ha a hivatkozás-jegyek közt nincs „{”, sehol sem lesz
+                token = None
+        if token is not None:
+            out.append(token)
             for k in range(i, i + length):
                 insert(k)
             i += length

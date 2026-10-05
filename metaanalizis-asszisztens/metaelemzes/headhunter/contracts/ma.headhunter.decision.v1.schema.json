@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.decision:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.decision/v1 — a decisions.jsonl egy sora (csak hozzáfűzés, hash-lánc)",
+  "type": "object",
+  "required": [
+    "schema",
+    "decision_id",
+    "ts",
+    "actor",
+    "kind",
+    "target",
+    "value",
+    "prev_sha256",
+    "sha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.decision/v1"
+    },
+    "decision_id": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+    },
+    "ts": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "actor": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/actor"
+    },
+    "kind": {
+      "enum": [
+        "review_select",
+        "candidate_confirm",
+        "candidate_reject",
+        "id_confirm",
+        "duplicate_accept",
+        "duplicate_reject",
+        "study_link",
+        "study_split",
+        "role_set",
+        "screen",
+        "final_inclusion",
+        "secondary_verify",
+        "update_window",
+        "source_config",
+        "criteria_set",
+        "checkpoint",
+        "note"
+      ]
+    },
+    "target": {
+      "type": "object",
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "review",
+            "candidate",
+            "record",
+            "study",
+            "proposal",
+            "project",
+            "source",
+            "window",
+            "checkpoint"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "value": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "examples": [
+        "include",
+        "exclude",
+        "accept",
+        "reject",
+        "verified",
+        "discrepant",
+        "EP4-done"
+      ]
+    },
+    "level": {
+      "enum": [
+        "title_abstract",
+        "full_text",
+        "final",
+        null
+      ]
+    },
+    "reason_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^X\\d{1,3}$"
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 2000
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+      }
+    },
+    "quote": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 300
+    },
+    "proposed_by": {
+      "oneOf": [
+        {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/actor"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "ha a döntés egy ágens/eszköz javaslatát fogadja el"
+    },
+    "batch": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "tömeges jóváhagyás azonosítója és szűrője"
+    },
+    "kb_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/kbid"
+      }
+    },
+    "supersedes": {
+      "oneOf": [
+        {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "project_log_id": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "a projekt.sqlite tükör-döntés azonosítója"
+    },
+    "prev_sha256": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/sha256"
+    },
+    "sha256": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/sha256"
+    }
+  }
+}

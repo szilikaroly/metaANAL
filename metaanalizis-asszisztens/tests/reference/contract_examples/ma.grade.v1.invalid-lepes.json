@@ -1,0 +1,77 @@
+{
+  "schema": "szk.ma.grade/v1",
+  "outcome_id": "o1",
+  "importance": "critical",
+  "run_id": "20261004T211200Z-a1f3c2",
+  "start": "high",
+  "start_reason": "RCT",
+  "domains": {
+    "risk_of_bias": {
+      "rating": "not serious",
+      "step": 0,
+      "rationale": "A súly 49.5%-a magas RoB-ú vizsgálatból; a magas RoB nélküli futás következtetése nem változik."
+    },
+    "inconsistency": {
+      "rating": "serious",
+      "step": 0,
+      "rationale": "A PI (0.13–1.79) átnyúlik az 1-en; a súly 14%-a a másik oldalon."
+    },
+    "indirectness": {
+      "rating": "not serious",
+      "step": 0,
+      "rationale": "A populáció és a beavatkozás a PICO-nak megfelel."
+    },
+    "imprecision": {
+      "rating": "not serious",
+      "step": 0,
+      "rationale": "A CI (0.33–0.73) nem lépi át a MID-et (0.75–1.25); OIS teljesül."
+    },
+    "publication_bias": {
+      "rating": "suspected",
+      "step": 0,
+      "status": "resolved",
+      "rationale": "Harbord p 0.23, Peters p 0.20; a regiszterkeresés teljes — nem minősítünk le."
+    }
+  },
+  "upgrades": {
+    "large_effect": false,
+    "dose_response": false,
+    "opposing_confounding": false
+  },
+  "certainty": "moderate",
+  "certainty_source": "computed",
+  "consistency_warning": null,
+  "validator_rollup": null,
+  "status": "recorded",
+  "origin": "human",
+  "journal_id": 3,
+  "kb_refs": [
+    "D-S13-002"
+  ],
+  "mid": {
+    "lower": 0.75,
+    "upper": 1.25,
+    "scale": "display",
+    "source": "protokoll 10. pont",
+    "sd": null,
+    "text": "0,75–1,25"
+  },
+  "run_summary": {
+    "k": 13,
+    "participants": 357347,
+    "measure": "RR",
+    "display_text": {
+      "hu": "0.49 [0.33; 0.73]",
+      "en": "0.49 [0.33; 0.73]"
+    },
+    "effect_text": {
+      "hu": "RR 0.49 [0.33; 0.73]",
+      "en": "RR 0.49 [0.33; 0.73]"
+    },
+    "data_sha256": "9f3a000000000000000000000000000000000000000000000000000000000000",
+    "spec_name": "o1_primary"
+  },
+  "override_warnings": [],
+  "actor": "user:SzK",
+  "updated": "2026-10-04T21:40:00Z"
+}

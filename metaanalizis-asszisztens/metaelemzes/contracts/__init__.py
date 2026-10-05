@@ -56,6 +56,22 @@ CONTRACTS = {
     ("ma.project-audit", 1): (("out",), "motor (project audit --json, E8)", "munkapad, ma-ellenorzo, FINAL audit-kapu"),
     ("ma.activity", 1): (("in", "out"), "munkapad és motor (MA_ACTIVITY_LOG=1)", "munkapad, audit-csomag (verify)"),
     ("ma.project", 1): (("in", "out"), "munkapad (projekt.save_project_meta)", "motor (projekt, audit), munkapad"),
+    # v1 értékelés (metaelemzes.instruments, metaelemzes.appraisal)
+    ("instrument", 1): (("out",), "motor (metaelemzes/instruments/*.json, appraisal.instrument_get); validator --schema",
+                        "munkapad (értékelő űrlapok), validator-adapter"),
+    ("appraisal", 1): (("in", "out"), "munkapad és motor (04_torzitas_kockazat/appraisals/*.json, appraisal.save)",
+                       "motor (appraisal.check, project audit X003/X017), validator ≥ 1.1"),
+    ("appraisal-result", 1): (("out",), "motor (appraisal.check); validator --verify/--rollup --json",
+                              "munkapad (teljesség, implikált ítélet, X017)"),
+    ("rob-summary", 1): (("out",), "motor (appraisal.rob_summary)", "munkapad (forgalmi lámpa), figure-forge (rob)"),
+    ("ma.appraisal-agreement", 1): (("out",), "motor (appraisal.agreement)", "munkapad (konszenzus-nézet)"),
+    ("ma.rob-sync-proposal", 1): (("out",), "motor (appraisal.rob_sync_proposal)",
+                                  "munkapad (rob-oszlop szinkron), CLI appraisal sync-rob"),
+    # v1 GRADE / SoF (metaelemzes.grade_help, projekt GRADE-tár; E10)
+    ("ma.grade", 1): (("in", "out"), "motor (grade_help.advice piszkozat; projekt.save_grade_doc / record_grade_doc)",
+                      "munkapad (GRADE-lap), projekt.record_grade_doc, project audit (X007, X019)"),
+    ("ma.sof", 1): (("out",), "motor (grade_help.sof; 06_kezirat/sof/<kimenet>.sof.json)",
+                    "munkapad (SoF-tábla, export), project audit (X008)"),
 }
 
 

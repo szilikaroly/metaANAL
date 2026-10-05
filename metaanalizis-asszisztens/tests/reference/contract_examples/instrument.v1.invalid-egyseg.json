@@ -1,0 +1,37 @@
+{
+ "schema": "szk.instrument/v1",
+ "key": "mini",
+ "name": "Mini",
+ "unit": "trial",
+ "answers": [
+  {
+   "value": "yes",
+   "label": "Y"
+  },
+  {
+   "value": "no",
+   "label": "N"
+  }
+ ],
+ "verdicts": [
+  "low",
+  "high"
+ ],
+ "domains": [
+  {
+   "id": "1",
+   "title": "Egy"
+  }
+ ],
+ "items": [
+  {
+   "id": "1.1",
+   "domain": "1",
+   "key": "1.1",
+   "text": "Kérdés?"
+  }
+ ],
+ "rollup": {
+  "algorithm": "none"
+ }
+}

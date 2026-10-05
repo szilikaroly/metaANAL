@@ -1,0 +1,173 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "openalex-list-cursor-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": true,
+  "license_note": null,
+  "notes": "KÉZI (OpenAlex dokumentáció): /works lista cursor-lapozással (per_page=2, meta.count=3), kulccsal (Authorization: Bearer — a kazettában nincs); szintetikus munkák",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works?cursor=%2A&filter=type%3Areview%2Cfrom_publication_date%3A2015-01-01&per_page=2&search=%28tuberculosis%29+AND+%28%22BCG+vaccine%22%29&select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "meta": {
+            "count": 3,
+            "db_response_time_ms": 10,
+            "page": null,
+            "per_page": 2,
+            "next_cursor": "IlsxXSI="
+          },
+          "results": [
+            {
+              "id": "https://openalex.org/W9000000001",
+              "doi": "https://doi.org/10.5555/fixture.oa.1",
+              "ids": {
+                "openalex": "https://openalex.org/W9000000001",
+                "doi": "https://doi.org/10.5555/fixture.oa.1"
+              },
+              "display_name": "Synthetic meta-analysis 1 (fixture)",
+              "publication_year": 2022,
+              "publication_date": "2022-06-01",
+              "type": "review",
+              "primary_location": {
+                "source": {
+                  "display_name": "Fixture Reviews",
+                  "issn_l": "0000-0000"
+                }
+              },
+              "authorships": [
+                {
+                  "author": {
+                    "display_name": "Fixture Author 1"
+                  }
+                }
+              ],
+              "biblio": {
+                "volume": "5",
+                "issue": "2",
+                "first_page": "100",
+                "last_page": "110"
+              },
+              "cited_by_count": 1,
+              "is_retracted": false,
+              "open_access": {
+                "is_oa": true,
+                "oa_status": "gold"
+              },
+              "referenced_works_count": 30
+            },
+            {
+              "id": "https://openalex.org/W9000000002",
+              "doi": "https://doi.org/10.5555/fixture.oa.2",
+              "ids": {
+                "openalex": "https://openalex.org/W9000000002",
+                "doi": "https://doi.org/10.5555/fixture.oa.2"
+              },
+              "display_name": "Synthetic meta-analysis 2 (fixture)",
+              "publication_year": 2020,
+              "publication_date": "2020-06-01",
+              "type": "review",
+              "primary_location": {
+                "source": {
+                  "display_name": "Fixture Reviews",
+                  "issn_l": "0000-0000"
+                }
+              },
+              "authorships": [
+                {
+                  "author": {
+                    "display_name": "Fixture Author 2"
+                  }
+                }
+              ],
+              "biblio": {
+                "volume": "5",
+                "issue": "2",
+                "first_page": "100",
+                "last_page": "110"
+              },
+              "cited_by_count": 2,
+              "is_retracted": false,
+              "open_access": {
+                "is_oa": false,
+                "oa_status": "gold"
+              },
+              "referenced_works_count": 30
+            }
+          ]
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works?cursor=IlsxXSI%3D&filter=type%3Areview%2Cfrom_publication_date%3A2015-01-01&per_page=2&search=%28tuberculosis%29+AND+%28%22BCG+vaccine%22%29&select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "meta": {
+            "count": 3,
+            "db_response_time_ms": 10,
+            "page": null,
+            "per_page": 2,
+            "next_cursor": null
+          },
+          "results": [
+            {
+              "id": "https://openalex.org/W9000000003",
+              "doi": "https://doi.org/10.5555/fixture.oa.3",
+              "ids": {
+                "openalex": "https://openalex.org/W9000000003",
+                "doi": "https://doi.org/10.5555/fixture.oa.3"
+              },
+              "display_name": "Synthetic meta-analysis 3 (fixture)",
+              "publication_year": 2018,
+              "publication_date": "2018-06-01",
+              "type": "review",
+              "primary_location": {
+                "source": {
+                  "display_name": "Fixture Reviews",
+                  "issn_l": "0000-0000"
+                }
+              },
+              "authorships": [
+                {
+                  "author": {
+                    "display_name": "Fixture Author 3"
+                  }
+                }
+              ],
+              "biblio": {
+                "volume": "5",
+                "issue": "2",
+                "first_page": "100",
+                "last_page": "110"
+              },
+              "cited_by_count": 3,
+              "is_retracted": true,
+              "open_access": {
+                "is_oa": false,
+                "oa_status": "gold"
+              },
+              "referenced_works_count": 30
+            }
+          ]
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

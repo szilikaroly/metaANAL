@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:rob-summary:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.rob-summary/v1 — vizsgálatonkénti doménítéletek, összítélet és súlyarány egy kimenetre (forgalmi lámpa, súlyozott összesítő; terv 3.5.10, 4.14 advisory)",
+  "type": "object",
+  "required": [
+    "schema",
+    "tool",
+    "studies"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.rob-summary/v1"
+    },
+    "tool": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "outcome": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "instrument_sha256": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+        }
+      ]
+    },
+    "algorithm": {
+      "enum": [
+        "published",
+        "count",
+        "conservative",
+        "none"
+      ]
+    },
+    "engine_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "pass": {
+            "enum": [
+              "development",
+              "evaluation",
+              null
+            ]
+          },
+          "title": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            ]
+          },
+          "short": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scale": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "studies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "study_id"
+        ],
+        "properties": {
+          "study_id": {
+            "type": "string"
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "weight_pct": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "weight_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "judgements": {
+            "type": "object"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "domain"
+              ],
+              "properties": {
+                "domain": {
+                  "type": "string"
+                },
+                "pass": {
+                  "enum": [
+                    "development",
+                    "evaluation",
+                    null
+                  ]
+                },
+                "judgement": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "implied": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "level": {
+                  "enum": [
+                    "low",
+                    "some",
+                    "high",
+                    "critical",
+                    "ni",
+                    null
+                  ]
+                },
+                "from": {
+                  "enum": [
+                    "judgement",
+                    "implied",
+                    null
+                  ]
+                }
+              }
+            }
+          },
+          "overall": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "overall_implied": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "level": {
+            "enum": [
+              "low",
+              "some",
+              "high",
+              "critical",
+              "ni",
+              null
+            ]
+          },
+          "source": {
+            "enum": [
+              "consensus",
+              "agreeing",
+              "single",
+              "ai_approved",
+              "draft",
+              "conflict",
+              null
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "origin": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assessors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "complete": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "rob_value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "weighted": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "level"
+        ],
+        "properties": {
+          "level": {
+            "type": "string"
+          },
+          "n": {
+            "type": "integer"
+          },
+          "pct": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "weights_source": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "unmatched_plot_rows": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        ]
+      }
+    }
+  }
+}

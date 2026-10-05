@@ -1,0 +1,3242 @@
+{
+ "description": "Mintaértékelések (szk.appraisal/v1 + a CSONK ellenőrzése)",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/appraisals/ARONSON1948/rob2",
+   "query": {
+    "rater": "SzK",
+    "target": "o1"
+   },
+   "etag": "26308fa6e2dde977",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "ARONSON1948",
+     "tool": "rob2",
+     "target": "o1",
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/ARONSON1948.rob2.o1.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "rob2",
+      "scope": "assignment",
+      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "target": {
+       "unit": "ARONSON1948",
+       "study_id": "ARONSON1948",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "complete",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1.1": {
+        "value": "yes",
+        "evidence": {
+         "text": "A számítógéppel generált véletlen lista alapján (Methods, 2. bekezdés)",
+         "page": 3,
+         "locator": "Methods",
+         "doc": null
+        }
+       },
+       "1.2": {
+        "value": "probably_yes",
+        "evidence": {
+         "text": "sorszámozott, lezárt borítékok",
+         "page": 3,
+         "locator": "Methods",
+         "doc": null
+        }
+       },
+       "1.3": {
+        "value": "no"
+       },
+       "2.1": {
+        "value": "yes"
+       },
+       "2.2": {
+        "value": "yes"
+       },
+       "2.3": {
+        "value": "yes"
+       },
+       "2.4": {
+        "value": "yes"
+       },
+       "2.5": {
+        "value": "yes"
+       },
+       "2.6": {
+        "value": "yes"
+       },
+       "2.7": {
+        "value": "no"
+       },
+       "3.1": {
+        "value": "yes"
+       },
+       "3.2": {
+        "value": "yes"
+       },
+       "3.3": {
+        "value": "yes"
+       },
+       "3.4": {
+        "value": "no"
+       },
+       "4.1": {
+        "value": "no"
+       },
+       "4.2": {
+        "value": "no"
+       },
+       "4.3": {
+        "value": "yes"
+       },
+       "4.4": {
+        "value": "yes"
+       },
+       "4.5": {
+        "value": "no"
+       },
+       "5.1": {
+        "value": "yes"
+       },
+       "5.2": {
+        "value": "no"
+       },
+       "5.3": {
+        "value": "no"
+       }
+      },
+      "domain_judgements": [
+       {
+        "domain": "1",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       }
+      ],
+      "applicability": [],
+      "overall": {
+       "judgement": "low",
+       "rationale": "Minden domén alacsony.",
+       "implied": null,
+       "override_reason": null
+      },
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "rob2",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": true,
+      "expected": 22,
+      "answered": 22,
+      "completeness_text": "22/22",
+      "missing": [],
+      "invalid": [],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "2.1",
+         "2.2",
+         "2.3",
+         "2.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "3.3"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "4.3",
+         "4.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       }
+      ],
+      "overall": {
+       "implied": "low",
+       "algorithm": "conservative",
+       "text": {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/ARONSON1948/rob2",
+   "query": {
+    "rater": "KP",
+    "target": "o1"
+   },
+   "etag": "45ab6df5c9f6f935",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "ARONSON1948",
+     "tool": "rob2",
+     "target": "o1",
+     "rater": "KP",
+     "path": "04_torzitas_kockazat/appraisals/ARONSON1948.rob2.o1.KP.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "rob2",
+      "scope": "assignment",
+      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "target": {
+       "unit": "ARONSON1948",
+       "study_id": "ARONSON1948",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
+      "assessor": "KP",
+      "second_assessor": null,
+      "status": "complete",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1.1": {
+        "value": "yes",
+        "evidence": {
+         "text": "A számítógéppel generált véletlen lista alapján (Methods, 2. bekezdés)",
+         "page": 3,
+         "locator": "Methods",
+         "doc": null
+        }
+       },
+       "1.2": {
+        "value": "no_information"
+       },
+       "1.3": {
+        "value": "no"
+       },
+       "2.1": {
+        "value": "yes"
+       },
+       "2.2": {
+        "value": "yes"
+       },
+       "2.3": {
+        "value": "yes"
+       },
+       "2.4": {
+        "value": "yes"
+       },
+       "2.5": {
+        "value": "yes"
+       },
+       "2.6": {
+        "value": "yes"
+       },
+       "2.7": {
+        "value": "no"
+       },
+       "3.1": {
+        "value": "yes"
+       },
+       "3.2": {
+        "value": "yes"
+       },
+       "3.3": {
+        "value": "yes"
+       },
+       "3.4": {
+        "value": "no"
+       },
+       "4.1": {
+        "value": "no"
+       },
+       "4.2": {
+        "value": "no"
+       },
+       "4.3": {
+        "value": "yes"
+       },
+       "4.4": {
+        "value": "yes"
+       },
+       "4.5": {
+        "value": "no"
+       },
+       "5.1": {
+        "value": "yes"
+       },
+       "5.2": {
+        "value": "no"
+       },
+       "5.3": {
+        "value": "no"
+       }
+      },
+      "domain_judgements": [
+       {
+        "domain": "1",
+        "pass": null,
+        "judgement": "some_concerns",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       }
+      ],
+      "applicability": [],
+      "overall": {
+       "judgement": "some_concerns",
+       "rationale": "Az elrejtés nem közölt.",
+       "implied": null,
+       "override_reason": null
+      },
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "rob2",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": true,
+      "expected": 22,
+      "answered": 22,
+      "completeness_text": "22/22",
+      "missing": [],
+      "invalid": [],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": null,
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [
+         "1.2"
+        ],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "nincs információ: 1.2",
+         "en": "no information at 1.2"
+        }
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "2.1",
+         "2.2",
+         "2.3",
+         "2.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "3.3"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "4.3",
+         "4.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       }
+      ],
+      "overall": {
+       "implied": "some_concerns",
+       "algorithm": "conservative",
+       "text": {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/FERGUSON1949/rob2",
+   "query": {
+    "rater": "SzK",
+    "target": "o1"
+   },
+   "etag": "7bd62dc6943401cf",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "FERGUSON1949",
+     "tool": "rob2",
+     "target": "o1",
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/FERGUSON1949.rob2.o1.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "rob2",
+      "scope": "assignment",
+      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "target": {
+       "unit": "FERGUSON1949",
+       "study_id": "FERGUSON1949",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1.1": {
+        "value": "yes",
+        "evidence": {
+         "text": "A számítógéppel generált véletlen lista alapján (Methods, 2. bekezdés)",
+         "page": 3,
+         "locator": "Methods",
+         "doc": null
+        }
+       },
+       "1.2": {
+        "value": "probably_yes",
+        "evidence": {
+         "text": "sorszámozott, lezárt borítékok",
+         "page": 3,
+         "locator": "Methods",
+         "doc": null
+        }
+       },
+       "1.3": {
+        "value": "no"
+       },
+       "2.1": {
+        "value": "yes"
+       },
+       "2.2": {
+        "value": "yes"
+       },
+       "2.3": {
+        "value": "yes"
+       },
+       "2.4": {
+        "value": "yes"
+       },
+       "2.5": {
+        "value": "yes"
+       },
+       "2.6": {
+        "value": "no",
+        "evidence": {
+         "text": "per-protocol elemzés: a nem oltott résztvevők kizárva",
+         "page": 8,
+         "locator": "Results",
+         "doc": null
+        }
+       },
+       "3.1": {
+        "value": "yes"
+       },
+       "3.2": {
+        "value": "yes"
+       },
+       "3.3": {
+        "value": "yes"
+       },
+       "3.4": {
+        "value": "no"
+       },
+       "4.1": {
+        "value": "no"
+       },
+       "4.2": {
+        "value": "no"
+       },
+       "4.3": {
+        "value": "yes"
+       },
+       "4.4": {
+        "value": "yes"
+       },
+       "5.1": {
+        "value": "yes"
+       },
+       "5.3": {
+        "value": "no"
+       }
+      },
+      "domain_judgements": [
+       {
+        "domain": "2",
+        "pass": null,
+        "judgement": "high",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       }
+      ],
+      "applicability": [],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "rob2",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": false,
+      "expected": 22,
+      "answered": 19,
+      "completeness_text": "19/22",
+      "missing": [
+       {
+        "item": "2.7",
+        "pass": null,
+        "key": "2.7"
+       },
+       {
+        "item": "4.5",
+        "pass": null,
+        "key": "4.5"
+       },
+       {
+        "item": "5.2",
+        "pass": null,
+        "key": "5.2"
+       }
+      ],
+      "invalid": [],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "implied": "high",
+        "algorithm": "conservative",
+        "forced_by": [
+         "2.6"
+        ],
+        "unknown_at": [],
+        "routers": [
+         "2.1",
+         "2.2",
+         "2.3",
+         "2.4"
+        ],
+        "missing": [
+         "2.7"
+        ],
+        "text": {
+         "hu": "'Nem' / 'Valószínűleg nem' itt: 2.6",
+         "en": "'No' or 'Probably no' at 2.6"
+        }
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "3.3"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "4.3",
+         "4.4"
+        ],
+        "missing": [
+         "4.5"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 4.5",
+         "en": "unanswered: 4.5"
+        }
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "5.2"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 5.2",
+         "en": "unanswered: 5.2"
+        }
+       }
+      ],
+      "overall": {
+       "implied": "high",
+       "algorithm": "conservative",
+       "text": {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/ROSENTHAL1960/rob2",
+   "query": {
+    "rater": "ai",
+    "target": "o1"
+   },
+   "etag": "7e878f09b056fcdf",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "ROSENTHAL1960",
+     "tool": "rob2",
+     "target": "o1",
+     "rater": "ai",
+     "path": "04_torzitas_kockazat/appraisals/ROSENTHAL1960.rob2.o1.ai.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "rob2",
+      "scope": "assignment",
+      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "target": {
+       "unit": "ROSENTHAL1960",
+       "study_id": "ROSENTHAL1960",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
+      "assessor": "ai",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "ai_draft",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1.1": {
+        "value": "probably_yes",
+        "evidence": {
+         "text": "„the children were allocated alternately”",
+         "page": 2,
+         "locator": "Methods",
+         "doc": null
+        },
+        "rationale": {
+         "asks": "Valóban véletlen volt-e a csoportba sorolás?",
+         "because": "A cikk váltakozó besorolást említ, ami NEM véletlen — ezért inkább N lenne; a vázlat PY-t javasolt, ezt ellenőrizd.",
+         "change": "Ha a módszertani rész véletlenszám-táblát említ, a válasz Y.",
+         "uncertain": "A cikk a randomizáció módját csak egy félmondatban írja le."
+        }
+       },
+       "1.2": {
+        "value": "no_information",
+        "rationale": {
+         "asks": "Elrejtették-e a besorolást a beválogatás végéig?",
+         "because": "A cikk nem írja le, hogyan tárolták a besorolási listát.",
+         "change": "Ha a szerzők lezárt borítékot vagy központi listát említenének.",
+         "uncertain": "A cikk nem közli."
+        }
+       },
+       "1.3": {
+        "value": "no"
+       },
+       "2.1": {
+        "value": "yes"
+       },
+       "2.2": {
+        "value": "yes"
+       },
+       "2.3": {
+        "value": "yes"
+       },
+       "2.4": {
+        "value": "yes"
+       },
+       "2.5": {
+        "value": "yes"
+       },
+       "2.6": {
+        "value": "yes"
+       },
+       "2.7": {
+        "value": "no"
+       },
+       "3.1": {
+        "value": "yes"
+       },
+       "3.2": {
+        "value": "yes"
+       },
+       "3.3": {
+        "value": "yes"
+       },
+       "3.4": {
+        "value": "no"
+       },
+       "4.1": {
+        "value": "no"
+       },
+       "4.2": {
+        "value": "no"
+       },
+       "4.3": {
+        "value": "yes"
+       },
+       "4.4": {
+        "value": "yes"
+       },
+       "4.5": {
+        "value": "no"
+       },
+       "5.1": {
+        "value": "yes"
+       },
+       "5.2": {
+        "value": "no"
+       },
+       "5.3": {
+        "value": "no"
+       }
+      },
+      "domain_judgements": [],
+      "applicability": [],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "rob2",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": true,
+      "expected": 22,
+      "answered": 22,
+      "completeness_text": "22/22",
+      "missing": [],
+      "invalid": [],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": null,
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [
+         "1.2"
+        ],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "nincs információ: 1.2",
+         "en": "no information at 1.2"
+        }
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "2.1",
+         "2.2",
+         "2.3",
+         "2.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "3.3"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "4.3",
+         "4.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       }
+      ],
+      "overall": {
+       "implied": "some_concerns",
+       "algorithm": "conservative",
+       "text": {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/HART1977/rob2",
+   "query": {
+    "rater": "SzK",
+    "target": "o1"
+   },
+   "etag": "2faedb45c8c546b2",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "HART1977",
+     "tool": "rob2",
+     "target": "o1",
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/HART1977.rob2.o1.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "rob2",
+      "scope": "assignment",
+      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "target": {
+       "unit": "HART1977",
+       "study_id": "HART1977",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "complete",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1.1": {
+        "value": "yes",
+        "evidence": {
+         "text": "A számítógéppel generált véletlen lista alapján (Methods, 2. bekezdés)",
+         "page": 3,
+         "locator": "Methods",
+         "doc": null
+        }
+       },
+       "1.2": {
+        "value": "probably_yes",
+        "evidence": {
+         "text": "sorszámozott, lezárt borítékok",
+         "page": 3,
+         "locator": "Methods",
+         "doc": null
+        }
+       },
+       "1.3": {
+        "value": "no"
+       },
+       "2.1": {
+        "value": "yes"
+       },
+       "2.2": {
+        "value": "yes"
+       },
+       "2.3": {
+        "value": "yes"
+       },
+       "2.4": {
+        "value": "yes"
+       },
+       "2.5": {
+        "value": "yes"
+       },
+       "2.6": {
+        "value": "yes"
+       },
+       "2.7": {
+        "value": "no"
+       },
+       "3.1": {
+        "value": "yes"
+       },
+       "3.2": {
+        "value": "yes"
+       },
+       "3.3": {
+        "value": "yes"
+       },
+       "3.4": {
+        "value": "no"
+       },
+       "4.1": {
+        "value": "no"
+       },
+       "4.2": {
+        "value": "no"
+       },
+       "4.3": {
+        "value": "yes"
+       },
+       "4.4": {
+        "value": "yes"
+       },
+       "4.5": {
+        "value": "no"
+       },
+       "5.1": {
+        "value": "yes"
+       },
+       "5.2": {
+        "value": "no"
+       },
+       "5.3": {
+        "value": "no"
+       }
+      },
+      "domain_judgements": [
+       {
+        "domain": "1",
+        "pass": null,
+        "judgement": "some_concerns",
+        "rationale": "",
+        "override_reason": "A kiindulási eltérés a kis elemszám miatt véletlen lehet, de a TBC-kockázatban eltérő régiók.",
+        "decision_id": 7
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       }
+      ],
+      "applicability": [],
+      "overall": {
+       "judgement": "some_concerns",
+       "rationale": "D1 miatt.",
+       "implied": null,
+       "override_reason": "A D1 felülbírálása miatt az összítélet is némi aggály.",
+       "decision_id": 8
+      },
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "rob2",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": true,
+      "expected": 22,
+      "answered": 22,
+      "completeness_text": "22/22",
+      "missing": [],
+      "invalid": [],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "2.1",
+         "2.2",
+         "2.3",
+         "2.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "3.3"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [
+         "4.3",
+         "4.4"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "implied": "low",
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "text": {
+         "hu": "egyik jelző-kérdés sem jelez problémát",
+         "en": "no signalling question flags a problem"
+        }
+       }
+      ],
+      "overall": {
+       "implied": "low",
+       "algorithm": "conservative",
+       "text": {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/FRIMODT1973/robins-i",
+   "query": {
+    "rater": "SzK",
+    "target": "o1"
+   },
+   "etag": "c442ecc7a416057c",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "FRIMODT1973",
+     "tool": "robins-i",
+     "target": "o1",
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/FRIMODT1973.robins-i.o1.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "robins-i",
+      "scope": "assignment",
+      "instrument_sha256": "6cc02902dc6b9bde2bb82d25002df9b6b8adcda2a670d27fa36e4dc4467dab24",
+      "target": {
+       "unit": "FRIMODT1973",
+       "study_id": "FRIMODT1973",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1.1": {
+        "value": "probably_yes"
+       },
+       "1.2": {
+        "value": "probably_yes"
+       },
+       "1.3": {
+        "value": "probably_yes"
+       },
+       "1.4": {
+        "value": "probably_yes"
+       },
+       "1.5": {
+        "value": "probably_yes"
+       },
+       "1.6": {
+        "value": "probably_yes"
+       },
+       "1.7": {
+        "value": "probably_yes"
+       },
+       "1.8": {
+        "value": "probably_yes"
+       }
+      },
+      "domain_judgements": [],
+      "applicability": [],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "robins-i",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": false,
+      "expected": 28,
+      "answered": 8,
+      "completeness_text": "8/28",
+      "missing": [
+       {
+        "item": "2.1",
+        "pass": null,
+        "key": "2.1"
+       },
+       {
+        "item": "2.2",
+        "pass": null,
+        "key": "2.2"
+       },
+       {
+        "item": "2.3",
+        "pass": null,
+        "key": "2.3"
+       },
+       {
+        "item": "2.4",
+        "pass": null,
+        "key": "2.4"
+       },
+       {
+        "item": "2.5",
+        "pass": null,
+        "key": "2.5"
+       },
+       {
+        "item": "3.1",
+        "pass": null,
+        "key": "3.1"
+       },
+       {
+        "item": "3.2",
+        "pass": null,
+        "key": "3.2"
+       },
+       {
+        "item": "3.3",
+        "pass": null,
+        "key": "3.3"
+       },
+       {
+        "item": "4.1",
+        "pass": null,
+        "key": "4.1"
+       },
+       {
+        "item": "4.2",
+        "pass": null,
+        "key": "4.2"
+       },
+       {
+        "item": "4.3",
+        "pass": null,
+        "key": "4.3"
+       },
+       {
+        "item": "5.1",
+        "pass": null,
+        "key": "5.1"
+       },
+       {
+        "item": "5.2",
+        "pass": null,
+        "key": "5.2"
+       },
+       {
+        "item": "5.3",
+        "pass": null,
+        "key": "5.3"
+       },
+       {
+        "item": "6.1",
+        "pass": null,
+        "key": "6.1"
+       },
+       {
+        "item": "6.2",
+        "pass": null,
+        "key": "6.2"
+       },
+       {
+        "item": "6.3",
+        "pass": null,
+        "key": "6.3"
+       },
+       {
+        "item": "7.1",
+        "pass": null,
+        "key": "7.1"
+       },
+       {
+        "item": "7.2",
+        "pass": null,
+        "key": "7.2"
+       },
+       {
+        "item": "7.3",
+        "pass": null,
+        "key": "7.3"
+       }
+      ],
+      "invalid": [],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": null,
+        "implied": "serious",
+        "algorithm": "conservative",
+        "forced_by": [
+         "1.1",
+         "1.3",
+         "1.6"
+        ],
+        "unknown_at": [],
+        "routers": [
+         "1.2"
+        ],
+        "missing": [],
+        "text": {
+         "hu": "'Nem' / 'Valószínűleg nem' itt: 1.1, 1.3, 1.6",
+         "en": "'No' or 'Probably no' at 1.1, 1.3, 1.6"
+        }
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "2.1",
+         "2.2",
+         "2.3",
+         "2.4",
+         "2.5"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 2.1, 2.2, 2.3, 2.4, 2.5",
+         "en": "unanswered: 2.1, 2.2, 2.3, 2.4, 2.5"
+        }
+       },
+       {
+        "domain": "3",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "3.1",
+         "3.2",
+         "3.3"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 3.1, 3.2, 3.3",
+         "en": "unanswered: 3.1, 3.2, 3.3"
+        }
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "4.1",
+         "4.2",
+         "4.3"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 4.1, 4.2, 4.3",
+         "en": "unanswered: 4.1, 4.2, 4.3"
+        }
+       },
+       {
+        "domain": "5",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "5.1",
+         "5.2",
+         "5.3"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 5.1, 5.2, 5.3",
+         "en": "unanswered: 5.1, 5.2, 5.3"
+        }
+       },
+       {
+        "domain": "6",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "6.1",
+         "6.2",
+         "6.3"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 6.1, 6.2, 6.3",
+         "en": "unanswered: 6.1, 6.2, 6.3"
+        }
+       },
+       {
+        "domain": "7",
+        "pass": null,
+        "implied": null,
+        "algorithm": "conservative",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "7.1",
+         "7.2",
+         "7.3"
+        ],
+        "text": {
+         "hu": "hiányzó válasz: 7.1, 7.2, 7.3",
+         "en": "unanswered: 7.1, 7.2, 7.3"
+        }
+       }
+      ],
+      "overall": {
+       "implied": "serious",
+       "algorithm": "conservative",
+       "text": {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
+        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/LEE2023/probast-ai",
+   "query": {
+    "rater": "SzK",
+    "target": "XGB-PE"
+   },
+   "etag": "44ca5b488905c06c",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "LEE2023",
+     "tool": "probast-ai",
+     "target": "XGB-PE",
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/LEE2023.probast-ai.XGB-PE.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "probast-ai",
+      "scope": "both",
+      "instrument_sha256": "e495d498653a241166a6f368944555255df3d5e4a83f87efb0a0fb36c3fb6cac",
+      "target": {
+       "unit": "LEE2023",
+       "study_id": "LEE2023",
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "XGB-PE"
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "development/1.1": {
+        "value": "probably_yes",
+        "evidence": {
+         "text": null,
+         "page": 4,
+         "locator": null,
+         "doc": null
+        }
+       },
+       "development/1.2": {
+        "value": "probably_yes"
+       },
+       "development/1.3": {
+        "value": "probably_yes"
+       },
+       "development/2.1": {
+        "value": "probably_yes"
+       },
+       "development/2.2": {
+        "value": "probably_yes"
+       },
+       "development/2.3": {
+        "value": "probably_yes"
+       },
+       "development/2.4": {
+        "value": "probably_yes"
+       },
+       "development/3.1": {
+        "value": "probably_yes"
+       },
+       "development/3.2": {
+        "value": "probably_yes"
+       },
+       "development/3.3": {
+        "value": "probably_yes"
+       },
+       "development/3.4": {
+        "value": "probably_yes"
+       },
+       "development/4.1": {
+        "value": "no"
+       },
+       "development/4.2": {
+        "value": "probably_yes"
+       },
+       "development/4.3": {
+        "value": "probably_yes"
+       },
+       "development/4.4": {
+        "value": "probably_yes"
+       },
+       "development/4.5": {
+        "value": "probably_yes"
+       }
+      },
+      "domain_judgements": [
+       {
+        "domain": "1",
+        "pass": "development",
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "2",
+        "pass": "development",
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "3",
+        "pass": "development",
+        "judgement": "low",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       },
+       {
+        "domain": "4",
+        "pass": "development",
+        "judgement": "high",
+        "rationale": "",
+        "override_reason": null,
+        "decision_id": null
+       }
+      ],
+      "applicability": [
+       {
+        "domain": "1",
+        "judgement": "low",
+        "rationale": ""
+       }
+      ],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z",
+      "model": "XGB-PE"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "probast-ai",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": false,
+      "expected": 34,
+      "answered": 16,
+      "completeness_text": "16/34",
+      "missing": [
+       {
+        "item": "1.1",
+        "pass": "evaluation",
+        "key": "evaluation/1.1"
+       },
+       {
+        "item": "1.2",
+        "pass": "evaluation",
+        "key": "evaluation/1.2"
+       },
+       {
+        "item": "1.3",
+        "pass": "evaluation",
+        "key": "evaluation/1.3"
+       },
+       {
+        "item": "2.1",
+        "pass": "evaluation",
+        "key": "evaluation/2.1"
+       },
+       {
+        "item": "2.2",
+        "pass": "evaluation",
+        "key": "evaluation/2.2"
+       },
+       {
+        "item": "2.3",
+        "pass": "evaluation",
+        "key": "evaluation/2.3"
+       },
+       {
+        "item": "2.4",
+        "pass": "evaluation",
+        "key": "evaluation/2.4"
+       },
+       {
+        "item": "3.1",
+        "pass": "evaluation",
+        "key": "evaluation/3.1"
+       },
+       {
+        "item": "3.2",
+        "pass": "evaluation",
+        "key": "evaluation/3.2"
+       },
+       {
+        "item": "3.3",
+        "pass": "evaluation",
+        "key": "evaluation/3.3"
+       },
+       {
+        "item": "3.4",
+        "pass": "evaluation",
+        "key": "evaluation/3.4"
+       },
+       {
+        "item": "4.1",
+        "pass": "evaluation",
+        "key": "evaluation/4.1"
+       },
+       {
+        "item": "4.2",
+        "pass": "evaluation",
+        "key": "evaluation/4.2"
+       },
+       {
+        "item": "4.3",
+        "pass": "evaluation",
+        "key": "evaluation/4.3"
+       },
+       {
+        "item": "4.4",
+        "pass": "evaluation",
+        "key": "evaluation/4.4"
+       },
+       {
+        "item": "4.5",
+        "pass": "evaluation",
+        "key": "evaluation/4.5"
+       },
+       {
+        "item": "4.6",
+        "pass": "evaluation",
+        "key": "evaluation/4.6"
+       },
+       {
+        "item": "4.7",
+        "pass": "evaluation",
+        "key": "evaluation/4.7"
+       }
+      ],
+      "invalid": [],
+      "domains": [],
+      "overall": {
+       "implied": null,
+       "algorithm": "none",
+       "text": {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      },
+      "per_pass": {
+       "development": {
+        "expected": 16,
+        "answered": 16,
+        "complete": true,
+        "text": "16/16"
+       },
+       "evaluation": {
+        "expected": 18,
+        "answered": 0,
+        "complete": false,
+        "text": "0/18"
+       }
+      },
+      "amstar2": null,
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/LEE2023/tripod-ai",
+   "query": {
+    "rater": "SzK"
+   },
+   "etag": "45ac83de1d6817ae",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "LEE2023",
+     "tool": "tripod-ai",
+     "target": null,
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/LEE2023.tripod-ai.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "tripod-ai",
+      "scope": "both",
+      "instrument_sha256": "e8c8d63f4f10127c7d1f4ace759be68f386f0cf947aa83921a704812c5c6be02",
+      "target": {
+       "unit": "LEE2023",
+       "study_id": "LEE2023",
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1": {
+        "value": "present"
+       },
+       "2": {
+        "value": "present"
+       },
+       "3a": {
+        "value": "partial"
+       },
+       "3b": {
+        "value": "missing"
+       },
+       "3c": {
+        "value": "present"
+       },
+       "4": {
+        "value": "not_applicable"
+       },
+       "5a": {
+        "value": "present"
+       },
+       "5b": {
+        "value": "present"
+       },
+       "6a": {
+        "value": "partial"
+       },
+       "6b": {
+        "value": "missing"
+       },
+       "6c": {
+        "value": "present"
+       },
+       "7": {
+        "value": "not_applicable"
+       },
+       "8a": {
+        "value": "present"
+       },
+       "8b": {
+        "value": "present"
+       },
+       "8c": {
+        "value": "partial"
+       },
+       "9a": {
+        "value": "missing"
+       },
+       "9b": {
+        "value": "present"
+       },
+       "9c": {
+        "value": "not_applicable"
+       },
+       "10": {
+        "value": "present"
+       },
+       "11": {
+        "value": "present"
+       },
+       "12a": {
+        "value": "partial"
+       },
+       "12b": {
+        "value": "missing"
+       },
+       "12c": {
+        "value": "present"
+       },
+       "12d": {
+        "value": "not_applicable"
+       },
+       "12e": {
+        "value": "present"
+       },
+       "12f": {
+        "value": "present"
+       },
+       "12g": {
+        "value": "partial"
+       },
+       "13": {
+        "value": "missing"
+       },
+       "14": {
+        "value": "present"
+       },
+       "15": {
+        "value": "not_applicable"
+       },
+       "16": {
+        "value": "present"
+       },
+       "17": {
+        "value": "present"
+       },
+       "18a": {
+        "value": "partial"
+       },
+       "18b": {
+        "value": "missing"
+       },
+       "18c": {
+        "value": "present"
+       },
+       "18d": {
+        "value": "not_applicable"
+       },
+       "18e": {
+        "value": "present"
+       },
+       "18f": {
+        "value": "present"
+       },
+       "19": {
+        "value": "partial"
+       },
+       "20a": {
+        "value": "missing"
+       },
+       "20b": {
+        "value": "present"
+       },
+       "20c": {
+        "value": "not_applicable"
+       },
+       "21": {
+        "value": "present"
+       },
+       "22": {
+        "value": "present"
+       },
+       "23a": {
+        "value": "partial"
+       },
+       "23b": {
+        "value": "missing"
+       },
+       "24": {
+        "value": "present"
+       },
+       "25": {
+        "value": "not_applicable"
+       },
+       "26": {
+        "value": "present"
+       },
+       "27a": {
+        "value": "present"
+       },
+       "27b": {
+        "value": "partial"
+       },
+       "27c": {
+        "value": "missing"
+       }
+      },
+      "domain_judgements": [],
+      "applicability": [],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "tripod-ai",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": true,
+      "expected": 52,
+      "answered": 52,
+      "completeness_text": "52/52",
+      "missing": [],
+      "invalid": [],
+      "domains": [],
+      "overall": {
+       "implied": null,
+       "algorithm": "none",
+       "text": {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": {
+       "scope": "both",
+       "counts": {
+        "present": 26,
+        "partial": 9,
+        "missing": 9,
+        "not_applicable": 8
+       },
+       "missing_items": [
+        {
+         "item": "3a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "3b",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "6a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "6b",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "8c",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "9a",
+         "applies_to": "D"
+        },
+        {
+         "item": "12a",
+         "applies_to": "D"
+        },
+        {
+         "item": "12b",
+         "applies_to": "D"
+        },
+        {
+         "item": "12g",
+         "applies_to": "E"
+        },
+        {
+         "item": "13",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "18a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "18b",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "19",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "20a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "23a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "23b",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "27b",
+         "applies_to": "D"
+        },
+        {
+         "item": "27c",
+         "applies_to": "D;E"
+        }
+       ],
+       "note": {
+        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+        "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+       }
+      },
+      "guards": [],
+      "notes": [
+       {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/VARGA2024/tripod-ai",
+   "query": {
+    "rater": "SzK"
+   },
+   "etag": "005f74bdcd310a38",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "VARGA2024",
+     "tool": "tripod-ai",
+     "target": null,
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/VARGA2024.tripod-ai.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "tripod-ai",
+      "scope": "both",
+      "instrument_sha256": "e8c8d63f4f10127c7d1f4ace759be68f386f0cf947aa83921a704812c5c6be02",
+      "target": {
+       "unit": "VARGA2024",
+       "study_id": "VARGA2024",
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1": {
+        "value": "partial"
+       },
+       "2": {
+        "value": "missing"
+       },
+       "3a": {
+        "value": "present"
+       },
+       "3b": {
+        "value": "not_applicable"
+       },
+       "3c": {
+        "value": "present"
+       },
+       "4": {
+        "value": "present"
+       },
+       "5b": {
+        "value": "missing"
+       },
+       "6a": {
+        "value": "present"
+       },
+       "6b": {
+        "value": "not_applicable"
+       },
+       "6c": {
+        "value": "present"
+       },
+       "7": {
+        "value": "present"
+       },
+       "8a": {
+        "value": "partial"
+       },
+       "8c": {
+        "value": "present"
+       },
+       "9a": {
+        "value": "not_applicable"
+       },
+       "9b": {
+        "value": "present"
+       },
+       "9c": {
+        "value": "present"
+       },
+       "10": {
+        "value": "partial"
+       },
+       "11": {
+        "value": "missing"
+       },
+       "12b": {
+        "value": "not_applicable"
+       },
+       "12c": {
+        "value": "present"
+       },
+       "12d": {
+        "value": "present"
+       },
+       "12e": {
+        "value": "partial"
+       },
+       "12f": {
+        "value": "missing"
+       },
+       "12g": {
+        "value": "present"
+       },
+       "14": {
+        "value": "present"
+       },
+       "15": {
+        "value": "present"
+       },
+       "16": {
+        "value": "partial"
+       },
+       "17": {
+        "value": "missing"
+       },
+       "18a": {
+        "value": "present"
+       },
+       "18b": {
+        "value": "not_applicable"
+       },
+       "18d": {
+        "value": "present"
+       },
+       "18e": {
+        "value": "partial"
+       },
+       "18f": {
+        "value": "missing"
+       },
+       "19": {
+        "value": "present"
+       },
+       "20a": {
+        "value": "not_applicable"
+       },
+       "20b": {
+        "value": "present"
+       },
+       "21": {
+        "value": "partial"
+       },
+       "22": {
+        "value": "missing"
+       },
+       "23a": {
+        "value": "present"
+       },
+       "23b": {
+        "value": "not_applicable"
+       },
+       "24": {
+        "value": "present"
+       },
+       "25": {
+        "value": "present"
+       },
+       "27a": {
+        "value": "missing"
+       },
+       "27b": {
+        "value": "present"
+       },
+       "27c": {
+        "value": "not_applicable"
+       }
+      },
+      "domain_judgements": [],
+      "applicability": [],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "tripod-ai",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": false,
+      "expected": 52,
+      "answered": 45,
+      "completeness_text": "45/52",
+      "missing": [
+       {
+        "item": "5a",
+        "pass": null,
+        "key": "5a"
+       },
+       {
+        "item": "8b",
+        "pass": null,
+        "key": "8b"
+       },
+       {
+        "item": "12a",
+        "pass": null,
+        "key": "12a"
+       },
+       {
+        "item": "13",
+        "pass": null,
+        "key": "13"
+       },
+       {
+        "item": "18c",
+        "pass": null,
+        "key": "18c"
+       },
+       {
+        "item": "20c",
+        "pass": null,
+        "key": "20c"
+       },
+       {
+        "item": "26",
+        "pass": null,
+        "key": "26"
+       }
+      ],
+      "invalid": [],
+      "domains": [],
+      "overall": {
+       "implied": null,
+       "algorithm": "none",
+       "text": {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": {
+       "scope": "both",
+       "counts": {
+        "partial": 7,
+        "missing": 8,
+        "present": 22,
+        "not_applicable": 8,
+        "unanswered": 7
+       },
+       "missing_items": [
+        {
+         "item": "1",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "2",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "5b",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "8a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "10",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "11",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "12e",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "12f",
+         "applies_to": "E"
+        },
+        {
+         "item": "16",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "17",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "18e",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "18f",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "21",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "22",
+         "applies_to": "D"
+        },
+        {
+         "item": "27a",
+         "applies_to": "D"
+        }
+       ],
+       "note": {
+        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+        "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+       }
+      },
+      "guards": [],
+      "notes": [
+       {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/manuscript/tripod-ai",
+   "query": {
+    "rater": "SzK"
+   },
+   "etag": "0fbc70a428c5ebb7",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "manuscript",
+     "tool": "tripod-ai",
+     "target": null,
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/manuscript.tripod-ai.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "tripod-ai",
+      "scope": "both",
+      "instrument_sha256": "e8c8d63f4f10127c7d1f4ace759be68f386f0cf947aa83921a704812c5c6be02",
+      "target": {
+       "unit": "manuscript",
+       "study_id": null,
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1": {
+        "value": "present"
+       },
+       "2": {
+        "value": "partial"
+       },
+       "3a": {
+        "value": "missing"
+       },
+       "3b": {
+        "value": "present"
+       },
+       "3c": {
+        "value": "not_applicable"
+       },
+       "4": {
+        "value": "present"
+       },
+       "5b": {
+        "value": "partial"
+       },
+       "6a": {
+        "value": "missing"
+       },
+       "6b": {
+        "value": "present"
+       },
+       "6c": {
+        "value": "not_applicable"
+       },
+       "7": {
+        "value": "present"
+       },
+       "8a": {
+        "value": "present"
+       },
+       "8c": {
+        "value": "missing"
+       },
+       "9a": {
+        "value": "present"
+       },
+       "9b": {
+        "value": "not_applicable"
+       },
+       "9c": {
+        "value": "present"
+       },
+       "10": {
+        "value": "present"
+       },
+       "11": {
+        "value": "partial"
+       },
+       "12b": {
+        "value": "present"
+       },
+       "12c": {
+        "value": "not_applicable"
+       },
+       "12d": {
+        "value": "present"
+       },
+       "12e": {
+        "value": "present"
+       },
+       "12f": {
+        "value": "partial"
+       },
+       "12g": {
+        "value": "missing"
+       },
+       "14": {
+        "value": "not_applicable"
+       },
+       "15": {
+        "value": "present"
+       },
+       "16": {
+        "value": "present"
+       },
+       "17": {
+        "value": "partial"
+       },
+       "18a": {
+        "value": "missing"
+       },
+       "18b": {
+        "value": "present"
+       },
+       "18d": {
+        "value": "present"
+       },
+       "18e": {
+        "value": "present"
+       },
+       "18f": {
+        "value": "partial"
+       },
+       "19": {
+        "value": "missing"
+       },
+       "20a": {
+        "value": "present"
+       },
+       "20b": {
+        "value": "not_applicable"
+       },
+       "21": {
+        "value": "present"
+       },
+       "22": {
+        "value": "partial"
+       },
+       "23a": {
+        "value": "missing"
+       },
+       "23b": {
+        "value": "present"
+       },
+       "24": {
+        "value": "not_applicable"
+       },
+       "25": {
+        "value": "present"
+       },
+       "27a": {
+        "value": "partial"
+       },
+       "27b": {
+        "value": "missing"
+       },
+       "27c": {
+        "value": "present"
+       }
+      },
+      "domain_judgements": [],
+      "applicability": [],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "tripod-ai",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": false,
+      "expected": 52,
+      "answered": 45,
+      "completeness_text": "45/52",
+      "missing": [
+       {
+        "item": "5a",
+        "pass": null,
+        "key": "5a"
+       },
+       {
+        "item": "8b",
+        "pass": null,
+        "key": "8b"
+       },
+       {
+        "item": "12a",
+        "pass": null,
+        "key": "12a"
+       },
+       {
+        "item": "13",
+        "pass": null,
+        "key": "13"
+       },
+       {
+        "item": "18c",
+        "pass": null,
+        "key": "18c"
+       },
+       {
+        "item": "20c",
+        "pass": null,
+        "key": "20c"
+       },
+       {
+        "item": "26",
+        "pass": null,
+        "key": "26"
+       }
+      ],
+      "invalid": [],
+      "domains": [],
+      "overall": {
+       "implied": null,
+       "algorithm": "none",
+       "text": {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      },
+      "per_pass": null,
+      "amstar2": null,
+      "nos": null,
+      "tripod": {
+       "scope": "both",
+       "counts": {
+        "present": 22,
+        "partial": 8,
+        "missing": 8,
+        "not_applicable": 7,
+        "unanswered": 7
+       },
+       "missing_items": [
+        {
+         "item": "2",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "3a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "5b",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "6a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "8c",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "11",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "12f",
+         "applies_to": "E"
+        },
+        {
+         "item": "12g",
+         "applies_to": "E"
+        },
+        {
+         "item": "17",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "18a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "18f",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "19",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "22",
+         "applies_to": "D"
+        },
+        {
+         "item": "23a",
+         "applies_to": "D;E"
+        },
+        {
+         "item": "27a",
+         "applies_to": "D"
+        },
+        {
+         "item": "27b",
+         "applies_to": "D"
+        }
+       ],
+       "note": {
+        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+        "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+       }
+      },
+      "guards": [],
+      "notes": [
+       {
+        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
+        "en": "HOLISTIC — no algorithm, human judgement"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/appraisals/review/amstar2",
+   "query": {
+    "rater": "SzK"
+   },
+   "etag": "eb30eed0c3042749",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-view/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-view/v1",
+     "unit": "review",
+     "tool": "amstar2",
+     "target": null,
+     "rater": "SzK",
+     "path": "04_torzitas_kockazat/appraisals/review.amstar2.SzK.json",
+     "exists": true,
+     "doc": {
+      "schema": "szk.appraisal/v1",
+      "tool": "amstar2",
+      "scope": null,
+      "instrument_sha256": "caae05a3fb16bd92f14692a2668a6cffa996b932922f8e1442dcbf77d9399bec",
+      "target": {
+       "unit": "review",
+       "study_id": null,
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
+      "assessor": "SzK",
+      "second_assessor": null,
+      "status": "draft",
+      "origin": "human",
+      "approved_by": null,
+      "approved_at": null,
+      "answers": {
+       "1": {
+        "value": "yes"
+       },
+       "2": {
+        "value": "yes"
+       },
+       "3": {
+        "value": "no"
+       },
+       "4": {
+        "value": "partial_yes",
+        "evidence": {
+         "text": "4 adatbázis, regiszter nélkül",
+         "page": null,
+         "locator": "Methods 2.2",
+         "doc": null
+        }
+       },
+       "5": {
+        "value": "yes"
+       },
+       "6": {
+        "value": "yes"
+       },
+       "7": {
+        "value": "yes"
+       },
+       "8": {
+        "value": "yes"
+       },
+       "9": {
+        "value": "yes"
+       },
+       "10": {
+        "value": "yes"
+       },
+       "11": {
+        "value": "yes"
+       },
+       "12": {
+        "value": "yes"
+       },
+       "14": {
+        "value": "yes"
+       },
+       "15": {
+        "value": "yes"
+       },
+       "16": {
+        "value": "yes"
+       }
+      },
+      "domain_judgements": [],
+      "applicability": [],
+      "overall": null,
+      "created": "2026-10-04T18:00:00Z",
+      "updated": "2026-10-04T18:30:00Z"
+     },
+     "check": {
+      "schema": "szk.appraisal-result/v1",
+      "tool": "amstar2",
+      "engine_version": "stub",
+      "legacy": false,
+      "complete": false,
+      "expected": 16,
+      "answered": 15,
+      "completeness_text": "15/16",
+      "missing": [
+       {
+        "item": "13",
+        "pass": null,
+        "key": "13"
+       }
+      ],
+      "invalid": [],
+      "domains": [],
+      "overall": {
+       "implied": "high",
+       "algorithm": "published",
+       "text": {
+        "hu": "PUBLIKÁLT algoritmus",
+        "en": "PUBLISHED algorithm"
+       }
+      },
+      "per_pass": null,
+      "amstar2": {
+       "convention": "meets",
+       "rating": "high",
+       "rating_text": {
+        "hu": "Magas",
+        "en": "High"
+       },
+       "critical_flaws": [],
+       "weaknesses": [
+        "3"
+       ],
+       "unanswered": [
+        "13"
+       ],
+       "provisional": true,
+       "alternative": {
+        "convention": "weakness",
+        "rating": "moderate",
+        "rating_text": {
+         "hu": "Mérsékelt",
+         "en": "Moderate"
+        },
+        "critical_flaws": [],
+        "weaknesses": [
+         "3",
+         "4"
+        ],
+        "unanswered": [
+         "13"
+        ],
+        "provisional": true
+       },
+       "differs": true,
+       "kb_ref": "AMSTAR2-00"
+      },
+      "nos": null,
+      "tripod": null,
+      "guards": [],
+      "notes": [
+       {
+        "hu": "PUBLIKÁLT algoritmus",
+        "en": "PUBLISHED algorithm"
+       }
+      ],
+      "warnings": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apd"
+    }
+   }
+  }
+ ]
+}

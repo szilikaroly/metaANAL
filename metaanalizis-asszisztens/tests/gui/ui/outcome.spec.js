@@ -224,7 +224,11 @@ async function api(p, pathname, query) {
     // lefúrás: nincs link a helyőrző Értékelés-képernyőre
     await page.click('#results-plot-panel g.fp-study');
     await page.waitForSelector('#drilldown');
-    check((await page.$$('#drilldown a[href*="appraisal"]')).length === 0, 'a lefúrásban nincs link a még készülő Értékelés-képernyőre');
+    // UX-15: helyőrzőre nem mutat link; a v1-ben az Értékelés-képernyő már valódi, ilyenkor a link oda vezet
+    const apPh = await page.evaluate(() => window.MA.app.isPlaceholder('appraisal'));
+    const apLinks = await page.$$('#drilldown a[href*="appraisal"]');
+    check(apPh ? apLinks.length === 0 : apLinks.length === 1, apPh ? 'a lefúrásban nincs link a még készülő Értékelés-képernyőre'
+      : 'a lefúrásból link vezet a (már valódi) Értékelés-képernyőre');
     // angolul: a befolyás-ábra tickjei a motor angol szövegei (U+2212)
     await page.evaluate(() => window.MA.i18n.setLang('en'));
     await go(page, '#/results?outcome=o1&run=' + run.run_id + '&view=influence', 'results');

@@ -19,6 +19,13 @@ else:                                       # pragma: no cover — a modul hián
 MODULES = (session, static, engine, caps, project, privacy, table, documents, validate, specs, analyze, runs,
            prisma, audit, log, kb, changes)
 
+from . import appraisal, appraisal_rob  # noqa: E402 — v1: értékelések (RoB-család, PROBAST+AI, TRIPOD+AI, AMSTAR 2)
+MODULES += (appraisal, appraisal_rob)
+from . import grade  # noqa: E402 — v1: GRADE, SoF, AMSTAR 2, Protokoll (grade_sof/_amstar2/_protocol is)
+MODULES += (grade,)
+from . import extraction_dual  # noqa: E402 — v1: kettős kinyerés (compare, reconcile, A/B import/export)
+MODULES += (extraction_dual,)
+
 
 def register_all(router):
     mods = MODULES + ((export,) if export is not None and hasattr(export, "register") else ())

@@ -1,0 +1,295 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "europepmc-lookup_kashangura",
+  "recorded_at": "2026-10-05T11:08:15Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "EXT_ID:31038197 AND SRC:MED (core): nyílt teljes szöveg, PMC6488980, licenc",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=1&query=EXT_ID%3A31038197+AND+SRC%3AMED&resultType=core",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 1,
+          "request": {
+            "queryString": "EXT_ID:31038197 AND SRC:MED",
+            "internalQuery": "EXT_ID:31038197 AND SRC:MED",
+            "resultType": "CORE",
+            "cursorMark": "*",
+            "pageSize": 1,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "31038197",
+                "source": "MED",
+                "pmid": "31038197",
+                "pmcid": "PMC6488980",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC6488980"
+                  ]
+                },
+                "doi": "10.1002/14651858.cd012915.pub2",
+                "title": "MVA85A vaccine to enhance BCG for preventing tuberculosis.",
+                "authorString": "Kashangura R, Jullien S, Garner P, Johnson S.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Kashangura R",
+                      "lastName": "Kashangura",
+                      "firstName": "Rufaro",
+                      "initials": "R",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Nhlangano Health Centre, Box 29, Nhlangano, Swaziland."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Jullien S",
+                      "lastName": "Jullien",
+                      "firstName": "Sophie",
+                      "initials": "S"
+                    },
+                    {
+                      "fullName": "Garner P",
+                      "lastName": "Garner",
+                      "firstName": "Paul",
+                      "initials": "P",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-0607-6941"
+                      }
+                    },
+                    {
+                      "fullName": "Johnson S",
+                      "lastName": "Johnson",
+                      "firstName": "Samuel",
+                      "initials": "S"
+                    }
+                  ]
+                },
+                "authorIdList": {
+                  "authorId": [
+                    {
+                      "type": "ORCID",
+                      "value": "0000-0002-0607-6941"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics",
+                    "supporting_data"
+                  ]
+                },
+                "journalInfo": {
+                  "volume": "4",
+                  "journalIssueId": 2799507,
+                  "dateOfPublication": "2019 Apr",
+                  "monthOfPublication": 4,
+                  "yearOfPublication": 2019,
+                  "journal": {
+                    "medlineAbbreviation": "Cochrane Database Syst Rev",
+                    "title": "The Cochrane database of systematic reviews",
+                    "essn": "1469-493X",
+                    "issn": "1469-493X",
+                    "isoabbreviation": "Cochrane Database Syst Rev",
+                    "nlmid": "100909747"
+                  },
+                  "printPublicationDate": "2019-04-01"
+                },
+                "pubYear": "2019",
+                "pageInfo": "CD012915",
+                "abstractText": "«redacted»",
+                "affiliation": "Nhlangano Health Centre, Box 29, Nhlangano, Swaziland.",
+                "publicationStatus": "epublish",
+                "language": "eng",
+                "pubModel": "Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Research Support, Non-U.S. Gov't",
+                    "Systematic Review",
+                    "systematic-review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "Y",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "HIV Seropositivity",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "CO",
+                            "qualifierName": "complications"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Vaccines, DNA"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis Vaccines"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Primary Prevention"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Randomized Controlled Trials as Topic"
+                    }
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Vaccines, DNA",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Tuberculosis Vaccines",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "MVA 85A",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "fullTextUrlList": {
+                  "fullTextUrl": [
+                    {
+                      "availability": "Free",
+                      "availabilityCode": "F",
+                      "documentStyle": "pdf",
+                      "site": "Unpaywall",
+                      "url": "https://europepmc.org/articles/pmc6488980?pdf=render"
+                    },
+                    {
+                      "availability": "Subscription required",
+                      "availabilityCode": "S",
+                      "documentStyle": "doi",
+                      "site": "DOI",
+                      "url": "https://doi.org/10.1002/14651858.CD012915.pub2"
+                    },
+                    {
+                      "availability": "Open access",
+                      "availabilityCode": "OA",
+                      "documentStyle": "html",
+                      "site": "Europe_PMC",
+                      "url": "https://europepmc.org/articles/PMC6488980"
+                    },
+                    {
+                      "availability": "Open access",
+                      "availabilityCode": "OA",
+                      "documentStyle": "pdf",
+                      "site": "Europe_PMC",
+                      "url": "https://europepmc.org/articles/PMC6488980?pdf=render"
+                    }
+                  ]
+                },
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 8,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasData": "Y",
+                "license": "cc by-nc",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "nct"
+                  ]
+                },
+                "dateOfCompletion": "2019-05-28",
+                "dateOfCreation": "2019-05-01",
+                "dateOfRevision": "2026-01-27",
+                "electronicPublicationDate": "2019-04-30",
+                "firstPublicationDate": "2019-04-30",
+                "firstIndexDate": "2019-05-01",
+                "fullTextReceivedDate": "2025-02-03",
+                "embargoDate": "2020-04-30",
+                "hasEvaluations": "N"
+              }
+            ]
+          }
+        },
+        "redactions": [
+          "abstractText"
+        ]
+      },
+      "delay_ms": null
+    }
+  ]
+}

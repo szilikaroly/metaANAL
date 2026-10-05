@@ -1,0 +1,73 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "europepmc-check",
+  "recorded_at": "2026-10-05T11:08:14Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "Europe PMC próbakérés: EXT_ID:8309034 AND SRC:MED (lite)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=1&query=EXT_ID%3A8309034+AND+SRC%3AMED&resultType=lite",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 1,
+          "request": {
+            "queryString": "EXT_ID:8309034 AND SRC:MED",
+            "internalQuery": "EXT_ID:8309034 AND SRC:MED",
+            "resultType": "LITE",
+            "cursorMark": "*",
+            "pageSize": 1,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "8309034",
+                "source": "MED",
+                "pmid": "8309034",
+                "doi": "10.1001/jama.1994.03510330076038",
+                "title": "Efficacy of BCG vaccine in the prevention of tuberculosis. Meta-analysis of the published literature.",
+                "authorString": "Colditz GA, Brewer TF, Berkey CS, Wilson ME, Burdick E, Fineberg HV, Mosteller F.",
+                "journalTitle": "JAMA",
+                "issue": "9",
+                "journalVolume": "271",
+                "pubYear": "1994",
+                "journalIssn": "0098-7484; 1538-3598; ",
+                "pageInfo": "698-702",
+                "pubType": "meta-analysis; research support, u.s. gov't, p.h.s.; journal article",
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 1263,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "1994-03-01",
+                "firstIndexDate": "2010-03-25"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

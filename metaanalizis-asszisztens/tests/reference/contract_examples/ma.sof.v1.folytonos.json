@@ -1,0 +1,165 @@
+{
+  "schema": "szk.ma.sof/v1",
+  "outcome_id": "o2",
+  "run_id": null,
+  "measure": "MD",
+  "title": {
+    "hu": "Az eredmények összefoglalása (SoF)",
+    "en": "Summary of findings"
+  },
+  "header": null,
+  "rows": [
+    {
+      "outcome_id": "o2",
+      "label": {
+        "hu": "Kórházi napok",
+        "en": "Length of stay"
+      },
+      "importance": null,
+      "k": 9,
+      "participants": 1158,
+      "design": "RCT",
+      "studies_text": {
+        "hu": "1158 (9 RCT)",
+        "en": "1158 (9 RCTs)"
+      },
+      "relative": null,
+      "effect": {
+        "kind": "mean_difference",
+        "measure": "MD",
+        "estimate": -15.1060274734783,
+        "ci_lower": -36.31874908256175,
+        "ci_upper": 6.106694135605153,
+        "level": 0.95,
+        "display_text": {
+          "hu": "-15.11 [-36.32; 6.11]",
+          "en": "−15.11 [−36.32; 6.11]"
+        },
+        "text": {
+          "hu": "MD 15.11 alacsonyabb (36.32 alacsonyabbtól 6.11 magasabbig)",
+          "en": "MD 15.11 lower (from 36.32 lower to 6.11 higher)"
+        }
+      },
+      "absolute": [],
+      "certainty": "low",
+      "certainty_symbols": "⊕⊕◯◯",
+      "certainty_text": {
+        "hu": "⊕⊕◯◯ alacsony",
+        "en": "⊕⊕◯◯ Low"
+      },
+      "statement": {
+        "hu": "Kórházi napok: a beavatkozás csökkentheti.",
+        "en": "The intervention may reduce Length of stay."
+      },
+      "footnotes": [],
+      "footnote_refs": {},
+      "sources": {
+        "participants": "totals.participants",
+        "k": "totals.k (primary.k)",
+        "relative": "back_transformed.estimate_ci",
+        "effect": "back_transformed.estimate_ci",
+        "absolute": "sof.absolute (grade_help.absolute_effect)",
+        "certainty": "paraméter"
+      },
+      "warnings": [],
+      "outcome_text": {
+        "hu": "Kórházi napok",
+        "en": "Length of stay"
+      },
+      "participants_text": {
+        "hu": "1158 (9 RCT)",
+        "en": "1158 (9 RCTs)"
+      },
+      "relative_text": {
+        "hu": "MD 15.11 alacsonyabb (36.32 alacsonyabbtól 6.11 magasabbig)",
+        "en": "MD 15.11 lower (from 36.32 lower to 6.11 higher)"
+      },
+      "assumed_risk_text": {
+        "hu": "—",
+        "en": "—"
+      },
+      "absolute_text": {
+        "hu": "—",
+        "en": "—"
+      },
+      "certainty_cell": {
+        "hu": "⊕⊕◯◯ alacsony",
+        "en": "⊕⊕◯◯ Low"
+      },
+      "comments_text": {
+        "hu": "Kórházi napok: a beavatkozás csökkentheti.",
+        "en": "The intervention may reduce Length of stay."
+      }
+    }
+  ],
+  "columns": [
+    {
+      "key": "outcome_text",
+      "label": {
+        "hu": "Kimenet",
+        "en": "Outcome"
+      }
+    },
+    {
+      "key": "participants_text",
+      "label": {
+        "hu": "Résztvevők (vizsgálatok)",
+        "en": "No. of participants (studies)"
+      }
+    },
+    {
+      "key": "relative_text",
+      "label": {
+        "hu": "Relatív hatás (95% CI)",
+        "en": "Relative effect (95% CI)"
+      }
+    },
+    {
+      "key": "assumed_risk_text",
+      "label": {
+        "hu": "Alapkockázat",
+        "en": "Assumed risk"
+      }
+    },
+    {
+      "key": "absolute_text",
+      "label": {
+        "hu": "Abszolút hatás (95% CI)",
+        "en": "Absolute effect (95% CI)"
+      }
+    },
+    {
+      "key": "certainty_cell",
+      "label": {
+        "hu": "A bizonyíték bizonyossága (GRADE)",
+        "en": "Certainty of the evidence (GRADE)"
+      }
+    },
+    {
+      "key": "comments_text",
+      "label": {
+        "hu": "Megjegyzés",
+        "en": "Comments"
+      }
+    }
+  ],
+  "footnotes": [],
+  "statement": {
+    "hu": "Kórházi napok: a beavatkozás csökkentheti.",
+    "en": "The intervention may reduce Length of stay."
+  },
+  "engine": {
+    "name": "metaelemzes",
+    "version": "0.1.0"
+  },
+  "notes": [],
+  "kb_refs": [
+    "GRADE-10",
+    "GRADE-10a",
+    "GRADE-10b",
+    "GRADE-11",
+    "D-S13-011",
+    "D-S13-012",
+    "D-S13-016"
+  ]
+}

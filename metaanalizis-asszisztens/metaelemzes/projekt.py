@@ -556,11 +556,55 @@ def grade_consistency(certainty, **domains):
             % (certainty, ("−%d" % down) if down else "0", ("+%d" % up) if up else "0", rng))
 
 
+# publikációs torzítás (11. döntés, 4. pont): a „suspected” (gyanított) előjeles lépés nélkül FELOLDATLAN — a rögzítés
+# tiltott, amíg ember 0-t vagy −1-et nem választ indoklással; a „strongly suspected” −1 (kézzel, indoklással −2)
+_PB_STRONG = re.compile(r"^\s*(?:strongly\s+suspected|er[őo]sen\s+gyan[ií]t(?:ott|hat[óo]))", re.I)
+_PB_SUSPECTED = re.compile(r"^\s*(?:suspected|gyan[ií]tott|gyan[ií]that[óo])", re.I)
+_PB_WORDS = re.compile(r"(?i)\b(?:strongly|suspected|er[őo]sen|gyan[ií]tott|gyan[ií]that[óo]|resolved|feloldva|"
+                       r"feloldott)\b")
+
+
+def publication_bias_check(text):
+    """A publikációs torzítás domén-szövegének ellenőrzése a 11/4. döntés szerint → (hiba, figyelmeztetés);
+    mindkettő szöveg vagy None. Hiba: a „suspected” / „gyanított” előjeles lépés nélkül (feloldatlan), vagy
+    előjeles lépéssel, de indoklás nélkül. Figyelmeztetés: „strongly suspected” lépés nélkül (−1 az alapérték)."""
+    if text is None or not str(text).strip():
+        return None, None
+    t = str(text)
+    step = _grade_step(t)
+    if step is None:
+        if _PB_STRONG.match(t):
+            return None, ("Publikációs torzítás: az „erősen gyanított” (strongly suspected) ítélet −1 lépés; írd elé "
+                          "az előjeles lépést (pl. \"−1 erősen gyanított: …\"), különben a bizonyosság-ellenőrzés nem "
+                          "tudja beszámítani.")
+        if _PB_SUSPECTED.match(t):
+            return ("Publikációs torzítás: a „gyanított” (suspected) ítélet feloldatlan — a rögzítés tiltott, amíg nem "
+                    "választasz 0-t vagy −1-et indoklással (11. döntés, 4. pont; X019). Példa: "
+                    "--publication-bias \"0 gyanított (feloldva): <miért nem minősítesz le>\" vagy "
+                    "\"−1 gyanított: <a konkrét jelek>\"."), None
+        return None, None
+    m = _SIGNED.match(t) or _ZERO.match(t)
+    rest = t[m.end():] if m else t
+    label = rest.lstrip(" :;,.-\u2013\u2014(")
+    strong = _PB_STRONG.match(label)
+    if (strong and step == -2) or (not strong and _PB_SUSPECTED.match(label)):
+        if len(re.findall(r"\w", _PB_WORDS.sub(" ", rest))) < 3:
+            return ("Publikációs torzítás: %s indoklás kell (pl. \"%s %s: <a jelek és a döntés oka>\")." % (
+                "a −2 lépéshez" if strong else "a „gyanított” ítélet feloldásához",
+                t[:m.end()].strip() if m else "0", "erősen gyanított" if strong else "gyanított")), None
+    return None, None
+
+
 def add_grade(project_dir, outcome, certainty, kb_db=None, strict=False, warnings=None, check_kb=True, actor=None,
               **kw):
     cols = ["k", "participants", "effect", "risk_of_bias", "inconsistency", "indirectness", "imprecision",
             "publication_bias", "upgrades", "rationale", "kb_refs", "kb_unverified", "actor"]
     kw["actor"] = check_actor(actor)
+    pb_error, pb_warning = publication_bias_check(kw.get("publication_bias"))
+    if pb_error:
+        raise ValueError(pb_error)
+    if pb_warning and warnings is not None:
+        warnings.append(pb_warning)
     if warnings is not None:
         msg = grade_consistency(certainty, **{d: kw.get(d) for d in _GRADE_DOWN + ("upgrades",)})
         if msg:
@@ -575,6 +619,543 @@ def add_grade(project_dir, outcome, certainty, kb_db=None, strict=False, warning
         return cur.lastrowid
     finally:
         con.close()
+
+
+# ------------------------------------------------------------------ GRADE-tár (szk.ma.grade/v1; terv 4.14, E10)
+# Kimenetenként egy JSON (06_kezirat/grade/<kimenet>.grade.json): az emberi ítélet doménenként (rating, step,
+# rationale) a motor tanácsa (advisory, suggestion — grade_help.advice) mellett. A naplóbejegyzés (add_grade) marad
+# a rögzítés: a record_grade_doc előjeles lépés-szövegekkel hívja, így a grade_consistency változatlanul ellenőriz.
+GRADE_SCHEMA = "szk.ma.grade/v1"
+GRADE_DIR = "06_kezirat/grade"
+GRADE_DOMAINS = _GRADE_DOWN
+GRADE_LEVELS = _GRADE_LEVELS
+GRADE_RATINGS = {"not serious": 0, "serious": -1, "very serious": -2}
+PUBLICATION_BIAS_RATINGS = ("undetected", "suspected", "strongly suspected")
+PUBLICATION_BIAS_STATUSES = ("open", "unresolved", "resolved")
+GRADE_IMPORTANCE = ("critical", "important", "limited", "not important")
+GRADE_UPGRADES = ("large_effect", "dose_response", "opposing_confounding")
+GRADE_UPGRADE_STEPS = {"large_effect": (1, 2), "dose_response": (1,), "opposing_confounding": (1,)}
+GRADE_CERTAINTY_SOURCES = ("computed", "human")
+GRADE_DOC_STATUSES = ("draft", "recorded")
+GRADE_ORIGINS = ("human", "ai_draft")
+GRADE_DOMAIN_LABELS = {"risk_of_bias": ("Torzítási kockázat", "Risk of bias"),
+                       "inconsistency": ("Inkonzisztencia", "Inconsistency"),
+                       "indirectness": ("Indirektség", "Indirectness"),
+                       "imprecision": ("Pontatlanság", "Imprecision"),
+                       "publication_bias": ("Publikációs torzítás", "Publication bias")}
+GRADE_RATING_LABELS = {"not serious": ("nem súlyos", "not serious"), "serious": ("súlyos", "serious"),
+                       "very serious": ("nagyon súlyos", "very serious"), "undetected": ("nem észlelt", "undetected"),
+                       "suspected": ("gyanított", "suspected"),
+                       "strongly suspected": ("erősen gyanított", "strongly suspected")}
+_GRADE_RUN_ID = re.compile(r"^\d{8}T\d{6}Z-[0-9a-f]{6}$")
+_GRADE_DEFAULT_KB = "D-S13-002"
+
+
+def _grade_utc_now():
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _grade_blank(v):
+    return v is None or (isinstance(v, str) and not v.strip())
+
+
+def _grade_is_int(v):
+    return isinstance(v, int) and not isinstance(v, bool)
+
+
+def grade_doc_path(project_dir, outcome_id):
+    """A kimenet GRADE-fájlja: <projekt>/06_kezirat/grade/<kimenet>.grade.json."""
+    if not isinstance(outcome_id, str) or not _OUTCOME_ID.match(outcome_id):
+        raise ValueError("érvénytelen kimenet-azonosító: %r (betű, szám, '_', '.', '-'; legfeljebb 64 karakter)"
+                         % (outcome_id,))
+    return os.path.join(project_dir, *GRADE_DIR.split("/"), "%s.grade.json" % outcome_id)
+
+
+def _check_main_domain(name, dom, errors):
+    rating, step = dom.get("rating"), dom.get("step")
+    if rating is not None and rating not in GRADE_RATINGS:
+        errors.append("domains.%s.rating: %s vagy null lehet (kapott: %r)" % (name, " | ".join(GRADE_RATINGS), rating))
+        return
+    if step is not None and not (_grade_is_int(step) and step in (0, -1, -2)):
+        errors.append("domains.%s.step: 0, -1, -2 vagy null lehet (kapott: %r)" % (name, step))
+        return
+    if rating is None:
+        if step is not None:
+            errors.append("domains.%s: lépés ítélet nélkül (rating: null, step: %r)" % (name, step))
+        dom["step"] = None
+        return
+    want = GRADE_RATINGS[rating]
+    if step is None:
+        dom["step"] = want
+    elif step != want:
+        errors.append("domains.%s: a(z) „%s” ítélethez %s lépés tartozik (kapott: %s)" % (
+            name, rating, _signed_step(want), _signed_step(step)))
+
+
+def _check_publication_bias(dom, errors):
+    rating, step, status = dom.get("rating"), dom.get("step"), dom.get("status")
+    where = "domains.publication_bias"
+    if rating is not None and rating not in PUBLICATION_BIAS_RATINGS:
+        errors.append("%s.rating: %s vagy null lehet (kapott: %r)" % (
+            where, " | ".join(PUBLICATION_BIAS_RATINGS), rating))
+        return
+    if step is not None and not (_grade_is_int(step) and step in (0, -1, -2)):
+        errors.append("%s.step: 0, -1, -2 vagy null lehet (kapott: %r)" % (where, step))
+        return
+    if status is not None and status not in PUBLICATION_BIAS_STATUSES:
+        errors.append("%s.status: %s lehet (kapott: %r)" % (where, " | ".join(PUBLICATION_BIAS_STATUSES), status))
+        return
+    rationale = not _grade_blank(dom.get("rationale"))
+    if rating is None:
+        want_status = "open"
+        if step is not None:
+            errors.append("%s: lépés ítélet nélkül (rating: null, step: %r)" % (where, step))
+    elif rating == "undetected":
+        want_status = "resolved"
+        if step is None:
+            dom["step"] = step = 0
+        if step != 0:
+            errors.append("%s: a „nem észlelt” (undetected) ítélethez 0 lépés tartozik (kapott: %d)" % (where, step))
+    elif rating == "strongly suspected":
+        want_status = "resolved"
+        if step is None:
+            dom["step"] = step = -1
+        if step == 0:
+            errors.append("%s: az „erősen gyanított” (strongly suspected) ítélet −1 lépés (indoklással −2)" % where)
+        elif step == -2 and not rationale:
+            errors.append("%s: a −2 lépéshez indoklás kell (rationale)" % where)
+    else:                                   # suspected: 11. döntés, 4. pont
+        if step is None:
+            want_status = "unresolved"
+        elif step == -2:
+            want_status = "resolved"
+            errors.append("%s: a „gyanított” (suspected) ítélet feloldása 0 vagy −1 lehet (kapott: −2; az erősebb "
+                          "jelhez válaszd az „erősen gyanított” ítéletet)" % where)
+        else:
+            want_status = "resolved"
+            if not rationale:
+                errors.append("%s: a „gyanított” (suspected) ítélet feloldásához (0 vagy −1) indoklás kell — "
+                              "indoklás nélkül feloldatlan marad (step: null, status: unresolved)" % where)
+    if status == "resolved" and want_status == "unresolved":
+        errors.append("%s.status: a „gyanított” (suspected) ítélet lépés (0 / −1) és indoklás nélkül nem lehet "
+                      "„resolved” — feloldatlan (11. döntés, 4. pont)" % where)
+    dom["status"] = want_status             # a státusz származtatott: az ítéletből és a lépésből
+
+
+def validate_grade_doc(doc):
+    """A szk.ma.grade/v1 dokumentum ellenőrzése és normalizálása → (normalizált másolat, hibák).
+    Kötelező: outcome_id; a hiányzó run_id / start / certainty null, a hiányzó domén {rating: null, step: null}, a
+    hiányzó felminősítés false. A rating és a step összeillik (not serious 0, serious −1, very serious −2; a
+    hiányzó step a ratingből jön). Publikációs torzítás: undetected 0; strongly suspected −1 (−2 csak indoklással);
+    suspected lépés nélkül → status 'unresolved' (feloldatlan), 0 / −1 csak indoklással ('resolved'); ítélet
+    nélkül 'open'. Az ismeretlen kulcsok megmaradnak."""
+    if not isinstance(doc, dict):
+        return doc, ["a gyökér objektum legyen"]
+    try:
+        d = json.loads(json.dumps(doc, ensure_ascii=False, allow_nan=False))
+    except (TypeError, ValueError):
+        return doc, ["a tartalom nem JSON-képes (vagy NaN/végtelen számot tartalmaz)"]
+    errors = []
+    if d.get("schema", GRADE_SCHEMA) != GRADE_SCHEMA:
+        errors.append("schema: csak %s lehet (kapott: %r)" % (GRADE_SCHEMA, d.get("schema")))
+    d["schema"] = GRADE_SCHEMA
+    oid = d.get("outcome_id")
+    if not isinstance(oid, str) or not _OUTCOME_ID.match(oid):
+        errors.append("outcome_id: kötelező; betű, szám, '_', '.', '-' (legfeljebb 64 karakter): %r" % (oid,))
+    for key in ("run_id", "start", "certainty"):
+        d.setdefault(key, None)
+    if d["run_id"] is not None and not (isinstance(d["run_id"], str) and _GRADE_RUN_ID.match(d["run_id"])):
+        errors.append("run_id: commit-futás azonosítója (20261004T211200Z-a1f3c2) vagy null: %r" % (d["run_id"],))
+    if d["start"] not in ("high", "low", None):
+        errors.append("start: high, low vagy null lehet (kapott: %r)" % (d["start"],))
+    if d.get("importance") not in GRADE_IMPORTANCE + (None,):
+        errors.append("importance: %s vagy null lehet (kapott: %r)" % (
+            " | ".join(GRADE_IMPORTANCE), d.get("importance")))
+    if d["certainty"] not in _GRADE_LEVELS + (None,):
+        errors.append("certainty: %s vagy null lehet (kapott: %r)" % (" | ".join(_GRADE_LEVELS), d["certainty"]))
+    d.setdefault("status", "draft")
+    if d["status"] not in GRADE_DOC_STATUSES:
+        errors.append("status: %s lehet (kapott: %r)" % (" | ".join(GRADE_DOC_STATUSES), d["status"]))
+    d.setdefault("origin", "human")
+    if d["origin"] not in GRADE_ORIGINS:
+        errors.append("origin: %s lehet (kapott: %r)" % (" | ".join(GRADE_ORIGINS), d["origin"]))
+    for key in ("start_reason", "rationale", "consistency_warning", "upgrades_rationale", "actor", "approved_by",
+                "updated"):
+        if d.get(key) is not None and not isinstance(d[key], str):
+            errors.append("%s: szöveg (vagy null) legyen" % key)
+    jid = d.get("journal_id")
+    if jid is not None and not (_grade_is_int(jid) and jid >= 1):
+        errors.append("journal_id: pozitív egész vagy null legyen")
+    refs = d.get("kb_refs")
+    if refs is not None and not (isinstance(refs, list) and all(isinstance(x, str) and x.strip() for x in refs)):
+        errors.append("kb_refs: nem üres szövegek listája legyen")
+    doms = d.get("domains")
+    if doms is None:
+        doms = d["domains"] = {}
+    if not isinstance(doms, dict):
+        errors.append("domains: objektum legyen")
+    else:
+        for name in GRADE_DOMAINS:
+            dom = doms.get(name)
+            if dom is None:
+                dom = doms[name] = {"rating": None, "step": None}
+            if not isinstance(dom, dict):
+                errors.append("domains.%s: objektum legyen" % name)
+                continue
+            dom.setdefault("rating", None)
+            dom.setdefault("step", None)
+            if dom.get("rationale") is not None and not isinstance(dom["rationale"], str):
+                errors.append("domains.%s.rationale: szöveg (vagy null) legyen" % name)
+                continue
+            if name == "publication_bias":
+                _check_publication_bias(dom, errors)
+            else:
+                _check_main_domain(name, dom, errors)
+    ups = d.get("upgrades")
+    if ups is None:
+        ups = d["upgrades"] = {}
+    if not isinstance(ups, dict):
+        errors.append("upgrades: objektum legyen")
+    else:
+        for k in GRADE_UPGRADES:
+            ups.setdefault(k, False)
+        for k, v in ups.items():
+            if not (isinstance(v, bool) or (_grade_is_int(v) and 0 <= v <= max(GRADE_UPGRADE_STEPS.get(k, (2,))))):
+                errors.append("upgrades.%s: true / false vagy 0–%d közötti egész legyen (kapott: %r)"
+                              % (k, max(GRADE_UPGRADE_STEPS.get(k, (2,))), v))
+    det = d.get("upgrade_details")
+    if det is not None:
+        if not isinstance(det, dict):
+            errors.append("upgrade_details: objektum (vagy null) legyen")
+        else:
+            for k, info in det.items():
+                if info is None:
+                    continue
+                if not isinstance(info, dict):
+                    errors.append("upgrade_details.%s: objektum (vagy null) legyen" % k)
+                    continue
+                st = info.get("step")
+                if st is not None and not (_grade_is_int(st) and st in GRADE_UPGRADE_STEPS.get(k, (1, 2))):
+                    errors.append("upgrade_details.%s.step: %s lehet (kapott: %r)" % (
+                        k, " vagy ".join("+%d" % x for x in GRADE_UPGRADE_STEPS.get(k, (1, 2))), st))
+                if info.get("rationale") is not None and not isinstance(info["rationale"], str):
+                    errors.append("upgrade_details.%s.rationale: szöveg (vagy null) legyen" % k)
+    if d.get("certainty_source") not in GRADE_CERTAINTY_SOURCES + (None,):
+        errors.append("certainty_source: %s vagy null lehet" % " | ".join(GRADE_CERTAINTY_SOURCES))
+    if d.get("mid_text") is not None and not isinstance(d["mid_text"], str):
+        errors.append("mid_text: szöveg (vagy null) legyen")
+    return d, errors
+
+
+def grade_upgrade_steps(doc):
+    """{felminősítés: lépés} a bekapcsolt felminősítésekre: true → az upgrade_details lépése (alapból +1), egész →
+    maga az érték (0 = nincs)."""
+    ups = doc.get("upgrades") if isinstance(doc.get("upgrades"), dict) else {}
+    det = doc.get("upgrade_details") if isinstance(doc.get("upgrade_details"), dict) else {}
+    out = {}
+    for k, v in ups.items():
+        if v is True:
+            st = (det.get(k) or {}).get("step") if isinstance(det.get(k), dict) else None
+            out[k] = st if _grade_is_int(st) and st > 0 else 1
+        elif _grade_is_int(v) and v > 0:
+            out[k] = v
+    return out
+
+
+def _upgrade_total(doc):
+    return sum(grade_upgrade_steps(doc).values())
+
+
+def grade_doc_certainty(doc):
+    """A kiindulásból és az előjeles lépésekből adódó szint (kiindulás − Σ|lépés| + felminősítés, 'very low'–'high'
+    közé vágva); None, ha a kiindulás vagy bármely domén lépése hiányzik (pl. feloldatlan publikációs torzítás).
+    Csak tájékoztató előtöltés: a végső bizonyosság emberi ítélet (GRADE-09)."""
+    if doc.get("start") not in ("high", "low"):
+        return None
+    doms = doc.get("domains") or {}
+    steps = [(doms.get(d) or {}).get("step") for d in GRADE_DOMAINS]
+    if any(s is None for s in steps):
+        return None
+    idx = (3 if doc["start"] == "high" else 1) - sum(abs(s) for s in steps) + _upgrade_total(doc)
+    return _GRADE_LEVELS[max(0, min(3, idx))]
+
+
+def grade_doc_open(doc):
+    """{'undecided': [ítélet nélküli domének], 'unresolved': ['publication_bias'] ha a „suspected” feloldatlan}."""
+    doms = doc.get("domains") or {}
+    undecided = [d for d in GRADE_DOMAINS if (doms.get(d) or {}).get("rating") is None]
+    pb = doms.get("publication_bias") or {}
+    unresolved = ["publication_bias"] if pb.get("rating") == "suspected" and pb.get("step") is None else []
+    return {"undecided": undecided, "unresolved": unresolved}
+
+
+def _signed_step(step):
+    return "0" if step == 0 else "%s%d" % ("−" if step < 0 else "+", abs(step))
+
+
+def grade_doc_texts(doc):
+    """Előjeles lépés-szövegek a projekt.add_grade-hez: {domén: '−1 serious: <indoklás>', …, 'upgrades': '+1
+    large_effect' | '0'}; ítélet nélküli doménnél None. A feloldott „suspected”: '0 suspected (resolved): …'."""
+    doms = doc.get("domains") or {}
+    out = {}
+    for name in GRADE_DOMAINS:
+        dom = doms.get(name) or {}
+        if dom.get("step") is None:
+            out[name] = None
+            continue
+        label = dom.get("rating") or ""
+        if name == "publication_bias" and label == "suspected":
+            label = "suspected (resolved)"
+        txt = "%s %s" % (_signed_step(dom["step"]), label)
+        if not _grade_blank(dom.get("rationale")):
+            txt += ": " + dom["rationale"].strip()
+        out[name] = txt
+    steps = grade_upgrade_steps(doc)
+    det = doc.get("upgrade_details") if isinstance(doc.get("upgrade_details"), dict) else {}
+    parts = []
+    for k, st in steps.items():
+        why = (det.get(k) or {}).get("rationale") if isinstance(det.get(k), dict) else None
+        parts.append("%s (+%d)%s" % (k, st, (": " + why.strip()) if not _grade_blank(why) else ""))
+    total = sum(steps.values())
+    up = "+%d %s" % (total, "; ".join(parts)) if total else "0"
+    if total and not _grade_blank(doc.get("upgrades_rationale")):
+        up += " — " + doc["upgrades_rationale"].strip()
+    out["upgrades"] = up
+    return out
+
+
+def _grade_flag(code, hu, en, domain=None):
+    return {"code": code, "domain": domain, "text": {"hu": hu, "en": en}}
+
+
+def grade_doc_warnings(doc):
+    """Figyelmeztetések (nem tiltások): indoklás nélküli le- vagy felminősítés; a motor-tanácsnál enyhébb ítélet
+    indoklás nélkül (3.5.12: „a tanács leminősítést jelez; a »not serious« ítélethez indoklás kell”); felminősítés
+    leminősítés mellett (D-S13-009). → [{code, domain, text {hu, en}}]"""
+    out = []
+    doms = doc.get("domains") or {}
+    for name in GRADE_DOMAINS:
+        dom = doms.get(name) or {}
+        step, rating = dom.get("step"), dom.get("rating")
+        sug = dom.get("suggestion") if isinstance(dom.get("suggestion"), dict) else {}
+        has_rationale = not _grade_blank(dom.get("rationale"))
+        hu_d, en_d = GRADE_DOMAIN_LABELS[name]
+        if step is not None and step != 0 and not has_rationale:
+            st = _signed_step(step)
+            out.append(_grade_flag("rationale_missing",
+                                   "%s: a %s lépést lábjegyzetben indokolni kell (GRADE-00)." % (hu_d, st),
+                                   "%s: the %s step needs a footnote rationale (GRADE-00)." % (en_d, st), name))
+        sstep = sug.get("step")
+        if step is not None and _grade_is_int(sstep) and step > sstep and not has_rationale:
+            hu_r, en_r = GRADE_RATING_LABELS.get(rating, (rating, rating))
+            st = _signed_step(sstep)
+            out.append(_grade_flag(
+                "advice_downgrade_unexplained",
+                "%s: a motor-tanács leminősítést jelez (%s); a „%s” ítélethez indoklás kell." % (hu_d, st, hu_r),
+                "%s: the engine advice suggests rating down (%s); the '%s' judgement needs a rationale."
+                % (en_d, st, en_r), name))
+    det = doc.get("upgrade_details") if isinstance(doc.get("upgrade_details"), dict) else {}
+    for k, st in grade_upgrade_steps(doc).items():
+        why = (det.get(k) or {}).get("rationale") if isinstance(det.get(k), dict) else None
+        if _grade_blank(why) and _grade_blank(doc.get("upgrades_rationale")):
+            out.append(_grade_flag("rationale_missing", "Felminősítés (%s, +%d): indoklás kell (GRADE-08)." % (k, st),
+                                   "Rating up (%s, +%d): a rationale is needed (GRADE-08)." % (k, st), None))
+    steps = [(doms.get(d) or {}).get("step") for d in GRADE_DOMAINS]
+    if _upgrade_total(doc) and any(isinstance(x, int) and x < 0 for x in steps):
+        out.append(_grade_flag("upgrade_with_downgrade",
+                               "Felminősítés leminősítés mellett: általában csak akkor indokolt, ha nincs érdemi "
+                               "leminősítési ok (D-S13-009) — indokold.",
+                               "Rating up despite rating down: usually justified only when there is no important "
+                               "reason to rate down (D-S13-009) — explain.", None))
+    return out
+
+
+def grade_doc_consistency(doc):
+    """A megadott bizonyosság és a lépések összhangja → figyelmeztető szöveg vagy None. Ha a kiindulás és minden
+    lépés ismert, a pontosan adódó szinttel vet össze; különben a grade_consistency (kiindulás-független)
+    ellenőrzése az előjeles lépés-szövegeken."""
+    cert = doc.get("certainty")
+    if cert is None:
+        return None
+    want = grade_doc_certainty(doc)
+    if want is not None:
+        if want == cert:
+            return None
+        return ("A bizonyosság ('%s') nem egyezik a kiindulásból (%s) és a lépésekből adódó szinttel ('%s'): "
+                "ellenőrizd a domének értékét, vagy indokold a globális ítéletet (GRADE-09)."
+                % (cert, "magas" if doc.get("start") == "high" else "alacsony", want))
+    texts = grade_doc_texts(doc)
+    return grade_consistency(cert, **{d: texts.get(d) for d in GRADE_DOMAINS + ("upgrades",)})
+
+
+def _grade_write_json(path, obj):
+    text = json.dumps(obj, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
+    folder = os.path.dirname(path)
+    os.makedirs(folder, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".grade.", suffix=".tmp", dir=folder)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def _grade_doc_error(errors):
+    return ValueError("Érvénytelen GRADE-dokumentum (%s): %s." % (GRADE_SCHEMA, "; ".join(errors)))
+
+
+def _human_certainty(doc):
+    """Az ember adta-e meg a bizonyosságot (nem a korábbi mentés számolta)."""
+    return isinstance(doc, dict) and doc.get("certainty") is not None and doc.get("certainty_source") != "computed"
+
+
+def _settle_certainty(norm, given):
+    """A bizonyosság a mentéskor: feloldatlan / hiányzó domén vagy kiindulás mellett null (4.14: „a certainty addig
+    null”); különben a megadott (emberi, given=True) érték marad, vagy — ha nincs megadva — a lépésekből adódó szint
+    (certainty_source: 'computed'). Az eltérést a grade_doc_consistency jelzi."""
+    computed = grade_doc_certainty(norm)
+    if computed is None:
+        norm["certainty"] = None
+        norm["certainty_source"] = None
+    elif norm.get("certainty") is None or not given:
+        norm["certainty"] = computed
+        norm["certainty_source"] = "computed"
+    else:
+        norm["certainty_source"] = "human"
+
+
+def save_grade_doc(project_dir, doc, actor=None):
+    """A kimenet GRADE-dokumentumának mentése piszkozatként (status 'draft'; feloldatlan publikációs torzítással is
+    menthető — csak a rögzítés tiltott). A bizonyosság: feloldatlan / hiányzó domén mellett null, különben a megadott
+    (emberi) érték, vagy ha nincs megadva, a kiindulásból és a lépésekből adódó szint (_settle_certainty). Kiszámolja a
+    consistency_warning és az override_warnings mezőt, beírja az actor-t és az 'updated' időbélyeget.
+    → a mentett (normalizált) dokumentum. Érvénytelen tartalom → ValueError."""
+    norm, errors = validate_grade_doc(doc)
+    if errors:
+        raise _grade_doc_error(errors)
+    actor = check_actor(actor)
+    norm["status"] = "draft"
+    _settle_certainty(norm, _human_certainty(doc))
+    norm["consistency_warning"] = grade_doc_consistency(norm)
+    norm["override_warnings"] = grade_doc_warnings(norm)
+    if actor is not None:
+        norm["actor"] = actor
+    norm["updated"] = _grade_utc_now()
+    _grade_write_json(grade_doc_path(project_dir, norm["outcome_id"]), norm)
+    return norm
+
+
+def load_grade_doc(project_dir, outcome_id):
+    """A kimenet GRADE-dokumentuma (normalizálva) vagy None, ha nincs. Hibás tartalom → ValueError."""
+    p = grade_doc_path(project_dir, outcome_id)
+    try:
+        with open(p, "rb") as fh:
+            raw = fh.read()
+    except FileNotFoundError:
+        return None
+    try:
+        doc = json.loads(raw.decode("utf-8-sig"))
+    except ValueError as exc:
+        raise ValueError("Érvénytelen %s: nem érvényes JSON (%s)." % (p, exc)) from None
+    norm, errors = validate_grade_doc(doc)
+    if errors:
+        raise _grade_doc_error(errors)
+    return norm
+
+
+def list_grade_docs(project_dir):
+    """A projekt GRADE-dokumentumai: [{outcome_id, path (projekt-relatív), doc (normalizált; hibánál a nyers vagy
+    None), errors}] fájlnév szerint rendezve."""
+    base = os.path.join(project_dir, *GRADE_DIR.split("/"))
+    out = []
+    if not os.path.isdir(base):
+        return out
+    for fn in sorted(os.listdir(base)):
+        if not fn.endswith(".grade.json") or fn.startswith("."):
+            continue
+        rel = "%s/%s" % (GRADE_DIR, fn)
+        oid = fn[:-len(".grade.json")]
+        try:
+            with open(os.path.join(base, fn), "rb") as fh:
+                doc = json.loads(fh.read().decode("utf-8-sig"))
+        except (OSError, ValueError) as exc:
+            out.append({"outcome_id": oid, "path": rel, "doc": None, "errors": ["nem olvasható JSON: %s" % exc]})
+            continue
+        norm, errors = validate_grade_doc(doc)
+        if not errors and norm.get("outcome_id") != oid:
+            errors = ["a fájlnév (%s) és az outcome_id (%s) eltér" % (oid, norm.get("outcome_id"))]
+        out.append({"outcome_id": oid, "path": rel, "doc": doc if errors else norm, "errors": errors})
+    return out
+
+
+def record_grade_doc(project_dir, doc, actor=None, kb_db=None, strict=False, check_kb=True):
+    """A GRADE-ítélet rögzítése: a projektnaplóba (add_grade, előjeles lépés-szövegekkel, k / résztvevők / hatás a
+    dokumentum run_summary-jéből) és a 06_kezirat/grade/<kimenet>.grade.json-ba (status 'recorded', journal_id).
+    Tiltott (ValueError, minden okkal): érvénytelen dokumentum; commit-futás (run_id) nélkül; kiindulás nélkül;
+    ítélet nélküli domén; feloldatlan publikációs torzítás („suspected” 0 / −1 döntés nélkül; 11. döntés, 4. pont);
+    bizonyosság nélkül; jóvá nem hagyott AI-vázlat (origin 'ai_draft', approved_by nélkül; 11. döntés, 6. pont).
+    → {id, doc, warnings, path}"""
+    norm, errors = validate_grade_doc(doc)
+    if errors:
+        raise _grade_doc_error(errors)
+    actor = check_actor(actor)
+    _settle_certainty(norm, _human_certainty(doc))
+    problems = []
+    if norm.get("run_id") is None:
+        problems.append("nincs commit-futás (run_id): GRADE csak rögzített futásra hivatkozhat")
+    if norm.get("start") is None:
+        problems.append("hiányzik a kiindulás (start: high — RCT; low — megfigyeléses)")
+    state = grade_doc_open(norm)
+    if state["undecided"]:
+        problems.append("ítélet nélküli domén: %s" % ", ".join(state["undecided"]))
+    if state["unresolved"]:
+        problems.append("a publikációs torzítás „gyanított” (suspected) ítélete feloldatlan: válassz 0-t vagy −1-et "
+                        "indoklással (11. döntés, 4. pont; X019)")
+    if norm.get("certainty") is None:
+        problems.append("hiányzik a bizonyosság (certainty)")
+    if norm.get("origin") == "ai_draft" and _grade_blank(norm.get("approved_by")):
+        problems.append("AI-vázlat emberi jóváhagyás nélkül (approved_by): az AI-vázlat nem rögzíthető "
+                        "(11. döntés, 6. pont)")
+    if problems:
+        raise ValueError("A GRADE-ítélet nem rögzíthető: %s." % "; ".join(problems))
+    texts = grade_doc_texts(norm)
+    summ = norm.get("run_summary") if isinstance(norm.get("run_summary"), dict) else {}
+    part = summ.get("participants")
+    if isinstance(part, float) and part.is_integer():
+        part = int(part)
+    effect = summ.get("effect_text")
+    effect = effect.get("hu") if isinstance(effect, dict) else effect
+    reason = "" if _grade_blank(norm.get("start_reason")) else " (%s)" % norm["start_reason"].strip()
+    lead = "Kiindulás: %s%s." % ("magas" if norm["start"] == "high" else "alacsony", reason)
+    rationale = lead + ((" " + norm["rationale"].strip()) if not _grade_blank(norm.get("rationale")) else "")
+    refs = norm.get("kb_refs") or [_GRADE_DEFAULT_KB]
+    warns = []
+    rid = add_grade(project_dir, norm["outcome_id"], norm["certainty"], kb_db=kb_db, strict=strict, warnings=warns,
+                    check_kb=check_kb, actor=actor, k=summ.get("k"), participants=part, effect=effect,
+                    risk_of_bias=texts["risk_of_bias"], inconsistency=texts["inconsistency"],
+                    indirectness=texts["indirectness"], imprecision=texts["imprecision"],
+                    publication_bias=texts["publication_bias"], upgrades=texts["upgrades"], rationale=rationale,
+                    kb_refs=",".join(refs))
+    norm["status"] = "recorded"
+    norm["journal_id"] = rid
+    norm["consistency_warning"] = grade_doc_consistency(norm)
+    norm["override_warnings"] = grade_doc_warnings(norm)
+    if actor is not None:
+        norm["actor"] = actor
+    norm["updated"] = _grade_utc_now()
+    path = grade_doc_path(project_dir, norm["outcome_id"])
+    _grade_write_json(path, norm)
+    if norm["consistency_warning"] and norm["consistency_warning"] not in warns:
+        warns.append(norm["consistency_warning"])
+    warns += [w["text"]["hu"] for w in norm["override_warnings"]]
+    return {"id": rid, "doc": norm, "warnings": warns, "path": "%s/%s.grade.json" % (GRADE_DIR, norm["outcome_id"])}
 
 
 def log_run(project_dir, command, data_path, outdir, engine_version, summary=None, actor=None):

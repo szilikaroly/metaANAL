@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.overlap:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.overlap/v1 — hivatkozási mátrix és CCA (01_kereses/headhunter/overlap.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "model",
+    "generated",
+    "level",
+    "reviews",
+    "rows",
+    "N",
+    "r",
+    "c",
+    "cca_pct",
+    "band"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.overlap/v1"
+    },
+    "model": {
+      "const": "szk.ma.headhunter/v1"
+    },
+    "generated": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "level": {
+      "enum": [
+        "study",
+        "report"
+      ],
+      "description": "report: Pieper-féle eredeti (közlemény-szintű); study: társközlemények összevonva"
+    },
+    "scope": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "pl. 'összes' vagy egy kimenet neve"
+    },
+    "reviews": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+      },
+      "description": "oszlopok sorrendje"
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "in"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "in": {
+            "type": "array",
+            "items": {
+              "type": "boolean"
+            }
+          },
+          "index_review": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "N": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "r": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "c": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cca_pct": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "CCA = (N − r) / (r·c − r) × 100; c < 2 vagy r = 0 esetén null"
+    },
+    "band": {
+      "enum": [
+        "slight",
+        "moderate",
+        "high",
+        "very_high",
+        null
+      ]
+    },
+    "pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "a",
+          "b",
+          "shared",
+          "cca_pct",
+          "band"
+        ],
+        "properties": {
+          "a": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+          },
+          "b": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+          },
+          "n_a": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "n_b": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "shared": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "cca_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "band": {
+            "enum": [
+              "slight",
+              "moderate",
+              "high",
+              "very_high",
+              null
+            ]
+          }
+        }
+      }
+    },
+    "wcca_pct": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "opcionális, tájékoztató (Ying 2025); csak ellenőrzött mintaelemszámmal"
+    },
+    "notes": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/explain"
+    }
+  }
+}

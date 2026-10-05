@@ -1,0 +1,33 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "europepmc-fulltext_not_oa_500",
+  "recorded_at": "2026-10-05T11:08:16Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "fullTextXML nem nyílt cikkre (PMC8555740): HTTP 500 = nincs nyílt teljes szöveg",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8555740/fullTextXML",
+        "headers": {
+          "accept": "application/xml, text/xml;q=0.9, */*;q=0.1"
+        }
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "timestamp": "2026-10-05T11:08:16.386+00:00",
+          "status": 500,
+          "error": "Internal Server Error",
+          "path": "/europepmc/webservices/rest/PMC8555740/fullTextXML"
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

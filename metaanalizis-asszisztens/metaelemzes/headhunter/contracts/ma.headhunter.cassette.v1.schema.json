@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.cassette:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.cassette/v1 — rögzített HTTP-válaszok offline tesztekhez (tests/reference/headhunter/cassettes/*.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "name",
+    "recorded_at",
+    "origin",
+    "interactions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.cassette/v1"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_.-]{2,80}$"
+    },
+    "recorded_at": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "origin": {
+      "enum": [
+        "recorded",
+        "hand_made"
+      ],
+      "description": "hand_made: dokumentáció alapján kézzel írt (pl. Scopus innen nem elérhető)"
+    },
+    "unverified_live": {
+      "type": "boolean",
+      "description": "true: élő szolgáltatással még nem igazolt (Scopus-fixture-ök)"
+    },
+    "license_note": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "teljes szövegből vett kivonatnál kötelező (pl. 'CC BY, csak tábla + hivatkozások')"
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "interactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "request",
+          "response"
+        ],
+        "properties": {
+          "request": {
+            "type": "object",
+            "required": [
+              "method",
+              "url"
+            ],
+            "properties": {
+              "method": {
+                "enum": [
+                  "GET",
+                  "POST",
+                  "HEAD"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "description": "redaktált URL — api_key, apiKey, mailto, email, insttoken paraméter nélkül"
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Authorization, X-ELS-APIKey, X-ELS-Insttoken, Cookie TILOS"
+              },
+              "body": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "response": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "type": "integer",
+                "minimum": 100,
+                "maximum": 599
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Set-Cookie és követő/riport-fejlécek nélkül"
+              },
+              "body_text": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "body_json": {},
+              "redactions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "mit vágott ki a rögzítő (pl. 'AbstractText', 'body/sec')"
+              },
+              "truncated": {
+                "type": "boolean"
+              }
+            }
+          },
+          "delay_ms": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      },
+      "minItems": 1
+    }
+  }
+}

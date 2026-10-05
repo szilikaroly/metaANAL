@@ -1,0 +1,65 @@
+/* grade.css — GRADE / SoF (3.5.12) és Protokoll (1) képernyők. Csak tokenek; a szín sosem egyedüli jelölés. */
+.gr-head { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-4); align-items: flex-end; margin-bottom: var(--sp-2); }
+.gr-outsel { flex: 0 1 260px; }
+.gr-meta { margin: 0; flex: 1 1 420px; }
+.gr-warnline { margin: var(--sp-1) 0; }
+.gr-intro { max-width: 80ch; }
+.gr-h3 { font-size: var(--fs-md); margin: var(--sp-4) 0 var(--sp-2); }
+.gr-x019 { border: 2px solid var(--crit-mark); background: var(--crit-bg); color: var(--ink); border-radius: var(--radius); padding: var(--sp-2) var(--sp-3); margin: var(--sp-3) 0; }
+.gr-x019[hidden] { display: none; }
+.gr-x019 p { margin: 0; }
+.gr-start { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--sp-2) var(--sp-3); margin: var(--sp-3) 0; }
+.gr-start legend { font-weight: 600; padding: 0 var(--sp-1); }
+.gr-steps { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3); align-items: center; }
+.gr-step-opt { display: inline-flex; gap: var(--sp-1); align-items: center; white-space: nowrap; }
+.gr-table { width: 100%; }
+.gr-table caption { text-align: left; font-weight: 600; padding: var(--sp-2) 0; }
+.gr-table td, .gr-table th { vertical-align: top; }
+.gr-dom { min-width: 150px; text-align: left; }
+.gr-stepcell { min-width: 90px; }
+.gr-step { font-weight: 700; }
+.gr-ratwrap { display: flex; flex-direction: column; gap: 2px; min-width: 220px; }
+.gr-rat { width: 100%; min-height: 3.2em; resize: vertical; font: inherit; }
+.gr-rat[aria-invalid="true"] { border: 2px solid var(--crit-mark); }
+.gr-err { color: var(--crit); font-size: var(--fs-xs); }
+.gr-err:empty { display: none; }
+.gr-advcell { min-width: 220px; max-width: 360px; font-size: var(--fs-sm); }
+.gr-adv p, .gr-adv ul { margin: 0 0 var(--sp-1); }
+.gr-adv ul { padding-left: var(--sp-4); }
+.gr-ev-text { overflow-wrap: anywhere; }
+.gr-adv-kb { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+.gr-concern:empty { display: none; }
+.gr-concern { margin-top: var(--sp-1); }
+.pf-field.gr-midfield { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin: var(--sp-2) 0 var(--sp-3); }
+.pf-field.gr-midfield input { max-width: 180px; }
+.pf-field.gr-midfield .pf-hint { flex: 1 1 100%; }
+.gr-certbox { border-top: 1px solid var(--line); margin-top: var(--sp-3); padding-top: var(--sp-2); }
+.gr-cert-val { font-size: var(--fs-lg); }
+.gr-recwhy:empty { display: none; }
+.gr-gate { margin-top: var(--sp-2); }
+.gr-engine { margin: var(--sp-2) 0; }
+.sof-risks, .sof-unotes { list-style: none; padding: 0; margin: 0 0 var(--sp-2); display: flex; flex-direction: column; gap: var(--sp-1); }
+.sof-risk { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
+.sof-risk input[type="text"] { min-width: 140px; }
+.sof-unotes li { display: flex; gap: var(--sp-2); align-items: flex-start; }
+.sof-unotes textarea { flex: 1 1 auto; min-width: 260px; font: inherit; }
+.sof-saved { font-size: var(--fs-sm); }
+.sof-table td, .sof-table th { vertical-align: top; }
+.sof-cell { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.sof-table caption { text-align: left; font-weight: 600; padding: var(--sp-2) 0; }
+.sof-notes { font-size: var(--fs-sm); list-style: none; padding-left: 0; }
+.sof-statement { margin: var(--sp-2) 0; padding: var(--sp-2) var(--sp-3); border-left: 4px solid var(--accent); background: var(--surface-2); }
+.sof-export-result:empty { display: none; }
+.sof-md pre { max-height: 240px; overflow: auto; white-space: pre; }
+.pr-pico { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--sp-2) var(--sp-3); margin: var(--sp-2) 0; }
+.pr-pico textarea { width: 100%; font: inherit; min-height: 3.2em; }
+.pr-reg { display: flex; flex-wrap: wrap; gap: var(--sp-2) var(--sp-3); align-items: flex-end; }
+.pr-reg input[hidden] { display: none; }
+.pr-classes { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--sp-2) var(--sp-3); }
+.pr-classes legend { font-weight: 600; padding: 0 var(--sp-1); }
+.pr-classopt { margin: var(--sp-1) 0; }
+.pr-classopt p { margin: 0 0 0 var(--sp-5); }
+@media print {
+  .gr-midfield, .sof-risks, .sof-unotes { display: none; }
+}
+.gr-warnlist { list-style: none; padding-left: 0; margin: var(--sp-1) 0; font-size: var(--fs-sm); }

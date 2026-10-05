@@ -1,0 +1,82 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "pubmed-elink_roy2014_refs",
+  "recorded_at": "2026-10-05T11:08:28Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "elink pubmed_pubmed_refs: Roy 2014 (25097193) irodalomjegyzéke",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?db=pubmed&dbfrom=pubmed&id=25097193&linkname=pubmed_pubmed_refs&retmode=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_json": {
+          "header": {
+            "type": "elink",
+            "version": "0.3"
+          },
+          "linksets": [
+            {
+              "dbfrom": "pubmed",
+              "ids": [
+                "25097193"
+              ],
+              "linksetdbs": [
+                {
+                  "dbto": "pubmed",
+                  "linkname": "pubmed_pubmed_refs",
+                  "links": [
+                    "24336911",
+                    "24021245",
+                    "23391465",
+                    "22325792",
+                    "22216109",
+                    "21964347",
+                    "21030395",
+                    "20965924",
+                    "20729220",
+                    "20616761",
+                    "20068506",
+                    "19715782",
+                    "19666590",
+                    "19504735",
+                    "18679154",
+                    "18232158",
+                    "17988427",
+                    "17978008",
+                    "17471036",
+                    "16898381",
+                    "16651307",
+                    "16616560",
+                    "16575109",
+                    "16345038",
+                    "16243089",
+                    "16243075",
+                    "15160401",
+                    "15116347",
+                    "12686038",
+                    "8309034",
+                    "3076815"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

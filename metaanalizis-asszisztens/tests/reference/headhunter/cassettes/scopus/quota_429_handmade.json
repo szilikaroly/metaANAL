@@ -1,0 +1,36 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "scopus-quota-429-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": true,
+  "license_note": null,
+  "notes": "KÉZI: 429 QUOTA_EXCEEDED, X-RateLimit-Reset = rögzített óra + 3 nap (epoch) → rate_limited + reset_at",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/search/scopus?count=1&field=dc%3Aidentifier%2Ceid&query=PMID%288309034%29"
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "application/json",
+          "x-els-status": "QUOTA_EXCEEDED - Quota Exceeded",
+          "x-ratelimit-limit": "20000",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-reset": "1791460800"
+        },
+        "body_json": {
+          "service-error": {
+            "status": {
+              "statusCode": "QUOTA_EXCEEDED",
+              "statusText": "Quota Exceeded"
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

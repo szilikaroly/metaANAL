@@ -1,0 +1,504 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "quadas2",
+  "name": "QUADAS-2",
+  "label": {
+    "hu": "QUADAS-2 — diagnosztikai pontossági vizsgálatok",
+    "en": "QUADAS-2 — diagnostic accuracy studies"
+  },
+  "full_name": "Quality Assessment of Diagnostic Accuracy Studies, version 2",
+  "family": "rob",
+  "tool_version": "2011",
+  "definition_version": 1,
+  "validator_version": "1.0.0",
+  "reference_sha256": "5c1bd701b496922b0eda1076678ab689a206561b75767dc999b14e0da96df69d",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/quadas2.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Whiting PF, Rutjes AWS, Westwood ME, et al. QUADAS-2: a revised tool for the quality assessment of diagnostic accuracy studies. Ann Intern Med 2011;155:529-36.",
+  "licence": {
+    "instrument_licence": "nincs nyílt licenc megjelölve (a cikk © American College of Physicians); az eszköz szabadon elérhető",
+    "verbatim_allowed": null,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "Szó szerinti átvételhez nincs ismert nyílt licenc, ezért a fájl csak rövid parafrázist tartalmaz a hivatalos tételszámozással. A jelző-kérdéseket a QUADAS-2 kifejezetten a review kérdéséhez igazítva kell használni; a módosításokat a módszertanban rögzítsd.",
+      "en": "No known open licence for verbatim reuse, so this file holds short paraphrases with the official numbering. QUADAS-2 is meant to be tailored to the review question; record any changes in the methods."
+    }
+  },
+  "intro": {
+    "hu": "A QUADAS-2 minden doménben torzítási kockázatot, az első háromban ALKALMAZHATÓSÁGOT is kér. A kettő más kérdés: a torzítás azt, hogy a vizsgálat lefolytatása hamis pontosságot adhatott-e; az alkalmazhatóság azt, hogy a vizsgálat betegköre, tesztje, referenciája a TE kérdésedhez illik-e. A „Nem egyértelmű” gyakori és legitim válasz. Összpontszám nincs.",
+    "en": "QUADAS-2 asks for risk of bias in every domain and APPLICABILITY in the first three. 'Unclear' is a frequent and legitimate answer. There is no total score."
+  },
+  "unit": "index_test",
+  "unit_label": {
+    "hu": "vizsgálatonként, indextesztenként",
+    "en": "per study, per index test"
+  },
+  "scopes": [
+    {
+      "id": "all",
+      "label": {
+        "hu": "Teljes eszköz",
+        "en": "Whole tool"
+      },
+      "default": true
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "unclear",
+      "label": "U",
+      "text": {
+        "hu": "Nem egyértelmű",
+        "en": "Unclear"
+      },
+      "kind": "unknown",
+      "aliases": [
+        "u",
+        "unclear",
+        "unclear risk",
+        "nem egyertelmu",
+        "bizonytalan",
+        "?"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "no",
+    "unclear"
+  ],
+  "verdicts": [
+    {
+      "value": "low",
+      "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+      },
+      "level": "low"
+    },
+    {
+      "value": "high",
+      "label": {
+        "hu": "Magas",
+        "en": "High"
+      },
+      "level": "high"
+    },
+    {
+      "value": "unclear",
+      "label": {
+        "hu": "Nem egyértelmű",
+        "en": "Unclear"
+      },
+      "level": "some"
+    }
+  ],
+  "domains": [
+    {
+      "id": "1",
+      "title": {
+        "hu": "Betegkiválasztás",
+        "en": "Patient selection"
+      },
+      "short": "D1",
+      "passes": null,
+      "applicability": true
+    },
+    {
+      "id": "2",
+      "title": {
+        "hu": "Indexteszt",
+        "en": "Index test"
+      },
+      "short": "D2",
+      "passes": null,
+      "applicability": true
+    },
+    {
+      "id": "3",
+      "title": {
+        "hu": "Referenciastandard",
+        "en": "Reference standard"
+      },
+      "short": "D3",
+      "passes": null,
+      "applicability": true
+    },
+    {
+      "id": "4",
+      "title": {
+        "hu": "Áramlás és időzítés",
+        "en": "Flow and timing"
+      },
+      "short": "D4",
+      "passes": null,
+      "applicability": false
+    }
+  ],
+  "items": [
+    {
+      "id": "1.1",
+      "key": "1.1",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Egymást követő (konszekutív) vagy véletlen betegmintát vontak-e be?",
+        "en": "Was a consecutive or random sample of patients enrolled?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.2",
+      "key": "1.2",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Elkerülték-e az eset-kontroll elrendezést?",
+        "en": "Was a case-control design avoided?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a jó válasz (a validator 1.0.0 fordítottnak címkézi, de a saját leírása szerint nem az). A kétkapus („diagnosztikai eset-kontroll”) elrendezés — egyértelmű esetek egészséges kontrollokkal összevetve — jelentősen felfújja a pontosságot; ez az eszköz legsúlyosabb tétele.",
+        "en": "Reverse-polarity is *not* needed here — the item is worded so that Yes is good — but note the trap: two-gate (\"diagnostic case-control\") designs, comparing clear cases with healthy controls, inflate accuracy substantially. This is the most consequential single item in the tool."
+      }
+    },
+    {
+      "id": "1.3",
+      "key": "1.3",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Elkerülték-e a nem helyénvaló kizárásokat?",
+        "en": "Did the study avoid inappropriate exclusions?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a jó válasz. A nehezen diagnosztizálható, korábbi tesztkudarcos vagy társbetegséges betegek kizárása látszólag javítja a pontosságot.",
+        "en": "Excluding difficult-to-diagnose patients, prior test failures, or those with comorbidity raises apparent accuracy."
+      }
+    },
+    {
+      "id": "2.1",
+      "key": "2.1",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Az indexteszt eredményét a referenciastandard eredményének ismerete nélkül értékelték-e?",
+        "en": "Were the index test results interpreted without knowledge of the results of the reference standard?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.2",
+      "key": "2.2",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ha volt küszöbérték, előre rögzítették-e?",
+        "en": "If a threshold was used, was it pre-specified?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A vizsgálat saját ROC-görbéjéből választott küszöb ugyanazon az adaton van optimalizálva, amelyen értékelik, így a közölt érzékenység–specificitás pár túl optimista.",
+        "en": "A threshold chosen from the study's own ROC curve is optimised on the data it is evaluated on, and the reported sensitivity/specificity pair is optimistic. This is very common and rarely acknowledged."
+      },
+      "condition": {
+        "hu": "Ha volt küszöbérték",
+        "en": "If a threshold was used"
+      },
+      "answers": [
+        "yes",
+        "no",
+        "unclear",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "3.1",
+      "key": "3.1",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Valószínűleg helyesen sorolja-e be a referenciastandard a célállapotot?",
+        "en": "Is the reference standard likely to correctly classify the target condition?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.2",
+      "key": "3.2",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "A referenciastandard eredményét az indexteszt eredményének ismerete nélkül értékelték-e?",
+        "en": "Were the reference standard results interpreted without knowledge of the results of the index test?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.1",
+      "key": "4.1",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő volt-e az időköz az indexteszt és a referenciastandard között?",
+        "en": "Was there an appropriate interval between the index test and reference standard?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ha túl hosszú, az állapot megváltozhat (betegségprogresszió-torzítás); ha túl rövid, a referenciastandard még nem mutatja ki.",
+        "en": "Long enough for the condition to change is disease progression bias; short enough that the reference standard cannot yet detect it is the opposite."
+      }
+    },
+    {
+      "id": "4.2",
+      "key": "4.2",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Minden beteg kapott-e referenciastandardot?",
+        "en": "Did all patients receive a reference standard?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.3",
+      "key": "4.3",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Ugyanazt a referenciastandardot kapta-e minden beteg?",
+        "en": "Did all patients receive the same reference standard?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Differenciális verifikáció — az indexpozitívak szigorú referenciát kapnak, az indexnegatívak csak követést — felfelé torzítja a pontosságot.",
+        "en": "Differential verification — index-positive patients getting the rigorous reference standard and index-negative patients getting follow-up instead — biases accuracy upward."
+      }
+    },
+    {
+      "id": "4.4",
+      "key": "4.4",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Minden beteget bevontak-e az elemzésbe?",
+        "en": "Were all patients included in the analysis?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Tipikus hiba a bizonytalan indexteszt-eredmények kizárása, ami az absztraktból általában nem látszik.",
+        "en": "Excluding indeterminate index-test results is the usual failure, and it is usually invisible in the abstract."
+      }
+    }
+  ],
+  "rollup": {
+    "algorithm": "conservative",
+    "basis": "validator-compatible",
+    "official": false,
+    "overall": "worst",
+    "tiers": {
+      "low": "low",
+      "some": "unclear",
+      "high": "high"
+    },
+    "label": {
+      "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos QUADAS-2 algoritmus",
+      "en": "Validator-compatible conservative rule — NOT the official QUADAS-2 algorithm"
+    },
+    "note": {
+      "hu": "Azt mutatja, amit a rögzített válaszok kikényszerítenek, és megnevezi a kiváltó kérdéseket. Ez NEM a hivatalos QUADAS-2 folyamatábra; a doménítélet és az összítélet a Tiéd. Ha eltérsz az implikálttól, indokold (a döntés a naplóba kerül, X017). Az alkalmazhatósági ítéletet a szabály nem érinti: az mindig emberi döntés.",
+      "en": "Shows what the recorded answers force and names the questions that forced it. This is NOT the official QUADAS-2 flowchart; the domain and overall judgements are yours. If you depart from the implied judgement, give a reason (logged as a decision, X017). Applicability is never implied: it is always a human judgement."
+    },
+    "differences_from_validator": [
+      {
+        "hu": "Hiányzó (nem irányító) válasz esetén a domén implikált ítélete üres marad — a validator 1.0.0 ilyenkor a megválaszolt tételekből „alacsony”-t ad.",
+        "en": "A domain with an unanswered (non-router) item has no implied judgement — validator 1.0.0 reports 'low' from the answered items."
+      },
+      {
+        "hu": "A „részben” típusú válasz (pl. QUIPS „Részben”) legalább a középső szintet adja — a validator 1.0.0 problémamentesnek veszi.",
+        "en": "A partial answer (e.g. QUIPS 'Partly') yields at least the middle level — validator 1.0.0 treats it as no problem."
+      }
+    ]
+  },
+  "rob_column": {
+    "low": "low",
+    "unclear": "some",
+    "high": "high"
+  },
+  "counts": {
+    "parsed": 11,
+    "published": 11,
+    "per_scope": {
+      "all": 11
+    },
+    "per_pass": null
+  },
+  "notes": [],
+  "validator_differences": [
+    {
+      "item": "1.2",
+      "validator": "reverse",
+      "here": "normal",
+      "reason": {
+        "hu": "„Elkerülték-e az eset-kontroll elrendezést?” — az Igen a jó válasz (a validator saját leírása is ezt mondja).",
+        "en": "'Was a case-control design avoided?' — Yes is good (as the validator text says)."
+      }
+    },
+    {
+      "item": "1.3",
+      "validator": "reverse",
+      "here": "normal",
+      "reason": {
+        "hu": "„Elkerülték-e a nem helyénvaló kizárásokat?” — az Igen a jó válasz.",
+        "en": "'Did the study avoid inappropriate exclusions?' — Yes is good."
+      }
+    }
+  ]
+}

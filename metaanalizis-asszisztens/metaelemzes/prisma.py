@@ -34,9 +34,28 @@ hiányzó duplikátum-doboz 0-nak számít (levezetve: azonosított − dupliká
 Belépési pontok: check_flow(flow, template=None) → FlowCheck; from_composer(prisma-flow.json
 szótár); parse_markdown_table(02_szures/prisma_folyamat.md szövege); load(path).
 A tételkódok (P001…) a validate.RULES formátumát követik (súlyosság, cím, teendő, forrás).
+
+Vizsgálat-térkép és folyamatábra (E9; terv 4.10, 4.12, 4.13):
+  studies_counts(studies)              03_adatok/studies.json (szk.ma.studies/v1) → I (vizsgálatok), J (a jelentések
+                                       rec_id-jeinek uniója), kimenetenkénti vizsgálatszám (X015), study_id-k
+  apply_studies(flow, studies)         → (flow, P017-találatok, számok): a hiányzó I / J a térképből töltődik, az
+                                       eltérő érték P017 (`prisma check --studies`)
+  check_with_studies(flow, studies)    → FlowCheck a fentiekkel
+  flowchart(flow, studies=None, …)     → teljes PRISMA 2020 folyamatábra-specifikáció (szk.ff.flowchart/v1: dobozok,
+                                       nyilak, a „Studies included in review (n = I)” és „Reports of included studies
+                                       (n = J)” felirat, regiszterek, egyéb módszerek ága, frissített áttekintés);
+                                       write_flowchart(spec, út) — `prisma check --emit-flowchart`
+  undecided_count(flow), reason_key(okok)   X020 / X021 segédek (composer undecided, okok összevetése)
+A composer folyamatábrájának „Studies included” doboza a jelentések számát (J) mutatja (H7); itt az I a
+vizsgálat-térképből jön, a J a jelentésekből, külön sorban.
 """
+import collections
 import json
+import os
 import re
+import tempfile
+
+from . import __version__
 
 # kód: (súlyosság, rövid cím, magyarázat/teendő, forrás)
 RULES = {

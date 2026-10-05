@@ -1,0 +1,70 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "crossref-work-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": true,
+  "license_note": null,
+  "notes": "KÉZI (Crossref REST dokumentáció): /works/{doi} — itt a Crossref blokkolt; szintetikus DOI (10.5555 teszt-előtag)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.crossref.org/works/10.5555/fixture.crossref.1"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "status": "ok",
+          "message-type": "work",
+          "message": {
+            "DOI": "10.5555/fixture.crossref.1",
+            "title": [
+              "Synthetic randomised trial (fixture)"
+            ],
+            "author": [
+              {
+                "family": "Fixture",
+                "given": "Anna B"
+              },
+              {
+                "family": "Second",
+                "given": "C"
+              }
+            ],
+            "issued": {
+              "date-parts": [
+                [
+                  2017,
+                  5,
+                  2
+                ]
+              ]
+            },
+            "container-title": [
+              "Fixture Medical Journal"
+            ],
+            "short-container-title": [
+              "Fixture Med J"
+            ],
+            "volume": "12",
+            "issue": "3",
+            "page": "200-210",
+            "type": "journal-article",
+            "ISSN": [
+              "0000-0000"
+            ],
+            "abstract": "«redacted»"
+          }
+        },
+        "redactions": [
+          "abstract"
+        ]
+      },
+      "delay_ms": null
+    }
+  ]
+}

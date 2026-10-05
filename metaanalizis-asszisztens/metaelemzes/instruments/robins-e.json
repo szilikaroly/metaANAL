@@ -1,0 +1,886 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "robins-e",
+  "name": "ROBINS-E",
+  "label": {
+    "hu": "ROBINS-E — expozíciós vizsgálatok",
+    "en": "ROBINS-E — studies of exposures"
+  },
+  "full_name": "Risk Of Bias In Non-randomised Studies — of Exposures (2023)",
+  "family": "rob",
+  "tool_version": "2023",
+  "definition_version": 1,
+  "validator_version": "1.0.0",
+  "reference_sha256": "9523e9c9e22358e92e3fbb949d0b7ac2faee58af1e43d9f73ee4274438c198b4",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/robins-e.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Higgins JPT, Morgan RL, Rooney AA, et al. A tool to assess risk of bias in non-randomized studies of exposures (ROBINS-E). Environment International 2024;186:108602; riskofbias.info/robins-e.",
+  "licence": {
+    "instrument_licence": "CC BY-NC-ND 4.0 (riskofbias.info) — ellenőrizendő",
+    "verbatim_allowed": true,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "A ROBINS-E a riskofbias.info oldalán érhető el (licence ellenőrizendő); többször átdolgozták. Ez a fájl munka-parafrázisokat tartalmaz — közlés előtt vesd össze az aktuális kiadással.",
+      "en": "ROBINS-E is distributed at riskofbias.info (licence to be verified) and has been revised more than once. This file holds working paraphrases — check against the current release."
+    }
+  },
+  "intro": {
+    "hu": "A ROBINS-E a vizsgálatot az ugyanarra a kérdésre irányuló IDEÁLIS MEGFIGYELÉSES vizsgálathoz méri. Az első kérdés előtt írásban rögzítsd az előzetes megfontolásokat: a vizsgált hatást, a megkövetelt zavaró tényezőket és az expozíciós időablakot — különben a vizsgálat szabja meg a saját mércéjét. A legtöbb expozíciós vizsgálatnál a „némi aggály” a reális legjobb ítélet.",
+    "en": "ROBINS-E judges the study against the IDEAL OBSERVATIONAL study of the same question. Record the preliminary considerations first (effect of interest, required confounders, exposure window). For most exposure epidemiology 'some concerns' is the realistic ceiling."
+  },
+  "unit": "result",
+  "unit_label": {
+    "hu": "eredményenként (egy expozíció–kimenet pár)",
+    "en": "per result (one exposure–outcome pair)"
+  },
+  "scopes": [
+    {
+      "id": "all",
+      "label": {
+        "hu": "Teljes eszköz",
+        "en": "Whole tool"
+      },
+      "default": true
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "probably_yes",
+      "label": "PY",
+      "text": {
+        "hu": "Valószínűleg igen",
+        "en": "Probably yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "py",
+        "probably yes",
+        "prob yes",
+        "valoszinuleg igen",
+        "vi"
+      ]
+    },
+    {
+      "value": "probably_no",
+      "label": "PN",
+      "text": {
+        "hu": "Valószínűleg nem",
+        "en": "Probably no"
+      },
+      "kind": "negative",
+      "aliases": [
+        "pn",
+        "probably no",
+        "prob no",
+        "valoszinuleg nem",
+        "vn"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "no_information",
+      "label": "NI",
+      "text": {
+        "hu": "Nincs információ",
+        "en": "No information"
+      },
+      "kind": "unknown",
+      "aliases": [
+        "ni",
+        "no information",
+        "no info",
+        "nincs informacio",
+        "nincs adat"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "probably_yes",
+    "probably_no",
+    "no",
+    "no_information"
+  ],
+  "verdicts": [
+    {
+      "value": "low",
+      "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+      },
+      "level": "low"
+    },
+    {
+      "value": "some_concerns",
+      "label": {
+        "hu": "Némi aggály",
+        "en": "Some concerns"
+      },
+      "level": "some"
+    },
+    {
+      "value": "high",
+      "label": {
+        "hu": "Magas",
+        "en": "High"
+      },
+      "level": "high"
+    },
+    {
+      "value": "very_high",
+      "label": {
+        "hu": "Nagyon magas",
+        "en": "Very high"
+      },
+      "level": "critical"
+    }
+  ],
+  "domains": [
+    {
+      "id": "1",
+      "title": {
+        "hu": "Zavaró tényezők miatti torzítás",
+        "en": "Bias due to confounding"
+      },
+      "short": "D1",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "2",
+      "title": {
+        "hu": "Az expozíció mérésének torzítása",
+        "en": "Bias arising from measurement of the exposure"
+      },
+      "short": "D2",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "3",
+      "title": {
+        "hu": "A résztvevők beválasztásának torzítása",
+        "en": "Bias in selection of participants into the study"
+      },
+      "short": "D3",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "4",
+      "title": {
+        "hu": "Az expozíció utáni beavatkozások miatti torzítás",
+        "en": "Bias due to post-exposure interventions"
+      },
+      "short": "D4",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "5",
+      "title": {
+        "hu": "Hiányzó adatok miatti torzítás",
+        "en": "Bias due to missing data"
+      },
+      "short": "D5",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "6",
+      "title": {
+        "hu": "A kimenet mérésének torzítása",
+        "en": "Bias arising from measurement of the outcome"
+      },
+      "short": "D6",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "7",
+      "title": {
+        "hu": "A közölt eredmény kiválasztásának torzítása",
+        "en": "Bias in selection of the reported result"
+      },
+      "short": "D7",
+      "passes": null,
+      "applicability": false
+    }
+  ],
+  "items": [
+    {
+      "id": "1.1",
+      "key": "1.1",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő elemzési módszerrel kontrollálták-e a szerzők az összes fontos zavaró tényezőt?",
+        "en": "Did the authors use an appropriate analysis method that controlled for all the important confounding factors?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A TE előre rögzített listádhoz mérve, nem a cikk korrekciós táblázatához.",
+        "en": "Against your pre-specified list, not theirs."
+      }
+    },
+    {
+      "id": "1.2",
+      "key": "1.2",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Érvényesen és megbízhatóan mérték-e a kontrollált zavaró tényezőket?",
+        "en": "Were confounding factors that were controlled for measured validly and reliably?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Táplálkozási és foglalkozási expozíciónál gyakran csak helyettesítőre (élelmiszer-gyakorisági kérdőív, munkakör–expozíció mátrix) korrigálnak, és a maradék zavarás a korrekció után is megmarad.",
+        "en": "Nutritional and occupational exposures are frequently adjusted for a proxy — a food frequency questionnaire, a job-exposure matrix — and residual confounding survives adjustment."
+      }
+    },
+    {
+      "id": "1.3",
+      "key": "1.3",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Korrigáltak-e a szerzők olyan változókra, amelyeket az expozíció befolyásolhatott?",
+        "en": "Did the authors control for any variables that could have been affected by the exposure?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés: közvetítőre való túlkorrigálás.",
+        "en": "Reverse-polarity. Over-adjustment for a mediator."
+      }
+    },
+    {
+      "id": "1.4",
+      "key": "1.4",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Idővel változó expozíciót vizsgáltak-e?",
+        "en": "Did the study involve time-varying exposure?"
+      },
+      "tags": [
+        "all",
+        "router"
+      ],
+      "polarity": "router",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Irányító kérdés: az 1.5-höz vezet.",
+        "en": ""
+      }
+    },
+    {
+      "id": "1.5",
+      "key": "1.5",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.4 válasza I/VI: megfelelő volt-e az elemzési módszer az idővel változó zavaró tényezőkhöz?",
+        "en": "If Y/PY to 1.4: was the analysis method appropriate for time-varying confounding?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha az 1.4 válasza I/VI",
+        "en": "If Y/PY to 1.4"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "2.1",
+      "key": "2.1",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Az érdeklődés tárgyát képező expozíciót tükrözi-e az expozíció mérése, a releváns időablakban?",
+        "en": "Does the measure of exposure reflect the exposure of interest, over the window of interest?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az időablak a legtöbb expozíciós vizsgálat gyenge pontja: egyetlen vérminta évtizedek felhalmozott expozíciója helyett más konstrukció, nem ugyanannak zajos változata.",
+        "en": "The window is the point most exposure studies fail: a single blood sample standing in for decades of accumulated exposure is a different construct, not a noisy version of the same one."
+      }
+    },
+    {
+      "id": "2.2",
+      "key": "2.2",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Eltérhetett-e az expozíció mérése vagy besorolása a kimenet szerint meghatározott csoportok között?",
+        "en": "Could measurement or classification of the exposure have differed between groups defined by the outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Visszaemlékezési torzítás: az esetek alaposabban emlékeznek az expozíciókra, mint a kontrollok.",
+        "en": "Reverse-polarity. Recall bias — cases remembering exposures more thoroughly than controls."
+      }
+    },
+    {
+      "id": "2.3",
+      "key": "2.3",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Valószínűleg nem differenciális volt-e az expozíció mérési hibája a kimenet szempontjából?",
+        "en": "Were exposure measurement errors likely to be non-differential with respect to the outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Normál kérdés (a validator 1.0.0 fordítottnak címkézi, de a saját leírása szerint normál): a nem differenciális hiba többnyire a nullhatás felé torzít, ezért a „Nem” (differenciális hiba) a probléma. Írd le, merre tolhatja a hiba a becslést.",
+        "en": "Reverse-polarity is inverted here: non-differential error usually biases toward the null, so `No` (differential error) is the problem and `Yes` is reassuring — hence this item is scored normally. Say which direction the error plausibly pushes the estimate; \"measurement error\" alone tells a reader nothing about whether the finding is likely to be too big or too small."
+      }
+    },
+    {
+      "id": "3.1",
+      "key": "3.1",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Összefüggött-e a vizsgálatba kerülés az expozícióval és a kimenettel is?",
+        "en": "Was selection into the study related to both exposure and outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Ütköző (collider) változón történő szelekció: ott is társulást kelthet, ahol nincs.",
+        "en": "Reverse-polarity. Selection on a collider is the mechanism, and it can create an association where none exists."
+      }
+    },
+    {
+      "id": "3.2",
+      "key": "3.2",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők többségénél egybeesett-e a követés kezdete és az expozíció kezdete?",
+        "en": "Do start of follow-up and start of exposure coincide for most participants?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.3",
+      "key": "3.3",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Alkalmaztak-e olyan korrekciós eljárást, amely valószínűleg kiküszöböli a szelekciós torzítást?",
+        "en": "Were adjustment techniques used that are likely to correct for selection bias?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.1",
+      "key": "4.1",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Volt-e az expozíció után olyan beavatkozás, amely befolyásolhatta a kimenetet, és eltért az expozíciós csoportok között?",
+        "en": "Were there post-exposure interventions that could have affected the outcome, and that differed between exposure groups?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Például szűrés vagy kezelés, ami abból következik, hogy valakiről tudják: exponált.",
+        "en": "Reverse-polarity. Screening or treatment that follows from being known to be exposed."
+      }
+    },
+    {
+      "id": "4.2",
+      "key": "4.2",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 4.1 válasza I/VI: megfelelő volt-e az elemzés az expozíció ezen beavatkozások nélküli hatásának becslésére?",
+        "en": "If Y/PY to 4.1: was the analysis appropriate to estimate the effect of exposure in the absence of those interventions?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha a 4.1 válasza I/VI",
+        "en": "If Y/PY to 4.1"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "5.1",
+      "key": "5.1",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Rendelkezésre álltak-e a kimeneti adatok az összes vagy szinte az összes résztvevőre?",
+        "en": "Were outcome data available for all, or nearly all, participants?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.2",
+      "key": "5.2",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Kizártak-e résztvevőket hiányzó expozíciós vagy kovariáns-adat miatt?",
+        "en": "Were participants excluded due to missing exposure or covariate data?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés: az „Igen” a probléma (a validator 1.0.0 normálnak címkézi).",
+        "en": ""
+      }
+    },
+    {
+      "id": "5.3",
+      "key": "5.3",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Van-e bizonyíték arra, hogy a hiányzó adatok nem torzították az eredményt?",
+        "en": "Is there evidence that the result was not biased by missing data?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Például megnevezett hiányzási feltevés melletti többszörös imputálás vagy érzékenységi elemzés. A teljes esetes elemzés nem bizonyíték.",
+        "en": "Multiple imputation under a stated missingness assumption, or a sensitivity analysis. Complete case analysis is not evidence."
+      }
+    },
+    {
+      "id": "6.1",
+      "key": "6.1",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Befolyásolhatta-e a kimenet mérését az expozíció ismerete?",
+        "en": "Could the outcome measure have been influenced by knowledge of the exposure?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": "Reverse-polarity."
+      }
+    },
+    {
+      "id": "6.2",
+      "key": "6.2",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Összehasonlíthatók voltak-e a kimenet értékelésének módszerei az expozíciós csoportok között?",
+        "en": "Were the methods of outcome assessment comparable across exposure groups?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a jó válasz (a validator 1.0.0 fordítottnak címkézi). Az exponált kohorszokat gyakran szorosabban követik, ami több betegséget talál.",
+        "en": "Differential surveillance again: exposed cohorts are often monitored more closely, which finds more disease."
+      }
+    },
+    {
+      "id": "6.3",
+      "key": "6.3",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Függetlenek voltak-e az expozíciótól a kimenet mérésének esetleges szisztematikus hibái?",
+        "en": "Were any systematic errors in outcome measurement unrelated to exposure?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.1",
+      "key": "7.1",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt eredményt több expozíciómérés közül választották ki?",
+        "en": "Is the reported result likely to have been selected from multiple exposure measurements?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Az expozíció sokféleképpen definiálható: folytonos, kvantilisek, vágópontok, késleltetések, kumulatív vagy csúcsérték.",
+        "en": "Reverse-polarity. Exposure studies carry unusually many defensible ways to define exposure — continuous, quantiles, cut-points, lags, cumulative versus peak."
+      }
+    },
+    {
+      "id": "7.2",
+      "key": "7.2",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt eredményt több kimenetmérés közül választották ki?",
+        "en": "... from multiple outcome measurements?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": ""
+      }
+    },
+    {
+      "id": "7.3",
+      "key": "7.3",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt eredményt több elemzés közül választották ki?",
+        "en": "... from multiple analyses?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": ""
+      }
+    },
+    {
+      "id": "7.4",
+      "key": "7.4",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt eredményt különböző alcsoportok közül választották ki?",
+        "en": "... from different subgroups?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": ""
+      }
+    }
+  ],
+  "rollup": {
+    "algorithm": "conservative",
+    "basis": "validator-compatible",
+    "official": false,
+    "overall": "worst",
+    "tiers": {
+      "low": "low",
+      "some": "some_concerns",
+      "high": "high"
+    },
+    "label": {
+      "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos ROBINS-E algoritmus",
+      "en": "Validator-compatible conservative rule — NOT the official ROBINS-E algorithm"
+    },
+    "note": {
+      "hu": "Azt mutatja, amit a rögzített válaszok kikényszerítenek, és megnevezi a kiváltó kérdéseket. Ez NEM a hivatalos ROBINS-E folyamatábra; a doménítélet és az összítélet a Tiéd. Ha eltérsz az implikálttól, indokold (a döntés a naplóba kerül, X017). A „nagyon magas” ítéletet a szabály sosem adja: az emberi döntés.",
+      "en": "Shows what the recorded answers force and names the questions that forced it. This is NOT the official ROBINS-E flowchart; the domain and overall judgements are yours. If you depart from the implied judgement, give a reason (logged as a decision, X017). The rule never yields 'very high': that is a human decision."
+    },
+    "differences_from_validator": [
+      {
+        "hu": "Hiányzó (nem irányító) válasz esetén a domén implikált ítélete üres marad — a validator 1.0.0 ilyenkor a megválaszolt tételekből „alacsony”-t ad.",
+        "en": "A domain with an unanswered (non-router) item has no implied judgement — validator 1.0.0 reports 'low' from the answered items."
+      },
+      {
+        "hu": "A „részben” típusú válasz (pl. QUIPS „Részben”) legalább a középső szintet adja — a validator 1.0.0 problémamentesnek veszi.",
+        "en": "A partial answer (e.g. QUIPS 'Partly') yields at least the middle level — validator 1.0.0 treats it as no problem."
+      }
+    ]
+  },
+  "rob_column": {
+    "low": "low",
+    "some_concerns": "some",
+    "high": "high",
+    "very_high": "critical"
+  },
+  "counts": {
+    "parsed": 23,
+    "published": null,
+    "per_scope": {
+      "all": 23
+    },
+    "per_pass": null
+  },
+  "notes": [
+    {
+      "hu": "Zárd azzal, hogy az azonosított torzítások merre tolnák a becslést, és megmagyarázhatják-e az eredményt — a ROBINS-E ezt kifejezetten kéri.",
+      "en": "Close by stating the direction in which the identified biases would push the estimate — ROBINS-E asks for this explicitly."
+    }
+  ],
+  "validator_differences": [
+    {
+      "item": "2.3",
+      "validator": "reverse",
+      "here": "normal",
+      "reason": {
+        "hu": "A validator saját leírása szerint is normál: a differenciális hiba („Nem”) a probléma.",
+        "en": "Normal per the validator's own text: differential error ('No') is the problem."
+      }
+    },
+    {
+      "item": "5.2",
+      "validator": "normal",
+      "here": "reverse",
+      "reason": {
+        "hu": "A hiányzó adat miatti kizárás a probléma (Igen = probléma).",
+        "en": "Exclusion for missing data is the problem (Yes = problem)."
+      }
+    },
+    {
+      "item": "6.2",
+      "validator": "reverse",
+      "here": "normal",
+      "reason": {
+        "hu": "Az összehasonlítható kimenetmérés a jó válasz (Igen = rendben).",
+        "en": "Comparable outcome assessment is the good answer (Yes = fine)."
+      }
+    }
+  ]
+}

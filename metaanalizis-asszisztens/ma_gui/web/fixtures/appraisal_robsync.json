@@ -1,0 +1,47 @@
+{
+ "description": "rob-oszlop szinkron: előnézet (CSONK)",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/appraisals/rob-sync",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.rob-sync/v1",
+    "data": {
+     "schema": "szk.ma.rob-sync/v1",
+     "dataset": "03_adatok/o1.csv",
+     "etag": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333",
+     "column": "rob",
+     "column_exists": false,
+     "proposal": {
+      "schema": "szk.ma.rob-sync/v1",
+      "column": "rob",
+      "changes": [
+       {
+        "row_uid": "rbcg04",
+        "row": 3,
+        "study_id": "HART1977",
+        "label": "Hart & Sutherland 1977",
+        "before": "low",
+        "after": "some concerns",
+        "judgement": "some_concerns",
+        "source": "single"
+       }
+      ],
+      "unchanged": 1,
+      "unmatched": [],
+      "warnings": []
+     },
+     "applied": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_apy"
+    }
+   }
+  }
+ ]
+}

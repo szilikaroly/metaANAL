@@ -1,0 +1,28 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "ctgov-study_404",
+  "recorded_at": "2026-10-05T11:08:13Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "NCT99999999 → 404",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://clinicaltrials.gov/api/v2/studies/NCT99999999?format=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/plain; charset=UTF-8"
+        },
+        "body_text": "NCT number NCT99999999 not found"
+      },
+      "delay_ms": null
+    }
+  ]
+}

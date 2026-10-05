@@ -5,7 +5,7 @@ A termék-buildet (ma_gui/web/dist/index.html — ezt szolgálja ki a szerver a 
 csak tartalék oldal, ha a build hiányzik) és a
 forrásokat (ma_gui/web/src/**) ellenőrzi:
 
-  • a dist naprakész (a forrásokból újraépítve bájtra azonos), ≤ 600 KB (build_gui.MAX_BYTES), determinisztikus;
+  • a dist naprakész (a forrásokból újraépítve bájtra azonos), ≤ 900 KB (build_gui.MAX_BYTES), determinisztikus;
   • nincs benne fixture / fejlesztői kód / fixture-token;
   • nincs külső URL (az SVG-névtér az egyetlen kivétel), külső szkript, stíluslap vagy url();
   • nincs innerHTML / outerHTML / insertAdjacentHTML / document.write / eval / new Function / string-időzítő;
@@ -84,7 +84,8 @@ class DistTests(unittest.TestCase):
         self.assertEqual(self.html, fresh, "a dist/index.html elavult — futtasd: python3 ma_gui/web/build_gui.py")
 
     def test_size_budget(self):
-        self.assertLessEqual(len(self.html.encode("utf-8")), 600 * 1024)
+        self.assertLessEqual(len(self.html.encode("utf-8")), 900 * 1024)
+        self.assertEqual(bg.MAX_BYTES, 900 * 1024, "a keret a terv 2.3 szerinti 900 KB")
 
     def test_no_fixtures_or_dev_code(self):
         low = self.html.lower()

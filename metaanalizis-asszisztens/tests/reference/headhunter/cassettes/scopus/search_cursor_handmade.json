@@ -1,0 +1,130 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "scopus-search-cursor-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": true,
+  "license_note": null,
+  "notes": "KÉZI (Scopus Search API dokumentáció): cursor-lapozás 2 lapon (count=2, totalResults=3), mezőszűkítés; szintetikus rekordok — élőben igazolandó (sources --check, test_headhunter_live)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/search/scopus?count=2&cursor=%2A&field=dc%3Aidentifier%2Ceid%2Cdc%3Atitle%2Cdc%3Acreator%2Cprism%3ApublicationName%2Cprism%3Aissn%2Cprism%3AeIssn%2Cprism%3Avolume%2Cprism%3AissueIdentifier%2Cprism%3ApageRange%2Cprism%3AcoverDate%2Cprism%3Adoi%2Cpubmed-id%2Ccitedby-count%2Csubtype%2CsubtypeDescription%2Copenaccess&query=TITLE-ABS-KEY%28tuberculosis%29+AND+TITLE-ABS-KEY%28%22BCG+vaccine%22%29+AND+%28TITLE-ABS-KEY%28%22meta-analysis%22%29+OR+TITLE-ABS-KEY%28%22systematic+review%22%29%29+AND+DOCTYPE%28re%29&view=STANDARD"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "search-results": {
+            "opensearch:totalResults": "3",
+            "opensearch:startIndex": "0",
+            "opensearch:itemsPerPage": "2",
+            "opensearch:Query": {
+              "@role": "request",
+              "@searchTerms": "TITLE-ABS-KEY(tuberculosis) AND TITLE-ABS-KEY(\"BCG vaccine\") AND (TITLE-ABS-KEY(\"meta-analysis\") OR TITLE-ABS-KEY(\"systematic review\")) AND DOCTYPE(re)",
+              "@startPage": "0"
+            },
+            "cursor": {
+              "@current": "*",
+              "@next": "AoJ0Zml4dHVyZTE="
+            },
+            "entry": [
+              {
+                "@_fa": "true",
+                "dc:identifier": "SCOPUS_ID:0000000001",
+                "eid": "2-s2.0-0000000001",
+                "dc:title": "Synthetic systematic review A (fixture)",
+                "dc:creator": "Fixture A.",
+                "prism:publicationName": "Fixture Journal of Evidence",
+                "prism:issn": "00000000",
+                "prism:volume": "11",
+                "prism:issueIdentifier": "1",
+                "prism:pageRange": "1-10",
+                "prism:coverDate": "2021-03-01",
+                "prism:doi": "10.5555/fixture.scopus.1",
+                "pubmed-id": "90000001",
+                "citedby-count": "3",
+                "subtype": "re",
+                "subtypeDescription": "Review",
+                "openaccess": "0"
+              },
+              {
+                "@_fa": "true",
+                "dc:identifier": "SCOPUS_ID:0000000002",
+                "eid": "2-s2.0-0000000002",
+                "dc:title": "Synthetic systematic review B (fixture)",
+                "dc:creator": "Fixture A.",
+                "prism:publicationName": "Fixture Journal of Evidence",
+                "prism:issn": "00000000",
+                "prism:volume": "12",
+                "prism:issueIdentifier": "1",
+                "prism:pageRange": "1-10",
+                "prism:coverDate": "2019-03-01",
+                "prism:doi": "10.5555/fixture.scopus.2",
+                "pubmed-id": null,
+                "citedby-count": "6",
+                "subtype": "re",
+                "subtypeDescription": "Review",
+                "openaccess": "0"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/search/scopus?count=2&cursor=AoJ0Zml4dHVyZTE%3D&field=dc%3Aidentifier%2Ceid%2Cdc%3Atitle%2Cdc%3Acreator%2Cprism%3ApublicationName%2Cprism%3Aissn%2Cprism%3AeIssn%2Cprism%3Avolume%2Cprism%3AissueIdentifier%2Cprism%3ApageRange%2Cprism%3AcoverDate%2Cprism%3Adoi%2Cpubmed-id%2Ccitedby-count%2Csubtype%2CsubtypeDescription%2Copenaccess&query=TITLE-ABS-KEY%28tuberculosis%29+AND+TITLE-ABS-KEY%28%22BCG+vaccine%22%29+AND+%28TITLE-ABS-KEY%28%22meta-analysis%22%29+OR+TITLE-ABS-KEY%28%22systematic+review%22%29%29+AND+DOCTYPE%28re%29&view=STANDARD"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "search-results": {
+            "opensearch:totalResults": "3",
+            "opensearch:startIndex": "0",
+            "opensearch:itemsPerPage": "1",
+            "opensearch:Query": {
+              "@role": "request",
+              "@searchTerms": "TITLE-ABS-KEY(tuberculosis) AND TITLE-ABS-KEY(\"BCG vaccine\") AND (TITLE-ABS-KEY(\"meta-analysis\") OR TITLE-ABS-KEY(\"systematic review\")) AND DOCTYPE(re)",
+              "@startPage": "0"
+            },
+            "cursor": {
+              "@current": "AoJ0Zml4dHVyZTE=",
+              "@next": "AoJ0Zml4dHVyZTI="
+            },
+            "entry": [
+              {
+                "@_fa": "true",
+                "dc:identifier": "SCOPUS_ID:0000000003",
+                "eid": "2-s2.0-0000000003",
+                "dc:title": "Synthetic systematic review C (fixture)",
+                "dc:creator": "Fixture A.",
+                "prism:publicationName": "Fixture Journal of Evidence",
+                "prism:issn": "00000000",
+                "prism:volume": "13",
+                "prism:issueIdentifier": "1",
+                "prism:pageRange": "1-10",
+                "prism:coverDate": "2016-03-01",
+                "prism:doi": "10.5555/fixture.scopus.3",
+                "pubmed-id": "90000003",
+                "citedby-count": "9",
+                "subtype": "re",
+                "subtypeDescription": "Review",
+                "openaccess": "0"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

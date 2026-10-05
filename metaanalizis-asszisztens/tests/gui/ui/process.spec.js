@@ -167,7 +167,11 @@ async function waitCheck(page) {
     check((await p.$('#ov-not-checked')) !== null && (await txt(p, '#ov-nc-head')).indexOf('2 szabály') >= 0, 'a még nem ellenőrizhető szabályok (2) a következő lépések között');
     const nc14 = await txt(p, '#ov-not-checked li[data-code="X014"]');
     check(nc14.indexOf('PRISMA-folyamatábrát') >= 0 && nc14.indexOf('TBC') >= 0, 'X014: egyszerű nyelvű teendő, a kimenetek nevével (' + nc14.replace(/\s+/g, ' ').slice(0, 120) + ')');
-    check((await p.$$('#ov-not-checked li[data-code="X003"] a.ov-act')).length === 0, 'X003: nincs link a még helyőrző Értékelés-képernyőre (UX-15)');
+    // UX-15: helyőrzőre nem mutat link; a v1-ben az Értékelés-képernyő már valódi, ilyenkor a teendő oda vezet
+    const apPh = await p.evaluate(() => window.MA.app.isPlaceholder('appraisal'));
+    const x003 = await p.$$('#ov-not-checked li[data-code="X003"] a.ov-act');
+    check(apPh ? x003.length === 0 : x003.length === 1, apPh ? 'X003: nincs link a még helyőrző Értékelés-képernyőre (UX-15)'
+      : 'X003: a teendő a (már valódi) Értékelés-képernyőre vezet (UX-15)');
     await p.waitForSelector('#overview-outcomes');
     check((await txt(p, '#overview-outcomes')).indexOf('0.49 [0.33; 0.73]') >= 0, 'kimenet: a motor display_text-je szó szerint (tizedespont, mint a report.md)');
     // „Miért?” a #15 blockeren: billentyűzettel nyit, KB-tétel (V011) betöltődik, Esc zár és visszaadja a fókuszt

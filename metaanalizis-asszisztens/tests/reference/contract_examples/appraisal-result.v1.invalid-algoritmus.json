@@ -1,0 +1,220 @@
+{
+ "schema": "szk.appraisal-result/v1",
+ "tool": "rob2",
+ "validator_version": null,
+ "engine_version": "0.1.0",
+ "legacy": false,
+ "instrument_sha256": "6a9c81e40d0a556220d18044e86bd118c2edbae9bb0afd075d81ae1fd5ad2c51",
+ "scope": "assignment",
+ "target": {
+  "unit": "NCT0456",
+  "study_id": "NCT0456",
+  "outcome": "o1",
+  "result": "ITT 12 hó",
+  "model": null,
+  "index_test": null,
+  "key": "o1"
+ },
+ "complete": true,
+ "expected": 22,
+ "answered": 22,
+ "completeness_text": "22/22",
+ "per_pass": null,
+ "missing": [],
+ "invalid": [],
+ "domains": [
+  {
+   "domain": "1",
+   "pass": null,
+   "implied": "some_concerns",
+   "algorithm": "conservative",
+   "forced_by": [],
+   "unknown_at": [
+    "1.1"
+   ],
+   "partial_at": [],
+   "routers": [],
+   "missing": [],
+   "judgement": "low",
+   "level": "some",
+   "text": {
+    "hu": "nincs információ: 1.1",
+    "en": "no information at 1.1"
+   }
+  },
+  {
+   "domain": "2",
+   "pass": null,
+   "implied": "high",
+   "algorithm": "conservative",
+   "forced_by": [
+    "2.6"
+   ],
+   "unknown_at": [],
+   "partial_at": [],
+   "routers": [
+    "2.1",
+    "2.2",
+    "2.3",
+    "2.4"
+   ],
+   "missing": [],
+   "judgement": "low",
+   "level": "high",
+   "text": {
+    "hu": "„Nem”/„Valószínűleg nem” (fordított kérdésnél „Igen”) itt: 2.6",
+    "en": "'No'/'Probably no' (or 'Yes' on a reverse question) at 2.6"
+   }
+  },
+  {
+   "domain": "3",
+   "pass": null,
+   "implied": "low",
+   "algorithm": "conservative",
+   "forced_by": [],
+   "unknown_at": [],
+   "partial_at": [],
+   "routers": [
+    "3.3"
+   ],
+   "missing": [],
+   "judgement": "low",
+   "level": "low",
+   "text": {
+    "hu": "egyik jelző-kérdés sem jelez problémát",
+    "en": "no signalling question flags a problem"
+   }
+  },
+  {
+   "domain": "4",
+   "pass": null,
+   "implied": "low",
+   "algorithm": "conservative",
+   "forced_by": [],
+   "unknown_at": [],
+   "partial_at": [],
+   "routers": [
+    "4.3",
+    "4.4"
+   ],
+   "missing": [],
+   "judgement": "low",
+   "level": "low",
+   "text": {
+    "hu": "egyik jelző-kérdés sem jelez problémát",
+    "en": "no signalling question flags a problem"
+   }
+  },
+  {
+   "domain": "5",
+   "pass": null,
+   "implied": "low",
+   "algorithm": "conservative",
+   "forced_by": [],
+   "unknown_at": [],
+   "partial_at": [],
+   "routers": [],
+   "missing": [],
+   "judgement": "low",
+   "level": "low",
+   "text": {
+    "hu": "egyik jelző-kérdés sem jelez problémát",
+    "en": "no signalling question flags a problem"
+   }
+  }
+ ],
+ "overall": {
+  "implied": "high",
+  "algorithm": "official",
+  "official": false,
+  "basis": "validator-compatible",
+  "label": {
+   "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos RoB 2 algoritmus",
+   "en": "Validator-compatible conservative rule — NOT the official RoB 2 algorithm"
+  },
+  "text": {
+   "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos RoB 2 algoritmus",
+   "en": "Validator-compatible conservative rule — NOT the official RoB 2 algorithm"
+  },
+  "lines": [
+   {
+    "hu": "1. domén (Randomizációs folyamat): Némi aggály — nincs információ: 1.1",
+    "en": "Domain 1 (Randomisation process): Some concerns — no information at 1.1"
+   },
+   {
+    "hu": "2. domén (Eltérés a tervezett beavatkozástól): Magas — „Nem”/„Valószínűleg nem” (fordított kérdésnél „Igen”) itt: 2.6",
+    "en": "Domain 2 (Deviations from intended interventions): High — 'No'/'Probably no' (or 'Yes' on a reverse question) at 2.6"
+   },
+   {
+    "hu": "3. domén (Hiányzó kimeneti adatok): Alacsony — egyik jelző-kérdés sem jelez problémát",
+    "en": "Domain 3 (Missing outcome data): Low — no signalling question flags a problem"
+   },
+   {
+    "hu": "4. domén (A kimenet mérése): Alacsony — egyik jelző-kérdés sem jelez problémát",
+    "en": "Domain 4 (Measurement of the outcome): Low — no signalling question flags a problem"
+   },
+   {
+    "hu": "5. domén (A közölt eredmény kiválasztása): Alacsony — egyik jelző-kérdés sem jelez problémát",
+    "en": "Domain 5 (Selection of the reported result): Low — no signalling question flags a problem"
+   },
+   {
+    "hu": "Implikált összítélet: Magas — a legrosszabb domén szerint.",
+    "en": "Implied overall: High — set by the worst domain."
+   },
+   {
+    "hu": "Ez NEM a hivatalos RoB 2 folyamatábra: azt mutatja, amit a válaszok kikényszerítenek. Határesetben vesd össze a hivatalos algoritmussal, és ha eltérsz, indokold.",
+    "en": "This is NOT the official RoB 2 flowchart: it shows what the answers force. Check borderline domains against the official algorithm and give a reason if you override."
+   }
+  ],
+  "provisional": false,
+  "judgement": "low",
+  "level": "high"
+ },
+ "amstar2": null,
+ "grade": null,
+ "nos": null,
+ "tripod": null,
+ "conventions": {},
+ "overrides": [
+  {
+   "domain": "1",
+   "pass": null,
+   "judgement": "low",
+   "implied": "some_concerns",
+   "algorithm": "conservative",
+   "reason_missing": true,
+   "decision_missing": true
+  },
+  {
+   "domain": "2",
+   "pass": null,
+   "judgement": "low",
+   "implied": "high",
+   "algorithm": "conservative",
+   "reason_missing": true,
+   "decision_missing": true
+  },
+  {
+   "domain": "overall",
+   "pass": null,
+   "judgement": "low",
+   "implied": "high",
+   "algorithm": "conservative",
+   "reason_missing": true,
+   "decision_missing": true
+  }
+ ],
+ "guards": [],
+ "notes": [
+  {
+   "hu": "Azt mutatja, amit a rögzített válaszok kikényszerítenek, és megnevezi a kiváltó kérdéseket. Ez NEM a hivatalos RoB 2 folyamatábra; a doménítélet és az összítélet a Tiéd. Ha eltérsz az implikálttól, indokold (a döntés a naplóba kerül, X017). A hivatalos algoritmus a 2.6/2.7, a 3.3/3.4 és a 4.3–4.5 kérdéseken ágazik el; határesetben vesd össze a hivatalos Excel-eszközzel vagy a 2019-es útmutató folyamatábráival.",
+   "en": "Shows what the recorded answers force and names the questions that forced it. This is NOT the official RoB 2 flowchart; the domain and overall judgements are yours. If you depart from the implied judgement, give a reason (logged as a decision, X017). The official algorithm branches on 2.6/2.7, 3.3/3.4 and 4.3–4.5; check borderline domains against the official Excel tool or the 2019 guidance flowcharts."
+  }
+ ],
+ "warnings": [
+  {
+   "hu": "Az implikálttól eltérő ítélet indoklás nélkül (X017): D1, D2, összítélet",
+   "en": "Judgement differs from the implied one without a reason (X017)."
+  }
+ ]
+}

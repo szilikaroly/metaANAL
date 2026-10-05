@@ -1,0 +1,61 @@
+{
+  "schema": "szk.ma.grade/v1",
+  "outcome_id": "o1",
+  "importance": "critical",
+  "run_id": "20261004T211200Z-a1f3c2",
+  "start": "high",
+  "start_reason": "RCT",
+  "domains": {
+    "risk_of_bias": {
+      "rating": "serious",
+      "step": -1,
+      "rationale": "…",
+      "advisory": {
+        "high_rob_weight_pct": 41.2
+      }
+    },
+    "inconsistency": {
+      "rating": "not serious",
+      "step": 0,
+      "rationale": "…",
+      "advisory": {
+        "I2": 92.1,
+        "pi_crosses_null": true
+      }
+    },
+    "indirectness": {
+      "rating": "not serious",
+      "step": 0,
+      "rationale": "…"
+    },
+    "imprecision": {
+      "rating": "not serious",
+      "step": 0,
+      "advisory": {
+        "ci_crosses_null": false,
+        "ci_crosses_mid": false,
+        "ois_met": true
+      }
+    },
+    "publication_bias": {
+      "rating": "suspected",
+      "step": null,
+      "status": "unresolved",
+      "advisory": {
+        "k": 13,
+        "tests_interpretable": true,
+        "harbord_p": 0.23,
+        "peters_p": 0.2,
+        "lfk": -4.1
+      }
+    }
+  },
+  "upgrades": {
+    "large_effect": false,
+    "dose_response": false,
+    "opposing_confounding": false
+  },
+  "certainty": null,
+  "consistency_warning": null,
+  "validator_rollup": null
+}

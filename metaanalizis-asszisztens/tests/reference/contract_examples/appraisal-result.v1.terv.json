@@ -1,0 +1,52 @@
+{
+ "schema": "szk.appraisal-result/v1",
+ "tool": "rob2",
+ "validator_version": "1.1.0",
+ "legacy": false,
+ "complete": false,
+ "expected": 22,
+ "answered": 19,
+ "missing": [
+  {
+   "item": "2.7",
+   "pass": null
+  }
+ ],
+ "invalid": [],
+ "domains": [
+  {
+   "domain": "2",
+   "implied": "high",
+   "forced_by": [
+    "2.6"
+   ],
+   "unknown_at": [],
+   "routers": [
+    "2.1"
+   ]
+  }
+ ],
+ "overall": {
+  "implied": "high",
+  "algorithm": "conservative",
+  "lines": [
+   "…"
+  ]
+ },
+ "amstar2": null,
+ "grade": null,
+ "nos": null,
+ "conventions": {
+  "amstar2.partial_yes_critical": "meets"
+ },
+ "guards": [
+  {
+   "id": "H3",
+   "message": "publication bias 'suspected' unresolved",
+   "effect": "rollup_unreliable"
+  }
+ ],
+ "notes": [
+  "This is NOT the published RoB 2 flowchart."
+ ]
+}

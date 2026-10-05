@@ -1,0 +1,116 @@
+{
+ "schema": "szk.rob-summary/v1",
+ "tool": "rob2",
+ "outcome": "o1",
+ "name": "RoB 2",
+ "instrument_sha256": "6a9c81e40d0a556220d18044e86bd118c2edbae9bb0afd075d81ae1fd5ad2c51",
+ "algorithm": "conservative",
+ "engine_version": "0.1.0",
+ "domains": [
+  {
+   "id": "1",
+   "pass": null,
+   "title": {
+    "hu": "Randomizációs folyamat",
+    "en": "Randomisation process"
+   },
+   "short": "D1"
+  },
+  {
+   "id": "2",
+   "pass": null,
+   "title": {
+    "hu": "Eltérés a tervezett beavatkozástól",
+    "en": "Deviations from intended interventions"
+   },
+   "short": "D2"
+  },
+  {
+   "id": "3",
+   "pass": null,
+   "title": {
+    "hu": "Hiányzó kimeneti adatok",
+    "en": "Missing outcome data"
+   },
+   "short": "D3"
+  },
+  {
+   "id": "4",
+   "pass": null,
+   "title": {
+    "hu": "A kimenet mérése",
+    "en": "Measurement of the outcome"
+   },
+   "short": "D4"
+  },
+  {
+   "id": "5",
+   "pass": null,
+   "title": {
+    "hu": "A közölt eredmény kiválasztása",
+    "en": "Selection of the reported result"
+   },
+   "short": "D5"
+  }
+ ],
+ "scale": [
+  {
+   "value": "low",
+   "label": {
+    "hu": "Alacsony",
+    "en": "Low"
+   },
+   "level": "low"
+  },
+  {
+   "value": "some_concerns",
+   "label": {
+    "hu": "Némi aggály",
+    "en": "Some concerns"
+   },
+   "level": "some"
+  },
+  {
+   "value": "high",
+   "label": {
+    "hu": "Magas",
+    "en": "High"
+   },
+   "level": "high"
+  }
+ ],
+ "studies": [],
+ "weighted": [
+  {
+   "level": "low",
+   "n": 0,
+   "pct": null,
+   "text": null
+  },
+  {
+   "level": "some",
+   "n": 0,
+   "pct": null,
+   "text": null
+  },
+  {
+   "level": "high",
+   "n": 0,
+   "pct": null,
+   "text": null
+  }
+ ],
+ "high_weight_pct": null,
+ "weights_source": null,
+ "unmatched_plot_rows": [],
+ "notes": [
+  {
+   "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos RoB 2 algoritmus",
+   "en": "Validator-compatible conservative rule — NOT the official RoB 2 algorithm"
+  },
+  {
+   "hu": "Súlyok nélkül: nincs megadott futás (plot_data.json).",
+   "en": "No weights: no run given."
+  }
+ ]
+}

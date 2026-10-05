@@ -1,0 +1,118 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "scopus-references-ref-view-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": true,
+  "license_note": null,
+  "notes": "KÉZI (Abstract Retrieval API, view=REF): startref/refcount lapozás (refcount=2, @total-references=3); szintetikus hivatkozások — élőben igazolandó (a REF nézet mezőnevei is)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/abstract/eid/2-s2.0-0000000001?refcount=2&startref=1&view=REF"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "abstracts-retrieval-response": {
+            "references": {
+              "@total-references": "3",
+              "reference": [
+                {
+                  "@id": "1",
+                  "scopus-id": "0000000201",
+                  "scopus-eid": "2-s2.0-0000000201",
+                  "ce:doi": "10.5555/fixture.ref.1",
+                  "title": "Synthetic trial 1 (fixture)",
+                  "sourcetitle": "Fixture Trials",
+                  "prism:coverDate": "2009-01-01",
+                  "author-list": {
+                    "author": [
+                      {
+                        "@seq": "1",
+                        "ce:surname": "Alpha1",
+                        "ce:initials": "A.",
+                        "ce:indexed-name": "Alpha1 A."
+                      }
+                    ]
+                  },
+                  "citedby-count": "1",
+                  "type": "resolvedReference"
+                },
+                {
+                  "@id": "2",
+                  "scopus-id": "0000000202",
+                  "scopus-eid": "2-s2.0-0000000202",
+                  "ce:doi": "10.5555/fixture.ref.2",
+                  "title": "Synthetic trial 2 (fixture)",
+                  "sourcetitle": "Fixture Trials",
+                  "prism:coverDate": "2010-01-01",
+                  "author-list": {
+                    "author": [
+                      {
+                        "@seq": "1",
+                        "ce:surname": "Alpha2",
+                        "ce:initials": "A.",
+                        "ce:indexed-name": "Alpha2 A."
+                      }
+                    ]
+                  },
+                  "citedby-count": "2",
+                  "type": "resolvedReference"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/abstract/eid/2-s2.0-0000000001?refcount=2&startref=3&view=REF"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "abstracts-retrieval-response": {
+            "references": {
+              "@total-references": "3",
+              "reference": [
+                {
+                  "@id": "3",
+                  "scopus-id": "0000000203",
+                  "scopus-eid": "2-s2.0-0000000203",
+                  "ce:doi": "10.5555/fixture.ref.3",
+                  "title": "Synthetic trial 3 (fixture)",
+                  "sourcetitle": "Fixture Trials",
+                  "prism:coverDate": "2011-01-01",
+                  "author-list": {
+                    "author": [
+                      {
+                        "@seq": "1",
+                        "ce:surname": "Alpha3",
+                        "ce:initials": "A.",
+                        "ce:indexed-name": "Alpha3 A."
+                      }
+                    ]
+                  },
+                  "citedby-count": "3",
+                  "type": "resolvedReference"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

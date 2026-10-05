@@ -1,0 +1,348 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "pubmed-esummary_kashangura_tameris",
+  "recorded_at": "2026-10-05T11:08:27Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "esummary: Kashangura 2019 (31038197) és Tameris 2013 (23391465)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=31038197%2C23391465&retmode=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "0"
+        },
+        "body_json": {
+          "header": {
+            "type": "esummary",
+            "version": "0.3"
+          },
+          "result": {
+            "uids": [
+              "31038197",
+              "23391465"
+            ],
+            "31038197": {
+              "uid": "31038197",
+              "pubdate": "2019 Apr 30",
+              "epubdate": "2019 Apr 30",
+              "source": "Cochrane Database Syst Rev",
+              "authors": [
+                {
+                  "name": "Kashangura R",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Jullien S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Garner P",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Johnson S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Johnson S",
+              "title": "MVA85A vaccine to enhance BCG for preventing tuberculosis.",
+              "sorttitle": "mva85a vaccine to enhance bcg for preventing tuberculosis",
+              "volume": "4",
+              "issue": "4",
+              "pages": "CD012915",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "100909747",
+              "issn": "1361-6137",
+              "essn": "1469-493X",
+              "pubtype": [
+                "Journal Article",
+                "Research Support, Non-U.S. Gov't",
+                "Systematic Review"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "3",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "31038197"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC6488980"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC6488980;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1002/14651858.CD012915.pub2"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2019/05/01 06:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2019/05/29 06:00"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2019/05/01 06:00"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2019/04/30 00:00"
+                }
+              ],
+              "references": [
+                {
+                  "refsource": "doi: 10.1002/14651858.CD012915",
+                  "reftype": "Update of",
+                  "pmid": "",
+                  "note": ""
+                }
+              ],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 96,
+              "fulljournalname": "The Cochrane database of systematic reviews",
+              "elocationid": "doi: 10.1002/14651858.CD012915.pub2",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2019/04/30 00:00",
+              "sortfirstauthor": "Kashangura R",
+              "vernaculartitle": ""
+            },
+            "23391465": {
+              "uid": "23391465",
+              "pubdate": "2013 Mar 23",
+              "epubdate": "",
+              "source": "Lancet",
+              "authors": [
+                {
+                  "name": "Tameris MD",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Hatherill M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Landry BS",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Scriba TJ",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Snowden MA",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Lockhart S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Shea JE",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "McClain JB",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Hussey GD",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Hanekom WA",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Mahomed H",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "McShane H",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "MVA85A 020 Trial Study Team",
+                  "authtype": "CollectiveName",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "McShane H",
+              "title": "Safety and efficacy of MVA85A, a new tuberculosis vaccine, in infants previously vaccinated with BCG: a randomised, placebo-controlled phase 2b trial.",
+              "sorttitle": "safety and efficacy of mva85a a new tuberculosis vaccine in infants previously vaccinated with bcg a randomised placebo controlled phase 2b trial",
+              "volume": "381",
+              "issue": "9871",
+              "pages": "1021-8",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "2985213R",
+              "issn": "0140-6736",
+              "essn": "1474-547X",
+              "pubtype": [
+                "Clinical Trial, Phase II",
+                "Journal Article",
+                "Randomized Controlled Trial",
+                "Research Support, Non-U.S. Gov't"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "4",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "23391465"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC5424647"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC5424647;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1016/S0140-6736(13)60177-4"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "S0140-6736(13)60177-4"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "entrez",
+                  "date": "2013/02/09 06:00"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2013/02/09 06:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2013/06/29 06:00"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2013/02/04 00:00"
+                }
+              ],
+              "references": [
+                {
+                  "refsource": "Lancet. 2013 Mar 23;381(9871):972-4. doi: 10.1016/S0140-6736(13)60137-3.",
+                  "reftype": "Comment in",
+                  "pmid": 23391464,
+                  "note": ""
+                },
+                {
+                  "refsource": "Lancet. 2013 Jun 29;381(9885):2252-3. doi: 10.1016/S0140-6736(13)61481-6.",
+                  "reftype": "Comment in",
+                  "pmid": 23809560,
+                  "note": ""
+                },
+                {
+                  "refsource": "Lancet. 2013 Jun 29;381(9885):2253-4. doi: 10.1016/S0140-6736(13)61482-8.",
+                  "reftype": "Comment in",
+                  "pmid": 23809561,
+                  "note": ""
+                },
+                {
+                  "refsource": "Lancet. 2013 Jun 29;381(9885):2254. doi: 10.1016/S0140-6736(13)61483-X.",
+                  "reftype": "Comment in",
+                  "pmid": 23809562,
+                  "note": ""
+                }
+              ],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 33,
+              "fulljournalname": "Lancet (London, England)",
+              "elocationid": "",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2013/03/23 00:00",
+              "sortfirstauthor": "Tameris MD",
+              "vernaculartitle": ""
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

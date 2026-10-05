@@ -1,0 +1,1212 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "robins-i",
+  "name": "ROBINS-I",
+  "label": {
+    "hu": "ROBINS-I — nem randomizált beavatkozásos vizsgálatok",
+    "en": "ROBINS-I — non-randomised studies of interventions"
+  },
+  "full_name": "Risk Of Bias In Non-randomised Studies — of Interventions (2016)",
+  "family": "rob",
+  "tool_version": "2016",
+  "definition_version": 1,
+  "validator_version": "1.0.0",
+  "reference_sha256": "e88d43342973571e2040b91f9fca7401e1f6cc5a5971abb41f6219b54452397e",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/robins-i.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Sterne JAC, Hernán MA, Reeves BC, et al. ROBINS-I: a tool for assessing risk of bias in non-randomised studies of interventions. BMJ 2016;355:i4919; guidance at riskofbias.info.",
+  "licence": {
+    "instrument_licence": "CC BY-NC-ND 4.0 (riskofbias.info) — ellenőrizendő",
+    "verbatim_allowed": true,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "A ROBINS-I a riskofbias.info oldalán CC BY-NC-ND 4.0 licenccel érhető el (ellenőrizendő). Ez a fájl munka-parafrázisokat tartalmaz; a tételszám a 2016-os eszköz, az útmutató és a 2024-es V2 között eltér — közlés előtt vesd össze a hivatkozott változattal.",
+      "en": "ROBINS-I is distributed at riskofbias.info under CC BY-NC-ND 4.0 (to be verified). This file holds working paraphrases; item counts differ between the 2016 tool, its guidance and the 2024 V2 — check against the version you cite."
+    }
+  },
+  "intro": {
+    "hu": "A ROBINS-I egy nem randomizált vizsgálatot egy elképzelt CÉLVIZSGÁLATHOZ (a kérdést megválaszoló pragmatikus RCT-hez) mér. Az első kérdés előtt írd le három sorban: beválasztás, a két összehasonlított beavatkozás, a kimenet és ideje. Az „alacsony” itt a jól kivitelezett RCT-vel egyenértékű — megfigyeléses vizsgálatnál ritka. A „kritikus” azt jelenti, hogy a vizsgálat nem használható a szintézisben.",
+    "en": "ROBINS-I judges a non-randomised study against a hypothetical TARGET TRIAL. Write the target trial down first (eligibility, the two interventions, the outcome and its timing). 'Low' means comparable to a well-performed RCT — unusual for an observational study. 'Critical' means the study should not enter the synthesis."
+  },
+  "unit": "result",
+  "unit_label": {
+    "hu": "eredményenként (egy kimenet, egy összehasonlítás)",
+    "en": "per result (one outcome, one comparison)"
+  },
+  "scopes": [
+    {
+      "id": "assignment",
+      "label": {
+        "hu": "A beavatkozás kiosztásának hatása",
+        "en": "Effect of assignment"
+      },
+      "default": true
+    },
+    {
+      "id": "adherence",
+      "label": {
+        "hu": "A beavatkozás betartásának hatása",
+        "en": "Effect of adhering"
+      },
+      "default": false
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "probably_yes",
+      "label": "PY",
+      "text": {
+        "hu": "Valószínűleg igen",
+        "en": "Probably yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "py",
+        "probably yes",
+        "prob yes",
+        "valoszinuleg igen",
+        "vi"
+      ]
+    },
+    {
+      "value": "probably_no",
+      "label": "PN",
+      "text": {
+        "hu": "Valószínűleg nem",
+        "en": "Probably no"
+      },
+      "kind": "negative",
+      "aliases": [
+        "pn",
+        "probably no",
+        "prob no",
+        "valoszinuleg nem",
+        "vn"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "no_information",
+      "label": "NI",
+      "text": {
+        "hu": "Nincs információ",
+        "en": "No information"
+      },
+      "kind": "unknown",
+      "aliases": [
+        "ni",
+        "no information",
+        "no info",
+        "nincs informacio",
+        "nincs adat"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "probably_yes",
+    "probably_no",
+    "no",
+    "no_information"
+  ],
+  "verdicts": [
+    {
+      "value": "low",
+      "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+      },
+      "level": "low"
+    },
+    {
+      "value": "moderate",
+      "label": {
+        "hu": "Mérsékelt",
+        "en": "Moderate"
+      },
+      "level": "some"
+    },
+    {
+      "value": "serious",
+      "label": {
+        "hu": "Súlyos",
+        "en": "Serious"
+      },
+      "level": "high"
+    },
+    {
+      "value": "critical",
+      "label": {
+        "hu": "Kritikus",
+        "en": "Critical"
+      },
+      "level": "critical"
+    },
+    {
+      "value": "no_information",
+      "label": {
+        "hu": "Nincs információ",
+        "en": "No information"
+      },
+      "level": "ni"
+    }
+  ],
+  "domains": [
+    {
+      "id": "1",
+      "title": {
+        "hu": "Zavaró tényezők (confounding) miatti torzítás",
+        "en": "Bias due to confounding"
+      },
+      "short": "D1",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "2",
+      "title": {
+        "hu": "A résztvevők beválasztásából eredő torzítás",
+        "en": "Bias in selection of participants into the study"
+      },
+      "short": "D2",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "3",
+      "title": {
+        "hu": "A beavatkozások besorolásából eredő torzítás",
+        "en": "Bias in classification of interventions"
+      },
+      "short": "D3",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "4",
+      "title": {
+        "hu": "A tervezett beavatkozástól való eltérés miatti torzítás",
+        "en": "Bias due to deviations from intended interventions"
+      },
+      "short": "D4",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "5",
+      "title": {
+        "hu": "Hiányzó adatok miatti torzítás",
+        "en": "Bias due to missing data"
+      },
+      "short": "D5",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "6",
+      "title": {
+        "hu": "A kimenet mérésének torzítása",
+        "en": "Bias in measurement of outcomes"
+      },
+      "short": "D6",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "7",
+      "title": {
+        "hu": "A közölt eredmény kiválasztásának torzítása",
+        "en": "Bias in selection of the reported result"
+      },
+      "short": "D7",
+      "passes": null,
+      "applicability": false
+    }
+  ],
+  "items": [
+    {
+      "id": "1.1",
+      "key": "1.1",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Fennáll-e ebben a vizsgálatban a beavatkozás hatásának zavaró tényezők általi torzítása?",
+        "en": "Is there potential for confounding of the effect of intervention in this study?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Megfigyeléses vizsgálatnál szinte mindig Igen; Nem csak akkor, ha a beavatkozás kiosztása gyakorlatilag véletlenszerű volt, senki befolyásától függetlenül — ekkor a domén alacsony kockázatú, és a többi kérdést nem kell feltenni. Az „Igen” önmagában legalább mérsékelt kockázatot jelent, mert a ROBINS-I-ben az „alacsony” a jól kivitelezett randomizált vizsgálattal egyenértékű.",
+        "en": "Reverse-polarity. Almost always Yes for an observational study; No only where intervention allocation was effectively random for reasons outside anyone's control. If No, the domain is Low and the remaining questions are not asked."
+      },
+      "severity": "some"
+    },
+    {
+      "id": "1.2",
+      "key": "1.2",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők követési idejét a ténylegesen kapott beavatkozás szerint bontották-e fel?",
+        "en": "Was the analysis based on splitting participants' follow-up time according to intervention received?"
+      },
+      "tags": [
+        "all",
+        "router"
+      ],
+      "polarity": "router",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Irányító kérdés: az idővel változó zavaró tényezők ágára (1.7–1.8) vezet a kiindulási ág (1.4–1.6) helyett.",
+        "en": "Routes to the time-varying confounding branch (1.7–1.8) rather than the baseline branch (1.4–1.6)."
+      }
+    },
+    {
+      "id": "1.3",
+      "key": "1.3",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.2 válasza I/VI: valószínű-e, hogy a beavatkozás abbahagyása vagy a váltás a kimenet szempontjából prognosztikus tényezőkkel függött össze?",
+        "en": "If Y/PY to 1.2: were intervention discontinuations or switches likely to be related to factors that are prognostic for the outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés: az „Igen” a probléma.",
+        "en": "Reverse-polarity."
+      },
+      "condition": {
+        "hu": "Ha az 1.2 válasza I/VI",
+        "en": "If Y/PY to 1.2"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.4",
+      "key": "1.4",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.2 válasza N/VN: megfelelő elemzési módszerrel kontrollálták-e az összes fontos zavaró domént?",
+        "en": "If N/PN to 1.2: did the authors use an appropriate analysis method that controlled for all the important confounding domains?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "„Az összes fontos” azokat jelenti, amelyeket TE soroltál fel a cikk elolvasása előtt (a témából, nem a cikk táblázatából) — különben a vizsgálat maga szabja meg a mércét.",
+        "en": "\"All the important\" means the ones *you* listed before reading the paper. Decide the confounder list from the topic, not from the paper's own table — otherwise the study defines the standard it is judged by."
+      },
+      "condition": {
+        "hu": "Ha az 1.2 válasza N/VN",
+        "en": "If N/PN to 1.2"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.5",
+      "key": "1.5",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.4 válasza I/VI: érvényesen és megbízhatóan mérték-e a kontrollált zavaró doméneket a rendelkezésre álló változók?",
+        "en": "If Y/PY to 1.4: were confounding domains that were controlled for measured validly and reliably by the variables available in this study?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Egy erős zavaró tényező önbevallásos helyettesítője „mérve” van, de valójában nincs kontrollálva.",
+        "en": "A self-reported proxy for a strong confounder is measured, not controlled."
+      },
+      "condition": {
+        "hu": "Ha az 1.4 válasza I/VI",
+        "en": "If Y/PY to 1.4"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.6",
+      "key": "1.6",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Korrigáltak-e a szerzők olyan, a beavatkozás után mért változókra, amelyeket a beavatkozás befolyásolhatott?",
+        "en": "Did the authors control for any post-intervention variables that could have been affected by the intervention?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Közvetítő változóra korrigálni túlkorrigálás, és torzítja a teljes hatást — gyakori és láthatatlan hiba, mert szigorúbb korrekciónak látszik.",
+        "en": "Reverse-polarity. Adjusting for a mediator is over-adjustment and biases the total effect — a common and invisible error, because it looks like more rigorous adjustment."
+      }
+    },
+    {
+      "id": "1.7",
+      "key": "1.7",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.2 válasza I/VI: megfelelő elemzési módszerrel kontrollálták-e az összes fontos zavaró domént és az idővel változó zavaró tényezőket?",
+        "en": "If Y/PY to 1.2: did the authors use an appropriate analysis method that controlled for all the important confounding domains and for time-varying confounding?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Például marginális strukturális modell vagy g-becslés. A szokásos regresszió idővel változó expozícióval nem kontrollálja azt a zavaró tényezőt, amelyet a korábbi expozíció befolyásolt.",
+        "en": "Marginal structural models, g-estimation. Standard regression on a time-varying exposure with a time-varying confounder affected by prior exposure does not control it."
+      },
+      "condition": {
+        "hu": "Ha az 1.2 válasza I/VI",
+        "en": "If Y/PY to 1.2"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.8",
+      "key": "1.8",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.7 válasza I/VI: érvényesen és megbízhatóan mérték-e a kontrollált zavaró doméneket?",
+        "en": "If Y/PY to 1.7: were confounding domains that were controlled for measured validly and reliably?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha az 1.7 válasza I/VI",
+        "en": "If Y/PY to 1.7"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "2.1",
+      "key": "2.1",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "A vizsgálatba (vagy az elemzésbe) való beválasztás a beavatkozás kezdete után megfigyelt jellemzőkön alapult-e?",
+        "en": "Was selection of participants into the study (or into the analysis) based on participant characteristics observed after the start of intervention?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Itt jelenik meg a „halhatatlan idő” torzítás (immortal time bias) és a prevalens felhasználós elrendezés: ha azokat választják be, akik elég sokáig éltek a beavatkozáshoz, az eredmény már a kohorszba van építve.",
+        "en": "Reverse-polarity. Immortal time bias and prevalent-user designs live here: selecting people who survived long enough to receive the intervention builds the result into the cohort."
+      }
+    },
+    {
+      "id": "2.2",
+      "key": "2.2",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 2.1 válasza I/VI: összefüggtek-e a beválasztást befolyásoló, beavatkozás utáni változók a beavatkozással?",
+        "en": "If Y/PY to 2.1: were the post-intervention variables that influenced selection likely to be associated with intervention?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": "Reverse-polarity."
+      },
+      "condition": {
+        "hu": "Ha a 2.1 válasza I/VI",
+        "en": "If Y/PY to 2.1"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "2.3",
+      "key": "2.3",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 2.2 válasza I/VI: befolyásolta-e a beválasztást meghatározó, beavatkozás utáni változókat a kimenet vagy a kimenet valamely oka?",
+        "en": "If Y/PY to 2.2: were the post-intervention variables that influenced selection likely to be influenced by the outcome or a cause of the outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": "Reverse-polarity."
+      },
+      "condition": {
+        "hu": "Ha a 2.2 válasza I/VI",
+        "en": "If Y/PY to 2.2"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "2.4",
+      "key": "2.4",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők többségénél egybeesett-e a követés kezdete és a beavatkozás kezdete?",
+        "en": "Do start of follow-up and start of intervention coincide for most participants?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ha nem, a köztes, nem megfigyelt időszakban halmozódik fel a „halhatatlan idő”.",
+        "en": "When they do not, the unobserved period between them is where immortal time accumulates."
+      }
+    },
+    {
+      "id": "2.5",
+      "key": "2.5",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 2.3 vagy a 2.4 válasza N/VN: alkalmaztak-e olyan korrekciós eljárást, amely valószínűleg kiküszöböli a szelekciós torzításokat?",
+        "en": "If N/PN to 2.3 or N/PN to 2.4: were adjustment techniques used that are likely to correct for the presence of selection biases?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha a 2.3 vagy a 2.4 válasza N/VN",
+        "en": "If N/PN to 2.3 or N/PN to 2.4"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "3.1",
+      "key": "3.1",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen definiálták-e a beavatkozási csoportokat?",
+        "en": "Were intervention groups clearly defined?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A dózissal, az időtartammal és az összehasonlítóval együtt. A „használók kontra nem használók” nem definíció.",
+        "en": "Including the dose, duration and comparator. \"Users versus non-users\" is not a definition."
+      }
+    },
+    {
+      "id": "3.2",
+      "key": "3.2",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "A beavatkozási csoportok meghatározásához használt információt a beavatkozás kezdetekor rögzítették-e?",
+        "en": "Was the information used to define intervention groups recorded at the start of the intervention?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.3",
+      "key": "3.3",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Befolyásolhatta-e a beavatkozási státusz besorolását a kimenet vagy a kimenet kockázatának ismerete?",
+        "en": "Could classification of intervention status have been affected by knowledge of the outcome or risk of the outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Az eset-kontroll elrendezés visszaemlékezési torzítása itt jelenik meg.",
+        "en": "Reverse-polarity. Recall bias in a case-control design sits here."
+      }
+    },
+    {
+      "id": "4.1",
+      "key": "4.1",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Volt-e a szokásos gyakorlatban várhatónál nagyobb eltérés a tervezett beavatkozástól?",
+        "en": "Were there deviations from the intended intervention beyond what would be expected in usual practice?"
+      },
+      "tags": [
+        "assignment",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés: az „Igen” a probléma.",
+        "en": "Reverse-polarity."
+      }
+    },
+    {
+      "id": "4.2",
+      "key": "4.2",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 4.1 válasza I/VI: kiegyensúlyozatlanok voltak-e ezek az eltérések a csoportok között, és valószínűleg befolyásolták-e a kimenetet?",
+        "en": "If Y/PY to 4.1: were these deviations from intended intervention unbalanced between groups and likely to have affected the outcome?"
+      },
+      "tags": [
+        "assignment",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": "Reverse-polarity."
+      },
+      "condition": {
+        "hu": "Ha a 4.1 válasza I/VI",
+        "en": "If Y/PY to 4.1"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "4.3",
+      "key": "4.3",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő volt-e az elemzés a beavatkozás megkezdése és betartása hatásának becslésére?",
+        "en": "Was the analysis appropriate to estimate the effect of starting and adhering to the intervention?"
+      },
+      "tags": [
+        "assignment"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.4",
+      "key": "4.4",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Kiegyensúlyozottak voltak-e a fontos együttes beavatkozások (ko-intervenciók) a csoportok között?",
+        "en": "Were important co-interventions balanced across intervention groups?"
+      },
+      "tags": [
+        "adherence",
+        "reverse"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a jó válasz (a validator 1.0.0 fordítottnak címkézi; itt a kérdés szövege szerint normál).",
+        "en": ""
+      }
+    },
+    {
+      "id": "4.5",
+      "key": "4.5",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Sikeresen valósították-e meg a beavatkozást a résztvevők többségénél?",
+        "en": "Was the intervention implemented successfully for most participants?"
+      },
+      "tags": [
+        "adherence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.6",
+      "key": "4.6",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Betartották-e a résztvevők a kijelölt beavatkozási rendet?",
+        "en": "Did study participants adhere to the assigned intervention regimen?"
+      },
+      "tags": [
+        "adherence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.1",
+      "key": "5.1",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Rendelkezésre álltak-e a kimeneti adatok az összes vagy szinte az összes résztvevőre?",
+        "en": "Were outcome data available for all, or nearly all, participants?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.2",
+      "key": "5.2",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Kizártak-e résztvevőket a beavatkozási státuszra vagy más, az elemzéshez szükséges változóra vonatkozó hiányzó adat miatt?",
+        "en": "Were participants excluded due to missing data on intervention status, or on other variables needed for the analysis?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés: az „Igen” a probléma (a validator 1.0.0 normálnak címkézi; itt a kérdés szövege szerint fordított).",
+        "en": ""
+      }
+    },
+    {
+      "id": "5.3",
+      "key": "5.3",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Hasonló-e a hiányzó adatú résztvevők aránya és a hiány oka a beavatkozási csoportok között?",
+        "en": "Are the proportion of participants and reasons for missing data similar across interventions?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.1",
+      "key": "6.1",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Befolyásolhatta-e a kimenet mérését a kapott beavatkozás ismerete?",
+        "en": "Could the outcome measure have been influenced by knowledge of the intervention received?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Regiszterben rögzített halálozást nem; klinikus által megítélt diagnózist igen.",
+        "en": "Reverse-polarity. A registry-recorded death cannot; a clinician-adjudicated diagnosis can."
+      }
+    },
+    {
+      "id": "6.2",
+      "key": "6.2",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Tudtak-e a kimenet értékelői arról, ki milyen beavatkozást kapott?",
+        "en": "Were outcome assessors aware of the intervention received by study participants?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": "Reverse-polarity."
+      }
+    },
+    {
+      "id": "6.3",
+      "key": "6.3",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Összehasonlíthatók voltak-e a kimenet értékelésének módszerei a beavatkozási csoportok között?",
+        "en": "Were the methods of outcome assessment comparable across intervention groups?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a jó válasz (a validator 1.0.0 fordítottnak címkézi). Az eltérő megfigyelési intenzitás — több vizsgálat a kezelt csoportban — észlelési torzítást okoz, amit semmilyen korrekció nem javít.",
+        "en": "Differential surveillance — more testing in the treated group — produces detection bias that no adjustment repairs."
+      }
+    },
+    {
+      "id": "7.1",
+      "key": "7.1",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt hatásbecslést az eredmények alapján választották ki a kimeneti doménen belüli több mérés közül?",
+        "en": "Is the reported effect estimate likely to be selected, on the basis of the results, from multiple outcome measurements within the outcome domain?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": "Reverse-polarity."
+      }
+    },
+    {
+      "id": "7.2",
+      "key": "7.2",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt hatásbecslést a beavatkozás–kimenet kapcsolat több elemzése közül választották ki?",
+        "en": "... from multiple analyses of the intervention-outcome relationship?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés. Megfigyeléses kutatásban ez a legnagyobb szabadságfok: modellspecifikáció, kovariáns-készletek, kategorizálási vágópontok.",
+        "en": "Reverse-polarity. In observational research this is the largest single degree of freedom: model specification, covariate sets, categorisation cut-points."
+      }
+    },
+    {
+      "id": "7.3",
+      "key": "7.3",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt hatásbecslést különböző alcsoportok közül választották ki?",
+        "en": "... from different subgroups?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Fordított kérdés.",
+        "en": "Reverse-polarity."
+      }
+    }
+  ],
+  "rollup": {
+    "algorithm": "conservative",
+    "basis": "validator-compatible",
+    "official": false,
+    "overall": "worst",
+    "tiers": {
+      "low": "low",
+      "some": "moderate",
+      "high": "serious"
+    },
+    "label": {
+      "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos ROBINS-I algoritmus",
+      "en": "Validator-compatible conservative rule — NOT the official ROBINS-I algorithm"
+    },
+    "note": {
+      "hu": "Azt mutatja, amit a rögzített válaszok kikényszerítenek, és megnevezi a kiváltó kérdéseket. Ez NEM a hivatalos ROBINS-I folyamatábra; a doménítélet és az összítélet a Tiéd. Ha eltérsz az implikálttól, indokold (a döntés a naplóba kerül, X017). A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. A hivatalos algoritmus a zavaró tényezők doménjén ágazik el.",
+      "en": "Shows what the recorded answers force and names the questions that forced it. This is NOT the official ROBINS-I flowchart; the domain and overall judgements are yours. If you depart from the implied judgement, give a reason (logged as a decision, X017). The rule never yields 'critical' or 'no information': these are human decisions. The official algorithm branches on the confounding domain."
+    },
+    "differences_from_validator": [
+      {
+        "hu": "Hiányzó (nem irányító) válasz esetén a domén implikált ítélete üres marad — a validator 1.0.0 ilyenkor a megválaszolt tételekből „alacsony”-t ad.",
+        "en": "A domain with an unanswered (non-router) item has no implied judgement — validator 1.0.0 reports 'low' from the answered items."
+      },
+      {
+        "hu": "A „részben” típusú válasz (pl. QUIPS „Részben”) legalább a középső szintet adja — a validator 1.0.0 problémamentesnek veszi.",
+        "en": "A partial answer (e.g. QUIPS 'Partly') yields at least the middle level — validator 1.0.0 treats it as no problem."
+      },
+      {
+        "hu": "Az 1.1 („Fennáll-e zavarás?”) „Igen” válasza legalább mérsékelt szintet ad, nem súlyosat — a ROBINS-I-ben az alacsony kockázathoz az kell, hogy ne legyen várható zavarás; a validator 1.0.0 ezt súlyosnak veszi.",
+        "en": "A 'Yes' to 1.1 ('potential for confounding?') yields at least moderate, not serious — in ROBINS-I low risk requires no expected confounding; validator 1.0.0 treats it as serious."
+      }
+    ]
+  },
+  "rob_column": {
+    "low": "low",
+    "moderate": "some",
+    "serious": "high",
+    "critical": "critical",
+    "no_information": "no information"
+  },
+  "counts": {
+    "parsed": 31,
+    "published": null,
+    "per_scope": {
+      "assignment": 28,
+      "adherence": 28
+    },
+    "per_pass": null
+  },
+  "notes": [
+    {
+      "hu": "Domént és összítéletet ne összegezz és ne átlagolj: a ROBINS-I-nek nincs pontszáma. Az összítélet a legrosszabb domén; több mérsékelt domén együtt indokolhat súlyosat — ezt ki kell mondani.",
+      "en": "Never sum or average domains: ROBINS-I has no score. Overall = the worst domain; several moderate domains together may justify serious — say so if you make that call."
+    }
+  ],
+  "validator_differences": [
+    {
+      "item": "4.4",
+      "validator": "reverse",
+      "here": "normal",
+      "reason": {
+        "hu": "A kiegyensúlyozott ko-intervenció a jó válasz (Igen = rendben).",
+        "en": "Balanced co-interventions are the good answer (Yes = fine)."
+      }
+    },
+    {
+      "item": "5.2",
+      "validator": "normal",
+      "here": "reverse",
+      "reason": {
+        "hu": "A hiányzó adat miatti kizárás a probléma (Igen = probléma).",
+        "en": "Exclusion for missing data is the problem (Yes = problem)."
+      }
+    },
+    {
+      "item": "6.3",
+      "validator": "reverse",
+      "here": "normal",
+      "reason": {
+        "hu": "Az összehasonlítható kimenetmérés a jó válasz (Igen = rendben).",
+        "en": "Comparable outcome assessment is the good answer (Yes = fine)."
+      }
+    },
+    {
+      "item": "1.1",
+      "validator": "reverse (high)",
+      "here": "reverse (legalább mérsékelt)",
+      "reason": {
+        "hu": "A zavarás lehetősége önmagában a mérsékelt szintet zárja ki az alacsonyt, nem súlyos kockázat.",
+        "en": "Potential confounding by itself rules out low (→ at least moderate), not serious."
+      }
+    }
+  ],
+  "counts_note": {
+    "hu": "A publikált tételszám a változattól függ; a validator sem ad elvárt összeget.",
+    "en": "The published item count depends on the version; the validator carries no expected total."
+  }
+}

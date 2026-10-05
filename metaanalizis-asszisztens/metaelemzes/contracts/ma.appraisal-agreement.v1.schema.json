@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.appraisal-agreement:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.appraisal-agreement/v1 — két független emberi értékelő egyezése tételszinten (Cohen-féle κ CI-vel, eltérések; terv 5.4, 11. fejezet 6. döntés: AI-vázlat nem értékelő)",
+  "type": "object",
+  "required": [
+    "schema",
+    "tool",
+    "a",
+    "b",
+    "items_compared",
+    "kappa",
+    "items"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.appraisal-agreement/v1"
+    },
+    "tool": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "a": {
+      "type": "string"
+    },
+    "b": {
+      "type": "string"
+    },
+    "pairs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "items_compared": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "agree": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "disagree": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "agreement_pct": {
+      "$ref": "urn:szk:contract:common:1#/$defs/num"
+    },
+    "agreement_pct_text": {
+      "type": "string"
+    },
+    "kappa": {
+      "$ref": "urn:szk:contract:common:1#/$defs/num"
+    },
+    "kappa_se": {
+      "$ref": "urn:szk:contract:common:1#/$defs/num"
+    },
+    "kappa_ci": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          }
+        }
+      ]
+    },
+    "kappa_method": {
+      "type": "string"
+    },
+    "level": {
+      "type": "number"
+    },
+    "kappa_text": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      ]
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "table": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pass": {
+            "enum": [
+              "development",
+              "evaluation",
+              null
+            ]
+          },
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "b": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "agree": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "pass": {
+            "enum": [
+              "development",
+              "evaluation",
+              null
+            ]
+          },
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "b": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "agree": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "overall": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        ]
+      }
+    }
+  }
+}

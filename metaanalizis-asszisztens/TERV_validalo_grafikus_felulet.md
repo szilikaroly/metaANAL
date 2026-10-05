@@ -185,9 +185,10 @@ metaanalizis-asszisztens/
     adapters/ base.py validator.py figureforge.py composer.py presubmit.py
     web/src/  app.js api.js store.js grid.js geom.js plots/{forest,funnel,doi,series,influence,bubble,
               traffic,prisma}.js screens/*.js css/tokens.css i18n/{hu,en}.json selftest.js
-    web/build_gui.py  → ma_gui/web/dist/index.html (egy fájl, nonce-helyek; ≤ 600 KB — a kezdőknek szóló
-                       magyarázatok miatt emelve 450-ről, helyi lapként így is azonnali; determinisztikus) és
-                       ma_gui/web/dist/snapshot.html (a pillanatkép sablonja; ≤ 600 KB)
+    web/build_gui.py  → ma_gui/web/dist/index.html (egy fájl, nonce-helyek; ≤ 900 KB — a kezdőknek szóló
+                       magyarázatok miatt emelve 450-ről 600-ra (MVP), majd a v1 értékelő űrlapjai, GRADE/SoF és
+                       protokoll miatt 900-ra; helyi lapként így is azonnali; determinisztikus) és
+                       ma_gui/web/dist/snapshot.html (a pillanatkép sablonja; ≤ 900 KB)
     web/dist/index.html  a lefordított felület, verziókövetve; a szerver a GET /-re KÖZVETLENÜL ezt szolgálja ki
                        (a felhasználónak nincs build-lépése)
     static/index.html  csak tartalék oldal újraépítési útmutatással, ha a web/dist/ hiányzik
@@ -317,6 +318,9 @@ ugyanazt az utat használják.
   - Akadálymentesség: `role="grid"`, `aria-invalid`, `aria-describedby`.
   - Virtualizáció csak a v1-ben jön (az MVP-ben legfeljebb 1000 sor).
   - A cellák **szövegként** maradnak; a számokat a motor értelmezi.
+- **Méretkeret (2.3):** a termék-build legfeljebb 900 KB (`build_gui.MAX_BYTES`; v1, 2026-10-05: 600-ról emelve az
+  értékelő űrlapok, a GRADE/SoF és a protokoll kezdőknek szóló magyarázatai miatt). A keretet a build és a
+  `tests/gui/test_ui_static.py` is ellenőrzi.
 - `geom.js` — az egyetlen modul, amely `Math.*`-t használhat. Lineáris és log10 pixel-leképezést végez a motor
   `axis.domain`-jére, és pixelre igazít.
 - `plots/*.js` — SVG-rajzolók, amelyek a `szk.ma.plot/v2`-t képezik pixelre.

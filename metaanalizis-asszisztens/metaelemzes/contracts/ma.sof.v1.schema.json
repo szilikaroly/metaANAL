@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.sof:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.sof/v1 — Summary of Findings (06_kezirat/sof/<kimenet>.sof.json; terv 4.14, E10)",
+  "description": "Kimenetenként egy (vagy több) SoF-sor; minden szám a motoré (grade_help.sof): résztvevők és k (totals), relatív hatás (back_transformed.estimate_ci — a display_text a motor szövege), alapkockázatonként abszolút hatás /1000 CI-vel (RR: ACR·RR; OR: ACR·OR/(1−ACR+ACR·OR); RD: maga az RD), bizonyosság szimbólummal, GRADE-megfogalmazás és lábjegyzetek. A sources a cellák forrásmezőit nevezi meg (X008).",
+  "type": "object",
+  "required": [
+    "schema",
+    "outcome_id",
+    "run_id",
+    "rows"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.sof/v1"
+    },
+    "outcome_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{8}T\\d{6}Z-[0-9a-f]{6}$"
+    },
+    "measure": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "header": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "population": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "setting": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "intervention": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "comparison": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/row"
+      }
+    },
+    "title": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      ]
+    },
+    "columns": {
+      "type": "array",
+      "description": "a táblázat oszlopai: a sor kész cellaszövegeinek kulcsa és fejléce",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "label": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        }
+      }
+    },
+    "footnotes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/footnote"
+      }
+    },
+    "statement": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      ]
+    },
+    "engine": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      }
+    },
+    "kb_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "updated": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "row": {
+      "type": "object",
+      "required": [
+        "outcome_id",
+        "k",
+        "participants",
+        "studies_text",
+        "relative",
+        "effect",
+        "absolute",
+        "certainty",
+        "footnotes",
+        "sources"
+      ],
+      "properties": {
+        "outcome_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+        },
+        "label": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "importance": {
+          "enum": [
+            "critical",
+            "important",
+            "limited",
+            "not important",
+            null
+          ]
+        },
+        "k": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "participants": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "design": {
+          "enum": [
+            "RCT",
+            "observational",
+            null
+          ]
+        },
+        "studies_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "relative": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/relative"
+            }
+          ]
+        },
+        "effect": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/effect"
+            }
+          ]
+        },
+        "absolute": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/absolute"
+          }
+        },
+        "certainty": {
+          "enum": [
+            "high",
+            "moderate",
+            "low",
+            "very low",
+            null
+          ]
+        },
+        "certainty_symbols": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[⊕◯]{4}$"
+        },
+        "certainty_text": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "statement": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "footnotes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/footnote"
+          }
+        },
+        "footnote_refs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "sources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        },
+        "outcome_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "participants_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "relative_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "assumed_risk_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "absolute_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "certainty_cell": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "comments_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "relative": {
+      "type": "object",
+      "required": [
+        "measure",
+        "estimate",
+        "ci_lower",
+        "ci_upper",
+        "display_text",
+        "text"
+      ],
+      "properties": {
+        "measure": {
+          "enum": [
+            "RR",
+            "OR",
+            "ROM"
+          ]
+        },
+        "estimate": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "ci_lower": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "ci_upper": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "level": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "display_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "effect": {
+      "type": "object",
+      "required": [
+        "kind",
+        "estimate",
+        "ci_lower",
+        "ci_upper",
+        "display_text",
+        "text"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "mean_difference",
+            "standardised_mean_difference",
+            "ratio_of_means",
+            "mean_change",
+            "standardised_mean_change",
+            "risk_difference",
+            "proportion",
+            "correlation",
+            "generic"
+          ]
+        },
+        "measure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "estimate": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "ci_lower": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "ci_upper": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "level": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "display_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "absolute": {
+      "type": "object",
+      "required": [
+        "label",
+        "kind",
+        "assumed_risk_per_1000",
+        "risk_per_1000",
+        "difference_per_1000",
+        "text"
+      ],
+      "properties": {
+        "label": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "kind": {
+          "enum": [
+            "control_pool",
+            "external"
+          ]
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assumed_risk_per_1000": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1000
+        },
+        "risk_per_1000": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          }
+        },
+        "difference_per_1000": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          }
+        },
+        "incompatible": {
+          "type": "boolean"
+        },
+        "baseline_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "risk_text": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "footnotes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "footnote": {
+      "type": "object",
+      "required": [
+        "id",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z]{1,2}$"
+        },
+        "text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "domain": {
+          "enum": [
+            "risk_of_bias",
+            "inconsistency",
+            "indirectness",
+            "imprecision",
+            "publication_bias",
+            "upgrades",
+            null
+          ]
+        },
+        "kind": {
+          "enum": [
+            "grade",
+            "baseline",
+            "note",
+            "user"
+          ]
+        }
+      }
+    }
+  }
+}

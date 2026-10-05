@@ -1,0 +1,61 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "scopus-check-search-only-403-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": true,
+  "license_note": null,
+  "notes": "KÉZI: keresés 200, de view=REF 403 AUTHORIZATION_ERROR (nem intézményi hálózat) → search_only",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/search/scopus?count=1&field=dc%3Aidentifier%2Ceid&query=PMID%288309034%29"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-limit": "20000",
+          "x-ratelimit-remaining": "19990",
+          "x-ratelimit-reset": "1791460800"
+        },
+        "body_json": {
+          "search-results": {
+            "opensearch:totalResults": "1",
+            "entry": [
+              {
+                "@_fa": "true",
+                "dc:identifier": "SCOPUS_ID:0000000101",
+                "eid": "2-s2.0-0000000101"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/abstract/eid/2-s2.0-0000000101?refcount=1&view=REF"
+      },
+      "response": {
+        "status": 403,
+        "headers": {
+          "content-type": "application/json",
+          "x-els-status": "AUTHORIZATION_ERROR"
+        },
+        "body_json": {
+          "service-error": {
+            "status": {
+              "statusCode": "AUTHORIZATION_ERROR",
+              "statusText": "The requestor is not authorized to access the requested view or fields of the resource"
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

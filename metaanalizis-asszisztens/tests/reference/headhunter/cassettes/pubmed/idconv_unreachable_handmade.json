@@ -1,0 +1,25 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "pubmed-idconv-unreachable-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "KÉZI: az NCBI PMC ID-konverter elérhetetlen (itt a proxy blokkolja) — tartós 503-mal modellezve, hogy a pubmed.Client.idconv tartalék-útja (esearch [doi] + esummary) offline is tesztelhető legyen",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/?format=json&ids=10.1002%2F14651858.CD012915.pub2"
+      },
+      "response": {
+        "status": 503,
+        "headers": {
+          "content-type": "text/plain"
+        },
+        "body_text": "Service Unavailable"
+      },
+      "delay_ms": null
+    }
+  ]
+}

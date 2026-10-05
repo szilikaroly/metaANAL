@@ -1,0 +1,1577 @@
+{
+ "description": "GRADE / SoF / Protokoll (3.5.12; „1 Protokoll”) — generálta: tests/gui/ui/gen_grade_fixtures.py. A számok a motorból (futás- és ábra-fixture-ök, motor-formázó); a tanácsok és a SoF-mondat szövege illusztratív, amíg a motor grade_help / sof függvénye el nem készül. A PUT/POST útvonalakat a src/dev/grade_backend.js kezeli (állapottartó).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/grade/o1",
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.grade-view/v1",
+    "data": {
+     "schema": "szk.ma.grade-view/v1",
+     "outcome": {
+      "id": "o1",
+      "name": {
+       "hu": "TBC-incidencia",
+       "en": "TB incidence"
+      },
+      "critical": true,
+      "measure": "RR",
+      "grade_start": "high",
+      "data": "03_adatok/o1.csv"
+     },
+     "run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "dir": "05_elemzes/o1/20261004T211200Z-a1f3c2",
+      "stale": false,
+      "k": 13,
+      "measure": "RR",
+      "display_text": {
+       "hu": "0.49 [0.33; 0.73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0.13; 1.79]",
+       "en": "[0.13; 1.79]"
+      },
+      "participants_text": {
+       "hu": "357347",
+       "en": "357347"
+      },
+      "spec": "o1_primary",
+      "finished": "2026-10-04T21:12:00Z"
+     },
+     "grade": null,
+     "path": "06_kezirat/grade/o1.grade.json",
+     "journal": {
+      "id": 1,
+      "ts": "2026-10-04T22:00:00Z",
+      "certainty": "low"
+     },
+     "unresolved": [],
+     "missing": [
+      "risk_of_bias",
+      "inconsistency",
+      "indirectness",
+      "imprecision",
+      "publication_bias"
+     ],
+     "run_matches": null,
+     "conventions": {
+      "grade_suspected": "unresolved"
+     },
+     "vocab": {
+      "domains": [
+       "risk_of_bias",
+       "inconsistency",
+       "indirectness",
+       "imprecision",
+       "publication_bias"
+      ],
+      "ratings": {
+       "risk_of_bias": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "inconsistency": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "indirectness": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "imprecision": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "publication_bias": [
+        {
+         "rating": "undetected",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "suspected",
+         "steps": [
+          null,
+          0,
+          -1
+         ]
+        },
+        {
+         "rating": "strongly suspected",
+         "steps": [
+          -1,
+          -2
+         ]
+        }
+       ]
+      },
+      "upgrades": [
+       {
+        "id": "large_effect",
+        "steps": [
+         1,
+         2
+        ]
+       },
+       {
+        "id": "dose_response",
+        "steps": [
+         1
+        ]
+       },
+       {
+        "id": "opposing_confounding",
+        "steps": [
+         1
+        ]
+       }
+      ],
+      "certainties": [
+       "high",
+       "moderate",
+       "low",
+       "very low"
+      ],
+      "starts": [
+       "high",
+       "low"
+      ]
+     },
+     "engine": {
+      "amstar2_consistency": true,
+      "grade_advice": true,
+      "grade_get": true,
+      "grade_put": true,
+      "grade_record": false,
+      "instrument": true,
+      "sof": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 61,
+     "request_id": "q_gr01"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/grade/o2",
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.grade-view/v1",
+    "data": {
+     "schema": "szk.ma.grade-view/v1",
+     "outcome": {
+      "id": "o2",
+      "name": {
+       "hu": "Mortalitás",
+       "en": "Mortality"
+      },
+      "critical": true,
+      "measure": "RR",
+      "grade_start": "high",
+      "data": "03_adatok/o2.csv"
+     },
+     "run": null,
+     "grade": null,
+     "path": "06_kezirat/grade/o2.grade.json",
+     "journal": null,
+     "unresolved": [],
+     "missing": [
+      "risk_of_bias",
+      "inconsistency",
+      "indirectness",
+      "imprecision",
+      "publication_bias"
+     ],
+     "run_matches": null,
+     "conventions": {
+      "grade_suspected": "unresolved"
+     },
+     "vocab": {
+      "domains": [
+       "risk_of_bias",
+       "inconsistency",
+       "indirectness",
+       "imprecision",
+       "publication_bias"
+      ],
+      "ratings": {
+       "risk_of_bias": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "inconsistency": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "indirectness": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "imprecision": [
+        {
+         "rating": "not serious",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "serious",
+         "steps": [
+          -1
+         ]
+        },
+        {
+         "rating": "very serious",
+         "steps": [
+          -2
+         ]
+        }
+       ],
+       "publication_bias": [
+        {
+         "rating": "undetected",
+         "steps": [
+          0
+         ]
+        },
+        {
+         "rating": "suspected",
+         "steps": [
+          null,
+          0,
+          -1
+         ]
+        },
+        {
+         "rating": "strongly suspected",
+         "steps": [
+          -1,
+          -2
+         ]
+        }
+       ]
+      },
+      "upgrades": [
+       {
+        "id": "large_effect",
+        "steps": [
+         1,
+         2
+        ]
+       },
+       {
+        "id": "dose_response",
+        "steps": [
+         1
+        ]
+       },
+       {
+        "id": "opposing_confounding",
+        "steps": [
+         1
+        ]
+       }
+      ],
+      "certainties": [
+       "high",
+       "moderate",
+       "low",
+       "very low"
+      ],
+      "starts": [
+       "high",
+       "low"
+      ]
+     },
+     "engine": {
+      "amstar2_consistency": true,
+      "grade_advice": true,
+      "grade_get": true,
+      "grade_put": true,
+      "grade_record": false,
+      "instrument": true,
+      "sof": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 61,
+     "request_id": "q_gr02"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/grade/o1/advice",
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.grade-advice-view/v1",
+    "data": {
+     "schema": "szk.ma.grade-advice-view/v1",
+     "outcome_id": "o1",
+     "run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "dir": "05_elemzes/o1/20261004T211200Z-a1f3c2",
+      "stale": false,
+      "k": 13,
+      "measure": "RR",
+      "display_text": {
+       "hu": "0.49 [0.33; 0.73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0.13; 1.79]",
+       "en": "[0.13; 1.79]"
+      },
+      "participants_text": {
+       "hu": "357347",
+       "en": "357347"
+      },
+      "spec": "o1_primary",
+      "finished": "2026-10-04T21:12:00Z"
+     },
+     "mid": null,
+     "advice": {
+      "schema": "szk.ma.grade/v1",
+      "outcome_id": "o1",
+      "importance": "critical",
+      "run_id": "20261004T211200Z-a1f3c2",
+      "start": "high",
+      "start_reason": null,
+      "domains": {
+       "risk_of_bias": {
+        "rating": null,
+        "step": null,
+        "rationale": null,
+        "advisory": {
+         "high_rob_weight_pct": 0.0,
+         "some_concerns_weight_pct": 0.0,
+         "low_rob_weight_pct": 0.0,
+         "unassessed_weight_pct": 100.0,
+         "limited_weight_pct": 0.0,
+         "k_assessed": 0,
+         "k": 13,
+         "high_rob_studies": [],
+         "sensitivity_run": null
+        },
+        "suggestion": {
+         "rating": null,
+         "step": null,
+         "status": "insufficient_data",
+         "concern": false,
+         "summary": {
+          "hu": "nincs RoB-adat",
+          "en": "no risk-of-bias data"
+         },
+         "evidence": [],
+         "why": {
+          "asks": {
+           "hu": "Mennyire bízhatunk abban, hogy a bevont vizsgálatok jól voltak kivitelezve (randomizálás, elrejtés, vakítás, hiányzó adatok, szelektív közlés)? A GRADE azt nézi, hogy az összesített eredmény SÚLYÁNAK mekkora része jön korlátozott (magas vagy „some concerns” kockázatú) vizsgálatokból — nem a vizsgálatok darabszámát.",
+           "en": "How far can we trust that the included studies were well conducted (randomisation, concealment, blinding, missing data, selective reporting)? GRADE looks at how much of the WEIGHT of the pooled result comes from studies with limitations (high risk or some concerns) — not at the number of studies."
+          },
+          "because": {
+           "hu": "Ehhez a futáshoz nincs torzításikockázat-értékelés (a táblában nincs rob oszlop, és értékelés sem érkezett), így a súlyarány nem számolható.",
+           "en": "There is no risk-of-bias assessment for this run (no rob column in the table and no appraisal), so the weight share cannot be computed."
+          },
+          "change": {
+           "hu": "Töltsd ki az értékeléseket (RoB 2 / ROBINS-I …), és a konszenzusos összítélet kerüljön a tábla rob oszlopába.",
+           "en": "Complete the appraisals (RoB 2 / ROBINS-I …) and copy the consensus overall judgement into the table's rob column."
+          },
+          "uncertain": {
+           "hu": "Nincs elég adat: a motor nem tud ítéletet javasolni. Nincs RoB-értékelés.",
+           "en": "Not enough data: the engine cannot suggest a judgement. No risk-of-bias assessment."
+          }
+         },
+         "flags": [
+          {
+           "code": "rob_missing",
+           "level": "warning",
+           "text": {
+            "hu": "Nincs RoB-értékelés.",
+            "en": "No risk-of-bias assessment."
+           }
+          }
+         ],
+         "kb_refs": [
+          "GRADE-03",
+          "D-S13-003",
+          "D-S12-002"
+         ]
+        }
+       },
+       "inconsistency": {
+        "rating": null,
+        "step": null,
+        "rationale": null,
+        "advisory": {
+         "k": 13,
+         "I2": 92.11734685456207,
+         "I2_ci_HT": [
+          88.31637947405893,
+          94.6817666259083
+         ],
+         "I2_ci_QP": [
+          81.92057455859498,
+          97.6780749578879
+         ],
+         "tau2": 0.313243258136481,
+         "tau": 0.5596813898429007,
+         "Q": 152.2330080823734,
+         "p_Q": 1.996764590845861e-26,
+         "pi": [
+          0.13411499835784682,
+          1.7860258678978704
+         ],
+         "pi_crosses_null": true,
+         "pi_crosses_mid": null,
+         "ci_crosses_null": false,
+         "minority_weight_pct": 14.011068100085225,
+         "opposite_significant": false,
+         "threshold_basis": "null"
+        },
+        "suggestion": {
+         "rating": "serious",
+         "step": -1,
+         "status": "suggested",
+         "concern": true,
+         "summary": {
+          "hu": "I² 92% [88; 95]; PI 0.13–1.79 átnyúlik: nullhatás = 1 ⚠",
+          "en": "I² 92% [88; 95]; PI 0.13 to 1.79 crosses: no effect = 1 ⚠"
+         },
+         "evidence": [
+          {
+           "label": {
+            "hu": "I² (95% CI)",
+            "en": "I² (95% CI)"
+           },
+           "text": {
+            "hu": "92% [88; 95]",
+            "en": "92% [88; 95]"
+           }
+          },
+          {
+           "label": {
+            "hu": "τ²",
+            "en": "τ²"
+           },
+           "text": {
+            "hu": "0.313",
+            "en": "0.313"
+           }
+          },
+          {
+           "label": {
+            "hu": "Predikciós intervallum",
+            "en": "Prediction interval"
+           },
+           "text": {
+            "hu": "0.13–1.79",
+            "en": "0.13 to 1.79"
+           }
+          },
+          {
+           "label": {
+            "hu": "A küszöb másik oldalán",
+            "en": "Other side of the threshold"
+           },
+           "text": {
+            "hu": "a súly 14.0%-a (nullhatás = 1)",
+            "en": "14.0% of the weight (no effect = 1)"
+           }
+          }
+         ],
+         "why": {
+          "asks": {
+           "hu": "Hasonló-e a hatás a vizsgálatokban, vagy annyira eltérnek, hogy ez bizonytalanná teszi a következtetést? Nem az I² egy határértéke dönt, hanem együtt: a vizsgálatok a döntési küszöb (nullhatás vagy MID) különböző oldalára esnek-e, mennyire fedik egymást a CI-k, és hová nyúlik a predikciós intervallum (PI: hol várható a hatás egy új vizsgálatban).",
+           "en": "Is the effect similar across studies, or do they differ so much that the conclusion becomes uncertain? No single I² cut-off decides; look together at whether the studies fall on different sides of the decision threshold (no effect or MID), how much their CIs overlap, and where the prediction interval reaches (PI: where the effect of a new study is expected)."
+          },
+          "because": {
+           "hu": "I² 92% [88; 95], τ² = 0.313 (τ = 0.560). A predikciós intervallum (0.13–1.79) átnyúlik a küszöbön (nullhatás = 1), a CI viszont nem: egy új vizsgálatban a hatás iránya vagy jelentősége más lehet. A súly 14.0%-a a küszöb (nullhatás = 1) másik oldalán van.",
+           "en": "I² 92% [88; 95], τ² = 0.313 (τ = 0.560). The prediction interval (0.13 to 1.79) crosses the threshold (no effect = 1) while the CI does not: in a new study the direction or importance of the effect may differ. 14.0% of the weight lies on the other side of the threshold (no effect = 1)."
+          },
+          "change": {
+           "hu": "Ha egy előre tervezett, hiteles alcsoport-elemzés megmagyarázza az eltérést, alcsoportonként adj becslést és külön ítéletet (GRADE-04a); ha minden vizsgálat a küszöb ugyanazon oldalán van, a magas I² önmagában nem ok a leminősítésre. Ugyanazt a szóródást ne számold kétszer (pontatlanságnál is).",
+           "en": "If a prespecified, credible subgroup analysis explains the differences, give estimates and separate judgements per subgroup (GRADE-04a); if all studies lie on the same side of the threshold, a high I² alone is no reason to rate down. Do not count the same spread twice (also under imprecision)."
+          },
+          "uncertain": null
+         },
+         "flags": [],
+         "kb_refs": [
+          "GRADE-04",
+          "GRADE-04a",
+          "D-S13-004"
+         ]
+        }
+       },
+       "indirectness": {
+        "rating": null,
+        "step": null,
+        "rationale": null,
+        "advisory": {
+         "human_judgement": true
+        },
+        "suggestion": {
+         "rating": null,
+         "step": null,
+         "status": "human_judgement",
+         "concern": false,
+         "summary": {
+          "hu": "— (emberi ítélet)",
+          "en": "— (human judgement)"
+         },
+         "evidence": [],
+         "why": {
+          "asks": {
+           "hu": "Ugyanarra a kérdésre válaszolnak-e a vizsgálatok, mint a protokoll (PICO)? Eltérő populáció vagy környezet, más dózis vagy kontroll (pl. placebo aktív kontroll helyett), helyettesítő (surrogate) végpont vagy túl rövid követés, illetve csak közvetett összehasonlítás csökkenti a bizonyosságot.",
+           "en": "Do the studies answer the same question as the protocol (PICO)? A different population or setting, another dose or comparator (e.g. placebo instead of an active control), a surrogate end point or too short follow-up, or only indirect comparisons lower the certainty."
+          },
+          "because": {
+           "hu": "Ezt a motor nem tudja kiszámolni: emberi (klinikai) ítélet kell. Vesd össze a vizsgálatjellemzők táblázatát a protokoll PICO-jával, a súly szerint fontos vizsgálatokra összpontosítva.",
+           "en": "The engine cannot compute this: it needs a human (clinical) judgement. Compare the table of study characteristics with the protocol PICO, focusing on the studies that carry most weight."
+          },
+          "change": {
+           "hu": "−1, ha a súly jelentős részét adó vizsgálatoknál az eltérés valószínűleg módosítja a hatást; −2, ha több súlyos eltérés halmozódik (pl. helyettesítő végpont és eltérő populáció).",
+           "en": "−1 if the difference probably modifies the effect in studies carrying much of the weight; −2 if several serious differences accumulate (e.g. surrogate end point and a different population)."
+          },
+          "uncertain": null
+         },
+         "flags": [
+          {
+           "code": "xss_probe",
+           "level": "info",
+           "text": {
+            "hu": "<img src=x onerror=alert(1)>",
+            "en": "<img src=x onerror=alert(1)>"
+           }
+          }
+         ],
+         "kb_refs": [
+          "GRADE-05",
+          "D-S13-005"
+         ]
+        }
+       },
+       "imprecision": {
+        "rating": null,
+        "step": null,
+        "rationale": null,
+        "advisory": {
+         "k": 13,
+         "ci": [
+          0.4894209398260303,
+          0.3300722484835995,
+          0.7256982598223388
+         ],
+         "ci_crosses_null": false,
+         "ci_crosses_mid": null,
+         "ci_crosses_both_mid": null,
+         "threshold_basis": "null",
+         "participants": 357347,
+         "events": 2575,
+         "ois": 48010,
+         "ois_met": true,
+         "ois_assumptions": {
+          "kind": "binary",
+          "per_arm": 24005,
+          "total": 48010,
+          "control_risk": 0.00908090424156408,
+          "intervention_risk": 0.00681067818117306,
+          "rrr": 0.25,
+          "alpha": 0.05,
+          "power": 0.8,
+          "method": "power.power_analysis (k = 1, z-teszt, nem összevont variancia)"
+         },
+         "events_below_300": false
+        },
+        "suggestion": {
+         "rating": "not serious",
+         "step": 0,
+         "status": "suggested",
+         "concern": false,
+         "summary": {
+          "hu": "CI 0.33–0.73 nem lépi át: nullhatás = 1 ✔; OIS ✔; 2575 esemény",
+          "en": "CI 0.33 to 0.73 does not cross no effect = 1 ✔; OIS ✔; 2575 events"
+         },
+         "evidence": [
+          {
+           "label": {
+            "hu": "95% CI",
+            "en": "95% CI"
+           },
+           "text": {
+            "hu": "0.33–0.73",
+            "en": "0.33 to 0.73"
+           }
+          },
+          {
+           "label": {
+            "hu": "Döntési küszöb",
+            "en": "Decision threshold"
+           },
+           "text": {
+            "hu": "nullhatás = 1",
+            "en": "no effect = 1"
+           }
+          },
+          {
+           "label": {
+            "hu": "OIS",
+            "en": "OIS"
+           },
+           "text": {
+            "hu": "48010 fő — kontrollkockázat 9.1/1000 (Σe2/Σn2), 25% relatív kockázatcsökkenés, α = 0.05, erő 80%",
+            "en": "48010 participants — control risk 9.1 per 1,000 (Σe2/Σn2), 25% relative risk reduction, α = 0.05, power 80%"
+           }
+          },
+          {
+           "label": {
+            "hu": "Résztvevők",
+            "en": "Participants"
+           },
+           "text": {
+            "hu": "357347",
+            "en": "357347"
+           }
+          },
+          {
+           "label": {
+            "hu": "Események",
+            "en": "Events"
+           },
+           "text": {
+            "hu": "2575",
+            "en": "2575"
+           }
+          }
+         ],
+         "why": {
+          "asks": {
+           "hu": "Elég pontos-e a becslés a döntéshez? A konfidencia-intervallumot (CI) a döntési küszöbhöz mérjük — a minimális fontos különbséghez (MID), ennek hiányában a nullhatáshoz —, nem a p-értékhez; és megnézzük, elég nagy-e a teljes minta (optimális információméret, OIS: amennyi résztvevő egyetlen, megfelelő erejű vizsgálathoz kellene).",
+           "en": "Is the estimate precise enough for a decision? The confidence interval (CI) is compared with the decision threshold — the minimal important difference (MID), or no effect if there is none — not with the p value; and we check whether the total sample is large enough (optimal information size, OIS: the number of participants a single adequately powered trial would need)."
+          },
+          "because": {
+           "hu": "A 95%-os CI (0.33–0.73) nem lépi át a küszöböt (nullhatás = 1). OIS ≈ 48010 fő (kontrollkockázat 9.1/1000 (Σe2/Σn2), 25% relatív kockázatcsökkenés, α = 0.05, erő 80%); a résztvevők száma 357347, ez meghaladja. Események összesen: 2575.",
+           "en": "The 95% CI (0.33 to 0.73) does not cross the threshold (no effect = 1). OIS ≈ 48010 participants (control risk 9.1 per 1,000 (Σe2/Σn2), 25% relative risk reduction, α = 0.05, power 80%); the analysis has 357347, which exceeds it. Total events: 2575."
+          },
+          "change": {
+           "hu": "Ha a CI egyszerre tartalmaz fontos előnyt és elhanyagolható hatást (átlépi a küszöböt), −1; ha fontos előnyt és fontos ártalmat is, −2. Szűk CI mellett is −1 jöhet szóba, ha a résztvevők száma az OIS alatt marad. Egy előre rögzített MID megadása megváltoztathatja a javaslatot. A heterogenitás miatt széles CI-t ne számold kétszer (lásd inkonzisztencia).",
+           "en": "If the CI includes both an important benefit and a negligible effect (crosses the threshold), −1; if it includes both important benefit and important harm, −2. Even with a narrow CI, −1 may apply when the sample is below the OIS. Entering a prespecified MID may change the suggestion. Do not count a CI widened by heterogeneity twice (see inconsistency)."
+          },
+          "uncertain": null
+         },
+         "flags": [
+          {
+           "code": "no_mid",
+           "level": "info",
+           "text": {
+            "hu": "Nincs MID: a nullhatáshoz mértünk. Add meg a protokollban rögzített MID-et (ellenőrzött forrással), ha van.",
+            "en": "No MID: compared with no effect. Enter the MID fixed in the protocol (with a verified source), if any."
+           }
+          }
+         ],
+         "kb_refs": [
+          "GRADE-06",
+          "GRADE-06a",
+          "GRADE-06b",
+          "D-S13-006",
+          "D-S13-007",
+          "D-S13-014"
+         ]
+        }
+       },
+       "publication_bias": {
+        "rating": null,
+        "step": null,
+        "rationale": null,
+        "advisory": {
+         "k": 13,
+         "min_k": 10,
+         "tests_interpretable": true,
+         "recommended_tests": [
+          "harbord",
+          "peters"
+         ],
+         "egger_p": 0.1887069950819783,
+         "harbord_p": 0.23497195212206645,
+         "peters_p": 0.20029179228413585,
+         "begg_p": 0.9523619079608658,
+         "lfk": -4.102396855947845,
+         "lfk_category": "jelentős aszimmetria",
+         "trimfill_k0": 1,
+         "asymmetry_signal": false
+        },
+        "suggestion": {
+         "rating": "undetected",
+         "step": 0,
+         "status": "borderline",
+         "concern": false,
+         "summary": {
+          "hu": "Harbord p 0.23 · Peters p 0.20 — nem jelez",
+          "en": "Harbord p 0.23 · Peters p 0.20 — no signal"
+         },
+         "evidence": [
+          {
+           "label": {
+            "hu": "k",
+            "en": "k"
+           },
+           "text": {
+            "hu": "13 (tesztek értelmezhetők)",
+            "en": "13 (tests interpretable)"
+           }
+          },
+          {
+           "label": {
+            "hu": "Harbord",
+            "en": "Harbord"
+           },
+           "text": {
+            "hu": "p 0.23",
+            "en": "p 0.23"
+           }
+          },
+          {
+           "label": {
+            "hu": "Peters",
+            "en": "Peters"
+           },
+           "text": {
+            "hu": "p 0.20",
+            "en": "p 0.20"
+           }
+          },
+          {
+           "label": {
+            "hu": "Egger (tájékoztató)",
+            "en": "Egger (informative)"
+           },
+           "text": {
+            "hu": "p 0.19",
+            "en": "p 0.19"
+           }
+          },
+          {
+           "label": {
+            "hu": "Begg (tájékoztató)",
+            "en": "Begg (informative)"
+           },
+           "text": {
+            "hu": "p 0.95",
+            "en": "p 0.95"
+           }
+          },
+          {
+           "label": {
+            "hu": "LFK (heurisztika)",
+            "en": "LFK (heuristic)"
+           },
+           "text": {
+            "hu": "-4.10",
+            "en": "−4.10"
+           }
+          }
+         ],
+         "why": {
+          "asks": {
+           "hu": "Hiányozhatnak-e szisztematikusan vizsgálatok vagy eredmények (pl. a kicsi, „negatív” vizsgálatok nem jelentek meg)? Az ítélet „nem észlelt” vagy „erősen gyanított”; a keresés teljessége (regiszterek, szürke irodalom), a regisztrált, de nem közölt vizsgálatok és a kis, ipari finanszírozású vizsgálatok túlsúlya legalább annyit számít, mint a funnel-tesztek.",
+           "en": "Could studies or results be systematically missing (e.g. small 'negative' studies never published)? The judgement is 'undetected' or 'strongly suspected'; the completeness of the search (registries, grey literature), registered but unpublished trials and a preponderance of small industry-funded studies matter at least as much as funnel tests."
+          },
+          "because": {
+           "hu": "k = 13 ≥ 10; a mértékhez illő teszt(ek): Harbord p 0.23 · Peters p 0.20. Az ajánlott teszt nem jelez aszimmetriát; ez önmagában nem zárja ki a torzítást. Ha „gyanított”-at (suspected) választasz, az ítélet FELOLDATLAN marad, és a GRADE nem rögzíthető, amíg nem döntesz 0 és −1 között indoklással; az „erősen gyanított” −1 (11. döntés, 4. pont; X019).",
+           "en": "k = 13 ≥ 10; tests suited to the measure: Harbord p 0.23 · Peters p 0.20. The recommended test does not signal asymmetry; this alone does not rule out bias. If you choose 'suspected', the judgement stays UNRESOLVED and the GRADE cannot be recorded until you decide between 0 and −1 with a rationale; 'strongly suspected' is −1 (decision 11.4; X019)."
+          },
+          "change": {
+           "hu": "Regisztrált, de nem közölt vizsgálatok, hiányos keresés vagy több egybevágó jel (pl. kontúr-funnelben a nem szignifikáns régióból hiányzó kis vizsgálatok) a „gyanított” / „erősen gyanított” felé visz; teljes keresés regiszterekkel a „nem észlelt” felé. A fail-safe N és a trim-and-fill korrigált becslése nem döntési alap.",
+           "en": "Registered but unpublished trials, an incomplete search or several concordant signals (e.g. small studies missing from the non-significant region of a contour funnel) point towards 'suspected' / 'strongly suspected'; a complete search including registries towards 'undetected'. Fail-safe N and the trim-and-fill adjusted estimate are not a basis for the judgement."
+          },
+          "uncertain": {
+           "hu": "Határeset: a számok a szokásos küszöb közelében vannak — a döntés mérlegelés, indokold.",
+           "en": "Borderline: the numbers are close to the usual threshold — the decision is a judgement; explain it."
+          }
+         },
+         "flags": [
+          {
+           "code": "suspected_unresolved",
+           "level": "info",
+           "text": {
+            "hu": "Ha „gyanított”-at (suspected) választasz, az ítélet FELOLDATLAN marad, és a GRADE nem rögzíthető, amíg nem döntesz 0 és −1 között indoklással; az „erősen gyanított” −1 (11. döntés, 4. pont; X019).",
+            "en": "If you choose 'suspected', the judgement stays UNRESOLVED and the GRADE cannot be recorded until you decide between 0 and −1 with a rationale; 'strongly suspected' is −1 (decision 11.4; X019)."
+           }
+          },
+          {
+           "code": "lfk_heuristic",
+           "level": "info",
+           "text": {
+            "hu": "LFK -4.10 (jelentős aszimmetria): heurisztika, nem döntési alap (GRADE-07a).",
+            "en": "LFK −4.10: a heuristic, not a basis for the judgement (GRADE-07a)."
+           }
+          },
+          {
+           "code": "trimfill",
+           "level": "info",
+           "text": {
+            "hu": "Trim-and-fill: 1 kitöltött vizsgálat — érzékenységi jelzés, nem korrigált eredmény (GRADE-07a).",
+            "en": "Trim-and-fill: 1 filled studies — a sensitivity signal, not a corrected result (GRADE-07a)."
+           }
+          }
+         ],
+         "kb_refs": [
+          "GRADE-07",
+          "GRADE-07a",
+          "D-S13-008",
+          "D-S11-018",
+          "D-S11-020"
+         ]
+        },
+        "status": "open"
+       }
+      },
+      "upgrades": {
+       "large_effect": false,
+       "dose_response": false,
+       "opposing_confounding": false
+      },
+      "certainty": null,
+      "consistency_warning": null,
+      "validator_rollup": null,
+      "status": "draft",
+      "mid": null,
+      "run_summary": {
+       "k": 13,
+       "participants": 357347,
+       "measure": "RR",
+       "display_text": {
+        "hu": "0.49 [0.33; 0.73]",
+        "en": "0.49 [0.33; 0.73]"
+       },
+       "effect_text": {
+        "hu": "RR 0.49 [0.33; 0.73]",
+        "en": "RR 0.49 [0.33; 0.73]"
+       },
+       "data_sha256": "8c3c6c7b8d47c34329e188a17f68fb6af01956e266b14a49aef32b1615839ae1",
+       "spec_name": "o1_primary"
+      },
+      "advice": {
+       "engine": {
+        "name": "metaelemzes",
+        "version": "0.1.0"
+       },
+       "notes": [
+        {
+         "hu": "Csak javaslat: a motor nem dönt. Minden domén ítéletét te választod ki és indoklod; a bizonyosság a kiindulásból és a te lépéseidből adódik.",
+         "en": "Advice only: the engine does not decide. You choose and justify every domain judgement; the certainty follows from the starting level and your steps."
+        }
+       ],
+       "upgrades": {
+        "large_effect": {
+         "suggested": false,
+         "candidate_step": 1,
+         "summary": {
+          "hu": "+1 mérlegelhető",
+          "en": "+1 may be considered"
+         },
+         "evidence": [
+          {
+           "label": {
+            "hu": "Relatív hatás",
+            "en": "Relative effect"
+           },
+           "text": {
+            "hu": "0.49 [0.33; 0.73]",
+            "en": "0.49 [0.33; 0.73]"
+           }
+          },
+          {
+           "label": {
+            "hu": "A CI is a határon túl",
+            "en": "CI also beyond the threshold"
+           },
+           "text": {
+            "hu": "nem",
+            "en": "no"
+           }
+          }
+         ],
+         "why": {
+          "asks": {
+           "hu": "Olyan nagy-e a hatás, hogy zavaró tényezők valószínűleg nem magyarázzák (megfigyeléses vizsgálatoknál)?",
+           "en": "Is the effect so large that confounding is unlikely to explain it (observational studies)?"
+          },
+          "because": {
+           "hu": "RR 0.49: a relatív hatás nagy (> 2 vagy < 0.5), ezért +1 mérlegelhető — de RCT-kiindulásnál a felminősítés ritkán indokolt.",
+           "en": "RR 0.49: the relative effect is large (> 2 or < 0.5), so +1 may be considered — but rating up is rarely justified when starting from RCTs."
+          },
+          "change": {
+           "hu": "Plauzibilis zavaró tényező, érdemi leminősítés vagy a határt el nem érő CI ellene szól; konzisztens, nagy hatás több vizsgálatban mellette (GRADE-08a).",
+           "en": "Plausible confounding, important downgrades or a CI not reaching the threshold argue against it; a consistent large effect across studies argues for it (GRADE-08a)."
+          },
+          "uncertain": {
+           "hu": "RCT-kiindulás: felminősítés ritkán indokolt.",
+           "en": "RCT start: rating up is rarely justified."
+          }
+         },
+         "flags": [],
+         "kb_refs": [
+          "GRADE-08",
+          "GRADE-08a",
+          "D-S13-009"
+         ]
+        },
+        "dose_response": {
+         "suggested": false,
+         "candidate_step": null,
+         "summary": {
+          "hu": "emberi ítélet",
+          "en": "human judgement"
+         },
+         "evidence": [],
+         "flags": [],
+         "why": {
+          "asks": {
+           "hu": "Változik-e hihetően és következetesen a hatás a dózissal vagy az expozíció mértékével?",
+           "en": "Does the effect change plausibly and consistently with dose or exposure?"
+          },
+          "because": {
+           "hu": "A motor nem végez dózis–hatás metaanalízist; a vizsgálatok átlagdózisára futtatott meta-regresszió erre nem elegendő.",
+           "en": "The engine does not run dose–response meta-analysis; a meta-regression on mean study doses is not sufficient."
+          },
+          "change": {
+           "hu": "Megfelelő módszerrel (pl. dosresmeta) kimutatott, konzisztens grádiens: +1 (GRADE-08b).",
+           "en": "A consistent gradient shown with an appropriate method (e.g. dosresmeta): +1 (GRADE-08b)."
+          },
+          "uncertain": null
+         },
+         "kb_refs": [
+          "GRADE-08",
+          "GRADE-08b",
+          "D-S13-009"
+         ]
+        },
+        "opposing_confounding": {
+         "suggested": false,
+         "candidate_step": null,
+         "summary": {
+          "hu": "emberi ítélet",
+          "en": "human judgement"
+         },
+         "evidence": [],
+         "flags": [],
+         "why": {
+          "asks": {
+           "hu": "A maradék zavaró tényezők a megfigyelt hatás CSÖKKENTÉSE irányába hatnának-e?",
+           "en": "Would residual confounding act to REDUCE the observed effect?"
+          },
+          "because": {
+           "hu": "Ehhez a zavaró tényezők és várható irányuk konkrét ismerete kell (ROBINS-I zavaró tényezők doménje).",
+           "en": "This needs specific knowledge of the confounders and their expected direction (ROBINS-I confounding domain)."
+          },
+          "change": {
+           "hu": "Ha minden plauzibilis zavaró tényező a hatás ellen dolgozik, +1 (GRADE-08c).",
+           "en": "If every plausible confounder works against the effect, +1 (GRADE-08c)."
+          },
+          "uncertain": null
+         },
+         "kb_refs": [
+          "GRADE-08",
+          "GRADE-08c",
+          "D-S13-009"
+         ]
+        }
+       },
+       "kb_refs": [
+        "D-S11-018",
+        "D-S11-020",
+        "D-S12-002",
+        "D-S13-002",
+        "D-S13-003",
+        "D-S13-004",
+        "D-S13-005",
+        "D-S13-006",
+        "D-S13-007",
+        "D-S13-008",
+        "D-S13-009",
+        "D-S13-010",
+        "D-S13-014",
+        "GRADE-00",
+        "GRADE-03",
+        "GRADE-04",
+        "GRADE-04a",
+        "GRADE-05",
+        "GRADE-06",
+        "GRADE-06a",
+        "GRADE-06b",
+        "GRADE-07",
+        "GRADE-07a",
+        "GRADE-08",
+        "GRADE-08a",
+        "GRADE-08b",
+        "GRADE-08c",
+        "GRADE-09"
+       ],
+       "expected_certainty_if_suggested": null
+      },
+      "origin": "human"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 61,
+     "request_id": "q_gr03"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/sof/o1",
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.sof-view/v1",
+    "data": {
+     "schema": "szk.ma.sof-view/v1",
+     "outcome": {
+      "id": "o1",
+      "name": {
+       "hu": "TBC-incidencia",
+       "en": "TB incidence"
+      },
+      "measure": "RR",
+      "critical": true
+     },
+     "run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "dir": "05_elemzes/o1/20261004T211200Z-a1f3c2",
+      "stale": false,
+      "k": 13,
+      "measure": "RR",
+      "display_text": {
+       "hu": "0.49 [0.33; 0.73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0.13; 1.79]",
+       "en": "[0.13; 1.79]"
+      },
+      "participants_text": {
+       "hu": "357347",
+       "en": "357347"
+      },
+      "spec": "o1_primary",
+      "finished": "2026-10-04T21:12:00Z"
+     },
+     "path": "06_kezirat/sof/o1.sof.json",
+     "saved": null,
+     "saved_matches_run": null,
+     "preview": {
+      "schema": "szk.ma.sof/v1",
+      "outcome_id": "o1",
+      "run_id": "20261004T211200Z-a1f3c2",
+      "measure": "RR",
+      "title": {
+       "hu": "Az eredmények összefoglalása (SoF)",
+       "en": "Summary of findings"
+      },
+      "header": null,
+      "rows": [
+       {
+        "outcome_id": "o1",
+        "label": {
+         "hu": "TBC-incidencia",
+         "en": "TB incidence"
+        },
+        "importance": "critical",
+        "k": 13,
+        "participants": 357347,
+        "design": "RCT",
+        "studies_text": {
+         "hu": "357347 (13 RCT)",
+         "en": "357347 (13 RCTs)"
+        },
+        "relative": {
+         "measure": "RR",
+         "estimate": 0.4894209398260303,
+         "ci_lower": 0.3300722484835995,
+         "ci_upper": 0.7256982598223388,
+         "level": 0.95,
+         "display_text": {
+          "hu": "0.49 [0.33; 0.73]",
+          "en": "0.49 [0.33; 0.73]"
+         },
+         "text": {
+          "hu": "RR 0.49 (95% CI 0.33–0.73)",
+          "en": "RR 0.49 (95% CI 0.33 to 0.73)"
+         }
+        },
+        "effect": null,
+        "absolute": [
+         {
+          "label": {
+           "hu": "kontroll-pool",
+           "en": "control-arm pool"
+          },
+          "kind": "control_pool",
+          "source": "totals.control_risk (Σe2/Σn2)",
+          "assumed_risk_per_1000": 9.080904241564081,
+          "risk_per_1000": [
+           4.444384688376477,
+           2.997354481277312,
+           6.589996405716349
+          ],
+          "difference_per_1000": [
+           -4.636519553187603,
+           -6.083549760286768,
+           -2.490907835847732
+          ],
+          "incompatible": false,
+          "baseline_text": {
+           "hu": "1000 főre 9",
+           "en": "9 per 1,000"
+          },
+          "risk_text": {
+           "hu": "1000 főre 4 (3–7)",
+           "en": "4 per 1,000 (3 to 7)"
+          },
+          "text": {
+           "hu": "1000 főre 5 kevesebb (6 kevesebbtől 2 kevesebbig)",
+           "en": "5 fewer per 1,000 (from 6 fewer to 2 fewer)"
+          },
+          "footnotes": [
+           "a"
+          ]
+         }
+        ],
+        "certainty": "low",
+        "certainty_symbols": "⊕⊕◯◯",
+        "certainty_text": {
+         "hu": "⊕⊕◯◯ alacsony",
+         "en": "⊕⊕◯◯ Low"
+        },
+        "statement": {
+         "hu": "TBC-incidencia: a beavatkozás csökkentheti.",
+         "en": "The intervention may reduce TB incidence."
+        },
+        "footnotes": [
+         {
+          "id": "a",
+          "text": {
+           "hu": "Alapkockázat (kontroll-pool): a kontrollkarok összesített kockázata (Σe2/Σn2 = 9.1/1000) — illusztratív; a klinikailag releváns alapkockázat forrással adható meg (GRADE-10a).",
+           "en": "Assumed risk (control-arm pool): pooled risk of the control arms (Σe2/Σn2 = 9.1 per 1,000) — illustrative; a clinically relevant baseline risk with a source can be added (GRADE-10a)."
+          },
+          "domain": null,
+          "kind": "baseline"
+         }
+        ],
+        "footnote_refs": {
+         "absolute": [
+          "a"
+         ]
+        },
+        "sources": {
+         "participants": "totals.participants",
+         "k": "totals.k (primary.k)",
+         "relative": "back_transformed.estimate_ci",
+         "effect": "back_transformed.estimate_ci",
+         "absolute": "sof.absolute (grade_help.absolute_effect)",
+         "certainty": "paraméter"
+        },
+        "warnings": [],
+        "outcome_text": {
+         "hu": "TBC-incidencia",
+         "en": "TB incidence"
+        },
+        "participants_text": {
+         "hu": "357347 (13 RCT)",
+         "en": "357347 (13 RCTs)"
+        },
+        "relative_text": {
+         "hu": "RR 0.49 (95% CI 0.33–0.73)",
+         "en": "RR 0.49 (95% CI 0.33 to 0.73)"
+        },
+        "assumed_risk_text": {
+         "hu": "kontroll-pool: 1000 főre 9 a",
+         "en": "control-arm pool: 9 per 1,000 a"
+        },
+        "absolute_text": {
+         "hu": "1000 főre 5 kevesebb (6 kevesebbtől 2 kevesebbig)",
+         "en": "5 fewer per 1,000 (from 6 fewer to 2 fewer)"
+        },
+        "certainty_cell": {
+         "hu": "⊕⊕◯◯ alacsony",
+         "en": "⊕⊕◯◯ Low"
+        },
+        "comments_text": {
+         "hu": "TBC-incidencia: a beavatkozás csökkentheti.",
+         "en": "The intervention may reduce TB incidence."
+        }
+       }
+      ],
+      "columns": [
+       {
+        "key": "outcome_text",
+        "label": {
+         "hu": "Kimenet",
+         "en": "Outcome"
+        }
+       },
+       {
+        "key": "participants_text",
+        "label": {
+         "hu": "Résztvevők (vizsgálatok)",
+         "en": "No. of participants (studies)"
+        }
+       },
+       {
+        "key": "relative_text",
+        "label": {
+         "hu": "Relatív hatás (95% CI)",
+         "en": "Relative effect (95% CI)"
+        }
+       },
+       {
+        "key": "assumed_risk_text",
+        "label": {
+         "hu": "Alapkockázat",
+         "en": "Assumed risk"
+        }
+       },
+       {
+        "key": "absolute_text",
+        "label": {
+         "hu": "Abszolút hatás (95% CI)",
+         "en": "Absolute effect (95% CI)"
+        }
+       },
+       {
+        "key": "certainty_cell",
+        "label": {
+         "hu": "A bizonyíték bizonyossága (GRADE)",
+         "en": "Certainty of the evidence (GRADE)"
+        }
+       },
+       {
+        "key": "comments_text",
+        "label": {
+         "hu": "Megjegyzés",
+         "en": "Comments"
+        }
+       }
+      ],
+      "footnotes": [
+       {
+        "id": "a",
+        "text": {
+         "hu": "Alapkockázat (kontroll-pool): a kontrollkarok összesített kockázata (Σe2/Σn2 = 9.1/1000) — illusztratív; a klinikailag releváns alapkockázat forrással adható meg (GRADE-10a).",
+         "en": "Assumed risk (control-arm pool): pooled risk of the control arms (Σe2/Σn2 = 9.1 per 1,000) — illustrative; a clinically relevant baseline risk with a source can be added (GRADE-10a)."
+        },
+        "domain": null,
+        "kind": "baseline"
+       }
+      ],
+      "statement": {
+       "hu": "TBC-incidencia: a beavatkozás csökkentheti.",
+       "en": "The intervention may reduce TB incidence."
+      },
+      "engine": {
+       "name": "metaelemzes",
+       "version": "0.1.0"
+      },
+      "notes": [
+       {
+        "hu": "MID nélkül a megfogalmazás csak az irányt követi; a „kevés vagy semmi különbség” megfogalmazáshoz MID kell.",
+        "en": "Without a MID the wording only follows the direction; 'little to no difference' needs a MID."
+       }
+      ],
+      "kb_refs": [
+       "GRADE-10",
+       "GRADE-10a",
+       "GRADE-10b",
+       "GRADE-11",
+       "D-S13-011",
+       "D-S13-012",
+       "D-S13-016"
+      ]
+     },
+     "inputs": {
+      "assumed_risks": [
+       {
+        "label": null,
+        "source": "control_pool",
+        "per_1000": null,
+        "note": null
+       }
+      ],
+      "footnotes": []
+     },
+     "certainty": "low",
+     "certainty_source": "journal",
+     "engine": {
+      "amstar2_consistency": true,
+      "grade_advice": true,
+      "grade_get": true,
+      "grade_put": true,
+      "grade_record": false,
+      "instrument": true,
+      "sof": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 61,
+     "request_id": "q_gr04"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/protocol",
+   "status": 200,
+   "etag": "\"pr-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.protocol/v1",
+    "data": {
+     "schema": "szk.ma.protocol/v1",
+     "path": "ma-projekt.json",
+     "has_project_json": true,
+     "title": "BCG-oltás és tuberkulózis",
+     "question": {
+      "P": "oltatlan személyek (13 vizsgálat, 1948–1980)",
+      "I": "BCG-oltás",
+      "C": "nem oltott kontroll",
+      "O": "TBC-incidencia"
+     },
+     "question_text": null,
+     "review_type": "intervention",
+     "review_types": [
+      "intervention",
+      "exposure",
+      "diagnostic",
+      "prognostic_factor",
+      "prediction_model"
+     ],
+     "data_class": "A",
+     "data_class_source": "ma-projekt.json",
+     "data_class_label": "publikált aggregált",
+     "registration": {
+      "registry": "PROSPERO",
+      "id": "CRD42024000001"
+     },
+     "outcomes": [
+      {
+       "id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "data": "03_adatok/o1.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": "o1_primary",
+       "grade_start": "high"
+      },
+      {
+       "id": "o2",
+       "name": {
+        "hu": "Mortalitás",
+        "en": "Mortality"
+       },
+       "data": "03_adatok/o2.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": null,
+       "grade_start": "high"
+      }
+     ],
+     "specs": [
+      {
+       "name": "o1_primary",
+       "path": "05_elemzes/specs/o1_primary.json",
+       "etag": "\"spec-o1_primary-1\"",
+       "outcome": "o1",
+       "purpose": "primary",
+       "parent": null,
+       "prespecified": true,
+       "protocol_ref": "protokoll 9.2",
+       "problems": []
+      },
+      {
+       "name": "o1_primary_no_estim",
+       "path": "05_elemzes/specs/o1_primary_no_estim.json",
+       "etag": "\"spec-o1_primary_no_estim-1\"",
+       "outcome": "o1",
+       "purpose": "sensitivity",
+       "parent": "o1_primary",
+       "prespecified": false,
+       "protocol_ref": null,
+       "problems": []
+      },
+      {
+       "name": "o3_primary",
+       "path": "05_elemzes/specs/o3_primary.json",
+       "etag": "\"spec-o3_primary-1\"",
+       "outcome": "o3",
+       "purpose": "primary",
+       "parent": null,
+       "prespecified": true,
+       "protocol_ref": "protokoll 9.2",
+       "problems": []
+      }
+     ],
+     "conventions": {
+      "amstar2_partial_yes_critical": "meets",
+      "grade_suspected": "unresolved"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 61,
+     "request_id": "q_gr05"
+    }
+   }
+  }
+ ]
+}

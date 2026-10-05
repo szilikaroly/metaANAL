@@ -1,0 +1,1398 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "tripod-ai",
+  "name": "TRIPOD+AI",
+  "label": {
+    "hu": "TRIPOD+AI — predikciós modellek jelentési teljessége",
+    "en": "TRIPOD+AI — reporting completeness of prediction model studies"
+  },
+  "full_name": "TRIPOD+AI statement: updated guidance for reporting clinical prediction models that use regression or machine learning methods",
+  "family": "reporting",
+  "tool_version": "2024",
+  "definition_version": 1,
+  "validator_version": "1.0.0",
+  "reference_sha256": "493b910c6c1ec3decf1bf06ed2685cc0f301bd52ab0af29424a282f8d51c5483",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/tripod-ai.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Collins GS, Moons KGM, Dhiman P, et al. TRIPOD+AI statement. BMJ 2024;385:e078378, and its Expanded Checklist supplement.",
+  "licence": {
+    "instrument_licence": "CC BY 4.0 (a validator tripod-ai.md forrásmegjelölése szerint)",
+    "verbatim_allowed": true,
+    "text_kind": "paraphrase",
+    "checked": true,
+    "note": {
+      "hu": "A CC BY 4.0 hivatkozással a szó szerinti átvételt is megengedi; ez a fájl mégis a validator rövidített munkaszövegét és saját magyar összefoglalót tartalmaz, mert a hivatalos szöveg itt nem volt ellenőrizhető. Kéziratban a hivatalos ellenőrzőlistát idézd.",
+      "en": "CC BY 4.0 allows verbatim reuse with attribution; this file nevertheless holds the validator's abridged working texts and a Hungarian summary, since the official wording could not be checked here."
+    }
+  },
+  "intro": {
+    "hu": "A TRIPOD+AI a JELENTÉS teljességét méri (27 tétel, 52 altétel), NEM azt, hogy a módszertan helyes volt-e — arra a PROBAST+AI való. Minden altételhez státuszt adsz: közölt / részben közölt / nem közölt / nem alkalmazható. A D (csak fejlesztés), E (csak értékelés) és D;E címkék szerint szűrhetsz: egy tiszta külső validálásnak nem kell a D-tételeket teljesítenie.",
+    "en": "TRIPOD+AI measures REPORTING completeness (27 items, 52 subitems), NOT whether the methods were sound — that is PROBAST+AI. Give each subitem a status: present / partial / missing / not applicable. Filter by the D / E / D;E labels."
+  },
+  "unit": "study",
+  "unit_label": {
+    "hu": "vizsgálatonként (vagy a saját kéziratra)",
+    "en": "per study (or for your own manuscript)"
+  },
+  "scopes": [
+    {
+      "id": "both",
+      "label": {
+        "hu": "Fejlesztés és értékelés (52 altétel)",
+        "en": "Development and evaluation (52 subitems)"
+      },
+      "default": true,
+      "applies_to": [
+        "D",
+        "E",
+        "D;E"
+      ]
+    },
+    {
+      "id": "development",
+      "label": {
+        "hu": "Fejlesztő vizsgálat (D és D;E)",
+        "en": "Development study (D and D;E)"
+      },
+      "default": false,
+      "applies_to": [
+        "D",
+        "D;E"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "label": {
+        "hu": "Értékelő vizsgálat (E és D;E)",
+        "en": "Evaluation study (E and D;E)"
+      },
+      "default": false,
+      "applies_to": [
+        "E",
+        "D;E"
+      ]
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "present",
+      "label": "P",
+      "text": {
+        "hu": "Közölt",
+        "en": "Present"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "p",
+        "present",
+        "reported",
+        "yes",
+        "y",
+        "kozolt",
+        "igen"
+      ]
+    },
+    {
+      "value": "partial",
+      "label": "PA",
+      "text": {
+        "hu": "Részben közölt",
+        "en": "Partial"
+      },
+      "kind": "partial",
+      "aliases": [
+        "pa",
+        "partial",
+        "partially",
+        "partially reported",
+        "partly",
+        "reszben",
+        "reszben kozolt"
+      ]
+    },
+    {
+      "value": "missing",
+      "label": "M",
+      "text": {
+        "hu": "Nem közölt",
+        "en": "Missing"
+      },
+      "kind": "negative",
+      "aliases": [
+        "m",
+        "missing",
+        "not reported",
+        "no",
+        "n",
+        "nem kozolt",
+        "hianyzik",
+        "nem"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
+    }
+  ],
+  "default_answers": [
+    "present",
+    "partial",
+    "missing",
+    "not_applicable"
+  ],
+  "status_vocab": [
+    "present",
+    "partial",
+    "missing",
+    "not_applicable"
+  ],
+  "verdicts": [],
+  "domains": [
+    {
+      "id": "title",
+      "title": {
+        "hu": "Cím",
+        "en": "Title"
+      },
+      "short": "Title",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "abstract",
+      "title": {
+        "hu": "Absztrakt",
+        "en": "Abstract"
+      },
+      "short": "Abstract",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "introduction",
+      "title": {
+        "hu": "Bevezetés",
+        "en": "Introduction"
+      },
+      "short": "Introduction",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "methods",
+      "title": {
+        "hu": "Módszerek",
+        "en": "Methods"
+      },
+      "short": "Methods",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "open_science",
+      "title": {
+        "hu": "Nyílt tudomány",
+        "en": "Open science"
+      },
+      "short": "Open science",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "ppi",
+      "title": {
+        "hu": "Betegek és a nyilvánosság bevonása",
+        "en": "Patient & public involvement"
+      },
+      "short": "Patient & public involvement",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "results",
+      "title": {
+        "hu": "Eredmények",
+        "en": "Results"
+      },
+      "short": "Results",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "discussion",
+      "title": {
+        "hu": "Megbeszélés",
+        "en": "Discussion"
+      },
+      "short": "Discussion",
+      "passes": null,
+      "applicability": false
+    }
+  ],
+  "items": [
+    {
+      "id": "1",
+      "key": "1",
+      "domain": "title",
+      "pass": null,
+      "text": {
+        "hu": "A cím azonosítja a vizsgálatot predikciós modell fejlesztéseként vagy értékeléseként, és megnevezi a célpopulációt és az előrejelzett kimenetet.",
+        "en": "Identify the study as developing or evaluating a prediction model, name the target population, and name the outcome predicted."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "Gyakori hiány: „Gépi tanulási modell X-re” típusú cím, amely nem mondja meg, fejlesztés vagy értékelés, és kihagyja a populációt.",
+        "en": "Common gap: titles like \"A machine learning model for X\" that don't specify development vs. evaluation, or omit the population."
+      }
+    },
+    {
+      "id": "2",
+      "key": "2",
+      "domain": "abstract",
+      "pass": null,
+      "text": {
+        "hu": "Absztrakt: a TRIPOD+AI absztrakt-ellenőrzőlistája szerint (13 tétel).",
+        "en": "Abstract: report the items of the TRIPOD+AI for Abstracts checklist (13 items)."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "Az absztrakt-lista 13 pontja: 1. fejlesztés vagy értékelés, célpopuláció és kimenet; 2. rövid kontextus és indoklás; 3. célok; 4. adatforrás(ok); 5. beválasztás és környezet; 6. az előrejelzett kimenet (prognózisnál időhorizonttal); 7. modelltípus, építési lépések és belső validálás (csak fejlesztés); 8. teljesítménymutatók; 9. résztvevők és események száma; 10. a végső modell prediktorai (csak fejlesztés); 11. teljesítménybecslések konfidenciaintervallummal; 12. átfogó értelmezés; 13. regisztrációs szám és regiszter.",
+        "en": "TRIPOD+AI for Abstracts: 1. Identify as development/evaluation, name the target population and outcome. 2. Brief healthcare context and rationale. 3. State objectives (development, evaluation, or both). 4. Describe data source(s). 5. Describe eligibility criteria and setting. 6. Specify the predicted outcome, incl. time horizon for prognostic models. 7. Specify model type, summary of build steps, and internal-validation method (development only). 8. Specify performance measures used. 9. Report N participants and N outcome events. 10. Summarise predictors in the final model (development only). 11. Report performance estimates with confidence intervals. 12. Overall interpretation of main results. 13. Registration number and registry/repository name."
+      }
+    },
+    {
+      "id": "3a",
+      "key": "3a",
+      "domain": "introduction",
+      "pass": null,
+      "text": {
+        "hu": "Egészségügyi kontextus (diagnosztikai vagy prognosztikai), a modell fejlesztésének/értékelésének indoklása, hivatkozás a meglévő modellekre.",
+        "en": "Healthcare context (diagnostic or prognostic), rationale for developing/evaluating this model, references to existing models for the same purpose."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "3b",
+      "key": "3b",
+      "domain": "introduction",
+      "pass": null,
+      "text": {
+        "hu": "Célpopuláció és a modell szerepe az ellátási folyamatban: milyen döntést, mikor és kinek (klinikus, beteg) segít.",
+        "en": "Target population and intended purpose in the care pathway — what decision this is meant to inform, at what point, for whom (clinicians? patients? both?)."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "3c",
+      "key": "3c",
+      "domain": "introduction",
+      "pass": null,
+      "text": {
+        "hu": "A célpopuláció szociodemográfiai csoportjai közötti ismert egészségügyi egyenlőtlenségek, hivatkozással.",
+        "en": "Known health inequalities between sociodemographic groups in the target population, with citations."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "Új a TRIPOD+AI-ban, és gyakran teljesen hiányzik — kifejezetten nézd meg.",
+        "en": "New in +AI, frequently absent entirely — worth checking explicitly rather than assuming it's covered elsewhere."
+      }
+    },
+    {
+      "id": "4",
+      "key": "4",
+      "domain": "introduction",
+      "pass": null,
+      "text": {
+        "hu": "A célok egyértelmű megfogalmazása: fejlesztés, értékelés vagy mindkettő.",
+        "en": "Explicit statement of study objectives: development, evaluation, or both."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "5a",
+      "key": "5a",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Az adatforrás(ok) külön a fejlesztéshez és az értékeléshez, a választás indoklása, és a célpopulációt reprezentáló voltuk.",
+        "en": "Data source(s) for development and evaluation separately (trial, cohort, routine care, registry), rationale for using this source, and its representativeness of the target population."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "5b",
+      "key": "5b",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők bevonásának kezdete és vége; adott esetben a követés vége.",
+        "en": "Start/end dates of participant accrual; end of follow-up if applicable."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "6a",
+      "key": "6a",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A vizsgálati környezet (alap- vagy szakellátás, általános népesség), a centrumok száma és helye.",
+        "en": "Study setting (primary/secondary care, general population), number and location of centres."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "6b",
+      "key": "6b",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők beválasztási kritériumai.",
+        "en": "Eligibility criteria for participants."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "6c",
+      "key": "6c",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A kapott kezelések és kezelésük a fejlesztés vagy az értékelés során, ha releváns.",
+        "en": "Treatments received and how handled during development/evaluation, if relevant."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "7",
+      "key": "7",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Az adatok előfeldolgozása és minőségellenőrzése (tisztítás, harmonizálás, jellemzőképzés); egységesen alkalmazták-e a szociodemográfiai csoportokban.",
+        "en": "Data pre-processing and quality-checking steps (cleaning, harmonisation, feature engineering); whether these were applied consistently across sociodemographic groups."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "8a",
+      "key": "8a",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A kimenet definíciója, időhorizontja, mérésének módja és ideje, a választás indoklása, a mérés egységessége a szociodemográfiai csoportok között.",
+        "en": "Outcome definition, time horizon, how/when assessed, rationale for choosing it, consistency of assessment across sociodemographic groups."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "8b",
+      "key": "8b",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Ha a kimenet mérése szubjektív értelmezést igényel: az értékelők képzettsége és demográfiája.",
+        "en": "If outcome assessment needs subjective interpretation: assessor qualifications and demographics."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "8c",
+      "key": "8c",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A kimenet értékelésének vakítására tett lépések (a címke-szivárgás elkerülése).",
+        "en": "Actions taken to blind outcome assessment (avoiding label leakage)."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "9a",
+      "key": "9a",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A kezdeti prediktorlista kiválasztásának módja (irodalom, korábbi modellek, minden elérhető adat) és a modellezés előtti előszelekció.",
+        "en": "How the initial predictor list was chosen (literature, prior models, all available data) and any pre-selection before modelling."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "9b",
+      "key": "9b",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Minden prediktor egyértelmű definíciója, mérésének módja és ideje, a vakítási lépések.",
+        "en": "Clear definition of every predictor, incl. how/when measured, and blinding actions."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "9c",
+      "key": "9c",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Ha a prediktor mérése szubjektív értelmezést igényel: az értékelők képzettsége és demográfiája.",
+        "en": "If predictor measurement needs subjective interpretation: assessor qualifications and demographics."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "10",
+      "key": "10",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A mintanagyság meghatározása külön a fejlesztésre és az értékelésre, az elégségesség indoklásával — nem csak „minden elérhető adatot felhasználtunk”.",
+        "en": "How the study size was determined, separately for development and evaluation, with justification that it's sufficient — not just \"we used all available data\" with no comment on adequacy."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "A minta elégségességének indoklása gyakran hiányzik; a nyers N közlése nem elég.",
+        "en": ""
+      }
+    },
+    {
+      "id": "11",
+      "key": "11",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A hiányzó adatok kezelése és a kihagyott adatok okai.",
+        "en": "How missing data were handled, and reasons for any omitted data."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "12a",
+      "key": "12a",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Az adatok felhasználása és felosztása (fejlesztés, hangolás, értékelés) a mintanagyság-indoklással; a szivárgásmentesség igazolása, ha személyenként több rekord van.",
+        "en": "How data were used/partitioned (development, hyperparameter tuning, evaluation), with sample-size reasoning behind the partitioning; confirmation of no leakage if the data contain multiple records per person."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "12b",
+      "key": "12b",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A prediktorok elemzési kezelése (funkcionális forma, átskálázás, transzformáció, standardizálás).",
+        "en": "How predictors were handled analytically (functional form, rescaling, transformation, standardisation)."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "12c",
+      "key": "12c",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A modelltípus és indoklása, minden modellépítési lépés a hiperparaméter-hangolással együtt, a belső validálás módszere — és hogy minden lépést megismételtek-e benne.",
+        "en": "Model type and rationale, all model-building steps including hyperparameter tuning, and the internal-validation method — with confirmation that all build steps were replayed inside internal validation, not just the final fit."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "12d",
+      "key": "12d",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A klaszterek (kórházak, országok) közötti heterogenitás kezelése és számszerűsítése, ha releváns.",
+        "en": "Handling/quantification of heterogeneity across clusters (hospitals, countries) if relevant — see TRIPOD-Cluster for specialised recommendations if this is central to the study."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "12e",
+      "key": "12e",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Minden teljesítménymutató és ábra indoklással; több modell esetén az összehasonlítás módszere.",
+        "en": "All performance measures and plots used, with rationale; method for comparing models if more than one was built."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "A leggyakoribb és legsúlyosabb hiány: csak diszkrimináció, kalibráció nélkül (lásd 23a is).",
+        "en": ""
+      }
+    },
+    {
+      "id": "12f",
+      "key": "12f",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Az értékelésből adódó modellfrissítés (pl. újrakalibrálás).",
+        "en": "Any model updating (e.g., recalibration) arising from the evaluation."
+      },
+      "tags": [
+        "E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "evaluation"
+      ],
+      "applies_to": "E"
+    },
+    {
+      "id": "12g",
+      "key": "12g",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Hogyan számolták ki ténylegesen az előrejelzéseket az értékeléshez (képlet, kód, objektum, API) — különösen, ha nincs zárt képlet (fa-együttesek, neurális hálók).",
+        "en": "How predictions were actually calculated for evaluation (formula, code, object, API) — especially important when there's no closed-form equation (tree ensembles, neural nets)."
+      },
+      "tags": [
+        "E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "evaluation"
+      ],
+      "applies_to": "E"
+    },
+    {
+      "id": "13",
+      "key": "13",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Ha osztálykiegyensúlyozatlanság-kezelést alkalmaztak: miért, hogyan, és az utólagos újrakalibrálás.",
+        "en": "If class-imbalance methods were used: why, how, and any subsequent recalibration."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "14",
+      "key": "14",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A modell méltányosságának (fairness) kezelésére alkalmazott megközelítések, indoklással — érdemi módszerleírás, nem egy odavetett mondat.",
+        "en": "Approaches used to address model fairness, with rationale."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "A TRIPOD+AI végig hangsúlyozza; érdemi módszer kell, amelyhez alcsoport-eredmények is tartoznak (23a).",
+        "en": "Emphasised throughout TRIPOD+AI — check this is a substantive paragraph with method, not a token sentence asserting fairness was considered."
+      }
+    },
+    {
+      "id": "15",
+      "key": "15",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A modell kimenete (valószínűség vagy osztály); osztályozásnál vagy kockázati csoportoknál a küszöb levezetése és indoklása.",
+        "en": "What the model outputs (probability vs. classification); rationale and threshold derivation for any classification/risk grouping."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "16",
+      "key": "16",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "A fejlesztési és az értékelési adatok különbségei (környezet, beválasztás, kimenet- vagy prediktordefiníció).",
+        "en": "Differences between development and evaluation data in setting, eligibility, outcome, or predictor definitions."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "17",
+      "key": "17",
+      "domain": "methods",
+      "pass": null,
+      "text": {
+        "hu": "Az etikai bizottsági (IRB) engedély, és a tájékozott beleegyezés (vagy az alóla való mentesítés) kezelése.",
+        "en": "Named ethics committee/IRB approval, and how informed consent (or a waiver) was handled."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "18a",
+      "key": "18a",
+      "domain": "open_science",
+      "pass": null,
+      "text": {
+        "hu": "Finanszírozás és a finanszírozó szerepe.",
+        "en": "Funding source and the funder's role."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "18b",
+      "key": "18b",
+      "domain": "open_science",
+      "pass": null,
+      "text": {
+        "hu": "Minden szerző összeférhetetlenségi és pénzügyi nyilatkozata.",
+        "en": "Conflicts of interest and financial disclosures, all authors."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "18c",
+      "key": "18c",
+      "domain": "open_science",
+      "pass": null,
+      "text": {
+        "hu": "A vizsgálati protokoll elérhetősége, vagy kifejezett nyilatkozat, hogy nem készült.",
+        "en": "Where the study protocol can be accessed, or an explicit statement that none was prepared."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "18d",
+      "key": "18d",
+      "domain": "open_science",
+      "pass": null,
+      "text": {
+        "hu": "Regisztrációs adatok (regiszter neve, száma), vagy kifejezett nyilatkozat, hogy nem regisztrálták.",
+        "en": "Registration details (register name, number), or an explicit statement that the study wasn't registered."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "18e",
+      "key": "18e",
+      "domain": "open_science",
+      "pass": null,
+      "text": {
+        "hu": "Az adatok elérhetősége, konkrét feltételekkel (az „ésszerű kérésre” önmagában nem elég).",
+        "en": "Data availability, with actual conditions specified — \"available upon reasonable request\" with no further detail is explicitly called out in the guideline as insufficient."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "Az irányelv kifejezetten elégtelennek nevezi az „ésszerű kérésre elérhető” fordulatot önmagában.",
+        "en": ""
+      }
+    },
+    {
+      "id": "18f",
+      "key": "18f",
+      "domain": "open_science",
+      "pass": null,
+      "text": {
+        "hu": "A kód elérhetősége (letöltés módja, licenc, verzió) — az elemzés kódja, és külön az új egyénre szóló előrejelzés kódja.",
+        "en": "Code availability, incl. how to retrieve it and any licence/version conditions; this covers analysis code (cleaning, feature engineering, model building) and, separately, the code needed to generate predictions for a new individual (see item 22)."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "19",
+      "key": "19",
+      "domain": "ppi",
+      "pass": null,
+      "text": {
+        "hu": "A betegek és a nyilvánosság bevonásának (PPI) részletei, vagy kifejezett „nem volt”.",
+        "en": "Details of PPI during design, conduct, reporting, or dissemination — or an explicit \"none.\""
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E",
+      "help": {
+        "hu": "Gyakran egyszerűen hiányzik, ahelyett hogy kifejezetten „nem volt” szerepelne.",
+        "en": ""
+      }
+    },
+    {
+      "id": "20a",
+      "key": "20a",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők útja (ábra segít); a kimenettel rendelkezők és nem rendelkezők száma; a követés összefoglalása.",
+        "en": "Participant flow (a diagram helps); numbers with/without the outcome; follow-up summary."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "20b",
+      "key": "20b",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "Kiindulási jellemzők — dátumok, prediktorok (demográfia is), kezelések, mintanagyság, események, követési idő, hiányzó adatok — összesen és adatforrásonként; különbségek a demográfiai csoportok között.",
+        "en": "Baseline characteristics — dates, predictors (incl. demographics), treatments, sample size, outcome events, follow-up time, missingness — overall and by data source/setting; differences across demographic groups."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "20c",
+      "key": "20c",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "Értékelő vizsgálatnál a prediktorok és a kimenet eloszlásának összevetése a fejlesztési adatokkal.",
+        "en": "For evaluation studies: comparison of the evaluation-data predictor/outcome distribution against the development data."
+      },
+      "tags": [
+        "E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "evaluation"
+      ],
+      "applies_to": "E"
+    },
+    {
+      "id": "21",
+      "key": "21",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők és a kimeneti események száma minden elemzésben külön (fejlesztés, hangolás, értékelés).",
+        "en": "N participants and N outcome events in each analysis separately (development, hyperparameter tuning, evaluation) — these routinely differ due to partitioning and missing data, and readers need each one, not just an overall total."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "22",
+      "key": "22",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "A teljes modellspecifikáció (egyenlet, kód, szoftverobjektum vagy API), amellyel harmadik fél előrejelzést tud készíteni és a modellt értékelni; a hozzáférés feltételei.",
+        "en": "Full model specification (equation, code, software object, or API) sufficient for a third party to generate predictions and evaluate the model independently, plus access/reuse conditions if it isn't freely available."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "23a",
+      "key": "23a",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "Teljesítménybecslések konfidenciaintervallummal, a fő alcsoportokra is; ábrák, ahol segítik az értelmezést.",
+        "en": "Performance estimates with confidence intervals, including for key subgroups; plots where they aid interpretation."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "23b",
+      "key": "23b",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "A teljesítmény klaszterek közötti heterogenitása, ha vizsgálták.",
+        "en": "Heterogeneity in performance across clusters, if examined."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "24",
+      "key": "24",
+      "domain": "results",
+      "pass": null,
+      "text": {
+        "hu": "Az esetleges modellfrissítés eredményei, a frissített modell teljesítményével.",
+        "en": "Results of any model updating, including the updated model's own performance."
+      },
+      "tags": [
+        "E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "evaluation"
+      ],
+      "applies_to": "E"
+    },
+    {
+      "id": "25",
+      "key": "25",
+      "domain": "discussion",
+      "pass": null,
+      "text": {
+        "hu": "A fő eredmények átfogó értelmezése, a méltányossági kérdésekkel együtt, a célok és a korábbi modellek és vizsgálatok tükrében.",
+        "en": "Overall interpretation of the main results, including fairness issues, in the context of the study's objectives and prior models/studies."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "26",
+      "key": "26",
+      "domain": "discussion",
+      "pass": null,
+      "text": {
+        "hu": "Korlátok — reprezentativitás, mintanagyság, túlillesztés, hiányzó adatok — és következményeik a torzításra, a bizonytalanságra és az általánosíthatóságra.",
+        "en": "Limitations — representativeness, sample size, overfitting, missing data — and their implications for bias, statistical uncertainty, and generalisability."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    },
+    {
+      "id": "27a",
+      "key": "27a",
+      "domain": "discussion",
+      "pass": null,
+      "text": {
+        "hu": "A rossz minőségű vagy hiányzó bemeneti adatok értékelése és kezelése a használat helyén.",
+        "en": "How poor-quality or unavailable input data should be assessed and handled at the point of use."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "27b",
+      "key": "27b",
+      "domain": "discussion",
+      "pass": null,
+      "text": {
+        "hu": "Szükséges-e (és mennyi) felhasználói interakció a használat helyén, és milyen szakértelem kell hozzá.",
+        "en": "Whether/how much user interaction is required at the point of use, and what expertise users need."
+      },
+      "tags": [
+        "D"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development"
+      ],
+      "applies_to": "D"
+    },
+    {
+      "id": "27c",
+      "key": "27c",
+      "domain": "discussion",
+      "pass": null,
+      "text": {
+        "hu": "A jövőbeli kutatás következő lépései, különösen az alkalmazhatóság és az általánosíthatóság tekintetében.",
+        "en": "Next steps for future research, specifically regarding applicability and generalisability."
+      },
+      "tags": [
+        "D;E"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "both",
+        "development",
+        "evaluation"
+      ],
+      "applies_to": "D;E"
+    }
+  ],
+  "rollup": {
+    "algorithm": "none",
+    "official": false,
+    "label": {
+      "hu": "Nincs ítélet — jelentési ellenőrzés",
+      "en": "No judgement — reporting check"
+    },
+    "note": {
+      "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+      "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+    }
+  },
+  "rob_column": null,
+  "counts": {
+    "parsed": 52,
+    "published": 52,
+    "per_scope": {
+      "both": 52,
+      "development": 48,
+      "evaluation": 44
+    },
+    "per_pass": null
+  },
+  "notes": [
+    {
+      "hu": "Bridge-módban (validator 1.0.0) az üres sablon is „1/52 answered”-et ad (H1: a 11. tétel címében a „Missing” szó). A munkapad a teljességet saját maga, cellánként számolja.",
+      "en": "In bridge mode (validator 1.0.0) an empty template reports '1/52 answered' (H1). The workbench counts completeness itself, per cell."
+    }
+  ],
+  "validator_differences": []
+}

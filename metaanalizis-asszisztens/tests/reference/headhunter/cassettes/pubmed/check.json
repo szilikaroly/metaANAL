@@ -1,0 +1,45 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "pubmed-check",
+  "recorded_at": "2026-10-05T11:08:27Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "PubMed próbakérés (sources --check): esearch 8309034[pmid]",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=1&retmode=json&retstart=0&term=8309034%5Bpmid%5D",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "2"
+        },
+        "body_json": {
+          "header": {
+            "type": "esearch",
+            "version": "0.3"
+          },
+          "esearchresult": {
+            "count": "1",
+            "retmax": "1",
+            "retstart": "0",
+            "idlist": [
+              "8309034"
+            ],
+            "translationset": [],
+            "querytranslation": "8309034[UID]"
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}
