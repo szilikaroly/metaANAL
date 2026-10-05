@@ -737,6 +737,16 @@ def _apply_targets(a, value):
     studies = None
     for t in targets:
         m_c = _CAND.match(t)
+        rawv = str(getattr(a, "value", None) or "").strip()
+        if m_c and value == "include" and rawv.lower().startswith(_RESOLUTION_PREFIXES) and \
+                not rawv.lower().startswith("option:"):
+            # a jelölt feloldásának emberi javítása (pl. az automatikus feloldás más évű/jelentésű rekordhoz kötötte):
+            # id_confirm a jelöltre — a resolve API-val ellenőrzi (N1), és a döntés felülírja az automatikát
+            d = S.append_decision(project, "id_confirm", ("candidate", t), rawv, actor, reason=reason, batch=batch,
+                                  kb_refs=["D-S03-103"])
+            decisions.append({"target": t, "kind": "id_confirm", "value": d["value"], "decision_id": d["decision_id"]})
+            redo.add("resolve")
+            continue
         if m_c:
             rid, cid = m_c.group(1), m_c.group(2)
             kind = "candidate_confirm" if value == "include" else "candidate_reject"
