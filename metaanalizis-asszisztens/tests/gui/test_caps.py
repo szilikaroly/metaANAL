@@ -120,14 +120,14 @@ class TestStates(StubCase):
             self.assertEqual(recs[p]["handshake"], "missing")
             self.assertIsNone(recs[p]["capabilities"])
             self.assertIn("bridge", recs[p]["note"]["hu"])
-        self.assertEqual(recs["validator"]["guards"], ["H1", "H2", "H3", "H4"])
+        self.assertEqual(recs["validator"]["guards"], ["H1", "H2", "H3", "H4", "H12", "H13"])
         self.assertEqual(recs["figure-forge"]["guards"], ["H5", "H6"])
         self.assertEqual(recs["composer"]["guards"], ["H7"])
         self.assertEqual(recs["presubmit"]["guards"], [])
         # a verzió a plugin.json-ból jön; a bridge-hez rögzített verziónál nincs figyelmeztetés
         self.assertEqual(recs["validator"]["version"], "1.0.0")
         self.assertNotIn("bridge_untested_version", self.codes(recs["validator"]))
-        self.assertEqual([i["id"] for i in recs["validator"]["known_issues"]], ["H1", "H2", "H3", "H4"])
+        self.assertEqual([i["id"] for i in recs["validator"]["known_issues"]], ["H1", "H2", "H3", "H4", "H12", "H13"])
 
     def test_legacy_untested_version_is_info(self):
         dest = self.install("validator", "legacy")
@@ -769,7 +769,7 @@ class TestMatrix(StubCase):
         self.assertEqual(matrix["grade"]["guards"], ["H3"])
         self.assertIn("feloldatlan", matrix["grade"]["note"]["hu"])
         self.assertEqual(matrix["amstar2"]["guards"], ["H4"])
-        self.assertEqual(matrix["rob"]["guards"], [])
+        self.assertEqual(matrix["rob"]["guards"], ["H12", "H13"])        # polaritás / számozás (e2e_v1 találat)
         self.assertEqual(matrix["pub_figure"]["guards"], ["H6"])
         self.assertIn("motor-SVG", matrix["pub_figure"]["note"]["hu"])
         self.assertEqual(matrix["figure_audit"]["guards"], ["H5"])

@@ -636,7 +636,7 @@ def load_state(project_dir, required=True):
     if not isinstance(st, dict):
         if required:
             raise StateError("A Metaheadhunter még nincs inicializálva ebben a projektben. Indítsd így: "
-                             "python -m metaelemzes.headhunter init <projekt> --question \"…\"",
+                             "ma.py headhunter init <projekt> --question \"…\"",
                              "HH_NOT_INITIALIZED", "Metaheadhunter is not initialized in this project (run init).")
         return None
     st.setdefault("steps", {})
@@ -722,6 +722,27 @@ def mark_stale(state, step, now=None):
                                               "en": "Stale: an earlier step (%s) changed — run it again." % step})
             changed.append(s)
     return changed
+
+
+# A lépések, amelyeket emberi ellenőrzőpont kapuz: ha a CLI „needs_human”-ra tette, és a kapuzó EP-k mind lezárultak
+# (0 nyitott tétel), a lépés is lezárul (UX-4: ne mutasson „döntésre vár”-at, amikor nincs mit eldönteni).
+GATED_STEPS = (("find_reviews", ("EP1",)), ("extract", ("EP2",)), ("dedupe", ("EP3",)), ("screen", ("EP4",)),
+               ("update_search", ("EP3", "EP4")))
+
+
+def close_gated_steps(state, items, now=None):
+    """``items``: {EP: nyitott tételek száma}. A „needs_human” lépés „done” lesz, ha minden kapuzó EP-je ismert és 0.
+    Visszaadja a lezárt lépéseket."""
+    closed = []
+    for step, eps in GATED_STEPS:
+        cur = (state.get("steps") or {}).get(step) or {}
+        if cur.get("status") != "needs_human":
+            continue
+        if all(isinstance(items.get(ep), int) and not isinstance(items.get(ep), bool) and items.get(ep) == 0
+               for ep in eps):
+            state["steps"][step] = dict(cur, status="done", updated=utc_now(now), message=None)
+            closed.append(step)
+    return closed
 
 
 def get_checkpoint(state, ep):

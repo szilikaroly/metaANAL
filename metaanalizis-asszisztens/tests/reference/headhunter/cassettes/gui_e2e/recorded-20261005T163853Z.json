@@ -1,0 +1,1634 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "recorded-20261005t163853z",
+  "recorded_at": "2026-10-05T16:38:55Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": " — GUI-elfogadási teszt (e2e_v1.spec.js 7. lépés), rögzítve a felületről; slim + e-mail-címek kivágva.",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=1&query=EXT_ID%3A40250749+AND+SRC%3AMED&resultType=core",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 1,
+          "request": {
+            "queryString": "EXT_ID:40250749 AND SRC:MED",
+            "internalQuery": "EXT_ID:40250749 AND SRC:MED",
+            "resultType": "CORE",
+            "cursorMark": "*",
+            "pageSize": 1,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "40250749",
+                "source": "MED",
+                "pmid": "40250749",
+                "doi": "10.1016/j.ijid.2025.107909",
+                "title": "Effect of Bacillus Calmette-Guérin vaccination against Mycobacterium tuberculosis infection in children: an updated systematic review and meta-analysis.",
+                "authorString": "Cai S, Luo Q, Zhou G, Guo X, Dong Y, Chen H, Luo S, He J, Xia Y, Li H, Zhou Y, Song C.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Cai S",
+                      "lastName": "Cai",
+                      "firstName": "Shunli",
+                      "initials": "S",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0006-3810-9986"
+                      }
+                    },
+                    {
+                      "fullName": "Luo Q",
+                      "lastName": "Luo",
+                      "firstName": "Qingyi",
+                      "initials": "Q"
+                    },
+                    {
+                      "fullName": "Zhou G",
+                      "lastName": "Zhou",
+                      "firstName": "Guozhong",
+                      "initials": "G"
+                    },
+                    {
+                      "fullName": "Guo X",
+                      "lastName": "Guo",
+                      "firstName": "Xin",
+                      "initials": "X"
+                    },
+                    {
+                      "fullName": "Dong Y",
+                      "lastName": "Dong",
+                      "firstName": "Yan",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Chen H",
+                      "lastName": "Chen",
+                      "firstName": "Hongbo",
+                      "initials": "H"
+                    },
+                    {
+                      "fullName": "Luo S",
+                      "lastName": "Luo",
+                      "firstName": "Shiqi",
+                      "initials": "S"
+                    },
+                    {
+                      "fullName": "He J",
+                      "lastName": "He",
+                      "firstName": "Jian",
+                      "initials": "J"
+                    },
+                    {
+                      "fullName": "Xia Y",
+                      "lastName": "Xia",
+                      "firstName": "Yuan",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Li H",
+                      "lastName": "Li",
+                      "firstName": "Hanse",
+                      "initials": "H"
+                    },
+                    {
+                      "fullName": "Zhou Y",
+                      "lastName": "Zhou",
+                      "firstName": "Yingchen",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Song C",
+                      "lastName": "Song",
+                      "firstName": "Chao",
+                      "initials": "C"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics"
+                  ]
+                },
+                "journalInfo": {
+                  "volume": "156",
+                  "journalIssueId": 3959879,
+                  "dateOfPublication": "2025 Jul",
+                  "monthOfPublication": 7,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "Int J Infect Dis",
+                    "title": "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases",
+                    "essn": "1878-3511",
+                    "issn": "1201-9712",
+                    "isoabbreviation": "Int J Infect Dis",
+                    "nlmid": "9610933"
+                  },
+                  "printPublicationDate": "2025-07-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "107909",
+                "abstractText": "«redacted»",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Mycobacterium tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "EP",
+                            "qualifierName": "epidemiology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis, Pulmonary",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Vaccination"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Adolescent"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Child"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Child, Preschool"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Infant"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Interferon-gamma Release Tests"
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Children",
+                    "Meta-analysis",
+                    "Mycobacterium Tuberculosis Infection",
+                    "Bacillus Calmette-guérin",
+                    "Interferon-gamma Release Assays"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 4,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasData": "N",
+                "license": "cc by-nc-nd",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2025-06-11",
+                "dateOfCreation": "2025-04-18",
+                "dateOfRevision": "2025-06-16",
+                "electronicPublicationDate": "2025-04-16",
+                "firstPublicationDate": "2025-04-16",
+                "firstIndexDate": "2025-04-20",
+                "hasEvaluations": "N"
+              }
+            ]
+          }
+        },
+        "redactions": [
+          "abstractText",
+          "scrub:affiliation_email",
+          "slim:authorIdList",
+          "slim:fullTextUrlList"
+        ]
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/40250749/references?format=json&page=1&pageSize=1000",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 30,
+          "request": {
+            "id": "40250749",
+            "source": "MED",
+            "offSet": 1,
+            "pageSize": 1000
+          },
+          "referenceList": {
+            "reference": [
+              {
+                "authorString": "AUTHOR UNKNOWN",
+                "pubYear": 2023,
+                "citedOrder": 1,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "25103518",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Burden of childhood tuberculosis in 22 high-burden countries: a mathematical modelling study.",
+                "authorString": "Dodd PJ, Gardiner E, Coghlan R, Seddon JA.",
+                "journalAbbreviation": "Lancet Glob Health",
+                "issue": "8",
+                "pubYear": 2014,
+                "volume": "2",
+                "pageInfo": "e453-9",
+                "citedOrder": 2,
+                "match": "Y",
+                "essn": "2214-109X",
+                "issn": "2214-109X"
+              },
+              {
+                "source": "MED",
+                "id": "27358801",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Two methods for setting child-focused tuberculosis care targets.",
+                "authorString": "Yuen CM, Jenkins HE, Chang R, Mpunga J, Becerra MC.",
+                "journalAbbreviation": "Public Health Action",
+                "issue": "2",
+                "pubYear": 2016,
+                "volume": "6",
+                "pageInfo": "83-96",
+                "citedOrder": 3,
+                "match": "Y",
+                "essn": "2220-8372",
+                "issn": "2220-8372"
+              },
+              {
+                "source": "MED",
+                "id": "21128015",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Latent tuberculosis in children: diagnosis and management.",
+                "authorString": "Singh M, Saini AG, Anil N, Aggarwal A.",
+                "journalAbbreviation": "Indian J Pediatr",
+                "issue": "4",
+                "pubYear": 2010,
+                "volume": "78",
+                "pageInfo": "464-468",
+                "citedOrder": 4,
+                "match": "Y",
+                "essn": "0973-7693",
+                "issn": "0019-5456"
+              },
+              {
+                "title": "A study of tuberculous infection and mortality in the children of tuberculous households",
+                "authorString": "Brailey",
+                "journalAbbreviation": "Am J Hygiene",
+                "pubYear": 1940,
+                "volume": "31",
+                "citedOrder": 5,
+                "match": "N"
+              },
+              {
+                "authorString": "Bentley",
+                "pubYear": 1954,
+                "citedOrder": 6,
+                "match": "N"
+              },
+              {
+                "authorString": "Lincoln",
+                "pubYear": 1963,
+                "pageInfo": "",
+                "citedOrder": 7,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "26515679",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Controlling the seedbeds of tuberculosis: diagnosis and treatment of tuberculosis infection.",
+                "authorString": "Rangaka MX, Cavalcante SC, Marais BJ, Thim S, Martinson NA, Swaminathan S, Chaisson RE.",
+                "journalAbbreviation": "Lancet",
+                "issue": "10010",
+                "pubYear": 2015,
+                "volume": "386",
+                "pageInfo": "2344-2353",
+                "citedOrder": 8,
+                "match": "Y",
+                "essn": "1474-547X",
+                "issn": "0140-6736"
+              },
+              {
+                "source": "MED",
+                "id": "26017823",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Latent Mycobacterium tuberculosis infection.",
+                "authorString": "Getahun H, Matteelli A, Chaisson RE, Raviglione M.",
+                "journalAbbreviation": "N Engl J Med",
+                "issue": "22",
+                "pubYear": 2015,
+                "volume": "372",
+                "pageInfo": "2127-2135",
+                "citedOrder": 9,
+                "match": "Y",
+                "essn": "1533-4406",
+                "issn": "0028-4793"
+              },
+              {
+                "source": "MED",
+                "id": "31221810",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "The global prevalence of latent tuberculosis: a systematic review and meta-analysis.",
+                "authorString": "Cohen A, Mathiasen VD, Schon T, Wejse C.",
+                "journalAbbreviation": "Eur Respir J",
+                "issue": "3",
+                "pubYear": 2019,
+                "volume": "54",
+                "pageInfo": "1900655",
+                "citedOrder": 10,
+                "match": "Y",
+                "essn": "1399-3003",
+                "issn": "0903-1936"
+              },
+              {
+                "source": "MED",
+                "id": "23374479",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "WHO and the future of disease control programmes.",
+                "authorString": "Dye C, Mertens T, Hirnschall G, Mpanju-Shumbusho W, Newman RD, Raviglione MC, Savioli L, Nakatani H.",
+                "journalAbbreviation": "Lancet",
+                "issue": "9864",
+                "pubYear": 2013,
+                "volume": "381",
+                "pageInfo": "413-418",
+                "citedOrder": 11,
+                "match": "Y",
+                "essn": "1474-547X",
+                "issn": "0140-6736"
+              },
+              {
+                "source": "MED",
+                "id": "21964347",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "How does the level of BCG vaccine protection against tuberculosis fall over time?",
+                "authorString": "Rodrigues LC, Mangtani P, Abubakar I.",
+                "journalAbbreviation": "BMJ",
+                "pubYear": 2011,
+                "volume": "343",
+                "pageInfo": "d5974",
+                "citedOrder": 12,
+                "match": "Y",
+                "essn": "1756-1833",
+                "issn": "0959-8138"
+              },
+              {
+                "source": "MED",
+                "id": "16616560",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Effect of BCG vaccination on childhood tuberculous meningitis and miliary tuberculosis worldwide: a meta-analysis and assessment of cost-effectiveness.",
+                "authorString": "Trunz BB, Fine P, Dye C.",
+                "journalAbbreviation": "Lancet",
+                "issue": "9517",
+                "pubYear": 2006,
+                "volume": "367",
+                "pageInfo": "1173-1180",
+                "citedOrder": 13,
+                "match": "Y",
+                "essn": "1474-547X",
+                "issn": "0140-6736"
+              },
+              {
+                "source": "MED",
+                "id": "35961354",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Infant BCG vaccination and risk of pulmonary and extrapulmonary tuberculosis throughout the life course: a systematic review and individual participant data meta-analysis.",
+                "authorString": "Martinez L, Cords O, Liu Q, Acuna-Villaorduna C, Bonnet M, Fox GJ, Carvalho ACC, Chan PC, Croda J, Hill PC, Lopez-Varela E, Donkor S, Fielding K, Graham SM, Espinal MA, Kampmann B, Reingold A, Huerga H, Villalba JA, Grandjean L, Sotgiu G, Egere U, Singh S, Zhu L, Lienhardt C, Denholm JT, Seddon JA, Whalen CC, Garcia-Basteiro AL, Triasih R, Chen C, Singh J, Huang LM, Sharma S, Hannoun D, Del Corral H, Mandalakas AM, Malone LL, Ling DL, Kritski A, Stein CM, Vashishtha R, Boulahbal F, Fang CT, Boom WH, Netto EM, Lemos AC, Hesseling AC, Kay A, Jones-Lopez EC, Horsburgh CR, Lange C, Andrews JR.",
+                "journalAbbreviation": "Lancet Glob Health",
+                "issue": "9",
+                "pubYear": 2022,
+                "volume": "10",
+                "pageInfo": "e1307-e1316",
+                "citedOrder": 14,
+                "match": "Y",
+                "essn": "2214-109X",
+                "issn": "2214-109X"
+              },
+              {
+                "source": "MED",
+                "id": "12200526",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "A meta-analysis of the effect of Bacille Calmette Guerin vaccination on tuberculin skin test measurements.",
+                "authorString": "Wang L, Turner MO, Elwood RK, Schulzer M, FitzGerald JM.",
+                "journalAbbreviation": "Thorax",
+                "issue": "9",
+                "pubYear": 2002,
+                "volume": "57",
+                "pageInfo": "804-809",
+                "citedOrder": 15,
+                "match": "Y",
+                "essn": "1468-3296",
+                "issn": "0040-6376"
+              },
+              {
+                "source": "MED",
+                "id": "17471036",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "T cell-based diagnosis of childhood tuberculosis infection.",
+                "authorString": "Lalvani A, Millington KA.",
+                "journalAbbreviation": "Curr Opin Infect Dis",
+                "issue": "3",
+                "pubYear": 2007,
+                "volume": "20",
+                "pageInfo": "264-271",
+                "citedOrder": 16,
+                "match": "Y",
+                "essn": "1473-6527",
+                "issn": "0951-7375"
+              },
+              {
+                "source": "MED",
+                "id": "25097193",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Effect of BCG vaccination against Mycobacterium tuberculosis infection in children: systematic review and meta-analysis.",
+                "authorString": "Roy A, Eisenhut M, Harris RJ, Rodrigues LC, Sridhar S, Habermann S, Snell L, Mangtani P, Adetifa I, Lalvani A, Abubakar I.",
+                "journalAbbreviation": "BMJ",
+                "pubYear": 2014,
+                "volume": "349",
+                "pageInfo": "g4643",
+                "citedOrder": 17,
+                "match": "Y",
+                "essn": "1756-1833",
+                "issn": "0959-8138"
+              },
+              {
+                "title": "Preferred reporting items for systematic reviews and meta-analyses: the PRISMA statement",
+                "authorString": "Pérez-Castillo",
+                "journalAbbreviation": "PLoS Med",
+                "pubYear": 2009,
+                "volume": "6",
+                "citedOrder": 18,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "32006723",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Primary Immunodeficiency Diseases and Bacillus Calmette-Guerin (BCG)-Vaccine-Derived Complications: A Systematic Review.",
+                "authorString": "Fekrvand S, Yazdani R, Olbrich P, Gennery A, Rosenzweig SD, Condino-Neto A, Azizi G, Rafiemanesh H, Hassanpour G, Rezaei N, Abolhassani H, Aghamohammadi A.",
+                "journalAbbreviation": "J Allergy Clin Immunol Pract",
+                "issue": "4",
+                "pubYear": 2020,
+                "volume": "8",
+                "pageInfo": "1371-1386",
+                "citedOrder": 19,
+                "match": "Y",
+                "essn": "2213-2201",
+                "issn": "2213-2198"
+              },
+              {
+                "authorString": "AUTHOR UNKNOWN",
+                "pubYear": 0,
+                "unstructuredInformation": "Wells GA, Shea B, O’Connell D, Peterson J, Welch V, Losos M, et al. The Newcastle-Ottawa Scale (NOS) for assessing the quality if nonrandomized studies in meta-analyses, https://www.ohri.ca/programs/clinical_epidemiology/oxford.asp [accessed 22 June 2024].",
+                "citedOrder": 20,
+                "match": "N"
+              },
+              {
+                "authorString": "AUTHOR UNKNOWN",
+                "pubYear": 2018,
+                "citedOrder": 21,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "36636295",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Predictive performance of interferon-gamma release assays and the tuberculin skin test for incident tuberculosis: an individual participant data meta-analysis.",
+                "authorString": "Hamada Y, Gupta RK, Quartagno M, Izzard A, Acuna-Villaorduna C, Altet N, Diel R, Dominguez J, Floyd S, Gupta A, Huerga H, Jones-Lopez EC, Kinikar A, Lange C, van Leth F, Liu Q, Lu W, Lu P, Rueda IL, Martinez L, Mbandi SK, Munoz L, Padilla ES, Paradkar M, Scriba T, Sester M, Shanaube K, Sharma SK, Sloot R, Sotgiu G, Thiruvengadam K, Vashishtha R, Abubakar I, Rangaka MX.",
+                "journalAbbreviation": "EClinicalMedicine",
+                "pubYear": 2023,
+                "volume": "56",
+                "pageInfo": "101815",
+                "citedOrder": 22,
+                "match": "Y",
+                "essn": "2589-5370",
+                "issn": "2589-5370"
+              },
+              {
+                "source": "MED",
+                "id": "36184056",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Positive rates of interferon-γ release assay and tuberculin skin test in detection of latent tuberculosis infection: A systematic review and meta-analysis of 200,000 head-to-head comparative tests.",
+                "authorString": "Zhou G, Luo Q, Luo S, He J, Chen N, Zhang Y, Yang R, Qiu Y, Li S, Ping Q, Cai S, Guo X, Song C.",
+                "journalAbbreviation": "Clin Immunol",
+                "pubYear": 2022,
+                "volume": "245",
+                "pageInfo": "109132",
+                "citedOrder": 23,
+                "match": "Y",
+                "essn": "1521-7035",
+                "issn": "1521-6616"
+              },
+              {
+                "source": "MED",
+                "id": "24396134",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Gamma interferon release assays for detection of Mycobacterium tuberculosis infection.",
+                "authorString": "Pai M, Denkinger CM, Kik SV, Rangaka MX, Zwerling A, Oxlade O, Metcalfe JZ, Cattamanchi A, Dowdy DW, Dheda K, Banaei N.",
+                "journalAbbreviation": "Clin Microbiol Rev",
+                "issue": "1",
+                "pubYear": 2014,
+                "volume": "27",
+                "pageInfo": "3-20",
+                "citedOrder": 24,
+                "match": "Y",
+                "essn": "1098-6618",
+                "issn": "0893-8512"
+              },
+              {
+                "source": "MED",
+                "id": "21996699",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Diagnosing latent tuberculosis in high-risk individuals: rising to the challenge in high-burden areas.",
+                "authorString": "Kasprowicz VO, Churchyard G, Lawn SD, Squire SB, Lalvani A.",
+                "journalAbbreviation": "J Infect Dis",
+                "pubYear": 2011,
+                "volume": "204 Suppl 4",
+                "pageInfo": "S1168-78",
+                "citedOrder": 25,
+                "match": "Y",
+                "essn": "1537-6613",
+                "issn": "0022-1899"
+              },
+              {
+                "source": "MED",
+                "id": "19555530",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Interferon-gamma release assays in immigrant contacts and effect of remote exposure to Mycobacterium tuberculosis.",
+                "authorString": "Kik SV, Franken WP, Arend SM, Mensen M, Cobelens FG, Kamphorst M, van Dissel JT, Borgdorff MW, Verver S.",
+                "journalAbbreviation": "Int J Tuberc Lung Dis",
+                "issue": "7",
+                "pubYear": 2009,
+                "volume": "13",
+                "pageInfo": "820-828",
+                "citedOrder": 26,
+                "match": "Y",
+                "essn": "1815-7920",
+                "issn": "1027-3719"
+              },
+              {
+                "source": "MED",
+                "id": "32813681",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Antituberculosis BCG vaccination: more reasons for varying innate and adaptive immune responses.",
+                "authorString": "Prentice S, Dockrell HM.",
+                "journalAbbreviation": "J Clin Invest",
+                "issue": "10",
+                "pubYear": 2020,
+                "volume": "130",
+                "pageInfo": "5121-5123",
+                "citedOrder": 27,
+                "match": "Y",
+                "essn": "1558-8238",
+                "issn": "0021-9738"
+              },
+              {
+                "source": "MED",
+                "id": "24336911",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Protection by BCG vaccine against tuberculosis: a systematic review of randomized controlled trials.",
+                "authorString": "Mangtani P, Abubakar I, Ariti C, Beynon R, Pimpin L, Fine PE, Rodrigues LC, Smith PG, Lipman M, Whiting PF, Sterne JA.",
+                "journalAbbreviation": "Clin Infect Dis",
+                "issue": "4",
+                "pubYear": 2013,
+                "volume": "58",
+                "pageInfo": "470-480",
+                "citedOrder": 28,
+                "match": "Y",
+                "essn": "1537-6591",
+                "issn": "1058-4838"
+              },
+              {
+                "source": "MED",
+                "id": "26464470",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "A field-validated approach using surveillance and genotyping data to estimate tuberculosis attributable to recent transmission in the United States.",
+                "authorString": "France AM, Grant J, Kammerer JS, Navin TR.",
+                "journalAbbreviation": "Am J Epidemiol",
+                "issue": "9",
+                "pubYear": 2015,
+                "volume": "182",
+                "pageInfo": "799-807",
+                "citedOrder": 29,
+                "match": "Y",
+                "essn": "1476-6256",
+                "issn": "0002-9262"
+              },
+              {
+                "source": "MED",
+                "id": "37741621",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Effectiveness and safety of tuberculosis preventive treatment for contacts of patients with multidrug-resistant tuberculosis: a systematic review and meta-analysis.",
+                "authorString": "Zhou G, Luo S, He J, Chen N, Zhang Y, Cai S, Guo X, Chen H, Song C.",
+                "journalAbbreviation": "Clin Microbiol Infect",
+                "issue": "2",
+                "pubYear": 2023,
+                "volume": "30",
+                "pageInfo": "189-196",
+                "citedOrder": 30,
+                "match": "Y",
+                "essn": "1469-0691",
+                "issn": "1198-743X"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=1&query=EXT_ID%3A41206639+AND+SRC%3AMED&resultType=core",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 1,
+          "request": {
+            "queryString": "EXT_ID:41206639 AND SRC:MED",
+            "internalQuery": "EXT_ID:41206639 AND SRC:MED",
+            "resultType": "CORE",
+            "cursorMark": "*",
+            "pageSize": 1,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "41206639",
+                "source": "MED",
+                "pmid": "41206639",
+                "doi": "10.1093/ije/dyaf186",
+                "title": "Efficacy of Bacillus Calmette-Guérin revaccination in preventing tuberculosis disease: a systematic review and meta-analysis.",
+                "authorString": "Rossi YI, Bolner G, Dolovitsch de Oliveira F, Costa Dall'Acqua J, Antunes do Livramento Junior V, Dias CAG.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Rossi YI",
+                      "lastName": "Rossi",
+                      "firstName": "Yohanna Idsabella",
+                      "initials": "YI",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0008-0341-0642"
+                      }
+                    },
+                    {
+                      "fullName": "Bolner G",
+                      "lastName": "Bolner",
+                      "firstName": "Gabriel",
+                      "initials": "G"
+                    },
+                    {
+                      "fullName": "Dolovitsch de Oliveira F",
+                      "lastName": "Dolovitsch de Oliveira",
+                      "firstName": "Fabiana",
+                      "initials": "F"
+                    },
+                    {
+                      "fullName": "Costa Dall'Acqua J",
+                      "lastName": "Costa Dall'Acqua",
+                      "firstName": "Jonathan",
+                      "initials": "J"
+                    },
+                    {
+                      "fullName": "Antunes do Livramento Junior V",
+                      "lastName": "Antunes do Livramento Junior",
+                      "firstName": "Vânio",
+                      "initials": "V"
+                    },
+                    {
+                      "fullName": "Dias CAG",
+                      "lastName": "Dias",
+                      "firstName": "Cícero Armídio Gomes",
+                      "initials": "CAG"
+                    }
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "6",
+                  "volume": "54",
+                  "journalIssueId": 4033437,
+                  "dateOfPublication": "2025 Oct",
+                  "monthOfPublication": 10,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "Int J Epidemiol",
+                    "title": "International journal of epidemiology",
+                    "essn": "1464-3685",
+                    "issn": "0300-5771",
+                    "isoabbreviation": "Int J Epidemiol",
+                    "nlmid": "7802871"
+                  },
+                  "printPublicationDate": "2025-10-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "dyaf186",
+                "abstractText": "«redacted»",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "EP",
+                            "qualifierName": "epidemiology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis, Pulmonary",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "EP",
+                            "qualifierName": "epidemiology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Immunization, Secondary"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Incidence"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Randomized Controlled Trials as Topic"
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Vaccines",
+                    "Tuberculosis",
+                    "BCG",
+                    "Public Health",
+                    "Revaccination"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 1,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasData": "N",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2025-11-12",
+                "dateOfCreation": "2025-11-09",
+                "dateOfRevision": "2025-12-09",
+                "firstPublicationDate": "2025-10-01",
+                "firstIndexDate": "2025-11-09",
+                "hasEvaluations": "N"
+              }
+            ]
+          }
+        },
+        "redactions": [
+          "abstractText",
+          "scrub:affiliation_email",
+          "slim:authorIdList",
+          "slim:fullTextUrlList"
+        ]
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/41206639/references?format=json&page=1&pageSize=1000",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 43,
+          "request": {
+            "id": "41206639",
+            "source": "MED",
+            "offSet": 1,
+            "pageSize": 1000
+          },
+          "referenceList": {
+            "reference": [
+              {
+                "authorString": "World Health Organization",
+                "pubYear": 2023,
+                "citedOrder": 1,
+                "match": "N"
+              },
+              {
+                "authorString": "World Health Organization",
+                "pubYear": 0,
+                "citedOrder": 2,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "25097193",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Effect of BCG vaccination against Mycobacterium tuberculosis infection in children: systematic review and meta-analysis.",
+                "authorString": "Roy A, Eisenhut M, Harris RJ, Rodrigues LC, Sridhar S, Habermann S, Snell L, Mangtani P, Adetifa I, Lalvani A, Abubakar I.",
+                "journalAbbreviation": "BMJ",
+                "pubYear": 2014,
+                "volume": "349",
+                "pageInfo": "g4643",
+                "citedOrder": 3,
+                "match": "Y",
+                "essn": "1756-1833",
+                "issn": "0959-8138"
+              },
+              {
+                "source": "MED",
+                "id": "22700862",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Identifying predictors of interferon-γ release assay results in pediatric latent tuberculosis: a protective role of bacillus Calmette-Guerin?: a pTB-NET collaborative study.",
+                "authorString": "Basu Roy R, Sotgiu G, Altet-Gomez N, Tsolia M, Ruga E, Velizarova S, Kampmann B.",
+                "journalAbbreviation": "Am J Respir Crit Care Med",
+                "issue": "4",
+                "pubYear": 2012,
+                "volume": "186",
+                "pageInfo": "378-384",
+                "citedOrder": 4,
+                "match": "Y",
+                "essn": "1535-4970",
+                "issn": "1073-449X"
+              },
+              {
+                "source": "MED",
+                "id": "16243089",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Effect of BCG vaccination on risk of Mycobacterium tuberculosis infection in children with household tuberculosis contact: a prospective community-based study.",
+                "authorString": "Soysal A, Millington KA, Bakir M, Dosanjh D, Aslan Y, Deeks JJ, Efe S, Staveley I, Ewer K, Lalvani A.",
+                "journalAbbreviation": "Lancet",
+                "issue": "9495",
+                "pubYear": 2005,
+                "volume": "366",
+                "pageInfo": "1443-1451",
+                "citedOrder": 5,
+                "match": "Y",
+                "essn": "1474-547X",
+                "issn": "0140-6736"
+              },
+              {
+                "source": "MED",
+                "id": "21445325",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "The BCG World Atlas: a database of global BCG vaccination policies and practices.",
+                "authorString": "Zwerling A, Behr MA, Verma A, Brewer TF, Menzies D, Pai M.",
+                "journalAbbreviation": "PLoS Med",
+                "issue": "3",
+                "pubYear": 2011,
+                "volume": "8",
+                "pageInfo": "e1001012",
+                "citedOrder": 6,
+                "match": "Y",
+                "essn": "1549-1676",
+                "issn": "1549-1277"
+              },
+              {
+                "source": "MED",
+                "id": "29474026",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "BCG vaccines: WHO position paper – February 2018.",
+                "authorString": "AUTHOR UNKNOWN",
+                "journalAbbreviation": "Wkly Epidemiol Rec",
+                "issue": "8",
+                "pubYear": 2018,
+                "volume": "93",
+                "pageInfo": "73-96",
+                "citedOrder": 7,
+                "match": "Y",
+                "essn": "1996-8345",
+                "issn": "0049-8114"
+              },
+              {
+                "source": "MED",
+                "id": "24021245",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Systematic review and meta-analysis of the current evidence on the duration of protection by bacillus Calmette-Guerin vaccination against tuberculosis.",
+                "authorString": "Abubakar I, Pimpin L, Ariti C, Beynon R, Mangtani P, Sterne JA, Fine PE, Smith PG, Lipman M, Elliman D, Watson JM, Drumright LN, Whiting PF, Vynnycky E, Rodrigues LC.",
+                "journalAbbreviation": "Health Technol Assess",
+                "issue": "37",
+                "pubYear": 2013,
+                "volume": "17",
+                "pageInfo": "1-372, v-vi",
+                "citedOrder": 8,
+                "match": "Y",
+                "essn": "2046-4924",
+                "issn": "1366-5278"
+              },
+              {
+                "source": "MED",
+                "id": "16704036",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "A case-control study of protection against tuberculosis by BCG revaccination in Recife, Brazil.",
+                "authorString": "Dantas OM, Ximenes RA, de Albuquerque Mde F, da Silva NL, Montarroyos UR, de Souza WV, Pereira TC, Campelo AR, Rodrigues LC.",
+                "journalAbbreviation": "Int J Tuberc Lung Dis",
+                "issue": "5",
+                "pubYear": 2006,
+                "volume": "10",
+                "pageInfo": "536-541",
+                "citedOrder": 9,
+                "match": "Y",
+                "essn": "1815-7920",
+                "issn": "1027-3719"
+              },
+              {
+                "source": "MED",
+                "id": "9563757",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Bacillus Calmette-Guerin revaccination questionable with low tuberculosis incidence.",
+                "authorString": "Tala-Heikkila MM, Tuominen JE, Tala EO.",
+                "journalAbbreviation": "Am J Respir Crit Care Med",
+                "issue": "4 Pt 1",
+                "pubYear": 1998,
+                "volume": "157",
+                "pageInfo": "1324-1327",
+                "citedOrder": 10,
+                "match": "Y",
+                "essn": "1535-4970",
+                "issn": "1073-449X"
+              },
+              {
+                "source": "MED",
+                "id": "36124494",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Revisiting the Chingleput BCG vaccination trial for the impact of BCG revaccination on the incidence of tuberculosis disease.",
+                "authorString": "Velayutham B, Thiruvengadam K, Kumaran PP, Watson B, Rajendran K, Padmapriyadarsini C.",
+                "journalAbbreviation": "Indian J Med Res",
+                "issue": "2&3",
+                "pubYear": 2023,
+                "volume": "157",
+                "pageInfo": "152-159",
+                "citedOrder": 11,
+                "match": "Y",
+                "issn": "0971-5916"
+              },
+              {
+                "source": "MED",
+                "id": "34534489",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "BCG re-vaccination in Malawi: 30-year follow-up of a large, randomised, double-blind, placebo-controlled trial.",
+                "authorString": "Glynn JR, Fielding K, Mzembe T, Sichali L, Banda L, McLean E, Kanjala C, Crampin AC, Ponnighaus JM, Warndorff DK, Fine PEM; Karonga Prevention Trial Group.",
+                "journalAbbreviation": "Lancet Glob Health",
+                "issue": "10",
+                "pubYear": 2021,
+                "volume": "9",
+                "pageInfo": "e1451-e1459",
+                "citedOrder": 12,
+                "match": "Y",
+                "essn": "2214-109X",
+                "issn": "2214-109X"
+              },
+              {
+                "title": "Bacille Calmette-Guerin (BCG) revaccination: is it beneficial for tuberculosis control?",
+                "authorString": "Ahmad",
+                "journalAbbreviation": "OMICS International",
+                "pubYear": 2013,
+                "volume": "2",
+                "pageInfo": "",
+                "doi": "10.4172/scientificreports.65",
+                "citedOrder": 13,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "33781348",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "The PRISMA 2020 statement: an updated guideline for reporting systematic reviews.",
+                "authorString": "Page MJ, McKenzie JE, Bossuyt PM, Boutron I, Hoffmann TC, Mulrow CD, Shamseer L, Tetzlaff JM, Akl EA, Brennan SE, Chou R, Glanville J, Grimshaw JM, Hrobjartsson A, Lalu MM, Li T, Loder EW, Mayo-Wilson E, McDonald S, McGuinness LA, Stewart LA, Thomas J, Tricco AC, Welch VA, Whiting P, Moher D.",
+                "journalAbbreviation": "Syst Rev",
+                "issue": "1",
+                "pubYear": 2021,
+                "volume": "10",
+                "pageInfo": "89",
+                "citedOrder": 14,
+                "match": "Y",
+                "essn": "2046-4053",
+                "issn": "2046-4053"
+              },
+              {
+                "authorString": "Higgins",
+                "pubYear": 2023,
+                "citedOrder": 15,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "31462531",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "RoB 2: a revised tool for assessing risk of bias in randomised trials.",
+                "authorString": "Sterne JAC, Savovic J, Page MJ, Elbers RG, Blencowe NS, Boutron I, Cates CJ, Cheng HY, Corbett MS, Eldridge SM, Emberson JR, Hernan MA, Hopewell S, Hrobjartsson A, Junqueira DR, Juni P, Kirkham JJ, Lasserson T, Li T, McAleenan A, Reeves BC, Shepperd S, Shrier I, Stewart LA, Tilling K, White IR, Whiting PF, Higgins JPT.",
+                "journalAbbreviation": "BMJ",
+                "pubYear": 2019,
+                "volume": "366",
+                "pageInfo": "l4898",
+                "citedOrder": 16,
+                "match": "Y",
+                "essn": "1756-1833",
+                "issn": "0959-8138"
+              },
+              {
+                "source": "MED",
+                "id": "27733354",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "ROBINS-I: a tool for assessing risk of bias in non-randomised studies of interventions.",
+                "authorString": "Sterne JA, Hernan MA, Reeves BC, Savovic J, Berkman ND, Viswanathan M, Henry D, Altman DG, Ansari MT, Boutron I, Carpenter JR, Chan AW, Churchill R, Deeks JJ, Hrobjartsson A, Kirkham J, Juni P, Loke YK, Pigott TD, Ramsay CR, Regidor D, Rothstein HR, Sandhu L, Santaguida PL, Schunemann HJ, Shea B, Shrier I, Tugwell P, Turner L, Valentine JC, Waddington H, Waters E, Wells GA, Whiting PF, Higgins JP.",
+                "journalAbbreviation": "BMJ",
+                "pubYear": 2016,
+                "volume": "355",
+                "pageInfo": "i4919",
+                "citedOrder": 17,
+                "match": "Y",
+                "essn": "1756-1833",
+                "issn": "0959-8138"
+              },
+              {
+                "source": "MED",
+                "id": "18436948",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "GRADE: an emerging consensus on rating quality of evidence and strength of recommendations.",
+                "authorString": "Guyatt GH, Oxman AD, Vist GE, Kunz R, Falck-Ytter Y, Alonso-Coello P, Schunemann HJ; GRADE Working Group, Alderson P, Alonso-Coello P, Andrews J, Atkins D, Bastian H, de Beer H, Brozek J, Cluzeau F, Craig J, Djulbegovic B, Falck-Ytter Y, Fervers B, Flottorp S, Glasziou P, Guyatt G, Harbour R, Haugh M, Helfand M, Helfand M, Jaeschke R, Jones K, Kunnamo I, Kunz R, Liberati A, Marzo M, Mason J, Mrukovics J, Norris S, Oxman A, Robinson V, Schunemann H, Tan Torres T, Tovey D, Tugwell P, Tuut M, Varonen H, Vist G, Wittington C, Williams J, Woodcock J.",
+                "journalAbbreviation": "BMJ",
+                "issue": "7650",
+                "pubYear": 2008,
+                "volume": "336",
+                "pageInfo": "924-926",
+                "citedOrder": 18,
+                "match": "Y",
+                "essn": "1756-1833",
+                "issn": "0959-8138"
+              },
+              {
+                "source": "MED",
+                "id": "31563865",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "How to perform a meta-analysis with R: a practical tutorial.",
+                "authorString": "Balduzzi S, Rucker G, Schwarzer G.",
+                "journalAbbreviation": "Evid Based Ment Health",
+                "issue": "4",
+                "pubYear": 2019,
+                "volume": "22",
+                "pageInfo": "153-160",
+                "citedOrder": 19,
+                "match": "Y",
+                "essn": "1468-960X",
+                "issn": "1362-0347"
+              },
+              {
+                "authorString": "R Core Team",
+                "pubYear": 2023,
+                "citedOrder": 20,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "35723546",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Fixed-Effect vs Random-Effects Models for Meta-Analysis: 3 Points to Consider.",
+                "authorString": "Dettori JR, Norvell DC, Chapman JR.",
+                "journalAbbreviation": "Global Spine J",
+                "issue": "7",
+                "pubYear": 2022,
+                "volume": "12",
+                "pageInfo": "1624-1626",
+                "citedOrder": 21,
+                "match": "Y",
+                "essn": "2192-5690",
+                "issn": "2192-5682"
+              },
+              {
+                "source": "MED",
+                "id": "27259973",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Accounting for heterogeneity in meta-analysis using a multiplicative model-an empirical study.",
+                "authorString": "Mawdsley D, Higgins JP, Sutton AJ, Abrams KR.",
+                "journalAbbreviation": "Res Synth Methods",
+                "issue": "1",
+                "pubYear": 2016,
+                "volume": "8",
+                "pageInfo": "43-52",
+                "citedOrder": 22,
+                "match": "Y",
+                "essn": "1759-2887",
+                "issn": "1759-2879"
+              },
+              {
+                "source": "MED",
+                "id": "21616115",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Evidence of an effect of BCG revaccination on incidence of tuberculosis in school-aged children in Brazil: second report of the BCG-REVAC cluster-randomised trial.",
+                "authorString": "Barreto ML, Pereira SM, Pilger D, Cruz AA, Cunha SS, Sant'Anna C, Ichihara MY, Genser B, Rodrigues LC.",
+                "journalAbbreviation": "Vaccine",
+                "issue": "31",
+                "pubYear": 2011,
+                "volume": "29",
+                "pageInfo": "4875-4877",
+                "citedOrder": 23,
+                "match": "Y",
+                "essn": "1873-2518",
+                "issn": "0264-410X"
+              },
+              {
+                "source": "MED",
+                "id": "29996082",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Prevention of M. tuberculosis Infection with H4:IC31 Vaccine or BCG Revaccination.",
+                "authorString": "Nemes E, Geldenhuys H, Rozot V, Rutkowski KT, Ratangee F, Bilek N, Mabwe S, Makhethe L, Erasmus M, Toefy A, Mulenga H, Hanekom WA, Self SG, Bekker LG, Ryall R, Gurunathan S, DiazGranados CA, Andersen P, Kromann I, Evans T, Ellis RD, Landry B, Hokey DA, Hopkins R, Ginsberg AM, Scriba TJ, Hatherill M; C-040-404 Study Team, Abrahams C, Aderiye M, Africa H, Albertyn D, Alexander F, Amsterdam J, Arendsen D, Bester H, Beyers E, Botes N, Botes J, Braaf S, Brooks R, Cloete Y, Companie A, Croucher K, Davids I, de Bruyn G, Diamond B, Dlakavu P, Dolo P, Dubel S, Elbring C, Erasmus M, Esterhuizen T, Fattore C, Gelderbloem S, Gempies D, Goliath S, Gomes P, Gregg Y, Hamilton E, Hector J, Herling R, Herselman Y, Hughes J, Hunt D, Issel H, Janosczyk H, Jaxa L, Jones C, Kassiem J, Keffers S, Kelepu X, Keyser A, Kieffer A, Kruger S, Lambrick M, Langata P, Lempicki M, Locas MC, Luabeya A, Mactavie L, Makunzi L, Mangala P, Maqubela C, Mosito B, Mouton A, Mullins M, Noble J, Nombida O, O’Dee D, O’Neil A, Ockhuis R, Omarjee S, Opperman F, Patel D, Petersen C, Pretorius A, Pretorius D, Raine M, Raphela R, Ratangee M, Rauner C, Rossouw S, Roux S, Schoeman E, Schreuder C, September C, Shenje J, Shepherd B, Shey M, Siefers H, Sinandile E, Skea D, Steyn M, Su J, Sutton S, Swarts A, Syntin P, Tameris M, Tyambetyu P, van der Merwe A, van der Riet E, van der Vendt D, van der Westhuizen D, van der Westhuizen A, van Rooyen E, Veldsman A, Veltdsman H, Vermeulen E, Wiseman Matiwane S, Xoyana N.",
+                "journalAbbreviation": "N Engl J Med",
+                "issue": "2",
+                "pubYear": 2018,
+                "volume": "379",
+                "pageInfo": "138-149",
+                "citedOrder": 24,
+                "match": "Y",
+                "essn": "1533-4406",
+                "issn": "0028-4793"
+              },
+              {
+                "source": "MED",
+                "id": "12392870",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Design of the Brazilian BCG-REVAC trial against tuberculosis: a large, simple randomized community trial to evaluate the impact on tuberculosis of BCG revaccination at school age.",
+                "authorString": "Barreto ML, Rodrigues LC, Cunha SS, Pereira S, Hijjar MA, Ichihara MY, de Brito SC, Dourado I.",
+                "journalAbbreviation": "Control Clin Trials",
+                "issue": "5",
+                "pubYear": 2002,
+                "volume": "23",
+                "pageInfo": "540-553",
+                "citedOrder": 25,
+                "match": "Y",
+                "issn": "0197-2456"
+              },
+              {
+                "source": "MED",
+                "id": "16214599",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Effect of BCG revaccination on incidence of tuberculosis in school-aged children in Brazil: the BCG-REVAC cluster-randomised trial.",
+                "authorString": "Rodrigues LC, Pereira SM, Cunha SS, Genser B, Ichihara MY, de Brito SC, Hijjar MA, Dourado I, Cruz AA, Sant'Anna C, Bierrenbach AL, Barreto ML.",
+                "journalAbbreviation": "Lancet",
+                "issue": "9493",
+                "pubYear": 2005,
+                "volume": "366",
+                "pageInfo": "1290-1295",
+                "citedOrder": 26,
+                "match": "Y",
+                "essn": "1474-547X",
+                "issn": "0140-6736"
+              },
+              {
+                "source": "MED",
+                "id": "17319942",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Selection bias: neighbourhood controls and controls selected from those presenting to a Health Unit in a case control study of efficacy of BCG revaccination.",
+                "authorString": "Dantas OM, Ximenes RA, de Albuquerque Mde F, Montarroyos UR, de Souza WV, Varejao P, Rodrigues LC.",
+                "journalAbbreviation": "BMC Med Res Methodol",
+                "pubYear": 2007,
+                "volume": "7",
+                "pageInfo": "11",
+                "citedOrder": 27,
+                "match": "Y",
+                "essn": "1471-2288",
+                "issn": "1471-2288"
+              },
+              {
+                "source": "MED",
+                "id": "37202933",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "The prevalence of tuberculosis infection in India: A systematic review and meta-analysis.",
+                "authorString": "Chauhan A, Parmar M, Dash GC, Solanki H, Chauhan S, Sharma J, Sahoo KC, Mahapatra P, Rao R, Kumar R, Rade K, Pati S.",
+                "journalAbbreviation": "Indian J Med Res",
+                "issue": "2&3",
+                "pubYear": 2023,
+                "volume": "157",
+                "pageInfo": "135-151",
+                "citedOrder": 28,
+                "match": "Y",
+                "issn": "0971-5916"
+              },
+              {
+                "authorString": "Murray",
+                "pubYear": 1991,
+                "citedOrder": 29,
+                "match": "N"
+              },
+              {
+                "authorString": "Mahasha",
+                "pubYear": 2018,
+                "citedOrder": 30,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "7807661",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Global epidemiology of tuberculosis. Morbidity and mortality of a worldwide epidemic.",
+                "authorString": "Raviglione MC, Snider DE Jr, Kochi A.",
+                "journalAbbreviation": "JAMA",
+                "issue": "3",
+                "pubYear": 1995,
+                "volume": "273",
+                "pageInfo": "220-226",
+                "citedOrder": 31,
+                "match": "Y",
+                "essn": "1538-3598",
+                "issn": "0098-7484"
+              },
+              {
+                "source": "MED",
+                "id": "7475776",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Variation in protection by BCG: implications of and for heterologous immunity.",
+                "authorString": "Fine PE.",
+                "journalAbbreviation": "Lancet",
+                "issue": "8986",
+                "pubYear": 1995,
+                "volume": "346",
+                "pageInfo": "1339-1345",
+                "citedOrder": 32,
+                "match": "Y",
+                "essn": "1474-547X",
+                "issn": "0140-6736"
+              },
+              {
+                "source": "MED",
+                "id": "32692728",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "BCG vaccination in humans inhibits systemic inflammation in a sex-dependent manner.",
+                "authorString": "Koeken VA, de Bree LCJ, Mourits VP, Moorlag SJ, Walk J, Cirovic B, Arts RJ, Jaeger M, Dijkstra H, Lemmers H, Joosten LA, Benn CS, van Crevel R, Netea MG.",
+                "journalAbbreviation": "J Clin Invest",
+                "issue": "10",
+                "pubYear": 2020,
+                "volume": "130",
+                "pageInfo": "5591-5602",
+                "citedOrder": 33,
+                "match": "Y",
+                "essn": "1558-8238",
+                "issn": "0021-9738"
+              },
+              {
+                "source": "MED",
+                "id": "29216358",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Rapid Protective Effects of Early BCG on Neonatal Mortality Among Low Birth Weight Boys: Observations From Randomized Trials.",
+                "authorString": "Biering-Sorensen S, Jensen KJ, Monterio I, Ravn H, Aaby P, Benn CS.",
+                "journalAbbreviation": "J Infect Dis",
+                "issue": "5",
+                "pubYear": 2018,
+                "volume": "217",
+                "pageInfo": "759-766",
+                "citedOrder": 34,
+                "match": "Y",
+                "essn": "1537-6613",
+                "issn": "0022-1899"
+              },
+              {
+                "title": "Hepatitis B vaccination associated with higher female than male mortality in Guinea-Bissau: an observational study",
+                "authorString": "Garly",
+                "journalAbbreviation": "Pediatr Infect Dis J",
+                "pubYear": 2004,
+                "volume": "23",
+                "pageInfo": "",
+                "doi": "10.1097/01.inf.0000145700.77286.94",
+                "citedOrder": 35,
+                "match": "N"
+              },
+              {
+                "source": "MED",
+                "id": "30153369",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "The impact of sex hormones on BCG-induced trained immunity.",
+                "authorString": "de Bree LCJ, Janssen R, Aaby P, van Crevel R, Joosten LAB, Benn CS, Netea MG.",
+                "journalAbbreviation": "J Leukoc Biol",
+                "issue": "3",
+                "pubYear": 2018,
+                "volume": "104",
+                "pageInfo": "573-578",
+                "citedOrder": 36,
+                "match": "Y",
+                "essn": "1938-3673",
+                "issn": "0741-5400"
+              },
+              {
+                "source": "MED",
+                "id": "16621182",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Age-specific changes in the female-male mortality ratio related to the pattern of vaccinations: an observational study from rural Gambia.",
+                "authorString": "Aaby P, Jensen H, Walraven G.",
+                "journalAbbreviation": "Vaccine",
+                "issue": "22",
+                "pubYear": 2006,
+                "volume": "24",
+                "pageInfo": "4701-4708",
+                "citedOrder": 37,
+                "match": "Y",
+                "essn": "1873-2518",
+                "issn": "0264-410X"
+              },
+              {
+                "source": "MED",
+                "id": "21979284",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "The efficacy of Bacillus Calmette-Guerin vaccinations for the prevention of acute upper respiratory tract infection in the elderly.",
+                "authorString": "Wardhana , Datau EA, Sultana A, Mandang VV, Jim E.",
+                "journalAbbreviation": "Acta Med Indones",
+                "issue": "3",
+                "pubYear": 2011,
+                "volume": "43",
+                "pageInfo": "185-190",
+                "citedOrder": 38,
+                "match": "Y",
+                "essn": "2338-2732",
+                "issn": "0125-9326"
+              },
+              {
+                "source": "MED",
+                "id": "32941801",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Activate: Randomized Clinical Trial of BCG Vaccination against Infection in the Elderly.",
+                "authorString": "Giamarellos-Bourboulis EJ, Tsilika M, Moorlag S, Antonakos N, Kotsaki A, Dominguez-Andres J, Kyriazopoulou E, Gkavogianni T, Adami ME, Damoraki G, Koufargyris P, Karageorgos A, Bolanou A, Koenen H, van Crevel R, Droggiti DI, Renieris G, Papadopoulos A, Netea MG.",
+                "journalAbbreviation": "Cell",
+                "issue": "2",
+                "pubYear": 2020,
+                "volume": "183",
+                "pageInfo": "315-323.e9",
+                "citedOrder": 39,
+                "match": "Y",
+                "essn": "1097-4172",
+                "issn": "0092-8674"
+              },
+              {
+                "source": "MED",
+                "id": "33763077",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "The BCG Vaccine for COVID-19: First Verdict and Future Directions.",
+                "authorString": "Gonzalez-Perez M, Sanchez-Tarjuelo R, Shor B, Nistal-Villan E, Ochando J.",
+                "journalAbbreviation": "Front Immunol",
+                "pubYear": 2021,
+                "volume": "12",
+                "pageInfo": "632478",
+                "citedOrder": 40,
+                "match": "Y",
+                "essn": "1664-3224",
+                "issn": "1664-3224"
+              },
+              {
+                "source": "MED",
+                "id": "32838341",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Safety and COVID-19 Symptoms in Individuals Recently Vaccinated with BCG: a Retrospective Cohort Study.",
+                "authorString": "Moorlag SJCFM, van Deuren RC, van Werkhoven CH, Jaeger M, Debisarun P, Taks E, Mourits VP, Koeken VACM, de Bree LCJ, Ten Doesschate T, Cleophas MC, Smeekens S, Oosting M, van de Veerdonk FL, Joosten LAB, Ten Oever J, van der Meer JWM, Curtis N, Aaby P, Stabell-Benn C, Giamarellos-Bourboulis EJ, Bonten M, van Crevel R, Netea MG.",
+                "journalAbbreviation": "Cell Rep Med",
+                "issue": "5",
+                "pubYear": 2020,
+                "volume": "1",
+                "pageInfo": "100073",
+                "citedOrder": 41,
+                "match": "Y",
+                "essn": "2666-3791",
+                "issn": "2666-3791"
+              },
+              {
+                "source": "MED",
+                "id": "34348897",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "Effect of BCG vaccination on proinflammatory responses in elderly individuals.",
+                "authorString": "Pavan Kumar N, Padmapriyadarsini C, Rajamanickam A, Marinaik SB, Nancy A, Padmanaban S, Akbar N, Murhekar M, Babu S.",
+                "journalAbbreviation": "Sci Adv",
+                "issue": "32",
+                "pubYear": 2021,
+                "volume": "7",
+                "pageInfo": "eabg7181",
+                "citedOrder": 42,
+                "match": "Y",
+                "essn": "2375-2548",
+                "issn": "2375-2548"
+              },
+              {
+                "source": "MED",
+                "id": "34302964",
+                "citationType": "JOURNAL ARTICLE",
+                "title": "BCG vaccination induces enhanced frequencies of dendritic cells and altered plasma levels of type I and type III interferons in elderly individuals.",
+                "authorString": "Kumar NP, Padmapriyadarsini C, Rajamanickam A, Bhavani PK, Nancy A, Jeyadeepa B, Selvaraj N, Ashokan D, Renji RM, Venkataramani V, Tripathy S, Babu S.",
+                "journalAbbreviation": "Int J Infect Dis",
+                "pubYear": 2021,
+                "volume": "110",
+                "pageInfo": "98-104",
+                "citedOrder": 43,
+                "match": "Y",
+                "essn": "1878-3511",
+                "issn": "1201-9712"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

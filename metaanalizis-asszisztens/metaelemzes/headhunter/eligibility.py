@@ -394,6 +394,11 @@ def record_screen_decision(project_dir, rec_id, level, value, actor, reason_code
                               quote=quote, kb_refs=KB_SCREEN, supersedes=supersedes, evidence_ids=evidence_ids)
 
 
+def _unsafe(x):
+    s = "" if x is None else str(x)
+    return s[1:] if s[:1] == "'" and s[1:2] in ("=", "+", "-", "@", "\t", "\r") else s
+
+
 def import_screening_csv(project_dir, text_or_path, now=None, default_actor=None):
     """Szűrési döntések visszatöltése (Rayyan/Covidence után): ``rec_id;level;decision;reason_code;actor``
     (fejléc kötelező; az ``actor`` ``user:`` előtagú). ``default_actor``: az importot végző ember (``user:…``) — az
@@ -417,7 +422,8 @@ def import_screening_csv(project_dir, text_or_path, now=None, default_actor=None
         if not any(x.strip() for x in row):
             continue
         row = (row + [""] * 5)[:5]
-        rid, level, dec, rc, actor = [x.strip() for x in row]
+        # az export képlet-védelme (merge.excel_safe) visszafordítva: „'=…” → „=…”
+        rid, level, dec, rc, actor = [_unsafe(x).strip() for x in row]
         actor = actor or (default_actor or "")
         try:
             d = record_screen_decision(project_dir, rid, level, dec, actor, reason_code=rc or None, now=now)

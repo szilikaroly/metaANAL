@@ -64,16 +64,62 @@
       "final": false,
       "findings": [
        {
-        "code": "H017",
-        "en": "Stale step: merge.",
-        "hu": "Elavult lépés: merge — futtasd újra.",
-        "severity": "warning"
+        "artifacts": [
+         "01_kereses/headhunter/reviews/rv-pmid-99000002.json"
+        ],
+        "code": "H006",
+        "detail": "rv-pmid-99000002: az áttekintés 4 vizsgálatot közöl, a kinyerés 2 vizsgálat-csoportot talált.",
+        "en": "rv-pmid-99000002: review reports 4 studies, extraction found 2.",
+        "explain": {
+         "en": "Extracted study count differs from the review's — rv-pmid-99000002: review reports 4 studies, extraction found 2.",
+         "hu": "A kinyert vizsgálatszám eltér az áttekintés által közölttől — rv-pmid-99000002: az áttekintés 4 vizsgálatot közöl, a kinyerés 2 vizsgálat-csoportot talált. Teendő: Nézd át az EP2-ben a jelölteket: hiányzó tábla-sor, összevont vizsgálat vagy több közleményes vizsgálat?"
+        },
+        "hu": "rv-pmid-99000002: az áttekintés 4 vizsgálatot közöl, a kinyerés 2 vizsgálat-csoportot talált.",
+        "kb_refs": [
+         "D-S03-102"
+        ],
+        "severity": "warning",
+        "stage": "S03",
+        "suggested_command": [
+         "list <projekt> candidates --review rv-pmid-99000002"
+        ],
+        "title": "A kinyert vizsgálatszám eltér az áttekintés által közölttől"
        },
        {
+        "artifacts": [
+         "01_kereses/headhunter/state.json"
+        ],
         "code": "H017",
+        "detail": "Elavult lépés: merge — futtasd újra.",
+        "en": "Stale step: merge.",
+        "explain": {
+         "en": "Stale output — Stale step: merge.",
+         "hu": "Elavult kimenet (egy korábbi lépés változott) — Elavult lépés: merge — futtasd újra. Teendő: Futtasd újra a jelzett lépést (status mutatja a sorrendet); lezárás után újra signoff kell."
+        },
+        "hu": "Elavult lépés: merge — futtasd újra.",
+        "kb_refs": [],
+        "severity": "warning",
+        "stage": "S03",
+        "suggested_command": [],
+        "title": "Elavult kimenet (egy korábbi lépés változott)"
+       },
+       {
+        "artifacts": [
+         "01_kereses/headhunter/state.json"
+        ],
+        "code": "H017",
+        "detail": "Elavult lépés: prisma — futtasd újra.",
         "en": "Stale step: prisma.",
+        "explain": {
+         "en": "Stale output — Stale step: prisma.",
+         "hu": "Elavult kimenet (egy korábbi lépés változott) — Elavult lépés: prisma — futtasd újra. Teendő: Futtasd újra a jelzett lépést (status mutatja a sorrendet); lezárás után újra signoff kell."
+        },
         "hu": "Elavult lépés: prisma — futtasd újra.",
-        "severity": "warning"
+        "kb_refs": [],
+        "severity": "warning",
+        "stage": "S03",
+        "suggested_command": [],
+        "title": "Elavult kimenet (egy korábbi lépés változott)"
        }
       ],
       "merged": {
@@ -113,6 +159,11 @@
       "update_window": "2020-09-15",
       "warnings": [
        {
+        "code": "H006",
+        "en": "rv-pmid-99000002: review reports 4 studies, extraction found 2.",
+        "hu": "rv-pmid-99000002: az áttekintés 4 vizsgálatot közöl, a kinyerés 2 vizsgálat-csoportot talált."
+       },
+       {
         "code": "H017",
         "en": "Stale step: merge.",
         "hu": "Elavult lépés: merge — futtasd újra."
@@ -128,9 +179,9 @@
       {
        "cancel_requested": false,
        "exit_code": 3,
-       "finished": "2026-10-05T13:10:58Z",
-       "run_id": "20261005T131058Z-72f7bb",
-       "started": "2026-10-05T13:10:58Z",
+       "finished": "2026-10-05T19:10:21Z",
+       "run_id": "20261005T191021Z-2e9b19",
+       "started": "2026-10-05T19:10:21Z",
        "status": "done",
        "step": "update_search"
       }
@@ -155,32 +206,32 @@
       {
        "actor": "user:user",
        "batch": null,
-       "decision_id": "d-20261005T131058Z-0002",
+       "decision_id": "d-20261005T191021Z-0002",
        "evidence_ids": [],
        "kb_refs": [
         "D-S03-104"
        ],
        "kind": "update_window",
        "level": null,
-       "prev_sha256": "60de0ab681aa8327a51f8611af9584b67c6953a3b3de988950ac162fc9acc5a8",
+       "prev_sha256": "cc2f83b5a3be6c9f9d89e70afd8a68e47e08ccb19cbb8d4d682ac309045568ee",
        "proposed_by": null,
        "quote": null,
        "reason": "Frissítő keresés ablaka: horgony=latest (2021-03-15), átfedés=6 hónap, 2020-09-15..2026-10-05.",
        "reason_code": null,
        "schema": "szk.ma.headhunter.decision/v1",
-       "sha256": "4ee76b624a407d3230046c5a7ac2fbfd22381c5ba2ff8054efca513589c0e792",
+       "sha256": "9291e6117ee051bef4185006c95ce9b5835f6f8c98b934cad1a9862b75ee27f1",
        "supersedes": null,
        "target": {
         "id": "update",
         "type": "window"
        },
-       "ts": "2026-10-05T13:10:58Z",
+       "ts": "2026-10-05T19:10:21Z",
        "value": "2020-09-15..2026-10-05"
       },
       {
        "actor": "user:SzK",
        "batch": null,
-       "decision_id": "d-20261005T131057Z-0001",
+       "decision_id": "d-20261005T191021Z-0001",
        "evidence_ids": [],
        "kb_refs": [
         "D-S03-101"
@@ -193,13 +244,13 @@
        "reason": "PICO és kritériumok jóváhagyva: Csökkenti-e a szintetikus X-szer a halálozást Y-betegségben? (szintetikus példa)",
        "reason_code": null,
        "schema": "szk.ma.headhunter.decision/v1",
-       "sha256": "60de0ab681aa8327a51f8611af9584b67c6953a3b3de988950ac162fc9acc5a8",
+       "sha256": "cc2f83b5a3be6c9f9d89e70afd8a68e47e08ccb19cbb8d4d682ac309045568ee",
        "supersedes": null,
        "target": {
         "id": "pico",
         "type": "project"
        },
-       "ts": "2026-10-05T13:10:57Z",
+       "ts": "2026-10-05T19:10:21Z",
        "value": "approved"
       }
      ],
@@ -211,32 +262,32 @@
        "path": "01_kereses/headhunter/decisions.jsonl"
       },
       "merged": {
-       "etag": "576bcef4b44a51e12b7630d95b518d73bb96153d3af30a0ea5b2c778b7c8cdde",
+       "etag": "50a4dc4b46b4f74ec6899acc677e58bed78a27e277e5375d31cf26eefa5139ca",
        "exists": true,
        "path": "01_kereses/headhunter/merged.json"
       },
       "overlap": {
-       "etag": "b9ab80281cc89e8a8a2b2320608a5641f542b91db615be524c990dbb507c1ac9",
+       "etag": "93cae1aebc02193c0562a80c146de22eef4ac2beb266c91fb2c8ff32f269e6fe",
        "exists": true,
        "path": "01_kereses/headhunter/overlap.json"
       },
       "prisma": {
-       "etag": "09f1c6218f55b35b012bbccd3dd25113073206e52d0d83531a4375eb6ef9f8b2",
+       "etag": "b1b912fd5e407afa8b56c04ccc85143c2c0a19e2233507c9b444fc9233bcfcc8",
        "exists": true,
        "path": "01_kereses/headhunter/prisma_flow.json"
       },
       "state": {
-       "etag": "7908c8ad0365c3a62bdd9c71a686a3f368060d39760616267fede2f86d13f5dc",
+       "etag": "262e28c0277a18c841e1d2477ecc8c17d3639c66940ded1f42b7a2316f626eea",
        "exists": true,
        "path": "01_kereses/headhunter/state.json"
       },
       "studies": {
-       "etag": "e9c64c5afa30cabed9a36f27ae2ebbef1a938d64fd44af86801794fa4ea1d736",
+       "etag": "b64d8f5ab189064b9d46a07a734fbc740c5b4144dde41254db5192b5fe18ea9d",
        "exists": true,
        "path": "01_kereses/headhunter/studies.json"
       },
       "update": {
-       "etag": "565ba9a0361efaf2dd3f015617879bd63ea3b35755459292a90f509f6716c85f",
+       "etag": "b0c7996585ec433b729711dbc06d92f774fd384e13efb28b8c66987a3d801a18",
        "exists": true,
        "path": "01_kereses/headhunter/update_search.json"
       }
@@ -388,12 +439,42 @@
       }
      ],
      "state": {
-      "created": "2026-10-05T13:10:57Z",
-      "criteria": [],
+      "created": "2026-10-05T19:10:21Z",
+      "criteria": [
+       {
+        "domain": "S",
+        "id": "E1",
+        "machine_hint": {
+         "exclude_retracted": true,
+         "pub_types_exclude": [
+          "Review",
+          "Systematic Review",
+          "Meta-Analysis",
+          "Editorial",
+          "Comment",
+          "Practice Guideline",
+          "Guideline",
+          "News",
+          "Retracted Publication"
+         ]
+        },
+        "text": "Nem elsődleges közlemény (áttekintés, metaanalízis, szerkesztőségi, kommentár, irányelv) — gépi javaslat a PubMed publikációtípusa alapján; a döntés emberi.",
+        "type": "exclude"
+       },
+       {
+        "domain": "P",
+        "id": "E2",
+        "machine_hint": {
+         "humans_only": true
+        },
+        "text": "Emberi vizsgálat — a csak állatkísérletként indexelt közlemény kizárási javaslatot kap.",
+        "type": "include"
+       }
+      ],
       "exclusion_reasons": [
        {
         "code": "X1",
-        "criterion": null,
+        "criterion": "E2",
         "domain": "P",
         "label": {
          "en": "wrong population",
@@ -438,7 +519,7 @@
        },
        {
         "code": "X6",
-        "criterion": null,
+        "criterion": "E1",
         "domain": null,
         "label": {
          "en": "not a primary report (review, editorial, comment)",
@@ -523,7 +604,7 @@
        "title_similarity_probable": 0.9
       },
       "tool_version": "metaelemzes-headhunter/1.0.0",
-      "updated": "2026-10-05T13:10:58Z"
+      "updated": "2026-10-05T19:10:21Z"
      },
      "steps": [
       {
@@ -573,7 +654,7 @@
        "message": null,
        "run_id": null,
        "status": "done",
-       "updated": "2026-10-05T13:10:57Z"
+       "updated": "2026-10-05T19:10:21Z"
       },
       {
        "id": "screen",
@@ -585,9 +666,9 @@
       {
        "id": "update_search",
        "message": null,
-       "run_id": "20261005T131058Z-72f7bb",
+       "run_id": "20261005T191021Z-2e9b19",
        "status": "needs_human",
-       "updated": "2026-10-05T13:10:58Z"
+       "updated": "2026-10-05T19:10:21Z"
       },
       {
        "id": "merge",
@@ -597,7 +678,7 @@
        },
        "run_id": null,
        "status": "stale",
-       "updated": "2026-10-05T13:10:58Z"
+       "updated": "2026-10-05T19:10:21Z"
       },
       {
        "id": "prisma",
@@ -607,7 +688,7 @@
        },
        "run_id": null,
        "status": "stale",
-       "updated": "2026-10-05T13:10:58Z"
+       "updated": "2026-10-05T19:10:21Z"
       },
       {
        "id": "export",
@@ -628,7 +709,7 @@
     "schema": "szk.ma.hh-status/v1",
     "warnings": []
    },
-   "etag": "e5641f572aff1ab2c11904841396329e97b761b44d748ff2f3d414f26ea0b693",
+   "etag": "db8dcb51d48b9730fed3e6f3cdd85882b1d97963cd087e6087ddf0f72e0ae25a",
    "method": "GET",
    "path": "/api/headhunter/status",
    "status": 200
@@ -647,7 +728,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": false,
-       "message": "A PubMed állapota még nem ismert (futtasd: sources --check).",
+       "message": "A PubMed állapota még nem ismert (nyomd meg a „Források ellenőrzése” gombot).",
        "name": "PubMed",
        "reset_at": null,
        "role": "áttekintések keresése, metaadat, hivatkozás-feloldás (ecitmatch), regiszterszám (DataBank)",
@@ -663,7 +744,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": null,
-       "message": "Az Europe PMC állapota még nem ismert (futtasd: sources --check).",
+       "message": "Az Europe PMC állapota még nem ismert (nyomd meg a „Források ellenőrzése” gombot).",
        "name": "Europe PMC",
        "reset_at": null,
        "role": "áttekintések keresése, nyílt teljes szöveg (bevont vizsgálatok kinyerése), hivatkozások, idézők",
@@ -679,7 +760,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": false,
-       "message": "Az OpenAlex állapota még nem ismert (futtasd: sources --check).",
+       "message": "Az OpenAlex állapota még nem ismert (nyomd meg a „Források ellenőrzése” gombot).",
        "name": "OpenAlex",
        "reset_at": null,
        "role": "áttekintések keresése (type:review), irodalomjegyzék (referenced_works), idéző közlemények (cites:)",
@@ -711,7 +792,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": null,
-       "message": "A ClinicalTrials.gov állapota még nem ismert (futtasd: sources --check).",
+       "message": "A ClinicalTrials.gov állapota még nem ismert (nyomd meg a „Források ellenőrzése” gombot).",
        "name": "ClinicalTrials.gov",
        "reset_at": null,
        "role": "regiszter-rekordok (NCT), regiszter-keresés a frissítéshez",
@@ -727,7 +808,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": null,
-       "message": "A Crossref állapota még nem ismert (futtasd: sources --check).",
+       "message": "A Crossref állapota még nem ismert (nyomd meg a „Források ellenőrzése” gombot).",
        "name": "Crossref",
        "reset_at": null,
        "role": "DOI-metaadat tartalékként",
@@ -736,7 +817,7 @@
        "unverified_live": false
       }
      ],
-     "state_etag": "7908c8ad0365c3a62bdd9c71a686a3f368060d39760616267fede2f86d13f5dc",
+     "state_etag": "262e28c0277a18c841e1d2477ecc8c17d3639c66940ded1f42b7a2316f626eea",
      "warnings": []
     },
     "meta": {
@@ -770,7 +851,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": false,
-       "message": "The status of PubMed is not known yet (run: sources --check).",
+       "message": "The status of PubMed is not known yet (press the “Check sources” button).",
        "name": "PubMed",
        "reset_at": null,
        "role": "review search, metadata, citation matching (ecitmatch), registry numbers (DataBank)",
@@ -786,7 +867,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": null,
-       "message": "The status of Europe PMC is not known yet (run: sources --check).",
+       "message": "The status of Europe PMC is not known yet (press the “Check sources” button).",
        "name": "Europe PMC",
        "reset_at": null,
        "role": "review search, open full text (included-study extraction), references, citations",
@@ -802,7 +883,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": false,
-       "message": "The status of OpenAlex is not known yet (run: sources --check).",
+       "message": "The status of OpenAlex is not known yet (press the “Check sources” button).",
        "name": "OpenAlex",
        "reset_at": null,
        "role": "review search (type:review), reference lists (referenced_works), citing works (cites:)",
@@ -834,7 +915,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": null,
-       "message": "The status of ClinicalTrials.gov is not known yet (run: sources --check).",
+       "message": "The status of ClinicalTrials.gov is not known yet (press the “Check sources” button).",
        "name": "ClinicalTrials.gov",
        "reset_at": null,
        "role": "registry records (NCT), registry search for the update",
@@ -850,7 +931,7 @@
        "entitlement": null,
        "insttoken_configured": null,
        "key_configured": null,
-       "message": "The status of Crossref is not known yet (run: sources --check).",
+       "message": "The status of Crossref is not known yet (press the “Check sources” button).",
        "name": "Crossref",
        "reset_at": null,
        "role": "DOI metadata as a fallback",
@@ -859,7 +940,7 @@
        "unverified_live": false
       }
      ],
-     "state_etag": "7908c8ad0365c3a62bdd9c71a686a3f368060d39760616267fede2f86d13f5dc",
+     "state_etag": "262e28c0277a18c841e1d2477ecc8c17d3639c66940ded1f42b7a2316f626eea",
      "warnings": []
     },
     "meta": {

@@ -3,7 +3,9 @@
 
 session, a statikus felület, engine (``api.engine_info``), capabilities, project, privacy, table + import
 + provenance, documents + fileurl + /f/, validate + convert, specs, analyze + jobs, runs, prisma + studies,
-audit, log, kb, changes. A motorhoz minden végpont a homlokzaton (``metaelemzes.api``) át fér hozzá (6.8).
+audit, log, kb, changes; v1: értékelések, GRADE/SoF/Protokoll, kettős kinyerés, adapterek/ábra-export/composer,
+Metaheadhunter. A motorhoz minden végpont a homlokzaton (``metaelemzes.api``) át fér hozzá (6.8); a Metaheadhunter a
+saját parancssorát futtatja alfolyamatként (``python -m metaelemzes.headhunter … --json``).
 Az export-végpontok (``routes/export.py``: audit-csomag, pillanatkép) külön modulban élnek; ha a modul
 jelen van, ugyanígy felvesszük."""
 import os
@@ -27,6 +29,8 @@ from . import extraction_dual  # noqa: E402 — v1: kettős kinyerés (compare, 
 MODULES += (extraction_dual,)
 from . import adapters, adapters_composer, adapters_figures  # noqa: E402 — v1: plugin-adapterek, ábra-export, composer
 MODULES += (adapters, adapters_figures, adapters_composer)
+from . import headhunter  # noqa: E402 — Metaheadhunter (meglévő metaanalízisek bányászata; a CLI-t futtatja)
+MODULES += (headhunter,)
 
 
 def register_all(router):

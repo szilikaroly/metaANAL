@@ -181,6 +181,19 @@ class SourceTests(unittest.TestCase):
             self.assertEqual(set(re.findall(r"\{(\w+)\}", hu[k])), set(re.findall(r"\{(\w+)\}", en[k])), k)
             self.assertTrue(hu[k].strip() and en[k].strip(), "üres szöveg: %s" % k)
 
+    # UX-5: a magyar felület egységesen tegező („Add meg”, „döntsd el”, „a te ítéleted”) — a magázó alakok tilosak
+    FORMAL_HU = re.compile(r"(?<![\wÁÉÍÓÖŐÚÜŰáéíóöőúüű])Ön(?:nek|t|é|ök|nél|re|ről|höz|től|hez)?(?![\wÁÉÍÓÖŐÚÜŰáéíóöőúüű])"
+                           r"|erősítse meg|írja át|[Kk]attintson|[Kk]érjük|[Tt]öltse ki|[Vv]álassza ki|[Ee]llenőrizze"
+                           r"|[Dd]öntse el|[Ii]ndokolja meg|[Nn]yissa meg|[Ff]uttassa|[Hh]asználja a|[Aa]dja meg a")
+
+    def test_hungarian_register_is_informal(self):
+        bad = ["%s: %s" % (k, v) for k, v in sorted(self.i18n["hu"].items()) if self.FORMAL_HU.search(v)]
+        self.assertEqual(bad, [], "magázó alak a magyar felületen (UX-5) — írd át tegezőre")
+        for probe in ("Az Ön ítélete", "erősítse meg vagy írja át", "Kérjük, kattintson"):
+            self.assertIsNotNone(self.FORMAL_HU.search(probe), probe)
+        for ok in ("A te ítéleted", "erősítsd meg vagy írd át", "önálló", "Önállóan", "a GRADE adja meg"):
+            self.assertIsNone(self.FORMAL_HU.search(ok), ok)
+
     def test_all_used_i18n_keys_exist_in_both_languages(self):
         """Minden kulcs-alakú sztringliterál, amely i18n-névtérrel kezdődik és nem állapot-/preferencia-út
         (MA.store / MA.prefs első argumentuma), mindkét szótárban megvan; a t(…)-ben álló dinamikus előtag

@@ -4,7 +4,8 @@ Ez az útmutató annak a kollégának szól, aki most kapja meg az eszközt. Pro
 dobozokban lévő parancsokat másold be a terminálba (Windows: *PowerShell* vagy *Parancssor*; macOS: *Terminál*),
 és nyomj Entert. A `<…>` jelek közötti részt a saját adatodra cseréld (a jelek nélkül).
 
-Mit kapsz: egy Claude Code-ban futó **orkesztrátort** és három **alágenst** (tervező, ellenőrző, értékelő), egy
+Mit kapsz: egy Claude Code-ban futó **orkesztrátort** és négy **alágenst** (tervező, ellenőrző, értékelő, valamint
+a **Metaheadhunter** — meglévő metaanalízisek bányászata), egy
 metafor-ral validált **számítási motort** (`ma.py`), egy **tudásbázist** a módszertani döntésekhez, egy
 **projektnaplót** szakaszkapukkal, és egy helyi, böngészős **munkapadot** (grafikus felület). Részletes leírás:
 [README.md](README.md).
@@ -18,6 +19,8 @@ metafor-ral validált **számítási motort** (`ma.py`), egy **tudásbázist** a
 5. [ ] (Ajánlott) telepítés Claude Code-pluginként ([4. pont](#4-claude-code-pluginként-ajánlott))
 6. [ ] Engedélylista a saját beállításaidba ([5. pont](#5-javasolt-engedélylista))
 7. [ ] Indítás ([6. pont](#6-indítás))
+8. [ ] (Opcionális, a Metaheadhunterhez) API-kulcsok környezeti változóban, majd `python ma.py headhunter sources
+   --check` ([7a. pont](#7a-metaheadhunter-források-és-api-kulcsok-opcionális))
 
 ## 1. Előfeltételek
 
@@ -90,7 +93,8 @@ Egy Claude Code-munkamenetben (indítsd: `claude`) írd be:
 
 Ugyanez a terminálból: `claude plugin marketplace add szilikaroly/anamnezis-asszisztens`, majd
 `claude plugin install metaanalizis@anamnezis-asszisztens`. Utána indítsd újra a Claude Code-ot (vagy a munkamenetben:
-`/reload-plugins`). Ellenőrzés: `claude plugin details metaanalizis` — négy ágenst és egy skillt kell mutatnia.
+`/reload-plugins`). Ellenőrzés: `claude plugin details metaanalizis` — öt ágenst (az orkesztrátor + négy alágens: ma-tervezo,
+ma-ellenorzo, ma-ertekelo, ma-metaheadhunter) és egy skillt kell mutatnia.
 
 - **Privát repó:** a Claude Code a gépeden lévő git-azonosítást használja, kérdezni nem tud. Ha a hozzáadás
   hibát ad, futtasd a `gh auth login` és a `gh auth setup-git` parancsot (2. pont), majd próbáld újra. Ha nincs GitHub
@@ -250,6 +254,11 @@ Parancssor nélkül: Windowson kattints duplán a `metaanalizis-asszisztens` map
   03_adatok/studies.json --emit-flowchart folyamatabra.json`.
 - **Ábrák:** kumulatív elemzésnél `cumulative.svg`, egyetlen folytonos moderátoros meta-regressziónál `bubble.svg`;
   angolul vagy rétegekkel: `python ma.py figure --plot <futásmappa> --kind bubble --lang en --out bubble_en.svg`.
+  A munkapadon az **Ábra-export** képernyő (az Eredmények oldal „Ábra-export” gombja) ugyanezt adja
+  magyar vagy angol felirattal; minden ábra számait a szerver visszaellenőrzi (zöld jelvény csak teljes egyezésnél).
+- **Validator-keresztellenőrzés:** ha a `validator` plugin telepítve van, az értékelő űrlap alján a
+  „Keresztellenőrzés a validator pluginnal” doboz összeveti a plugin eredményét a motoréval, és megmondja, hol nem
+  összevethető (a plugin ismert hibái miatt) — tájékoztatás, az ítélet a tiéd.
 
 **Pillanatkép és audit-csomag** (a munkapad indítása nélkül is; szintén a `metaanalizis-asszisztens` mappában):
 
@@ -267,6 +276,65 @@ python ma.py gui audit-export --project <projektmappa>    # ZIP a 07_ellenorzes/
 - Az **audit-csomag** determinisztikus ZIP (ugyanabból a projektállapotból bájtra azonos): `manifest.json`
   (fájlok sha256-jával), a tevékenységnapló hash-lánca, a futások fájljai és `rerun.cmd`/`rerun.sh` az
   újrafuttatáshoz.
+
+## 7a. Metaheadhunter: források és API-kulcsok (opcionális)
+
+A Metaheadhunter (meglévő metaanalízisek bányászata: `python ma.py headhunter …`, a munkapadon PRISMA fül →
+Metaheadhunter) a PubMed, az Europe PMC, az OpenAlex, a Scopus, a ClinicalTrials.gov és tartalékként a Crossref
+nyilvános API-jait hívja. Kulcs nélkül is működik (Scopus nélkül); a kulcsok gyorsabbá és megbízhatóbbá teszik. Hol
+kapod őket, és mire jók: [ESZKOZOK_ES_HOZZAFERESEK.md](ESZKOZOK_ES_HOZZAFERESEK.md) 6a. pont (Scopus Magyarországon
+jellemzően az **EISZ** intézményi előfizetésén át; a kulcsot intézményi hálózatról kérd a dev.elsevier.com oldalon).
+
+**A kulcs csak környezeti változóban lehet** — ne írd a csevegésbe, parancssorba, projektfájlba vagy a repóba. A program
+a kulcsnak csak a meglétét mutatja, az értékét sehová nem írja ki.
+
+| Változó | Mi ez |
+|---|---|
+| `MA_CONTACT_EMAIL` | a saját e-mail-címed (az NCBI és az OpenAlex udvariassági kérése) |
+| `MA_OPENALEX_APIKEY` | OpenAlex API-kulcs |
+| `MA_SCOPUS_APIKEY` | Elsevier / Scopus API-kulcs |
+| `MA_SCOPUS_INSTTOKEN` | Scopus intézményi token (ha nem az intézményi hálózatról dolgozol) |
+| `MA_NCBI_APIKEY` | NCBI E-utilities kulcs (opcionális; 3 helyett 10 kérés/s) |
+
+**Beállítás tartósan** (utána nyiss új terminált, és a Claude Code-ot is indítsd újra):
+
+- **Windows** (Parancssor vagy PowerShell; a felhasználói környezetbe ír):
+  ```
+  setx MA_CONTACT_EMAIL "nev@intezmeny.hu"
+  setx MA_OPENALEX_APIKEY "<kulcs>"
+  setx MA_SCOPUS_APIKEY "<kulcs>"
+  ```
+  (Vagy: *Gépház → Rendszer → Névjegy → Speciális rendszerbeállítások → Környezeti változók → Felhasználói változók*.)
+- **macOS** (zsh): a `~/.zshrc` végére:
+  ```bash
+  export MA_CONTACT_EMAIL="nev@intezmeny.hu"
+  export MA_OPENALEX_APIKEY="<kulcs>"
+  export MA_SCOPUS_APIKEY="<kulcs>"
+  ```
+- **Linux** (bash): ugyanez a `~/.bashrc` végére.
+
+**Ellenőrzés a saját gépeden** (a `metaanalizis-asszisztens` mappában):
+
+```bash
+python ma.py headhunter sources --check                     # minden forrás: rendben / nincs beállítva / nem érhető el
+python ma.py headhunter sources --check --sources scopus     # csak a Scopus
+```
+
+Kilépési kód 0: minden bekapcsolt forrás elérhető; 3: legalább egy nem — az üzenet megmondja, miért. A Scopus-kapcsolatot
+a fejlesztéskor élőben nem lehetett kipróbálni, ezért az első használat előtt ezzel igazold. (Fejlesztőknek: a valódi
+Scopus-válaszok rögzítése `python3 tests/reference/headhunter/cassettes/record_cassettes.py --only scopus_live`.)
+
+Az „Állapot” oszlop a parancssor magyar címkéit mutatja (zárójelben a `--json` / `--lang en` angol állapotkódja):
+
+| Állapot a táblázatban | Teendő |
+|---|---|
+| Scopus: „nincs beállítva” (`not_configured`) | A `MA_SCOPUS_APIKEY` nincs a környezetben: `setx` / `export` után **új** terminál kell. |
+| Scopus: „kulcs elutasítva” (`unauthorized`, HTTP 401) | A kulcs hibás, vagy nem intézményi IP-ről használod: intézményi hálózat / VPN, vagy `MA_SCOPUS_INSTTOKEN`. |
+| Scopus: „nincs jogosultság” (`forbidden`, HTTP 403) | Az intézményed előfizetése nem fedi az adott API-t — kérdezd a könyvtárat (EISZ). |
+| OpenAlex: „keret elfogyott (eddig: …)” (`rate_limited`, HTTP 429) | A kulcs nélküli napi keret elfogyott (IP-nként közös): állíts be `MA_OPENALEX_APIKEY`-t, vagy várj a zárójelben írt időpontig. |
+| Egy forrás „nem elérhető” (`unreachable`) | Hálózat / tűzfal / proxy: a többi forrással a lépés részlegesen lefut (kilépési kód 3), és jelzi, mi hiányzik. |
+
+Engedély: a `ma.py headhunter …` a hálózatot a Pythonon át éri el, ezért az 5. pont `Bash(… ma.py *)` sorai elegendők.
 
 ## 8. Saját PDF-ek a tudásbázisban
 

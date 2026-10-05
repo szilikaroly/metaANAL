@@ -1,7 +1,8 @@
 # Metaanalízis-asszisztens
 
-Szisztematikus áttekintés és metaanalízis asszisztens Claude Code-hoz: egy **orkesztrátor** és három
-**alágens** (tervező, ellenőrző, értékelő), egy **metafor-ral validált számítási motor** (csak Python
+Szisztematikus áttekintés és metaanalízis asszisztens Claude Code-hoz: egy **orkesztrátor** és négy
+**alágens** (tervező, ellenőrző, értékelő, valamint a **Metaheadhunter** — meglévő metaanalízisek bányászata), egy
+**metafor-ral validált számítási motor** (csak Python
 standard könyvtár, telepítés nélkül fut), egy **SQL-tudásbázis** a módszertani döntésekhez, és egy
 **projektnapló**, amely minden döntést és ellenőrzési megállapítást visszakereshetően rögzít, valamint egy helyi,
 böngészős **munkapad** (MA-munkapad). A repó egyúttal **Claude Code-plugin-marketplace** is: a `metaanalizis` plugin
@@ -15,15 +16,15 @@ plugin-telepítés, engedélyek, adatvédelem, hibaelhárítás).
   felhasználó → │ metaanalizis-asszisztens  (orkesztrátor)      │
                 │  .claude/agents/metaanalizis-asszisztens.md   │
                 │  .claude/skills/metaanalizis/SKILL.md         │
-                └──┬───────────────┬────────────────┬──────────┘
-         kezdéskor │   menet közben│és a végén      │ a következtetések előtt
-           ┌───────▼──────┐ ┌──────▼───────┐ ┌──────▼───────┐
-           │ ma-tervezo   │ │ ma-ellenorzo │ │ ma-ertekelo  │
-           │ protokoll,   │ │ checkpoint / │ │ GRADE, SoF,  │
-           │ elemzési terv│ │ final; PASS/ │ │ AMSTAR 2,    │
-           │ eszközök (S00)│ │ FAIL kapuk  │ │ MCID         │
-           └───────┬──────┘ └──────┬───────┘ └──────┬───────┘
-                   └────────┬──────┴────────────────┘
+                └──┬───────────────┬────────────────┬───────┬──┘
+         kezdéskor │   menet közben│és a végén      │ zárás │ S03–S04 (meglévő metaanalízisek)
+           ┌───────▼──────┐ ┌──────▼───────┐ ┌──────▼──────┐┌▼──────────────────┐
+           │ ma-tervezo   │ │ ma-ellenorzo │ │ ma-ertekelo ││ ma-metaheadhunter │
+           │ protokoll,   │ │ checkpoint / │ │ GRADE, SoF, ││ bányászat, duplum-│
+           │ elemzési terv│ │ final; PASS/ │ │ AMSTAR 2,   ││ szűrés, egyesítés,│
+           │ eszközök(S00)│ │ FAIL kapuk   │ │ MCID        ││ frissítő keresés  │
+           └───────┬──────┘ └──────┬───────┘ └──────┬──────┘└─────────┬─────────┘
+                   └────────┬──────┴────────────────┴─────────────────┘
           python ma.py kb … │ python ma.py analyze/validate … │ python ma.py project …
           ┌─────────────────▼─────┐ ┌───────────────────────┐ ┌──────────────────────┐
           │ tudásbázis (SQLite,   │ │ metaelemzes motor      │ │ projektnapló (SQLite)│
@@ -54,7 +55,8 @@ GitHub-meghívót kell elfogadni, és a gépen a git-azonosításnak működnie 
 
 Indítás pluginból: `claude --agent metaanalizis:metaanalizis-asszisztens`, vagy egy munkamenetben
 `/metaanalizis:metaanalizis <projektmappa> "<kérdés>"`. A plugin-változatban az alágensek neve névtérrel szerepel
-(`metaanalizis:ma-tervezo`, `metaanalizis:ma-ellenorzo`, `metaanalizis:ma-ertekelo`). A plugin nem adhat
+(`metaanalizis:ma-tervezo`, `metaanalizis:ma-ellenorzo`, `metaanalizis:ma-ertekelo`, `metaanalizis:ma-metaheadhunter`).
+A plugin nem adhat
 engedélyeket: a javasolt engedélylistát a [TELEPITES.md](TELEPITES.md) 5. pontja adja, a saját beállításaidba.
 
 **Csak a motor** (parancssor, bármely mappából):
@@ -80,6 +82,11 @@ python metaanalizis-asszisztens/ma.py grade sof --run <futás> --project <projek
 python metaanalizis-asszisztens/ma.py kettos compare --project <projekt> --outcome o1   # kettős kinyerés összevetése
 python metaanalizis-asszisztens/ma.py prisma check --composer prisma-flow.json --studies 03_adatok/studies.json --emit-flowchart folyamatabra.json
 python metaanalizis-asszisztens/ma.py figure --plot <futás> --kind bubble --lang en --out bubble_en.svg
+python metaanalizis-asszisztens/ma.py figure --plot <futás> --kind forest --lang en --annotate --out forest_en.svg   # a futás adataiból újrarajzolva
+# Metaheadhunter: meglévő metaanalízisek bányászata (kilépési kód 4 = emberi döntésre vár)
+python metaanalizis-asszisztens/ma.py headhunter sources --check                   # a források elérhetősége ezen a gépen
+python metaanalizis-asszisztens/ma.py headhunter init <projekt> --question "…"     # majd: find, extract, resolve, dedupe, …
+python metaanalizis-asszisztens/ma.py headhunter status <projekt> --json
 python metaanalizis-asszisztens/ma.py --capabilities                             # szk.capabilities/v1
 python metaanalizis-asszisztens/ma.py selftest
 ```
@@ -111,6 +118,29 @@ A pillanatkép kitakarási alapértékei az adatosztályból jönnek: **A** — 
 kimaradnak (kérésre `--keep tables`), az értékelők neve monogram; **C** — táblák soha. A `_privat/` mappa, a PDF-ek és
 a tudásbázis teljes szövege egyik osztályban sem kerül bele. Kilépési kód: 0 kész, 2 hibás kérés (pl. táblák C
 osztályú projektből), 1 egyéb hiba. **A pillanatképet soha ne töltsd fel és ne publikáld — Claude Artifactként sem.**
+
+## Metaheadhunter — meglévő metaanalízisek bányászata (`metaelemzes/headhunter/`)
+
+Ha a témában már van közölt szisztematikus áttekintés vagy metaanalízis, a Metaheadhunter a bevont vizsgálataikból
+épít **bizonyítékkal alátámasztott** (áttekintés + hely + legfeljebb 300 karakteres szó szerinti idézet), API-ból
+azonosított, duplumszűrt vizsgálatlistát; kiszámolja az áttekintések átfedését (CCA), előkészíti a szűrést a SAJÁT
+PICO szerint, dátumkorlátos frissítő keresést futtat, és PRISMA 2020 számokat ad (az „other methods” ágra). A saját,
+protokoll szerinti keresést nem helyettesíti, hanem kiegészíti. Részletes terv: `TERV_metaheadhunter.md`.
+
+- **Ágens:** `ma-metaheadhunter` (pluginban `metaanalizis:ma-metaheadhunter`) — az orkesztrátor az S03–S04-ben hívja;
+  az **EP1–EP6** emberi ellenőrzőpontokon (áttekintések kiválasztása, bizonytalan jelöltek, duplumok, jogosultság,
+  lezárás, másodlagos adatok) megáll, és a felhasználó dönt.
+- **Parancssor:** `python ma.py headhunter <parancs> <projekt> [--json]` (ugyanaz: `python -m metaelemzes.headhunter`);
+  parancsok: `init`, `sources [--check]`, `find`, `extract`, `resolve`, `dedupe`, `overlap`, `screen`, `update-search`,
+  `merge`, `prisma`, `signoff`, `verify-secondary`, `export`, `status`, `verify`. Kilépési kód: 0 rendben · 1 hiba ·
+  2 használati hiba · 3 egy forrás nem érhető el (részleges) · 4 emberi döntésre vár.
+- **Források:** PubMed, Europe PMC, OpenAlex, Scopus (intézményi hozzáféréssel), ClinicalTrials.gov, Crossref
+  (tartalék). A kulcsok csak környezeti változóból jönnek (`MA_CONTACT_EMAIL`, `MA_OPENALEX_APIKEY`,
+  `MA_SCOPUS_APIKEY`, `MA_SCOPUS_INSTTOKEN`, opcionálisan `MA_NCBI_APIKEY`) — beállításuk és a Scopus EISZ-en át:
+  [TELEPITES.md](TELEPITES.md) és [ESZKOZOK_ES_HOZZAFERESEK.md](ESZKOZOK_ES_HOZZAFERESEK.md). A saját gépeden az első
+  lépés mindig: `python ma.py headhunter sources --check`.
+- **Munkapad:** PRISMA fül → Metaheadhunter (9 lépéses varázsló; a lépéseket a parancssor futtatja a háttérben).
+- **Homlokzat:** `api.headhunter_init|status|sources|run_step|decide|verify` (a CLI JSON-borítéka).
 
 ## A motor (`metaelemzes/`)
 
@@ -175,9 +205,14 @@ A [`TERV_validalo_grafikus_felulet.md`](TERV_validalo_grafikus_felulet.md) a bö
 (`ma_gui/`) helyi, csak 127.0.0.1-en figyelő stdlib szerver: `python ma.py gui --project <mappa>` (parancssor nélkül:
 `ma-munkapad.cmd` Windowson, `ma-munkapad.command` macOS-en). Csak `project init` után az elemzéshez előbb egy
 kimenetet kell felvenni: a felület „Kimenet felvétele” gombjával vagy `python ma.py project outcome <mappa> --id o1
---name "…" --data 03_adatok/o1.csv --measure RR`. A számok egyetlen forrása a motor. A `figure-forge` (ábra-export,
-audit) és a `validator` (RoB, PROBAST+AI, TRIPOD+AI, GRADE, AMSTAR 2) a v1-ben csatlakozik majd opcionális
-adapterként, verziózott `szk.*` JSON-szerződéssel; az MVP csak felderíti őket (Képességek oldal), és nélkülük működik.
+--name "…" --data 03_adatok/o1.csv --measure RR`. A számok egyetlen forrása a motor. A `figure-forge` és a `validator` plugin a v1-ben
+opcionális adapterként csatlakozik (verziózott `szk.*` JSON-szerződéssel), és a munkapad nélkülük is működik:
+a **Képességek** oldal megmutatja, mi érhető el; az **Ábra-export** képernyő (`#/figures`, az Eredmények oldalról
+nyílik) a motor ábráit magyar vagy angol felirattal, rétegzett SVG-ként adja, a szerver pedig minden számot
+visszaellenőriz a futás adataival (zöld jelvény csak teljes egyezésnél; a figure-forge auditja, ha használható,
+különben a pontos teendő); az értékelő űrlapokon a **„Keresztellenőrzés a validator pluginnal”** doboz
+„Összevetés a motorral” sorai mutatják az eltéréseket a plugin ismert hibáira vonatkozó őrökkel (H1–H4, H12
+polaritás, H13 tételszámozás) — az ítélet mindig a motoré és a tiéd, a plugin csak tájékoztat.
 A v1 motor-oldala már kész (2026-10-05): a kettős kinyerés egyeztetése, a natív értékelő eszközök (RoB 2, ROBINS-I/E,
 QUADAS-2, NOS, QUIPS, JBI, PROBAST+AI, TRIPOD+AI, AMSTAR 2; konszenzus, forgalmi lámpa, `rob`-szinkron), a GRADE / SoF,
 a kumulatív és a buborék-ábra, valamint a PRISMA 2020 folyamatábra-specifikáció a `metaelemzes/api.py` homlokzatán és a

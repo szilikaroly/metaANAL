@@ -531,6 +531,51 @@ async function goByKeyboard(page, s) {
     });
   }
 
+  // UX-10 (v1 harmadik átnézés): a v1-képernyők is átmennek a projekt saját ellenőrzésén (kontraszt — a forgalmi lámpa
+  // jelei és a „Kritikus” jelvény —, feloldható aria-hivatkozások — a kettős kinyerés részlet-panelje kijelölés nélkül)
+  const V1 = [
+    { id: 'appraisal-summary', hash: '#/appraisal-summary?tool=rob2&outcome=o1', ready: '#rt-matrix' },
+    { id: 'appraisal', hash: '#/appraisal?tool=robins-i&target=o1&unit=FRIMODT1973', ready: '#ap-form-panel #ap-comp-text' },
+    { id: 'appraisal', hash: '#/appraisal?tool=rob2&target=o1&unit=HART1977', ready: '#ap-form-panel #ap-comp-text' },
+    { id: 'appraisal-consensus', hash: '#/appraisal-consensus?tool=rob2&target=o1&unit=ARONSON1948', ready: '#cs-table' },
+    { id: 'dual', hash: '#/dual?outcome=o1', ready: '#dx-items table[role="grid"]' },
+    { id: 'headhunter', hash: '#/headhunter?step=screen', ready: '#hh-card .hh-card-body > :not(.spinner)' },
+    { id: 'grade', hash: '#/grade?outcome=o1', ready: '#gr-cert' }
+  ];
+  for (const theme of ['light', 'dark']) {
+    await test('v1-képernyők (értékelés, konszenzus, forgalmi lámpa, kettős kinyerés, Metaheadhunter, GRADE) — ' + theme + ' téma: DOM-ellenőrzés, kontraszt', async () => {
+      const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: theme });
+      await ctx.addInitScript("try { localStorage.setItem('mag.pref.appraisal.rater', 'SzK'); } catch (e) {}");
+      const p = await ctx.newPage();
+      const errors = [];
+      p.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+      p.on('console', (m) => { if (m.type() === 'error') { errors.push('console: ' + m.text()); } });
+      for (const s of V1) {
+        await p.goto(srv.base + '/?fixtures=1' + s.hash);
+        await p.waitForSelector('html[data-ready="1"]', { timeout: 10000 });
+        await screenReady(p, s);
+        if (/robins-i/.test(s.hash)) {
+          // a „Kritikus” ítélet-jelvény (.ap-v-critical) — fehér szöveg a kritikus színen, kis betűmérettel
+          await p.evaluate(() => {
+            const b = window.MA.appr.verdictBadge({ verdicts: [{ value: 'critical', label: 'Kritikus', level: 'critical' }] }, 'critical');
+            b.id = 'a11y-critical-probe';
+            document.getElementById('ap-form-panel').appendChild(b);
+          });
+        }
+        await audit(p, s.hash + ' [' + theme + ']');
+      }
+      // a kettős kinyerés részlet-panelje kijelölés NÉLKÜL is feloldható aria-labelledby-t ad
+      await p.goto(srv.base + '/?fixtures=1#/dual?outcome=o1');
+      await p.waitForSelector('html[data-ready="1"]', { timeout: 10000 });
+      await screenReady(p, { id: 'dual', ready: '#dx-items table[role="grid"]' });
+      const dangling = await p.evaluate(() => Array.from(document.querySelectorAll('[aria-labelledby]')).filter((el) =>
+        el.getAttribute('aria-labelledby').split(/\s+/).some((id) => !document.getElementById(id))).map((el) => el.id || el.tagName));
+      check(dangling.length === 0, 'nincs feloldhatatlan aria-labelledby: ' + dangling.join(', '));
+      check(errors.length === 0, 'nincs konzolhiba: ' + errors.join(' || '));
+      await ctx.close();
+    });
+  }
+
   await test('modális és nem modális ablakok billentyűzettel: átváltó, eredet-panel, KB-kereső, „Miért?”', async () => {
     const o = await openPage('#/extraction');
     const p = o.page;

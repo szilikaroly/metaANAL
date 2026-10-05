@@ -19,12 +19,21 @@
 
   function clip(s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
 
-  function mark(inst, v, x, y, extra) {
+  /** egy cella jele; implied: a motor implikált (konzervatív, NEM hivatalos) ítélete, mert emberi ítélet nincs — szaggatott
+   *  kerettel és a címben kimondva (F6: soha nem „hivatalos eredményként”); domain: a domén saját ítélet-felirata */
+  function mark(inst, v, x, y, extra, implied, domain) {
     var lv = v ? MA.appr.level(inst, v) : null;
-    var label = v ? MA.appr.verdictLabel(inst, v) : t('appraisal.empty');
-    return S('g', { 'class': ['rt-mark', 'ap-v-' + (lv || 'none')].join(' '), 'data-v': v || '' },
-      S('title', null, (extra ? extra + ': ' : '') + label),
+    var label = v ? MA.appr.verdictLabel(inst, v, domain) : t('appraisal.empty');
+    return S('g', { 'class': ['rt-mark', 'ap-v-' + (lv || 'none'), implied && v ? 'is-implied' : ''].join(' ').trim(), 'data-v': v || '',
+      'data-from': implied && v ? 'implied' : (v ? 'judgement' : '') },
+      S('title', null, (extra ? extra + ': ' : '') + label + (implied && v ? ' — ' + t('appraisal.sum.impliedCell') : '')),
+      implied && v ? S('rect', { x: G.px(x - 11), y: G.px(y - 11), width: 22, height: 22, rx: 4, 'class': 'rt-implied-ring' }) : null,
       S('text', { x: G.px(x), y: G.px(y), 'text-anchor': 'middle', 'dominant-baseline': 'central', 'class': 'rt-sym' }, MA.appr.SYM[lv || 'none']));
+  }
+
+  function fromOf(st, d) {
+    var hit = (st.domains || []).filter(function (x) { return x && String(x.domain) === String(d.id) && (x.pass || null) === (d.pass || null); })[0];
+    return hit ? hit.from : null;
   }
 
   function matrix(summary, inst) {
@@ -44,6 +53,7 @@
     head.appendChild(S('text', { x: G.px(LABEL_W + COL * (doms.length + 1) + 8), y: 20 }, t('appraisal.sum.weight')));
     svg.appendChild(head);
     var desc = [];
+    var nImplied = 0;
     studies.forEach(function (st, r) {
       var y = HEAD + ROW * r + ROW / 2;
       var g = S('g', { 'class': 'rt-row', 'data-study': st.study_id || '' });
@@ -53,9 +63,11 @@
         S('text', { x: 6, y: G.px(y), 'dominant-baseline': 'central', 'class': 'rt-label' }, clip(label, 32))));
       var cells = [];
       doms.forEach(function (d, i) {
-        var v = (st.judgements || {})[d.id] || null;
-        cells.push(MA.appr.domainShort(d) + ' ' + (v ? MA.appr.verdictLabel(inst, v) : '—'));
-        g.appendChild(mark(inst, v, LABEL_W + COL * i + COL / 2, y, MA.appr.domainShort(d)));
+        var v = (st.judgements || {})[d.pass ? d.pass + '/' + d.id : d.id] || null;
+        var imp = fromOf(st, d) === 'implied';
+        if (imp && v) { nImplied += 1; }
+        cells.push(MA.appr.domainShort(d) + ' ' + (v ? MA.appr.verdictLabel(inst, v, d.id) + (imp ? ' (' + t('appraisal.sum.impliedShort') + ')' : '') : '—'));
+        g.appendChild(mark(inst, v, LABEL_W + COL * i + COL / 2, y, MA.appr.domainShort(d), imp, d.id));
       });
       g.appendChild(mark(inst, st.overall || null, LABEL_W + COL * doms.length + COL / 2, y, t('appraisal.col.overall')));
       var wt = pick(st.weight_text);
@@ -64,6 +76,7 @@
       svg.appendChild(g);
     });
     svg.appendChild(S('desc', null, desc.join(' | ')));
+    svg.setAttribute('data-implied', String(nImplied));
     return svg;
   }
 
@@ -91,10 +104,12 @@
         var x1 = sx(acc), x2 = sx(acc + p.pct);
         acc += p.pct;
         var txt = pick(p.text);
-        g.appendChild(S('rect', { x: G.px(x1), y: G.px(y), width: G.px(G.max(0, x2 - x1)), height: BH, 'class': 'rt-seg ap-v-' + (p.level || 'none') },
-          S('title', null, t('appraisal.sum.level.' + (p.level || 'none')) + ': ' + (txt || '—'))));
+        var lvk = p.level === 'unassessed' || !p.level ? 'none' : p.level;   // a motor szint-kódja: „unassessed” = nincs értékelés
+        var impNote = p.n_implied ? ' — ' + t('appraisal.sum.weightedImplied', { n: String(p.n_implied) }) : '';
+        g.appendChild(S('rect', { x: G.px(x1), y: G.px(y), width: G.px(G.max(0, x2 - x1)), height: BH, 'class': 'rt-seg ap-v-' + lvk + (p.n_implied ? ' has-implied' : '') },
+          S('title', null, t('appraisal.sum.level.' + lvk) + ': ' + (txt || '—') + impNote)));
         if (txt && x2 - x1 > 40) { g.appendChild(S('text', { x: G.px((x1 + x2) / 2), y: G.px(y + BH / 2), 'text-anchor': 'middle', 'dominant-baseline': 'central', 'class': 'rt-seg-text' }, txt)); }
-        desc.push(b.label + ' ' + t('appraisal.sum.level.' + (p.level || 'none')) + ' ' + (txt || '—'));
+        desc.push(b.label + ' ' + t('appraisal.sum.level.' + lvk) + ' ' + (txt || '—'));
       });
       svg.appendChild(g);
     });

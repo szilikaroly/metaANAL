@@ -323,9 +323,11 @@ def build_update_queries(query, window, sources=UPDATE_SOURCES, concepts=("P", "
                        "query": "search=%s; filter=from_publication_date:%s,to_publication_date:%s" % (search, start,
                                                                                                    end)}]
         elif s == "scopus":
+            # a Scopus csak évre szűr: alsó ÉS felső korlát (F12: a jóváhagyott ablak vége minden forrásnál érvényes);
+            # az éven belüli napokra a letöltés után a borító-dátum szűr (_run_query: window)
             base = over.get("scopus") or topic.get("scopus")
-            q = "%s AND PUBYEAR > %d" % (base, int(start[:4]) - 1)
-            out[s] = [{"query": q, "date_field": "PUBYEAR", "unverified_live": True}]
+            q = "%s AND PUBYEAR > %d AND PUBYEAR < %d" % (base, int(start[:4]) - 1, int(end[:4]) + 1)
+            out[s] = [{"query": q, "date_field": "PUBYEAR", "unverified_live": True, "window": [start, end]}]
         elif s == "ctgov":
             term = over.get("ctgov") or topic.get("ctgov")
             out[s] = [
@@ -690,13 +692,21 @@ def _run_query(source, client, q, cap, sid, at):
         return recs, _pager_info(pager)
     if source == "scopus":
         pager = client.search(q["query"], max_results=cap, normalize=True)
+        lo, hi = (q.get("window") or [None, None])[:2]
+        outside = 0
         for meta in pager:
             meta = dict(meta)
+            cover = str(meta.get("cover_date") or "")
+            if re.match(r"^\d{4}-\d{2}-\d{2}$", cover) and ((lo and cover < lo) or (hi and cover > hi)):
+                outside += 1                  # az ablakon kívüli borító-dátum: nem kerül a halmazba (D3-ként számít)
+                continue
             meta["pub_types"] = [x for x in (meta.get("doctype_desc"),) if x]
             rec = make_record(meta, "scopus", "scopus.search", sid, at)
             if rec:
                 recs.append(rec)
-        return recs, _pager_info(pager)
+        info = _pager_info(pager)
+        info["out_of_window"] = outside
+        return recs, info
     if source == "ctgov":
         pager = client.studies(term=q["term"], advanced=q["advanced"], max_results=cap)
         for raw in pager:
@@ -854,6 +864,15 @@ def run_update(project_dir, actor=None, anchor="latest", overlap_months=None, st
             entry.update(status="done" if complete and not info.get("error") else "partial",
                          count_total=info["count_total"], count_retrieved=info["count_retrieved"],
                          complete=complete)
+            if info.get("out_of_window"):
+                entry["out_of_window"] = int(info["out_of_window"])
+                entry["message"] = _expl("%s: %d találat borító-dátuma a keresési ablakon (%s – %s) kívül esik — nem "
+                                         "kerültek a halmazba (PRISMA: egyéb okból eltávolítva)."
+                                         % (s, entry["out_of_window"], window["start_date"], window["end_date"]),
+                                         "%s: %d hits have a cover date outside the window (%s – %s) — removed "
+                                         "(PRISMA: removed for other reasons)." % (s, entry["out_of_window"],
+                                                                                    window["start_date"],
+                                                                                    window["end_date"]))
             if info.get("error"):
                 err = info["error"]
                 m = err.get("message") or _expl("a lapozás megszakadt", "paging interrupted")

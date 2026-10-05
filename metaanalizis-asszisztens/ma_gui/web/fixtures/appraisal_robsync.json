@@ -1,5 +1,5 @@
 {
- "description": "rob-oszlop szinkron: előnézet (CSONK)",
+ "description": "rob-oszlop szinkron: előnézet (motor)",
  "routes": [
   {
    "method": "POST",
@@ -14,8 +14,10 @@
      "column": "rob",
      "column_exists": false,
      "proposal": {
-      "schema": "szk.ma.rob-sync/v1",
+      "schema": "szk.ma.rob-sync-proposal/v1",
+      "tool": "rob2",
       "column": "rob",
+      "column_exists": true,
       "changes": [
        {
         "row_uid": "rbcg04",
@@ -23,13 +25,104 @@
         "study_id": "HART1977",
         "label": "Hart & Sutherland 1977",
         "before": "low",
-        "after": "some concerns",
+        "after": "some",
         "judgement": "some_concerns",
-        "source": "single"
+        "basis": "single",
+        "source": null,
+        "files": [],
+        "provenance": {
+         "method": "calculated",
+         "derived_from": "appraisal",
+         "tool": "rob2",
+         "files": []
+        }
        }
       ],
-      "unchanged": 1,
-      "unmatched": [],
+      "unchanged": 0,
+      "unmatched": [
+       {
+        "row": 4,
+        "row_uid": "rbcg05",
+        "study_id": null,
+        "label": "Frimodt-Moller et al 1973"
+       },
+       {
+        "row": 5,
+        "row_uid": "rbcg06",
+        "study_id": null,
+        "label": "Stein & Aronson 1953"
+       },
+       {
+        "row": 6,
+        "row_uid": "rbcg07",
+        "study_id": null,
+        "label": "Vandiviere et al 1973"
+       },
+       {
+        "row": 7,
+        "row_uid": "rbcg08",
+        "study_id": null,
+        "label": "TPT Madras 1980"
+       },
+       {
+        "row": 8,
+        "row_uid": "rbcg09",
+        "study_id": null,
+        "label": "Coetzee & Berjak 1968"
+       },
+       {
+        "row": 9,
+        "row_uid": "rbcg10",
+        "study_id": null,
+        "label": "Rosenthal et al 1961"
+       },
+       {
+        "row": 10,
+        "row_uid": "rbcg11",
+        "study_id": null,
+        "label": "Comstock et al 1974"
+       },
+       {
+        "row": 11,
+        "row_uid": "rbcg12",
+        "study_id": null,
+        "label": "Comstock & Webster 1969"
+       },
+       {
+        "row": 12,
+        "row_uid": "rbcg13",
+        "study_id": null,
+        "label": "Comstock et al 1976"
+       }
+      ],
+      "conflicts": [
+       {
+        "row": 0,
+        "row_uid": "rbcg01",
+        "study_id": "ARONSON1948",
+        "files": []
+       }
+      ],
+      "skipped": [
+       {
+        "row": 1,
+        "row_uid": "rbcg02",
+        "study_id": "FERGUSON1949",
+        "reason": {
+         "hu": "csak vázlat-értékelés van (nincs lezárt / konszenzusos)",
+         "en": "only draft appraisals (no final / consensus)"
+        }
+       },
+       {
+        "row": 2,
+        "row_uid": "rbcg03",
+        "study_id": "ROSENTHAL1960",
+        "reason": {
+         "hu": "csak vázlat-értékelés van (nincs lezárt / konszenzusos)",
+         "en": "only draft appraisals (no final / consensus)"
+        }
+       }
+      ],
       "warnings": []
      },
      "applied": false

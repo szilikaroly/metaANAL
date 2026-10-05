@@ -17,6 +17,54 @@
 
   var S = null;
 
+  function anyImplied(d) {
+    return (d.studies || []).some(function (st) {
+      return st.overall_from === 'implied' || (st.domains || []).some(function (x) { return x && x.from === 'implied'; });
+    });
+  }
+
+  /** a súlyozott sávok szintje részben a motor implikált összítéletéből jön (nincs még emberi összítélet) — kimondva */
+  function impliedWeightNote(d) {
+    var n = (d.weighted || []).reduce(function (acc, w) { return acc + (w && w.n_implied ? w.n_implied : 0); }, 0);
+    return n ? h('p', { 'class': 'ap-note', id: 'rt-weighted-implied' }, MA.ui.badge('warning', null), ' ', t('appraisal.sum.weightedImpliedNote', { n: String(n) })) : null;
+  }
+
+  // ---------------------------------------------------------------- kettős értékelés megbízhatósága (F5)
+  /** a motor összevont egyezése (GET /api/appraisals/agreement): a doménítéletek κ-ja az elsődleges mérték (ezt közli
+   *  a Módszerek fejezet), a tételszintű κ másodlagos */
+  function reliabilityPanel(host, ctx) {
+    var q = { tool: S.tool };
+    if (S.outcome) { q.target = S.outcome; }
+    MA.dom.mount(host, h('h2', { 'class': 'panel-title', i18n: 'appraisal.rel.title' }), MA.ui.spinner());
+    return MA.api.get('/api/appraisals/agreement', { query: q, signal: ctx.signal, toast: false }).then(function (env) {
+      if (!ctx.alive()) { return; }
+      var d = env.data || {};
+      var ag = d.agreement;
+      if (!ag) {
+        MA.dom.mount(host, h('h2', { 'class': 'panel-title', i18n: 'appraisal.rel.title' }), h('p', { 'class': 'muted', id: 'rel-none' }, t('appraisal.rel.none')));
+        return;
+      }
+      var line = function (key, k) {
+        return k ? h('li', { dataset: { k: key } }, h('strong', null, t('appraisal.rel.' + key)), ' ', h('span', { 'class': 'num' }, pick(k.kappa_text) || '—'),
+          k.n !== undefined ? h('span', { 'class': 'muted' }, ' (' + t('appraisal.rel.pairs', { n: String(k.n) }) + ')') : null) : null;
+      };
+      MA.dom.mount(host, h('h2', { 'class': 'panel-title', i18n: 'appraisal.rel.title' }),
+        h('p', { 'class': 'muted' }, t('appraisal.rel.units', { n: String((d.units || []).length) })),
+        h('ul', { 'class': 'rel-list', id: 'rel-kappa' },
+          line('judgement', ag.judgement_kappa), line('overall', ag.overall_kappa),
+          h('li', { dataset: { k: 'item' } }, h('span', null, t('appraisal.rel.item')), ' ', h('span', { 'class': 'num' }, pick(ag.kappa_text) || '—'))),
+        (ag.domain_kappa || []).length ? h('details', { 'class': 'rel-domains' }, h('summary', { i18n: 'appraisal.rel.perDomain' }),
+          h('ul', null, ag.domain_kappa.map(function (k) {
+            return h('li', null, (k.kind === 'applicability' ? t('appraisal.applicability') + ' ' : '') + (k.domain === 'overall' ? t('appraisal.col.overall') : 'D' + k.domain) +
+              (k.pass ? ' (' + t('appraisal.pass.' + k.pass) + ')' : '') + ': ', h('span', { 'class': 'num' }, pick(k.kappa_text) || '—'));
+          }))) : null,
+        (ag.notes || []).length ? h('p', { 'class': 'muted' }, ag.notes.map(pick).join(' ')) : null,
+        h('p', { 'class': 'muted' }, t('appraisal.cons.fromEngine')));
+    }, function (err) {
+      if (ctx.alive() && err.code !== 'ABORTED') { MA.dom.mount(host, h('h2', { 'class': 'panel-title', i18n: 'appraisal.rel.title' }), MA.ui.errorBox(err)); }
+    });
+  }
+
   function summaryPanel(sec, ctx) {
     var q = { tool: S.tool };
     if (S.outcome) { q.outcome = S.outcome; }
@@ -26,9 +74,13 @@
       return [
         (env.warnings || []).length ? h('ul', { 'class': 'ap-warn-list' }, env.warnings.map(function (w) { return h('li', null, MA.ui.badge('warning', null), ' ', w); })) : null,
         (d.studies || []).length ? h('div', { 'class': 'rt-wrap' }, MA.plots.robTraffic.matrix(d, S.inst)) : MA.ui.emptyState('appraisal.sum.empty'),
-        h('p', { 'class': 'muted ap-legend' }, A.verdicts(S.inst).map(function (v) { return [A.verdictBadge(S.inst, v.value), ' ']; }), A.verdictBadge(S.inst, null)),
+        h('p', { 'class': 'muted ap-legend' }, A.verdicts(S.inst).map(function (v) { return [A.verdictBadge(S.inst, v.value), ' ']; }), A.verdictBadge(S.inst, null),
+          // F6: a szaggatott keretes jel a motor implikált (konzervatív, NEM hivatalos) ítélete — emberi ítélet még nincs
+          anyImplied(d) ? [' ', h('span', { 'class': 'rt-legend-implied', id: 'rt-legend-implied' }, h('span', { 'class': 'rt-legend-ring', 'aria-hidden': 'true' }, '◌'), ' ',
+            t('appraisal.sum.impliedLegend'))] : null),
         h('h3', { i18n: 'appraisal.sum.weightedTitle' }),
         MA.plots.robTraffic.weighted(d, S.inst) || h('p', { 'class': 'muted', i18n: 'appraisal.sum.noWeights' }),
+        impliedWeightNote(d),
         h('p', { 'class': 'muted', id: 'rt-source' }, src && src.run_id ? t('appraisal.sum.sourceRun', { run: src.run_id }) : t('appraisal.sum.noRun'),
           src && src.stale ? [' ', MA.ui.badge('stale', t('appraisal.sum.stale'))] : null,
           ' · ', t('appraisal.sum.fromEngine'))
@@ -110,11 +162,13 @@
         outs.map(function (o) { return h('option', { value: o.id, selected: o.id === S.outcome }, o.id + ' — ' + pick(o.name)); }));
       var sec = MA.proc.section('appraisal.sum.title', 'rt-panel');
       var syncHost = h('section', { 'class': 'panel', id: 'sync-panel' });
+      var relHost = h('section', { 'class': 'panel', id: 'rel-panel', 'aria-live': 'polite' });
       MA.dom.mount(root,
         h('section', { 'class': 'panel' }, h('div', { 'class': 'toolbar' }, h('label', { htmlFor: 'sum-tool', i18n: 'appraisal.tool' }), toolSel,
           h('label', { htmlFor: 'sum-outcome', i18n: 'appraisal.outcome' }), outSel)),
-        sec.el, syncHost);
+        sec.el, relHost, syncHost);
       summaryPanel(sec, ctx);
+      reliabilityPanel(relHost, ctx);
       syncPanel(syncHost);
     }, function (err) { if (ctx.alive() && err.code !== 'ABORTED') { MA.dom.mount(root, MA.ui.errorBox(err)); } });
   }

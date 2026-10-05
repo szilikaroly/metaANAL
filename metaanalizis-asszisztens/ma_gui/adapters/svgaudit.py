@@ -158,78 +158,232 @@ def _ticks(axis, path, items):
     for i, t in enumerate(axis.get("ticks") or []):
         if isinstance(t, dict):
             val = t.get("text_i18n") if isinstance(t.get("text_i18n"), dict) else t.get("text")
-            items.append(("%s.ticks[%d].text" % (path, i), val, "exact"))
+            items.append(("%s.ticks[%d].text" % (path, i), val, "exact", None))
+
+
+def _row(prefix, uid, label):
+    """Egy ábrasor azonosítása: az annotált motor-SVG sorcsoportja (``<g id="<prefix><row_uid>" data-row>``), ennek
+    hiányában a sor címkéje (ugyanabban a magasságban, y, álló szövegek)."""
+    lab = label if isinstance(label, str) else None
+    return {"group": (prefix + uid) if isinstance(uid, str) and uid else None, "label": norm(lab) if lab else None}
 
 
 def expected_texts(plot, kind):
-    """[(mező-út, motorszöveg, 'contains'|'exact')] — a motor kész szövegei, amelyeknek az ábrán szó szerint
-    látszaniuk kell. A tengelyosztás pontos egyezést kér (egy „1” részszövegként bárhol előfordulna)."""
+    """[(mező-út, motorszöveg, mód, sor)] — a motor kész szövegei, amelyeknek az ábrán szó szerint látszaniuk kell.
+    mód: 'contains' (egy elemen belül), 'exact' (a tengelyosztás: egy „1” részszövegként bárhol előfordulna),
+    'wrapped' (több sorba tördelt hosszú szöveg: az elemek egymás utáni szövegében). sor: None (bárhol), vagy a
+    vizsgálat/lépés sora (_row) — a sorhoz kötött szám CSAK a saját sorában számít (két sor felcserélése hiba)."""
     items = []
     if not isinstance(plot, dict):
         return items
     if kind == "forest":
         for i, s in enumerate(plot.get("studies") or []):
             if isinstance(s, dict):
-                items.append(("studies[%d].display_text" % i, s.get("display_text"), "contains"))
+                row = _row("study-", s.get("row_uid"), s.get("label"))
+                items.append(("studies[%d].display_text" % i, s.get("display_text"), "contains", row))
                 if s.get("weight_text") is not None:
-                    items.append(("studies[%d].weight_text" % i, s.get("weight_text"), "exact"))
+                    items.append(("studies[%d].weight_text" % i, s.get("weight_text"), "exact", row))
         for i, s in enumerate(plot.get("summaries") or []):
             if isinstance(s, dict):
-                items.append(("summaries[%d].display_text" % i, s.get("display_text"), "contains"))
+                items.append(("summaries[%d].display_text" % i, s.get("display_text"), "contains", None))
                 if s.get("pi_text") is not None:
-                    items.append(("summaries[%d].pi_text" % i, s.get("pi_text"), "contains"))
+                    items.append(("summaries[%d].pi_text" % i, s.get("pi_text"), "contains", None))
         for i, sec in enumerate(plot.get("sections") or []):
             summ = sec.get("summary") if isinstance(sec, dict) else None
             if isinstance(summ, dict) and summ.get("display_text") is not None:
-                items.append(("sections[%d].summary.display_text" % i, summ.get("display_text"), "contains"))
+                items.append(("sections[%d].summary.display_text" % i, summ.get("display_text"), "contains", None))
+        het = plot.get("heterogeneity") if isinstance(plot.get("heterogeneity"), dict) else {}
+        if het.get("text") is not None:
+            items.append(("heterogeneity.text", het.get("text"), "wrapped", None))
         _ticks(plot.get("axis"), "axis", items)
     elif kind in ("funnel", "doi"):
         part = plot.get(kind) if isinstance(plot.get(kind), dict) else {}
         _ticks(part.get("axis"), kind + ".axis", items)
         _ticks(part.get("y_axis"), kind + ".y_axis", items)
         if kind == "doi" and part.get("lfk_text") is not None:
-            items.append(("doi.lfk_text", part.get("lfk_text"), "contains"))
+            items.append(("doi.lfk_text", part.get("lfk_text"), "contains", None))
     elif kind == "cumulative":
         cum = plot.get("cumulative") if isinstance(plot.get("cumulative"), dict) else {}
         for i, e in enumerate(cum.get("entries") or []):
             if isinstance(e, dict):
-                items.append(("cumulative.entries[%d].display_text" % i, e.get("display_text"), "contains"))
+                row = _row("cumulative-step-", e.get("added_row_uid"), e.get("label"))
+                items.append(("cumulative.entries[%d].display_text" % i, e.get("display_text"), "contains", row))
+                for f in ("i2_text", "tau2_text", "key_text"):
+                    if e.get(f) is not None:
+                        items.append(("cumulative.entries[%d].%s" % (i, f), e.get(f), "exact", row))
+                if isinstance(e.get("k"), int) and not isinstance(e.get("k"), bool):
+                    items.append(("cumulative.entries[%d].k" % i, str(e["k"]), "exact", row))
         _ticks(cum.get("axis"), "cumulative.axis", items)
     elif kind == "loo":
         for i, e in enumerate(plot.get("loo") or []):
             if isinstance(e, dict):
-                items.append(("loo[%d].display_text" % i, e.get("display_text"), "contains"))
+                row = _row("loo-study-", e.get("omitted_row_uid"), e.get("label"))
+                items.append(("loo[%d].display_text" % i, e.get("display_text"), "contains", row))
+                for f in ("i2_text", "tau2_text"):
+                    if e.get(f) is not None:
+                        items.append(("loo[%d].%s" % (i, f), e.get(f), "exact", row))
         _ticks(plot.get("loo_axis"), "loo_axis", items)
     elif kind == "bubble":
         bub = plot.get("bubble") if isinstance(plot.get("bubble"), dict) else {}
         _ticks(bub.get("axis") or bub.get("x_axis"), "bubble.x_axis", items)
         _ticks(bub.get("y_axis"), "bubble.y_axis", items)
+        if bub.get("coef_text") is not None:
+            items.append(("bubble.coef_text", bub.get("coef_text"), "wrapped", None))
     return [it for it in items if _variants(it[1])]
 
 
+def text_nodes(root):
+    """[(szöveg, sorcsoport-id | None, y | None)] dokumentum-sorrendben: a legközelebbi ``data-row``-os ``<g>`` őse
+    azonosítója és a ``<text>`` y-koordinátája (a sor felismeréséhez annotálatlan SVG-n)."""
+    out = []
+
+    def walk(el, group):
+        tag = _local(el.tag)
+        if tag == "g" and el.get("data-row") is not None and el.get("id"):
+            group = el.get("id")
+        if tag == "text":
+            y = el.get("y")
+            try:
+                yv = round(float(y), 1) if y is not None else None
+            except ValueError:
+                yv = None
+            out.append(("".join(el.itertext()), group, yv))
+            return
+        for c in el:
+            walk(c, group)
+    walk(root, None)
+    return out
+
+
+_STATIC = []
+
+
+def _static_texts():
+    """A motor rajzolójának kódba égetett feliratai (pl. a funnel sáv-jelmagyarázata) — a homlokzatról, egyszer."""
+    if not _STATIC:
+        try:
+            from metaelemzes import api
+            fn = getattr(api, "figure_static_texts", None)
+            vals = fn() if callable(fn) else []
+        except Exception:                               # noqa: BLE001 — a hiányuk csak szigorúbbá teszi az ellenőrzést
+            vals = []
+        _STATIC.append(set(norm(v) for v in vals if isinstance(v, str) and v.strip()))
+    return _STATIC[0]
+
+
+def _plot_strings(plot):
+    """A motor dokumentumának összes szöveges értéke (normalizálva) — a „nem magyarázott szám” kereséshez."""
+    out = set(_static_texts())
+
+    def walk(o):
+        if isinstance(o, dict):
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+        elif isinstance(o, str):
+            n = norm(o)
+            if n:
+                out.add(n)
+    walk(plot)
+    return out
+
+
+_DIGIT_RE = re.compile(r"\d")
+_LETTER_RE = re.compile(r"[^\W\d_]")
+
+
 def numbers_check(texts, plot, kind):
-    """{ok, checked, matched, mismatches[{field, expected}], kind} — a motorszövegek szó szerinti jelenléte az
-    SVG szövegei között. ``ok`` None, ha a fajtához nincs ellenőrizhető motorszöveg (nem zöld, nem piros)."""
-    elems = [norm(t) for t in texts or [] if isinstance(t, str)]
+    """{ok, checked, matched, mismatches[{field, expected, found?}], unexplained, kind} — a motorszövegek szó
+    szerinti jelenléte az SVG szövegei között (6.7).
+
+    - A sorhoz kötött szám (vizsgálat hatása és súlya; kumulatív lépés k / I² / τ²; LOO-sor) a SAJÁT sorában kell,
+      hogy szerepeljen (az annotált SVG sorcsoportja, különben a címkével azonos magasságú szövegek) — két sor
+      felcserélése eltérés.
+    - Az ábra minden számot tartalmazó ``<text>``-elemének a motor valamely szövegéből kell származnia (vagy azzal
+      egyeznie / azt tartalmaznia, vagy a motor dokumentumának egy szövegrésze lennie); a nem magyarázható szám is
+      eltérés (pl. átírt heterogenitás-sor, R², együttható).
+    ``texts``: szövegek listája VAGY text_nodes() hármasai. ``ok`` None, ha a fajtához nincs ellenőrizhető
+    motorszöveg (nem zöld, nem piros)."""
+    nodes = [t if isinstance(t, tuple) else (t, None, None) for t in texts or []]
+    nodes = [(norm(t), g, y) for t, g, y in nodes if isinstance(t, str)]
+    elems = [t for t, _g, _y in nodes]
     elem_set = set(elems)
+    joined = " ".join(e for e in elems if e)
+    by_group, by_y = {}, {}
+    for t, g, y in nodes:
+        if g:
+            by_group.setdefault(g, []).append(t)
+        if y is not None:
+            by_y.setdefault(y, []).append(t)
     items = expected_texts(plot, kind)
     mismatches = []
     matched = 0
-    for field, value, mode in items:
-        cands = _variants(value)
+
+    def hit_in(cands, mode, pool):
         if mode == "exact":
+            return any(c in pool for c in cands)
+        return any(c in e for c in cands for e in pool)
+
+    def row_pools(row):
+        """A sor szövegei (listák listája: több azonos címkéjű sor esetén bármelyik); None, ha a sor nem található."""
+        if not row:
+            return None
+        if row.get("group") and row["group"] in by_group:
+            return [by_group[row["group"]]]
+        lab = row.get("label")
+        if lab:
+            ys = sorted(set(y for t, _g, y in nodes if t == lab and y is not None))
+            if ys:
+                return [by_y[y] for y in ys]
+        return None
+
+    for field, value, mode, row in items:
+        cands = _variants(value)
+        pools = row_pools(row)
+        if pools is not None:
+            hit = any(hit_in(cands, mode, pool) for pool in pools)
+        elif mode == "exact":
             hit = any(c in elem_set for c in cands)
+        elif mode == "wrapped":
+            hit = any(c in joined for c in cands)
         else:
             hit = any(c in e for c in cands for e in elems)
         if hit:
             matched += 1
         elif len(mismatches) < MAX_MISMATCHES:
             mismatches.append({"field": field, "expected": cands[0]})
+    # nem magyarázott számok: minden számjegyet tartalmazó szöveg a motor szövegeiből
     checked = len(items)
+    unexplained = 0
+    if checked:
+        exact_all = set(c for _f, v, _m, _r in items for c in _variants(v))
+        long_all = [c for _f, v, m, _r in items if m != "exact" for c in _variants(v)]
+        known = _plot_strings(plot)
+        # a sablonba illesztett motor-kifejezések (pl. „95% confidence band” a jelmagyarázatban): betűt is tartalmazó
+        # szövegek — a puszta számok (tengelyosztás „1”) nem „magyaráznak” meg egy átírt számot
+        phrases = sorted(set(long_all) | set(k for k in known if _LETTER_RE.search(k) and _DIGIT_RE.search(k)),
+                         key=len, reverse=True)
+        for t in elems:
+            if not t or not _DIGIT_RE.search(t) or t in exact_all:
+                continue
+            rest = t
+            for c in phrases:
+                if c in rest:
+                    rest = rest.replace(c, " ")
+            if not _DIGIT_RE.search(rest):
+                continue
+            # tördelt hosszú motorszöveg egy sora (pl. megjegyzés): a motor egy szövegének része
+            if (len(t) >= 8 or _LETTER_RE.search(t)) and any(t in k for k in known):
+                continue
+            unexplained += 1
+            if len(mismatches) < MAX_MISMATCHES:
+                mismatches.append({"field": "svg.text", "expected": None, "found": t[:200]})
     return {"kind": kind, "checked": checked, "matched": matched, "mismatches": mismatches,
-            "ok": (matched == checked) if checked else None}
+            "unexplained": unexplained, "ok": (matched == checked and not unexplained) if checked else None}
 
 
 def numbers_check_svg(data, plot, kind):
-    """Az SVG bájtjaiból: numbers_check a <text>-elemeken. Hibánál SvgError."""
-    return numbers_check(text_elements(parse_svg(data)), plot, kind)
+    """Az SVG bájtjaiból: numbers_check a <text>-elemeken (sor-azonosítással). Hibánál SvgError."""
+    return numbers_check(text_nodes(parse_svg(data)), plot, kind)

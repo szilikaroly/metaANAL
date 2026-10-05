@@ -35,16 +35,16 @@ mj = bg.minify_js
 class MinifyJsTests(unittest.TestCase):
     def test_comments_and_whitespace_dropped(self):
         src = "/* fej */\n(function () {\n  'use strict';\n  // sor\n  var a = 1; // vég\n  return a;\n})();\n"
-        self.assertEqual(mj(src), "(()=>{'use strict';var a=1;return a;})();\n")
+        self.assertEqual(mj(src), "(()=>{'use strict';var a=1;return a})();\n")
 
     def test_strings_keep_comment_like_text(self):
         self.assertEqual(mj("var s = '/* x */ // y';"), "var s='/* x */ // y';\n")
         self.assertEqual(mj('var s = "a\\"b";'), 'var s="a\\"b";\n')
 
     def test_restricted_productions_keep_newline(self):
-        self.assertEqual(mj("function f() { return\n  1; }"), "function f(){return\n1;}\n")
+        self.assertEqual(mj("function f() { return\n  1; }"), "function f(){return\n1}\n")
         self.assertEqual(mj("a\n++b"), "a\n++b\n")
-        self.assertEqual(mj("for (;;) { break\nfoo; }"), "for(;;){break\nfoo;}\n")
+        self.assertEqual(mj("for (;;) { break\nfoo; }"), "for(;;){break\nfoo}\n")
 
     def test_asi_sensitive_newline_kept(self):
         self.assertEqual(mj("var a = 1\nvar b = 2\n"), "var a=1\nvar b=2\n")
@@ -58,7 +58,7 @@ class MinifyJsTests(unittest.TestCase):
 
     def test_regex_literals(self):
         self.assertEqual(mj("var r = /a\\/b[/]c/g.test(s);"), "var r=/a\\/b[/]c/g.test(s);\n")
-        self.assertEqual(mj("function f(s) { return /x+/i.test(s); }"), "function f(s){return/x+/i.test(s);}\n")
+        self.assertEqual(mj("function f(s) { return /x+/i.test(s); }"), "function f(s){return/x+/i.test(s)}\n")
         self.assertEqual(mj("x = a.split(/,\\s*/)"), "x=a.split(/,\\s*/)\n")
 
     def test_line_separator_allowed_in_string(self):
@@ -72,18 +72,18 @@ class MinifyJsTests(unittest.TestCase):
         self.assertEqual(mj("h('div', { 'class': a, 'aria-label': b, '0': c, 'x$1': d });"),
                          "h('div',{class:a,'aria-label':b,'0':c,x$1:d});\n")
         self.assertEqual(mj("x = c ? 'a' : 'b';"), "x=c?'a':'b';\n")   # feltételes kifejezés nem kulcs
-        self.assertEqual(mj("switch (k) { case 'a': break; }"), "switch(k){case'a':break;}\n")
+        self.assertEqual(mj("switch (k) { case 'a': break; }"), "switch(k){case'a':break}\n")
 
     def test_else_after_block(self):
-        self.assertEqual(mj("if (a) {\n  b();\n}\nelse {\n  c();\n}"), "if(a){b();}else{c();}\n")
+        self.assertEqual(mj("if (a) {\n  b();\n}\nelse {\n  c();\n}"), "if(a){b()}else{c()}\n")
 
     def test_multiline_comment_counts_as_newline(self):
         self.assertEqual(mj("a /*\n*/ b"), "a\nb\n")
 
     def test_arrowify_where_meaning_is_kept(self):
-        self.assertEqual(mj("x.map(function (a) { return a + 1; });"), "x.map(a=>{return a+1;});\n")
-        self.assertEqual(mj("f(function (a, b) { g(); }, 1);"), "f((a,b)=>{g();},1);\n")
-        self.assertEqual(mj("var o = { k: function () { return new Error('x'); } };"), "var o={k:()=>{return new Error('x');}};\n")
+        self.assertEqual(mj("x.map(function (a) { return a + 1; });"), "x.map(a=>a+1);\n")
+        self.assertEqual(mj("f(function (a, b) { g(); }, 1);"), "f((a,b)=>{g()},1);\n")
+        self.assertEqual(mj("var o = { k: function () { return new Error('x'); } };"), "var o={k:()=>new Error('x')};\n")
         self.assertEqual(mj("y = new window.BroadcastChannel('c'); z = [function () {}];"), "y=new window.BroadcastChannel('c');z=[()=>{}];\n")
 
     def test_arrowify_skipped_when_meaning_could_change(self):
@@ -96,6 +96,50 @@ class MinifyJsTests(unittest.TestCase):
                     "var F = function () {}; var o = new F();",       # saját konstruktor a modulban
                     "t = new (function () {})();"):
             self.assertNotIn("=>", mj(src), src)
+
+    def test_last_semicolon_before_brace_dropped(self):
+        """A '}' előtti ';' elhagyható (ASI — az AST azonos), de az üres utasítás marad."""
+        self.assertEqual(mj("function f(){a();b();}"), "function f(){a();b()}\n")
+        for src in ("if(a){;}", "function g(){if(a);}", "function h(){for(;;);}", "function m(){if(a)b();else;}",
+                    "function k(){do{a();}while(b);}"):
+            self.assertIn(";}", mj(src), src)
+
+    def test_var_statements_merged(self):
+        """var a=1;var b=2; → var a=1,b=2; (a minify_check.js AST-szinten azonosnak veszi)."""
+        self.assertEqual(mj("var a = 1; var b = 2; var c = function () { var d = 1; var e = 2; }; f();"),
+                         "var a=1,b=2,c=()=>{var d=1,e=2};f();\n")
+        self.assertEqual(mj("for (var i = 0; i < 3; i++) { var q = 1; var r = 2; }"), "for(var i=0;i<3;i++){var q=1,r=2}\n")
+        self.assertEqual(mj("var x = f(a,\n b); var y = 1;"), "var x=f(a,b),y=1;\n")
+
+    def test_var_merge_skipped_when_meaning_could_change(self):
+        for src in ("if (x) var a = 1; var b = 2;",                    # az if törzse csak az első var
+                    "var a = 1\nfoo(); var b = 2;",                    # ASI-határ az utasításban
+                    "var x = a ||\n b; var y = 1;",
+                    "switch (x) { case 1: var a = 1; var b = 2; }"):
+            self.assertNotIn(",b=", mj(src).replace(",y=", ",b="), src)
+
+    def test_short_literals(self):
+        """true → !0, false → !1, undefined → void 0 (a minify_check.js AST-szinten azonosnak veszi)."""
+        self.assertEqual(mj("a = true; b = false; c = x === undefined;"), "a=!0;b=!1;c=x===void 0;\n")
+        self.assertEqual(mj("f(a ? true : false); return true;"), "f(a?!0:!1);return!0;\n")
+        for src in ("o = {true: 1};", "x.true = 1;", "y = true.toString();", "z = undefined[k];", "w = obj.undefined;"):
+            self.assertNotIn("!0", mj(src), src)
+            self.assertNotIn("void 0", mj(src), src)
+
+    def test_concise_arrow_body(self):
+        """{ return kif; } → kif, ahol a jelentés azonos (a minify_check.js AST-szinten is ellenőrzi)."""
+        self.assertEqual(mj("f(function () { return {a: 1}; });"), "f(()=>({a:1}));\n")       # objektumliterál: zárójel
+        self.assertEqual(mj("g(function (x) { return function (y) { return x + y; }; });"), "g(x=>y=>x+y);\n")
+        self.assertEqual(mj("v = c ? function () { return 1; } : 2;"), "v=c?()=>1:2;\n")
+        self.assertEqual(mj("o = { k: function () { return a ? b : c; }, z: 1 };"), "o={k:()=>a?b:c,z:1};\n")
+        self.assertEqual(mj("f(function () { return `a${b, c}`; });"), "f(()=>`a${b,c}`);\n")
+
+    def test_concise_arrow_skipped_when_meaning_could_change(self):
+        self.assertEqual(mj("f(function () { return a, b; });"), "f(()=>{return a,b});\n")    # vesszőoperátor
+        self.assertEqual(mj("f(function () { return\n a; });"), "f(()=>{return\na});\n")     # ASI: return;
+        self.assertEqual(mj("f(function () { return; });"), "f(()=>{return});\n")
+        self.assertEqual(mj("f(function () { if (a) { return 1; } return 2; });"), "f(()=>{if(a){return 1}return 2});\n")
+        self.assertEqual(mj("var f = function () { return this.x; };"), "var f=function(){return this.x};\n")
 
     def test_unterminated_input_rejected(self):
         for bad in ("var s = 'abc", "/* x", "var r = /abc", "var t = `abc"):

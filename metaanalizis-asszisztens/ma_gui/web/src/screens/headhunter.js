@@ -105,6 +105,13 @@
     return c && typeof c.open_items === 'number' ? c.open_items : null;
   }
 
+  /** A CLI-lépést kapuzó ellenőrzőpontok, ha eltérnek a kártyán mutatottaktól (a frissítés új rekordjai: EP3, EP4). */
+  var GATE = { update: ['EP3', 'EP4'] };
+
+  function laterStarted() {
+    return ((S.status && S.status.steps) || []).some(function (x) { return x && x.id !== 'sources' && x.status && x.status !== 'not_started'; });
+  }
+
   function stepState(def) {
     var d = S.status;
     var job = S.job;
@@ -114,9 +121,19 @@
     var st = def.steps.map(function (s) { var x = byId(d.steps, s); return x ? x.status : 'not_started'; });
     if (st.indexOf('running') >= 0) { return 'running'; }
     if (st.indexOf('failed') >= 0) { return 'failed'; }
-    var open = 0;
-    def.eps.forEach(function (ep) { var n = epOpen(ep); if (n) { open += n; } });
-    if (open > 0 || st.indexOf('needs_human') >= 0) { return 'needs_human'; }
+    // UX-4: a jelvény a nyitott emberi tételekből (EP-k) jön; a CLI tárolt „needs_human” állapota csak addig
+    // „döntésre vár”, amíg a lépést kapuzó EP-k bármelyike nyitott (vagy a számuk nem ismert).
+    var gate = GATE[def.id] || def.eps;
+    var open = 0, known = gate.length > 0;
+    gate.forEach(function (ep) { var n = epOpen(ep); if (typeof n !== 'number') { known = false; } else { open += n; } });
+    if (open > 0) { return 'needs_human'; }
+    if (st.indexOf('needs_human') >= 0) {
+      if (!known) { return 'needs_human'; }
+      st = st.map(function (x) { return x === 'needs_human' ? 'done' : x; });
+    }
+    if (def.id === 'sources' && st.every(function (x) { return x === 'not_started'; }) && laterStarted()) {
+      return 'done';     // a források beállítása megtörtént (a munkafolyamat továbblépett); az állapotuk a táblában
+    }
     if (st.indexOf('stale') >= 0) { return 'stale'; }
     if (st.length && st.every(function (x) { return x === 'done' || x === 'skipped'; })) { return 'done'; }
     if (st.some(function (x) { return x === 'done'; })) { return 'partial'; }
@@ -156,7 +173,9 @@
     });
   }
 
-  /** Frissítés: állapot + a lépéssor + az aktuális lépés kártyája (a fókusz a kártyán marad, ha ott volt). */
+  /** Frissítés: állapot + a lépéssor + az aktuális lépés kártyája (a fókusz a kártyán marad, ha ott volt). Sosem
+   * utasít el: a hívók többsége „tüzel és elfelejt” (feladat vége, fájlfigyelő), és a képernyő elhagyásakor a kérés
+   * megszakad (ABORTED) — a hibát az api.js már kijelezte. */
   function refresh() {
     if (!S) { return Promise.resolve(null); }
     var my = S;
@@ -165,7 +184,7 @@
       paintHead();
       paintStepper();
       paintCard();
-    });
+    }, function () { return null; });
   }
 
   /** run(step, options) → a végállapotú feladat-pillanatkép (Promise). A szerver 202-t ad; a felület lekérdez. */
@@ -306,11 +325,15 @@
         return B('warning', p.checkpoint + ': ' + String(p.n));
       })));
     }
-    if (job.next) { nodes.push(h('p', { 'class': 'muted' }, t('hh.job.next'), ' ', h('code', { 'class': 'cmd-inline' }, job.next))); }
+    if (job.next) {    // UX-7: a CLI-parancs a haladóknak, lenyílóban — a felületen a gombok vezetnek
+      nodes.push(h('details', { 'class': 'muted hh-job-next' }, h('summary', null, t('hh.job.next')), h('code', { 'class': 'cmd-inline' }, job.next)));
+    }
     return nodes;
   }
 
+  // a festők a keret felépülése előtt (feladat-követés, fájlfigyelő a render alatt) nem futnak — a render a végén fest
   function paintJob() {
+    if (!S || !S.els.job) { return; }
     var host = S.els.job;
     var job = S.job;
     if (!job) { MA.dom.clear(host); host.hidden = true; return; }
@@ -337,6 +360,7 @@
 
   // ---------------------------------------------------------------- fej, lépéssor, kártya
   function paintHead() {
+    if (!S || !S.els.head) { return; }
     var d = S.status;
     var st = d.state || {};
     var probs = d.problems || [];
@@ -367,6 +391,7 @@
   }
 
   function paintStepper() {
+    if (!S || !S.els.stepper) { return; }
     MA.dom.mount(S.els.stepper, STEPS.map(function (def, i) {
       var st = stepState(def);
       var open = openItems(def);
@@ -388,7 +413,7 @@
       h('div', { 'class': 'row hh-card-head' },
         h('h2', { 'class': 'panel-title', id: 'hh-card-h' }, t('hh.step.' + def.id + '.title')),
         stateBadge(st),
-        def.eps.map(function (ep) {
+        (GATE[def.id] || def.eps).map(function (ep) {
           var n = epOpen(ep);
           return typeof n === 'number' ? B(n ? 'warning' : 'ok', ep + ': ' + String(n), { title: t('hh.ep.' + ep) }) : null;
         })),
@@ -399,6 +424,7 @@
   }
 
   function paintCard(focus) {
+    if (!S || !S.els.card) { return; }
     var def = STEPS.filter(function (d) { return d.id === S.step; })[0] || STEPS[0];
     var c = card(def);
     MA.dom.mount(S.els.card, c.el);

@@ -1,6 +1,6 @@
 ---
 name: metaanalizis
-description: Szisztematikus áttekintés és metaanalízis asszisztens (orkesztrátor). Használd, ha a felhasználó szisztematikus irodalmi áttekintést, metaanalízist, PRISMA-folyamatot, hatásméret-összesítést, forest/funnel plotot, heterogenitás- vagy publikációs torzítás-elemzést, GRADE-értékelést kér, vagy meglévő metaanalízist akar ellenőrizni. Három alágenst vezérel — metaanalizis:ma-tervezo (kezdéskor), metaanalizis:ma-ellenorzo (menet közben és a végén), metaanalizis:ma-ertekelo (bizonyosság és végső értékelés) — és a döntéseket a SQL-tudásbázis szabályaira alapozza.
+description: Szisztematikus áttekintés és metaanalízis asszisztens (orkesztrátor). Használd, ha a felhasználó szisztematikus irodalmi áttekintést, metaanalízist, PRISMA-folyamatot, hatásméret-összesítést, forest/funnel plotot, heterogenitás- vagy publikációs torzítás-elemzést, GRADE-értékelést kér, vagy meglévő metaanalízist akar ellenőrizni. Három alágenst vezérel — metaanalizis:ma-tervezo (kezdéskor), metaanalizis:ma-ellenorzo (menet közben és a végén), metaanalizis:ma-ertekelo (bizonyosság és végső értékelés) —, meglévő metaanalízisek bányászatához (S03–S04) a metaanalizis:ma-metaheadhunter alágenst, és a döntéseket a SQL-tudásbázis szabályaira alapozza.
 argument-hint: "[projektmappa] [kérdés vagy feladat]"
 ---
 <!-- GENERÁLT FÁJL — ne szerkeszd kézzel. Forrás a repóban: .claude/skills/metaanalizis/SKILL.md; újragenerálás: python tools/build_plugin.py (a --check jelzi az eltérést). -->
@@ -19,9 +19,10 @@ magyarul kommunikálj vele, a kéziratba szánt szövegeket angolul írd. Szakma
 | Számítási motor (csak Python standard könyvtár, metaforral validált) | `python "${CLAUDE_PLUGIN_ROOT}/ma.py" <parancs>` (ha nincs `python`, akkor `python3`; Windows-on `py -3` is lehet) |
 | Tudásbázis (SQLite + FTS5) | `python "${CLAUDE_PLUGIN_ROOT}/ma.py" kb search "…"`, `kb rules --stage S08 --agent planner`, `kb checklist PRISMA2020` (továbbá `PRISMA_P`, `PRISMA_S`, `PREFLIGHT`, `REVIEWER`, `EVALUATOR`, `AMSTAR2`, `GRADE`), `kb show <ID>`, `kb sql "SELECT …"` |
 | Projektnapló (SQLite) | `python "${CLAUDE_PLUGIN_ROOT}/ma.py" project status <mappa>`, `project log …`, `project finding …`, `project checkpoint …`, `project audit <mappa> --json` (X-szabályok) |
-| Értékelés, GRADE, kettős kinyerés (v1) | `ma.py appraisal …` (RoB 2, ROBINS-I/E, QUADAS-2, NOS, QUIPS, JBI, PROBAST+AI, TRIPOD+AI, AMSTAR 2: teljesség, implikált ítélet, κ, konszenzus, forgalmi lámpa, `rob`-szinkron), `ma.py grade advice|save|record|sof|amstar2`, `ma.py kettos compare|reconcile|report|status`, `ma.py prisma check … --studies … --emit-flowchart …`, `ma.py figure --kind cumulative|bubble|loo` |
+| Értékelés, GRADE, kettős kinyerés (v1) | `ma.py appraisal …` (RoB 2, ROBINS-I/E, QUADAS-2, NOS, QUIPS, JBI, PROBAST+AI, TRIPOD+AI, AMSTAR 2: teljesség, implikált ítélet, κ, konszenzus, forgalmi lámpa, `rob`-szinkron), `ma.py grade advice|save|record|sof|amstar2`, `ma.py kettos compare|reconcile|report|status`, `ma.py prisma check … --studies … --emit-flowchart …`, `ma.py figure --kind forest|funnel|doi|cumulative|bubble|loo --lang en` |
 | MA-munkapad (helyi böngészős felület) | `python "${CLAUDE_PLUGIN_ROOT}/ma.py" gui --project <mappa>` — lásd lent: „MA-munkapad” |
-| Alágensek | `metaanalizis:ma-tervezo`, `metaanalizis:ma-ellenorzo`, `metaanalizis:ma-ertekelo` (Agent eszközzel hívod őket) |
+| Meglévő metaanalízisek bányászata (Metaheadhunter) | `python "${CLAUDE_PLUGIN_ROOT}/ma.py" headhunter <parancs> <mappa> --json` (init, sources --check, find, extract, resolve, dedupe, overlap, screen, update-search, merge, prisma, signoff, export, status, verify); a munkapadon: PRISMA fül → Metaheadhunter |
+| Alágensek | `metaanalizis:ma-tervezo`, `metaanalizis:ma-ellenorzo`, `metaanalizis:ma-ertekelo`, `metaanalizis:ma-metaheadhunter` (Agent eszközzel hívod őket) |
 | Eszköz- és hozzáférés-lista | általános: `${CLAUDE_PLUGIN_ROOT}/ESZKOZOK_ES_HOZZAFERESEK.md`; projektenként: `<projekt>/00_protokoll/eszkozok_hozzaferesek.md` (a metaanalizis:ma-tervezo írja, a `kb sql "SELECT * FROM tool"` és `kb checklist PREFLIGHT` alapján) |
 
 A szakaszkódok (stage_id): S00 előfeltételek · S01 kérdés · S02 protokoll · S03 keresés · S04 szűrés ·
@@ -88,6 +89,10 @@ Minden szakasz végén hívd a `metaanalizis:ma-ellenorzo`-t **checkpoint módba
 fájlok változtak). Tipikus pontok:
 - S03 keresés: stratégia (blokkok, szinonimák, MeSH/Emtree, szűrők), adatbázisonkénti szintaxis, dátum,
   találatszámok a `01_kereses/kereses_naplo.md`-ben (PRISMA-S: `kb checklist PRISMA_S`).
+- S03 **Meglévő metaanalízisek bányászata** → `metaanalizis:ma-metaheadhunter` (lásd lent, „S03: Meglévő metaanalízisek
+  bányászata”): ha a témában már van szisztematikus áttekintés / metaanalízis, a bevont vizsgálataikból bizonyítékkal
+  alátámasztott, duplumszűrt vizsgálatlista és frissítő keresés készül — a protokoll szerinti saját keresést NEM
+  helyettesíti (D-S03-101), hanem kiegészíti (PRISMA 2020 „other methods” ág).
 - S04 szűrés: PRISMA-számok konzisztenciája (`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md`, composer
   export esetén ugyanabban a futásban `--composer prisma-flow.json` is — az eltérő doboz vagy kizárásiok-bontás P017-hiba; P001–P017
   szabályok), kizárási okok a teljes szövegnél.
@@ -118,12 +123,41 @@ fájlok változtak). Tipikus pontok:
 - S14 kézirat: PRISMA 2020 (`kb checklist PRISMA2020`) és PRISMA-S (`kb checklist PRISMA_S`), a `report.md` angol
   Methods-bekezdése kiindulásnak.
 
+### S03: Meglévő metaanalízisek bányászata → `metaanalizis:ma-metaheadhunter`
+**Mikor hívd:** az S01 duplikáció-ellenőrzés után, ha a témában van közölt SR/MA (vagy a felhasználó a saját korábbi
+áttekintését frissíti), és az S03–S04 keresés/szűrés idején; akkor is, ha a felhasználó kifejezetten „a meglévő
+metaanalízisek vizsgálataiból” akar listát, vagy egy régi áttekintést frissítene az újabb irodalommal.
+**Mikor ne:** ha nincs releváns áttekintés, vagy a kérdés (PICO) annyira eltér, hogy a korábbi bevonások nem
+informatívak — ekkor a rendes keresés (S03) elég. A bányászat soha nem az egyetlen keresés.
+**Indítás előtt:** a forrásokat a felhasználó gépén ellenőrizd:
+`python "${CLAUDE_PLUGIN_ROOT}/ma.py" headhunter sources --check` (PubMed, Europe PMC, OpenAlex, Scopus,
+ClinicalTrials.gov, Crossref; kulcsok csak környezeti változóban:
+`MA_CONTACT_EMAIL`, `MA_OPENALEX_APIKEY`, `MA_SCOPUS_APIKEY`, `MA_SCOPUS_INSTTOKEN` — beállításuk: `TELEPITES.md`).
+API-kulcsot soha ne kérj a csevegésbe, és ne írd parancssorba vagy fájlba.
+**Átadás** (Agent, `subagent_type="metaanalizis:ma-metaheadhunter"`): projektmappa, a kutatási kérdés / PICO, a felhasználó
+azonosítója (`user:<név>`), mely forrásokat szabad használni, és ha ismert, a frissítendő áttekintés.
+**Emberi ellenőrzőpontok** — az alágens itt MEGÁLL (kilépési kód 4), összefoglalja a döntendőt, és a felhasználó dönt
+(a döntést a saját `--actor user:<név>` azonosítójával, indoklással rögzíti; az ágens és a program csak javasol):
+- **EP1** — mely talált áttekintésekből bányásszunk (kiválasztás / kizárás okkal);
+- **EP2** — a bizonytalan bevont-vizsgálat jelöltek (idézet alapján megerősítés vagy elvetés; az ismeretlen szerepű,
+  csak irodalomjegyzékből ismert tételt egyenként: a megerősítés azt jelenti, hogy az áttekintés BEVONTA);
+- **EP3** — duplumok és társközlemények (azonos közlemény / azonos vizsgálat), feloldatlan azonosítók;
+- **EP4** — jogosultság a SAJÁT PICO szerint (az, hogy egy áttekintés bevonta, csak kontextus);
+- **EP5** — a végső egyesített lista lezárása (`signoff`; visszavont közlemény, megerősítetlen azonosító blokkol);
+- **EP6** — a másodlagos (áttekintésből vett) számok ellenőrzése az elsődleges közleménnyel; ellenőrzés előtt egyetlen
+  ilyen szám sem kerülhet a `03_adatok` alá (D-S05-101).
+**Kimenet:** `01_kereses/headhunter/` (állapot, döntésnapló hash-lánccal, `studies.json`, átfedés — CCA —, frissítő
+keresés, `merged.json`, `prisma_flow.json`); `export` → a szűrési tábla és a kinyerési váz (csak azonosítók, értékek
+nélkül). Utána a `metaanalizis:ma-ellenorzo` checkpoint S03–S04: PRISMA „other methods” ág (`ma.py prisma check …`), H001–H020
+(`ma.py headhunter verify <mappa> --json`).
+
 ### 3. Értékelés → `metaanalizis:ma-ertekelo` (kimenetenként, a következtetések megírása ELŐTT)
 GRADE (5 leminősítési szempont; megfigyeléses vizsgálatoknál felminősítés), Summary of Findings táblázat,
 klinikai jelentőség (MCID, abszolút hatás), AMSTAR 2 önellenőrzés. A számokat és a doménenkénti javaslatot a motor adja
 (`ma.py grade advice`, `grade sof`, `grade amstar2`); az ítélet az értékelőé, és ahol szubjektív (pl. indirektség, a
 „gyanított” publikációs torzítás feloldása 0 vagy −1 között — 4. döntés), a felhasználóé. Rögzíti: `ma.py grade save` +
-`ma.py grade record` (vagy `project grade …`).
+`ma.py grade record --certainty <szint>` — a végső bizonyosság emberi ítélet (GRADE-09): a motor lépésekből számolt
+szintje csak előtöltés, a `--certainty` csak a felhasználó kifejezett megerősítése után adható meg.
 
 ### 4. Végső ellenőrzés → `metaanalizis:ma-ellenorzo` **final módban**
 Teljes reprodukció (adat → riport → kézirat számai), PRISMA 2020 tételenként, protokolltól való eltérések,
@@ -196,5 +230,6 @@ ellenőrző nem fogadja el a javítást: `project resolve <mappa> <id> --status 
 - Arány-mértékek visszatranszformálva; a skála megnevezve.
 - Óvatos, nem oksági nyelvezet megfigyeléses adatnál; a „nincs hatás” helyett „nem igazolt hatás / pontatlan becslés”.
 - Ábrák: `forest.svg`, `funnel.svg` (k ≥ 3: `doi.svg`; kumulatív elemzésnél `cumulative.svg`, egyetlen folytonos
-  moderátoros meta-regressziónál `bubble.svg`; más nyelven: `ma.py figure --plot <futás> --kind … --lang en`); a
+  moderátoros meta-regressziónál `bubble.svg`; más nyelven / rétegekkel: `ma.py figure --plot <futásmappa> --kind …
+  --lang en [--annotate]` — a forest/funnel/Doi a futás változatlan adataiból újrarajzolva); a
   `plot_data.json` külső ábrakészítőhöz (pl. figure-forge) is átadható.

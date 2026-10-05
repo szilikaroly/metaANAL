@@ -1,0 +1,2407 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "recorded-20261005t163913z",
+  "recorded_at": "2026-10-05T16:39:15Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": " — GUI-elfogadási teszt (e2e_v1.spec.js 7. lépés), rögzítve a felületről; slim + e-mail-címek kivágva.",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?datetype=edat&db=pubmed&maxdate=2026%2F10%2F05&mindate=2026%2F09%2F01&retmax=500&retmode=json&retstart=0&term=%28tuberculosis%5Btiab%5D%29+AND+%28%22BCG+vaccine%22%5Btiab%5D+OR+%22BCG+vaccination%22%5Btiab%5D%29",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "2"
+        },
+        "body_json": {
+          "header": {
+            "type": "esearch",
+            "version": "0.3"
+          },
+          "esearchresult": {
+            "count": "12",
+            "retmax": "12",
+            "retstart": "0",
+            "idlist": [
+              "42828061",
+              "42819388",
+              "42812022",
+              "42806320",
+              "42801992",
+              "42798601",
+              "42796696",
+              "42770035",
+              "42756352",
+              "42723834",
+              "42721892",
+              "42695560"
+            ],
+            "translationset": [],
+            "querytranslation": "\"tuberculosis\"[Title/Abstract] AND (\"BCG vaccine\"[Title/Abstract] OR \"BCG vaccination\"[Title/Abstract]) AND 2026/09/01:2026/10/05[Date - Entry]"
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=42828061%2C42819388%2C42812022%2C42806320%2C42801992%2C42798601%2C42796696%2C42770035%2C42756352%2C42723834%2C42721892%2C42695560&retmode=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_json": {
+          "header": {
+            "type": "esummary",
+            "version": "0.3"
+          },
+          "result": {
+            "uids": [
+              "42828061",
+              "42819388",
+              "42812022",
+              "42806320",
+              "42801992",
+              "42798601",
+              "42796696",
+              "42770035",
+              "42756352",
+              "42723834",
+              "42721892",
+              "42695560"
+            ],
+            "42828061": {
+              "uid": "42828061",
+              "pubdate": "2026 Oct",
+              "epubdate": "2026 Oct 2",
+              "source": "Cureus",
+              "authors": [
+                {
+                  "name": "Alrajhi K",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Algarni A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Abulola W",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Alhadad A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Fallatah S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Alrajhi M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Ghasib A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Fan H",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Vali Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Vali Y",
+              "title": "Comparison of Tuberculin Skin Test and Interferon-Gamma Release Assay for Latent Tuberculosis Screening in Healthcare Workers.",
+              "sorttitle": "comparison of tuberculin skin test and interferon gamma release assay for latent tuberculosis screening in healthcare workers",
+              "volume": "18",
+              "issue": "10",
+              "pages": "e117357",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101596737",
+              "issn": "2168-8184",
+              "essn": "2168-8184",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed",
+              "pubstatus": "258",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42828061"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13632901"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13632901;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.7759/cureus.117357"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/10/02 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/10/04 00:34"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/10/04 00:33"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/10/03 06:25"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/10/02 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 19,
+              "fulljournalname": "Cureus",
+              "elocationid": "doi: 10.7759/cureus.117357",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/10/02 00:00",
+              "sortfirstauthor": "Alrajhi K",
+              "vernaculartitle": ""
+            },
+            "42819388": {
+              "uid": "42819388",
+              "pubdate": "2026 Oct",
+              "epubdate": "2026 Sep 30",
+              "source": "MedComm (2020)",
+              "authors": [
+                {
+                  "name": "Kim H",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Choi E",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Kwon KW",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Choi HH",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Kim K",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Jung W",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Shin SJ",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Shin SJ",
+              "title": "Cholesterol 25-Hydroxylase Deficiency Provides an Optimal and Durable Protective T Helper 1 Immunity via Interleukin-12-Interleukin-2 Axis in BCG-Vaccinated Mice.",
+              "sorttitle": "cholesterol 25 hydroxylase deficiency provides an optimal and durable protective t helper 1 immunity via interleukin 12 interleukin 2 axis in bcg vaccinated mice",
+              "volume": "7",
+              "issue": "10",
+              "pages": "e70989",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101769925",
+              "issn": "",
+              "essn": "2688-2663",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed",
+              "pubstatus": "258",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42819388"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13625813"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13625813;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1002/mco2.70989"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "MCO270989"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/01/07 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/08/07 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/08/11 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/10/01 17:30"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/10/01 17:29"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/10/01 15:44"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/09/30 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 78,
+              "fulljournalname": "MedComm",
+              "elocationid": "doi: 10.1002/mco2.70989",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/30 00:00",
+              "sortfirstauthor": "Kim H",
+              "vernaculartitle": ""
+            },
+            "42812022": {
+              "uid": "42812022",
+              "pubdate": "2026 Sep 15",
+              "epubdate": "",
+              "source": "Front Biosci (Elite Ed)",
+              "authors": [
+                {
+                  "name": "Liu Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Pepper M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Khatchadourian C",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Sanders L",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Lewis J",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Trapp M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Venketaraman V",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Venketaraman V",
+              "title": "The BCG Vaccine: Pharmacological Biotechnology and Expanding Immunological Horizons.",
+              "sorttitle": "bcg vaccine pharmacological biotechnology and expanding immunological horizons",
+              "volume": "18",
+              "issue": "3",
+              "pages": "49594",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101485240",
+              "issn": "1945-0494",
+              "essn": "1945-0508",
+              "pubtype": [
+                "Journal Article",
+                "Review"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "4",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42812022"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.31083/FBE49594"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "S1945-0508(26)03974-0"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2025/12/31 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/03/20 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/03/26 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/30 05:31"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/30 05:30"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/30 04:03"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "Frontiers in bioscience (Elite edition)",
+              "elocationid": "doi: 10.31083/FBE49594",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/15 00:00",
+              "sortfirstauthor": "Liu Y",
+              "vernaculartitle": ""
+            },
+            "42806320": {
+              "uid": "42806320",
+              "pubdate": "2026 Jul 27",
+              "epubdate": "2026 Jul 27",
+              "source": "BMC Infect Dis",
+              "authors": [
+                {
+                  "name": "Rahman T",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Kundu S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Hossain A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Hossain A",
+              "title": "BCG vaccination and household TB exposure in childhood tuberculosis: a community-based case-control study in rural Bangladesh.",
+              "sorttitle": "bcg vaccination and household tb exposure in childhood tuberculosis a community based case control study in rural bangladesh",
+              "volume": "26",
+              "issue": "1",
+              "pages": "",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "100968551",
+              "issn": "",
+              "essn": "1471-2334",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "3",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42806320"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13621702"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13621702;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1186/s12879-026-14043-6"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "10.1186/s12879-026-14043-6"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/01/12 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/07/14 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/29 05:31"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/29 05:30"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/28 23:53"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/07/27 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 37,
+              "fulljournalname": "BMC infectious diseases",
+              "elocationid": "doi: 10.1186/s12879-026-14043-6",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/07/27 00:00",
+              "sortfirstauthor": "Rahman T",
+              "vernaculartitle": ""
+            },
+            "42801992": {
+              "uid": "42801992",
+              "pubdate": "2026 Sep 27",
+              "epubdate": "2026 Sep 27",
+              "source": "Int J Infect Dis",
+              "authors": [
+                {
+                  "name": "Cîndea CN",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Dumitra S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Stănculeț CR",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Roman EC",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Lazăr V",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Bostinaru GM",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Trăilescu M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Crișan I",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Crișan I",
+              "title": "Measles coinfection in an unvaccinated adolescent with secondary pulmonary TB - a case report.",
+              "sorttitle": "measles coinfection in an unvaccinated adolescent with secondary pulmonary tb a case report",
+              "volume": "",
+              "issue": "",
+              "pages": "109154",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "9610933",
+              "issn": "1201-9712",
+              "essn": "1878-3511",
+              "pubtype": [
+                "Case Reports",
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - as supplied by publisher",
+              "pubstatus": "10",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42801992"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1016/j.ijid.2026.109154"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "S1201-9712(26)00789-7"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/07/23 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/09/09 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/09/26 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/27 23:28"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/27 23:28"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/27 19:23"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases",
+              "elocationid": "doi: 10.1016/j.ijid.2026.109154",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/27 00:00",
+              "sortfirstauthor": "Cîndea CN",
+              "vernaculartitle": ""
+            },
+            "42798601": {
+              "uid": "42798601",
+              "pubdate": "2026",
+              "epubdate": "2026 Sep 11",
+              "source": "Front Immunol",
+              "authors": [
+                {
+                  "name": "Bıçakcıoğlu G",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Bravo-Robles L",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Mata-Martínez P",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Fernández J",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Terrón-Arcos V",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "González N",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Rubio I",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Abad-Moret R",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Bilas S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Díaz E",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Cantero-Cid R",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "López-Collazo E",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Del Fresno C",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Del Fresno C",
+              "title": "Heat-killed Mycobacterium tuberculosis-induced trained immunity elicits antitumor activity in PBMCs from colon cancer patients with unresponsiveness to anti-PD-1 in vitro.",
+              "sorttitle": "heat killed mycobacterium tuberculosis induced trained immunity elicits antitumor activity in pbmcs from colon cancer patients with unresponsiveness to anti pd 1 in vitro",
+              "volume": "17",
+              "issue": "",
+              "pages": "1911032",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101560960",
+              "issn": "",
+              "essn": "1664-3224",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "258",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42798601"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13612437"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13612437;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.3389/fimmu.2026.1911032"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/06/16 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/08/18 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/08/26 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/27 02:28"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/27 02:27"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/26 05:22"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/09/11 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 57,
+              "fulljournalname": "Frontiers in immunology",
+              "elocationid": "doi: 10.3389/fimmu.2026.1911032",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/11 00:00",
+              "sortfirstauthor": "Bıçakcıoğlu G",
+              "vernaculartitle": ""
+            },
+            "42796696": {
+              "uid": "42796696",
+              "pubdate": "2026 Sep 3",
+              "epubdate": "2026 Sep 3",
+              "source": "Pathogens",
+              "authors": [
+                {
+                  "name": "Vasilyeva I",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Klevno N",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Kazakov A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Pakhlavonova A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Prikhodko A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Sokolskaya E",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Zakharova E",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Rudakova K",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Chuishchev A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Enilenis I",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Martel I",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Martel I",
+              "title": "Tuberculous Meningitis in Pediatric Patients: Diagnosis, Clinical Course, and Outcomes in the Modern Era.",
+              "sorttitle": "tuberculous meningitis in pediatric patients diagnosis clinical course and outcomes in the modern era",
+              "volume": "15",
+              "issue": "9",
+              "pages": "",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101596317",
+              "issn": "",
+              "essn": "2076-0817",
+              "pubtype": [
+                "Journal Article",
+                "Observational Study"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "3",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42796696"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13610865"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13610865;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.3390/pathogens15090928"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "pathogens15090928"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/07/21 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/08/27 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/09/01 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/26 05:36"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/26 05:35"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/26 01:14"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/09/03 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 16,
+              "fulljournalname": "Pathogens (Basel, Switzerland)",
+              "elocationid": "doi: 10.3390/pathogens15090928",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/03 00:00",
+              "sortfirstauthor": "Vasilyeva I",
+              "vernaculartitle": ""
+            },
+            "42770035": {
+              "uid": "42770035",
+              "pubdate": "2026",
+              "epubdate": "2026 Sep 17",
+              "source": "Int Med Case Rep J",
+              "authors": [
+                {
+                  "name": "Mohamed HA",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Botan NI",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Ahmed SI",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Qawdhan MJ",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Qawdhan MJ",
+              "title": "Takayasu Arteritis in a 15-Year-Old Male Presenting with Constitutional Symptoms and Upper Limb Pulse Deficit: A Case Report a Resource-Limited Settings.",
+              "sorttitle": "takayasu arteritis in a 15 year old male presenting with constitutional symptoms and upper limb pulse deficit a case report a resource limited settings",
+              "volume": "19",
+              "issue": "",
+              "pages": "583050",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101566269",
+              "issn": "",
+              "essn": "1179-142X",
+              "pubtype": [
+                "Case Reports",
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "258",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42770035"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13592360"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13592360;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.2147/IMCRJ.S583050"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "583050"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/06/14 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/09/11 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/22 12:43"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/22 12:42"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/22 06:47"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/09/17 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 13,
+              "fulljournalname": "International medical case reports journal",
+              "elocationid": "doi: 10.2147/IMCRJ.S583050",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/17 00:00",
+              "sortfirstauthor": "Mohamed HA",
+              "vernaculartitle": ""
+            },
+            "42756352": {
+              "uid": "42756352",
+              "pubdate": "2026",
+              "epubdate": "2026 Sep 3",
+              "source": "Front Immunol",
+              "authors": [
+                {
+                  "name": "Zheng Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Li F",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Zhang B",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Wang X",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Jiao Z",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Wu X",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Yang T",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Deng J",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Xiong Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Huang Z",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Huang J",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Huang J",
+              "title": "Research progress on the role and dysregulation of NK cells in anti-tuberculosis immunity.",
+              "sorttitle": "research progress on the role and dysregulation of nk cells in anti tuberculosis immunity",
+              "volume": "17",
+              "issue": "",
+              "pages": "1917564",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101560960",
+              "issn": "",
+              "essn": "1664-3224",
+              "pubtype": [
+                "Journal Article",
+                "Review"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "258",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42756352"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13582517"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13582517;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.3389/fimmu.2026.1917564"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/06/23 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/08/16 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/08/17 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/18 12:26"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/18 12:25"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/18 07:13"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/09/03 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 100,
+              "fulljournalname": "Frontiers in immunology",
+              "elocationid": "doi: 10.3389/fimmu.2026.1917564",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/03 00:00",
+              "sortfirstauthor": "Zheng Y",
+              "vernaculartitle": ""
+            },
+            "42723834": {
+              "uid": "42723834",
+              "pubdate": "2026",
+              "epubdate": "2026 Aug 27",
+              "source": "Public Health Rev",
+              "authors": [
+                {
+                  "name": "Caripa VCA",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Andrade-Gonçalves RLP",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Bonfim RO",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "de Faria MGBF",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Alves YM",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Tavares RBV",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Teibo TKA",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Bernardi WOB",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Rosa RJ",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Tártaro AF",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Ribeiro NM",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Vinci ALT",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Zini N",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Arcêncio RA",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Arcêncio RA",
+              "title": "Strengthening comprehensive tuberculosis care in Angola: a scoping review of strategies, challenges, and potentialities in a high-burden setting.",
+              "sorttitle": "strengthening comprehensive tuberculosis care in angola a scoping review of strategies challenges and potentialities in a high burden setting",
+              "volume": "47",
+              "issue": "",
+              "pages": "1609466",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "0370123",
+              "issn": "0301-0422",
+              "essn": "2107-6952",
+              "pubtype": [
+                "Journal Article",
+                "Review"
+              ],
+              "recordstatus": "PubMed",
+              "pubstatus": "258",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42723834"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13558124"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13558124;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.3389/phrs.2026.1609466"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "1609466"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2025/12/18 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/07/16 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/07/30 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/11 11:39"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/11 11:38"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/11 06:14"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/08/27 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 35,
+              "fulljournalname": "Public health reviews",
+              "elocationid": "doi: 10.3389/phrs.2026.1609466",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/08/27 00:00",
+              "sortfirstauthor": "Caripa VCA",
+              "vernaculartitle": ""
+            },
+            "42721892": {
+              "uid": "42721892",
+              "pubdate": "2026 Oct 24",
+              "epubdate": "2026 Sep 10",
+              "source": "Vaccine",
+              "authors": [
+                {
+                  "name": "Khatri B",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Salguero FJ",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Goyal M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Dagg B",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Wandiga S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Ho MM",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Ho MM",
+              "title": "Understanding pathogenesis of and BCG vaccine efficacy against high, moderate, and low transmissible Mycobacterium tuberculosis strains in mice.",
+              "sorttitle": "understanding pathogenesis of and bcg vaccine efficacy against high moderate and low transmissible mycobacterium tuberculosis strains in mice",
+              "volume": "92",
+              "issue": "",
+              "pages": "129116",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "8406899",
+              "issn": "0264-410X",
+              "essn": "1873-2518",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "256",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42721892"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1016/j.vaccine.2026.129116"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "S0264-410X(26)00925-4"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/06/02 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/07/03 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/08/30 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/27 23:28"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/10 23:36"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/10 18:11"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "Vaccine",
+              "elocationid": "doi: 10.1016/j.vaccine.2026.129116",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/10/24 00:00",
+              "sortfirstauthor": "Khatri B",
+              "vernaculartitle": ""
+            },
+            "42695560": {
+              "uid": "42695560",
+              "pubdate": "2026 Sep 3",
+              "epubdate": "2026 Sep 3",
+              "source": "Monaldi Arch Chest Dis",
+              "authors": [
+                {
+                  "name": "Nugraha Putra O",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Julaeha J",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Nurhayati N",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Purnamasari T",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Damayanti N",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Ramdani D",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Erlan A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Paisal P",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Sasanti Handayani R",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Indah N",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Indah N",
+              "title": "Treatment outcomes and factors associated with unfavorable outcomes among drug-resistant tuberculosis patients treated with a bedaquiline-based oral regimen.",
+              "sorttitle": "treatment outcomes and factors associated with unfavorable outcomes among drug resistant tuberculosis patients treated with a bedaquiline based oral regimen",
+              "volume": "",
+              "issue": "",
+              "pages": "",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "9307314",
+              "issn": "1122-0643",
+              "essn": "2532-5264",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - as supplied by publisher",
+              "pubstatus": "10",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42695560"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.4081/monaldi.2026.3928"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/02/05 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/07/20 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/04 17:40"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/09/04 17:40"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/09/04 11:49"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "Monaldi archives for chest disease = Archivio Monaldi per le malattie del torace",
+              "elocationid": "doi: 10.4081/monaldi.2026.3928",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/09/03 00:00",
+              "sortfirstauthor": "Nugraha Putra O",
+              "vernaculartitle": ""
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=1000&query=%28%28%28TITLE%3Atuberculosis+OR+ABSTRACT%3Atuberculosis+OR+KW%3Atuberculosis%29%29+AND+%28%28TITLE%3A%22BCG+vaccine%22+OR+ABSTRACT%3A%22BCG+vaccine%22+OR+KW%3A%22BCG+vaccine%22%29+OR+%28TITLE%3A%22BCG+vaccination%22+OR+ABSTRACT%3A%22BCG+vaccination%22+OR+KW%3A%22BCG+vaccination%22%29%29%29+AND+CREATION_DATE%3A%5B2026-09-01+TO+2026-10-05%5D&resultType=lite",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 16,
+          "request": {
+            "queryString": "(((TITLE:tuberculosis OR ABSTRACT:tuberculosis OR KW:tuberculosis)) AND ((TITLE:\"BCG vaccine\" OR ABSTRACT:\"BCG vaccine\" OR KW:\"BCG vaccine\") OR (TITLE:\"BCG vaccination\" OR ABSTRACT:\"BCG vaccination\" OR KW:\"BCG vaccination\"))) AND CREATION_DATE:[2026-09-01 TO 2026-10-05]",
+            "resultType": "lite",
+            "cursorMark": "*",
+            "pageSize": 1000,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "42806320",
+                "source": "MED",
+                "pmid": "42806320",
+                "pmcid": "PMC13621702",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13621702"
+                  ]
+                },
+                "doi": "10.1186/s12879-026-14043-6",
+                "title": "BCG vaccination and household TB exposure in childhood tuberculosis: a community-based case-control study in rural Bangladesh.",
+                "authorString": "Rahman T, Kundu S, Hossain A.",
+                "journalTitle": "BMC Infect Dis",
+                "issue": "1",
+                "journalVolume": "26",
+                "pubYear": "2026",
+                "journalIssn": "1471-2334",
+                "pageInfo": "1726",
+                "pubType": "research-article; journal article",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "firstPublicationDate": "2026-07-27",
+                "firstIndexDate": "2026-09-29"
+              },
+              {
+                "id": "42812022",
+                "source": "MED",
+                "pmid": "42812022",
+                "doi": "10.31083/fbe49594",
+                "title": "The BCG Vaccine: Pharmacological Biotechnology and Expanding Immunological Horizons.",
+                "authorString": "Liu Y, Pepper M, Khatchadourian C, Sanders L, Lewis J, Trapp M, Venketaraman V.",
+                "journalTitle": "Front Biosci (Elite Ed)",
+                "issue": "3",
+                "journalVolume": "18",
+                "pubYear": "2026",
+                "journalIssn": "1945-0494; 1945-0508; ",
+                "pageInfo": "49594",
+                "pubType": "review; journal article",
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "N",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-01",
+                "firstIndexDate": "2026-09-30"
+              },
+              {
+                "id": "42721892",
+                "source": "MED",
+                "pmid": "42721892",
+                "doi": "10.1016/j.vaccine.2026.129116",
+                "title": "Understanding pathogenesis of and BCG vaccine efficacy against high, moderate, and low transmissible Mycobacterium tuberculosis strains in mice.",
+                "authorString": "Khatri B, Salguero FJ, Goyal M, Dagg B, Wandiga S, Ho MM.",
+                "journalTitle": "Vaccine",
+                "journalVolume": "92",
+                "pubYear": "2026",
+                "journalIssn": "0264-410x; 1873-2518; ",
+                "pageInfo": "129116",
+                "pubType": "journal article",
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-10",
+                "firstIndexDate": "2026-09-11"
+              },
+              {
+                "id": "PPR1315117",
+                "source": "PPR",
+                "doi": "10.64898/2026.09.04.749280",
+                "title": "A novel recombinant BCG vaccine using a mycobacteriophage promoter shows improved protection against tuberculosis",
+                "authorString": "Tsukamoto Y, Tsujimura Y, Mukai T, Tamura T, Maeda Y, Torigoe S, Saiga H, Asaka MN, Komine T, Miyamoto Y, Nakaya M, Makino M, Ato M.",
+                "pubYear": "2026",
+                "pubType": "preprint",
+                "bookOrReportDetails": {
+                  "publisher": "bioRxiv",
+                  "yearOfPublication": 2026
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-07",
+                "firstIndexDate": "2026-09-09"
+              },
+              {
+                "id": "42819388",
+                "source": "MED",
+                "pmid": "42819388",
+                "pmcid": "PMC13625813",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13625813"
+                  ]
+                },
+                "doi": "10.1002/mco2.70989",
+                "title": "Cholesterol 25-Hydroxylase Deficiency Provides an Optimal and Durable Protective T Helper 1 Immunity via Interleukin-12-Interleukin-2 Axis in BCG-Vaccinated Mice.",
+                "authorString": "Kim H, Choi E, Kwon KW, Choi HH, Kim K, Jung W, Shin SJ.",
+                "journalTitle": "MedComm (2020)",
+                "issue": "10",
+                "journalVolume": "7",
+                "pubYear": "2026",
+                "journalIssn": "2688-2663",
+                "pageInfo": "e70989",
+                "pubType": "research-article; journal article",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-30",
+                "firstIndexDate": "2026-10-02"
+              },
+              {
+                "id": "42756352",
+                "source": "MED",
+                "pmid": "42756352",
+                "pmcid": "PMC13582517",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13582517"
+                  ]
+                },
+                "doi": "10.3389/fimmu.2026.1917564",
+                "title": "Research progress on the role and dysregulation of NK cells in anti-tuberculosis immunity.",
+                "authorString": "Zheng Y, Li F, Zhang B, Wang X, Jiao Z, Wu X, Yang T, Deng J, Xiong Y, Huang Z, Huang J.",
+                "journalTitle": "Front Immunol",
+                "journalVolume": "17",
+                "pubYear": "2026",
+                "journalIssn": "1664-3224",
+                "pageInfo": "1917564",
+                "pubType": "review-article; review; journal article",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "firstPublicationDate": "2026-09-03",
+                "firstIndexDate": "2026-09-19"
+              },
+              {
+                "id": "42796696",
+                "source": "MED",
+                "pmid": "42796696",
+                "pmcid": "PMC13610865",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13610865"
+                  ]
+                },
+                "doi": "10.3390/pathogens15090928",
+                "title": "Tuberculous Meningitis in Pediatric Patients: Diagnosis, Clinical Course, and Outcomes in the Modern Era.",
+                "authorString": "Vasilyeva I, Klevno N, Kazakov A, Pakhlavonova A, Prikhodko A, Sokolskaya E, Zakharova E, Rudakova K, Chuishchev A, Enilenis I, Martel I.",
+                "journalTitle": "Pathogens",
+                "issue": "9",
+                "journalVolume": "15",
+                "pubYear": "2026",
+                "journalIssn": "2076-0817",
+                "pageInfo": "928",
+                "pubType": "research-article; journal article; observational study",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "firstPublicationDate": "2026-09-03",
+                "firstIndexDate": "2026-09-28"
+              },
+              {
+                "id": "42723834",
+                "source": "MED",
+                "pmid": "42723834",
+                "pmcid": "PMC13558124",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13558124"
+                  ]
+                },
+                "doi": "10.3389/phrs.2026.1609466",
+                "title": "Strengthening comprehensive tuberculosis care in Angola: a scoping review of strategies, challenges, and potentialities in a high-burden setting.",
+                "authorString": "Caripa VCA, Andrade-Gonçalves RLP, Bonfim RO, de Faria MGBF, Alves YM, Tavares RBV, Teibo TKA, Bernardi WOB, Rosa RJ, Tártaro AF, Ribeiro NM, Vinci ALT, Zini N, Arcêncio RA.",
+                "journalTitle": "Public Health Rev",
+                "journalVolume": "47",
+                "pubYear": "2026",
+                "journalIssn": "0301-0422; 2107-6952; ",
+                "pageInfo": "1609466",
+                "pubType": "review-article; review; journal article",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "firstPublicationDate": "2026-08-27",
+                "firstIndexDate": "2026-09-12"
+              },
+              {
+                "id": "42828061",
+                "source": "MED",
+                "pmid": "42828061",
+                "pmcid": "PMC13632901",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13632901"
+                  ]
+                },
+                "doi": "10.7759/cureus.117357",
+                "title": "Comparison of Tuberculin Skin Test and Interferon-Gamma Release Assay for Latent Tuberculosis Screening in Healthcare Workers.",
+                "authorString": "Alrajhi K, Algarni A, Abulola W, Alhadad A, Fallatah S, Alrajhi M, Ghasib A, Fan H, Vali Y.",
+                "journalTitle": "Cureus",
+                "issue": "10",
+                "journalVolume": "18",
+                "pubYear": "2026",
+                "journalIssn": "2168-8184",
+                "pageInfo": "e117357",
+                "pubType": "research-article; journal article",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-10-02",
+                "firstIndexDate": "2026-10-04"
+              },
+              {
+                "id": "42695560",
+                "source": "MED",
+                "pmid": "42695560",
+                "doi": "10.4081/monaldi.2026.3928",
+                "title": "Treatment outcomes and factors associated with unfavorable outcomes among drug-resistant tuberculosis patients treated with a bedaquiline-based oral regimen.",
+                "authorString": "Nugraha Putra O, Julaeha J, Nurhayati N, Purnamasari T, Damayanti N, Ramdani D, Erlan A, Paisal P, Sasanti Handayani R, Indah N.",
+                "journalTitle": "Monaldi Arch Chest Dis",
+                "pubYear": "2026",
+                "journalIssn": "1122-0643; 2532-5264; ",
+                "pubType": "journal article",
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "N",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-03",
+                "firstIndexDate": "2026-09-05"
+              },
+              {
+                "id": "42801992",
+                "source": "MED",
+                "pmid": "42801992",
+                "doi": "10.1016/j.ijid.2026.109154",
+                "title": "Measles coinfection in an unvaccinated adolescent with secondary pulmonary TB - a case report.",
+                "authorString": "Cîndea CN, Dumitra S, Stănculeț CR, Roman EC, Lazăr V, Bostinaru GM, Trăilescu M, Crișan I.",
+                "journalTitle": "Int J Infect Dis",
+                "pubYear": "2026",
+                "journalIssn": "1201-9712; 1878-3511; ",
+                "pageInfo": "109154",
+                "pubType": "journal article; case reports",
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "N",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-27",
+                "firstIndexDate": "2026-09-28"
+              },
+              {
+                "id": "42798601",
+                "source": "MED",
+                "pmid": "42798601",
+                "pmcid": "PMC13612437",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13612437"
+                  ]
+                },
+                "doi": "10.3389/fimmu.2026.1911032",
+                "title": "Heat-killed &lt;i&gt;Mycobacterium tuberculosis&lt;/i&gt;-induced trained immunity elicits antitumor activity in PBMCs from colon cancer patients with unresponsiveness to anti-PD-1 &lt;i&gt;in vitro&lt;/i&gt;.",
+                "authorString": "Bıçakcıoğlu G, Bravo-Robles L, Mata-Martínez P, Fernández J, Terrón-Arcos V, González N, Rubio I, Abad-Moret R, Bilas S, Díaz E, Cantero-Cid R, López-Collazo E, Del Fresno C.",
+                "journalTitle": "Front Immunol",
+                "journalVolume": "17",
+                "pubYear": "2026",
+                "journalIssn": "1664-3224",
+                "pageInfo": "1911032",
+                "pubType": "research-article; journal article",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "N",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-11",
+                "firstIndexDate": "2026-09-28"
+              },
+              {
+                "id": "42685465",
+                "source": "MED",
+                "pmid": "42685465",
+                "doi": "10.1016/j.vetmic.2026.111208",
+                "title": "Intranasal BCG cell wall polysaccharide-based subunit vaccine confers protection against Mycobacterium bovis challenge in mice.",
+                "authorString": "Li N, Zhou M, Song Y, Tang L, Ma H, Xu J, Cao J, Li N, Chu Y.",
+                "journalTitle": "Vet Microbiol",
+                "journalVolume": "321",
+                "pubYear": "2026",
+                "journalIssn": "0378-1135; 1873-2542; ",
+                "pageInfo": "111208",
+                "pubType": "journal article",
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-08-30",
+                "firstIndexDate": "2026-09-03"
+              },
+              {
+                "id": "42738899",
+                "source": "MED",
+                "pmid": "42738899",
+                "pmcid": "PMC13565049",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13565049"
+                  ]
+                },
+                "doi": "10.3390/cells15171604",
+                "title": "Diabetic Immunotherapy Advances with BCG: Metabolic and Immune Reprogramming.",
+                "authorString": "Faustman DL, Hashiguchi S, Davis M, Kuhtreiber W.",
+                "journalTitle": "Cells",
+                "issue": "17",
+                "journalVolume": "15",
+                "pubYear": "2026",
+                "journalIssn": "2073-4409",
+                "pageInfo": "1604",
+                "pubType": "review-article; review; journal article",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "firstPublicationDate": "2026-09-03",
+                "firstIndexDate": "2026-09-15"
+              },
+              {
+                "id": "42825910",
+                "source": "MED",
+                "pmid": "42825910",
+                "doi": "10.18502/ijaai.v25is11.22499",
+                "title": "Unraveling a Rare Complication: BCG-associated Brain Abscess in Wiskott-aldrich Syndrome.",
+                "authorString": "Hamidi M, Habibi Z, Parvaneh N, Movahedi M.",
+                "journalTitle": "Iran J Allergy Asthma Immunol",
+                "issue": "sup 11",
+                "journalVolume": "25",
+                "pubYear": "2026",
+                "journalIssn": "1735-1502; 1735-5249; ",
+                "pageInfo": "211-217",
+                "pubType": "journal article; case reports",
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "N",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-08-12",
+                "firstIndexDate": "2026-10-03"
+              },
+              {
+                "id": "42770035",
+                "source": "MED",
+                "pmid": "42770035",
+                "pmcid": "PMC13592360",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13592360"
+                  ]
+                },
+                "doi": "10.2147/imcrj.s583050",
+                "title": "Takayasu Arteritis in a 15-Year-Old Male Presenting with Constitutional Symptoms and Upper Limb Pulse Deficit: A Case Report a Resource-Limited Settings.",
+                "authorString": "Mohamed HA, Botan NI, Ahmed SI, Qawdhan MJ.",
+                "journalTitle": "Int Med Case Rep J",
+                "journalVolume": "19",
+                "pubYear": "2026",
+                "journalIssn": "1179-142x",
+                "pageInfo": "583050",
+                "pubType": "journal article; case reports; case-report",
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "N",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasTMAccessionNumbers": "N",
+                "firstPublicationDate": "2026-09-17",
+                "firstIndexDate": "2026-09-23"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://clinicaltrials.gov/api/v2/studies?countTotal=true&filter.advanced=AREA%5BStudyFirstPostDate%5DRANGE%5B2026-09-01%2C2026-10-05%5D&format=json&pageSize=100&query.term=%28tuberculosis%29+AND+%28%22BCG+vaccine%22+OR+%22BCG+vaccination%22%29",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "totalCount": 0,
+          "studies": []
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://clinicaltrials.gov/api/v2/studies?countTotal=true&filter.advanced=AREA%5BResultsFirstPostDate%5DRANGE%5B2026-09-01%2C2026-10-05%5D&format=json&pageSize=100&query.term=%28tuberculosis%29+AND+%28%22BCG+vaccine%22+OR+%22BCG+vaccination%22%29",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "totalCount": 0,
+          "studies": []
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

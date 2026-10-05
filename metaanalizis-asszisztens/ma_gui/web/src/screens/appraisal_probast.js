@@ -28,7 +28,9 @@
     return h('div', { 'class': 'table-wrap' }, h('table', { 'class': 'table table-compact', id: 'pb-list' },
       h('thead', null, h('tr', null, h('th', { scope: 'col', i18n: 'appraisal.col.study' }), h('th', { scope: 'col', i18n: 'appraisal.pb.model' }),
         h('th', { scope: 'col' }, t('appraisal.pass.development')), h('th', { scope: 'col' }, t('appraisal.pass.evaluation')),
-        h('th', { scope: 'col', i18n: 'appraisal.col.overall' }), h('th', { scope: 'col', i18n: 'appraisal.col.raters' }))),
+        h('th', { scope: 'col' }, t('appraisal.pb.overallPass', { pass: t('appraisal.pass.development') })),
+        h('th', { scope: 'col' }, t('appraisal.pb.overallPass', { pass: t('appraisal.pass.evaluation') })),
+        h('th', { scope: 'col', i18n: 'appraisal.col.raters' }))),
       h('tbody', null, items.map(function (x) {
         var c = x.check || {};
         var pp = c.per_pass || {};
@@ -39,7 +41,11 @@
           h('td', null, x.target || '—'),
           h('td', { 'class': 'num' }, pp.development ? A.completeness(c, 'development') : '—'),
           h('td', { 'class': 'num' }, pp.evaluation ? A.completeness(c, 'evaluation') : '—'),
-          h('td', null, x.overall && x.overall.judgement ? A.verdictBadge(S.inst, x.overall.judgement) : A.verdictBadge(S.inst, null)),
+          // menetenkénti összítélet (overall_passes) — F4; egy korábbi, egyetlen összítéletes fájlnál az a két oszlopon át
+          (x.overall_passes || []).length || !(x.overall && x.overall.judgement) ? ['development', 'evaluation'].map(function (ps) {
+            var hit = (x.overall_passes || []).filter(function (o2) { return o2.pass === ps; })[0];
+            return h('td', { dataset: { pass: ps } }, A.verdictBadge(S.inst, hit ? hit.judgement || null : null));
+          }) : h('td', { colspan: '2', dataset: { pass: 'both' } }, A.verdictBadge(S.inst, x.overall.judgement)),
           h('td', null, x.origin === 'ai_draft' ? A.aiBadge() : null, ' ', x.rater));
       }))));
   }

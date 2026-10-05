@@ -449,15 +449,17 @@ def status_explain(source, status, reset_at=None, detail=None):
             en += " The Scopus weekly quota belongs to the key; wait for the reset or ask Elsevier for a larger quota."
     elif status == "unreachable":
         hu = ("%s nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: "
-              "python -m metaelemzes.headhunter sources --check." % the_hu)
+              "ma.py headhunter sources --check." % the_hu)
         en = ("%s cannot be reached from here (network, proxy or firewall). We continue with the other sources; "
-              "later run: python -m metaelemzes.headhunter sources --check." % name)
+              "later run: ma.py headhunter sources --check." % name)
     elif status == "disabled":
-        hu = "%s ki van kapcsolva ebben a projektben (bekapcsolás: sources set <projekt> --enable %s)." % (the_hu, source)
-        en = "%s is disabled in this project (enable: sources set <project> --enable %s)." % (name, source)
+        hu = ("%s ki van kapcsolva ebben a projektben (bekapcsolás: ma.py headhunter sources <projekt> --enable %s "
+              "--actor user:<név>)." % (the_hu, source))
+        en = ("%s is disabled in this project (enable: ma.py headhunter sources <project> --enable %s "
+              "--actor user:<name>)." % (name, source))
     else:
-        hu = "%s állapota még nem ismert (futtasd: sources --check)." % the_hu
-        en = "The status of %s is not known yet (run: sources --check)." % name
+        hu = "%s állapota még nem ismert (futtasd: ma.py headhunter sources --check)." % the_hu
+        en = "The status of %s is not known yet (run: ma.py headhunter sources --check)." % name
     if detail:
         if isinstance(detail, dict):
             hu += " " + detail.get("hu", "")
@@ -1157,10 +1159,36 @@ def proxies_from_env(env=None):
     return proxies
 
 
+#: titkot hordozó kérésfejlécek (kisbetűvel) — átirányításkor nem mennek tovább (SEC-7)
+SECRET_HEADERS = frozenset(["x-els-apikey", "x-els-insttoken", "authorization", "proxy-authorization", "api-key",
+                            "x-api-key"])
+
+
+def _origin(url):
+    u = urllib.parse.urlsplit(url)
+    port = u.port or {"http": 80, "https": 443}.get((u.scheme or "").lower())
+    return ((u.scheme or "").lower(), (u.hostname or "").lower(), port)
+
+
+class _SameOriginSecretRedirect(urllib.request.HTTPRedirectHandler):
+    """Átirányítás: a titkot hordozó (nem átirányítandó) fejlécek CSAK azonos eredetre (séma + gép + port) mennek
+    tovább; más gépre vagy https→http váltáskor nem (SEC-7)."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        new = urllib.request.HTTPRedirectHandler.redirect_request(self, req, fp, code, msg, headers, newurl)
+        if new is not None and _origin(req.full_url) == _origin(new.full_url):
+            for k, v in req.unredirected_hdrs.items():
+                if k.lower() in SECRET_HEADERS:
+                    new.add_unredirected_header(k, v)
+        return new
+
+
 def build_opener(env=None, ssl_context=None):
-    """urllib-opener a környezet proxyjaival (``ProxyHandler``) és a rendszer CA-ival (``SSL_CERT_FILE``)."""
+    """urllib-opener a környezet proxyjaival (``ProxyHandler``) és a rendszer CA-ival (``SSL_CERT_FILE``); az
+    átirányítás a titkos fejléceket csak azonos eredetre viszi tovább."""
     ctx = ssl_context or ssl.create_default_context()
-    handlers = [urllib.request.ProxyHandler(proxies_from_env(env)), urllib.request.HTTPSHandler(context=ctx)]
+    handlers = [urllib.request.ProxyHandler(proxies_from_env(env)), urllib.request.HTTPSHandler(context=ctx),
+                _SameOriginSecretRedirect()]
     return urllib.request.build_opener(*handlers)
 
 
@@ -1577,10 +1605,16 @@ class HttpClient(object):
         if data is not None:
             req_headers.setdefault("Content-Type", "application/x-www-form-urlencoded")
         status, hdrs, raw = None, {}, b""
+        # SEC-7: a titkot hordozó fejléc (API-kulcs, intézményi token, Bearer) csak az EREDETI kérés gépére megy —
+        # átirányításkor (más gép, https→http) az urllib a „nem átirányítandó” fejléceket nem viszi tovább
+        secret = dict((k, v) for k, v in req_headers.items() if k.lower() in SECRET_HEADERS)
+        plain = dict((k, v) for k, v in req_headers.items() if k.lower() not in SECRET_HEADERS)
         try:
-            req = urllib.request.Request(full_url, data=data, headers=req_headers, method=method)
+            req = urllib.request.Request(full_url, data=data, headers=plain, method=method)
         except ValueError as exc:  # hibás URL — a kivétel szövege az URL-t (és benne kulcsot) tartalmazhatna
             raise HttpError(source, 0, endpoint=canon, body_excerpt=redact(str(exc), self.env)[:120])
+        for k, v in secret.items():
+            req.add_unredirected_header(k, v)
         try:
             resp = self.opener.open(req, timeout=timeout or self.timeout)
             try:

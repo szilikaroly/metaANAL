@@ -249,12 +249,14 @@
     }
 
     function paintFormats() {
+      var shown = {};          // ugyanaz a (hosszú) teendő-szöveg csak egyszer — a többi formátumnál rövid utalás (UX-8)
       MA.dom.mount(fmtHost, ['svg', 'pdf', 'png', 'tiff', 'pptx'].filter(function (f) { return fmtById[f]; }).map(function (f) {
         var avail = fmtAvailable(f);
         if (!avail) { S.formats[f] = false; }
         var id = 'fig-fmt-' + f;
         var x = fmtById[f];
         var reason = !avail ? (x.reason ? pick(x.reason) : t('adp.fig.unavailable')) : (f === 'svg' ? t('adp.fig.svgAlways') : null);
+        if (!avail && reason && shown[reason]) { reason = t('adp.fig.sameReason', { fmt: shown[reason] }); } else if (!avail && reason) { shown[reason] = f.toUpperCase(); }
         var cb = h('input', { type: 'checkbox', id: id, value: f, checked: f === 'svg' || !!S.formats[f], disabled: f === 'svg' || !avail,
           onchange: function () { S.formats[f] = cb.checked; } });
         return h('div', { 'class': ['adp-fmt', !avail && 'is-disabled'], dataset: { format: f } },

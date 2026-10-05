@@ -21,7 +21,7 @@
   var pick = function (v, fb) { return MA.i18n.pick(v, fb === undefined ? '' : fb); };
   var hh = MA.hh;
   var ST_KIND = { included: 'ok', excluded: 'warning', awaiting: 'pending', pending: 'neutral' };
-  var screenFilter = 'pending';
+  var screenFilter = null;  // null: alapértelmezés — „döntésre vár”, ha van ilyen; különben „mind” (UX-4)
   var selected = null;
   var local = {};           // study_id → a most rögzített döntés (amíg az egyesítés újra nem fut)
   var plan = null;          // az utolsó dry-run terve (csak memóriában)
@@ -77,12 +77,13 @@
       }
       var all = d.studies || [];
       var counts = d.status_counts || {};
+      var filter = screenFilter || ((counts.pending || 0) ? 'pending' : 'all');
       var listEl = h('div', { 'class': 'hh-sc-list', role: 'listbox', id: 'hh-sc-list', tabindex: '0', 'aria-label': t('hh.sc.listLabel'),
         'aria-describedby': 'hh-sc-keys' });
       var detailHost = h('div', { 'class': 'hh-sc-detail-host' });
       var rows = [];
 
-      function view() { return all.filter(function (s) { return screenFilter === 'all' || s.status === screenFilter; }); }
+      function view() { return all.filter(function (s) { return filter === 'all' || s.status === filter; }); }
 
       function decideStudy(st, value, level, needCode) {
         var p = (value === 'include') ? Promise.resolve({ reason: null, reason_code: null }) : api.reasonDialog({
@@ -167,14 +168,17 @@
       });
 
       var segWrap = h('div', { 'class': 'seg', role: 'group', 'aria-label': t('hh.sc.filterLabel') }, ['pending', 'included', 'excluded', 'awaiting', 'all'].map(function (k) {
-        return h('button', { type: 'button', 'class': 'seg-btn', 'aria-pressed': screenFilter === k ? 'true' : 'false', dataset: { filter: k }, onclick: function () {
-          screenFilter = k;
+        return h('button', { type: 'button', 'class': 'seg-btn', 'aria-pressed': filter === k ? 'true' : 'false', dataset: { filter: k }, onclick: function () {
+          screenFilter = filter = k;
           MA.dom.$$('.seg-btn', segWrap).forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.filter === k ? 'true' : 'false'); });
           paintList(false);
         } }, t('hh.sc.filter.' + k) + (k === 'all' ? '' : ' (' + String(counts[k] || 0) + ')'));
       }));
       MA.dom.mount(host,
         h('p', { 'class': 'hh-guide' }, B((counts.pending || 0) ? 'warning' : 'ok', 'EP4'), ' ', t('hh.sc.guide')),
+        (counts.pending || 0) || !all.length ? null : h('p', { 'class': 'hh-guide', id: 'hh-sc-done' }, B('ok', t('hh.sc.allDecided')), ' ',
+          t('hh.sc.nextHint'), ' ',
+          h('button', { type: 'button', 'class': 'btn btn-sm', id: 'hh-sc-next', onclick: function () { api.go('update', true); } }, t('hh.sc.nextBtn'))),
         h('div', { 'class': 'toolbar' }, segWrap,
           h('button', { type: 'button', 'class': 'btn', id: 'hh-sc-refresh', onclick: function () { local = {}; api.run('merge', {}); } }, t('hh.sc.rebuild'))),
         h('p', { 'class': 'muted hh-small', id: 'hh-sc-keys' }, t('hh.sc.keys')),
@@ -242,7 +246,9 @@
       var w = u.window || {};
       var anchor = SEL({ id: 'hh-up-anchor', 'class': 'input' }, ['latest', 'earliest', 'manual'].map(function (k) { return { value: k, label: t('hh.up.anchor.' + k) }; }), w.anchor || 'latest');
       var start = h('input', { type: 'text', id: 'hh-up-start', 'class': 'input hh-narrow', placeholder: 'ÉÉÉÉ-HH-NN', value: w.anchor === 'manual' ? (w.start_date || '') : '', autocomplete: 'off' });
+      var end = h('input', { type: 'text', id: 'hh-up-end', 'class': 'input hh-narrow', placeholder: 'ÉÉÉÉ-HH-NN', value: w.end_date && w.anchor === 'manual' ? w.end_date : '', autocomplete: 'off' });
       var months = h('input', { type: 'text', id: 'hh-up-months', 'class': 'input hh-narrow', inputmode: 'numeric', value: w.overlap_months === undefined ? '6' : String(w.overlap_months), autocomplete: 'off' });
+      var cap = h('input', { type: 'text', id: 'hh-up-cap', 'class': 'input hh-narrow', inputmode: 'numeric', value: '', placeholder: '5000', autocomplete: 'off' });
       var cite = SEL({ id: 'hh-up-cite', 'class': 'input' }, [{ value: '', label: t('hh.up.cite.none') }].concat(['forward', 'backward', 'both'].map(function (k) { return { value: k, label: t('hh.up.cite.' + k) }; })), '');
       var err = h('p', { 'class': 'hh-err', role: 'alert', hidden: true });
       var planHost = h('div', { id: 'hh-plan-host' }, planView(plan));
@@ -253,17 +259,25 @@
           if (!/^\d{4}-\d{2}-\d{2}$/.test(start.value.trim())) { err.textContent = t('hh.up.startBad'); err.hidden = false; start.focus(); return null; }
           o.start = start.value.trim();
         }
+        if (end.value.trim()) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(end.value.trim())) { err.textContent = t('hh.up.endBad'); err.hidden = false; end.focus(); return null; }
+          o.end = end.value.trim();
+        }
         if (months.value.trim()) {
           if (!/^\d{1,2}$/.test(months.value.trim())) { err.textContent = t('hh.up.monthsBad'); err.hidden = false; months.focus(); return null; }
           o.overlap_months = parseInt(months.value.trim(), 10);
+        }
+        if (cap.value.trim()) {
+          if (!/^\d{1,6}$/.test(cap.value.trim()) || parseInt(cap.value.trim(), 10) < 1 || parseInt(cap.value.trim(), 10) > 100000) { err.textContent = t('hh.up.capBad'); err.hidden = false; cap.focus(); return null; }
+          o.cap = parseInt(cap.value.trim(), 10);
         }
         if (cite.value) { o.cite = cite.value; }
         return o;
       }
       MA.dom.mount(host,
         h('form', { 'class': 'hh-up-form', onsubmit: function (ev) { ev.preventDefault(); } },
-          h('div', { 'class': 'toolbar' }, F(t('hh.up.anchorLabel'), anchor), F(t('hh.up.startLabel'), start),
-            F(t('hh.up.monthsLabel'), months, t('hh.up.monthsHint')), F(t('hh.up.citeLabel'), cite)), err,
+          h('div', { 'class': 'toolbar' }, F(t('hh.up.anchorLabel'), anchor), F(t('hh.up.startLabel'), start), F(t('hh.up.endLabel'), end, t('hh.up.endHint')),
+            F(t('hh.up.monthsLabel'), months, t('hh.up.monthsHint')), F(t('hh.up.capLabel'), cap, t('hh.up.capHint')), F(t('hh.up.citeLabel'), cite)), err,
           h('div', { 'class': 'toolbar' },
             h('button', { type: 'button', 'class': 'btn', id: 'hh-up-preview', onclick: function () {
               var o = opts();

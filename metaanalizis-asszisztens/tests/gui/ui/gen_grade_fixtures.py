@@ -112,7 +112,7 @@ def main(argv=None):
     def view(o, r, journal_row):
         return {"schema": "szk.ma.grade-view/v1", "outcome": outcome_info(o), "run": r, "grade": None,
                 "path": "06_kezirat/grade/%s.grade.json" % o["id"], "journal": journal_row, "unresolved": [],
-                "missing": list(grade_route.DOMAINS), "run_matches": None,
+                "missing": list(grade_route.DOMAINS), "run_matches": None, "computed_certainty": None,
                 "conventions": {"grade_suspected": "unresolved"}, "vocab": grade_route.vocab(), "engine": ALL_ENGINE}
 
     # ---------------------------------------------------------------- tanács és SoF: a VALÓDI motor (grade_help)

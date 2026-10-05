@@ -25,7 +25,9 @@
         "H1",
         "H2",
         "H3",
-        "H4"
+        "H4",
+        "H12",
+        "H13"
        ],
        "tools": {
         "amstar2": {
@@ -62,12 +64,16 @@
         "quadas2": {
          "mode": "bridge",
          "feature": "rob",
-         "guards": []
+         "guards": [
+          "H12"
+         ]
         },
         "quips": {
          "mode": "bridge",
          "feature": "rob",
-         "guards": []
+         "guards": [
+          "H13"
+         ]
         },
         "rob2": {
          "mode": "bridge",
@@ -77,12 +83,17 @@
         "robins-e": {
          "mode": "bridge",
          "feature": "rob",
-         "guards": []
+         "guards": [
+          "H12"
+         ]
         },
         "robins-i": {
          "mode": "bridge",
          "feature": "rob",
-         "guards": []
+         "guards": [
+          "H12",
+          "H13"
+         ]
         },
         "robis": {
          "mode": "bridge",
@@ -98,8 +109,8 @@
         }
        },
        "remedy": {
-        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
-        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, az őrökkel (H1, H2, H3, H4, H12, H13). A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is az őrök kijavítják az ismert hibáit, vagy megjelölik, ahol az eredménye nem megbízható — ott a motor ítélete számít.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the guards (H1, H2, H3, H4, H12, H13). The direct JSON link needs validator 1.1 (V1); meanwhile the guards correct its known bugs, or flag where its result is unreliable — there the engine verdict counts."
        }
       },
       "figure-forge": {
@@ -168,8 +179,8 @@
        "state": "legacy",
        "mode": "bridge",
        "remedy": {
-        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
-        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, az őrökkel (H1, H2, H3, H4, H12, H13). A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is az őrök kijavítják az ismert hibáit, vagy megjelölik, ahol az eredménye nem megbízható — ott a motor ítélete számít.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the guards (H1, H2, H3, H4, H12, H13). The direct JSON link needs validator 1.1 (V1); meanwhile the guards correct its known bugs, or flag where its result is unreliable — there the engine verdict counts."
        },
        "guards": [],
        "standalone": true,
@@ -188,8 +199,8 @@
        "state": "legacy",
        "mode": "bridge",
        "remedy": {
-        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
-        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, az őrökkel (H1, H2, H3, H4, H12, H13). A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is az őrök kijavítják az ismert hibáit, vagy megjelölik, ahol az eredménye nem megbízható — ott a motor ítélete számít.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the guards (H1, H2, H3, H4, H12, H13). The direct JSON link needs validator 1.1 (V1); meanwhile the guards correct its known bugs, or flag where its result is unreliable — there the engine verdict counts."
        },
        "guards": [
         {
@@ -216,8 +227,8 @@
        "state": "legacy",
        "mode": "bridge",
        "remedy": {
-        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
-        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, az őrökkel (H1, H2, H3, H4, H12, H13). A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is az őrök kijavítják az ismert hibáit, vagy megjelölik, ahol az eredménye nem megbízható — ott a motor ítélete számít.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the guards (H1, H2, H3, H4, H12, H13). The direct JSON link needs validator 1.1 (V1); meanwhile the guards correct its known bugs, or flag where its result is unreliable — there the engine verdict counts."
        },
        "guards": [
         {
@@ -244,8 +255,8 @@
        "state": "legacy",
        "mode": "bridge",
        "remedy": {
-        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
-        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, az őrökkel (H1, H2, H3, H4, H12, H13). A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is az őrök kijavítják az ismert hibáit, vagy megjelölik, ahol az eredménye nem megbízható — ott a motor ítélete számít.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the guards (H1, H2, H3, H4, H12, H13). The direct JSON link needs validator 1.1 (V1); meanwhile the guards correct its known bugs, or flag where its result is unreliable — there the engine verdict counts."
        },
        "guards": [
         {
@@ -272,8 +283,8 @@
        "state": "legacy",
        "mode": "bridge",
        "remedy": {
-        "hu": "A validator 1.0.0 régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a hibáit.",
-        "en": "validator 1.0.0 runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
+        "hu": "A validator 1.0.0 régi (bridge) módban fut, az őrökkel (H1, H2, H3, H4, H12, H13). A közvetlen JSON-kapcsolathoz a validator 1.1 (V1) kell; addig is az őrök kijavítják az ismert hibáit, vagy megjelölik, ahol az eredménye nem megbízható — ott a motor ítélete számít.",
+        "en": "validator 1.0.0 runs in legacy (bridge) mode with the guards (H1, H2, H3, H4, H12, H13). The direct JSON link needs validator 1.1 (V1); meanwhile the guards correct its known bugs, or flag where its result is unreliable — there the engine verdict counts."
        },
        "guards": [
         {

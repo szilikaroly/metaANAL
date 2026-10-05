@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""validator-adapter — RoB-család, PROBAST+AI, TRIPOD+AI, GRADE, AMSTAR 2 (terv 4.11, 5.0 H1–H4, 5.4, 6.5).
+"""validator-adapter — RoB-család, PROBAST+AI, TRIPOD+AI, GRADE, AMSTAR 2 (terv 4.11, 5.0 H1–H4, H12, H13, 5.4, 6.5).
 
 Egy ``szk.appraisal/v1`` értékelést a validator pluginnal KERESZTELLENŐRIZ, és ``szk.appraisal-result/v1``-et ad.
 Az ítéletek és a teljesség elsődleges forrása a motor (``metaelemzes.api``); ez az adapter a validator saját
@@ -27,6 +27,14 @@ kézfogás ``known_issues``-a szerint):
 - **H4** (AMSTAR 2): eszközönkénti álnév-tábla a globális ``_norm`` helyett — a ``partial_yes`` mindig
   „Partial yes” szöveggel megy (soha „PY”, amit a validator „probably yes”-nek olvasna); az 1.0.0 besorolása a
   ``weakness`` konvenciónak felel meg, és így is címkézzük (a projekt konvenciója ``meets``, KB AMSTAR2-00).
+- **H12** (polaritás): a validator 1.0.0 referenciafájljában néhány tétel polaritás-címkéje eltér a publikált
+  eszköztől (QUADAS-2 1.2/1.3, ROBINS-E 2.3/6.2 és ROBINS-I 6.3 „reverse”, a ROBINS-E 5.2 nem) — a motor
+  definíciója a publikált változatot követi. Ha ilyen tétel válaszolt, az érintett domének és az összítélet
+  validator-ítélete nem megbízható (``reliable: false``, ``unreliable_domains``); a motor ítélete számít.
+- **H13** (számozás): a motor a publikált számozást használja (ROBINS-I 2016: ``numbering_changed``; QUIPS a–g:
+  ``validator_ids``), a validator 1.0.0 a régit — ugyanaz az azonosító MÁS kérdést jelöl. Ezeket a tételeket a híd
+  NEM küldi át (különben a validator rossz kérdésre adott választ értékelne); a validator teljessége és ítélete így
+  nem vethető össze a motoréval (``comparable: false``).
 
 Az implikált ítélet a validator ``algorithm`` címkéjével jön (``conservative`` = NEM a hivatalos folyamatábra) —
 hivatalos eredményként soha nem jeleníthető meg (6.5). Statisztikát nem számol; a teljesség csak darabszám."""
@@ -110,6 +118,49 @@ GUARD_TEXT = {
                   "follows the 'weakness' convention (the project convention is 'meets', KB AMSTAR2-00)."},
            "convention_weakness"),
 }
+GUARD_TEXT.update({
+    "H12": ({"hu": "H12: a validator 1.0.0 polaritás-címkéje ezeknél a tételeknél eltér a publikált eszköztől (és a "
+                   "motor definíciójától): %s — ezért az érintett domének (%s) és az összítélet validator-ítélete "
+                   "nem megbízható; a motor ítélete számít.",
+             "en": "H12: validator 1.0.0 tags these items with a polarity that differs from the published tool (and "
+                   "the engine definition): %s — so its verdict for the affected domains (%s) and overall is "
+                   "unreliable; the engine verdict counts."}, "polarity_differs"),
+    "H13": ({"hu": "H13: a validator 1.0.0 régi tételszámozást használ, a motor a publikáltat: ugyanez az azonosító "
+                   "ott MÁS kérdés (%s). Ezek a válaszok nem mentek át, így a validator teljessége és ítélete nem "
+                   "vethető össze a motoréval.",
+             "en": "H13: validator 1.0.0 uses an old item numbering, the engine the published one: the same id is a "
+                   "DIFFERENT question there (%s). These answers were not sent, so the validator's completeness and "
+                   "verdict are not comparable with the engine's."}, "numbering_differs"),
+})
+# H12: a validator 1.0.0 polaritás-címkéi, amelyek eltérnek a publikált eszköztől (a motor definíciója szerint);
+# a router↔reverse eltérés is az (ROBINS-I 1.3 és 2.1: a validatornál „reverse”, a publikált eszközben elágazó kérdés)
+POLARITY_DIFFERS = {"quadas2": ("1.2", "1.3"), "robins-e": ("2.3", "5.2", "6.2"), "robins-i": ("1.3", "2.1", "6.3")}
+_POLARITY_WORDS = ("normal", "reverse", "router", "none")
+
+
+def polarity_differs(tool, instrument=None):
+    """A H12-tételek: a fenti tábla ÉS a motor eszköz-definíciójának validator_differences-bejegyzései, ahol a
+    validator és a motor polaritása eltér (így a definíció bővülése is érvényesül)."""
+    out = list(POLARITY_DIFFERS.get(tool, ()))
+    for d in (instrument or {}).get("validator_differences") or ():
+        if not isinstance(d, dict):
+            continue
+        a, b = d.get("validator"), d.get("here")
+        if a in _POLARITY_WORDS and b in _POLARITY_WORDS and a != b and isinstance(d.get("item"), str) \
+                and d["item"] not in out:
+            out.append(d["item"])
+    return tuple(out)
+# melyik őr melyik eszközt érinti (status().tools[*].guards)
+GUARD_TOOLS = (("H1", ("tripod-ai",)), ("H2", ("probast-ai",)), ("H3", ("grade",)), ("H4", ("amstar2",)),
+               ("H12", tuple(sorted(POLARITY_DIFFERS))), ("H13", ("quips", "robins-i")))
+
+
+def guard_order(ids):
+    """Az őr-azonosítók természetes sorrendben (H1, H2, …, H12, H13 — nem betűrendben)."""
+    def key(gid):
+        num = gid[1:] if gid[:1] == "H" else ""
+        return (0, int(num), gid) if num.isdigit() else (1, 0, gid)
+    return sorted(ids, key=key)
 VERY_LARGE_GUARD = ({"hu": "A validator 1.0.0 a „nagyon nagy hatást” csak +1-nek számolja (a GRADE szerint +2 is "
                            "lehet); a bizonyossága itt nem megbízható, a motor számol.",
                      "en": "validator 1.0.0 counts a 'very large effect' as +1 only (GRADE allows +2); its certainty "
@@ -201,6 +252,28 @@ def _tiers(instrument):
     roll = instrument.get("rollup") if isinstance(instrument, dict) else None
     tiers = roll.get("tiers") if isinstance(roll, dict) else None
     return tiers if isinstance(tiers, dict) else {}
+
+
+def renumbered(instrument):
+    """H13: a motor definíciójának azon azonosítói, amelyek a validator 1.0.0-ban MÁS kérdést jelölnek
+    (``numbering_changed.items``), illetve — ha a validator azonosítói teljesen mások (``validator_ids``, pl. QUIPS) —
+    a validator saját azonosítói. → (ids frozenset, a motor szerinti változás-lista)"""
+    if not isinstance(instrument, dict):
+        return frozenset(), []
+    nc = instrument.get("numbering_changed")
+    changed = [str(x) for x in (nc.get("items") or ()) if isinstance(x, str)] if isinstance(nc, dict) else []
+    vids = [str(x) for x in instrument.get("validator_ids") or () if isinstance(x, str)]
+    own = {str(it.get("id")) for it in instrument.get("items") or () if isinstance(it, dict)}
+    if vids and not (own & set(vids)):
+        return frozenset(vids), sorted(set(vids))
+    return frozenset(changed), changed
+
+
+def guard(gid, *args):
+    msg, effect = GUARD_TEXT[gid]
+    if args:
+        msg = {k: v % args for k, v in msg.items()}
+    return {"id": gid, "message": msg, "effect": effect}
 
 
 def minimal_json_doc(doc):
@@ -432,22 +505,22 @@ class ValidatorAdapter(Adapter):
         active = self.active_guards(cap)
         per_tool = {}
         for tool, (_script, _vt, feat) in sorted(TOOLS.items()):
-            g = [gid for gid, tools in (("H1", ("tripod-ai",)), ("H2", ("probast-ai",)), ("H3", ("grade",)),
-                                        ("H4", ("amstar2",))) if tool in tools and gid in active]
+            g = [gid for gid, tools in GUARD_TOOLS if tool in tools and gid in active]
             per_tool[tool] = {"mode": self.mode(tool, cap), "feature": feat, "guards": g}
         remedy = None
         state = cap.get("state") or "absent"
         if state not in USABLE_STATES:
             remedy = cap.get("todo") or _i18n("A validator plugin nem érhető el.", "The validator plugin is unavailable.")
         elif state == "legacy":
-            remedy = _i18n("A validator %s régi (bridge) módban fut, a H1–H4 őrökkel. A közvetlen JSON-kapcsolathoz a "
-                           "validator 1.1 (V1) kell; addig is minden eredmény megbízható, mert az őrök kijavítják a "
-                           "hibáit." % (cap.get("version") or "?"),
-                           "validator %s runs in legacy (bridge) mode with the H1–H4 guards. The direct JSON link needs "
-                           "validator 1.1 (V1); results stay reliable meanwhile because the guards correct its bugs."
-                           % (cap.get("version") or "?"))
+            ids = ", ".join(guard_order(active)) or "—"
+            remedy = _i18n("A validator %s régi (bridge) módban fut, az őrökkel (%s). A közvetlen JSON-kapcsolathoz a "
+                           "validator 1.1 (V1) kell; addig is az őrök kijavítják az ismert hibáit, vagy megjelölik, "
+                           "ahol az eredménye nem megbízható — ott a motor ítélete számít." % (cap.get("version") or "?", ids),
+                           "validator %s runs in legacy (bridge) mode with the guards (%s). The direct JSON link needs "
+                           "validator 1.1 (V1); meanwhile the guards correct its known bugs, or flag where its result "
+                           "is unreliable — there the engine verdict counts." % (cap.get("version") or "?", ids))
         return {"plugin": PLUGIN, "state": state, "version": cap.get("version"), "mode": cap.get("mode"),
-                "guards": sorted(active), "tools": per_tool, "remedy": remedy}
+                "guards": guard_order(active), "tools": per_tool, "remedy": remedy}
 
     # -- futtatás
     def _call(self, script, args, parse="text", timeout=None, cwd=None):
@@ -490,13 +563,49 @@ class ValidatorAdapter(Adapter):
             raise ValueError("Érvénytelen hatókör (scope).")
         if TOOLS[tool][0] == "checklist.py" and scope not in CHECKLIST_SCOPES:
             scope = "both"
+        # H13: az eltérő számozású tételek válaszai nem mennek át (a validatorban ugyanez az azonosító más kérdés)
+        dropped = []
+        if "H13" in self.active_guards(cap):
+            ids, _changed = renumbered(instrument)
+            if ids:
+                answers = {}
+                for k, v in (doc.get("answers") or {}).items():
+                    if k.split("/")[-1] in ids and (v or {}).get("value") is not None:
+                        dropped.append(k)
+                    else:
+                        answers[k] = v
+                doc = dict(doc, answers=answers)
         work = tempfile.mkdtemp(prefix="validator-", dir=str(self.caps.tmp_dir()))
         try:
             if mode == "json":
-                return self._check_json(doc, tool, scope, cap, instrument, work, timeout)
-            return self._check_bridge(doc, tool, scope, cap, instrument, work, timeout)
+                res = self._check_json(doc, tool, scope, cap, instrument, work, timeout)
+            else:
+                res = self._check_bridge(doc, tool, scope, cap, instrument, work, timeout)
         finally:
             shutil.rmtree(work, ignore_errors=True)
+        if res.get("ok"):
+            self._numbering_polarity(res["data"], tool, cap, instrument, doc, dropped)
+        return res
+
+    def _numbering_polarity(self, out, tool, cap, instrument, doc, dropped):
+        """H13 és H12 (a módtól független utófeldolgozás): őr-bejegyzés, összevethetőség, megbízhatóság."""
+        active = self.active_guards(cap)
+        guards = out.setdefault("guards", [])
+        ids, changed = renumbered(instrument)
+        if "H13" in active and ids:
+            guards.append(dict(guard("H13", ", ".join(changed)), items=sorted(dropped)))
+            out["comparable"] = False
+        pol = polarity_differs(tool, instrument)
+        if "H12" in active and pol:
+            values = _values(doc)
+            hit = [k for k in pol if values.get(k) is not None]
+            if hit:
+                doms = sorted({k.split(".")[0] for k in hit})
+                guards.append(dict(guard("H12", ", ".join(hit), ", ".join(doms)), items=hit, domains=doms))
+                out["unreliable_domains"] = doms
+                ov = out.get("overall")
+                if isinstance(ov, dict):
+                    ov["reliable"] = False
 
     # -- json mód (V1)
     def _check_json(self, doc, tool, scope, cap, instrument, work, timeout):

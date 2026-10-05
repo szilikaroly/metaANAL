@@ -291,7 +291,7 @@ def apply_checks(cfg, results):
 
 
 def set_enabled(cfg, enable=(), disable=(), env=None):
-    """Forrásválasztás (``sources set --enable … --disable …``). Visszaad: ``(új_cfg, változások,
+    """Forrásválasztás (``sources <projekt> --enable … --disable … --actor user:<név>``). Visszaad: ``(új_cfg, változások,
     figyelmeztetések)``; a változások a ``source_config`` döntés értéke (a hívó naplózza)."""
     enable = parse_source_list(enable) or []
     disable = parse_source_list(disable) or []
@@ -452,7 +452,7 @@ def main(argv=None, stdout=None, env=None, http=None):
         else:
             out.write(msg + "\n")
         return 2
-    nxt = None if args.check else "python -m metaelemzes.headhunter sources --check"
+    nxt = None if args.check else "ma.py headhunter sources --check"
     if args.json:
         data = {"sources": res["sources"], "rows": res["rows"], "checked": res["checked"], "secrets": res["secrets"]}
         env_doc = {"ok": res["exit_code"] == 0, "data": data,
@@ -466,7 +466,7 @@ def main(argv=None, stdout=None, env=None, http=None):
         if not args.check:
             lines.append("")
             lines.append(("Not checked yet. Run: %s" if args.lang == "en" else "Még nem ellenőriztük. Futtasd: %s")
-                         % "python -m metaelemzes.headhunter sources --check")
+                         % "ma.py headhunter sources --check")
         out.write(net.redact("\n".join(lines) + "\n", env))
     return res["exit_code"]
 

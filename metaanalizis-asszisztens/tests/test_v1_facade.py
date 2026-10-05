@@ -201,7 +201,9 @@ class TestSurface(unittest.TestCase):
 
     def test_signatures_match_workbench_calls(self):
         p = inspect.signature(api.render_figure).parameters
-        self.assertFalse({"run_dir", "project_root", "run_id"} & set(p), "a felület csak plot/kind/lang/annotate-et ad")
+        # a munkapad ábra-exportja (adapters_figures._engine_svg) ezeket adja át, ha a függvény elfogadja: a forest /
+        # funnel / Doi a futás mappájából rajzolható újra más nyelven / rétegekkel
+        self.assertTrue({"plot", "kind", "lang", "annotate", "run_dir", "project_root", "run_id"} <= set(p))
         self.assertNotIn("path", list(inspect.signature(api.compare).parameters)[0])
         for kw in ("key", "tolerance", "measure", "spec"):
             self.assertIn(kw, inspect.signature(api.compare).parameters)
@@ -567,7 +569,31 @@ class TestPrismaAndFigure(_Base):
         self.assertEqual(rc, 0, err)
         with open(out, encoding="utf-8") as fh:
             self.assertEqual(fh.read(), api.render_figure(plot, "loo", "en", True)["svg"])
-        self.assertIsNone(api.render_figure(plot, "forest"))
+        self.assertIsNone(api.render_figure(plot, "forest"))           # futásmappa nélkül: a futás saját SVG-je
+        # forest / funnel / Doi a futás mappájából: a futás nyelvével és annotálásával bájtra a futás saját SVG-je
+        # (a motor újraszámol, és a számbeli magot a plot_data.json-hoz köti); angolul, rétegekkel is készül
+        for kind in ("forest", "funnel", "doi"):
+            again = api.render_figure(plot, kind, plot.get("display_locale") or "hu", False, run_dir=self.run_dir)
+            with open(os.path.join(self.run_dir, "%s.svg" % kind), encoding="utf-8") as fh:
+                self.assertEqual(again["svg"], fh.read(), kind)
+            en = api.render_figure(plot, kind, "en", True, run_dir=self.run_dir)
+            self.assertEqual((en["lang"], en["kind"], en["source"]), ("en", kind, "run_rerender"))
+            self.assertIn('id="layer-', en["svg"], kind)
+            if kind == "forest":
+                prim = [x for x in plot["summaries"] if x.get("primary")][0]
+                self.assertIn(prim["display_text"]["en"].replace("-", "\u2212"), en["svg"].replace("-", "\u2212"))
+        rc, out, err = run_cli("figure", "--plot", self.run_dir, "--kind", "forest", "--lang", "en", "--annotate",
+                               "--json")
+        self.assertEqual(rc, 0, err)
+        self.assertEqual(json.loads(out)["svg"], api.render_figure(plot, "forest", "en", True,
+                                                                   run_dir=self.run_dir)["svg"])
+        # a fidelitás-őr: megváltozott adatfájlnál vagy eltérő plot_data-nál nem rajzol (ValueError)
+        bad = json.loads(json.dumps(plot))
+        bad["studies"][0]["display_text"] = {"hu": "9.99 [9.99; 9.99]", "en": "9.99 [9.99; 9.99]"}
+        with self.assertRaises(ValueError):
+            api.render_figure(bad, "forest", "en", True, run_dir=self.run_dir)
+        rc, _o, err = run_cli("figure", "--plot", os.path.join(self.run_dir, "plot_data.json"), "--kind", "forest")
+        self.assertEqual(rc, 0, err)                                    # a plot_data.json mellett ott a run.json
         # a riport megemlíti az E4c ábrákat
         with open(os.path.join(self.run_dir, "report.md"), encoding="utf-8") as fh:
             self.assertIn("`cumulative.svg`, `bubble.svg`", fh.read())

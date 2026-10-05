@@ -257,7 +257,11 @@ Fixture-fájl: `{"description": "…", "routes": [{"method": "GET", "path": "/ap
 A `dist/index.html`-t a szerver közvetlenül szolgálja ki (`GET /`, a `{{CSP_NONCE}}` helyeket válaszonként cseréli);
 a `ma_gui/static/index.html` csak tartalék oldal újraépítési útmutatással, ha a `dist/` hiányzik. CSP-sértés és
 JS-kivétel nincs, az oldalon belüli önteszt (`?selftest=1`) zöld. A végponttól végpontig tartó elfogadási teszt
-(`node tests/gui/ui/e2e.spec.js`) a valódi szerverrel fut.
+(`node tests/gui/ui/e2e.spec.js`) a valódi szerverrel fut; a v1 elfogadása (terv 9.3) `node tests/gui/ui/e2e_v1.spec.js`
+(projektek és szerver: `tests/gui/ui/e2e_v1_server.py`, X-szabály-projekt: `e2e_v1_xrules.py`; részenként:
+`E2E_V1_ONLY=appraisal,grade,dual,plots,figures,composer,hh,xrules,final,replay`; a valódi pluginok `MA_GUI_PLUGIN_DIRS`,
+a figure-forge-hoz `MA_GUI_TEST_FF_PYTHON`; a Metaheadhunter kazettái `tests/reference/headhunter/cassettes/gui_e2e/`,
+újrafelvétel élő hálózattal: `E2E_V1_HH_RECORD=1`).
 
 - `POST /api/session` törzse `{"launch_code": "<kód>"}`, válasza `data.token` (api.js `SESSION_BODY_KEY`).
 - `GET /api/project` `data`: `szk.ma.project/v1` + opcionális `badges: {fül: [{kind, text}]}`, `user.initials`.
@@ -428,8 +432,10 @@ Szerver-alakok (`ma_gui/routes/grade*.py`; a motor-függvényeket a `grade_engin
   dry_run?}`) → `szk.ma.sof-view/v1` (`preview`: a motor `sof()`-ja; oszlopok a `columns`-ból, cellánként a motor kész
   szövege, a forrásmező a `sources`-ból); `POST /api/sof/<kimenet>/export` `{format: csv|md, lang}` → `{path, url (aláírt),
   content?}` (Excel-biztos CSV: `'` előtag, BOM, CRLF; hu `;`, en `,`).
-- `GET/PUT /api/amstar2[?rater=]` — AMSTAR 2 önellenőrzés (ugyanaz a fájl, mint az értékelés-végpontoké), a motor
-  besorolásával mindkét konvencióval; eltérő összítélethez `override_reason` (X017).
+- AMSTAR 2 önellenőrzés: EGY végpont, az értékelésé (`GET/PUT /api/appraisals/review/amstar2?rater=`,
+  `review.amstar2.<értékelő>.json`); a motor besorolása mindkét konvencióval a `check.amstar2`-ben (`rating`,
+  `alternative`, `differs`); eltérő összítélethez `override_reason` (X017). A korábbi párhuzamos `GET/PUT /api/amstar2`
+  a v1 integrációban megszűnt (egy fájl-elrendezés, egy út).
 - `GET/PUT /api/protocol` (`{title?, question{P,I,C,O}?, review_type?, registration{registry, id}|null}` + If-Match) — a
   ma-projekt.json protokoll-mezői; a kimenetek a `POST /api/project {action: 'outcome', replace?}`, az adatosztály a
   `{action: 'data_class'}`, az előre rögzített jelölés a `PUT /api/specs/<név>` útján megy.
@@ -495,7 +501,10 @@ szerver: `ma_gui/adapters/{validator,figureforge,composer,svgaudit}.py`, `ma_gui
 tesztek: `tests/gui/test_v1_adapters.py` (stub-pluginok minden állapotban, `tests/gui/_adapters_stubs.py`),
 `tests/gui/test_v1_adapters_real.py` (a valódi szk-plugins: `MA_GUI_PLUGIN_DIRS=…/plugins`, figure-forge-hoz `MA_GUI_TEST_FF_PYTHON`
 vagy `MA_GUI_TEST_FF_INSTALL=1`; hiányzó függőségnél kimarad), `tests/gui/ui/test_adapters_fixtures.py`, `node tests/gui/ui/adapters.spec.js`.
-A validator 1.0.0 rögzített kimenetei (H1–H4 reprodukció): `tests/gui/adapters_golden/validator-1.0.0/`.
+A validator 1.0.0 rögzített kimenetei (H1–H4 reprodukció): `tests/gui/adapters_golden/validator-1.0.0/`. A v1 elfogadási teszt
+két további 1.0.0-hibát talált: **H12** (eltérő polaritás-címke: QUADAS-2 1.2/1.3, ROBINS-E 2.3/5.2/6.2, ROBINS-I 6.3 → az érintett
+domének és az összítélet `reliable: false`, `unreliable_domains`) és **H13** (régi tételszámozás: ROBINS-I 4.3–4.6/5.2/5.3, QUIPS →
+ezek a válaszok nem mennek át, `comparable: false`); mindkettő módtól független utófeldolgozás (`ValidatorAdapter._numbering_polarity`).
 
 Képernyők: `figures` (4 Elemzés › Ábra-export; `?run=&kind=`), `prisma-composer` (2 PRISMA › Composer-forrás). A Képességek képernyő
 (`screens/capabilities.js`) egy sorral illeszti be az `MA.adaptersCaps.panel(ctx)`-et.
@@ -503,7 +512,7 @@ Képernyők: `figures` (4 Elemzés › Ábra-export; `?run=&kind=`), `prisma-com
 | Modul | API |
 |---|---|
 | `MA.adaptersCaps` | `panel(ctx) → <section>` (GET /api/adapters táblája: funkció, plugin, állapot ●◑◐○ + szöveg, mód, tartalék, teendő, H-őrök; átalakítók), `stateCell(state, extra?)`, `modeText(mode)` |
-| `MA.adaptersValidator` | `box(getDoc, {id?}) → <section>` („Ellenőrzés a validatorral” → POST /api/validator/check; CSAK a válaszértékek mennek), `render(result)`, `minimal(doc)` — az értékelő panel `extra` horgába illeszthető |
+| `MA.adaptersValidator` | `box(getDoc, {id?, engine?}) → <section>` („Ellenőrzés a validatorral” → POST /api/validator/check; CSAK a válaszértékek mennek; `engine()` → a motor ellenőrzése: „Összevetés a motorral” — teljesség, implikált ítélet, AMSTAR 2, GRADE, NOS soronként egyezik / eltér az okkal, `.adp-val-cmp li[data-k][data-agree]`), `render(result, engine?)`, `compare(result, engine)`, `minimal(doc)` — az értékelő panel `extra` horgába illeszthető |
 
 Szerver-alakok:
 - `GET /api/adapters` → `szk.ma.adapters/v1` `{plugins{validator, figure-forge, composer}, features[{id, plugin, label, state:

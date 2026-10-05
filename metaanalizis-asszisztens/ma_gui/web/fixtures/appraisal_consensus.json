@@ -1,5 +1,5 @@
 {
- "description": "Konszenzus-nézet: két független emberi értékelés + κ (CSONK)",
+ "description": "Konszenzus-nézet: két független emberi értékelés + κ (motor)",
  "routes": [
   {
    "method": "GET",
@@ -13,157 +13,274 @@
       "tool": "rob2",
       "a": "KP",
       "b": "SzK",
+      "pairs": 1,
       "items_compared": 22,
       "agree": 21,
       "disagree": 1,
+      "agreement_pct": 95.45454545454545,
       "agreement_pct_text": "95.5%",
       "kappa": 0.9123505976095619,
+      "kappa_se": 0.07844927903460337,
       "kappa_ci": [
-       0.744510640162025,
-       1.080190555057099
+       0.7585928360886062,
+       1.0
       ],
+      "level": 0.95,
+      "kappa_level": "item",
+      "kappa_method": "Cohen 1960; aszimptotikus SE: Fleiss, Cohen & Everitt 1969; normál CI",
       "kappa_text": {
-       "hu": "κ = 0.91 [0.74; 1.08]",
-       "en": "κ = 0.91 [0.74; 1.08]"
+       "hu": "κ = 0.91 [0.76; 1.00]",
+       "en": "κ = 0.91 [0.76; 1.00]"
       },
+      "categories": [
+       "no",
+       "no_information",
+       "probably_yes",
+       "yes"
+      ],
+      "table": [
+       [
+        8,
+        0,
+        0,
+        0
+       ],
+       [
+        0,
+        0,
+        1,
+        0
+       ],
+       [
+        0,
+        0,
+        0,
+        0
+       ],
+       [
+        0,
+        0,
+        0,
+        13
+       ]
+      ],
       "items": [
        {
         "key": "1.1",
+        "unit": "ARONSON1948",
+        "domain": "1",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "1.2",
+        "unit": "ARONSON1948",
+        "domain": "1",
+        "pass": null,
         "a": "no_information",
         "b": "probably_yes",
         "agree": false
        },
        {
         "key": "1.3",
+        "unit": "ARONSON1948",
+        "domain": "1",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
        },
        {
         "key": "2.1",
+        "unit": "ARONSON1948",
+        "domain": "2",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "2.2",
+        "unit": "ARONSON1948",
+        "domain": "2",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "2.3",
+        "unit": "ARONSON1948",
+        "domain": "2",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "2.4",
+        "unit": "ARONSON1948",
+        "domain": "2",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "2.5",
+        "unit": "ARONSON1948",
+        "domain": "2",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "2.6",
+        "unit": "ARONSON1948",
+        "domain": "2",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "2.7",
+        "unit": "ARONSON1948",
+        "domain": "2",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
        },
        {
         "key": "3.1",
+        "unit": "ARONSON1948",
+        "domain": "3",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "3.2",
+        "unit": "ARONSON1948",
+        "domain": "3",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "3.3",
+        "unit": "ARONSON1948",
+        "domain": "3",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "3.4",
+        "unit": "ARONSON1948",
+        "domain": "3",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
        },
        {
         "key": "4.1",
+        "unit": "ARONSON1948",
+        "domain": "4",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
        },
        {
         "key": "4.2",
+        "unit": "ARONSON1948",
+        "domain": "4",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
        },
        {
         "key": "4.3",
+        "unit": "ARONSON1948",
+        "domain": "4",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "4.4",
+        "unit": "ARONSON1948",
+        "domain": "4",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "4.5",
+        "unit": "ARONSON1948",
+        "domain": "4",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
        },
        {
         "key": "5.1",
+        "unit": "ARONSON1948",
+        "domain": "5",
+        "pass": null,
         "a": "yes",
         "b": "yes",
         "agree": true
        },
        {
         "key": "5.2",
+        "unit": "ARONSON1948",
+        "domain": "5",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
        },
        {
         "key": "5.3",
+        "unit": "ARONSON1948",
+        "domain": "5",
+        "pass": null,
         "a": "no",
         "b": "no",
         "agree": true
+       }
+      ],
+      "disagreements": [
+       {
+        "key": "1.2",
+        "unit": "ARONSON1948",
+        "domain": "1",
+        "pass": null,
+        "a": "no_information",
+        "b": "probably_yes",
+        "agree": false
        }
       ],
       "domains": [
        {
         "domain": "1",
         "pass": null,
+        "unit": "ARONSON1948",
+        "kind": "domain_judgements",
         "a": "some_concerns",
         "b": "low",
         "agree": false
@@ -171,6 +288,8 @@
        {
         "domain": "2",
         "pass": null,
+        "unit": "ARONSON1948",
+        "kind": "domain_judgements",
         "a": "low",
         "b": "low",
         "agree": true
@@ -178,6 +297,8 @@
        {
         "domain": "3",
         "pass": null,
+        "unit": "ARONSON1948",
+        "kind": "domain_judgements",
         "a": "low",
         "b": "low",
         "agree": true
@@ -185,6 +306,8 @@
        {
         "domain": "4",
         "pass": null,
+        "unit": "ARONSON1948",
+        "kind": "domain_judgements",
         "a": "low",
         "b": "low",
         "agree": true
@@ -192,6 +315,8 @@
        {
         "domain": "5",
         "pass": null,
+        "unit": "ARONSON1948",
+        "kind": "domain_judgements",
         "a": "low",
         "b": "low",
         "agree": true
@@ -202,7 +327,148 @@
        "b": "low",
        "agree": false
       },
-      "excluded": []
+      "primary": "domain",
+      "domain_kappa": [
+       {
+        "kind": "domain_judgements",
+        "domain": "1",
+        "pass": null,
+        "n": 1,
+        "agree": 0,
+        "disagree": 1,
+        "kappa": null,
+        "kappa_se": null,
+        "kappa_ci": null,
+        "kappa_text": {
+         "hu": "κ nem számolható (egyetlen ítélet-pár)",
+         "en": "κ not estimable (a single pair of judgements)"
+        },
+        "categories": [
+         "low",
+         "some_concerns"
+        ]
+       },
+       {
+        "kind": "domain_judgements",
+        "domain": "2",
+        "pass": null,
+        "n": 1,
+        "agree": 1,
+        "disagree": 0,
+        "kappa": null,
+        "kappa_se": null,
+        "kappa_ci": null,
+        "kappa_text": {
+         "hu": "κ nem számolható (egyetlen ítélet-pár)",
+         "en": "κ not estimable (a single pair of judgements)"
+        },
+        "categories": [
+         "low"
+        ]
+       },
+       {
+        "kind": "domain_judgements",
+        "domain": "3",
+        "pass": null,
+        "n": 1,
+        "agree": 1,
+        "disagree": 0,
+        "kappa": null,
+        "kappa_se": null,
+        "kappa_ci": null,
+        "kappa_text": {
+         "hu": "κ nem számolható (egyetlen ítélet-pár)",
+         "en": "κ not estimable (a single pair of judgements)"
+        },
+        "categories": [
+         "low"
+        ]
+       },
+       {
+        "kind": "domain_judgements",
+        "domain": "4",
+        "pass": null,
+        "n": 1,
+        "agree": 1,
+        "disagree": 0,
+        "kappa": null,
+        "kappa_se": null,
+        "kappa_ci": null,
+        "kappa_text": {
+         "hu": "κ nem számolható (egyetlen ítélet-pár)",
+         "en": "κ not estimable (a single pair of judgements)"
+        },
+        "categories": [
+         "low"
+        ]
+       },
+       {
+        "kind": "domain_judgements",
+        "domain": "5",
+        "pass": null,
+        "n": 1,
+        "agree": 1,
+        "disagree": 0,
+        "kappa": null,
+        "kappa_se": null,
+        "kappa_ci": null,
+        "kappa_text": {
+         "hu": "κ nem számolható (egyetlen ítélet-pár)",
+         "en": "κ not estimable (a single pair of judgements)"
+        },
+        "categories": [
+         "low"
+        ]
+       }
+      ],
+      "judgement_kappa": {
+       "kind": "domain_judgements",
+       "n": 5,
+       "agree": 4,
+       "disagree": 1,
+       "kappa": 0.0,
+       "kappa_se": 0.0,
+       "kappa_ci": [
+        0.0,
+        0.0
+       ],
+       "kappa_text": {
+        "hu": "κ = 0.00 [0.00; 0.00]",
+        "en": "κ = 0.00 [0.00; 0.00]"
+       },
+       "categories": [
+        "low",
+        "some_concerns"
+       ]
+      },
+      "overall_kappa": {
+       "kind": "overall",
+       "n": 1,
+       "agree": 0,
+       "disagree": 1,
+       "kappa": null,
+       "kappa_se": null,
+       "kappa_ci": null,
+       "kappa_text": {
+        "hu": "κ nem számolható (egyetlen ítélet-pár)",
+        "en": "κ not estimable (a single pair of judgements)"
+       },
+       "categories": [
+        "low",
+        "some_concerns"
+       ]
+      },
+      "excluded": [],
+      "notes": [
+       {
+        "hu": "Csak a mindkét értékelőnél megválaszolt tételek számítanak; az AI-vázlat sosem értékelő.",
+        "en": "Only items answered by both raters count; an AI draft is never a rater."
+       },
+       {
+        "hu": "Elsődleges mérték a doménítéletek κ-ja (domain_kappa, judgement_kappa, overall_kappa; terv 5.4). A felső szintű κ másodlagos, tételszintű (jelző-kérdések); a kettős 'Nem alkalmazható' (útválasztás) párok kimaradnak (0). Egy párnál (egy vizsgálat) a doménenkénti κ nem számolható; az egyezés doménenként látszik.",
+        "en": "The primary statistic is κ on the domain judgements (domain_kappa, judgement_kappa, overall_kappa; plan 5.4). The top-level κ is secondary and item-level (signalling questions); double 'Not applicable' (routing) pairs are excluded (0). With one pair (one study) per-domain κ is not estimable; agreement is shown per domain."
+       }
+      ]
      }
     },
     "warnings": [],

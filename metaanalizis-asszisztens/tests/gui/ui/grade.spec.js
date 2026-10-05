@@ -73,8 +73,9 @@ function startStatic() {
   })));
 }
 
-function startReal(tmp, stub) {
-  const args = [HELPER, 'serve', tmp].concat(stub ? ['--stub'] : []);
+function startReal(tmp, mode) {
+  // mode: 'stub' (teszt-csonk motor), 'none' (a motor GRADE-függvényei kikapcsolva → 424), egyébként a valódi motor
+  const args = [HELPER, 'serve', tmp].concat(mode === 'stub' ? ['--stub'] : (mode === 'none' ? ['--no-engine'] : []));
   const proc = spawn('python3', args, { cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'] });
   let buf = '';
   let err = '';
@@ -235,10 +236,16 @@ async function partA() {
     check(await p.$eval('#gr-x019', (e) => e.hidden), 'feloldás után az X019-sáv eltűnik');
     check(!(await p.$eval('#gr-record', (b) => b.disabled)), 'a rögzítés engedélyezett');
     await p.click('#gr-record');
+    // a végső bizonyosság emberi ítélet (GRADE-09): az első rögzítés menti a piszkozatot és megerősítést kér, a
+    // választó a motor számolt szintjével előtöltve; az ember megerősíti → második rögzítés a certainty-vel
+    await p.waitForSelector('#gr-human-cert:not([hidden])');
+    check(await p.$eval('#gr-human-cert-sel', (e) => e.value) === 'low', 'a választó a számolt szinttel előtöltve (alacsony)');
+    await p.click('#gr-record');
     await p.waitForFunction(() => /rögzítve/.test((document.getElementById('ma-toasts') || {}).textContent || ''));
     await screen(p, 'grade');
     put = (await calls(p, 'PUT', '/api/grade/o1')).pop();
     check(put.body.record === true && put.body.grade.domains.publication_bias.step === -1, 'rögzítés: record + −1');
+    check(put.body.certainty === 'low', 'a rögzítés az ember megerősített szintjével (' + put.body.certainty + ')');
     check(/^"grade-o1-/.test(put.headers['If-Match'] || ''), 'rögzítés If-Match-csel (' + put.headers['If-Match'] + ')');
     check((await txt(p, '#gr-cert-val')).indexOf('alacsony') >= 0, 'bizonyosság a háttérből: alacsony (' + (await txt(p, '#gr-cert-val')) + ')');
     check((await txt(p, '#gr-journal')).indexOf('alacsony') >= 0, 'a napló sora frissült');
@@ -247,6 +254,64 @@ async function partA() {
     await p.click('#gr-save');
     check((await p.$eval('#gr-urat-large_effect', (e) => e.getAttribute('aria-invalid'))) === 'true', 'felminősítéshez is kötelező az indoklás');
     await finish(o, 'GRADE-út');
+  });
+
+  await test('FID-2/FID-3: elavult előtöltés nem rögzíthető; a rögzített EMBERI bizonyosság nem „javaslat”, az eltérő motor-szint külön látszik', async () => {
+    const o = await openDev('#/grade?outcome=o1');
+    const p = o.page;
+    await screen(p, 'grade');
+    await p.waitForSelector('#gr-adv-inconsistency .gr-adv');
+    await rate(p, 'risk_of_bias', 'serious', 'A súly 41%-a magas RoB-ú vizsgálatból.');
+    await rate(p, 'inconsistency', 'not serious', 'Az alcsoport magyarázza.');
+    await rate(p, 'indirectness', 'not serious', 'A populáció egyezik.');
+    await rate(p, 'imprecision', 'not serious', 'A CI szűk.');
+    await rate(p, 'publication_bias', 'undetected', 'A tölcsér szimmetrikus.');
+    await p.click('#gr-record');
+    await p.waitForSelector('#gr-human-cert:not([hidden])');
+    const first = await p.$eval('#gr-human-cert-sel', (e) => e.value);
+    check(first === 'moderate', 'előtöltés: a motor MOSTANI számolt szintje (mérsékelt): ' + first);
+    // FID-2: szerkesztés után az előtöltés elavult — nem maradhat a választóban
+    await rate(p, 'imprecision', 'serious', 'A CI átlépi a klinikai küszöböt.');
+    check(await p.$eval('#gr-human-cert-sel', (e) => e.value) === '', 'FID-2: szerkesztés után a választó üres (nincs elavult „mérsékelt”)');
+    await p.evaluate(() => window.MA.dev.fixtures.reset());
+    await p.click('#gr-record');
+    await p.waitForFunction(() => document.getElementById('gr-human-cert-sel') && document.getElementById('gr-human-cert-sel').value !== '', null, { timeout: 4000 });
+    const puts = await calls(p, 'PUT', '/api/grade/o1');
+    check(puts.length >= 1 && puts[0].body.certainty === undefined, 'FID-2: a második rögzítés NEM a régi szinttel ment (certainty nincs a kérésben)');
+    check(await p.$eval('#gr-human-cert-sel', (e) => e.value) === 'low', 'FID-2: az új előtöltés a 422 friss számolt szintje (alacsony)');
+    // az ember mást választ (mérsékelt) → rögzítés; a nézet az emberi ítéletet mutatja, a motor eltérő szintjét külön
+    await p.selectOption('#gr-human-cert-sel', 'moderate');
+    await p.click('#gr-record');
+    await p.waitForFunction(() => /rögzítve/.test((document.getElementById('ma-toasts') || {}).textContent || ''));
+    await screen(p, 'grade');
+    const put = (await calls(p, 'PUT', '/api/grade/o1')).pop();
+    check(put.body.certainty === 'moderate', 'a rögzítés az ember szintjével (mérsékelt)');
+    check(await p.$eval('#gr-cert-val', (e) => e.dataset.source) === 'human', 'FID-3: a bizonyosság forrása: ember (data-source=human)');
+    const cert = await txt(p, '#gr-cert');
+    check(cert.indexOf('mérsékelt') >= 0 && cert.indexOf('javasl') < 0, 'FID-3: „mérsékelt”, nem a motor javaslataként (' + cert + ')');
+    check((await txt(p, '#gr-cert-engine')).indexOf('alacsony') >= 0, 'FID-3: a motor eltérő számolt szintje (alacsony) külön jelezve');
+    await finish(o, 'FID-2/3');
+  });
+
+  await test('F11: külső alapkockázat forrás-hivatkozással (a lábjegyzetbe), hiányzó hivatkozásnál figyelmeztetés', async () => {
+    const o = await openDev('#/grade?outcome=o1');
+    const p = o.page;
+    await screen(p, 'grade');
+    await p.waitForSelector('#sof-table');
+    await p.click('#sof-add-risk');
+    await p.waitForSelector('#sof-cite-1');
+    check((await txt(p, '#sof-cite-warn-1')).length > 0, 'hivatkozás nélkül: figyelmeztetés (' + (await txt(p, '#sof-cite-warn-1')) + ')');
+    await p.fill('#sof-label-1', 'Magyar regiszter');
+    await p.fill('#sof-per-1', '12,5');
+    await p.fill('#sof-cite-1', 'KSH Népegészségügyi Adattár, 2023');
+    await p.press('#sof-cite-1', 'Tab');
+    check((await txt(p, '#sof-cite-warn-1')).trim() === '', 'hivatkozással: nincs figyelmeztetés');
+    await p.evaluate(() => window.MA.dev.fixtures.reset());
+    await p.click('#sof-preview');
+    await p.waitForFunction(() => window.MA.dev.fixtures.calls.some((c) => c.method === 'PUT' && c.path === '/api/sof/o1'), null, { timeout: 4000 });
+    const put = (await calls(p, 'PUT', '/api/sof/o1')).pop();
+    check(put.body.assumed_risks[1].note === 'KSH Népegészségügyi Adattár, 2023' && put.body.assumed_risks[1].source === 'external', 'a hivatkozás a kérésben (assumed_risks[1].note)');
+    await finish(o, 'F11');
   });
 
   await test('GRADE: mentetlen-őr, 424 (motor-tár nélkül), commit-futás nélküli kimenet', async () => {
@@ -388,7 +453,7 @@ async function realPage(srv) {
 async function partB() {
   await test('valódi szerver, motor v1 nélkül: a GRADE 424-et mutat magyarul, a Protokoll működik', async () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ma_grade_ui0_'));
-    const srv = await startReal(tmp, false);
+    const srv = await startReal(tmp, 'none');
     try {
       const o = await realPage(srv);
       const p = o.page;
@@ -414,7 +479,7 @@ async function partB() {
 
   await test('valódi szerver + teszt-csonk motor: GRADE mentés → X019 → feloldás → napló; SoF + Excel-biztos CSV; Protokoll', async () => {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ma_grade_ui1_'));
-    const srv = await startReal(tmp, true);
+    const srv = await startReal(tmp, 'stub');
     try {
       const o = await realPage(srv);
       const p = o.page;
@@ -435,6 +500,13 @@ async function partB() {
       check(await p.$eval('#gr-x019', (e) => !e.hidden), 'X019-sáv a valódi szerver nézetéből');
       const radios = await p.$$('#gr-step-publication_bias input[type="radio"]');
       await radios[0].check();
+      await p.click('#gr-record');
+      // a végső bizonyosság emberi ítélet (GRADE-09): a motor számolt szintje csak előtöltés — az első rögzítés a
+      // piszkozatot menti, és a megerősítést kéri; az ember a (motor által előtöltött) szintet erősíti meg
+      await p.waitForSelector('#gr-human-cert:not([hidden])');
+      check(await p.$eval('#gr-human-cert-sel', (e) => e.value) === 'moderate', 'a választó a motor számolt szintjével előtöltve');
+      const pending = await p.evaluate(() => window.MA.api.get('/api/log/grade', { toast: false }).then((e) => e.data.items.filter((r) => r.outcome === 'o1').length));
+      check(pending === 0, 'megerősítés nélkül nincs naplósor (' + pending + ')');
       await p.click('#gr-record');
       await waitToast(p, /rögzítve/);
       await screen(p, 'grade');

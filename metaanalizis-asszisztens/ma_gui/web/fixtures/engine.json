@@ -28,22 +28,31 @@
       "fresh": true
      },
      "contracts": {
+      "appraisal": 1,
+      "appraisal-result": 1,
       "capabilities": 1,
       "common": 1,
+      "ff.flowchart": 1,
+      "instrument": 1,
       "ma.activity": 1,
       "ma.analysis-spec": 1,
+      "ma.appraisal-agreement": 1,
       "ma.compare-result": 1,
       "ma.consensus": 1,
       "ma.convert-request": 1,
       "ma.convert-result": 1,
+      "ma.grade": 1,
       "ma.plot": 2,
       "ma.project": 1,
       "ma.project-audit": 1,
       "ma.provenance": 1,
+      "ma.rob-sync-proposal": 1,
       "ma.run": 1,
+      "ma.sof": 1,
       "ma.studies": 1,
       "ma.validate-request": 1,
-      "ma.validation": 1
+      "ma.validation": 1,
+      "rob-summary": 1
      },
      "measures": [
       {
@@ -1869,6 +1878,25 @@
        "machine_check": "metaelemzes.audit:X001"
       },
       {
+       "id": "X002",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S14",
+       "title": {
+        "hu": "Elavult ábra: az exportált ábra nem a legutóbbi futás adataiból készült",
+        "en": "Stale figure: the exported figure was not drawn from the latest run"
+       },
+       "advice": "Az ábra (06_kezirat/abrak/<név>.result.json) olyan plot_data.json-ból készült, amely már nem a kimenet legutóbbi commit-futásáé, vagy a futás plot_data.json-ja azóta megváltozott. A kéziratban így más számok állhatnak, mint az elemzésben. Rajzold újra az ábrát a legutóbbi futásból (Ábra-export), és cseréld le a kéziratban.",
+       "source": "PRISMA 2020 20b; terv 5.3",
+       "kb_refs": [
+        "D-S14-008",
+        "D-S14-012"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X002"
+      },
+      {
        "id": "X003",
        "kind": "audit",
        "module": "audit",
@@ -1886,6 +1914,28 @@
        ],
        "escalation": null,
        "machine_check": "metaelemzes.audit:X003"
+      },
+      {
+       "id": "X004",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S06",
+       "title": {
+        "hu": "Elemzett vizsgálat torzításikockázat-értékelés nélkül",
+        "en": "Analysed study without a risk-of-bias appraisal"
+       },
+       "advice": "Minden elemzett vizsgálathoz kell egy lezárt (complete vagy konszenzusos) értékelés a kimenethez rögzített eszközzel (ma-projekt.json appraisal_tools; pl. randomizált vizsgálatnál RoB 2). Enélkül a „magas RoB nélkül” érzékenységi futás és a GRADE torzítási kockázat doménje nem megalapozott. Töltsd ki és zárd le az értékelést a Torzítási kockázat lapon (a vázlat és a jóvá nem hagyott AI-vázlat nem számít). Az S13 (bizonyosság) szakasztól hiba, előtte figyelmeztetés.",
+       "source": "Cochrane Handbook 7–8; RoB 2 / ROBINS-I",
+       "kb_refs": [
+        "D-S06-008",
+        "D-S06-016"
+       ],
+       "escalation": {
+        "from": "S13",
+        "before": "warning"
+       },
+       "machine_check": "metaelemzes.audit:X004"
       },
       {
        "id": "X005",
@@ -1925,6 +1975,62 @@
        "machine_check": "metaelemzes.audit:X006"
       },
       {
+       "id": "X007",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S13",
+       "title": {
+        "hu": "A GRADE-ítélet számai eltérnek az elsődleges commit-futástól",
+        "en": "GRADE numbers differ from the primary commit run"
+       },
+       "advice": "A projektnapló GRADE-sorában (vagy a rögzített 06_kezirat/grade/<kimenet>.grade.json-ban) álló vizsgálatszám (k), résztvevőszám vagy hatás-szöveg nem az, amit a kimenet elsődleges elemzésének legutóbbi commit-futása ad: a GRADE egy régebbi eredményre épül. Nyisd meg a GRADE-lapot, frissítsd a futásra, nézd át a doménítéleteket, és rögzítsd újra.",
+       "source": "GRADE Handbook 5; Cochrane Handbook 14",
+       "kb_refs": [
+        "D-S13-026",
+        "D-S13-002"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X007"
+      },
+      {
+       "id": "X008",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S13",
+       "title": {
+        "hu": "A SoF-táblázat egy cellája eltér a motor eredményétől",
+        "en": "Summary-of-findings cell differs from the engine result"
+       },
+       "advice": "A 06_kezirat/sof/<kimenet>.sof.json egy cellája (k, résztvevők, a relatív hatás szövege vagy az abszolút hatás /1000) nem egyezik azzal, amit a motor a kimenet elsődleges commit-futásából számol: kézzel írt vagy régi futásból maradt szám került a táblázatba. A bizonyosság-cella csak a kimenet rögzített GRADE-ítéletének szintje lehet (ugyanarra a futásra): piszkozat, feloldatlan publikációs torzítás, jóvá nem hagyott AI-vázlat vagy GRADE nélküli bizonyosság is ide tartozik. Generáld újra a SoF-ot a GRADE-lapon (a számokat a motor sof() függvénye, a bizonyosságot a rögzített GRADE adja), ne szerkeszd kézzel.",
+       "source": "Cochrane Handbook 14.1; GRADE Handbook 5.2",
+       "kb_refs": [
+        "D-S13-011",
+        "D-S13-012"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X008"
+      },
+      {
+       "id": "X009",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Kettős kinyerés lezáratlan eltéréssel",
+        "en": "Double data extraction has unresolved disagreements"
+       },
+       "advice": "A két független kinyerő táblája (03_adatok/kettos/<kimenet>.A.csv és .B.csv) eltér, és nem minden eltérésre van érvényes egyeztetési döntés a <kimenet>.consensus.json-ban — vagy egy döntés óta valamelyik tábla megváltozott, így a döntés elavult. Amíg ez így van, a szintézis (S08) nem indulhat. Döntsd el az eltéréseket a Kettős kinyerés lapon (röviden indokolva), majd írd ki a konszenzus-táblát.",
+       "source": "Cochrane Handbook 5.5.2",
+       "kb_refs": [
+        "D-S05-001"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X009"
+      },
+      {
        "id": "X010",
        "kind": "audit",
        "module": "audit",
@@ -1942,6 +2048,44 @@
        ],
        "escalation": null,
        "machine_check": "metaelemzes.audit:X010"
+      },
+      {
+       "id": "X011",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S06",
+       "title": {
+        "hu": "Predikciósmodell-áttekintés: vizsgálat PROBAST+AI-értékelés nélkül",
+        "en": "Prediction-model review: study without a PROBAST+AI appraisal"
+       },
+       "advice": "A ma-projekt.json szerint az áttekintés predikciós modellekről szól (review_type: prediction_model), ezért minden bevont vizsgálat modelljének torzítási kockázatát és alkalmazhatóságát PROBAST+AI-jal kell értékelni — a RoB 2 vagy a ROBINS-I erre nem alkalmas. Töltsd ki és zárd le a PROBAST+AI-értékelést a felsorolt vizsgálatokra; az AI-vázlat csak emberi jóváhagyás után számít.",
+       "source": "PROBAST+AI (Moons et al. 2025); Cochrane Prognosis Methods",
+       "kb_refs": [
+        "D-S13-023",
+        "D-S02-011"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X011"
+      },
+      {
+       "id": "X012",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S14",
+       "title": {
+        "hu": "AMSTAR 2 önellenőrzés hiányos, vagy a besorolás nem egyezik a válaszokkal",
+        "en": "AMSTAR 2 self-assessment incomplete or rating inconsistent with the answers"
+       },
+       "advice": "A saját áttekintés AMSTAR 2 önellenőrzésében (04_torzitas_kockazat/appraisals/review.amstar2.*.json) nincs mind a 16 tétel megválaszolva, vagy a rögzített összbesorolás egyik konvencióval sem az, ami a válaszokból adódik (a projekt konvenciója a KB AMSTAR2-00 szerint: kritikus tételen a „részben igen” nem hiba). Válaszold meg a hiányzó tételeket, és a besorolást igazítsd a motor által számolthoz (vagy javítsd a válaszokat). A hiányosság az S14 (jelentés) szakasztól és a FINAL kéréskor számít.",
+       "source": "AMSTAR 2 (Shea et al. 2017); KB AMSTAR2-00",
+       "kb_refs": [
+        "D-S13-021",
+        "D-S04-014"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X012"
       },
       {
        "id": "X013",
@@ -1980,6 +2124,25 @@
        "machine_check": "metaelemzes.audit:X014"
       },
       {
+       "id": "X015",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "A metaanalízisbe vont vizsgálatok száma eltér a commit-futásétól",
+        "en": "Number of studies in the meta-analysis differs from the commit run"
+       },
+       "advice": "A kimenetenként közölt „metaanalízisben” szám (a studies.json vizsgálatainak outcomes listája, illetve a PRISMA-folyamat included_meta mezője) nem egyezik azzal, ahány vizsgálat a kimenet elsődleges commit-futásában ténylegesen szerepel. Javítsd a vizsgálat-térképet (melyik vizsgálat melyik kimenethez tartozik) vagy a PRISMA-számot, és a különbség okát a kéziratban közöld.",
+       "source": "PRISMA 2020 16b, 20b",
+       "kb_refs": [
+        "D-S04-015",
+        "P010"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X015"
+      },
+      {
        "id": "X016",
        "kind": "audit",
        "module": "audit",
@@ -1997,6 +2160,104 @@
        ],
        "escalation": null,
        "machine_check": "metaelemzes.audit:X016"
+      },
+      {
+       "id": "X017",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S06",
+       "title": {
+        "hu": "Az implikálttól eltérő ítélet indoklás nélkül",
+        "en": "Judgement differs from the implied one without a reason"
+       },
+       "advice": "Egy domén- vagy összítélet eltér attól, amit a válaszok a motor szabálya szerint kikényszerítenek (implikált ítélet), de nincs megadva a felülbírálás oka (override_reason). Az eltérés nem tilos — az ítélet emberi döntés —, de indokolni kell, és döntésként naplózni. Az értékelőlapon írd be röviden, miért tér el az ítéleted (pl. „a hiányzó adat aránya elhanyagolható”), vagy igazítsd az ítéletet a válaszokhoz.",
+       "source": "RoB 2 útmutató (Sterne et al. 2019); Cochrane Handbook 8",
+       "kb_refs": [
+        "D-S06-004",
+        "D-S06-005"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X017"
+      },
+      {
+       "id": "X018",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S14",
+       "title": {
+        "hu": "Kéziratba szánt ábra minőségellenőrzése nem tiszta",
+        "en": "Manuscript figure did not pass quality control"
+       },
+       "advice": "A 06_kezirat/abrak/<név>.result.json szerint az ábra QC-je nem tiszta (felirat lóg ki a dobozából, vagy görbét, nyilat takar), egy karakter hiányzik a betűkészletből, vagy a számhűség-ellenőrzés eltérést talált (egy szám nem pontosan az, amit a motor számolt). Rajzold újra az ábrát (pl. szélesebb doboz, más elrendezés), és csak tiszta QC-vel tedd a kéziratba.",
+       "source": "terv 5.3, 6.7",
+       "kb_refs": [
+        "D-S14-008",
+        "D-S14-012"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X018"
+      },
+      {
+       "id": "X019",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S13",
+       "title": {
+        "hu": "A GRADE publikációs torzítás doménje feloldatlan („suspected”)",
+        "en": "GRADE publication bias domain unresolved ('suspected')"
+       },
+       "advice": "A „gyanított” (suspected) publikációs torzítás addig feloldatlan, amíg ember nem választ 0-t (nem minősít le) vagy −1-et (leminősít) indoklással; az ilyen kimenet GRADE-je nem rögzíthető, és nem kerülhet a SoF-ba. Döntsd el a GRADE-lapon (a „Miért?” panel mutatja a tesztek értelmezhetőségét és a keresés teljességét), vagy válaszd a „nem észlelt” / „erősen gyanított” ítéletet. Az S13 (bizonyosság) szakasztól hiba, előtte figyelmeztetés.",
+       "source": "GRADE Handbook 5.2.5; 11. döntés, 4. pont",
+       "kb_refs": [
+        "D-S13-008"
+       ],
+       "escalation": {
+        "from": "S13",
+        "before": "warning"
+       },
+       "machine_check": "metaelemzes.audit:X019"
+      },
+      {
+       "id": "X020",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "A szűrésben még elbírálatlan rekord van",
+        "en": "Screening still has undecided records"
+       },
+       "advice": "A composer PRISMA-exportja (02_szures/prisma_flow.json) szerint vannak még döntésre váró (undecided) rekordok. A végleges áttekintés előtt minden teljes szöveget be kell vonni vagy okkal kizárni, különben a PRISMA-számok nem véglegesek. Zárd le a döntéseket a composerben és frissítsd az exportot, vagy a folyamatábrán jelöld őket „folyamatban lévő” vizsgálatként. Az S14-től és a FINAL kéréskor számít.",
+       "source": "PRISMA 2020 1. ábra; composer",
+       "kb_refs": [
+        "D-S04-008",
+        "P013"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X020"
+      },
+      {
+       "id": "X021",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "A teljes szöveg szintű kizárási okok eltérnek a szűrési döntési naplótól",
+        "en": "Full-text exclusion reasons differ from the screening decision log"
+       },
+       "advice": "A PRISMA-folyamat okonkénti kizárási számai (02_szures/prisma_flow.json vagy prisma_folyamat.md) nem egyeznek a 02_szures mappába exportált döntési naplóval (a teljes szöveg szintű kizárások okonként összeszámolva). A folyamatábra számainak a naplóból kell jönniük: exportáld újra a naplót a szűrőeszközből (vagy frissítsd a composer-exportot), és javítsd az eltérő számot.",
+       "source": "PRISMA 2020 16a",
+       "kb_refs": [
+        "D-S04-008",
+        "D-S04-013",
+        "P007"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X021"
       },
       {
        "id": "X022",

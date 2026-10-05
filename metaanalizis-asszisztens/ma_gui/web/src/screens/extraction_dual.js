@@ -426,7 +426,8 @@
   function drawDetail(it) {
     var host = S.els.detail;
     S.detail = { radios: [] };
-    if (!it) { MA.dom.mount(host, h('p', { 'class': 'muted' }, t('dual.detail.pick'))); return; }
+    // a szakasz aria-labelledby-je (dx-detail-h) kiválasztott eltérés nélkül is feloldható legyen (UX-10)
+    if (!it) { MA.dom.mount(host, h('h2', { 'class': 'panel-title', id: 'dx-detail-h' }, t('dual.detail.title')), h('p', { 'class': 'muted' }, t('dual.detail.pick'))); return; }
     var d = it.decision || null;
     var title = h('h2', { 'class': 'panel-title', id: 'dx-detail-h' }, h('span', { 'class': 'dx-key' }, it.key), ' · ', fieldLabel(it.field), ' ', statusEl(it));
     var ab = h('div', { 'class': 'dx-ab' }, SIDES.map(function (side) {

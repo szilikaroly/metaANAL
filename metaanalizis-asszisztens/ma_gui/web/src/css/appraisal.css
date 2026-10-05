@@ -7,7 +7,7 @@
 .ap-v-low { color: var(--ok); background: var(--ok-bg); }
 .ap-v-some { color: var(--warn); background: var(--warn-bg); }
 .ap-v-high { color: var(--crit); background: var(--crit-bg); }
-.ap-v-critical { color: var(--on-accent); background: var(--crit-mark); }
+.ap-v-critical { color: var(--on-accent); background: var(--crit); }   /* AA: fehér a sötétített vermillion-on (UX-10) */
 .ap-v-ni { color: var(--info); background: var(--info-bg); }
 .ap-v-none { color: var(--muted); background: var(--neutral-bg); }
 .ap-v.is-implied { background: transparent; border: 1px dashed currentColor; }
@@ -120,10 +120,18 @@
 .rt-svg text { fill: var(--plot-ink); }
 .rt-band { fill: var(--surface-2); }
 .rt-sym { font-size: 17px; }
-.rt-mark.ap-v-low text { fill: var(--plot-rob-low); }
-.rt-mark.ap-v-some text { fill: var(--plot-rob-some); }
-.rt-mark.ap-v-high text { fill: var(--plot-rob-high); }
-.rt-mark.ap-v-critical text { fill: var(--plot-rob-high); font-weight: 800; }
+/* a forgalmi lámpa jelei: az SVG-csoporton nincs háttér (a jelvény-osztály háttere nem a cella színe), a jel színe a
+   szöveg-tokenekből (AA kontraszt mindkét témában — UX-10); az alak (●◐○) és a cím-szöveg is jelöl */
+.rt-svg .rt-mark { background: none; }
+.rt-mark.ap-v-low text { fill: var(--ok); }
+.rt-mark.ap-v-some text { fill: var(--warn); }
+.rt-mark.ap-v-high text { fill: var(--crit); }
+.rt-mark.ap-v-critical text { fill: var(--crit); font-weight: 800; }
+/* F6: a motor implikált (nem hivatalos) ítélete — szaggatott keret, halványabb jel */
+.rt-implied-ring { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 2; }
+.rt-mark.is-implied text { font-style: italic; }
+.rt-legend-implied { display: inline-flex; align-items: center; gap: 4px; }
+.rt-legend-ring { display: inline-block; border: 1px dashed var(--muted); border-radius: 4px; padding: 0 3px; line-height: 1.2; }
 .rt-mark.ap-v-ni text, .rt-mark.ap-v-none text { fill: var(--muted); }
 .rt-head text { font-weight: 700; }
 .rt-weighted .rt-seg.ap-v-low { fill: var(--plot-rob-low); }
@@ -131,10 +139,26 @@
 .rt-weighted .rt-seg.ap-v-high, .rt-weighted .rt-seg.ap-v-critical { fill: var(--plot-rob-high); }
 .rt-weighted .rt-seg.ap-v-ni, .rt-weighted .rt-seg.ap-v-none { fill: var(--line-strong); }
 .rt-seg { stroke: var(--surface); stroke-width: 1; }
-.rt-svg .rt-seg-text { fill: var(--on-accent); font-weight: 700; }
+/* a sáv-felirat sötét tintával, világos körvonallal (a színes sávon és a háttéren is olvasható — UX-10) */
+.rt-svg .rt-seg-text { fill: var(--plot-ink); font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+.rt-weighted .rt-seg.has-implied { stroke: var(--muted); stroke-dasharray: 4 2; }
+/* kettős értékelés megbízhatósága, AMSTAR 2 részek és figyelmeztetések, érvénytelen válasz */
+.rel-list { list-style: none; padding: 0; margin: var(--sp-1) 0; }
+.rel-list li { margin: 2px 0; }
+.am-warnings { list-style: none; padding: 0; margin: var(--sp-1) 0; }
+.ap-parts { display: flex; flex-direction: column; gap: 4px; }
+.ap-part { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-1); }
+.ap-part-label { font-weight: 650; font-size: var(--fs-sm); min-width: 12em; }
+.ap-slot.is-invalid { box-shadow: inset 3px 0 0 var(--crit-mark); }
+.ap-invalid-msg { color: var(--crit); font-size: var(--fs-sm); font-weight: 600; }
+.ap-invalid { margin: var(--sp-1) 0; color: var(--crit); }
+.ap-invalid-list { margin: 2px 0 0 1.2em; padding: 0; }
+.ap-overall.is-per-pass .ap-overall-block { border-left: 3px solid var(--line); padding-left: var(--sp-2); margin-bottom: var(--sp-2); }
+.cs-item-kappa-label { font-weight: 600; }
+.cs-notes { font-size: var(--fs-sm); }
 
 /* TRIPOD+AI hőtérkép */
-.tr-wrap { overflow-x: auto; }
+.tr-wrap { overflow-x: auto; max-width: 100%; position: relative; }   /* UX-11: a hőtérkép a saját dobozában görög (az abszolút pozíciójú leszármazottak se tolják szét a lapot) */
 .tr-heat th.tr-col { font-size: var(--fs-xs); writing-mode: vertical-rl; transform: rotate(180deg); padding: 2px 1px; }
 .tr-cell { text-align: center; font-size: 14px; padding: 0 2px; }
 .tr-present { color: var(--ok); }

@@ -38,6 +38,9 @@ const CSP = (n) => "default-src 'none'; script-src 'nonce-" + n + "'; style-src 
 const FX = (name) => JSON.parse(fs.readFileSync(path.join(WEB, 'fixtures', name), 'utf-8'));
 const AGREEMENT = FX('appraisal_consensus.json').routes[0].envelope.data.agreement;
 const SUMMARY = FX('appraisal_robsummary.json').routes[0].envelope.data;
+// a fixture-ök a MOTOR kimenetei (FID-7: gen_appraisal_fixtures.py) — a várt szövegek is a motor definícióiból jönnek
+const INSTR = (k) => FX('appraisal_instruments.json').routes.filter((r) => r.path === '/api/instruments/' + k)[0].envelope.data;
+const POOLED = FX('appraisal_agreement.json').routes[0].envelope.data;
 
 // ---------------------------------------------------------------- mini-tesztkeret
 const results = [];
@@ -75,7 +78,7 @@ function startServer() {
 let browser, srv;
 const SET_RATER = "try { localStorage.setItem('mag.pref.appraisal.rater', 'SzK'); } catch (e) {}";
 async function openPage(hash, opts) {
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+  const ctx = await browser.newContext({ viewport: (opts && opts.viewport) || { width: 1440, height: 1000 }, acceptDownloads: true });
   const page = await ctx.newPage();
   const errors = [];
   const dialogs = [];
@@ -191,7 +194,7 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     await p.click('#ap-missing .ap-missing-go[data-key="2.7"]');
     check(await p.evaluate(() => document.activeElement && document.activeElement.closest('.ap-slot') && document.activeElement.closest('.ap-slot').dataset.key === '2.7'), 'hiánylista → fókusz a 2.7 válaszán');
     const d2 = await txt(p, '.ap-judg[data-domain="2"][data-coll="domain_judgements"] .ap-implied');
-    check(d2.indexOf('KONZERVATÍV') >= 0 && d2.indexOf('NEM a hivatalos') >= 0 && d2.indexOf('Magas') >= 0, 'D2 implikált: MAGAS, az algoritmus címkéjével (nem hivatalos)');
+    check(d2.indexOf(INSTR('rob2').rollup.label.hu) >= 0 && d2.indexOf('NEM a hivatalos') >= 0 && d2.indexOf('Magas') >= 0, 'D2 implikált: MAGAS, a motor algoritmus-címkéjével (nem hivatalos): ' + d2.slice(0, 160));
     check(d2.indexOf('2.6') >= 0, 'D2: a kikényszerítő tétel (2.6) megnevezve');
     // élő ellenőrzés
     await p.evaluate(() => window.MA.dev.fixtures.reset());
@@ -204,7 +207,8 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     // „Miért?” kezdőknek (magyar útmutató az 1.1-hez)
     await p.click('.ap-item[data-id="1.1"] .why-btn');
     await p.waitForSelector('.why-pop');
-    check((await txt(p, '.why-pop')).indexOf('véletlen volt-e a csoportba sorolás') >= 0, '„Miért?”: a tétel kezdőknek szóló magyarázata');
+    const help11 = INSTR('rob2').items.filter((it) => it.id === '1.1')[0].help.hu;
+    check((await txt(p, '.why-pop')).indexOf(help11.slice(0, 40)) >= 0, '„Miért?”: a tétel kezdőknek szóló magyarázata (a motor help-szövege)');
     await p.keyboard.press('Escape');
     // bizonyíték: oldalszám csak szám
     await p.click('.ap-slot[data-key="2.7"] .ap-ev-sum');
@@ -219,6 +223,8 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     await p.selectOption('.ap-judg[data-domain="1"][data-coll="domain_judgements"] select', 'high');
     check(!(await p.$eval('.ap-judg[data-domain="1"] .ap-override', (e) => e.hidden)), 'eltérés az implikálttól → indoklás-mező megjelenik');
     check((await p.getAttribute('.ap-judg[data-domain="1"] .ap-override-text', 'aria-invalid')) === 'true', 'üres indoklás: aria-invalid=true, aria-required');
+    // a validator keresztellenőrző doboza a panel lábában (csak vélemény; csukott részletező)
+    check(await p.$('#ap-val summary') !== null && await p.$('#ap-val #ap-val-run') !== null, 'validator-doboz a panelen');
     await p.evaluate(() => window.MA.dev.fixtures.reset());
     await p.click('#ap-save');
     await p.waitForSelector('#ap-form-msg .error-box');
@@ -251,6 +257,103 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     check((await txt(p, '[role="dialog"]')).indexOf('Mentetlen értékelés') >= 0, 'mentetlen változás → megerősítés navigáláskor');
     await p.click('[role="dialog"] .modal-actions .btn-ghost');
     await finish(o, 'űrlap');
+  });
+
+  // ========== 2b. harmadik átnézés: az űrlap a motor definícióját követi (F1, F2, F3, F9, F10)
+  await test('Űrlap ↔ motor: polaritás (F1), megengedett válaszok minden eszköz minden tételén (F2), résztételek (F3), hivatalos azonosító (F9), doménfelirat (F10)', async () => {
+    const o = await openPage('#/overview');
+    const p = o.page;
+    const keys = FX('appraisal_instruments.json').routes.filter((r) => /^\/api\/instruments\/[a-z0-9-]+$/.test(r.path)).map((r) => r.envelope.data.key);
+    check(keys.length >= 11, 'minden eszköz a fixture-ben (' + keys.length + ')');
+    const insts = keys.map((k) => INSTR(k));
+    const res = await p.evaluate((list) => {
+      const out = { bad: [], slots: 0, parts: 0, rev: {}, ids: {}, d1: null };
+      const revTxt = window.MA.i18n.t('appraisal.tag.reverse');
+      list.forEach((inst) => {
+        const doc = { schema: 'szk.appraisal/v1', tool: inst.key, scope: null, answers: {}, domain_judgements: [], applicability: [], overall: null, overall_passes: [] };
+        const f = window.MA.appr.form({ inst: inst, doc: doc, passes: inst.passes && inst.passes.length ? inst.passes.map((x) => x.id) : null, scope: null, editable: true, check: null });
+        const byKey = {};
+        inst.items.forEach((it) => { byKey[it.key || it.id] = it; });
+        f.el.querySelectorAll('.ap-slot[data-key]').forEach((sl) => {
+          const it = byKey[sl.dataset.key];
+          if (!it) { out.bad.push(inst.key + ':' + sl.dataset.key + ' ismeretlen'); return; }
+          if (it.parts && it.parts.length) {
+            it.parts.forEach((pp) => {
+              out.parts += 1;
+              const got = Array.from(sl.querySelectorAll('.ap-part[data-part="' + pp.id + '"] input[type="radio"]')).map((r) => r.value);
+              if (got.join(',') !== pp.answers.join(',')) { out.bad.push(inst.key + ':' + it.id + '/' + pp.id + ' ' + got.join(',') + ' ≠ ' + pp.answers.join(',')); }
+              const na = sl.querySelector('.ap-part[data-part="' + pp.id + '"] input[value="not_applicable"] + label');
+              if (pp.na_label && (!na || na.title !== window.MA.i18n.pick(pp.na_label))) { out.bad.push(inst.key + ':' + it.id + '/' + pp.id + ' NA-felirat'); }
+            });
+            return;
+          }
+          out.slots += 1;
+          const want = it.answers || inst.default_answers || inst.answers.map((a) => a.value);
+          const got = Array.from(sl.querySelectorAll('input[type="radio"]')).map((r) => r.value);
+          if (got.join(',') !== want.join(',')) { out.bad.push(inst.key + ':' + it.id + ' ' + got.join(',') + ' ≠ ' + want.join(',')); }
+          if (window.MA.appr.allowed(inst, it).join(',') !== want.join(',')) { out.bad.push(inst.key + ':' + it.id + ' allowed()'); }
+        });
+        f.el.querySelectorAll('.ap-item[data-id]').forEach((row) => {
+          const id = row.dataset.id;
+          const badges = Array.from(row.querySelectorAll('.badge-text')).map((b) => b.textContent);
+          out.rev[inst.key + ':' + id] = badges.indexOf(revTxt) >= 0;
+          const it = inst.items.filter((x) => x.id === id)[0];
+          const shown = row.querySelector('.ap-item-id');
+          out.ids[inst.key + ':' + id] = shown ? shown.textContent : null;
+          if (it && it.official_id && shown && shown.textContent !== it.official_id) { out.bad.push(inst.key + ':' + id + ' hivatalos azonosító: ' + shown.textContent); }
+        });
+        if (inst.key === 'robins-e') {
+          const opt = f.el.querySelector('.ap-judg[data-domain="1"][data-coll="domain_judgements"] select option[value="low"]');
+          out.d1 = opt ? opt.textContent : null;
+        }
+        if (inst.key === 'rob2') {
+          out.short = Array.from(f.el.querySelectorAll('.ap-slot[data-key="2.3"] .ap-opts label')).map((l) => l.childNodes[0].textContent);
+          out.shortTitle = Array.from(f.el.querySelectorAll('.ap-slot[data-key="2.3"] .ap-opts label')).map((l) => l.title);
+        }
+      });
+      return out;
+    }, insts);
+    check(res.bad.length === 0, 'F2/F3/F9: a felajánlott válaszok = a motor megengedett válaszai; résztételek; hivatalos azonosítók (' + res.bad.slice(0, 6).join(' | ') + ')');
+    check(res.slots > 250 && res.parts === 4, 'minden eszköz minden tétele ellenőrizve (' + res.slots + ' slot, ' + res.parts + ' résztétel)');
+    check(res.rev['quadas2:1.2'] === false && res.rev['quadas2:1.3'] === false, 'F1: QUADAS-2 1.2 / 1.3 nem „fordított” (polarity: normal)');
+    check(res.rev['robins-e:2.3'] === false && res.rev['robins-e:6.2'] === false, 'F1: ROBINS-E 2.3 / 6.2 nem „fordított”');
+    check(res.rev['rob2:1.3'] === true && res.rev['rob2:2.7'] === true, 'F1: a valóban fordított tételek (RoB 2 1.3, 2.7) jelvénnyel');
+    const nos = INSTR('nos').items.filter((it) => it.official_id && it.official_id !== it.id)[0];
+    check(!!nos && res.ids['nos:' + nos.id] === nos.official_id, 'F9: NOS ' + (nos && nos.id) + ' → a hivatalos azonosító (' + (nos && nos.official_id) + ') látszik');
+    check(res.d1 === INSTR('robins-e').domains.filter((d) => d.id === '1')[0].verdict_labels.low.hu, 'F10: ROBINS-E D1 „alacsony” felirata a domén sajátja (' + res.d1 + ')');
+    check((res.short || []).join(',') === 'I,VI,VN,N,NI,NA', 'UX-6: a válaszgombok magyar rövidítései (I/VI/VN/N/NI/NA): ' + (res.short || []).join(','));
+    check((res.shortTitle || [])[0] === 'Igen', 'UX-6: a teljes felirat a gomb címében (' + (res.shortTitle || [])[0] + ')');
+    await finish(o, 'űrlap-motor');
+  });
+
+  await test('F2: a motor által elutasított válasz (nem megengedett) látható jelzést kap; F3: AMSTAR 2 résztétel mentése', async () => {
+    const o = await openPage('#/overview');
+    const p = o.page;
+    await p.evaluate(() => {
+      const S = window.MA.dev.appraisal.state();
+      const k = Object.keys(S.docs).filter((x) => /FERGUSON1949\.rob2\.o1\.SzK/.test(x))[0];
+      S.docs[k].answers['1.1'] = { value: 'not_applicable' };
+      window.location.hash = '#/appraisal?tool=rob2&target=o1&unit=FERGUSON1949';
+    });
+    await screen(p, 'appraisal');
+    await formReady(p);
+    await p.waitForSelector('#ap-invalid', { timeout: 4000 }).catch(() => null);
+    check((await txt(p, '#ap-invalid')).indexOf('nem megengedett válasz') >= 0, 'a nem megengedett válasz a hibalistán (a motor indoklásával)');
+    check(await p.evaluate(() => document.querySelector('.ap-slot[data-key="1.1"]').classList.contains('is-invalid')), 'a tétel válasza jelölve (is-invalid)');
+    check(!(await p.evaluate(() => document.querySelector('.ap-slot[data-key="1.1"] .ap-invalid-msg').hidden)), 'a tételnél is kiírva');
+    // AMSTAR 2: 9. tétel RCT / NRSI külön
+    await p.evaluate(() => { window.location.hash = '#/appraisal-amstar2'; });
+    await screen(p, 'appraisal-amstar2');
+    await formReady(p);
+    check((await p.$$('.ap-slot[data-key="9"] .ap-part')).length === 2 && (await p.$$('.ap-slot[data-key="11"] .ap-part')).length === 2, 'F3: a 9. és a 11. tétel RCT / NRSI résztétellel');
+    await p.click('.ap-slot[data-key="9"] .ap-part[data-part="NRSI"] input[value="no"] + label');
+    await p.evaluate(() => window.MA.dev.fixtures.reset());
+    await p.click('#ap-save');
+    await p.waitForFunction(() => window.MA.dev.fixtures.calls.some((c) => c.method === 'PUT'), null, { timeout: 4000 });
+    const put = (await calls(p, 'PUT', '/api/appraisals/review/amstar2')).pop();
+    const a9 = put && put.body.doc.answers['9'];
+    check(a9 && a9.value === null && a9.parts && a9.parts.RCT === 'yes' && a9.parts.NRSI === 'no', 'mentés: answers.9 = {parts: {RCT: yes, NRSI: no}} (' + JSON.stringify(a9) + ')');
+    await finish(o, 'érvénytelen-résztétel');
   });
 
   // ========== 3. AI-vázlat
@@ -325,6 +428,24 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     await screen(p, 'appraisal-consensus');
     await p.waitForSelector('#cs-body');
     check((await txt(p, '#cs-body')).indexOf('Konszenzus-változat mentve') >= 0, 'mentés után: konszenzus-változat mentve');
+    // F5: a doménítéletek egyezése (elsődleges), a tételszintű κ külön címkével
+    check((await txt(p, '#cs-judg-agree')).indexOf('1') >= 0 && (await txt(p, '#cs-judg-agree')).indexOf(AGREEMENT.judgement_kappa.kappa_text.hu) >= 0,
+      'F5: doménítélet-eltérések száma + a doménítéletek κ-ja (' + (await txt(p, '#cs-judg-agree')) + ')');
+    check((await txt(p, '.cs-item-kappa-label')).length > 0, 'F5: a felső κ tételszintűként címkézve');
+    // UX-3: újranyitáskor a mentett konszenzus döntései és indoklásai visszatöltődnek (a táblázat FELRAJZOLÁSA ELŐTT)
+    await p.evaluate(() => { window.location.hash = '#/appraisal-summary?tool=rob2&outcome=o1'; });
+    await screen(p, 'appraisal-summary');
+    await p.evaluate(() => { window.location.hash = '#/appraisal-consensus?tool=rob2&target=o1&unit=ARONSON1948'; });
+    await screen(p, 'appraisal-consensus');
+    await p.waitForSelector('#cs-table');
+    const restored = await p.evaluate(() => {
+      const q = (k, v) => { const el = document.querySelector('#cs-table tr[data-key="' + k + '"] input[value="' + v + '"]'); return !!(el && el.checked); };
+      const r = document.querySelector('#cs-table tr[data-key="1.2"] .cs-reason');
+      return { a12: q('1.2', 'a'), d1: q('dom:1', 'a'), ov: q('overall', 'a'), reason: r ? r.value : null, counter: document.getElementById('cs-counter').textContent };
+    });
+    check(restored.a12 && restored.d1 && restored.ov, 'UX-3: a korábbi A/B döntések kijelölve (' + JSON.stringify(restored) + ')');
+    check(/lezárt borítékok/.test(restored.reason || ''), 'UX-3: az indoklás visszatöltve (' + restored.reason + ')');
+    check(restored.counter.indexOf('3 / 3') >= 0, 'UX-3: a számláló a visszatöltött döntésekkel: 3 / 3');
     await finish(o, 'konszenzus');
   });
 
@@ -341,8 +462,20 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     const wt = w ? (typeof w.weight_text === 'string' ? w.weight_text : w.weight_text.hu) : null;
     check(!!wt && svgTxt.indexOf(wt) >= 0, 'súly: a motor szövege szó szerint (' + wt + ')');
     const wsum = SUMMARY.weighted.filter((x) => x.pct > 0)[0];
-    check((await txt(p, '#rt-weighted')).indexOf(wsum.text.hu) >= 0, 'súlyozott összesítő: a motor szövege (' + wsum.text.hu + ')');
+    const wtxt = typeof wsum.text === 'string' ? wsum.text : wsum.text.hu;   // a motor szerződése: string (FID-7)
+    check((await txt(p, '#rt-weighted')).indexOf(wtxt) >= 0, 'súlyozott összesítő: a motor szövege (' + wtxt + ')');
     check(/[●◐○]/.test(svgTxt), 'a jel alakja (●◐○) is jelöl');
+    // F6: a motor implikált (nem emberi) ítélete megkülönböztetve: szaggatott keret, data-from, jelmagyarázat
+    const nImp = SUMMARY.studies.reduce((n, st) => n + st.domains.filter((d) => d.from === 'implied').length, 0);
+    const imp = await p.evaluate(() => ({ marks: document.querySelectorAll('#rt-matrix [data-from="implied"]').length, rings: document.querySelectorAll('#rt-matrix .rt-implied-ring').length,
+      attr: (document.querySelector('#rt-matrix svg') || { getAttribute: () => null }).getAttribute('data-implied') }));
+    check(nImp > 0 && imp.marks >= nImp && imp.rings >= nImp, 'F6: implikált jelek: ' + JSON.stringify(imp) + ' (a motorban ' + nImp + ')');
+    check((await p.$('#rt-legend-implied')) !== null, 'F6: jelmagyarázat az implikált jelhez');
+    // F5: a kettős értékelés megbízhatósága (a motor összevont egyezése)
+    await p.waitForSelector('#rel-kappa', { timeout: 4000 });
+    const rel = await txt(p, '#rel-panel');
+    check(rel.indexOf(POOLED.agreement.judgement_kappa.kappa_text.hu) >= 0 && rel.indexOf(POOLED.agreement.kappa_text.hu) >= 0, 'F5: megbízhatóság-panel a motor szövegeivel (doménítélet- és tételszintű κ)');
+    check(rel.indexOf(String(POOLED.units.length)) >= 0, 'F5: az egységek száma (' + POOLED.units.length + ')');
     check((await p.$('#rt-weighted')) !== null || (await txt(p, '#rt-panel')).indexOf('commit-futása') >= 0, 'súlyozott összesítő (vagy magyarázat)');
     await p.click('#sync-preview');
     await p.waitForSelector('#sync-table, #sync-none');
@@ -422,7 +555,22 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     check(passes.some((x) => /^development:.*16\/16/.test(x)) && passes.some((x) => /^evaluation:.*0\/18/.test(x)), 'menetenként: fejlesztés 16/16, értékelés 0/18 (' + passes.join(' | ') + ')');
     check((await p.$$('.ap-item[data-id="1.1"] .ap-slot')).length === 2, 'az 1.1 két slotja (development/1.1 és evaluation/1.1)');
     check((await p.$('.ap-slot[data-key="development/1.1"]')) !== null && (await p.$('.ap-slot[data-key="evaluation/1.1"]')) !== null, 'menettel minősített kulcsok (H2 ellen)');
-    check((await p.$$('.ap-judg-applicability')).length === 3, 'alkalmazhatóság a 1–3. doménen');
+    const appl = await p.$$eval('.ap-judg-applicability', (ns) => ns.map((n) => n.dataset.domain + '/' + n.dataset.pass).sort());
+    check(appl.join(',') === '1/development,1/evaluation,2/development,2/evaluation,3/development,3/evaluation', 'alkalmazhatóság az 1–3. doménen, menetenként (UX-2): ' + appl.join(','));
+    // F4: menetenkénti összítélet (fejlesztés: minőség; értékelés: torzítási kockázat) → overall_passes
+    const ovp = await p.$$eval('#ap-overall.is-per-pass .ap-overall-block', (ns) => ns.map((n) => n.dataset.pass));
+    check(ovp.join(',') === 'development,evaluation', 'két menetenkénti összítélet-blokk (' + ovp.join(',') + ')');
+    await p.selectOption('#ap-overall .ap-overall-block[data-pass="development"] select', 'high');
+    await p.fill('#ap-overall .ap-overall-block[data-pass="development"] .ap-rationale', 'A 4. domén magas.');
+    await p.press('#ap-overall .ap-overall-block[data-pass="development"] .ap-rationale', 'Tab');
+    await p.evaluate(() => window.MA.dev.fixtures.reset());
+    await p.click('#ap-save');
+    await p.waitForFunction(() => window.MA.dev.fixtures.calls.some((c) => c.method === 'PUT'), null, { timeout: 4000 });
+    const put = (await calls(p, 'PUT', '/api/appraisals/LEE2023/probast-ai')).pop();
+    const op = put && put.body.doc.overall_passes;
+    check(Array.isArray(op) && op.length === 1 && op[0].pass === 'development' && op[0].judgement === 'high' && /4\. domén/.test(op[0].rationale || ''), 'mentés: overall_passes [{development, high, indoklás}] (' + JSON.stringify(op) + ')');
+    check(put && (put.body.doc.overall === null || put.body.doc.overall === undefined || !put.body.doc.overall.judgement), 'a menetes eszköznél nincs egyetlen (menet nélküli) összítélet');
+    await formReady(p);
     check((await txt(p, '#ap-overall')).indexOf('HOLISZTIKUS') >= 0, 'összítélet: holisztikus (nincs algoritmus) — szó szerint');
     check((await txt(p, '#pb-holistic')).indexOf('indoklás kötelező') >= 0, 'a fejléc kimondja: indoklás kötelező');
     // csak az értékelési menet
@@ -464,11 +612,33 @@ async function compText(page) { return (await txt(page, '#ap-comp-text')).trim()
     check((await p.$$('#tr-missing li[data-item]')).length >= 1, 'hiánylista a motor check.tripod-jából');
     check((await p.$('#ap-overall')) === null, 'TRIPOD+AI: nincs összítélet-választó (nem RoB-eszköz)');
     await p.click('#tr-mode-manuscript');
+    await p.waitForSelector('#tr-mode-manuscript[aria-pressed="true"]');   // a navigáció aszinkron: az új nézetre várunk
     await screen(p, 'appraisal-tripod');
     await formReady(p);
     check((await txt(p, '#ap-form-title')).indexOf('Saját kézirat') >= 0, 'saját kézirat mód: az űrlap a manuscript egységre');
     check((await p.$('#tr-heat')) === null, 'saját kézirat módban nincs hőtérkép');
     await finish(o, 'tripod');
+  });
+
+  await test('UX-11: TRIPOD+AI hőtérkép 1280 px-en a saját dobozában görög, a lap nem', async () => {
+    for (const w of [1280, 1440]) {
+      const o = await openPage('#/appraisal-tripod', { viewport: { width: w, height: 900 } });
+      const p = o.page;
+      await screen(p, 'appraisal-tripod');
+      await p.waitForSelector('#tr-heat');
+      const r = await p.evaluate(() => {
+        const wrap = document.querySelector('#tr-heat').closest('.tr-wrap');
+        wrap.scrollLeft = wrap.scrollWidth;
+        const last = Array.from(document.querySelectorAll('#tr-heat thead th.tr-col')).pop().getBoundingClientRect();
+        const box = wrap.getBoundingClientRect();
+        return { sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth, wsw: wrap.scrollWidth, wcw: wrap.clientWidth,
+          lastIn: last.right <= box.right + 1 && last.left >= box.left - 1 };
+      });
+      check(r.sw <= r.cw, w + ' px: nincs vízszintes lapgörgetés (' + r.sw + ' ≤ ' + r.cw + ')');
+      check(r.wsw > r.wcw, w + ' px: a hőtérkép a dobozában görgethető (' + r.wsw + ' > ' + r.wcw + ')');
+      check(r.lastIn, w + ' px: az utolsó oszlop (27c) görgetéssel elérhető, nincs levágva');
+      await finish(o, 'tripod-' + w);
+    }
   });
 
   // ========== 9. AMSTAR 2

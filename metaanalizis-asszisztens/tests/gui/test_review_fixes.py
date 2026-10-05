@@ -762,15 +762,20 @@ class DocsMatchTheProduct(unittest.TestCase):
         self.assertIn("ma_gui/web/dist/index.html", cm.exception.message)
         self.assertIn("build_gui.py", cm.exception.message)
 
-    def test_doc7_adapters_are_future_tense(self):
-        """DOC-7: a README nem állítja, hogy a figure-forge/validator adapter már csatlakozik (az MVP csak felderíti)."""
+    def test_doc7_adapters_state_matches_the_product(self):
+        """DOC-7 (MVP) → DOC-6 (v1, harmadik átnézés): a README a mostani állapotot írja le. Az MVP-ben az adapterek
+        még nem csatlakoztak (akkor ez volt az igaz mondat); a v1-ben élnek — Ábra-export (#/figures) és a validator
+        keresztellenőrző doboza („Összevetés a motorral”) —, de opcionálisak: a munkapad nélkülük is működik."""
         readme = _read("README.md")
         sec = readme[readme.index("## Validáló és grafikus felület"):]
         sec = sec[:sec.index("\n## ", 5)]
         flat = " ".join(sec.split())
-        self.assertNotIn("opcionális adapterként, verziózott `szk.*` JSON-szerződéssel csatlakozik", flat)
-        self.assertIn("a v1-ben csatlakozik majd", flat)
-        self.assertIn("csak felderíti", flat)
+        self.assertNotIn("a v1-ben csatlakozik majd", flat)
+        self.assertNotIn("csak felderíti", flat)
+        self.assertIn("opcionális adapterként csatlakozik", flat)
+        self.assertIn("nélkülük is működik", flat)
+        self.assertIn("#/figures", flat)
+        self.assertIn("Összevetés a motorral", flat)
 
     def test_doc8_every_command_block_names_its_folder(self):
         """DOC-8: a TELEPITES 6–7. pontjának minden `python ma.py` blokkja előtt ott a munkamappa (vagy előtaggal fut)."""

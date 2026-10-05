@@ -153,14 +153,21 @@ def _engine_svg(app, rel_dir, run, plot, kind, lang, warnings):
               "run_dir": str(app.store.path(rel_dir)), "project_root": str(app.project_root),
               "run_id": run.get("run_id")}
         use = {k: v for k, v in kw.items() if accepts(fn, k)}
+        engine_reason = None
         try:
             out = fn(**use)
         except (ValueError, KeyError, TypeError) as exc:
-            raise ApiError("VALIDATION", "A motor nem tudta megrajzolni az ábrát (%s): %s" % (kind, exc)) from None
+            if kind not in RUN_KINDS:
+                raise ApiError("VALIDATION", "A motor nem tudta megrajzolni az ábrát (%s): %s" % (kind, exc)) from None
+            # forest / funnel / Doi: a motor csak a futás változatlan adataiból rajzol újra (fidelitás-őr) —
+            # ha nem tud, a futás saját SVG-je készül, a motor okával
+            out, engine_reason = None, str(exc)
         svg = out if isinstance(out, str) else (out.get("svg") if isinstance(out, dict) else None)
         if isinstance(svg, str) and svg.strip():
             used = out.get("lang") if isinstance(out, dict) and out.get("lang") in LANGS else lang
             return svg.encode("utf-8"), used, "engine_render"
+        if engine_reason:
+            warnings.append("A motor nem rajzolta újra az ábrát (%s), ezért a futás saját SVG-je készült." % engine_reason)
     if kind not in RUN_KINDS:
         raise ApiError("CAPABILITY_MISSING", "A(z) %s ábra exportjához a motor rajzoló-függvénye kell "
                                              "(metaelemzes.api.render_figure), de ez a motorváltozat még nem "
@@ -175,10 +182,13 @@ def _engine_svg(app, rel_dir, run, plot, kind, lang, warnings):
                                              "(Rögzítés), vagy frissítsd a motort." % kind,
                        {"engine_functions": ["render_figure"], "engine": "metaelemzes.api"})
     run_lang = plot.get("display_locale") if plot.get("display_locale") in LANGS else "hu"
-    if run_lang != lang:
+    if run_lang != lang and fn is None:
         warnings.append("A futás saját SVG-je %s feliratú; a kért (%s) nyelvű, rétegzett motor-SVG-hez a motor "
                         "render_figure függvénye kell (frissítsd a motort). Most a futás SVG-je készült."
                         % ("magyar" if run_lang == "hu" else "angol", lang))
+    elif run_lang != lang:
+        warnings.append("A futás saját SVG-je %s feliratú, nem a kért (%s) nyelvű: az újrarajzoláshoz futtasd újra "
+                        "az elemzést (Rögzítés)." % ("magyar" if run_lang == "hu" else "angol", lang))
     return raw, run_lang, "run_file"
 
 

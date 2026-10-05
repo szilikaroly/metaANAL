@@ -7,6 +7,8 @@
   ``ready: false`` (nem hiba). A konszenzus mentése: ``PUT /api/appraisals/<unit>/<tool>?rater=consensus``.
 - ``GET /api/appraisals/rob-summary?tool=&outcome=&target=`` → ``szk.rob-summary/v1`` a motorból (vizsgálatonkénti
   doménítéletek, összítélet, a kimenet elsődleges commit-futásának súlyai) — a forgalmi lámpa ebből rajzol.
+- ``GET /api/appraisals/agreement?tool=&target=`` → a motor összevont egyezése (κ) minden kettősen értékelt egységre
+  (elsődleges: a doménítéletek κ-ja — ezt közli a Módszerek fejezet).
 - ``POST /api/appraisals/rob-sync`` ← ``{tool, outcome | dataset, target?, dry_run, column?}`` (+ If-Match a tábla
   ETag-jével az alkalmazáshoz): a motor javaslata a kinyerési tábla ``rob`` oszlopára; ``dry_run: false``-nál a
   tároló írja (ETag, 409), a cellák eredete ``calculated`` (forrás: az értékelés-fájl), activity érték nélkül.
@@ -21,6 +23,7 @@ from ._common import body_bool, body_str, dataset_rel, if_match, log_activity_or
 CONSENSUS_SCHEMA = "szk.ma.appraisal-consensus-view/v1"
 SUMMARY_SCHEMA = "szk.rob-summary/v1"
 SYNC_SCHEMA = "szk.ma.rob-sync/v1"
+AGREEMENT_SCHEMA = "szk.ma.appraisal-agreement-view/v1"
 ROB_FIELD = "rob"
 MAX_HISTORY = 50
 
@@ -84,6 +87,43 @@ def get_consensus(req):
     if excluded:
         warnings.append("%d AI-vázlat kimaradt az egyezés-számításból (6. döntés: nem értékelő)." % len(excluded))
     return Result(data, CONSENSUS_SCHEMA, warnings=warnings)
+
+
+# ---------------------------------------------------------------------------- összevont egyezés (F5)
+def get_agreement(req):
+    """GET /api/appraisals/agreement?tool=&target= → a motor összevont egyezése (api.appraisal_agreement_pooled) minden
+    olyan egységre, ahol két független EMBERI értékelés van (a konszenzus-nézet alapértelmezett párja: az első két
+    értékelő név szerint). Elsődleges mérték a doménítéletek κ-ja (domain_kappa, judgement_kappa, overall_kappa) — ezt
+    közli a Módszerek fejezet; a tételszintű κ másodlagos. A szerver nem számol."""
+    app = req.app
+    app.require_open()
+    tool = C.check_tool(req.arg("tool"))
+    target = C.check_target(req.arg("target")) if req.arg("target") is not None else None
+    inst = C.instrument(tool)
+    by_unit = {}
+    for f in C.list_files(app):
+        if f["tool"] != tool or (req.arg("target") is not None and f["target"] != target):
+            continue
+        try:
+            doc, _etag = C.load(app, f["path"])
+        except store.StoreError:
+            continue
+        if not C.is_human(doc, f["rater"]):
+            continue
+        unit = C.unit_of(doc) or f["slug"]
+        by_unit.setdefault((unit, f["target"]), {})[f["rater"]] = doc
+    pairs, units = [], []
+    for (unit, tg), raters in sorted(by_unit.items(), key=lambda kv: (kv[0][0], kv[0][1] or "")):
+        if len(raters) < 2:
+            continue
+        a, b = sorted(raters)[:2]
+        pairs.append((raters[a], raters[b]))
+        units.append({"unit": unit, "target": tg, "a": a, "b": b})
+    data = {"schema": AGREEMENT_SCHEMA, "tool": tool, "target": target, "units": units, "agreement": None}
+    if pairs:
+        fn = C.need("pooled")
+        data["agreement"] = C._call(fn, pairs, instrument=inst)
+    return Result(data, AGREEMENT_SCHEMA)
 
 
 # ---------------------------------------------------------------------------- forgalmi lámpa
@@ -273,4 +313,5 @@ def post_rob_sync(req):
 def register(router):
     router.add("GET", "/api/appraisals/consensus/<unit>/<tool>", get_consensus, schema=CONSENSUS_SCHEMA)
     router.add("GET", "/api/appraisals/rob-summary", get_rob_summary, schema=SUMMARY_SCHEMA)
+    router.add("GET", "/api/appraisals/agreement", get_agreement, schema=AGREEMENT_SCHEMA)
     router.add("POST", "/api/appraisals/rob-sync", post_rob_sync, schema=SYNC_SCHEMA, request_schema=_SYNC_REQ)

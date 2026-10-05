@@ -28,6 +28,8 @@ dokumentációjával együtt):
     sof(run, assumed_risks, certainty=None, footnotes=None, project_dir=None, grade=None) -> szk.ma.sof/v1
         assumed_risks: [{label, source: control_pool|external, per_1000: nyers szöveg | None, note}];
         grade: a mentett szk.ma.grade/v1 (bizonyosság + lábjegyzetek a domén-indoklásokból)
+    sof_problems(project_dir, doc) -> [szöveg]                      [opcionális] a SoF bizonyossága csak a rögzített
+        GRADE-ítéleté lehet (4. döntés; X008) — a munkapad a saját írása előtt ellenőriz vele
     sof_csv(doc, lang='hu', delimiter=';') / sof_markdown(doc, lang='hu')       [opcionális; különben a munkapad
         ugyanazokból a motor-szövegekből rendereli — grade_sof.render_csv / render_md]
     amstar2_consistency(answers, convention='meets') -> {rating, critical_flaws, weaknesses,
@@ -57,6 +59,7 @@ FUNCS = {
     "sof": (("sof", "sof_build"), "a Summary of Findings tábla (abszolút hatás alapkockázatonként)"),
     "sof_csv": (("sof_csv",), "a SoF CSV-exportja (Excel-biztos)"),
     "sof_markdown": (("sof_markdown",), "a SoF Markdown-exportja"),
+    "sof_problems": (("sof_problems",), "a SoF bizonyosságának egyezése a rögzített GRADE-ítélettel (X008)"),
     "amstar2_consistency": (("amstar2_consistency",), "az AMSTAR 2 besorolás és konzisztencia (mindkét konvencióval)"),
     "instrument": (("instrument_get", "get_instrument", "instrument", "load_instrument"),
                    "a műszer-leírás (szk.instrument/v1)"),

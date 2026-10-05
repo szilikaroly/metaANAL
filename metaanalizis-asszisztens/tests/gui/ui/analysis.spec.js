@@ -401,6 +401,8 @@ async function storageReport(page) {
     const opts = await p.$$eval('#results-run option', (os) => os.map((o) => o.textContent));
     check(opts.length >= 6 && opts.some((o) => o.indexOf('ELAVULT') >= 0) && opts.some((o) => o.indexOf('Explore') >= 0), 'futás-választó: commit-futások + explore (' + opts.length + ')');
     check((await txt(p, '#results-run-badge')).indexOf('AKTUÁLIS') >= 0, 'AKTUÁLIS jelvény');
+    // a commit-futás ábrái → ábra-export (#/figures?run=…)
+    check((await p.getAttribute('#results-figures', 'href')) === '#/figures?run=' + encodeURIComponent(PRIMARY), 'ábra-export link a futásra');
     const line = await txt(p, '.res-line');
     ['RR ' + PRIM.display_text.hu, PRIM.p_text.hu, 'PI ' + PRIM.pi_text.hu, 'I² ' + PLOT.heterogeneity.i2_text.hu, 'τ² ' + PLOT.heterogeneity.tau2_text.hu, 'k 13',
       'N ' + RUNS_FX[PRIMARY].participants_text.hu].forEach((part) => check(line.indexOf(part) >= 0, 'összegző sáv: ' + part));

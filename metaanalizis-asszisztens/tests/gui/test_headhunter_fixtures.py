@@ -8,10 +8,12 @@ közlemények), amelyen a valódi CLI offline lépései futottak (átfedés, egy
     python3 tests/gui/test_headhunter_fixtures.py --write     # újragenerálás
     python3 -m unittest tests/gui/test_headhunter_fixtures.py # sodródás-őr: a fixture-ök kulcsai = a mostani route-éi
 
-Az ellenőrzés a boríték alakját (4.2), a `data` legfelső kulcsait végpontonként, és azt nézi, hogy a fixture-ökben
-nincs abszolút út, kulcs vagy e-mail. A számok és időbélyegek futásonként változhatnak (a motor és a CLI adja őket)."""
+Az ellenőrzés a boríték alakját (4.2), a `data` legfelső kulcsait végpontonként, az ÉRTÉKEKET is (FID-8: a
+futásonként változó mezők — időbélyegek, futás-, feladat- és döntés-azonosítók, sha256/ETag, elapsed_ms, a generálás
+napja — maszkolva), és azt nézi, hogy a fixture-ökben nincs abszolút út, kulcs vagy e-mail."""
 import json
 import os
+import re
 import shutil
 import sys
 import unittest
@@ -121,6 +123,47 @@ def _keys(route):
     return sorted((route["envelope"].get("data") or {}).keys())
 
 
+_TS = re.compile(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z")
+_VOLATILE_KEYS = ("elapsed_ms",)
+
+
+def mask(doc):
+    """A futásonként változó értékek maszkolása (FID-8): ISO-időbélyeg, tömör időbélyeg (futás-, keresés- és
+    döntés-azonosítókban), feladat-azonosító, sha256/ETag, elapsed_ms, és a generálás napja (pl. a frissítő keresés
+    ablakának vége = a mai nap)."""
+    text = json.dumps(doc, ensure_ascii=False, sort_keys=True)
+    days = sorted(set(m.group(0)[:10] for m in _TS.finditer(text)))
+    text = _TS.sub("<ts>", text)
+    text = re.sub(r"\d{8}T\d{6}Z(?:-[0-9a-f]{6})?", "<ts>", text)
+    text = re.sub(r"hh-[0-9a-f]{12}", "<job>", text)
+    text = re.sub(r"[0-9a-f]{64}", "<sha>", text)
+    for d in days:
+        text = text.replace(d, "<day>")
+
+    def walk(x):
+        if isinstance(x, dict):
+            return {k: (0 if k in _VOLATILE_KEYS and isinstance(v, (int, float)) else walk(v)) for k, v in x.items()}
+        if isinstance(x, list):
+            return [walk(v) for v in x]
+        return x
+    return walk(json.loads(text))
+
+
+def first_diffs(a, b, path="", out=None, limit=8):
+    out = [] if out is None else out
+    if len(out) >= limit:
+        return out
+    if isinstance(a, dict) and isinstance(b, dict):
+        for k in sorted(set(a) | set(b)):
+            first_diffs(a.get(k), b.get(k), "%s.%s" % (path, k), out, limit)
+    elif isinstance(a, list) and isinstance(b, list) and len(a) == len(b):
+        for i, (x, y) in enumerate(zip(a, b)):
+            first_diffs(x, y, "%s[%d]" % (path, i), out, limit)
+    elif a != b:
+        out.append("%s: %s ≠ %s" % (path, json.dumps(a, ensure_ascii=False)[:120], json.dumps(b, ensure_ascii=False)[:120]))
+    return out
+
+
 class FixtureDrift(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -148,6 +191,24 @@ class FixtureDrift(unittest.TestCase):
             for old, new in zip(doc["routes"], fresh["routes"]):
                 self.assertEqual(_keys(old), _keys(new), "%s %s: a route alakja változott — generáld újra (--write)"
                                  % (name, old["path"]))
+
+    def test_values_match_the_route(self):
+        """FID-8: nem csak a kulcsok — az értékek is a mostani CLI/motor kimenetével egyeznek (a változó mezők
+        maszkolva); pl. a kritériumok, a kizárási okok kritérium-hivatkozása, a CLI H006-figyelmeztetése."""
+        for name, fresh in self.fresh.items():
+            with open(os.path.join(FIXTURES, name), encoding="utf-8") as fh:
+                doc = json.load(fh)
+            diffs = first_diffs(mask(doc), mask(fresh))
+            self.assertEqual([], diffs, "%s: a fixture értékei elsodródtak — generáld újra (--write):\n  %s"
+                             % (name, "\n  ".join(diffs)))
+
+    def test_mask_is_stable_and_not_blind(self):
+        a = {"ts": "2026-10-05T10:00:00Z", "run_id": "20261005T100000Z-abcdef", "end": "2026-10-05",
+             "sha256": "a" * 64, "elapsed_ms": 12, "criterion": "E2"}
+        b = dict(a, ts="2026-10-06T11:00:00Z", run_id="20261006T110000Z-123456", end="2026-10-06", sha256="b" * 64,
+                 elapsed_ms=99)
+        self.assertEqual(mask(a), mask(b))
+        self.assertNotEqual(mask(a), mask(dict(a, criterion=None)), "érdemi érték-eltérés nem maszkolódik")
 
     def test_no_paths_keys_or_emails(self):
         for name in self.fresh:

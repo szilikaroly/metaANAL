@@ -130,6 +130,8 @@ _ABS_PATH_RE = re.compile(r"(?:(?<![\w/\\.])[A-Za-z]:[\\/]|(?<![\w/\\.:])/(?:hom
 _QUOTE_KEYS = frozenset(["quote", "quotes", "excerpt", "evidence_quote", "quote_text"])
 _ASSESSOR_KEYS = frozenset(["assessor", "assessors", "rater", "raters", "extractor", "reviewer_name",
                             "assessor_name", "appraiser"])
+# a v1 értékelés- és kettős-kinyerés-nézetek további értékelő-mezői (a fenntartott 'consensus' / 'ai' nem név)
+_RATER_EXTRA_KEYS = frozenset(["second_assessor", "approved_by", "approver", "human_raters", "a_rater", "b_rater"])
 _CELL_VALUE_KEYS = frozenset(["value", "values", "value_as_entered", "entered", "cell", "cells", "raw", "rows"])
 # az eredet-adat cellája alatt (bármilyen mélységben) bevitt vagy származtatott értéket hordozó kulcsok: az átváltó
 # bemenetei és kimenetei (conversion.request.inputs, outputs, outputs_text, cell_text), az egyeztetés A/B értéke
@@ -415,11 +417,26 @@ def _is_private_real(root, path):
 
 def _private_run_ids(app):
     """A _privat/ alól jövő commit-futások azonosítói (mappa, adatfájl vagy spec a _privat/ alatt)."""
+    return set(_private_run_marks(app))
+
+
+def _private_run_marks(app):
+    """{run_id: [ujjlenyomatok]} a _privat/ alól jövő futásokra: a futás-azonosító és az adatfájl / spec sha256-ja —
+    egy v1-válasz, amely ezek bármelyikét tartalmazza, a privát futásra hivatkozik (a pillanatképbe nem kerülhet)."""
     try:
         from .routes import runs as runs_mod
-        return {rid for rid, (d, r) in runs_mod.run_index(app).items() if runs_mod.run_is_private(app, d, r)}
+        out = {}
+        for rid, (d, r) in runs_mod.run_index(app).items():
+            if runs_mod.run_is_private(app, d, r):
+                marks = [rid]
+                for part in ("data", "spec"):
+                    sha = (r.get(part) or {}).get("sha256") if isinstance(r.get(part), dict) else None
+                    if isinstance(sha, str) and len(sha) >= 32:
+                        marks.append(sha)
+                out[rid] = marks
+        return out
     except Exception:                                  # noqa: BLE001 — a futás-index hiánya nem állítja meg
-        return set()
+        return {}
 
 
 def _journal_run_private(root, row):
@@ -756,6 +773,9 @@ def record(app, pol):
     if (inc["provenance"] or tables_on) and not _is_private(docs_rel):
         rec.get("/api/documents")
 
+    # -- v1: értékelések, GRADE/SoF, kettős kinyerés, ábra-export, Metaheadhunter (a képernyők pontos kérései)
+    extra["rater_alias"] = _record_v1(rec, app, pol, pdata, outcomes, private_runs)
+
     # -- KB-tételek (a rögzített adatban hivatkozottak; a teljes szöveg soha)
     ids = set()
     for env in rec.routes.values():
@@ -780,7 +800,198 @@ def record(app, pol):
         kb_ok.append(kid)
     extra["kb_ids"] = kb_ok
     extra["engine_version"] = engine_version
-    return rec.routes, extra
+    # B/C osztályban (vagy kérésre) az értékelő-azonosítók álnévre — minden válaszban, nem csak az értékeléseknél
+    return rename_raters(rec.routes, extra.get("rater_alias") or {}), extra
+
+
+# -------------------------------------------------------------------------------------- v1-képernyők
+# a munkapad Metaheadhunter-lépései → a parancssor parancsai (routes/headhunter.STEPS-szel azonos)
+HH_STEP_COMMANDS = (("find_reviews", "find-reviews"), ("extract", "extract"), ("resolve", "resolve"),
+                    ("dedupe", "dedupe"), ("overlap", "overlap"), ("update_search", "update-search"),
+                    ("cite_search", "cite-search"), ("merge", "merge"), ("prisma", "prisma"), ("export", "export"),
+                    ("verify", "verify"))
+RESERVED_RATERS = ("consensus", "ai")
+MAX_APPRAISAL_DOCS = 400
+MAX_HH_REVIEWS = 60
+ROB_TOOLS = ("rob2", "robins-i", "robins-e", "quadas2", "nos", "quips", "jbi")
+HH_LISTS = ("status", "studies", "proposals", "overlap", "merged", "prisma", "update", "decisions")
+# <egység>.<eszköz>[.<cél>].<értékelő>.json — a munkapad routes/appraisal_common._FILE_RE-jével azonos
+_APPRAISAL_FILE_RE = re.compile(r"^([A-Za-z0-9_-]{1,64})\.([a-z0-9][a-z0-9-]{0,31})(?:\.([A-Za-z0-9][A-Za-z0-9_-]{0,63}))?"
+                                r"\.([A-Za-z][A-Za-z0-9_-]{0,31})\.json$")
+
+
+def enc_path(text):
+    """Egy útszakasz a JS encodeURIComponent-jével azonos kódolásban (a kliens kulcsa ezzel egyezik)."""
+    return quote(str(text), safe="!*'()~")
+
+
+def rater_aliases(raters, pol):
+    """Értékelő-azonosító → a pillanatképben látható alak. B/C osztályban (vagy kérésre) monogram, legfeljebb 3
+    karakter — így a kitakaró bejárás (initials) változatlanul hagyja, és a kulcsok (…?rater=) is egyeznek; ütközésnél
+    sorszám. A fenntartott értékelők (consensus, ai) változatlanok."""
+    out = collections.OrderedDict()
+    used = set()
+    for r in sorted(set(x for x in raters if isinstance(x, str))):
+        if r in RESERVED_RATERS or not pol["redact"]["assessors"]:
+            out[r] = r
+            continue
+        base = (initials(r) or "?")[:3]
+        alias, n = base, 2
+        while alias in used or alias in RESERVED_RATERS:
+            alias = "%s%d" % (base[:2], n)
+            n += 1
+        used.add(alias)
+        out[r] = alias
+    return out
+
+
+def rename_raters(routes, aliases):
+    """Az értékelő-azonosító az álnevére MINDEN rögzített válaszban: a fájlnevekben (…<egység>.<eszköz>[.<cél>].
+    <értékelő>.json — értékben, listaelemben és szótárkulcsban is, pl. a project audit 'inputs'-a), az értékelés-
+    nézetekben pedig minden pontosan egyező szövegben (pl. az egyezés 'a' / 'b' értékelője). Így a kitakaró bejárás
+    és a kliens kulcsai (…?rater=) egyformán az álnevet látják."""
+    changes = {r: a for r, a in aliases.items() if r != a}
+    if not changes:
+        return routes
+    alt = "|".join(re.escape(r) for r in sorted(changes, key=len, reverse=True))
+    pat = re.compile(r"\.(%s)\.json\b" % alt)
+    # SEC-5: a korábbi felülbírálás-naplóbejegyzések szövegében a név „(értékelő: <név>)” alakban áll
+    named = re.compile(r"\((értékelő|rater|jóváhagyó|approver): (%s)\)" % alt)
+
+    def sub(text):
+        text = pat.sub(lambda m: "." + changes[m.group(1)] + ".json", text)
+        return named.sub(lambda m: "(%s: %s)" % (m.group(1), changes[m.group(2)]), text)
+
+    def walk(node, exact):
+        if isinstance(node, dict):
+            return collections.OrderedDict((sub(k) if isinstance(k, str) else k, walk(v, exact)) for k, v in node.items())
+        if isinstance(node, list):
+            return [walk(x, exact) for x in node]
+        if isinstance(node, str):
+            return changes[node] if exact and node in changes else sub(node)
+        return node
+    out = collections.OrderedDict()
+    for key, env in routes.items():
+        out[key] = walk(env, key.startswith(("GET /api/appraisals", "GET /api/instruments")))
+    return out
+
+
+def _record_appraisals(rec, app, pol, pdata, outcomes):
+    """Értékelő eszközök, értékelések (egyenként is), konszenzus-nézetek és a forgalmi lámpa → rater-álnevek."""
+    lst = rec.get("/api/appraisals")
+    items = [it for it in ((_data(lst) or {}).get("items") or []) if isinstance(it, dict) and it.get("tool")]
+    aliases = rater_aliases([it.get("rater") for it in items], pol)
+    tools = sorted(set(it["tool"] for it in items) | set(
+        t for t in (pdata.get("appraisal_tools") or []) if isinstance(t, str)))
+    if rec.get("/api/instruments") is not None:
+        for tool in tools:
+            rec.get("/api/instruments/%s" % enc_path(tool))
+    for tool in sorted(set(it["tool"] for it in items)):
+        rec.get("/api/appraisals", {"tool": tool})
+        if tool == "tripod-ai":
+            rec.get("/api/appraisals", {"tool": tool, "answers": "1"})
+    groups = collections.OrderedDict()
+    for it in items[:MAX_APPRAISAL_DOCS]:
+        unit = it.get("unit")
+        if not isinstance(unit, str) or not it.get("rater"):
+            continue
+        # a fájlnév cél-része (a lista 'target' mezője a dokumentum target-objektuma is lehet)
+        m = _APPRAISAL_FILE_RE.match(str(it.get("path") or "").rsplit("/", 1)[-1])
+        target = m.group(3) if m else (it.get("target") if isinstance(it.get("target"), str) else None)
+        q = {"rater": aliases.get(it["rater"], it["rater"])}
+        if target:
+            q["target"] = target
+        path = "/api/appraisals/%s/%s" % (enc_path(unit), enc_path(it["tool"]))
+        status, env = rec.call("GET", path, {"rater": it["rater"], "target": target})
+        if env is not None and env.get("ok") is True:
+            rec.routes[route_key("GET", path, q)] = env
+        if it.get("human"):
+            groups.setdefault((unit, it["tool"], target), []).append(it["rater"])
+    for (unit, tool, target), raters in groups.items():
+        if len(raters) >= 2:
+            rec.get("/api/appraisals/consensus/%s/%s" % (enc_path(unit), enc_path(tool)),
+                    {"target": target} if target else None)
+    for tool in sorted(set(it["tool"] for it in items) & set(ROB_TOOLS)):
+        rec.get("/api/appraisals/rob-summary", {"tool": tool})
+        for oid in outcomes:
+            rec.get("/api/appraisals/rob-summary", {"tool": tool, "outcome": oid})
+    return aliases
+
+
+def _record_v1(rec, app, pol, pdata, outcomes, private_runs):
+    """A v1-képernyők (értékelések, GRADE/SoF, Protokoll, kettős kinyerés, ábra-export, adapterek,
+    Metaheadhunter) GET-válaszai a kitakarási szabályok szerint. Visszaad: az értékelő-álnevek térképe."""
+    inc = pol["include"]
+    root = app.project_root
+    aliases = {}
+    before = set(rec.routes)
+    if inc["appraisals"]:
+        aliases = _record_appraisals(rec, app, pol, pdata, outcomes)
+        # GRADE / SoF: a bizonyosság ítélete és a motor tanácsa (számok a futásból, kész szövegekkel)
+        for oid in outcomes:
+            genv = rec.get("/api/grade/%s" % enc_path(oid))
+            if genv is not None:
+                # a tanács ugyanazzal a lekérdezéssel, amit a felület küld (grade.js loadAdvice: mentett MID + futás):
+                # MID nélkül a pontatlanság-ellenőrzés a nullhatáshoz mérne (FID-6)
+                gd = _data(genv) or {}
+                mid = ((gd.get("grade") or {}).get("mid_text") or "").strip() if isinstance(gd, dict) else ""
+                run_id = ((gd.get("run") or {}).get("run_id") if isinstance(gd.get("run"), dict) else None) \
+                    if isinstance(gd, dict) else None
+                q = dict((k, v) for k, v in (("mid", mid or None), ("run", run_id)) if v)
+                rec.get("/api/grade/%s/advice" % enc_path(oid), q or None)
+                if q:
+                    rec.get("/api/grade/%s/advice" % enc_path(oid))     # tartalék (a kliens kulcsa nélkül)
+                rec.get("/api/sof/%s" % enc_path(oid))
+    rec.get("/api/protocol")
+    # kettős kinyerés: a jegyzék mindig (darabszámok, utak — a _privat/ alattiak nélkül); az összevetés cellaértéket
+    # hordoz, ezért csak adattáblákkal (A osztály vagy kérésre)
+    env = rec.get("/api/kettos")
+    d = _data(env)
+    if isinstance(d, dict):
+        d["outcomes"] = [o for o in d.get("outcomes") or [] if isinstance(o, dict)
+                         and not _is_private_real(root, o.get("dir") or "")
+                         and not _is_private_real(root, o.get("data") or "")]
+        d["inbox"] = [x for x in d.get("inbox") or [] if isinstance(x, dict)
+                      and not _is_private_real(root, x.get("path") or "")]
+        if inc["data_tables"]:
+            for o in d["outcomes"]:
+                a, b = o.get("a") or {}, o.get("b") or {}
+                if a.get("exists") and b.get("exists"):
+                    status, venv = rec.call("POST", "/api/compare", body={"outcome": o["id"], "tables": True})
+                    if venv is not None and venv.get("ok") is True:
+                        rec.routes[route_key("POST", "/api/compare", {"outcome": o["id"]})] = venv
+    # ábra-export: a commit-futások ábrái és a már exportált ábrák (X002 elavulás-jelöléssel)
+    if inc["figures"]:
+        fenv = rec.get("/api/figures")
+        fd = _data(fenv)
+        if isinstance(fd, dict):
+            fd["runs"] = [r for r in fd.get("runs") or [] if isinstance(r, dict) and r.get("run_id") not in private_runs]
+            for r in fd["runs"]:
+                rec.get("/api/figures", {"run": r["run_id"]})
+    rec.get("/api/adapters")
+    # Metaheadhunter: állapot, források (kulcs-ÉRTÉK soha, csak beállítva igen/nem), listák; a kiválasztott
+    # áttekintések részletei (legfeljebb MAX_HH_REVIEWS); az idézetek az általános idézet-kitakarással mennek ki
+    st = rec.get("/api/headhunter/status")
+    if st is not None and (_data(st) or {}).get("initialized", (_data(st) or {}).get("state") is not None):
+        rec.get("/api/headhunter/sources")
+        for name in HH_LISTS[1:]:
+            rec.get("/api/headhunter/" + name)
+        renv = rec.get("/api/headhunter/reviews")
+        sel = [it.get("review_id") for it in ((_data(renv) or {}).get("items") or [])
+               if isinstance(it, dict) and it.get("status") == "selected" and it.get("review_id")]
+        for rid in sel[:MAX_HH_REVIEWS]:
+            rec.get("/api/headhunter/reviews/%s" % enc_path(rid))
+    # a _privat/ alól jövő futásra hivatkozó v1-válasz (pl. a GRADE / SoF / ábra-export alapja egy privát futás)
+    # nem kerülhet bele: a kliens „nincs a pillanatképben” üzenetet kap (a manifeszt '_privat/** — soha' ígérete)
+    marks = [m for ms in _private_run_marks(app).values() for m in ms] + ["_privat/05_elemzes"]
+    for key in sorted(set(rec.routes) - before):
+        text = canonical_json(rec.routes[key])
+        if any(m in text for m in marks):
+            del rec.routes[key]
+            if key.startswith("GET ") and not any(m in key for m in marks):
+                rec.refuse(key, "Ez a nézet egy _privat/ alól jövő (bizalmas) futásra hivatkozik, ezért nincs a "
+                                "pillanatképben (terv 7.4).")
+    return aliases
 
 
 def _excluded_message(pol):
@@ -846,11 +1057,15 @@ def apply_redactions(routes, pol, root, home=None):
                 if nv != v:
                     counts["assessors"] += 1
                 return nv
-            if lk in _ASSESSOR_KEYS:
+            if lk in _ASSESSOR_KEYS or lk in _RATER_EXTRA_KEYS:
+                def one(x):
+                    return x if not isinstance(x, str) or x in RESERVED_RATERS else initials(x)
                 counts["assessors"] += 1
                 if isinstance(v, list):
-                    return [initials(x) if isinstance(x, str) else x for x in v]
-                return initials(v) if isinstance(v, str) else v
+                    return [one(x) if isinstance(x, str) else x for x in v]
+                if isinstance(v, dict) and all(isinstance(x, (str, type(None))) for x in v.values()):
+                    return collections.OrderedDict((kk, one(x)) for kk, x in v.items())
+                return one(v)
         if scrub is not None and isinstance(v, str):
             nv = scrub(v)
             if nv != v:
@@ -876,10 +1091,34 @@ def apply_redactions(routes, pol, root, home=None):
                 counts["provenance_values"] += _strip_provenance_values(data)
             elif path == "/api/documents":
                 counts["documents"] += _strip_documents(data)
+            elif path.startswith("/api/appraisals") and pol["redact"]["quotes"]:
+                counts["quotes"] += _strip_evidence_text(data)
+            elif path == "/api/compare" and not tables_on:          # pragma: no cover — tábla nélkül nem rögzül
+                data.clear()
             elif path == "/api/project" and scrub is None:
                 pass
         out[key] = env
     return out, counts
+
+
+def _strip_evidence_text(data):
+    """Az értékelések bizonyíték-idézete (answers[*].evidence.text) az idézet-kitakarással kimarad; az oldal és a
+    lokátor marad (a forrás így visszakereshető)."""
+    counter = [0]
+
+    def strip(node):
+        if isinstance(node, dict):
+            ev = node.get("evidence")
+            if isinstance(ev, dict) and ev.get("text") not in (None, ""):
+                ev["text"] = None
+                counter[0] += 1
+            for v in node.values():
+                strip(v)
+        elif isinstance(node, list):
+            for x in node:
+                strip(x)
+    strip(data)
+    return counter[0]
 
 
 def _strip_plot_cells(plot):
@@ -1012,6 +1251,20 @@ def command_templates():
         w("POST", "/api/export/snapshot", ["ma.py", "gui", "snapshot", "--project", "{project}"]),
         w("PUT", "/api/table", live, note=("A tábla az élő munkapadban vagy Excelben szerkeszthető.",
                                            "Edit the table in the live workbench or in Excel.")),
+        # Metaheadhunter: a lépések és a döntések pontos parancsa (az ember döntése a saját --actor user:<név>-vel)
+        w("POST", "/api/headhunter/run", ["ma.py", "headhunter", "init", "{project}", "--question",
+                                          "{options.question}"], when={"step": "init"}),
+        w("POST", "/api/headhunter/run", ["ma.py", "headhunter", "sources", "{project}", "--check"],
+          when={"step": "sources_check"}),
+    ] + [
+        w("POST", "/api/headhunter/run", ["ma.py", "headhunter", cmd, "{project}"], when={"step": step})
+        for step, cmd in HH_STEP_COMMANDS
+    ] + [
+        w("POST", "/api/headhunter/decide", ["ma.py", "headhunter", "decide", "{project}", "--target", "{target}",
+                                             "--value", "{value}", "--actor", "user:<név>",
+                                             ["--reason", "{reason}"]], when={"kind": "decide"}),
+        w("POST", "/api/headhunter/decide", ["ma.py", "headhunter", "signoff", "{project}", "--actor", "user:<név>"],
+          when={"kind": "signoff"}),
         w("*", "*", live, note=("Ehhez a művelethez az élő munkapad kell (a pillanatkép csak olvasható).",
                                 "This action needs the live workbench (the snapshot is read-only)."))
     ]

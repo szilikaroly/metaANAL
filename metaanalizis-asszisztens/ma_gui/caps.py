@@ -132,6 +132,16 @@ BUILTIN_ISSUES = {
                     "AMSTAR 2 item becomes a non-critical weakness",
          "guard": {"hu": "H4: kanonikus partial_yes, a besorolás „weakness” konvencióként címkézve",
                    "en": "H4: canonical partial_yes, rating labelled as the 'weakness' convention"}},
+        {"id": "H12", "fixed_in": None, "features": ("rob",),
+         "summary": "reference polarity tags differ from the published tools: QUADAS-2 1.2/1.3, ROBINS-E 2.3/6.2 "
+                    "and ROBINS-I 6.3 are tagged reverse, ROBINS-E 5.2 is not",
+         "guard": {"hu": "H12: az érintett domének validator-ítélete nem megbízható (eltérő polaritás)",
+                   "en": "H12: the validator's verdict for the affected domains is unreliable (polarity differs)"}},
+        {"id": "H13", "fixed_in": None, "features": ("rob",),
+         "summary": "old item numbering: ROBINS-I 4.3–4.6, 5.2, 5.3 and every QUIPS item differ from the published "
+                    "numbering the engine uses",
+         "guard": {"hu": "H13: az eltérő számozású tételek nem mennek át; a validator eredménye nem összevethető",
+                   "en": "H13: renumbered items are not sent; the validator result is not comparable"}},
     ),
     "figure-forge": (
         {"id": "H5", "fixed_in": None, "features": ("figure_audit",),

@@ -142,7 +142,7 @@ _SECRET_HEADER_RE = re.compile(r"(?i)\b(authorization|x-els-apikey|x-els-insttok
 _BEARER_RE = re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{6,}")
 
 MSG_NOT_INIT = ("A Metaheadhunter még nincs elindítva ebben a projektben (nincs 01_kereses/headhunter/state.json). "
-                "Kezdd a „Kérdés (PICO)” lépéssel, vagy: python -m metaelemzes.headhunter init <projekt> --question …")
+                "Kezdd a „Kérdés (PICO)” lépéssel (parancssorból: ma.py headhunter init <projekt> --question …).")
 MSG_BUSY = ("Már fut egy Metaheadhunter-lépés ebben a projektben. Várd meg, vagy szakítsd meg (Megszakítás), "
             "aztán próbáld újra.")
 MSG_IF_MATCH = ("A döntéshez kell az If-Match fejléc (a cél fájl ETag-je, ahogy a felület látta) — így nem írsz "
@@ -151,7 +151,7 @@ MSG_STALE = ("A(z) %s közben megváltozott (például egy ágens vagy a parancs
              "nézd át, majd dönts újra.")
 MSG_CLI_FAILED = ("A Metaheadhunter parancssora váratlanul leállt vagy érthetetlen választ adott. A részletek "
                   "(redaktálva) a details.stderr_tail mezőben; próbáld a parancsot terminálban is: "
-                  "python -m metaelemzes.headhunter status <projekt>.")
+                  "ma.py headhunter status <projekt>.")
 MSG_TIMEOUT = "A Metaheadhunter-lépés túllépte az időkorlátot (%d s), ezért leállítottuk. A már letöltött adat megmaradt."
 
 
@@ -254,6 +254,45 @@ def redact(text, root=None, secret_values=None):
     if root:
         text = text.replace(root, "<projekt>")
     return text
+
+
+# UX-7: a CLI-tanácsok felületi megfogalmazása — a felületen a gombot / mezőt nevezzük meg, nem a parancsot (a CLI
+# kimenete változatlan; a „Javasolt következő parancs” a haladóknak külön, lenyílóban marad).
+_CLI = r"(?:ma\.py headhunter |python3? -m metaelemzes\.headhunter )?"
+GUI_HINTS = (
+    (re.compile(r"\(futtasd: " + _CLI + r"sources --check\)"), "(nyomd meg a „Források ellenőrzése” gombot)"),
+    (re.compile(r"később: " + _CLI + r"sources --check\."), "később nyomd meg a „Források ellenőrzése” gombot."),
+    (re.compile(r"\(bekapcsolás: " + _CLI + r"sources <projekt> --enable \S+ --actor user:<név>\)"),
+     "(bekapcsolás: a „Bekapcsolva” oszlop kapcsolójával)"),
+    (re.compile(r"Ellenőrizd a forrásokat \(" + _CLI + r"sources --check\)"),
+     "Ellenőrizd a forrásokat (a Források lépés „Források ellenőrzése” gombjával)"),
+    (re.compile(r"a felső korlát \(--max\)"), "a felső korlát (Áttekintések lépés, „Legfeljebb forrásonként” mező)"),
+    (re.compile(r"emeld a korlátot \(--cap\)"),
+     "emeld a korlátot (Frissítés lépés, „Legfeljebb találat forrásonként” mező)"),
+    (re.compile(r"\(--cap / --max\)"), "(a „Legfeljebb forrásonként” / „Legfeljebb találat forrásonként” mezőben)"),
+    (re.compile(r"\(run: " + _CLI + r"sources --check\)"), "(press the “Check sources” button)"),
+    (re.compile(r"later run: " + _CLI + r"sources --check\."), "later press the “Check sources” button."),
+    (re.compile(r"\(enable: " + _CLI + r"sources <project> --enable \S+ --actor user:<name>\)"),
+     "(enable it with the switch in the “Enabled” column)"),
+)
+
+
+def gui_wording(obj, keys=("message", "hu", "en", "advice", "detail")):
+    """A JSON-fa megjelenő szövegeiben (``keys`` mezők, ill. {hu, en} értékek) a CLI-tanácsot a felületi
+    megfelelőjére cseréli (``GUI_HINTS``). Azonosítót, parancsot (``next``), adatot nem érint."""
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            if isinstance(v, str) and k in keys:
+                for rx, rep in GUI_HINTS:
+                    v = rx.sub(rep, v)
+                out[k] = v
+            else:
+                out[k] = gui_wording(v, keys)
+        return out
+    if isinstance(obj, (list, tuple)):
+        return [gui_wording(v, keys) for v in obj]
+    return obj
 
 
 def redact_obj(obj, root=None, secret_values=None):
@@ -477,8 +516,9 @@ def _text_arg(argv, flag, value):
 def _safe_argv(argv):
     """Az activity-naplóba: a szabad szöveges kapcsolók értéke nélkül (T10), a projektút nélkül."""
     out = []
+    # SEC-4: a verify_secondary --outcome / --arm értéke is szabad szöveg (a végpont PHI-szűri) → nem kerül naplóba
     free = ("--question", "--population", "--intervention", "--comparator", "--outcomes", "--study-designs",
-            "--query", "--reason", "--primary-locator", "--primary-value")
+            "--query", "--reason", "--primary-locator", "--primary-value", "--outcome", "--arm")
     for i, a in enumerate(argv):
         if i < len(_cli_prefix()):
             continue
@@ -754,7 +794,7 @@ def _snapshot(app, job, with_data=True):
             data, truncated = None, True
     exit_code = job.exit_code
     partial = exit_code == 3
-    return {
+    return gui_wording({
         "job_id": job.id, "kind": job.kind, "step": job.step, "status": job.status, "created": job.created_iso,
         "elapsed_ms": int((now - job.created) * 1000), "timeout_s": int(job.timeout), "exit_code": exit_code,
         "ok": env.get("ok") if job.envelope is not None else None, "partial": partial,
@@ -765,7 +805,7 @@ def _snapshot(app, job, with_data=True):
         "run_id": run_id, "progress": _progress(app, run_id) if run_id else [],
         "cancel_requested": job.cancel_requested,
         "cancellable": job.status in ("queued", "running"),
-    }
+    })
 
 
 # ---------------------------------------------------------------------------- lépések (POST /run)
@@ -1269,7 +1309,7 @@ def get_sources(req):
     data = {"initialized": initialized, "lang": lang, "rows": rows,
             "warnings": list(env.get("warnings") or [])[:20],
             "state_etag": app.store.etag(STATE_REL) if initialized else None}
-    return Result(redact_obj(data, str(app.project_root)), S_SOURCES)
+    return Result(gui_wording(redact_obj(data, str(app.project_root))), S_SOURCES)
 
 
 def get_status(req):
@@ -1359,7 +1399,7 @@ def get_status(req):
     if problems:
         warnings.append("%d headhunter-fájl nem felel meg a sémájának (H001) — a részletek a problems listában."
                         % len(problems))
-    return Result(redact_obj(data, str(app.project_root)), S_STATUS, warnings=warnings, etag=tag)
+    return Result(gui_wording(redact_obj(data, str(app.project_root))), S_STATUS, warnings=warnings, etag=tag)
 
 
 def get_reviews(req):
@@ -1413,7 +1453,7 @@ def get_review(req):
             "signals_evidence": [evidence[e] for e in (doc.get("signals") or {}).get("evidence_ids") or []
                                  if e in evidence],
             "path": rel, "problems": probs}
-    return Result(redact_obj(data, str(app.project_root)), S_REVIEW, etag=etag)
+    return Result(gui_wording(redact_obj(data, str(app.project_root))), S_REVIEW, etag=etag)
 
 
 def _studies_doc(app):
@@ -1558,7 +1598,7 @@ def get_merged(req):
                  "review_meta": _review_labels(app)})
     state, _e, _p = _load(app, STATE_REL, "state")
     data["exclusion_reasons"] = (state or {}).get("exclusion_reasons") or []
-    return Result(redact_obj(data, str(app.project_root)), S_MERGED, etag=etag)
+    return Result(gui_wording(redact_obj(data, str(app.project_root))), S_MERGED, etag=etag)
 
 
 def get_prisma(req):
@@ -1579,7 +1619,7 @@ def get_prisma(req):
             "check": check, "problems": probs,
             "project_copy": {"path": "02_szures/prisma_flow.json", "exists": app.store.etag("02_szures/prisma_flow.json")
                              is not None}}
-    return Result(redact_obj(data, str(app.project_root)), S_PRISMA, warnings=warnings, etag=etag)
+    return Result(gui_wording(redact_obj(data, str(app.project_root))), S_PRISMA, warnings=warnings, etag=etag)
 
 
 def get_update(req):
@@ -1591,7 +1631,7 @@ def get_update(req):
         return Result({"exists": False, "path": UPDATE_REL}, S_UPDATE)
     data = dict(doc)
     data.update({"exists": True, "path": UPDATE_REL, "problems": probs})
-    return Result(redact_obj(data, str(app.project_root)), S_UPDATE, etag=etag)
+    return Result(gui_wording(redact_obj(data, str(app.project_root))), S_UPDATE, etag=etag)
 
 
 def get_decisions(req):

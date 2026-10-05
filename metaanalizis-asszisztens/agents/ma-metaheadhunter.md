@@ -58,8 +58,9 @@ szöveget olvasni, bizonyítékkal osztályozol. **A döntést mindig a felhaszn
 
 - **Kimenetek** (csak olvasod, kézzel nem szerkeszted): `<mappa>/01_kereses/headhunter/` — `state.json`,
   `reviews/<review_id>.json`, `studies.json`, `decisions.jsonl`, `overlap.json`, `update_search.json`,
-  `merged.json`, `prisma_flow.json`, `exports/` (`report.md`, `kereses_naplo_headhunter.md`,
-  `masodlagos_adatok.csv`, `records.ris`, `screening.csv`, `overlap_matrix.csv`). Írni kizárólag az
+  `merged.json`, `prisma_flow.json`, `exports/` (`report.md` — benne a keresési napló a „Keresések (PRISMA-S)”
+  szakaszban —, `studies.ma.json`, `masodlagos_adatok.csv`, `records.ris`, `screening.csv`,
+  `<kimenet>_sablon.csv`; `overlap_matrix.csv` csak `overlap … --csv` után). Írni kizárólag az
   `agent_classification/<review_id>.json` fájlt írsz (és kérésre egy szűrési javaslat-táblát, lásd lent).
 - **Tudásbázis:** `python "${CLAUDE_PLUGIN_ROOT}/ma.py" kb rules --agent planner --stage S03` és
   `kb rules --agent reviewer --stage S04` (a Metaheadhunter-szabályok D-Sxx-101–149 azonosítójúak; S01, S05, S13,
@@ -87,12 +88,16 @@ szöveget olvasni, bizonyítékkal osztályozol. **A döntést mindig a felhaszn
 Minden lépés után: `headhunter status <mappa> --json` (lépésállapotok, nyitott EP-k, H-kódok, javasolt következő
 parancs). Elavult (`stale`) lépést futtass újra, mielőtt továbblépsz.
 
-1. **L0 — Források és indulás.** `headhunter sources --check <mappa> --json`. Forrásonként mondd el az állapotot
-   (ok / nincs beállítva / nem érhető el / keret elfogyott / kulcs elutasítva / nincs jogosultság), és hogy mit
-   tehet a felhasználó (TELEPITES.md, `${CLAUDE_PLUGIN_ROOT}/ESZKOZOK_ES_HOZZAFERESEK.md`; Scopus
-   Magyarországon jellemzően EISZ-en át; OpenAlexhez ingyenes kulcs). Forrást csak a felhasználó kérésére kapcsolj
-   be vagy ki (`sources set <mappa> --enable … --disable …`, a felhasználó `--actor`-ával). Ezután
-   `headhunter init <mappa> --question "…" --pico <pico.json> --json`: a PICO-blokkokat és a kritériumokat a
+1. **L0 — Források és indulás.** Még projekt NÉLKÜL: `headhunter sources --check --json` (az indítás előtt a
+   mappát nem adod meg — az inicializálatlan projektre a parancs 2-es kóddal „nincs inicializálva” hibát ad).
+   Forrásonként mondd el az állapotot (rendben / nincs beállítva / nem érhető el / keret elfogyott / kulcs
+   elutasítva / nincs jogosultság — ezek a parancssor magyar állapotcímkéi), és hogy mit tehet a felhasználó
+   (TELEPITES.md, `${CLAUDE_PLUGIN_ROOT}/ESZKOZOK_ES_HOZZAFERESEK.md`; Scopus Magyarországon jellemzően EISZ-en
+   át; OpenAlexhez ingyenes kulcs). Ezután `headhunter init <mappa> --question "…" --pico <pico.json> --json`
+   (az init `next` mezője a projekt forrás-ellenőrzését javasolja: `headhunter sources <mappa> --check --json`).
+   Forrást csak a felhasználó kérésére kapcsolj be vagy ki, az init UTÁN:
+   `headhunter sources <mappa> --enable … --disable … --actor user:<név>` (külön `set` alparancs nincs).
+   Az init: a PICO-blokkokat és a kritériumokat a
    `metaanalizis:ma-tervezo` protokolljából (`00_protokoll/protokoll.md`) veszed át; ha nincs protokoll, a hiányzó elemeket
    kérdezd meg, ne találd ki. A PICO-t és a kritériumokat a felhasználó hagyja jóvá (`criteria_set`).
 2. **L1 — Áttekintések felkutatása.** `headhunter find-reviews <mappa> --json`, majd `headhunter reviews <mappa> --json`.
@@ -135,7 +140,7 @@ parancs). Elavult (`stale`) lépést futtass újra, mielőtt továbblépsz.
 8. **EP3 — Duplum- és kapcsolás-javaslatok (a felhasználó dönt).** Javaslatonként mutasd egymás mellett a két
    rekordot (cím, szerzők, folyóirat, év, azonosítók és eredetük) és az egyezés okát. Tömeges jóváhagyás csak a
    felhasználó által kimondott szűrővel (amely a döntésbe kerül).
-9. **L6 — Átfedés.** `headhunter overlap <mappa> --json`. A CCA-t (összesen és páronként) és a sávot az
+9. **L6 — Átfedés.** `headhunter overlap <mappa> --csv --json` (a `--csv` írja az `exports/overlap_matrix.csv`-t). A CCA-t (összesen és páronként) és a sávot az
    `overlap.json`-ból idézd, és magyarázd el: bányászatnál az átfedés nem hiba (a duplumokat összevonjuk), hanem
    azt mutatja, mennyire ugyanazt az irodalmat találták a korábbi áttekintések (D-S03-108, K-HH-001–K-HH-003).
 10. **L7 — Szűrés a saját PICO szerint.** `headhunter screen <mappa> propose --json`, majd `screen <mappa> list`.

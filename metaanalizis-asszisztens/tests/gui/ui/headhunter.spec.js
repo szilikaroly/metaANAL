@@ -375,6 +375,76 @@ async function finish(o, label) {
     await finish(o, 'frissítés-egyesítés');
   });
 
+  await test('UX-4/UX-7: lezárt EP-nél nincs „döntésre vár”, üres alapszűrő → mind + következő lépés, magyar kinyerés-állapot', async () => {
+    const o = await openPage('#/headhunter?step=sources');
+    const p = o.page;
+    await screen(p, 'sources');
+    // a megtartott hh-projekt állapota: a CLI tárolt lépés-állapota needs_human, de minden EP lezárult
+    const closed = JSON.parse(JSON.stringify(STATUS));
+    closed.steps.forEach((x) => { if (x.id === 'screen' || x.id === 'update_search') { x.status = 'needs_human'; } if (x.id === 'sources') { x.status = 'not_started'; } });
+    Object.keys(closed.cli.checkpoints).forEach((k) => { closed.cli.checkpoints[k] = 0; });
+    closed.checkpoints.forEach((c) => { c.open_items = 0; c.status = 'done'; });
+    const merged = JSON.parse(JSON.stringify(MERGED));
+    merged.studies.forEach((x) => { x.status = 'included'; });
+    merged.status_counts = { included: merged.studies.length };
+    await p.evaluate(([st, mg]) => {
+      window.__hhStatus = st;
+      window.MA.dev.fixtures.route('GET', '/api/headhunter/status', () => ({ envelope: { ok: true, schema: 'szk.ma.hh-status/v1', data: window.__hhStatus, warnings: [], meta: {} }, etag: 'x1' }), { first: true });
+      window.MA.dev.fixtures.route('GET', '/api/headhunter/merged', () => ({ envelope: { ok: true, schema: 'szk.ma.hh-merged-view/v1', data: mg, warnings: [], meta: {} } }), { first: true });
+    }, [closed, merged]);
+    await p.click('#hh-refresh');
+    await p.waitForFunction(() => document.querySelector('#hh-steps li[data-step="screen"]').classList.contains('is-done'), null, { timeout: 4000 }).catch(() => null);
+    const cls = async (st) => p.evaluate((x) => document.querySelector('#hh-steps li[data-step="' + x + '"]').className, st);
+    check(/is-done/.test(await cls('screen')), 'Szűrés: kész (EP4: 0), nem „döntésre vár” (' + await cls('screen') + ')');
+    check(/is-done/.test(await cls('update')), 'Frissítés: kész (EP3 = EP4 = 0) (' + await cls('update') + ')');
+    check(/is-done/.test(await cls('sources')), 'Források: kész, ha a munkafolyamat továbblépett (' + await cls('sources') + ')');
+    check((await txt(p, '#hh-steps')).indexOf('döntésre vár') < 0, 'sehol nincs „döntésre vár”');
+    await p.click('#hh-steps li[data-step="screen"] a');
+    await screen(p, 'screen');
+    check((await p.getAttribute('.seg-btn[data-filter="all"]', 'aria-pressed')) === 'true', 'üres „döntésre vár” mellett az alapszűrő: mind');
+    check((await p.$$('#hh-sc-list [role="option"]')).length === merged.studies.length, 'a lista nem üres');
+    check((await p.$('#hh-sc-done')) !== null && (await txt(p, '#hh-sc-done')).indexOf('Frissítés') >= 0, 'következő lépés javaslat (Frissítés)');
+    await p.click('#hh-sc-next');
+    await screen(p, 'update');
+    check((await txt(p, '#hh-card .hh-card-head')).indexOf('EP4: 0') >= 0, 'a Frissítés kártyája megnevezi a kapuzó EP-ket');
+    check((await p.$('#hh-up-cap')) !== null, 'a frissítés felső korlátja a felületen is beállítható (H012 erre hivatkozik)');
+    // nyitott EP4 → újra „döntésre vár”; ismeretlen EP-szám → nem állítjuk, hogy kész
+    await p.evaluate(() => { window.__hhStatus.cli.checkpoints.EP4 = 2; });
+    await p.click('#hh-refresh');
+    await p.waitForFunction(() => document.querySelector('#hh-steps li[data-step="screen"]').classList.contains('is-needs_human'), null, { timeout: 4000 }).catch(() => null);
+    check(/is-needs_human/.test(await cls('screen')) && /is-needs_human/.test(await cls('update')), 'EP4: 2 → Szűrés és Frissítés döntésre vár');
+    await p.evaluate(() => { const s = window.__hhStatus; s.cli.available = false; s.checkpoints.forEach((c) => { if (c.id === 'EP4') { c.open_items = null; } }); });
+    await p.click('#hh-refresh');
+    await p.waitForFunction(() => !document.querySelector('#hh-steps li[data-step="screen"]').classList.contains('is-done'), null, { timeout: 4000 }).catch(() => null);
+    check(/is-needs_human/.test(await cls('screen')), 'ismeretlen EP4-szám mellett a tárolt needs_human marad');
+    await finish(o, 'UX-4');
+  });
+
+  await test('UX-7: a kinyerés állapota és stratégiája magyarul, a CLI-parancs csak lenyílóban', async () => {
+    const o = await openPage('#/headhunter?step=sources');
+    const p = o.page;
+    await screen(p, 'sources');
+    const details = {};
+    RV.filter((r) => /^\/api\/headhunter\/reviews\/rv-/.test(r.path)).forEach((r) => {
+      const env = JSON.parse(JSON.stringify(r.envelope));
+      env.data.summary.extraction = { status: 'done', strategy: 'reflist_api', run_id: '20261005T131058Z-72f7bb' };
+      details[r.path] = { envelope: env, etag: r.etag };
+    });
+    await p.evaluate((d) => {
+      window.MA.dev.fixtures.route('GET', '/api/headhunter/reviews/*', (req) => d[req.path], { first: true });
+    }, details);
+    await p.evaluate(() => { window.location.hash = '#/headhunter?step=extract'; });
+    await screen(p, 'extract');
+    await p.waitForSelector('.hh-ex-head', { timeout: 4000 });
+    const head = await txt(p, '.hh-ex-head');
+    check(head.indexOf('hivatkozáslista (adatbázis-API)') >= 0 && head.indexOf('kész') >= 0, 'utolsó kinyerés: magyar állapot és stratégia');
+    check(!/\b(reflist_api|jats|user_pdf|no_fulltext)\b/.test(head), 'nincs nyers stratégia/állapot-kód a fejlécben: ' + head.slice(0, 200));
+    const raw = await p.evaluate(() => ({ s: window.MA.i18n.t('hh.ex.strategy.reflist_api'), st: window.MA.i18n.t('hh.ex.run.done'), pr: window.MA.i18n.t('hh.pr.engine') }));
+    check(raw.s === 'hivatkozáslista (adatbázis-API)' && raw.st === 'kész', 'címkék: ' + JSON.stringify(raw));
+    check(raw.pr.indexOf('ma.py') < 0, 'a PRISMA-magyarázat nem CLI-parancsra hivatkozik');
+    await finish(o, 'UX-7');
+  });
+
   await test('Kérdés (PICO), angol nyelv, sötét téma, 409-es ütközés kezelése', async () => {
     const o = await openPage('#/headhunter?step=pico', { dark: true });
     const p = o.page;
@@ -403,7 +473,9 @@ async function finish(o, label) {
   await browser.close();
   await srv.close();
   const failed = results.filter((r) => !r.pass);
-  console.log('\nheadhunter.spec: ' + (results.length - failed.length) + '/' + results.length + ' rendben');
+  // a run_all.js közös összesítő sora („N/M ellenőrzés zöld”)
+  console.log('\nheadhunter.spec: ' + (results.length - failed.length) + '/' + results.length + ' ellenőrzés zöld' +
+    (failed.length ? ', ' + failed.length + ' HIBÁS' : ''));
   if (failed.length) {
     failed.forEach((f) => console.log('  ✖ [' + f.test + '] ' + f.msg));
     process.exit(1);

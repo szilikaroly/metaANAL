@@ -1,5 +1,5 @@
 {
- "description": "Kettős kinyerés (3.5.5): a munkapad VALÓDI szerverének borítékai (tests/gui/ui/gen_extraction_fixtures.py) egy ideiglenes projekten — o1: BCG, A/B eltérésekkel (10×, felcserélt karok, csak írásmód, kategória, hiányzó, nem szám, csak A / csak B sor, HTML-címke); o2: Normand (SE/SD csere); o3: csak az A tábla, a B a beérkezett mappában. Az összevetést a VALÓDI motor kettős kinyerés-modulja (metaelemzes/kettos.py: compare, consensus_table, agreement_report; a homlokzatba kötése az integrátoré) adja. A döntéseket, a visszavonást, a CSV-írást és az importot a src/dev/extraction_dual_backend.js állapottartóan szimulálja (nem a szerver).",
+ "description": "Kettős kinyerés (3.5.5): a munkapad VALÓDI szerverének borítékai (tests/gui/ui/gen_extraction_fixtures.py) egy ideiglenes projekten — o1: BCG, A/B eltérésekkel (10×, felcserélt karok, csak írásmód, kategória, hiányzó, nem szám, csak A / csak B sor, HTML-címke); o2: Normand (SE/SD csere); o3: csak az A tábla, a B a beérkezett mappában. Az összevetést a VALÓDI motor (metaelemzes.api.compare) adja. A döntéseket, a visszavonást, a CSV-írást és az importot a src/dev/extraction_dual_backend.js állapottartóan szimulálja (nem a szerver).",
  "routes": [
   {
    "method": "GET",

@@ -1667,7 +1667,9 @@ def agreement(pairs, instrument=None, level=0.95):
                     "'Not applicable' for both raters (routing) — not an independent agreement")})
             elif a is not None and b is not None:
                 cat_pairs.append((a, b))
-        for coll in ("domain_judgements", "applicability"):
+        # PROBAST+AI: az alkalmazhatóság és az összítélet is menetenként (overall_passes — fejlesztés: minőség,
+        # értékelés: torzítási kockázat); ezek is a doménítélet-egyezésbe és az összítélet-κ-ba számítanak
+        for coll in ("domain_judgements", "applicability", "overall_passes"):
             keys = []
             for dj in (doc_a.get(coll) or []) + (doc_b.get(coll) or []):
                 if isinstance(dj, dict):
@@ -1681,6 +1683,8 @@ def agreement(pairs, instrument=None, level=0.95):
                                 "agree": ja is not None and ja == jb})
                 if ja in inst.verdicts and jb in inst.verdicts:
                     by_domain.setdefault((coll, did, ps), []).append((ja, jb))
+                    if coll == "overall_passes":
+                        overall_pairs.append((ja, jb))
         oa_ = (doc_a.get("overall") or {}) if isinstance(doc_a.get("overall"), dict) else {}
         ob_ = (doc_b.get("overall") or {}) if isinstance(doc_b.get("overall"), dict) else {}
         if oa_.get("judgement") in inst.verdicts and ob_.get("judgement") in inst.verdicts:
@@ -1938,6 +1942,9 @@ def rob_summary(appraisals, tool, outcome=None, plot=None, studies=None, paths=N
             "weight_pct": w, "weight_text": ("%.1f%%" % w) if w is not None else None,
             "rows": [r for r in rows_of.get(key, []) if isinstance(r, str)], "judgements": jmap, "domains": doms,
             "overall": oj, "overall_implied": oi, "level": inst.level(shown) if shown else None,
+            # a szint forrása: emberi összítélet vagy (annak hiányában) a motor implikált ítélete — a forgalmi lámpán és
+            # a súlyozott sávokon az implikált jelölve (nem hivatalos eredmény; F6)
+            "overall_from": "judgement" if oj is not None else ("implied" if oi is not None else None),
             "source": f["basis"], "status": doc.get("status"), "origin": doc.get("origin"),
             "assessors": f["assessors"], "files": f["files"], "complete": res["complete"], "rob_value": rob_val})
     weighted = []
@@ -1952,7 +1959,9 @@ def rob_summary(appraisals, tool, outcome=None, plot=None, studies=None, paths=N
         if lev in ("critical", "ni", "unassessed") and n == 0:
             continue
         pct = 100.0 * vs_w / total_w if total_w > 0 else None
-        weighted.append({"level": lev, "n": n, "pct": pct, "text": ("%.1f%%" % pct) if pct is not None else None})
+        n_impl = 0 if lev == "unassessed" else sum(1 for s in vs if s["overall_from"] == "implied")
+        weighted.append({"level": lev, "n": n, "n_implied": n_impl, "pct": pct,
+                         "text": ("%.1f%%" % pct) if pct is not None else None})
     high = [w["pct"] for w in weighted if w["level"] in ("high", "critical") and w["pct"] is not None]
     notes = [inst.rollup.get("label") or _t(inst.algorithm)]
     if plot is None:

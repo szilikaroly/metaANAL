@@ -454,6 +454,16 @@ class CheckRequestTests(unittest.TestCase):
             self.assertRejected(self.api(method, route, Content_Length=str(big + 1)), 413)
         self.assertEqual(sec.body_limit("/api/table?dataset=a"), big)
         self.assertEqual(sec.body_limit("/api/table/x"), small)
+        # értékelés- és GRADE-dokumentum: 1 MB (TRIPOD+AI AI-vázlat indoklásokkal); a többi 64 KB marad
+        doc = sec.MAX_DOC_BODY_BYTES
+        self.assertEqual(doc, 1024 * 1024)
+        for route in ("/api/appraisals/S1/tripod-ai?rater=ai", "/api/appraisals/S1/rob2/check",
+                      "/api/appraisals/import", "/api/grade/o1"):
+            self.assertEqual(sec.body_limit(route), doc, route)
+            self.assertIsNone(self.api("PUT", route, Content_Length=str(doc)), route)
+            self.assertRejected(self.api("PUT", route, Content_Length=str(doc + 1)), 413, "PAYLOAD_TOO_LARGE")
+        for route in ("/api/appraisals", "/api/gradex", "/api/sof/o1", "/api/log/decision"):
+            self.assertEqual(sec.body_limit(route), small, route)
 
     def test_bad_content_length_and_chunked(self):
         for cl in ("abc", "-1", "1.5", " ", "0x10", "\u0661\u0662", "9" * 20):

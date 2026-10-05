@@ -34,6 +34,7 @@ FILE_URL_MAX_TTL = 3600
 MAX_PENDING_LAUNCH_CODES = 8
 MAX_SESSION_TOKENS = 16
 MAX_TABLE_BODY_BYTES = 4 * 1024 * 1024
+MAX_DOC_BODY_BYTES = 1024 * 1024      # értékelés / GRADE-dokumentum (TRIPOD+AI AI-vázlat 52 tétel indoklással)
 MAX_BODY_BYTES = 64 * 1024
 MAX_JSON_DEPTH = 32
 MAX_ROWS = 5000
@@ -52,6 +53,9 @@ TABLE_BODY_ROUTES = frozenset([
     "/api/table", "/api/table/import", "/api/validate", "/api/compare", "/api/reconcile",
     "/api/analyze", "/api/provenance",
 ])
+# a teljes értékelés- és GRADE-dokumentumot vivő útvonalak 1 MB-ot kapnak (v1): egy TRIPOD+AI AI-vázlat mind az 52
+# tételhez egyszerű nyelvű indoklást és idézetet hordoz (6. döntés), ami a 64 KB-ot meghaladhatja
+DOC_BODY_PREFIXES = ("/api/appraisals/", "/api/grade/")
 
 # 3.4 hibakód-táblázat (+ METHOD_NOT_ALLOWED a T1 OPTIONS → 405 szabályhoz)
 ERROR_CODES = {
@@ -239,7 +243,11 @@ def route_class(path):
 def body_limit(path):
     """A törzs megengedett legnagyobb mérete bájtban (T11)."""
     p = path.split("?", 1)[0]
-    return MAX_TABLE_BODY_BYTES if p in TABLE_BODY_ROUTES else MAX_BODY_BYTES
+    if p in TABLE_BODY_ROUTES:
+        return MAX_TABLE_BODY_BYTES
+    if p.startswith(DOC_BODY_PREFIXES):
+        return MAX_DOC_BODY_BYTES
+    return MAX_BODY_BYTES
 
 
 _FETCH_SITE_ALLOWED = {

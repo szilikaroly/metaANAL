@@ -29,7 +29,7 @@ for p in (ROOT, HERE):
         sys.path.insert(0, p)
 
 from ma_gui import activity, audit_export, schema_lite, snapshot  # noqa: E402
-from test_snapshot import (ASSESSOR, CELL_MARKER, PDF_MARKER, PRIVATE_MARKER, QUOTE_MARKER, make_project,  # noqa: E402
+from test_snapshot import (ASSESSOR, CELL_MARKER, has_cell_marker, PDF_MARKER, PRIVATE_MARKER, QUOTE_MARKER, make_project,  # noqa: E402
                            open_app)
 
 
@@ -192,7 +192,7 @@ class AuditClassMatrixTests(unittest.TestCase):
         names = zipfile.ZipFile(io.BytesIO(data)).namelist()
         self.assertFalse([n for n in names if n.startswith("03_adatok/") and n.endswith(".csv")])
         text = zip_text(data)
-        self.assertTrue(CELL_MARKER not in text, "nem szerepelhet: %r · %s" % (CELL_MARKER, "cellaérték: sem tábla, sem eredet-érték, sem ábra-oszlop"))
+        self.assertFalse(has_cell_marker(text), "nem szerepelhet: %r · %s" % (CELL_MARKER, "cellaérték: sem tábla, sem eredet-érték, sem ábra-oszlop"))
         self.assertTrue(PRIVATE_MARKER not in text, "nem szerepelhet: %r" % (PRIVATE_MARKER,))
         self.assertTrue(any(x["pattern"] == "03_adatok/**/*.csv" for x in manifest["excluded"]))
         self.assertEqual(schema_lite.validate(manifest, audit_export.MANIFEST_SCHEMA), [])

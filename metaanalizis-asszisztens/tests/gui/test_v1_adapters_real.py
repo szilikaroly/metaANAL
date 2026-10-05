@@ -5,7 +5,8 @@ Futtatás: ``MA_GUI_PLUGIN_DIRS=<szk-plugins>/plugins python3 -m unittest tests/
 Ha a változó nincs beállítva vagy a plugin hiányzik, a tesztek tiszta üzenettel kimaradnak.
 
 - validator 1.0.0 (stdlib): a golden-kimenetek nem sodródtak (a rögzített H1–H4 reprodukció ma is így fut), és a
-  bridge-mód az őrökkel helyes eredményt ad a hibás plugin mellett is.
+  bridge-mód az őrökkel helyes eredményt ad a hibás plugin mellett is; a H12 (polaritás) és a H13 (számozás) hibája
+  ma is reprodukálható, és az őr megjelöli / kiszűri.
 - figure-forge 0.2.1: matplotlib nélküli interpreterrel ``unusable`` + pontos H5-teendő; matplotlibes
   interpreterrel (``MA_GUI_TEST_FF_PYTHON`` vagy ``FIGURE_FORGE_PYTHON``; ennek hiányában a PATH ``python3``-ja, ha
   van benne matplotlib) ``legacy``, és az ``ff.py audit`` a motor valódi SVG-jén fut — a tmp-ben, a projektbe nem ír.
@@ -153,6 +154,41 @@ class RealValidator(_Tmp):
         d = self.ad.check(docs["tripod_empty"])["data"]
         self.assertEqual(d["answered"], 0)                                                    # H1
         self.assertIn("H1", [g["id"] for g in d["guards"]])
+
+    def test_h12_h13_reproduced_and_guarded(self):
+        """H12: a QUADAS-2 1.2/1.3 „yes” (= jó) a validator 1.0.0-ban magas kockázatot kényszerít (fordított
+        polaritás) — az őr megjelöli; H13: a ROBINS-I régi számozású tételei nem mennek át."""
+        def instrument(tool):
+            return json.loads(_read(os.path.join(H.ROOT, "metaelemzes", "instruments", tool + ".json")))
+        doc = {"schema": "szk.appraisal/v1", "tool": "quadas2",
+               "answers": {k: {"value": "yes"} for k in ("1.1", "1.2", "1.3")}}
+        d = self.ad.check(doc, instrument=instrument("quadas2"))["data"]
+        dom1 = [x for x in d["domains"] if x["domain"] == "1"][0]
+        self.assertEqual((dom1["implied"], sorted(dom1["forced_by"])), ("high", ["1.2", "1.3"]))   # a hiba ma is él
+        self.assertEqual([g["id"] for g in d["guards"]], ["H12"])
+        self.assertEqual(d["unreliable_domains"], ["1"])
+        self.assertFalse(d["overall"]["reliable"])
+        doc = {"schema": "szk.appraisal/v1", "tool": "robins-i", "scope": "assignment",
+               "answers": {k: {"value": "no"} for k in ("4.1", "4.3", "5.1", "5.2")}}
+        d = self.ad.check(doc, instrument=instrument("robins-i"))["data"]
+        self.assertEqual([(g["id"], g["items"]) for g in d["guards"]], [("H13", ["4.3", "5.2"])])
+        self.assertFalse(d["comparable"])
+        self.assertEqual(d["validator_reported"]["answered"], 2)                                   # 4.1, 5.1
+
+    def test_h12_robins_i_router_items(self):
+        """FID-5: a ROBINS-I 2.1 (és 1.3) a publikált eszközben elágazó kérdés, a validator 1.0.0-ban „reverse”: a
+        2.1 = igen a validatornál súlyos kockázatot kényszerít — az őr a domént és az összítéletet nem megbízhatónak
+        jelöli (nem a H13 számozásnak tulajdonítja)."""
+        inst = json.loads(_read(os.path.join(H.ROOT, "metaelemzes", "instruments", "robins-i.json")))
+        doc = {"schema": "szk.appraisal/v1", "tool": "robins-i", "scope": "assignment",
+               "answers": {"2.1": {"value": "yes"}, "2.2": {"value": "no"}, "2.3": {"value": "no"}}}
+        d = self.ad.check(doc, instrument=inst)["data"]
+        h12 = [g for g in d["guards"] if g["id"] == "H12"]
+        self.assertTrue(h12, d["guards"])
+        self.assertIn("2.1", h12[0]["items"])
+        self.assertIn("2", d["unreliable_domains"])
+        if isinstance(d.get("overall"), dict):
+            self.assertFalse(d["overall"]["reliable"])
 
 
 class RealFigureForge(_Tmp):

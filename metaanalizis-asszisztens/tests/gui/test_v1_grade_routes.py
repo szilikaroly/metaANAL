@@ -34,8 +34,8 @@ from ma_gui.routes import grade_sof  # noqa: E402
 
 ALL_ENGINE = ("grade_get", "grade_load", "load_grade_doc", "grade_doc_load", "grade_put", "grade_save", "save_grade_doc",
               "grade_doc_save", "grade_record", "record_grade_doc", "grade_doc_record", "grade_advice", "sof",
-              "sof_build", "sof_csv", "sof_markdown", "amstar2_consistency", "instrument_get", "get_instrument",
-              "instrument", "load_instrument")
+              "sof_build", "sof_csv", "sof_markdown", "sof_problems", "amstar2_consistency", "instrument_get",
+              "get_instrument", "instrument", "load_instrument")
 SECRET = "Smith-féle titkos indoklás"
 
 
@@ -131,14 +131,13 @@ class FeatureDetectionTests(_Base):
         for method, path, body in (("PUT", "/api/grade/o1", {"grade": grade_doc(self.run_id)}),
                                    ("GET", "/api/grade/o1/advice", None), ("GET", "/api/sof/o1", None),
                                    ("PUT", "/api/sof/o1", {"assumed_risks": [{"source": "control_pool"}]}),
-                                   ("GET", "/api/amstar2", None)):
+                                   ("GET", "/api/appraisals/review/amstar2?rater=SzK", None)):
             st, e = self.err(method, path, body)
             self.assertEqual((st, e["code"]), (424, "CAPABILITY_MISSING"), (method, path))
             self.assertIn("Frissítsd a motort", e["message"])
-        st, e = self.err("GET", "/api/amstar2")
-        self.assertIn("view", e["details"])
-        self.assertEqual(e["details"]["view"]["instrument_source"], "kb", "a KB AMSTAR2 listája a tartalék")
-        self.assertTrue(any(it["id"] == "AMSTAR2-02" for it in e["details"]["view"]["kb_items"]))
+        # az AMSTAR 2-nek EGY végpontja van (az értékelés-végpontok, review.amstar2.<értékelő>.json); a régi
+        # párhuzamos /api/amstar2 megszűnt (v1 integráció)
+        self.assertEqual(self.err("GET", "/api/amstar2")[0], 404)
         # a protokoll a motor v1 nélkül is megy (a meglévő homlokzattal)
         self.assertEqual(self.ok("GET", "/api/protocol")["data"]["review_types"], list(api.REVIEW_TYPES))
 
@@ -203,9 +202,17 @@ class GradeTests(_Base):
         st, e = self.err("PUT", "/api/grade/o1", {"grade": grade_doc(self.run_id, pb=("suspected", -2))}, etag=etag)
         self.assertEqual(st, 422)
         self.assertIn("csak 0 vagy −1", e["message"])
-        # feloldás: −1 indoklással, rögzítés → naplósor előjeles lépés-szövegekkel
-        env = self.ok("PUT", "/api/grade/o1", {"grade": grade_doc(self.run_id, pb=("suspected", -1)), "record": True},
-                      etag=etag)
+        # feloldás: −1 indoklással; rögzítés az ember megerősítése nélkül → 422: a motor számolt szintje csak
+        # előtöltés, a végső bizonyosság emberi ítélet (GRADE-09, M5) — naplósor nem keletkezik
+        body = {"grade": grade_doc(self.run_id, pb=("suspected", -1)), "record": True}
+        st, e = self.err("PUT", "/api/grade/o1", body, etag=etag)
+        self.assertEqual((st, e["code"]), (422, "VALIDATION"))
+        self.assertTrue(e["details"]["needs_certainty"])
+        self.assertEqual(e["details"]["computed_certainty"], "low")
+        self.assertEqual(len(self.grades()), n_before)
+        etag = self.ok("GET", "/api/grade/o1")["_etag"]           # a piszkozat elmentődött
+        # az ember megerősíti az előtöltött szintet → naplósor előjeles lépés-szövegekkel
+        env = self.ok("PUT", "/api/grade/o1", dict(body, certainty="low"), etag=etag)
         d = env["data"]
         self.assertEqual(d["grade"]["domains"]["publication_bias"]["status"], "resolved")
         self.assertEqual(d["grade"]["certainty"], "low", "a csonk motor: magas −1 (RoB) −1 (PB) = alacsony")
@@ -382,39 +389,54 @@ class SofTests(_Base):
 
 
 class Amstar2Tests(_Base):
+    """Az AMSTAR 2 önellenőrzés EGYETLEN végpontja: ``/api/appraisals/review/amstar2`` (a 6 GRADE/SoF › AMSTAR 2
+    képernyő ezt használja; fájl: 04_torzitas_kockazat/appraisals/review.amstar2.<értékelő>.json) — a valódi motor
+    eszköz-definíciójával és besorolásával, mindkét „részben igen” konvencióval (KB AMSTAR2-00)."""
     NAME = "am"
+    PATH = "/api/appraisals/review/amstar2?rater=%s"
 
-    def test_amstar2_both_conventions_override_and_ai_draft(self):
-        self.engine()
-        d = self.ok("GET", "/api/amstar2")["data"]
-        self.assertIsNone(d["appraisal"])
-        self.assertEqual(d["convention"], "meets")
-        self.assertEqual(d["instrument_source"], "kb")
+    @staticmethod
+    def amstar2_doc(rater="SzK", **kw):
         answers = {str(i): {"value": "yes"} for i in range(1, 17)}
         answers["2"] = {"value": "partial_yes", "rationale": "protokoll van, regisztráció nincs"}
-        doc = {"answers": answers, "assessor": "SzK", "overall": {"judgement": "high", "rationale": "x"}}
-        env = self.ok("PUT", "/api/amstar2", {"appraisal": doc})
-        d = env["data"]
-        self.assertEqual(d["consistency"]["by_convention"], {"meets": "high", "weakness": "low"})
-        self.assertEqual(d["rater"], "SzK")
-        self.assertEqual(d["raters"], ["SzK"])
+        answers["4"] = {"value": "partial_yes"}
+        for i in ("9", "11"):
+            answers[i] = {"value": "yes", "parts": {"RCT": "yes", "NRSI": "not_applicable"}}
+        doc = {"schema": "szk.appraisal/v1", "tool": "amstar2", "scope": None,
+               "target": {"unit": "review", "study_id": None, "key": None}, "assessor": rater,
+               "second_assessor": None, "status": "draft", "origin": "human", "answers": answers,
+               "domain_judgements": [], "applicability": [], "overall": {"judgement": "high", "rationale": "x"}}
+        doc.update(kw)
+        return doc
+
+    def test_amstar2_both_conventions_override_and_ai_draft(self):
+        self.assertEqual(self.err("GET", "/api/amstar2")[0], 404, "nincs második AMSTAR 2 végpont")
+        d = self.ok("GET", self.PATH % "SzK")["data"]
+        self.assertFalse(d["exists"])
+        doc = self.amstar2_doc()
+        env = self.ok("PUT", self.PATH % "SzK", {"doc": doc})
+        am = env["data"]["check"]["amstar2"]
+        # a projekt konvenciója (meets): két „részben igen” kritikus tétel nem gyengeség → magas; a másik
+        # konvencióval (weakness) két nem kritikus gyengeség → mérsékelt; a motor mindkettőt megadja
+        self.assertEqual((am["convention"], am["rating"]), ("meets", "high"))
+        self.assertEqual((am["alternative"]["convention"], am["alternative"]["rating"]), ("weakness", "moderate"))
+        self.assertTrue(am["differs"])
         self.assertTrue(os.path.isfile(os.path.join(self.proj, "04_torzitas_kockazat", "appraisals",
                                                     "review.amstar2.SzK.json")))
         # felülbírálás indoklás nélkül: 422 X017
-        doc2 = dict(doc, overall={"judgement": "moderate"})
-        st, e = self.err("PUT", "/api/amstar2", {"appraisal": doc2}, etag=env["_etag"])
+        doc2 = dict(doc, overall={"judgement": "moderate", "rationale": "x", "override_reason": None})
+        st, e = self.err("PUT", self.PATH % "SzK", {"doc": doc2}, etag=env["_etag"])
         self.assertEqual((st, e["code"]), (422, "VALIDATION"))
-        self.assertEqual(e["details"]["code"], "X017")
+        self.assertIn("X017", e["message"])
         doc2["overall"]["override_reason"] = "a 2. tételt szigorúbban ítéljük"
-        env = self.ok("PUT", "/api/amstar2", {"appraisal": doc2}, etag=env["_etag"])
+        env = self.ok("PUT", self.PATH % "SzK", {"doc": doc2}, etag=env["_etag"])
         # If-Match nélkül nem írható felül
-        self.assertEqual(self.err("PUT", "/api/amstar2", {"appraisal": doc})[0], 409)
-        # AI-vázlat jóváhagyás nélkül nem lehet kész
-        ai = dict(doc, assessor="Claude", origin="ai_draft", status="complete")
-        st, e = self.err("PUT", "/api/amstar2", {"appraisal": ai})
+        self.assertEqual(self.err("PUT", self.PATH % "SzK", {"doc": doc})[0], 409)
+        # AI-vázlat jóváhagyás nélkül nem lehet kész (6. döntés), és az AI nem emberi értékelő
+        ai = self.amstar2_doc(rater="ai", assessor="ai", origin="ai_draft", status="complete")
+        st, e = self.err("PUT", self.PATH % "ai", {"doc": ai})
         self.assertEqual(st, 422)
         self.assertIn("AI-vázlat", e["message"])
-        self.assertEqual(self.err("GET", "/api/amstar2?rater=ai")[0], 400)
         self.assertNotIn("a 2. tételt szigorúbban", self.activity_text())
 
 
@@ -510,8 +532,8 @@ class StaleRunTests(_Base):
         self.assertFalse(env["data"]["run_matches"])
         st, e = self.err("PUT", "/api/grade/o1", {"grade": doc, "record": True}, etag=env["_etag"])
         self.assertEqual(e["details"]["code"], "X007")
-        d = self.ok("PUT", "/api/grade/o1", {"grade": dict(doc, run_id=new_id), "record": True},
-                    etag=env["_etag"])["data"]
+        d = self.ok("PUT", "/api/grade/o1", {"grade": dict(doc, run_id=new_id), "record": True,
+                                             "certainty": "moderate"}, etag=env["_etag"])["data"]
         self.assertTrue(d["run_matches"])
         self.assertEqual(d["recorded"]["certainty"], "moderate")
 
@@ -532,15 +554,39 @@ class RealEngineTests(_Base):
                    "grade_record": (projekt, "record_grade_doc"), "grade_advice": (grade_help, "advice"),
                    "sof": (grade_help, "sof"), "sof_csv": (grade_help, "sof_csv"),
                    "sof_markdown": (grade_help, "sof_markdown"),
+                   "sof_problems": (grade_help, "sof_certainty_problems"),
                    "amstar2_consistency": (grade_help, "amstar2_consistency")}
         missing = ["%s.%s" % (m.__name__, n) for m, n in mapping.values() if not callable(getattr(m, n, None))]
         if missing:
             self.skipTest("a motor v1-függvényei még hiányoznak: %s" % ", ".join(missing))
         from unittest import mock
-        for p in STUB.absent(ALL_ENGINE):
+        # a valódi eszköz-definíció marad (az AMSTAR 2 az értékelés-végponton a motor instrument_get-jével megy)
+        for p in STUB.absent([n for n in ALL_ENGINE if n != "instrument_get"]):
             self.stack.enter_context(p)
         for name, (m, n) in mapping.items():
             self.stack.enter_context(mock.patch.object(api, name, getattr(m, n), create=True))
+
+    def test_recorded_human_certainty_and_computed_level(self):
+        """FID-3: a rögzített EMBERI bizonyosság a nézetben emberiként (certainty_source: human), a lépésekből adódó
+        motor-szint külön mezőben (computed_certainty) — a felület így nem nevezi a kettőt egynek. F11: a külső
+        alapkockázat forrása (note) a SoF lábjegyzetébe kerül."""
+        doc = grade_doc(self.run_id, pb=("suspected", -1))
+        cur = self.ok("GET", "/api/grade/o1")
+        env = self.ok("PUT", "/api/grade/o1", {"grade": doc}, etag=cur["_etag"]) if cur["_etag"] else \
+            self.ok("PUT", "/api/grade/o1", {"grade": doc})
+        self.assertEqual(env["data"]["computed_certainty"], "low")
+        env = self.ok("PUT", "/api/grade/o1", {"grade": doc, "record": True, "certainty": "moderate"}, etag=env["_etag"])
+        g = self.ok("GET", "/api/grade/o1")["data"]
+        self.assertEqual(g["grade"]["certainty"], "moderate")
+        self.assertEqual(g["grade"].get("certainty_source"), "human")
+        self.assertEqual(g["computed_certainty"], "low", "a motor szintje a lépésekből (emberi ítélet mellett)")
+        sv = self.ok("PUT", "/api/sof/o1", {"assumed_risks": [{"source": "control_pool"},
+                                                               {"source": "external", "label": "Regiszter", "per_1000": "12,5",
+                                                                "note": "KSH Népegészségügyi Adattár 2023"}],
+                                            "dry_run": True})["data"]
+        notes = json.dumps(sv["preview"].get("footnotes") or [], ensure_ascii=False)
+        self.assertIn("KSH Népegészségügyi Adattár 2023", notes)
+        self.assertNotIn("nincs megadva", json.dumps(sv["preview"]["rows"][0], ensure_ascii=False))
 
     def test_grade_sof_amstar2_with_the_real_engine(self):
         adv = self.ok("GET", "/api/grade/o1/advice?mid=0%2C75%E2%80%931%2C25")["data"]["advice"]
@@ -562,7 +608,20 @@ class RealEngineTests(_Base):
         st, e = self.err("PUT", "/api/grade/o1", {"grade": doc, "record": True}, etag=env["_etag"])
         self.assertEqual((st, e["details"]["code"]), (409, "X019"))
         doc["domains"]["publication_bias"]["step"] = -1
-        env = self.ok("PUT", "/api/grade/o1", {"grade": doc, "record": True}, etag=env["_etag"])
+        # a motor számolt szintje ('low') csak előtöltés: megerősítés nélkül a motor is, a munkapad is elutasít
+        st, e = self.err("PUT", "/api/grade/o1", {"grade": doc, "record": True}, etag=env["_etag"])
+        self.assertEqual(st, 422)
+        self.assertTrue(e["details"]["needs_certainty"])
+        self.assertEqual(e["details"]["computed_certainty"], "low")
+        etag = self.ok("GET", "/api/grade/o1")["_etag"]
+        # a még nem rögzített (piszkozat) GRADE bizonyossága nem kerülhet a mentett SoF-ba (4. döntés, X008)
+        sv = self.ok("GET", "/api/sof/o1")["data"]
+        row0 = sv["preview"]["rows"][0]
+        self.assertEqual((row0["certainty"], row0["certainty_basis"]), ("low", "draft"), "az előnézet piszkozatként jelöl")
+        st, e = self.err("PUT", "/api/sof/o1", {"assumed_risks": [{"source": "control_pool"}]})
+        self.assertEqual((st, e["details"]["code"]), (422, "X008"))
+        self.assertFalse(os.path.isfile(os.path.join(self.proj, "06_kezirat", "sof", "o1.sof.json")))
+        env = self.ok("PUT", "/api/grade/o1", {"grade": doc, "record": True, "certainty": "low"}, etag=etag)
         d = env["data"]
         self.assertEqual(d["grade"]["certainty"], "low")
         self.assertEqual(d["grade"]["status"], "recorded", "a motor a fájlt 'recorded'-re állítja")
@@ -590,13 +649,14 @@ class RealEngineTests(_Base):
         self.assertFalse([c for r in rows for c in r if c[:1] in ("=", "+", "-", "@", "\t", "\r")])
         m = self.ok("POST", "/api/sof/o1/export", {"format": "md", "lang": "en"})["data"]
         self.assertIn("| Outcome |", m["content"])
-        # AMSTAR 2 a motor algoritmusával, mindkét konvencióval
-        answers = {str(i): {"value": "yes"} for i in range(1, 17)}
-        answers["4"] = {"value": "partial_yes"}
-        a = self.ok("PUT", "/api/amstar2", {"appraisal": {"answers": answers, "assessor": "SzK"}})["data"]
-        self.assertEqual(a["consistency"]["by_convention"]["meets"]["rating"], "high")
-        self.assertEqual(a["consistency"]["by_convention"]["weakness"]["rating"], "high",
-                         "egy nem kritikus gyengeség még „magas”")
+        # AMSTAR 2 a motor algoritmusával, mindkét konvencióval — az egyetlen AMSTAR 2 végponton
+        doc = Amstar2Tests.amstar2_doc()
+        doc["answers"]["2"] = {"value": "yes"}
+        a = self.ok("PUT", Amstar2Tests.PATH % "SzK", {"doc": doc})["data"]["check"]["amstar2"]
+        self.assertEqual(a["rating"], "high")
+        self.assertEqual(a["alternative"]["rating"], "high", "egy nem kritikus gyengeség még „magas”")
+        cons = api.amstar2_consistency({k: v["value"] for k, v in doc["answers"].items()})
+        self.assertEqual(cons["by_convention"]["weakness"]["rating"], "high", "a GRADE-modul ugyanígy számol")
         self.assertNotIn("gyenge tesztek", self.activity_text())
 
 

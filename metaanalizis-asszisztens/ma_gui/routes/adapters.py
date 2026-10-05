@@ -164,7 +164,8 @@ def post_validator_check(req):
     warnings = []
     data = res["data"]
     if data.get("legacy"):
-        warnings.append("A validator régi (bridge) módban fut; az eredményt a H1–H4 őrök javítják (5.0).")
+        warnings.append("A validator régi (bridge) módban fut; az ismert hibáit az őrök (5.0: H1–H4, H12, H13) "
+                        "kijavítják, vagy megjelölik, ahol az eredménye nem megbízható.")
     return Result(data, RESULT_SCHEMA, warnings=warnings)
 
 

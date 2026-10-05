@@ -7,6 +7,7 @@
  *   o: {tool, unit, target, rater, myRater, inst, label?, passes?: true (PROBAST+AI menetei), applicability?, judgements?,
  *       overall?, extra?(view) → Node (pl. TRIPOD-hiánylista), onSaved?(view), onRater?(rater), consensusHref?}
  *   ctl: {dirty(), reload(), save(status?), view()}
+ * A lábban (ha a komponens be van töltve) a validator keresztellenőrző doboza: MA.adaptersValidator.box (csak vélemény).
  * A számok (teljesség, implikált ítélet) a motor válaszából jönnek; itt nincs számolás.
  */
 (function () {
@@ -50,7 +51,8 @@
         }) : null,
         c && c.complete ? MA.ui.badge('ok', t('appraisal.complete')) : MA.ui.badge('warning', t('appraisal.incomplete')),
         st.dirty ? MA.ui.badge('pending', t('appraisal.unsaved')) : null);
-      MA.dom.mount(missHost, A().missingList(c, function (key) { if (st.form) { st.form.focusKey(key); } }));
+      var go = function (key) { if (st.form) { st.form.focusKey(key); } };
+      MA.dom.mount(missHost, A().missingList(c, go, o.inst), A().invalidList(c, go, o.inst));
       if (extraHost && o.extra) { MA.dom.mount(extraHost, o.extra(st.view, st.check, st.doc)); }
     }
 
@@ -161,6 +163,13 @@
         h('div', { 'class': 'ap-foot', id: 'ap-foot' },
           h('div', { 'class': 'row' }, status),
           missHost, extraHost, msg,
+          // a validator plugin keresztellenőrzése (csak vélemény; semmit nem ír vissza) — egyszer csatolva, így az élő
+          // ellenőrzés nem törli az eredményét
+          MA.adaptersValidator ? h('details', { 'class': 'ap-val-wrap', id: 'ap-val' }, h('summary', { i18n: 'adp.val.title' }),
+            MA.adaptersValidator.box(function () { return st.doc; }, { id: 'ap-val-run', engine: function (doc) {
+              // a motor ellenőrzése a validatornak küldött dokumentum pillanatképére (FID-4)
+              return MA.api.post(A().apiPath(o.unit, o.tool, 'check'), { doc: doc }, { query: q(), toast: false }).then(function (env) { return env.data.check; });
+            } })) : null,
           h('div', { 'class': 'toolbar' },
             h('button', { type: 'button', 'class': 'btn', id: 'ap-check', onclick: function () { runCheck(); runCheck.flush(); } }, t('appraisal.check')),
             ro ? null : h('button', { type: 'button', 'class': 'btn btn-primary', id: 'ap-save', onclick: function () { save(); } }, t('appraisal.save')),

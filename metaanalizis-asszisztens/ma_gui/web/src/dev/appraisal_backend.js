@@ -63,6 +63,30 @@
 
   // ---------------------------------------------------------------- SZIMULÁLT ellenőrzés (nem a motor!)
   function val(doc, key) { var a = (doc.answers || {})[key]; return a && typeof a === 'object' ? a.value : null; }
+  /** a tételnél adható értékek (a motor szabálya: items[].answers, különben default_answers, különben minden) */
+  function allowedOf(inst, it) {
+    var list = it.answers || inst.default_answers || (inst.answers || []).map(function (a) { return a.value; });
+    var m = {};
+    list.forEach(function (v) { m[v] = 1; });
+    return m;
+  }
+  /** résztételes tétel (AMSTAR 2 9./11.: RCT / NRSI — F3): minden rész megválaszolva, a részenként adható értékkel */
+  function partsDone(it, doc) {
+    var a = (doc.answers || {})[it.key];
+    var ps = it.parts || [];
+    if (!ps.length || !a || typeof a !== 'object' || !a.parts) { return false; }
+    return ps.every(function (p) { return (p.answers || []).indexOf(a.parts[p.id]) >= 0; });
+  }
+  /** a résztételes tétel összesített értéke a besoroláshoz: a legrosszabb nem-NA rész (mind NA → igen) */
+  function partsValue(it, doc) {
+    var a = (doc.answers || {})[it.key] || {};
+    var vs = (it.parts || []).map(function (p) { return (a.parts || {})[p.id]; }).filter(function (v) { return v && v !== 'not_applicable'; });
+    if (!vs.length) { return partsDone(it, doc) ? 'yes' : null; }
+    return vs.indexOf('no') >= 0 ? 'no' : (vs.indexOf('partial_yes') >= 0 ? 'partial_yes' : 'yes');
+  }
+  function isAnswered(inst, it, doc) { return (it.parts || []).length ? partsDone(it, doc) : !!allowedOf(inst, it)[val(doc, it.key)]; }
+  function isReverse(it) { return it.polarity ? it.polarity === 'reverse' : (it.tags || []).indexOf('reverse') >= 0; }
+  function isRouter(it) { return it.polarity ? it.polarity === 'router' : (it.tags || []).indexOf('router') >= 0; }
   function verdictFor(inst, lev) { var v = (inst.verdicts || []).filter(function (x) { return x.level === lev; })[0]; return v ? v.value : null; }
   function scoped(inst, doc) {
     var scope = doc.scope;
@@ -82,23 +106,27 @@
 
   function check(doc) {
     var inst = S.insts[doc.tool];
-    var allowed = {};
-    (inst.answers || []).forEach(function (a) { allowed[a.value] = 1; });
     var items = scoped(inst, doc);
-    var missing = [], answered = 0;
+    var missing = [], answered = 0, invalid = [];
     items.forEach(function (it) {
       var v = val(doc, it.key);
-      if (v === null || v === undefined || !allowed[v]) { missing.push({ item: it.id, pass: it.pass || null, key: it.key }); } else { answered += 1; }
+      if (!(it.parts || []).length && v !== null && v !== undefined && !allowedOf(inst, it)[v]) {
+        // a motor alakja (check.invalid): a nem megengedett válasz SOHA nem csendes (F2)
+        var lst = Object.keys(allowedOf(inst, it)).join(', ');
+        invalid.push({ item: it.id, pass: it.pass || null, key: it.key, value: v,
+          reason: { hu: 'nem megengedett válasz (lehet: ' + lst + ')', en: 'answer not allowed (allowed: ' + lst + ')' } });
+      }
+      if (!isAnswered(inst, it, doc)) { missing.push({ item: it.id, pass: it.pass || null, key: it.key }); } else { answered += 1; }
     });
     var alg = (inst.rollup || {}).algorithm || 'none';
     var res = { schema: 'szk.appraisal-result/v1', tool: inst.key, engine_version: 'dev-szimuláció', complete: missing.length === 0,
-      expected: items.length, answered: answered, completeness_text: frac(answered, items.length), missing: missing, invalid: [],
+      expected: items.length, answered: answered, completeness_text: frac(answered, items.length), missing: missing, invalid: invalid,
       domains: [], overall: { implied: null, algorithm: alg, text: null }, per_pass: null, amstar2: null, tripod: null, guards: [], notes: [], warnings: [] };
     if ((inst.passes || []).length) {
       res.per_pass = {};
       inst.passes.forEach(function (p) {
         var its = items.filter(function (it) { return it.pass === p.id; });
-        var n = its.filter(function (it) { return allowed[val(doc, it.key)]; }).length;
+        var n = its.filter(function (it) { return isAnswered(inst, it, doc); }).length;
         res.per_pass[p.id] = { expected: its.length, answered: n, complete: n === its.length, text: frac(n, its.length) };
       });
     }
@@ -110,9 +138,9 @@
         var forced = [], unk = [], miss = [], routers = [];
         its.forEach(function (it) {
           var v = val(doc, it.key);
-          if ((it.tags || []).indexOf('router') >= 0) { if (v) { routers.push(it.id); } return; }
+          if (isRouter(it)) { if (v) { routers.push(it.id); } return; }
           if (!v) { miss.push(it.id); return; }
-          var bad = (it.tags || []).indexOf('reverse') >= 0 ? !!YES_ISH[v] : !!NO_ISH[v];
+          var bad = isReverse(it) ? !!YES_ISH[v] : !!NO_ISH[v];
           if (bad) { forced.push(it.id); } else if (UNKNOWN[v]) { unk.push(it.id); }
         });
         var lev = forced.length ? 'high' : (miss.length ? null : (unk.length ? 'some' : 'low'));
@@ -145,7 +173,7 @@
     ['meets', 'weakness'].forEach(function (conv) {
       var flaws = [], weak = [], unans = [];
       inst.items.forEach(function (it) {
-        var v = val(doc, it.key);
+        var v = (it.parts || []).length ? partsValue(it, doc) : val(doc, it.key);
         if (!v) { unans.push(it.id); return; }
         if (v === 'yes') { return; }
         if (v === 'partial_yes') { if (it.critical && conv === 'weakness') { weak.push(it.id); } return; }
@@ -229,7 +257,8 @@
       origin: doc.origin, status: doc.status, assessor: doc.assessor, second_assessor: doc.second_assessor, approved_by: doc.approved_by,
       updated: doc.updated, scope: doc.scope, target_obj: doc.target,
       domain_judgements: (doc.domain_judgements || []).map(function (d) { return { domain: d.domain, pass: d.pass || null, judgement: d.judgement }; }),
-      applicability: (doc.applicability || []).map(function (d) { return { domain: d.domain, judgement: d.judgement }; }),
+      applicability: (doc.applicability || []).map(function (d) { return { domain: d.domain, pass: d.pass || null, judgement: d.judgement }; }),
+      overall_passes: (doc.overall_passes || []).map(function (d) { return { pass: d.pass || null, judgement: d.judgement }; }),
       overall: doc.overall ? { judgement: doc.overall.judgement } : null,
       check: { complete: c.complete, expected: c.expected, answered: c.answered, completeness_text: c.completeness_text, per_pass: c.per_pass,
         tripod: c.tripod, amstar2: c.amstar2, domains: c.domains.map(function (d) { return { domain: d.domain, pass: d.pass, implied: d.implied, algorithm: d.algorithm }; }),
@@ -254,6 +283,18 @@
     }).map(function (p) { return summary(p, qq.answers === '1'); });
     return ok('szk.ma.appraisals/v1', { schema: 'szk.ma.appraisals/v1', dir: DIR.slice(0, -1), items: items, studies: studies(), outcomes: outcomes(),
       engine: { available: true, missing: [], functions: {} } });
+  });
+
+  // összevont egyezés (F5): a motor kimenete a fixtúrából (gen_appraisal_fixtures.py: appraisal_agreement_pooled) —
+  // a dev-háttér nem számol κ-t; ismeretlen eszköz/cél: nincs két független emberi értékelés
+  FX.route('GET', '/api/appraisals/agreement', function (req) {
+    var qq = q(req);
+    var fx = routesOf('appraisal_agreement.json').filter(function (r) {
+      var rq = r.query || {};
+      return rq.tool === qq.tool && (qq.target === undefined || rq.target === (qq.target || null));
+    })[0];
+    var d = fx ? clone(fx.envelope.data) : { schema: 'szk.ma.appraisal-agreement-view/v1', tool: qq.tool || null, target: qq.target || null, units: [], agreement: null };
+    return ok('szk.ma.appraisal-agreement-view/v1', d);
   });
 
   FX.route('GET', '/api/appraisals/*/*', function (req) {

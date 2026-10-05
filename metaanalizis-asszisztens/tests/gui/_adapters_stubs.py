@@ -141,20 +141,30 @@ def ff(args, cfg, mode, version):
         loc = (req.get("style") or {}).get("locale") or "en"
         out = Path(req["out"]["dir"])
         stem = req["out"]["stem"]
+        # egy forest-sor (címke, hatás, súly) egy alapvonalon, mint egy valódi rajzolónál; (szöveg, sor)
         texts = []
-        for s in plot.get("studies") or []:
-            texts += [s.get("label") or "", (s.get("display_text") or {}).get(loc, ""), (s.get("weight_text") or {}).get(loc, "")]
+        for i, s in enumerate(plot.get("studies") or []):
+            texts += [(s.get("label") or "", i), ((s.get("display_text") or {}).get(loc, ""), i),
+                      ((s.get("weight_text") or {}).get(loc, ""), i)]
+        row = len(texts)
         for s in plot.get("summaries") or []:
-            texts.append((s.get("display_text") or {}).get(loc, ""))
+            row += 1
+            texts.append(((s.get("display_text") or {}).get(loc, ""), row))
             if s.get("pi_text"):
-                texts.append("PI " + s["pi_text"].get(loc, ""))
+                row += 1
+                texts.append(("PI " + s["pi_text"].get(loc, ""), row))
         for t in (plot.get("axis") or {}).get("ticks") or []:
-            texts.append(t.get("text") or "")
+            row += 1
+            texts.append((t.get("text") or "", row))
+        het = (plot.get("heterogeneity") or {}).get("text")
+        if isinstance(het, dict):
+            row += 1
+            texts.append((het.get(loc) or "", row))
         if cfg.get("drop_number") and len(texts) > 1:
             texts = texts[:1] + texts[2:]
         esc = lambda s: s.replace("&", "&amp;").replace("<", "&lt;")
-        body = "".join('<text x="1" y="%d" font-family="Arial, Helvetica, sans-serif">%s</text>' % (12 * (i + 1), esc(t))
-                       for i, t in enumerate(texts))
+        body = "".join('<text x="1" y="%d" font-family="Arial, Helvetica, sans-serif">%s</text>' % (12 * (r + 1), esc(t))
+                       for t, r in texts)
         svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><g id="layer-rows">%s</g></svg>' % body
         formats = {}
         heads = {"svg": svg.encode("utf-8"), "pdf": b"%PDF-1.4\n%stub\n", "png": b"\x89PNG\r\n\x1a\nstub",

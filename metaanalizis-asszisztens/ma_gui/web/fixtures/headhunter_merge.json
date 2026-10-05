@@ -18,7 +18,7 @@
      "exclusion_reasons": [
       {
        "code": "X1",
-       "criterion": null,
+       "criterion": "E2",
        "domain": "P",
        "label": {
         "en": "wrong population",
@@ -63,7 +63,7 @@
       },
       {
        "code": "X6",
-       "criterion": null,
+       "criterion": "E1",
        "domain": null,
        "label": {
         "en": "not a primary report (review, editorial, comment)",
@@ -110,7 +110,7 @@
      "exists": true,
      "exports": {},
      "final": false,
-     "generated": "2026-10-05T13:10:58Z",
+     "generated": "2026-10-05T19:10:21Z",
      "path": "01_kereses/headhunter/merged.json",
      "prisma_flow": "01_kereses/headhunter/prisma_flow.json",
      "problems": [],
@@ -527,7 +527,7 @@
     "schema": "szk.ma.hh-merged/v1",
     "warnings": []
    },
-   "etag": "576bcef4b44a51e12b7630d95b518d73bb96153d3af30a0ea5b2c778b7c8cdde",
+   "etag": "50a4dc4b46b4f74ec6899acc677e58bed78a27e277e5375d31cf26eefa5139ca",
    "method": "GET",
    "path": "/api/headhunter/merged",
    "status": 200
@@ -677,7 +677,7 @@
      },
      "source": {
       "file": "01_kereses/headhunter/prisma_flow.json",
-      "generated": "2026-10-05T13:10:58Z",
+      "generated": "2026-10-05T19:10:21Z",
       "kind": "headhunter",
       "tool_version": "metaelemzes-headhunter/1.0.0"
      }
@@ -692,7 +692,7 @@
     "schema": "szk.ma.hh-prisma/v1",
     "warnings": []
    },
-   "etag": "09f1c6218f55b35b012bbccd3dd25113073206e52d0d83531a4375eb6ef9f8b2",
+   "etag": "b1b912fd5e407afa8b56c04ccc85143c2c0a19e2233507c9b444fc9233bcfcc8",
    "method": "GET",
    "path": "/api/headhunter/prisma",
    "status": 200
@@ -703,7 +703,7 @@
      "cancelled": false,
      "citation_search": [],
      "exists": true,
-     "generated": "2026-10-05T13:10:58Z",
+     "generated": "2026-10-05T19:10:21Z",
      "model": "szk.ma.headhunter/v1",
      "path": "01_kereses/headhunter/update_search.json",
      "problems": [],
@@ -715,11 +715,11 @@
        "date_from": "2020-09-15",
        "date_to": "2026-10-05",
        "message": {
-        "en": "PubMed cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-        "hu": "A PubMed nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban."
+        "en": "PubMed cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "A PubMed nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
        },
        "query": "(\"Y disease\"[tiab]) AND (\"drug X\"[tiab]) [edat 2020-09-15–2026-10-05]",
-       "search_id": "s-pubmed-20261005T131058Z",
+       "search_id": "s-pubmed-20261005T191021Z",
        "source": "pubmed",
        "status": "skipped_source_unavailable"
       },
@@ -730,11 +730,11 @@
        "date_from": "2020-09-15",
        "date_to": "2026-10-05",
        "message": {
-        "en": "Europe PMC cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-        "hu": "Az Europe PMC nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban."
+        "en": "Europe PMC cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "Az Europe PMC nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
        },
        "query": "(((TITLE:\"Y disease\" OR ABSTRACT:\"Y disease\" OR KW:\"Y disease\")) AND ((TITLE:\"drug X\" OR ABSTRACT:\"drug X\" OR KW:\"drug X\"))) AND CREATION_DATE:[2020-09-15 TO 2026-10-05]",
-       "search_id": "s-europepmc-20261005T131058Z",
+       "search_id": "s-europepmc-20261005T191021Z",
        "source": "europepmc",
        "status": "skipped_source_unavailable"
       },
@@ -745,11 +745,11 @@
        "date_from": "2020-09-15",
        "date_to": "2026-10-05",
        "message": {
-        "en": "OpenAlex cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-        "hu": "Az OpenAlex nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban."
+        "en": "OpenAlex cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "Az OpenAlex nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
        },
        "query": "search=(\"Y disease\") AND (\"drug X\"); filter=from_publication_date:2020-09-15,to_publication_date:2026-10-05",
-       "search_id": "s-openalex-20261005T131058Z",
+       "search_id": "s-openalex-20261005T191021Z",
        "source": "openalex",
        "status": "skipped_source_unavailable"
       },
@@ -760,11 +760,11 @@
        "date_from": "2020-09-15",
        "date_to": "2026-10-05",
        "message": {
-        "en": "ClinicalTrials.gov cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-        "hu": "A ClinicalTrials.gov nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban."
+        "en": "ClinicalTrials.gov cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "A ClinicalTrials.gov nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
        },
        "query": "query.term=(\"Y disease\") AND (\"drug X\"); filter.advanced=AREA[StudyFirstPostDate]RANGE[2020-09-15,2026-10-05]",
-       "search_id": "s-ctgov-20261005T131058Z",
+       "search_id": "s-ctgov-20261005T191021Z",
        "source": "ctgov",
        "status": "skipped_source_unavailable"
       }
@@ -828,32 +828,32 @@
      "warnings": [
       {
        "code": "H014",
-       "en": "PubMed cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-       "hu": "A PubMed nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "en": "PubMed cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "A PubMed nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
        "source": "pubmed"
       },
       {
        "code": "H014",
-       "en": "Europe PMC cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-       "hu": "Az Europe PMC nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "en": "Europe PMC cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "Az Europe PMC nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
        "source": "europepmc"
       },
       {
        "code": "H014",
-       "en": "OpenAlex cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-       "hu": "Az OpenAlex nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "en": "OpenAlex cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "Az OpenAlex nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
        "source": "openalex"
       },
       {
        "code": "H014",
-       "en": "ClinicalTrials.gov cannot be reached from here (network, proxy or firewall). We continue with the other sources; later run: python -m metaelemzes.headhunter sources --check. Offline mode: this request is not in the cache.",
-       "hu": "A ClinicalTrials.gov nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később: python -m metaelemzes.headhunter sources --check. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "en": "ClinicalTrials.gov cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "A ClinicalTrials.gov nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
        "source": "ctgov"
       }
      ],
      "window": {
       "anchor": "latest",
-      "decision_id": "d-20261005T131058Z-0002",
+      "decision_id": "d-20261005T191021Z-0002",
       "earliest_source_search": "2020-06",
       "end_date": "2026-10-05",
       "latest_source_search": "2021-03-15",
@@ -887,7 +887,7 @@
     "schema": "szk.ma.hh-update/v1",
     "warnings": []
    },
-   "etag": "565ba9a0361efaf2dd3f015617879bd63ea3b35755459292a90f509f6716c85f",
+   "etag": "b0c7996585ec433b729711dbc06d92f774fd384e13efb28b8c66987a3d801a18",
    "method": "GET",
    "path": "/api/headhunter/update",
    "status": 200
@@ -900,32 +900,32 @@
       {
        "actor": "user:user",
        "batch": null,
-       "decision_id": "d-20261005T131058Z-0002",
+       "decision_id": "d-20261005T191021Z-0002",
        "evidence_ids": [],
        "kb_refs": [
         "D-S03-104"
        ],
        "kind": "update_window",
        "level": null,
-       "prev_sha256": "60de0ab681aa8327a51f8611af9584b67c6953a3b3de988950ac162fc9acc5a8",
+       "prev_sha256": "cc2f83b5a3be6c9f9d89e70afd8a68e47e08ccb19cbb8d4d682ac309045568ee",
        "proposed_by": null,
        "quote": null,
        "reason": "Frissítő keresés ablaka: horgony=latest (2021-03-15), átfedés=6 hónap, 2020-09-15..2026-10-05.",
        "reason_code": null,
        "schema": "szk.ma.headhunter.decision/v1",
-       "sha256": "4ee76b624a407d3230046c5a7ac2fbfd22381c5ba2ff8054efca513589c0e792",
+       "sha256": "9291e6117ee051bef4185006c95ce9b5835f6f8c98b934cad1a9862b75ee27f1",
        "supersedes": null,
        "target": {
         "id": "update",
         "type": "window"
        },
-       "ts": "2026-10-05T13:10:58Z",
+       "ts": "2026-10-05T19:10:21Z",
        "value": "2020-09-15..2026-10-05"
       },
       {
        "actor": "user:SzK",
        "batch": null,
-       "decision_id": "d-20261005T131057Z-0001",
+       "decision_id": "d-20261005T191021Z-0001",
        "evidence_ids": [],
        "kb_refs": [
         "D-S03-101"
@@ -938,13 +938,13 @@
        "reason": "PICO és kritériumok jóváhagyva: Csökkenti-e a szintetikus X-szer a halálozást Y-betegségben? (szintetikus példa)",
        "reason_code": null,
        "schema": "szk.ma.headhunter.decision/v1",
-       "sha256": "60de0ab681aa8327a51f8611af9584b67c6953a3b3de988950ac162fc9acc5a8",
+       "sha256": "cc2f83b5a3be6c9f9d89e70afd8a68e47e08ccb19cbb8d4d682ac309045568ee",
        "supersedes": null,
        "target": {
         "id": "pico",
         "type": "project"
        },
-       "ts": "2026-10-05T13:10:57Z",
+       "ts": "2026-10-05T19:10:21Z",
        "value": "approved"
       }
      ],

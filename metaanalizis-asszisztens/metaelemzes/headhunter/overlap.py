@@ -358,10 +358,11 @@ def matrix_csv(doc, reviews=None):
             else r["review_id"]
     buf = io.StringIO()
     w = csv.writer(buf, delimiter=";", lineterminator="\n")
-    w.writerow(["kulcs", "cimke"] + [names.get(c, c) for c in doc["reviews"]] + ["index_attekintes",
-                                                                                 "attekintesek_szama"])
+    from .merge import excel_safe          # SEC-6: a címkék külső metaadatból jönnek (képlet-védelem)
+    w.writerow(["kulcs", "cimke"] + [excel_safe(names.get(c, c)) for c in doc["reviews"]] + ["index_attekintes",
+                                                                                             "attekintesek_szama"])
     for row in doc["rows"]:
-        w.writerow([row["key"], row["label"]] + ["1" if x else "0" for x in row["in"]] +
+        w.writerow([excel_safe(row["key"]), excel_safe(row["label"])] + ["1" if x else "0" for x in row["in"]] +
                    [row.get("index_review") or "", sum(1 for x in row["in"] if x)])
     w.writerow([])
     w.writerow(["N", doc["N"]])

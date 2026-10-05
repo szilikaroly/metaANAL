@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 """Az értékelés-képernyők fejlesztői fixture-ei (ma_gui/web/fixtures/appraisal_*.json).
 
-Az eszköz-definíciók (szk.instrument/v1) a felhasználó validator-pluginjának referenciafájljaiból készülnek
-(MIT, ugyanattól a szerzőtől; ``MA_GUI_PLUGIN_DIRS`` vagy az alapút), a mintaértékelések ellenőrzése, az egyezés (κ)
-és a forgalmi lámpa a ``tests/gui/_appraisal_engine_stub.py`` CSONKJÁVAL (nem a motor!) — amíg a motor v1 értékelő
-homlokzata el nem készül; utána ez a szkript a valódi ``metaelemzes.api`` függvényekkel is futtatható
-(``--engine``). A súlyok a BCG-példa motor-fixtúrájából (analysis_plots.json) jönnek.
+Alapból (FID-7) a MOTOR saját értékelő homlokzatával (``metaelemzes.api``: eszköz-definíciók, ellenőrzés, κ, összevont
+egyezés, forgalmi lámpa, rob-szinkron) — a fixture-ök így a motor kimenetei, és a motor szerződéseinek
+(metaelemzes/contracts) megfelelnek (sodródás-őr: tests/gui/test_v1_appraisal_drift.py). ``--stub``: a régi, a
+validator referenciafájljaiból épített eszközök + ``tests/gui/_appraisal_engine_stub.py`` (csak összevetéshez).
+A súlyok a BCG-példa motor-fixtúrájából (analysis_plots.json) jönnek.
 
-Futtatás:  python3 tests/gui/ui/gen_appraisal_fixtures.py [--engine] [--check]
+Futtatás:  python3 tests/gui/ui/gen_appraisal_fixtures.py [--stub] [--check]
   --check   nem ír, csak összeveti a meglévő fájlokkal (1-es kód eltérésnél)"""
 import argparse
 import copy
@@ -248,10 +248,15 @@ def _scoped_ids(inst, scope, pass_=None):
     return [it for it in eng._scoped(inst, {"scope": scope}) if pass_ is None or it["pass"] == pass_]
 
 
+def _reverse(it):
+    """Fordított tétel: a motor definíciójában a 'polarity' (F1), a régi (validator) alakban a 'tags'."""
+    return it.get("polarity") == "reverse" if "polarity" in it else "reverse" in (it.get("tags") or [])
+
+
 def seeds(insts):
     rob2 = insts["rob2"]
     all_rob2 = _scoped_ids(rob2, "assignment")
-    low = {it["key"]: _a("no" if "reverse" in it["tags"] else "yes") for it in all_rob2}
+    low = {it["key"]: _a("no" if _reverse(it) else "yes") for it in all_rob2}
     low["1.1"] = _a("yes", "A számítógéppel generált véletlen lista alapján (Methods, 2. bekezdés)", 3, "Methods")
     low["1.2"] = _a("probably_yes", "sorszámozott, lezárt borítékok", 3, "Methods")
     out = []
@@ -309,7 +314,7 @@ def seeds(insts):
     pb_dj = [{"domain": d["id"], "pass": "development", "judgement": "high" if d["id"] == "4" else "low",
               "rationale": "", "override_reason": None, "decision_id": None} for d in pb["domains"]]
     out.append(_doc("probast-ai", "LEE2023", "SzK", "XGB-PE", "both", pb_ans, pb_dj, None, model="XGB-PE",
-                    applicability=[{"domain": "1", "judgement": "low", "rationale": ""}]))
+                    applicability=[{"domain": "1", "pass": "development", "judgement": "low", "rationale": ""}]))
     # TRIPOD+AI: két vizsgálat + a saját kézirat
     tr = insts["tripod-ai"]
     cyc = ["present", "present", "partial", "missing", "present", "not_applicable"]
@@ -323,6 +328,9 @@ def seeds(insts):
     # AMSTAR 2: a 4. (kritikus) tételen „részben igen”, a 3. „nem”, a 13. hiányzik → a két konvenció eltér
     am = insts["amstar2"]
     am_ans = {it["key"]: _a("yes") for it in am["items"]}
+    for it in am["items"]:                      # 9. és 11.: RCT / NRSI résztételek (F3) — csak RCT-t von be
+        if it.get("parts"):
+            am_ans[it["key"]] = {"value": None, "parts": {"RCT": "yes", "NRSI": "not_applicable"}}
     am_ans["4"] = _a("partial_yes", "4 adatbázis, regiszter nélkül", None, "Methods 2.2")
     am_ans["3"] = _a("no")
     am_ans.pop("13", None)
@@ -338,7 +346,8 @@ def rel_of(doc):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--engine", action="store_true", help="a valódi metaelemzes.api értékelő függvényeivel")
+    ap.add_argument("--engine", action="store_true", help="(alapértelmezés) a valódi metaelemzes.api függvényeivel")
+    ap.add_argument("--stub", action="store_true", help="a validator referenciái + a teszt-csonk (összevetéshez)")
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args(argv)
     plugins = (os.environ.get("MA_GUI_PLUGIN_DIRS") or DEFAULT_PLUGINS).split(os.pathsep)[0]
@@ -347,7 +356,8 @@ def main(argv=None):
         return 0 if args.check else 2
     insts = build_instruments(plugins)
     eng = STUB.StubEngine(insts)
-    if args.engine:
+    SRC = "CSONK" if args.stub else "motor"
+    if not args.stub:
         from metaelemzes import api
         insts = {x["key"]: api.instrument_get(x["key"]) for x in api.instruments_list()}
         eng = api
@@ -380,16 +390,36 @@ def main(argv=None):
         routes.append({"method": "GET", "path": "/api/appraisals/%s/%s" % (d["target"]["unit"], d["tool"]),
                        "query": q, "etag": STUB.sha(d)[:16],
                        "envelope": env("szk.ma.appraisal-view/v1", view, rid="q_apd")})
-    files["appraisal_docs.json"] = {"description": "Mintaértékelések (szk.appraisal/v1 + a CSONK ellenőrzése)",
+    files["appraisal_docs.json"] = {"description": "Mintaértékelések (szk.appraisal/v1 + a %s ellenőrzése)" % SRC,
                                     "routes": routes}
     # konszenzus (Aronson: SzK vs KP; az AI-vázlat nincs ezen az egységen)
     a = next(d for d in docs if d["target"]["unit"] == "ARONSON1948" and d["assessor"] == "KP")
     b = next(d for d in docs if d["target"]["unit"] == "ARONSON1948" and d["assessor"] == "SzK")
     agreement = eng.appraisal_consensus(a, b, instrument=insts["rob2"])
-    files["appraisal_consensus.json"] = {"description": "Konszenzus-nézet: két független emberi értékelés + κ (CSONK)",
+    files["appraisal_consensus.json"] = {"description": "Konszenzus-nézet: két független emberi értékelés + κ (%s)" % SRC,
                                          "routes": [{"method": "GET", "path": "/api/appraisals/consensus/ARONSON1948/rob2",
                                                      "envelope": env("szk.ma.appraisal-consensus-view/v1",
                                                                      {"agreement": agreement}, rid="q_apc")}]}
+    # összevont egyezés (F5): minden egység, ahol két független EMBERI értékelés van (a route szabálya: az első két
+    # értékelő név szerint); a számok a motor appraisal_agreement_pooled-jából
+    if not args.stub:
+        by_unit = {}
+        for d in docs:
+            if d["tool"] == "rob2" and d["origin"] == "human" and d["status"] != "consensus":
+                by_unit.setdefault((d["target"]["unit"], d["target"]["key"]), {})[d["assessor"]] = d
+        pairs, units = [], []
+        for (unit, tg), raters in sorted(by_unit.items()):
+            if len(raters) >= 2:
+                ra, rb = sorted(raters)[:2]
+                pairs.append((raters[ra], raters[rb]))
+                units.append({"unit": unit, "target": tg, "a": ra, "b": rb})
+        pooled = eng.appraisal_agreement_pooled(pairs, instrument=insts["rob2"]) if pairs else None
+        files["appraisal_agreement.json"] = {
+            "description": "Összevont egyezés (motor: appraisal_agreement_pooled) a rob2/o1 emberi pároira",
+            "routes": [{"method": "GET", "path": "/api/appraisals/agreement", "query": {"tool": "rob2", "target": "o1"},
+                        "envelope": env("szk.ma.appraisal-agreement-view/v1", {
+                            "schema": "szk.ma.appraisal-agreement-view/v1", "tool": "rob2", "target": "o1",
+                            "units": units, "agreement": pooled}, rid="q_apa")}]}
     # forgalmi lámpa a BCG motor-fixtúra súlyaival
     plot = None
     try:
@@ -405,14 +435,14 @@ def main(argv=None):
     rob_docs = [d for d in docs if d["tool"] == "rob2"]
     summ = eng.rob_summary(rob_docs, tool="rob2", outcome="o1", plot=plot, studies=studies)
     summ["source_run"] = {"run_id": "20261004T211200Z-a1f3c2", "stale": False}
-    files["appraisal_robsummary.json"] = {"description": "Forgalmi lámpa (szk.rob-summary/v1, CSONK; súly: BCG-fixtúra)",
+    files["appraisal_robsummary.json"] = {"description": "Forgalmi lámpa (szk.rob-summary/v1, %s; súly: BCG-fixtúra)" % SRC,
                                           "routes": [{"method": "GET", "path": "/api/appraisals/rob-summary",
                                                       "envelope": env("szk.rob-summary/v1", summ, rid="q_aps")}]}
     # rob-szinkron előnézet a BCG-tábla fixtúrájából
     table = _load_json(os.path.join(FIX, "table.json"))["routes"][0]["envelope"]["data"]
     prop = eng.rob_sync_proposal(rob_docs, table["header"], [r["cells"] for r in table["rows"]], tool="rob2",
                                  row_uids=[r["row_uid"] for r in table["rows"]], studies=studies)
-    files["appraisal_robsync.json"] = {"description": "rob-oszlop szinkron: előnézet (CSONK)",
+    files["appraisal_robsync.json"] = {"description": "rob-oszlop szinkron: előnézet (%s)" % SRC,
                                        "routes": [{"method": "POST", "path": "/api/appraisals/rob-sync",
                                                    "envelope": env("szk.ma.rob-sync/v1", {
                                                        "schema": "szk.ma.rob-sync/v1", "dataset": table["dataset"],

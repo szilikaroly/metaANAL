@@ -78,6 +78,7 @@
     v.unresolved = p.unresolved;
     v.missing = p.missing;
     v.run_matches = g && v.run ? g.run_id === v.run.run_id : null;
+    v.computed_certainty = g ? certainty(g, p) : null;     // FID-3: a számolt szint a rögzített emberi ítélet mellett
     if (S.journal[oid]) { v.journal = clone(S.journal[oid]); }
     return v;
   }
@@ -129,6 +130,13 @@
     var out = view(oid);
     out.recorded = null;
     if (b.record === true) {
+      // a végső bizonyosság emberi ítélet (GRADE-09): a számolt szint csak előtöltés — megerősítés nélkül 422
+      if (['high', 'moderate', 'low', 'very low'].indexOf(b.certainty) < 0) {
+        return fail('VALIDATION', 422, 'Az ítéletet elmentettem; a naplóba rögzítéshez erősítsd meg a bizonyosság szintjét: a végső bizonyosság emberi ítélet (GRADE-09).',
+          { needs_certainty: true, computed_certainty: doc.certainty || null, kb_refs: ['GRADE-09'] });
+      }
+      doc.certainty = b.certainty;
+      doc.certainty_source = 'human';
       S.n += 1;
       S.journal[oid] = { id: S.n, ts: now(), certainty: doc.certainty };
       out.journal = clone(S.journal[oid]);

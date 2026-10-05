@@ -426,7 +426,13 @@ NAMES = ("instruments_list", "instrument_get", "appraisal_check", "appraisal_con
          "rob_sync_proposal")
 
 
+# a valódi motor további értékelő-függvényei, amelyeket a csonk-világban ki kell kapcsolni: a csonk eszköz-
+# definícióival (beépített minták) a valódi motor tartalmi ellenőrzése nem értelmezhető
+REAL_ONLY = ("appraisal_problems", "appraisal_validate", "appraisal_completeness", "appraisal_implied")
+
+
 def patch(engine, names=NAMES):
     """[mock.patch.object(api, név, …, create=True)] — a hívó start()/stop()-ja (vagy ExitStack)."""
     from metaelemzes import api
-    return [mock.patch.object(api, n, getattr(engine, n), create=True) for n in names]
+    return ([mock.patch.object(api, n, getattr(engine, n), create=True) for n in names]
+            + [mock.patch.object(api, n, None, create=True) for n in REAL_ONLY if n not in names])

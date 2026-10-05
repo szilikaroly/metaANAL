@@ -1,6 +1,17 @@
 # Metaheadhunter — meglévő metaanalízisek bányászata (terv és build-szerződés, v1)
 
-**Állapot:** build-szerződés v1 (2026-10-05). A build-ágensek ezt követik; ami itt nincs rögzítve, arról a
+**Állapot (2026-10-05): v1 kész és bekötve.** A build és a független felülvizsgálat kész; a 21. fejezet bekötése
+elvégezve: `ma.py headhunter …` (és `metaheadhunter` álnév; a súgó és a következő-lépés tipp `ma.py headhunter`),
+`api.headhunter_init|status|sources|run_step|decide|verify` és a `headhunter` képesség, a munkapad-regiszter
+(`routes.MODULES`), a skill S03-szakasza („Meglévő metaanalízisek bányászata”: mikor, EP1–EP6) és az orkesztrátor, a
+plugin-másolatok, a README / TELEPITES (7a) / ESZKOZOK (6a; Scopus EISZ-en át, `sources --check`), a `.gitignore`, a
+`tools.json` megjegyzései, az audit-csomag (állapotfájlok + hash-láncolt döntésnapló; `cache/`, `runs/`, `reviews/`
+nélkül), a pillanatkép (állapot, források, listák, a lépések és döntések parancsa) és a 16(a) motor-oldali pont. Nyitott:
+8 (a `.claude/settings.json` engedélyei — a felhasználó döntése; a `ma.py headhunter` a TELEPITES `Bash(… ma.py *)`
+soraival fut), 4–5 (`KNOWN_AGENTS` / `kb rules --agent` és a H-kódok tudásbázis-regisztrációja: opcionális), 16(b) (az
+egyéb-módszerek dobozai a munkapad fő PRISMA-képernyőjén; a Metaheadhunter képernyő mindkét ágat mutatja).
+
+**Eredeti állapot:** build-szerződés v1 (2026-10-05). A build-ágensek ezt követik; ami itt nincs rögzítve, arról a
 build-ágens dönt, de a döntést a saját jelentésében megnevezi. **Kód csak új fájlokba kerül** (20. fejezet); a
 meglévő fájlok bekötését (CLI, homlokzat, GUI-regiszter, skill, plugin-másolatok, dokumentáció) később az
 integrátor végzi (21. fejezet).
@@ -276,8 +287,8 @@ nem intézményi IP), `disabled` (a felhasználó kikapcsolta), `unknown` (még 
 ### 3.3 Beállítás
 
 `state.json` → `sources.<kulcs>.enabled` (alap: `pubmed`, `europepmc`, `ctgov`, `openalex` bekapcsolva; `scopus`
-csak kulccsal, egyébként `not_configured`; `crossref` automatikus). CLI: `sources set <projekt> --enable scopus
---disable openalex` (döntésként naplózva: `source_config`). Lépésenként felülírható: `--sources pubmed,europepmc`.
+csak kulccsal, egyébként `not_configured`; `crossref` automatikus). CLI: `sources <projekt> --enable scopus
+--disable openalex --actor user:<név>` (döntésként naplózva: `source_config`; külön `set` alparancs nincs). Lépésenként felülírható: `--sources pubmed,europepmc`.
 
 ### 3.4 Melyik lépés melyik forrást használja
 
@@ -326,7 +337,8 @@ csak kulccsal, egyébként `not_configured`; `crossref` automatikus). CLI: `sour
   prisma_flow.json              szk.prisma-flow/v1 (+ "hh" kiegészítés)  → ma.py prisma check
   agent_classification/<review_id>.json   ágens-javaslatok (6.2; importálás előtt)
   exports/                      studies.ma.json (szk.ma.studies/v1), records.ris, screening.csv,
-                                masodlagos_adatok.csv, overlap_matrix.csv, kereses_naplo_headhunter.md, report.md
+                                masodlagos_adatok.csv, <kimenet>_sablon.csv, report.md (a keresési napló a
+                                „Keresések (PRISMA-S)” szakasza); overlap_matrix.csv csak `overlap --csv` után
   runs/<run_id>/                run.json, progress.jsonl, CANCEL (együttműködő megszakítás)
   cache/http/                   metaadat-válaszok gyorsítótára (absztrakt igen, teljes szöveg SOHA) — gitignore
   .lock                         írászár
@@ -741,8 +753,8 @@ kritériumokra vagy keresési hiányra utal → a frissítő és a saját keres�
     (`nem`/`igen`). Ez **ellenőrzési munkalista**, nem elemzési tábla; a `03_adatok/<kimenet>.csv`-be a program soha
     nem ír másodlagos számot.
   - `exports/records.ris`, `exports/screening.csv`, `exports/overlap_matrix.csv`,
-    `exports/kereses_naplo_headhunter.md` (a `kereses_naplo.md` sablon oszlopaival, PRISMA-S), `exports/report.md`
-    (magyar összefoglaló: módszer, források, számok, korlátok, hivatkozások).
+    `exports/report.md` (magyar összefoglaló: módszer, források, számok, korlátok, hivatkozások; a PRISMA-S
+    keresési napló a „Keresések (PRISMA-S)” szakasza — külön `kereses_naplo_headhunter.md` nem készül).
 - **EP6 (`verify-secondary`):** S05-ben a felhasználó az elsődleges közleményt megnyitva tételenként `verified` vagy
   `discrepant` (az elsődleges lokátorral). `export --for-analysis` csak `verified` értéket ad ki (H010).
 
@@ -836,7 +848,7 @@ kanonikus nevek a kötelezők.
   addig a headhunter-képernyő mutatja a teljes ábrát.
 - **`own_update` mód** (a felhasználó *saját* korábbi áttekintését frissíti): a korábbi változat bevont vizsgálatai
   és jelentései `previous_studies`/`previous_reports`, az összesítés `total_studies`/`total_reports` (P015).
-- **Jelentés:** a `report.md` és a `kereses_naplo_headhunter.md` a PRISMA-S tételeit (adatbázisok platformmal,
+- **Jelentés:** a `report.md` („Keresések (PRISMA-S)” szakasz) a PRISMA-S tételeit (adatbázisok platformmal,
   regiszterek, hivatkozáskövetés, dátumok, pontos stratégiák) és a TARCiS hivatkozáskövetési adatait adja; a
   rekordkövetés kérdéseiben Rethlefsen & Page 2022 ad további útmutatást. Overview-ként közölt munkánál PRIOR.
 
@@ -852,7 +864,7 @@ kapcsolók: `--json` (boríték: `{"ok", "data", "warnings": [{code, hu, en}], "
 | Parancs | Feladat |
 |---|---|
 | `sources [--check] [<projekt>]` | forrás-állapotok táblázata; `--check` próbakérésekkel (3.2) |
-| `sources set <projekt> --enable … --disable …` | forrásválasztás (döntés) |
+| `sources <projekt> --enable … --disable … --actor user:<név>` | forrásválasztás (döntés) |
 | `init <projekt> --question … [--pico pico.json] [--mode harvest\|own_update]` | állapotfájl, PICO, kritériumok, okszótár |
 | `find-reviews <projekt> [--query-file f] [--since ÉÉÉÉ] [--max N]` | L1 |
 | `reviews <projekt>` | áttekintés-jelöltek rangsorral és jelzésekkel |

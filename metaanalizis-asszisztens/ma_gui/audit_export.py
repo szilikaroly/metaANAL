@@ -53,7 +53,11 @@ FIGURE_SUFFIXES = (".svg", ".png")
 MAX_FILE_BYTES = 64 * 1024 * 1024
 
 ROLES = ("manifest", "project", "log", "audit", "spec", "run", "results", "report", "plot", "figure",
-         "provenance", "studies", "prisma", "appraisal", "sof", "activity", "rerun", "data")
+         "provenance", "studies", "prisma", "appraisal", "sof", "activity", "rerun", "data", "grade", "headhunter")
+# Metaheadhunter: a bekerülő állapotfájlok (a döntésnapló hash-lánca változatlanul); a gyorsítótár, a futás-naplók és
+# a forrás-áttekintések kinyert szövegrészei (idézetek, jogvédett teljes szövegből) nem
+HH_DIR = "01_kereses/headhunter"
+HH_FILES = ("state.json", "studies.json", "merged.json", "prisma_flow.json", "update_search.json", "overlap.json")
 
 
 _SHA = {"type": "string", "pattern": "^[0-9a-f]{64}$"}
@@ -96,7 +100,7 @@ MANIFEST_SCHEMA = {
                            "sha256": _SHA, "bytes": {"type": "integer", "minimum": 0},
                            "role": {"enum": ["project", "log", "audit", "spec", "run", "results", "report", "plot",
                                              "figure", "provenance", "studies", "prisma", "appraisal", "sof",
-                                             "activity", "rerun", "data"]}},
+                                             "activity", "rerun", "data", "grade", "headhunter"]}},
             "additionalProperties": False}},
         "runs": {"type": "array", "items": {
             "type": "object", "required": ["run_id", "outcome_id", "data_sha256", "spec_sha256"],
@@ -282,17 +286,50 @@ def _redact_report_details(data):
     return "\n".join(out).encode("utf-8")
 
 
+def _initials_keep_reserved(v):
+    """Monogram, de a fenntartott értékelő-azonosítók (consensus, ai) nem nevek: változatlanok."""
+    return v if not isinstance(v, str) or v in snapshot.RESERVED_RATERS else snapshot.initials(v)
+
+
 def _strip_assessors(obj):
     def fn(k, v):
         lk = str(k).lower()
         if lk in ("actor", "resolved_actor") and isinstance(v, str):
             return snapshot._actor_initials(v)
-        if lk in snapshot._ASSESSOR_KEYS:
+        if lk in snapshot._ASSESSOR_KEYS or lk in snapshot._RATER_EXTRA_KEYS:
             if isinstance(v, list):
-                return [snapshot.initials(x) if isinstance(x, str) else x for x in v]
-            return snapshot.initials(v) if isinstance(v, str) else v
+                return [_initials_keep_reserved(x) for x in v]
+            if isinstance(v, dict) and all(isinstance(x, (str, type(None))) for x in v.values()):
+                return collections.OrderedDict((kk, _initials_keep_reserved(x)) for kk, x in v.items())
+            return _initials_keep_reserved(v)
         return v
     return snapshot._walk(obj, fn)
+
+
+# értékelés-fájl útja bárhol egy szövegben (napló context.dataset, project_audit inputs-kulcs) → az értékelő monogram
+_APPRAISAL_PATH_RE = re.compile(r"(04_torzitas_kockazat/appraisals/(?:[A-Za-z0-9_-]+/)?[A-Za-z0-9_-]{1,64}"
+                                r"\.[a-z0-9][a-z0-9-]{0,31}(?:\.[A-Za-z0-9][A-Za-z0-9_-]{0,63})?)"
+                                r"\.([A-Za-z][A-Za-z0-9_-]{0,31})\.json")
+# a korábbi felülbírálás-bejegyzések szövege: „… (értékelő: <név>)”
+_NAMED_RATER_RE = re.compile(r"\((értékelő|rater|jóváhagyó|approver): ([^()\n]{1,64})\)")
+
+
+def _rater_text(text):
+    """SEC-5: szabad szövegben (napló, audit-kulcs) az értékelés-fájl útjának értékelő-része és a „(értékelő: név)”
+    monogrammá — ugyanúgy, ahogy az értékelés-fájl neve a csomagban (_appraisal_rel)."""
+    if not isinstance(text, str):
+        return text
+    text = _APPRAISAL_PATH_RE.sub(lambda m: "%s.%s.json" % (m.group(1), _initials_keep_reserved(m.group(2))), text)
+    return _NAMED_RATER_RE.sub(lambda m: "(%s: %s)" % (m.group(1), _initials_keep_reserved(m.group(2).strip())), text)
+
+
+def _rater_obj(obj):
+    """_rater_text minden szöveges értékre ÉS szótárkulcsra (pl. project_audit 'inputs': {út: sha})."""
+    if isinstance(obj, dict):
+        return collections.OrderedDict((_rater_text(k), _rater_obj(v)) for k, v in obj.items())
+    if isinstance(obj, list):
+        return [_rater_obj(x) for x in obj]
+    return _rater_text(obj)
 
 
 def _appraisal_rel(rel, redact_assessors):
@@ -302,7 +339,7 @@ def _appraisal_rel(rel, redact_assessors):
     head, _, name = rel.rpartition("/")
     parts = name.split(".")
     if len(parts) >= 4 and parts[-1].lower() == "json":
-        parts[-2] = snapshot.initials(parts[-2])
+        parts[-2] = _initials_keep_reserved(parts[-2])
     return (head + "/" if head else "") + ".".join(parts)
 
 
@@ -395,10 +432,12 @@ def collect(root, pol, app=None, environ=None):
             from metaelemzes import api as engine_api
             j = engine_api.project_export_json(str(root))
             if pol["redact"]["assessors"]:
-                j = _strip_assessors(j)
+                j = _rater_obj(_strip_assessors(j))
             stamps.append(j)
             b.add_json("projekt/naplo.json", j, "log")
             md = engine_api.project_export_markdown(str(root))
+            if pol["redact"]["assessors"]:
+                md = _rater_text(md)
             b.add_bytes("projekt/naplo.md", md.encode("utf-8"), "log")
     else:
         b.exclude("projekt/naplo.*", "döntési napló kikapcsolva", "decision log switched off")
@@ -448,8 +487,15 @@ def collect(root, pol, app=None, environ=None):
                 b.add_file(rel, "figure")
             elif rel.lower().endswith(".result.json"):
                 b.add_file(rel, "figure")
+    def not_private_run(data):
+        """A fájl változatlanul — kivéve, ha egy _privat/ alól jövő futásra épül (akkor kimarad)."""
+        try:
+            o = json.loads(data.decode("utf-8-sig"))
+        except (ValueError, UnicodeDecodeError):
+            return data
+        return None if isinstance(o, dict) and o.get("run_id") in private_runs else data
     for rel in b.glob("06_kezirat/sof/*.json"):
-        b.add_file(rel, "sof")
+        b.add_file(rel, "sof", not_private_run)
 
     # -- adatok: eredet, tábla, studies
     if inc["provenance"]:
@@ -465,6 +511,28 @@ def collect(root, pol, app=None, environ=None):
         b.add_file("02_szures/prisma_flow.json", "prisma")
         b.add_file("02_szures/prisma_folyamat.md", "prisma")
         b.add_file("03_adatok/studies.json", "studies")
+        # Metaheadhunter (meglévő metaanalízisek bányászata): állapot, vizsgálat-térkép, egyesítés, PRISMA-folyam,
+        # frissítő keresés, átfedés és a döntésnapló (hash-lánc: változatlanul)
+        hh_tr = _json_transform(lambda o: _strip_assessors(o) if pol["redact"]["assessors"] else o)
+        hh_any = False
+        for name in HH_FILES:
+            hh_any = b.add_file(HH_DIR + "/" + name, "headhunter", hh_tr) or hh_any
+        if b.add_file(HH_DIR + "/decisions.jsonl", "headhunter"):
+            hh_any = True
+            if pol["redact"]["assessors"]:
+                b.notes.append(_reason("A 01_kereses/headhunter/decisions.jsonl változatlan, hogy a hash-lánca "
+                                       "ellenőrizhető maradjon (a döntéshozók ott nincsenek kitakarva).",
+                                       "01_kereses/headhunter/decisions.jsonl is unchanged so that its hash chain stays "
+                                       "verifiable (decision makers are not redacted there)."))
+        if hh_any:
+            b.exclude(HH_DIR + "/cache/**", "a Metaheadhunter API-gyorsítótára (gépállapot)",
+                      "the Metaheadhunter API cache (machine state)")
+            b.exclude(HH_DIR + "/runs/**", "a Metaheadhunter futás-naplói (gépállapot)",
+                      "the Metaheadhunter run logs (machine state)")
+            b.exclude(HH_DIR + "/reviews/**", "a forrás-áttekintésekből kinyert szövegrészek (jogvédett teljes szöveg "
+                                              "idézetei) — az azonosítók a studies.json-ban",
+                      "text extracted from source reviews (quotes of copyrighted full text) — identifiers are in "
+                      "studies.json")
     else:
         b.exclude("02_szures/**", "PRISMA kikapcsolva", "PRISMA switched off")
     docs = snapshot._read_json(root / store.DOCUMENTS_REL) if (root / store.DOCUMENTS_REL).is_file() else None
@@ -493,6 +561,14 @@ def collect(root, pol, app=None, environ=None):
                 data = None
             if data is not None:
                 b.add_bytes(_appraisal_rel(rel, pol["redact"]["assessors"]), data, "appraisal")
+        # GRADE-ítéletek kimenetenként (06_kezirat/grade/<kimenet>.grade.json; a SoF-fájlok külön, 'sof' szereppel);
+        # a _privat/ alól jövő futásra épülő ítélet nem (a futás-azonosítója sem kerülhet a csomagba)
+        def grade_tr(o):
+            if isinstance(o, dict) and o.get("run_id") in private_runs:
+                return None
+            return _strip_assessors(o) if pol["redact"]["assessors"] else o
+        for rel in b.glob("06_kezirat/grade/*.grade.json"):
+            b.add_file(rel, "grade", _json_transform(grade_tr))
     else:
         b.exclude("04_torzitas_kockazat/appraisals/**", "értékelések kikapcsolva", "appraisals switched off")
 
@@ -521,6 +597,8 @@ def collect(root, pol, app=None, environ=None):
         except Exception:                              # noqa: BLE001 — a hiányzó audit a csomagot nem állítja meg
             rep = None
         if isinstance(rep, dict):
+            if pol["redact"]["assessors"]:
+                rep = _rater_obj(rep)
             b.add_json("audit/project_audit.json", rep, "audit")
     if not inc["data_tables"]:
         why = {"A": ("adattábla kikapcsolva", "data tables switched off"),

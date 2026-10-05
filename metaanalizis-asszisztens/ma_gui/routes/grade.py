@@ -18,8 +18,9 @@
   ``record: true`` — a projektnapló GRADE-sora (``grade_record`` vagy ``api.project_grade`` előjeles lépés-
   szövegekkel, hogy a ``grade_consistency`` változatlanul ellenőrizzen). A rögzítés TILTOTT (409 GATE_BLOCKED),
   ha bármely domén hiányzik vagy feloldatlan (X019), ha a futás ELAVULT (X001), vagy ha az ítélet nem a kimenet
-  legutóbbi elsődleges futására hivatkozik (X007). A bizonyosság a motoré; ha a motor nem számol, a kérés
-  ``certainty`` mezője (az ember ítélete) kerül a naplóba, és a motor ``grade_consistency``-je figyelmeztet.
+  legutóbbi elsődleges futására hivatkozik (X007). A végső bizonyosság EMBERI ítélet (GRADE-09): a motor lépésekből
+  számolt értéke csak előtöltés; rögzítéskor a kérés ``certainty`` mezője (az ember megerősítése) kötelező — nélküle
+  422 ``needs_certainty`` + ``computed_certainty``; a motor ``certainty_source: human``-nal kapja.
 - ``GET /api/grade/<kimenet>/advice[?run=&mid=]`` → ``szk.ma.grade-advice-view/v1``: ``{outcome_id, run, mid,
   advice}`` — az ``advice`` a motor ``grade_advice`` kimenete változatlanul (doménenkénti bizonyíték, KB-szabályok,
   kezdőknek szóló „Miért?” szöveg; csak javaslat — az ítélet mindig az emberé). A ``mid`` nyers szöveg, a motor
@@ -29,7 +30,7 @@ A szöveges mezőkben (indoklás) cellaérték nem lehet; a hibaüzenetek mezőn
 from metaelemzes import api
 
 from ..router import ApiError, Result
-from . import grade_amstar2, grade_engine as E, grade_protocol, grade_sof
+from . import grade_engine as E, grade_protocol, grade_sof
 from ._common import has_journal, journal_root, log_activity_or_warn, phi_doc_guard
 from .grade_common import (check_if_match, content_etag, outcome_of, own_dir_writes, primary_run, require_run,
                            results_of, run_dir_abs, run_summary, text_or_none)
@@ -220,6 +221,17 @@ def _outcome_info(outcome):
             "data": outcome.get("data")}
 
 
+def _computed(doc):
+    fn = getattr(api, "grade_computed_certainty", None)
+    if not callable(fn) or not isinstance(doc, dict):
+        return None
+    try:
+        v = fn(doc)
+    except Exception:                                      # noqa: BLE001 — csak tájékoztató mező
+        return None
+    return v if v in CERTAINTIES else None
+
+
 def view(app, outcome, meta, run, doc):
     oid = outcome["id"]
     _errors, unresolved, missing = problems(doc) if doc else ([], [], list(DOMAINS))
@@ -229,6 +241,8 @@ def view(app, outcome, meta, run, doc):
         "outcome": _outcome_info(outcome),
         "run": run_summary(run),
         "grade": doc,
+        # a lépésekből adódó szint (motor) — a rögzített emberi bizonyosság mellett, ha eltér (FID-3)
+        "computed_certainty": _computed(doc),
         "path": GRADE_REL % oid,
         "journal": _latest_journal(app, oid),
         "unresolved": unresolved,
@@ -321,17 +335,32 @@ def _gate(doc, run, current):
 
 
 def _record(app, outcome, saved, run, human_certainty, warnings):
+    """A projektnapló GRADE-sora. A végső bizonyosság EMBERI ítélet (GRADE-09, M5): a motor lépésekből számolt
+    értéke (``saved.certainty``) csak előtöltés — a rögzítéshez a kérés ``certainty`` mezője kell (a felület az
+    előtöltött választót küldi, az ember megerősíti vagy átírja), és a motor ``certainty_source: human``-nal kapja.
+    Hiányában 422 ``needs_certainty`` + ``computed_certainty`` (az előtöltéshez)."""
     root = journal_root(app)
     oid = outcome["id"]
-    certainty = saved.get("certainty") or human_certainty
-    if certainty not in CERTAINTIES:
-        raise ApiError("VALIDATION", "Az ítéletet elmentettem, de a naplóba rögzítéshez a bizonyosság szintje kell: a "
-                                     "motor ebben a változatban nem számolja, ezért válaszd ki (magas, mérsékelt, "
-                                     "alacsony, nagyon alacsony) — a motor ellenőrzi, hogy illik-e a lépésekhez.",
-                       {"needs_certainty": True})
-    with own_dir_writes(app, [GRADE_DIR]):
-        done, res = E.call_optional("grade_record", project_dir=root, outcome=oid, doc=dict(saved, certainty=certainty),
-                                    actor=app.actor, kb_db=app.kb_db)
+    computed = saved.get("certainty") if saved.get("certainty") in CERTAINTIES else None
+    if human_certainty not in CERTAINTIES:
+        raise ApiError("VALIDATION", "Az ítéletet elmentettem; a naplóba rögzítéshez erősítsd meg a bizonyosság "
+                                     "szintjét (magas, mérsékelt, alacsony, nagyon alacsony): a végső bizonyosság "
+                                     "emberi ítélet (GRADE-09)%s." % (
+                                         " — a motor a lépésekből „%s” szintet számolt, ez csak előtöltés" % computed
+                                         if computed else ""),
+                       {"needs_certainty": True, "computed_certainty": computed, "kb_refs": ["GRADE-09"]})
+    certainty = human_certainty
+    doc = dict(saved, certainty=certainty, certainty_source="human")
+    try:
+        with own_dir_writes(app, [GRADE_DIR]):
+            done, res = E.call_optional("grade_record", project_dir=root, outcome=oid, doc=doc, certainty=certainty,
+                                        actor=app.actor, kb_db=app.kb_db)
+    except ValueError as exc:
+        # a motor elutasítása (X019, hiányzó domén, nem emberi bizonyosság, jóvá nem hagyott AI-vázlat) — szó szerint
+        det = {"needs_certainty": bool(getattr(exc, "needs_certainty", False))}
+        if getattr(exc, "computed_certainty", None):
+            det["computed_certainty"] = getattr(exc, "computed_certainty")
+        raise ApiError("VALIDATION", "A GRADE-ítélet nem rögzíthető: %s" % exc, det) from None
     if not done:
         res = api.project_grade(root, oid, certainty, kb_db=app.kb_db, actor=app.actor,
                                 **_journal_fields(app, saved, run, outcome))
@@ -339,8 +368,8 @@ def _record(app, outcome, saved, run, human_certainty, warnings):
     warnings.extend(_text(w) for w in res.get("warnings") or [])
     log_activity_or_warn(app, "grade.record", warnings,
                          details={"outcome": oid, "id": res.get("id"), "certainty": certainty,
-                                  "run_id": run.get("run_id"), "certainty_source": "engine" if saved.get("certainty")
-                                  else "user", "via": "engine" if done else "project_grade"})
+                                  "run_id": run.get("run_id"), "certainty_source": "human",
+                                  "computed_certainty": computed, "via": "engine" if done else "project_grade"})
     return {"id": res.get("id"), "certainty": certainty, "warnings": [_text(w) for w in res.get("warnings") or []],
             "doc": res.get("doc") if isinstance(res.get("doc"), dict) else None}
 
@@ -421,5 +450,4 @@ def register(router):
     router.add("PUT", "/api/grade/<outcome>", put_grade, schema=VIEW_SCHEMA, request_schema=PUT_REQUEST)
     router.add("GET", "/api/grade/<outcome>/advice", get_advice, schema=ADVICE_SCHEMA)
     grade_sof.register(router)
-    grade_amstar2.register(router)
     grade_protocol.register(router)

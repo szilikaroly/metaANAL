@@ -210,6 +210,11 @@
             "type": "boolean",
             "description": "false: felső korlát vagy megszakadt lapozás (H012)"
           },
+          "out_of_window": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "csak évre szűrő forrás (Scopus): a letöltött találatok közül ennyinek a borító-dátuma az ablakon kívül esett — nem kerültek a halmazba (PRISMA D3)"
+          },
           "date_from": {
             "oneOf": [
               {

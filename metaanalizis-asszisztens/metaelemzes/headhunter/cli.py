@@ -193,6 +193,8 @@ def cmd_sources(a):
                                       "%s %s" % (c["source"], "bekapcsolva" if c["enabled"] else "kikapcsolva")
                                       for c in changes), kb_refs=["D-S03-106"])
             state["sources"] = cfg
+            if ((state.get("steps") or {}).get("sources") or {}).get("status") in (None, "not_started"):
+                S.set_step(state, "sources", "done")     # UX-4: a forrásválasztás rögzítése lezárja a lépést
             S.save_state(project, state)
             warnings.append({"code": "INFO", "hu": "Rögzítve (%s)." % d["decision_id"],
                              "en": "Recorded (%s)." % d["decision_id"]})
@@ -843,6 +845,11 @@ def _after_decisions(project, redo):
     open_ep2 = sum(1 for r in reviews if r.get("status") == "selected" for c in r.get("candidates") or []
                    if c.get("status") == "proposed")
     open_ep3 = sum(1 for p in studies.get("proposals") or [] if p.get("status") == "pending")
+    open_ep4 = None
+    if "screen" in redo:
+        from .eligibility import open_items
+        oi = open_items(studies, S.read_decisions(project), S.load_state(project))
+        open_ep4 = len(set(oi["title_abstract"]) | set(oi["full_text"]) | set(oi["conflicts"]))
 
     def upd(st):
         if "select_reviews" in redo:
@@ -867,7 +874,10 @@ def _after_decisions(project, redo):
             S.set_step(st, "resolve", "stale")
             S.mark_stale(st, "resolve")
         if "screen" in redo:
-            S.set_step(st, "screen", "needs_human", stale_downstream=True)
+            # UX-4: a szűrés csak addig „needs_human”, amíg van nyitott szűrési tétel (EP4)
+            S.set_step(st, "screen", "needs_human" if open_ep4 else "done", stale_downstream=True)
+            if not open_ep4:
+                S.close_gated_steps(st, {"EP3": open_ep3, "EP4": 0})
     S.mutate_state(project, upd)
     return out_warn
 
@@ -1334,10 +1344,10 @@ def _common():
     return p
 
 
-def build_parser(parser_class=None):
+def build_parser(parser_class=None, prog=None):
     common = _common()
     p = (parser_class or argparse.ArgumentParser)(
-        prog=PROG, formatter_class=argparse.RawDescriptionHelpFormatter,
+        prog=prog or PROG, formatter_class=argparse.RawDescriptionHelpFormatter,
         description="Metaheadhunter — meglévő metaanalízisek bányászata: felkutatás, a bevont vizsgálatok kinyerése "
                     "bizonyítékkal, azonosítás, duplumszűrés, kizárás a saját PICO szerint, egyesítés és frissítés "
                     "az újabb irodalommal. Minden döntést ember hoz; a program javasol és naplóz.",
@@ -1534,7 +1544,7 @@ def build_parser(parser_class=None):
 # kimenet
 # =============================================================================================
 
-def _render_text(cmd, env, lang, quiet=False):
+def _render_text(cmd, env, lang, quiet=False, prog=None):
     L = "en" if lang == "en" else "hu"
     lines = []
     head = {0: ("RENDBEN", "OK"), 1: ("HIBA", "ERROR"), 2: ("HASZNÁLATI HIBA", "USAGE ERROR"),
@@ -1623,7 +1633,7 @@ def _render_text(cmd, env, lang, quiet=False):
         nxt = str(env["next"])
         first = nxt.split(" ", 1)[0]
         if first in _COMMANDS:
-            nxt = "%s %s" % (PROG, nxt)
+            nxt = "%s %s" % (prog or PROG, nxt)
         lines.append(("Következő lépés: " if L == "hu" else "Next: ") + nxt)
     return "\n".join(lines)
 
@@ -1660,11 +1670,11 @@ def execute(argv):
     return _run_parsed(a, argv), a
 
 
-def main(argv=None, stdout=None):
-    """Belépési pont. Visszaad: kilépési kód (0–4)."""
+def main(argv=None, stdout=None, prog=None):
+    """Belépési pont. Visszaad: kilépési kód (0–4). prog: a súgóban mutatott parancsnév (``ma.py headhunter``)."""
     argv = list(sys.argv[1:] if argv is None else argv)
     out = stdout or sys.stdout
-    parser = build_parser()
+    parser = build_parser(prog=prog)
     if not argv or argv[0] in ("-h", "--help"):
         parser.print_help(out)
         return EXIT_OK if argv else EXIT_USAGE
@@ -1676,7 +1686,7 @@ def main(argv=None, stdout=None):
     if a.json:
         text = json.dumps(env, ensure_ascii=False, indent=2, default=str)
     else:
-        text = _render_text(env["command"], env, a.lang, quiet=a.quiet)
+        text = _render_text(env["command"], env, a.lang, quiet=a.quiet, prog=prog)
     try:
         text = _redact_out(text)
     except Exception:  # pragma: no cover

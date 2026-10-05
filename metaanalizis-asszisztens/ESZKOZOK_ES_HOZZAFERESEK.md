@@ -77,6 +77,38 @@ keresése). A szisztematikus keresést nem helyettesítik, mert nem reprodukálh
 | Semantic Scholar API key | semanticscholar.org/product/api | hivatkozás-hálózat programból |
 | OpenAlex, Crossref, Unpaywall | nem kell kulcs — elég az e-mail-cím a kérésben („polite pool”) | DOI-ellenőrzés, nyílt hozzáférésű teljes szöveg |
 
+### 6a. A Metaheadhunter forrásai és környezeti változói
+
+A Metaheadhunter (meglévő metaanalízisek bányászata; `ma.py headhunter …`, `ma-metaheadhunter` ágens) a kulcsokat
+**kizárólag környezeti változóból** olvassa: a csevegésbe, parancssorba vagy projektfájlba soha ne írd be őket. A
+program a kulcsnak csak a meglétét mutatja (igen/nem), az értékét sem a kimenetbe, sem a naplóba, sem a
+gyorsítótárba nem írja.
+
+| Forrás | Környezeti változó | Hol kapod | Kötelező? |
+|---|---|---|---|
+| PubMed (NCBI E-utilities), Europe PMC, ClinicalTrials.gov | `MA_CONTACT_EMAIL` (a saját e-mail-címed; az NCBI és az OpenAlex „polite pool” ezt kéri) | — | **ajánlott** (kulcs nélkül is működik) |
+| PubMed gyorsabban | `MA_NCBI_APIKEY` | ncbi.nlm.nih.gov → fiók → API Key Management | opcionális |
+| OpenAlex | `MA_OPENALEX_APIKEY` | openalex.org → ingyenes API-kulcs (a lista-lekérdezések napi kerete IP-nként közös; kulccsal saját keret) | ajánlott |
+| Scopus (Elsevier) | `MA_SCOPUS_APIKEY` + intézményi hálózaton kívül `MA_SCOPUS_INSTTOKEN` | dev.elsevier.com → API Key (intézményi IP-ről kérd); az Insttoken-t az intézményi könyvtár / az Elsevier adja | opcionális (ha van intézményi Scopus) |
+| Crossref | — | — | automatikus tartalék |
+
+**Scopus Magyarországon:** az intézményi Scopus-hozzáférés jellemzően az **EISZ** (Elektronikus Információszolgáltatás
+Nemzeti Program) előfizetésén át érhető el. A kulcsot a dev.elsevier.com oldalon az intézményi hálózatról (vagy VPN-ről)
+kérd; ha otthonról dolgozol, az intézményi könyvtár adhat Insttoken-t (`MA_SCOPUS_INSTTOKEN`). Ha nincs Scopus, a
+Metaheadhunter nélküle is fut (PubMed, Europe PMC, OpenAlex, ClinicalTrials.gov).
+
+**Ellenőrzés a saját gépeden** (a beállítás után, új terminálban):
+
+```bash
+python metaanalizis-asszisztens/ma.py headhunter sources --check              # minden forrás: rendben / nincs beállítva / nem elérhető / keret elfogyott / kulcs elutasítva / nincs jogosultság
+python metaanalizis-asszisztens/ma.py headhunter sources --check --sources scopus
+```
+
+Kilépési kód 0: minden bekapcsolt forrás elérhető; 3: legalább egy nem érhető el (az üzenet megmondja, miért —
+hiányzó kulcs, jogosultság, kvóta, hálózat). A Scopus-kliens a fejlesztői környezetből élőben nem volt igazolható, ezért
+az első Scopus-használat előtt ezzel a paranccsal igazold a saját gépeden. A beállítás lépései operációs rendszerenként:
+[TELEPITES.md](TELEPITES.md) 7a. pont.
+
 ## 7. A szk-plugins pluginjai (ha telepítve vannak)
 
 | Plugin | Előfeltétel | Szerep |

@@ -10,12 +10,15 @@
  *
  * MA.appr:
  *   instrument(tool) → Promise<inst> · instruments() → Promise<data> (GET /api/instruments, gyorsítótárral)
- *   family(inst), toolName(inst), answers(inst), verdicts(inst), level(inst, v), verdictBadge(inst, v, {implied})
+ *   family(inst), toolName(inst), answers(inst), allowed(inst, it), answersFor(inst, it, part?), answerLabel(inst, v),
+ *   itemId(it), itemIdOf(inst, key), verdicts(inst), level(inst, v), verdictLabel(inst, v, domain?),
+ *   verdictBadge(inst, v, {implied, domain})
  *   algText(alg) → szöveg · scopes(inst) · itemsFor(inst, scope, pass) · rater() / setRater(v) / raterField(onChange)
  *   ans(doc, key) · setAns(doc, key, patch) · judg(doc, coll, domain, pass) · setJudg(doc, coll, domain, pass, patch)
  *   form(o) → {el, update(check), focusKey(key)} — o: {inst, doc, check, scope, passes?, judgements?, applicability?,
  *            overall?, editable?, filter?(item), onChange(kind)}
- *   aiBanner(doc, onApprove) · completeness(check) · missingList(check, onGo) · download(name, obj) · pickJson(cb)
+ *   aiBanner(doc, onApprove) · completeness(check) · missingList(check, onGo, inst) · invalidList(check, onGo, inst)
+ *   download(name, obj) · pickJson(cb)
  *   apiPath(unit, tool, suffix?) · query(target, rater)
  */
 (function () {
@@ -72,13 +75,50 @@
     return algText(alg);
   }
 
+  /** a válasz rövid felirata: magyar felületen a kérdésszövegek rövidítései (I / VI / VN / N / NI / NA …), angolul az
+   *  eszköz saját kódja (Y / PY / …); a teljes szó a title-ben és a képernyőolvasónak (UX-6) */
+  function shortLabel(value, fallback) {
+    var k = 'appraisal.ansShort.' + value;
+    return MA.i18n.lang() === 'hu' && MA.i18n.has(k) ? t(k) : fallback;
+  }
+
   function answers(inst) {
     var list = (inst && inst.answers) || [];
     if (!list.length && inst && inst.status_vocab) { list = inst.status_vocab; }
     return list.map(function (a) {
-      if (typeof a === 'string') { return { value: a, label: a, text: a }; }
-      return { value: a.value, label: a.label || a.value, text: pick(a.text) || a.label || a.value };
+      if (typeof a === 'string') { return { value: a, label: shortLabel(a, a), text: a }; }
+      return { value: a.value, label: shortLabel(a.value, a.label || a.value), text: pick(a.text) || a.label || a.value };
     });
+  }
+
+  /** a tételnél megengedett válaszok — a motor szabálya (Instrument.allowed): a tétel saját listája, különben az
+   *  eszköz default_answers-e; null: nincs megkötés (pl. TRIPOD+AI státusz-szótára) — F2 */
+  function allowed(inst, it) {
+    if (it && Array.isArray(it.answers) && it.answers.length) { return it.answers; }
+    if (inst && Array.isArray(inst.default_answers) && inst.default_answers.length) { return inst.default_answers; }
+    return null;
+  }
+
+  /** a tételnél (vagy egy részénél: AMSTAR 2 9. és 11. — RCT / NRSI) felkínálható válaszok, a rész saját NA-feliratával */
+  function answersFor(inst, it, part) {
+    var allow = part && Array.isArray(part.answers) && part.answers.length ? part.answers : allowed(inst, it);
+    return answers(inst).filter(function (opt) { return !allow || allow.indexOf(opt.value) >= 0; }).map(function (opt) {
+      if (part && opt.value === 'not_applicable' && part.na_label) { return Object.assign({}, opt, { text: pick(part.na_label) }); }
+      return opt;
+    });
+  }
+
+  function answerLabel(inst, v) {
+    var o = answers(inst).filter(function (x) { return x.value === v; })[0];
+    return o ? o.label : String(v);
+  }
+
+  /** a tétel közölt (hivatalos) azonosítója: a NOS eset-kontroll tételei S1–S4, C1 (official_id) — F9 */
+  function itemId(it) { return it ? String(it.official_id || it.id) : ''; }
+
+  function itemIdOf(inst, key) {
+    var it = ((inst && inst.items) || []).filter(function (x) { return keyOf(x) === key || x.id === key; })[0];
+    return it ? itemId(it) : String(key);
   }
 
   function verdicts(inst) {
@@ -94,7 +134,12 @@
     return hit ? hit.level : (LEVELS[v] || 'ni');
   }
 
-  function verdictLabel(inst, v) {
+  /** az ítélet felirata; domain megadásakor a domén saját felirata (verdict_labels — pl. ROBINS-E zavaró tényező:
+   *  „Alacsony (kivéve a nem kontrollált zavaró tényezők miatti aggályt)”), mint a motor verdict_label-je — F10 */
+  function verdictLabel(inst, v, domain) {
+    var d = domain && typeof domain !== 'object' ? ((inst && inst.domains) || []).filter(function (x) { return String(x.id) === String(domain); })[0] : domain;
+    var own = d && d.verdict_labels ? d.verdict_labels[v] : null;
+    if (own) { return pick(own); }
     var hit = verdicts(inst).filter(function (x) { return x.value === v; })[0];
     return hit ? hit.label : String(v);
   }
@@ -103,7 +148,7 @@
   function verdictBadge(inst, v, opts) {
     opts = opts || {};
     var lv = level(inst, v);
-    var label = lv ? verdictLabel(inst, v) : t('appraisal.empty');
+    var label = lv ? verdictLabel(inst, v, opts.domain) : t('appraisal.empty');
     return h('span', { 'class': ['ap-v', 'ap-v-' + (lv || 'none'), opts.implied && 'is-implied'], dataset: { v: v || '' },
       title: opts.title || null },
     h('span', { 'class': 'ap-v-sym', 'aria-hidden': 'true' }, SYM[lv || 'none']), ' ',
@@ -174,8 +219,10 @@
     var cur = Object.assign({}, ans(doc, key) || {});
     Object.keys(patch).forEach(function (k) { cur[k] = patch[k]; });
     if (cur.evidence && emptyEv(cur.evidence)) { delete cur.evidence; }
+    var hasParts = !!cur.parts && typeof cur.parts === 'object' && Object.keys(cur.parts).some(function (p) { return !!cur.parts[p]; });
+    if ('parts' in cur && !hasParts) { delete cur.parts; }
     var noValue = cur.value === null || cur.value === undefined || cur.value === '';
-    if (noValue && !cur.evidence && !cur.comment && !cur.rationale) { delete doc.answers[key]; return; }
+    if (noValue && !hasParts && !cur.evidence && !cur.comment && !cur.rationale) { delete doc.answers[key]; return; }
     if (noValue) { cur.value = null; }
     doc.answers[key] = cur;
   }
@@ -191,7 +238,11 @@
     var cur = judg(doc, coll, domain, pass);
     var next = Object.assign({ domain: String(domain), pass: pass || null, judgement: null, rationale: null, override_reason: null,
       decision_id: null }, cur || {}, patch);
-    if (coll === 'applicability') { delete next.pass; delete next.override_reason; delete next.decision_id; }
+    if (coll === 'applicability' || coll === 'overall_passes') {
+      delete next.override_reason;
+      delete next.decision_id;
+      if (!next.pass) { delete next.pass; }
+    }
     var i = doc[coll].indexOf(cur);
     if (i >= 0) { doc[coll][i] = next; } else { doc[coll].push(next); }
     return next;
@@ -239,15 +290,29 @@
     return '—';
   }
 
-  function missingList(check, onGo) {
+  function missingList(check, onGo, inst) {
     var miss = (check && check.missing) || [];
     if (!miss.length) { return h('span', { 'class': 'ap-missing is-none', i18n: 'appraisal.noMissing' }); }
     return h('span', { 'class': 'ap-missing', id: 'ap-missing' }, h('span', { i18n: 'appraisal.missing' }), ' ',
       miss.slice(0, 12).map(function (m) {
         var key = m.key || (m.pass ? m.pass + '/' + m.item : m.item);
-        var label = m.pass ? m.item + ' (' + t('appraisal.pass.' + m.pass) + ')' : String(m.item);
+        var id = inst ? itemIdOf(inst, key) : String(m.item);
+        var label = m.pass ? id + ' (' + t('appraisal.pass.' + m.pass) + ')' : id;
         return h('button', { type: 'button', 'class': 'btn-link ap-missing-go', dataset: { key: key }, onclick: function () { onGo(key); } }, label);
       }), miss.length > 12 ? h('span', { 'class': 'muted' }, ' ' + t('appraisal.moreMissing', { n: String(miss.length - 12) })) : null);
+  }
+
+  /** a motor által elutasított válaszok (check.invalid: pl. nem megengedett válasz) — F2: soha nem csendben */
+  function invalidList(check, onGo, inst) {
+    var bad = (check && check.invalid) || [];
+    if (!bad.length) { return null; }
+    return h('div', { 'class': 'ap-invalid', id: 'ap-invalid', role: 'alert' }, h('strong', { i18n: 'appraisal.invalid' }), ' ',
+      h('ul', { 'class': 'ap-invalid-list' }, bad.slice(0, 12).map(function (m) {
+        var key = m.key || (m.pass ? m.pass + '/' + m.item : m.item);
+        var id = inst ? itemIdOf(inst, key) : String(m.item);
+        return h('li', null, h('button', { type: 'button', 'class': 'btn-link ap-invalid-go', dataset: { key: key }, onclick: function () { onGo(key); } }, id),
+          ' — ', pick(m.reason) || '—');
+      })));
   }
 
   // ---------------------------------------------------------------- fájlcsere (5. döntés)
@@ -283,12 +348,10 @@
   }
 
   // ---------------------------------------------------------------- űrlap
+  /** a polaritás-jelvények CSAK a motor polaritásából (it.polarity); a tags a validator-eredetet őrzi, és ott
+   *  hibás is lehet (H12: QUADAS-2 1.2/1.3, ROBINS-E 2.3/6.2) — F1 */
   function tagBadges(it) {
     var out = [];
-    (it.tags || []).forEach(function (tg) {
-      if (tg === 'router' && it.polarity !== 'router') { out.push(MA.ui.badge('info', t('appraisal.tag.router'), { symbol: '↪', title: t('appraisal.tag.routerTitle') })); }
-      if (tg === 'reverse' && it.polarity !== 'reverse') { out.push(MA.ui.badge('warning', t('appraisal.tag.reverse'), { symbol: '⇄', title: t('appraisal.tag.reverseTitle') })); }
-    });
     if (it.polarity === 'router') { out.push(MA.ui.badge('info', t('appraisal.tag.router'), { symbol: '↪', title: t('appraisal.tag.routerTitle') })); }
     if (it.polarity === 'reverse') { out.push(MA.ui.badge('warning', t('appraisal.tag.reverse'), { symbol: '⇄', title: t('appraisal.tag.reverseTitle') })); }
     if (it.critical) { out.push(MA.ui.badge('blocker', t('appraisal.tag.critical'), { symbol: 'K', title: t('appraisal.tag.criticalTitle') })); }
@@ -300,7 +363,7 @@
   function whySpec(it, a) {
     var ev = a && a.evidence ? { quote: a.evidence.text, page: a.evidence.page, locator: a.evidence.locator } : null;
     var rat = a && a.rationale;
-    return { title: it.id + ' — ' + pick(it.text), detail: it.help || it.guidance || null,
+    return { title: itemId(it) + ' — ' + pick(it.text), detail: it.help || it.guidance || null,
       plain: rat && typeof rat === 'object' ? rat : (rat ? { because: rat } : null), evidence: ev };
   }
 
@@ -308,25 +371,61 @@
     var inst = o.inst, doc = o.doc;
     var editable = o.editable !== false;
     var passes = o.passes && o.passes.length ? o.passes : [null];
-    var refs = { rows: {}, judg: {}, overall: null, whys: {} };
+    var refs = { rows: {}, judg: {}, overall: null, overallPasses: {}, whys: {}, inv: {} };
     var check = o.check || null;
     var root = h('div', { 'class': 'ap-form', role: 'group', 'aria-label': toolName(inst) });
 
     function changed(kind) { if (o.onChange) { o.onChange(kind); } }
 
+    /** rádiógomb-csoport: a megengedett válaszok (F2); part: résztétel (AMSTAR 2 RCT / NRSI) */
+    function radioGroup(it, key, opts, cur, onPick, labelId) {
+      var name = MA.dom.uid('ap-r');
+      return h('span', { 'class': 'ap-opts', role: 'radiogroup', 'aria-labelledby': labelId }, opts.map(function (opt) {
+        var id = MA.dom.uid('ap-o');
+        return h('span', { 'class': 'ap-opt' },
+          h('input', { type: 'radio', id: id, name: name, value: opt.value, checked: cur === opt.value, disabled: !editable,
+            dataset: { key: key }, onchange: function () { onPick(opt.value); } }),
+          h('label', { htmlFor: id, title: opt.text }, opt.label, h('span', { 'class': 'sr-only' }, ' — ' + opt.text)));
+      }));
+    }
+
     function slot(it, passLabel) {
       var key = keyOf(it);
       var a = ans(doc, key) || {};
-      var name = MA.dom.uid('ap-r');
       var legendId = MA.dom.uid('ap-lg');
-      var allowed = Array.isArray(it.answers) && it.answers.length ? it.answers : null;
-      var radios = answers(inst).filter(function (opt) { return !allowed || allowed.indexOf(opt.value) >= 0; }).map(function (opt) {
-        var id = MA.dom.uid('ap-o');
-        return h('span', { 'class': 'ap-opt' },
-          h('input', { type: 'radio', id: id, name: name, value: opt.value, checked: a.value === opt.value, disabled: !editable,
-            dataset: { key: key }, onchange: function () { setAns(doc, key, { value: opt.value }); markAnswered(key); changed('answer'); } }),
-          h('label', { htmlFor: id, title: opt.text }, opt.label, h('span', { 'class': 'sr-only' }, ' — ' + opt.text)));
-      });
+      var parts = Array.isArray(it.parts) ? it.parts.filter(function (pp) { return pp && pp.id; }) : [];
+      var groups;
+      var holder = null;
+      if (parts.length) {
+        // résztételes tétel (AMSTAR 2 9. és 11.): RCT-re és NRSI-re KÜLÖN ítélet; a tétel értékét a motor képzi a
+        // részekből (bármelyik „Nem” → „Nem”) — F3
+        groups = h('div', { 'class': 'ap-parts' }, parts.map(function (pp) {
+          var pl = MA.dom.uid('ap-pl');
+          var cur = ((ans(doc, key) || {}).parts || {})[pp.id] || null;
+          var grp = radioGroup(it, key, answersFor(inst, it, pp), cur, function (v) {
+            var pv = Object.assign({}, (ans(doc, key) || {}).parts || {});
+            pv[pp.id] = v;
+            setAns(doc, key, { parts: pv, value: null });
+            markAnswered(key);
+            changed('answer');
+          }, pl);
+          var clr = editable ? h('button', { type: 'button', 'class': 'btn-icon ap-clear', 'aria-label': t('appraisal.clearAnswer', { id: itemId(it) + ' ' + pick(pp.label) }),
+            title: t('appraisal.clearAnswer', { id: itemId(it) + ' ' + pick(pp.label) }), onclick: function () {
+              var pv = Object.assign({}, (ans(doc, key) || {}).parts || {});
+              delete pv[pp.id];
+              setAns(doc, key, { parts: Object.keys(pv).length ? pv : null, value: null });
+              MA.dom.$$('input[type="radio"]', grp).forEach(function (r) { r.checked = false; });
+              changed('answer');
+            } }, '×') : null;
+          return h('div', { 'class': 'ap-part', dataset: { part: pp.id } }, h('span', { id: pl, 'class': 'ap-part-label' }, pick(pp.label)), grp, clr);
+        }));
+      } else {
+        groups = radioGroup(it, key, answersFor(inst, it, null), a.value, function (v) {
+          setAns(doc, key, { value: v });
+          markAnswered(key);
+          changed('answer');
+        }, legendId);
+      }
       var ev = a.evidence || {};
       var qId = MA.dom.uid('ap-q'), pId = MA.dom.uid('ap-p'), lId = MA.dom.uid('ap-l');
       var page = h('input', { id: pId, type: 'text', inputmode: 'numeric', 'class': 'ap-page', size: '4', maxlength: '6', disabled: !editable,
@@ -345,21 +444,24 @@
       var loc = h('input', { id: lId, type: 'text', maxlength: '200', size: '14', 'class': 'ap-loc', disabled: !editable, value: ev.locator || '' });
       [quote, page, loc].forEach(function (el) { el.addEventListener('change', evPatch); });
       var evSum = h('summary', { 'class': ['ap-ev-sum', !emptyEv(ev) && 'has-ev'] }, h('span', { i18n: 'appraisal.evidence' }));
-      var clear = editable ? h('button', { type: 'button', 'class': 'btn-icon ap-clear', 'aria-label': t('appraisal.clearAnswer', { id: it.id }),
-        title: t('appraisal.clearAnswer', { id: it.id }), onclick: function () {
+      var clear = editable && !parts.length ? h('button', { type: 'button', 'class': 'btn-icon ap-clear', 'aria-label': t('appraisal.clearAnswer', { id: itemId(it) }),
+        title: t('appraisal.clearAnswer', { id: itemId(it) }), onclick: function () {
           setAns(doc, key, { value: null });
-          MA.dom.$$('input[name="' + name + '"]', root).forEach(function (r) { r.checked = false; });
+          MA.dom.$$('input[type="radio"]', holder).forEach(function (r) { r.checked = false; });
           changed('answer');
         } }, '×') : null;
-      return h('fieldset', { 'class': 'ap-slot', dataset: { key: key } },
-        h('legend', { id: legendId, 'class': passLabel ? 'ap-slot-label' : 'sr-only' }, passLabel || it.id),
-        h('span', { 'class': 'ap-opts', role: 'radiogroup', 'aria-labelledby': legendId }, radios), clear,
+      var invMsg = h('span', { 'class': 'ap-invalid-msg', role: 'status', hidden: true });
+      refs.inv[key] = invMsg;
+      holder = h('fieldset', { 'class': ['ap-slot', parts.length && 'has-parts'], dataset: { key: key } },
+        h('legend', { id: legendId, 'class': passLabel ? 'ap-slot-label' : 'sr-only' }, passLabel || itemId(it)),
+        groups, clear, invMsg,
         a.rationale ? h('span', { 'class': 'ap-ai-mark', title: t('appraisal.ai.itemTitle') }, aiBadge()) : null,
         h('details', { 'class': 'ap-ev' }, evSum,
           h('div', { 'class': 'ap-ev-body' },
             h('label', { htmlFor: qId, i18n: 'appraisal.quote' }), quote,
             h('span', { 'class': 'row' }, h('label', { htmlFor: pId, i18n: 'appraisal.page' }), page,
               h('label', { htmlFor: lId, i18n: 'appraisal.locator' }), loc))));
+      return holder;
     }
 
     function markAnswered(key) {
@@ -379,7 +481,7 @@
       refreshWhy();
       refs.whys[it0.id] = refreshWhy;
       row.appendChild(h('div', { 'class': 'ap-item-head' },
-        h('span', { 'class': 'ap-item-id' }, it0.id), ' ',
+        h('span', { 'class': 'ap-item-id', title: it0.official_id && it0.official_id !== it0.id ? it0.id : null }, itemId(it0)), ' ',
         h('span', { 'class': 'ap-item-text' }, pick(it0.text)), ' ', tagBadges(it0), whyHost));
       row.appendChild(h('div', { 'class': ['ap-slots', group.items.length > 1 && 'is-multi'] }, group.items.map(function (it, i) {
         if (!it) { return h('div', { 'class': 'ap-slot is-na' }, h('span', { 'class': 'muted' }, t('appraisal.notInPass'))); }
@@ -397,14 +499,14 @@
       var selId = MA.dom.uid('ap-j'), ratId = MA.dom.uid('ap-jr'), ovId = MA.dom.uid('ap-jo'), msgId = MA.dom.uid('ap-jm');
       var sel = h('select', { id: selId, 'class': 'ap-judg-select', disabled: !editable, dataset: { domain: domain.id, pass: pass || '', coll: coll } },
         h('option', { value: '' }, t('appraisal.noJudgement')),
-        verdicts(inst).map(function (v) { return h('option', { value: v.value, selected: cur.judgement === v.value }, v.label); }));
+        verdicts(inst).map(function (v) { return h('option', { value: v.value, selected: cur.judgement === v.value }, verdictLabel(inst, v.value, domain)); }));
       var rat = h('textarea', { id: ratId, rows: '1', maxlength: '4000', 'class': 'ap-rationale', disabled: !editable, value: cur.rationale || '' });
       var ov = h('textarea', { id: ovId, rows: '2', maxlength: '4000', 'class': 'ap-override-text', disabled: !editable, value: cur.override_reason || '',
         'aria-describedby': msgId });
       var ovMsg = h('p', { id: msgId, 'class': 'ap-override-msg' });
       var ovBox = h('div', { 'class': 'ap-override', hidden: true }, h('label', { htmlFor: ovId, i18n: 'appraisal.override' }), ov, ovMsg);
       var implied = coll === 'domain_judgements' ? h('div', { 'class': 'ap-implied', 'aria-live': 'polite' }) : null;
-      var ref = { sel: sel, ov: ov, ovBox: ovBox, ovMsg: ovMsg, implied: implied, impliedValue: null, alg: null, reasonMissing: false };
+      var ref = { sel: sel, ov: ov, ovBox: ovBox, ovMsg: ovMsg, implied: implied, impliedValue: null, alg: null, reasonMissing: false, domain: domain };
       refs.judg[key] = ref;
       sel.addEventListener('change', function () {
         setJudg(doc, coll, domain.id, pass, { judgement: sel.value || null });
@@ -414,7 +516,8 @@
       rat.addEventListener('change', function () { setJudg(doc, coll, domain.id, pass, { rationale: rat.value.trim() || null }); changed('rationale'); });
       ov.addEventListener('input', function () { syncOverride(ref); });
       ov.addEventListener('change', function () { setJudg(doc, coll, domain.id, pass, { override_reason: ov.value.trim() || null }); syncOverride(ref); changed('override'); });
-      var title = coll === 'applicability' ? t('appraisal.applicability') : (pass ? t('appraisal.judgementPass', { pass: t('appraisal.pass.' + pass) }) : t('appraisal.judgement'));
+      var title = coll === 'applicability' ? (pass ? t('appraisal.applicabilityPass', { pass: t('appraisal.pass.' + pass) }) : t('appraisal.applicability'))
+        : (pass ? t('appraisal.judgementPass', { pass: t('appraisal.pass.' + pass) }) : t('appraisal.judgement'));
       return h('div', { 'class': ['ap-judg', 'ap-judg-' + coll], dataset: { domain: domain.id, pass: pass || '', coll: coll } },
         implied,
         h('div', { 'class': 'ap-judg-row' }, h('label', { htmlFor: selId }, title), sel,
@@ -433,7 +536,7 @@
       ref.ov.setAttribute('aria-invalid', differs && !text ? 'true' : 'false');
       ref.ovBox.classList.toggle('is-required', differs);
       MA.dom.mount(ref.ovMsg, differs ? (text ? t('appraisal.overrideOk') : t('appraisal.overrideNeeded', {
-        implied: verdictLabel(inst, ref.impliedValue), mine: verdictLabel(inst, v) })) : '');
+        implied: verdictLabel(inst, ref.impliedValue, ref.domain), mine: verdictLabel(inst, v, ref.domain) })) : '');
     }
 
     // doménszakaszok
@@ -456,17 +559,19 @@
       refs['dom|' + d.id] = sumImplied;
       if (o.judgements !== false) {
         var jp = o.passes && o.passes.length ? o.passes.filter(function (p) { return !d.passes || d.passes.indexOf(p) >= 0; }) : [null];
+        // PROBAST+AI: az alkalmazhatóság is menetenként (fejlesztés / értékelés) — F4
         sec.appendChild(h('div', { 'class': 'ap-dom-judg' }, jp.map(function (p) { return judgBlock(d, p, 'domain_judgements'); }),
-          o.applicability && d.applicability ? judgBlock(d, null, 'applicability') : null));
+          o.applicability && d.applicability ? jp.map(function (p) { return judgBlock(d, p, 'applicability'); }) : null));
       }
       root.appendChild(sec);
     });
 
-    // összítélet
-    if (o.overall !== false && verdicts(inst).length) {
-      var ov0 = doc.overall || {};
+    // összítélet — PROBAST+AI (menetes eszköz): menetenként külön (fejlesztés: minőség; értékelés: torzítási kockázat),
+    // overall_passes-be — F4; a többi eszköznél egy összítélet (overall)
+    function overallBlock(pass) {
+      var ov0 = pass ? (judg(doc, 'overall_passes', 'overall', pass) || {}) : (doc.overall || {});
       var oSel = MA.dom.uid('ap-os'), oRat = MA.dom.uid('ap-or'), oOv = MA.dom.uid('ap-oo'), oMsg = MA.dom.uid('ap-om');
-      var sel = h('select', { id: oSel, 'class': 'ap-overall-select', disabled: !editable },
+      var sel = h('select', { id: oSel, 'class': 'ap-overall-select', disabled: !editable, dataset: { pass: pass || '' } },
         h('option', { value: '' }, t('appraisal.noJudgement')),
         verdicts(inst).map(function (v) { return h('option', { value: v.value, selected: ov0.judgement === v.value }, v.label); }));
       var rat = h('textarea', { id: oRat, rows: '2', maxlength: '4000', 'class': 'ap-rationale', disabled: !editable, value: ov0.rationale || '' });
@@ -474,30 +579,42 @@
       var ovMsg = h('p', { id: oMsg, 'class': 'ap-override-msg' });
       var box = h('div', { 'class': 'ap-override', hidden: true }, h('label', { htmlFor: oOv, i18n: 'appraisal.override' }), ovt, ovMsg);
       var implied = h('div', { 'class': 'ap-implied', 'aria-live': 'polite' });
-      var oref = { sel: sel, ov: ovt, ovBox: box, ovMsg: ovMsg, implied: implied, impliedValue: null, alg: null, rat: rat };
-      refs.overall = oref;
-      function patchOverall(p) { doc.overall = Object.assign({ judgement: null, rationale: null, override_reason: null, decision_id: null }, doc.overall || {}, p); }
-      sel.addEventListener('change', function () { patchOverall({ judgement: sel.value || null }); syncOverride(oref); syncHolistic(); changed('overall'); });
-      rat.addEventListener('change', function () { patchOverall({ rationale: rat.value.trim() || null }); syncHolistic(); changed('overall'); });
+      var oref = { sel: sel, ov: ovt, ovBox: box, ovMsg: ovMsg, implied: implied, impliedValue: null, alg: null, rat: rat, pass: pass || null };
+      function patch(pp) {
+        if (pass) { setJudg(doc, 'overall_passes', 'overall', pass, pp); return; }
+        doc.overall = Object.assign({ judgement: null, rationale: null, override_reason: null, decision_id: null }, doc.overall || {}, pp);
+      }
+      sel.addEventListener('change', function () { patch({ judgement: sel.value || null }); syncOverride(oref); syncHolistic(); changed('overall'); });
+      rat.addEventListener('change', function () { patch({ rationale: rat.value.trim() || null }); syncHolistic(); changed('overall'); });
       rat.addEventListener('input', syncHolistic);
       ovt.addEventListener('input', function () { syncOverride(oref); });
-      ovt.addEventListener('change', function () { patchOverall({ override_reason: ovt.value.trim() || null }); syncOverride(oref); changed('override'); });
-      root.appendChild(h('section', { 'class': 'ap-overall', id: 'ap-overall' },
-        h('h3', { i18n: 'appraisal.overall' }), implied,
-        h('div', { 'class': 'ap-judg-row' }, h('label', { htmlFor: oSel, i18n: 'appraisal.yourJudgement' }), sel,
+      ovt.addEventListener('change', function () { patch({ override_reason: ovt.value.trim() || null }); syncOverride(oref); changed('override'); });
+      var label = pass ? t('appraisal.yourJudgementPass', { pass: pick(((inst.passes || []).filter(function (x) { return x.id === pass; })[0] || {}).label) || t('appraisal.pass.' + pass) })
+        : t('appraisal.yourJudgement');
+      return { ref: oref, el: h('div', { 'class': 'ap-overall-block', dataset: { pass: pass || '' } }, implied,
+        h('div', { 'class': 'ap-judg-row' }, h('label', { htmlFor: oSel }, label), sel,
           ov0.decision_id ? MA.ui.badge('info', t('appraisal.decision', { id: String(ov0.decision_id) }), { symbol: '✎' }) : null),
-        h('div', { 'class': 'ap-judg-row' }, h('label', { htmlFor: oRat, i18n: 'appraisal.rationale' }), rat), box));
+        h('div', { 'class': 'ap-judg-row' }, h('label', { htmlFor: oRat, i18n: 'appraisal.rationale' }), rat), pass ? null : box) };
+    }
+    if (o.overall !== false && verdicts(inst).length) {
+      var perPass = !!(o.passes && o.passes.length && inst.passes && inst.passes.length);
+      var blocks = perPass ? o.passes.map(function (pp) { var b = overallBlock(pp); refs.overallPasses[pp] = b.ref; return b; }) : [overallBlock(null)];
+      if (!perPass) { refs.overall = blocks[0].ref; }
+      root.appendChild(h('section', { 'class': ['ap-overall', perPass && 'is-per-pass'], id: 'ap-overall' },
+        h('h3', { i18n: perPass ? 'appraisal.overallPasses' : 'appraisal.overall' }), blocks.map(function (b) { return b.el; })));
     }
 
     function syncHolistic() {
-      var r = refs.overall;
-      if (!r) { return; }
-      var need = r.alg === 'none' && !!r.sel.value;
-      r.rat.setAttribute('aria-required', need ? 'true' : 'false');
-      r.rat.setAttribute('aria-invalid', need && !r.rat.value.trim() ? 'true' : 'false');
+      var all = [refs.overall].concat(Object.keys(refs.overallPasses).map(function (k) { return refs.overallPasses[k]; }));
+      all.forEach(function (r) {
+        if (!r) { return; }
+        var need = r.alg === 'none' && !!r.sel.value;
+        r.rat.setAttribute('aria-required', need ? 'true' : 'false');
+        r.rat.setAttribute('aria-invalid', need && !r.rat.value.trim() ? 'true' : 'false');
+      });
     }
 
-    function impliedNode(v, alg, text, forced, isOverall, extra) {
+    function impliedNode(v, alg, text, forced, isOverall, extra, domain) {
       var algNode = h('span', { 'class': 'ap-alg', dataset: { alg: alg || '' } }, algLabel(inst, alg));
       if (alg === 'none') {
         // nincs algoritmus: doménszinten csak a motor jelzései (nem ítélet), az összítéletnél a holisztikus címke
@@ -509,16 +626,25 @@
         return [h('span', { 'class': 'ap-implied-label', i18n: 'appraisal.stars' }), ' ', h('span', { 'class': 'num ap-implied-why' }, pick(extra) || '—'), ' (', algNode, ')'];
       }
       return [h('span', { 'class': 'ap-implied-label', i18n: 'appraisal.implied' }), ' (', algNode, '): ',
-        v ? verdictBadge(inst, v, { implied: true }) : h('span', { 'class': 'muted', i18n: 'appraisal.impliedNone' }),
+        v ? verdictBadge(inst, v, { implied: true, domain: domain }) : h('span', { 'class': 'muted', i18n: 'appraisal.impliedNone' }),
         text ? h('span', { 'class': 'ap-implied-why' }, ' — ' + pick(text)) : null,
         forced && forced.length ? h('span', { 'class': 'ap-forced muted' }, ' ' + t('appraisal.forcedBy', { items: forced.join(', ') })) : null];
     }
 
     function update(c) {
       check = c || null;
-      var miss = {};
+      var miss = {}, inv = {};
       ((c && c.missing) || []).forEach(function (m) { miss[m.key || (m.pass ? m.pass + '/' + m.item : m.item)] = true; });
-      Object.keys(refs.rows).forEach(function (k) { refs.rows[k].classList.toggle('is-missing', !!miss[k]); refs.rows[k].dataset.missing = miss[k] ? '1' : ''; });
+      ((c && c.invalid) || []).forEach(function (m) { inv[m.key || (m.pass ? m.pass + '/' + m.item : m.item)] = m; });
+      Object.keys(refs.rows).forEach(function (k) {
+        refs.rows[k].classList.toggle('is-missing', !!miss[k]);
+        refs.rows[k].dataset.missing = miss[k] ? '1' : '';
+        // a motor által elutasított válasz (pl. nem megengedett érték) a tételnél is látszik — F2
+        refs.rows[k].classList.toggle('is-invalid', !!inv[k]);
+        refs.rows[k].dataset.invalid = inv[k] ? '1' : '';
+        var im = refs.inv[k];
+        if (im) { im.hidden = !inv[k]; MA.dom.mount(im, inv[k] ? ['⚠ ', t('appraisal.invalidItem'), ' ', pick(inv[k].reason) || ''] : null); }
+      });
       var byDom = {};
       ((c && c.domains) || []).forEach(function (d) { byDom[String(d.domain) + '|' + (d.pass || '')] = d; });
       var alg0 = c && c.overall ? c.overall.algorithm : (inst.rollup && inst.rollup.algorithm);
@@ -529,13 +655,13 @@
         var d = byDom[parts[1] + '|' + parts[2]] || null;
         r.impliedValue = d ? d.implied || null : null;
         r.alg = d ? d.algorithm || alg0 : alg0;
-        if (r.implied) { MA.dom.mount(r.implied, impliedNode(r.impliedValue, r.alg, d && d.text, d && d.forced_by, false)); }
+        if (r.implied) { MA.dom.mount(r.implied, impliedNode(r.impliedValue, r.alg, d && d.text, d && d.forced_by, false, null, r.domain)); }
         var sum = refs['dom|' + parts[1]];
-        if (sum && !parts[2]) { MA.dom.mount(sum, r.impliedValue ? verdictBadge(inst, r.impliedValue, { implied: true, title: t('appraisal.impliedShort') }) : null); }
+        if (sum && !parts[2]) { MA.dom.mount(sum, r.impliedValue ? verdictBadge(inst, r.impliedValue, { implied: true, title: t('appraisal.impliedShort'), domain: r.domain }) : null); }
         syncOverride(r);
       });
       ((c && c.overrides) || []).forEach(function (ov) {
-        var r = ov.domain === 'overall' ? refs.overall : refs.judg['domain_judgements|' + ov.domain + '|' + (ov.pass || '')];
+        var r = ov.domain === 'overall' ? (ov.pass ? refs.overallPasses[ov.pass] : refs.overall) : refs.judg['domain_judgements|' + ov.domain + '|' + (ov.pass || '')];
         if (r && ov.reason_missing) { r.ov.setAttribute('aria-invalid', r.ov.value.trim() ? 'false' : 'true'); }
       });
       if (refs.overall) {
@@ -545,8 +671,16 @@
         MA.dom.mount(refs.overall.implied, impliedNode(refs.overall.impliedValue, refs.overall.alg, null, null, true, c && c.nos ? c.nos.text : null),
           co.provisional ? [' ', MA.ui.badge('warning', t('appraisal.provisional'))] : null);
         syncOverride(refs.overall);
-        syncHolistic();
       }
+      Object.keys(refs.overallPasses).forEach(function (pp) {
+        var r = refs.overallPasses[pp];
+        var cp = ((c && c.overall_passes) || []).filter(function (x) { return x && x.pass === pp; })[0] || {};
+        r.impliedValue = cp.implied || null;
+        r.alg = cp.algorithm || alg0;
+        MA.dom.mount(r.implied, impliedNode(r.impliedValue, r.alg, null, null, true, null));
+        syncOverride(r);
+      });
+      syncHolistic();
     }
 
     function focusKey(key) {
@@ -565,10 +699,11 @@
   }
 
   MA.appr = {
-    instrument: instrument, instruments: instruments, family: family, toolName: toolName, answers: answers, verdicts: verdicts,
+    instrument: instrument, instruments: instruments, family: family, toolName: toolName, answers: answers, allowed: allowed,
+    answersFor: answersFor, answerLabel: answerLabel, itemId: itemId, itemIdOf: itemIdOf, verdicts: verdicts,
     level: level, verdictLabel: verdictLabel, isRobFamily: isRobFamily, domainShort: domainShort, scopeLabel: scopeLabel, algLabel: algLabel, verdictBadge: verdictBadge, algText: algText, scopes: scopes, itemsFor: itemsFor,
     keyOf: keyOf, rater: rater, setRater: setRater, raterField: raterField, ans: ans, setAns: setAns, judg: judg, setJudg: setJudg,
-    apiPath: apiPath, query: query, aiBadge: aiBadge, aiBanner: aiBanner, completeness: completeness, missingList: missingList,
+    apiPath: apiPath, query: query, aiBadge: aiBadge, aiBanner: aiBanner, completeness: completeness, missingList: missingList, invalidList: invalidList,
     download: download, pickJson: pickJson, form: form, SYM: SYM, RATER_RE: RATER_RE,
     reset: function () { instCache = {}; listCache = null; }
   };

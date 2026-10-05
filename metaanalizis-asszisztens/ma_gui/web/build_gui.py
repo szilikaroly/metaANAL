@@ -541,12 +541,15 @@ def main(argv=None):
 #   minify_js   — tokenszintű: megjegyzések és fölös szóközök/sortörések nélkül; a sortörés ott marad,
 #                 ahol az ASI (automatikus pontosvessző) számíthat. Az idézőjeles, azonosító-alakú
 #                 objektumkulcs idézőjel nélkül kerül ki ({'class': x} → {class:x}); a névtelen
-#                 függvénykifejezés nyílfüggvény lesz, ahol a jelentés biztosan azonos (_js_arrowify).
+#                 függvénykifejezés nyílfüggvény lesz, ahol a jelentés biztosan azonos (_js_arrowify); az
+#                 egyetlen 'return kif;' törzsű nyílfüggvény tömör törzset kap (_js_concise); az egymást követő
+#                 var-utasítások összevonódnak (_js_merge_vars); a '}' előtti utolsó ';' elmarad (ASI;
+#                 _js_drop_last_semicolon); true/false/undefined → !0/!1/void 0 (_js_short_literals).
 #                 Nevet NEM cserél. Az egyenértékűséget a tests/gui/ui/test_minify.py ellenőrzi
 #                 (espree-AST összevetés + a nyílfüggvény-feltételek: tests/gui/ui/minify_check.js).
 #   minify_css  — megjegyzések és fölös szóközök nélkül (a ':' ELŐTTI szóköz marad: '.a :hover').
-#   pack_i18n   — a két szótár egy fává ({"a":{"b":["hu","en"]}}), majd szöveges LZ77 („lz1”); a
-#                 kicsomagolás az i18n.js-ben van (unpackI18n), a Python-oldali párja: unpack_i18n.
+#   pack_i18n   — a két szótár egy fává ({"a":{"b":["hu","en"]}}), majd szöveges LZ77 („lz1”, optimális
+#                 felbontással); a kicsomagolás az i18n.js-ben van (unpackI18n), a Python-oldali párja: unpack_i18n.
 class MinifyError(BuildError):
     pass
 
@@ -823,9 +826,198 @@ def _js_arrowify(toks):
     return out
 
 
+def _js_top_level_simple(expr):
+    """A kifejezés legfelső szintjén nincs vessző (vesszőoperátor) és pontosvessző (sablon-helyettesítéseket is
+    számolva) — csak ekkor lehet tömör nyíltörzs."""
+    depth = 0
+    for kind, val, _nl in expr:
+        if kind == "tmpl":
+            if val.startswith("}"):
+                depth -= 1
+            if val.endswith("${"):
+                depth += 1
+        elif kind == "punct" and val in ("(", "[", "{"):
+            depth += 1
+        elif kind == "punct" and val in (")", "]", "}"):
+            depth -= 1
+            if depth < 0:
+                return False
+        elif kind == "punct" and val in (",", ";") and depth == 0:
+            return False
+    return depth == 0
+
+
+def _js_concise(toks, tail_ok=False):
+    """Blokktörzsű nyílfüggvény, amelynek törzse egyetlen 'return KIFEJEZÉS;' → tömör törzs: a=>{return x;} → a=>x.
+    Feltételek: a törzs pontosan 'return' + kifejezés + ';', a kifejezés a 'return'-nel egy sorban kezdődik (ASI);
+    a kifejezés legfelső szintjén nincs vessző és pontosvessző; a törzs utáni token a nyílkifejezés biztos lezárója
+    (_ARROW_NEXT); objektumliterállal kezdődő kifejezés zárójelbe kerül. A tests/gui/ui/minify_check.js AST-szinten
+    ellenőrzi (a tömör törzset a return-blokkal azonosnak veszi, minden más eltérés hiba)."""
+    out = []
+    i, n = 0, len(toks)
+    while i < n:
+        tok = toks[i]
+        out.append(tok)
+        if (tok[:2] == ("punct", "=>") and i + 2 < n and toks[i + 1][:2] == ("punct", "{")
+                and toks[i + 2][:2] == ("word", "return")):
+            close = _js_match(toks, i + 1, "{", "}")
+            body = toks[i + 3:close]
+            after = toks[close + 1] if close + 1 < n else None
+            # a szelet vége (tail_ok): egy külső tömör törzs vége, amelyet a külső nyíl lezárója követ
+            closed = (after is None and tail_ok) or (after is not None and after[0] == "punct" and after[1] in _ARROW_NEXT)
+            if (len(body) >= 2 and body[-1][:2] == ("punct", ";") and not body[0][2] and closed
+                    and _js_top_level_simple(body[:-1])):
+                expr = _js_concise(body[:-1], tail_ok=True)
+                wrap = expr[0][:2] == ("punct", "{")
+                if wrap:
+                    out.append(("punct", "(", False))
+                out.extend(expr)
+                if wrap:
+                    out.append(("punct", ")", False))
+                i = close + 1
+                continue
+        i += 1
+    return out
+
+
+_EMPTY_BODY_HEADS = {"if", "while", "for", "with"}
+
+
+def _js_drop_last_semicolon(toks):
+    """A blokk utolsó utasítása utáni ';' elhagyása a '}' előtt (ASI: a '}' előtt a pontosvessző automatikus — az AST
+    azonos). Nem esik ki az üres utasítás: '{;}', ';;}', 'if(…);}', 'else;}', 'do;}' (ott a ';' maga az utasítás)."""
+    out = []
+    n = len(toks)
+    for i, tok in enumerate(toks):
+        if tok[:2] == ("punct", ";") and i + 1 < n and toks[i + 1][:2] == ("punct", "}") and out:
+            prev = out[-1]
+            if prev[:2] in (("punct", "{"), ("punct", ";")) or prev[:2] in (("word", "else"), ("word", "do")):
+                out.append(tok)
+                continue
+            if prev[:2] == ("punct", ")"):
+                # a ')' egy if/while/for/with fejét zárja? — akkor a ';' üres törzs, marad
+                depth, j = 0, len(out) - 1
+                while j >= 0:
+                    v = out[j]
+                    if v[0] == "punct" and v[1] == ")":
+                        depth += 1
+                    elif v[0] == "punct" and v[1] == "(":
+                        depth -= 1
+                        if depth == 0:
+                            break
+                    j -= 1
+                if j <= 0 or (out[j - 1][0] == "word" and out[j - 1][1] in _EMPTY_BODY_HEADS):
+                    out.append(tok)
+                    continue
+            continue
+        out.append(tok)
+    return out
+
+
+_SHORT_LITERALS = {"true": [("punct", "!"), ("num", "0")], "false": [("punct", "!"), ("num", "1")],
+                   "undefined": [("word", "void"), ("num", "0")]}
+
+
+def _js_short_literals(toks):
+    """true → !0, false → !1, undefined → void 0 (azonos érték; a minify_check.js AST-szinten azonosnak veszi).
+    Kimarad: tulajdonságnév (x.true, {true: …}), tag/hívás tárgya (true.toString(), undefined[x]), a '**' bal
+    operandusa (unáris kifejezés ott szintaxishiba)."""
+    out = []
+    n = len(toks)
+    for i, tok in enumerate(toks):
+        rep = _SHORT_LITERALS.get(tok[1]) if tok[0] == "word" else None
+        if rep is not None:
+            prev = out[-1] if out else None
+            nxt = toks[i + 1] if i + 1 < n else None
+            if prev is not None and prev[:2] in (("punct", "."), ("punct", "?.")):
+                rep = None
+            elif nxt is not None and nxt[0] == "punct" and nxt[1] in (".", "?.", "[", "(", "**", "=>", "=", "++", "--"):
+                rep = None
+            elif nxt is not None and nxt[:2] == ("punct", ":") and prev is not None and prev[:2] in (("punct", "{"), ("punct", ",")):
+                rep = None
+        if rep is None:
+            out.append(tok)
+            continue
+        out.append((rep[0][0], rep[0][1], tok[2]))
+        out.append((rep[1][0], rep[1][1], False))
+    return out
+
+
+def _js_stmt_end(toks, i):
+    """Az i-től induló utasítás-rész vége: a 0. mélységű ';' indexe, vagy a nyitatlan záró zárójelé / a lista vége."""
+    depth = 0
+    n = len(toks)
+    while i < n:
+        kind, val = toks[i][0], toks[i][1]
+        if kind == "tmpl":
+            if val.startswith("}"):
+                depth -= 1
+            if val.endswith("${"):
+                depth += 1
+        elif kind == "punct" and val in ("(", "[", "{"):
+            depth += 1
+        elif kind == "punct" and val in (")", "]", "}"):
+            depth -= 1
+            if depth < 0:
+                return i
+        elif kind == "punct" and val == ";" and depth == 0:
+            return i
+        i += 1
+    return n
+
+
+def _js_flat_line(toks, i, k):
+    """A toks[i:k] 0. mélységén (az első token után) nincs sortörés."""
+    depth = 0
+    for j in range(i, k):
+        kind, val, nl = toks[j]
+        if nl and depth == 0 and j > i:
+            return False
+        if kind == "tmpl":
+            if val.startswith("}"):
+                depth -= 1
+            if val.endswith("${"):
+                depth += 1
+        elif kind == "punct" and val in ("(", "[", "{"):
+            depth += 1
+        elif kind == "punct" and val in (")", "]", "}"):
+            depth -= 1
+    return True
+
+
+def _js_merge_vars(toks):
+    """Egymást követő var-utasítások összevonása: var a=1;var b=2; → var a=1,b=2; (a var-ok emelése miatt azonos
+    jelentés). Csak utasítás-kezdő var-ra (előtte ';', '{', '}' vagy semmi — nem for-fej, nem if/else/case/címke
+    törzse), és csak ';'-vel lezárt utasítás után; a kezdőértékekben (függvénytörzsek) is. A minify_check.js
+    AST-szinten ellenőrzi."""
+    out = []
+    n = len(toks)
+    i = 0
+    while i < n:
+        tok = toks[i]
+        if tok[:2] == ("word", "var") and (not out or out[-1][:2] in (("punct", ";"), ("punct", "{"), ("punct", "}"))):
+            out.append(tok)
+            k = _js_stmt_end(toks, i + 1)
+            out.extend(_js_merge_vars(toks[i + 1:k]))
+            start = i + 1
+            # csak ha az utasításban nincs 0. mélységű sortörés (ASI-határ lehetne: 'var a=1⏎f();var b=2;')
+            while (k + 1 < n and toks[k][:2] == ("punct", ";") and toks[k + 1][:2] == ("word", "var")
+                   and _js_flat_line(toks, start, k)):
+                out.append(("punct", ",", False))
+                start = k + 2
+                k2 = _js_stmt_end(toks, start)
+                out.extend(_js_merge_vars(toks[start:k2]))
+                k = k2
+            i = k
+            continue
+        out.append(tok)
+        i += 1
+    return out
+
+
 def minify_js(text):
     """Veszteségmentes JS-tömörítés (lásd fent). MinifyError, ha a forrás nem tokenizálható."""
-    toks = _js_arrowify(_js_tokens(text))
+    toks = _js_short_literals(_js_drop_last_semicolon(_js_merge_vars(_js_concise(_js_arrowify(_js_tokens(text))))))
     for k in range(1, len(toks) - 1):                       # {'class': x} → {class:x}
         kind, val, nl = toks[k]
         if (kind == "str" and toks[k - 1][0] == "punct" and toks[k - 1][1] in ("{", ",")
@@ -923,59 +1115,63 @@ def _bmp_json(obj):
 
 
 def lz_encode(s):
-    """Determinisztikus mohó LZ77 (hash-lánc, egylépéses lusta illesztés) a fenti formátumban."""
+    """Determinisztikus LZ77 a fenti formátumban, OPTIMÁLIS felbontással: minden pozícióra a leghosszabb (hash-láncon
+    talált) visszahivatkozás, majd dinamikus programozással a legkevesebb UTF-8 bájtot adó literál/hivatkozás-sorozat
+    (a dekóder és a formátum változatlan; a „{” nem kerülhet hivatkozás-jegybe — lásd lent)."""
     n = len(s)
-    out = []
     chains = {}
-
-    def find(i):
-        best = off = 0
-        cand = chains.get(s[i:i + 3]) if i + 3 <= n else None
-        if not cand:
-            return 0, 0
-        lim = min(_LZ_MAX, n - i)
-        for j in reversed(cand[-_LZ_DEPTH:]):
-            if i - j > _LZ_WINDOW:
-                break
-            k = 0
-            while k < lim and s[j + k] == s[i + k]:
-                k += 1
-            if k > best:
-                best, off = k, i - j
-                if k == lim:
+    longest = [0] * n
+    offs = [0] * n
+    for i in range(n):
+        if i + 3 > n:
+            break
+        key = s[i:i + 3]
+        cand = chains.get(key)
+        if cand:
+            lim = min(_LZ_MAX, n - i)
+            best = off = 0
+            for j in reversed(cand[-_LZ_DEPTH:]):
+                if i - j > _LZ_WINDOW:
                     break
-        return best, off
-
-    def insert(k):
-        if k + 3 <= n:
-            chains.setdefault(s[k:k + 3], []).append(k)
-
-    def literal(k):
-        out.append("~~" if s[k] == "~" else s[k])
-        insert(k)
-
-    i = 0
-    while i < n:
-        length, off = find(i)
-        if length >= LZ_MIN and i + 1 < n and find(i + 1)[0] > length + 1:
-            literal(i)
-            i += 1
-            continue
-        token = None
-        if length >= LZ_MIN:
-            o = off - 1
-            token = "~" + LZ_ALPHABET[o // _LZ_N] + LZ_ALPHABET[o % _LZ_N] + LZ_ALPHABET[length - LZ_MIN]
-            if "{" in token:
+                o = i - j - 1
                 # a „{{” a sablon-helyőrzők jele ({{CSP_NONCE}}, {{SNAPSHOT_*}}): a csomagban nem keletkezhet — a
                 # JSON-szöveg maga nem tartalmaz „{{”-t, így ha a hivatkozás-jegyek közt nincs „{”, sehol sem lesz
-                token = None
-        if token is not None:
-            out.append(token)
-            for k in range(i, i + length):
-                insert(k)
+                if LZ_ALPHABET[o // _LZ_N] == "{" or LZ_ALPHABET[o % _LZ_N] == "{":
+                    continue
+                k = 0
+                while k < lim and s[j + k] == s[i + k]:
+                    k += 1
+                if k > best:
+                    best, off = k, i - j
+                    if k == lim:
+                        break
+            if best >= LZ_MIN:
+                longest[i], offs[i] = best, off
+        chains.setdefault(key, []).append(i)
+    cost = [0] * (n + 1)
+    choice = [0] * n
+    for i in range(n - 1, -1, -1):
+        c = s[i]
+        best = (2 if c == "~" else len(c.encode("utf-8"))) + cost[i + 1]
+        ch = 0
+        for length in range(LZ_MIN, longest[i] + 1):
+            if LZ_ALPHABET[length - LZ_MIN] == "{":
+                continue
+            v = 4 + cost[i + length]
+            if v < best:
+                best, ch = v, length
+        cost[i] = best
+        choice[i] = ch
+    out = []
+    i = 0
+    while i < n:
+        length = choice[i]
+        if length:
+            o = offs[i] - 1
+            out.append("~" + LZ_ALPHABET[o // _LZ_N] + LZ_ALPHABET[o % _LZ_N] + LZ_ALPHABET[length - LZ_MIN])
             i += length
         else:
-            literal(i)
+            out.append("~~" if s[i] == "~" else s[i])
             i += 1
     return "".join(out)
 

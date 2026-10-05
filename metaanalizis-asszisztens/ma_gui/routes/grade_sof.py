@@ -293,6 +293,12 @@ def put_sof(req):
         return Result(_view(app, outcome, run, saved, doc, certainty, source), VIEW_SCHEMA, etag=etag)
     if certainty is None:
         warnings.append("A SoF bizonyosság-oszlopa üres: a kimenet GRADE-ítélete még nincs kész (GRADE fül).")
+    # a motor szabálya (4. döntés, X008): a SoF bizonyossága csak a RÖGZÍTETT GRADE-ítéleté lehet, ugyanarra a futásra
+    done, probs = E.call_optional("sof_problems", project_dir=str(app.project_root), doc=doc)
+    if done and probs:
+        raise ApiError("VALIDATION", "A SoF nem menthető: %s. A SoF bizonyossága a rögzített GRADE-ítéleté (4. döntés; "
+                                     "X008) — előbb rögzítsd a GRADE-et a GRADE fülön." % "; ".join(probs[:3]),
+                       {"problems": list(probs)[:20], "code": "X008"})
     want = req.header("If-Match") or None
     sha = app.store.write_bytes(rel, store.json_bytes(doc), if_match=want)
     log_activity_or_warn(app, "sof.save", warnings, outputs=[{"path": rel, "sha256": sha}],

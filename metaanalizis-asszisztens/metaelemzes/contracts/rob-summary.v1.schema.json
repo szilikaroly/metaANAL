@@ -190,6 +190,14 @@
               "null"
             ]
           },
+          "overall_from": {
+            "enum": [
+              "judgement",
+              "implied",
+              null
+            ],
+            "description": "a szint (level) forrása: emberi összítélet, vagy annak hiányában a motor implikált ítélete (nem hivatalos)"
+          },
           "level": {
             "enum": [
               "low",
@@ -263,6 +271,11 @@
           },
           "n": {
             "type": "integer"
+          },
+          "n_implied": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "ebből ennyi vizsgálat szintje a motor implikált (nem hivatalos) ítéletéből jön"
           },
           "pct": {
             "$ref": "urn:szk:contract:common:1#/$defs/num"

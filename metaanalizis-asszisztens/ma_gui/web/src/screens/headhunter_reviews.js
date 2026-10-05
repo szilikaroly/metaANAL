@@ -16,6 +16,8 @@
   var F = MA.proc.field;
   var EMPTY = MA.ui.emptyState;
   var t = function (k, a) { return MA.i18n.t(k, a); };
+  /** Belső kód → magyar címke (UX-7); ismeretlen kódnál maga a kód. */
+  function label(prefix, v) { return !v ? '—' : (MA.i18n.has(prefix + v) ? t(prefix + v) : String(v)); }
   var hh = MA.hh;
   var STATUS_KIND = { candidate: 'neutral', selected: 'ok', excluded: 'warning', superseded: 'stale' };
   var CAND_KIND = { proposed: 'pending', confirmed: 'ok', rejected: 'warning' };
@@ -168,7 +170,8 @@
       var s = d.summary || {};
       var etag = env.etag;
       var cands = d.candidates || [];
-      var proposed = cands.filter(function (c) { return c.status === 'proposed'; }).length;
+      // a tömeges megerősítés az ismeretlen szerepű (csak irodalomjegyzékből ismert) tételt nem érinti (W-UNKNOWN-ROLE)
+      var proposed = cands.filter(function (c) { return c.status === 'proposed' && c.role_in_review !== 'unknown'; }).length;
       var k = s.k_reported && s.k_reported.value;
       var mismatch = typeof k === 'number' && k !== s.n_groups;
       MA.dom.mount(host,
@@ -180,7 +183,7 @@
             h('dt', null, t('hh.rv.kReported')), h('dd', null, typeof k === 'number' ? String(k) : '—', ' · ', t('hh.ex.groups', { n: String(s.n_groups || 0) }),
               mismatch ? [' ', B('warning', t('hh.ex.kMismatch'), { title: 'H006' })] : null, d.k_evidence ? hh.api.quote(d.k_evidence) : null),
             h('dt', null, t('hh.rv.fulltext')), h('dd', null, s.fulltext ? t('hh.rv.route.' + (s.fulltext.route || 'none')) : '—',
-              s.extraction ? [' · ', t('hh.ex.lastRun', { status: s.extraction.status || '—', strategy: s.extraction.strategy || '—' })] : null))),
+              s.extraction ? [' · ', t('hh.ex.lastRun', { status: label('hh.ex.run.', s.extraction.status), strategy: label('hh.ex.strategy.', s.extraction.strategy) })] : null))),
         h('div', { 'class': 'toolbar' },
           h('button', { type: 'button', 'class': 'btn', id: 'hh-extract-one', onclick: function () { api.run('extract', { reviews: [rid], strategy: 'auto' }); } }, t('hh.ex.rerun')),
           h('button', { type: 'button', 'class': 'btn', id: 'hh-confirm-all', disabled: !proposed, onclick: function () {

@@ -699,6 +699,7 @@ def run_merge(project_dir, now=None, with_prisma=True, env=None):
             elif ep == "EP5":
                 S.set_checkpoint(st, "EP5", "done" if merged["final"] else "pending", open_items=n,
                                  decision_id=merged["summary"].get("signoff_decision"))
+        S.close_gated_steps(st, items, now=now)
         st.setdefault("counters", {})["study_seq"] = max(int((st.get("counters") or {}).get("study_seq") or 0),
                                                          int(((studies or {}).get("counters") or {}).get("study_seq")
                                                              or 0))
@@ -954,12 +955,18 @@ def outcome_rows(merged, outcome=None, for_analysis=False):
                                   "munkalistája: 01_kereses/headhunter/exports/masodlagos_adatok.csv"
                                   % ",".join(inc_reports or [prim["rec_id"]])})
         if for_analysis:
-            used, locs = {}, []
+            # egy sor = EGY kimenet: csak a kért kimenettel PONTOSAN egyező (normalizált) címkéjű értékek kerülhetnek
+            # be — részszöveg-egyezés (pl. „mortality” ⊂ „cardiovascular mortality”) különböző kimenetek számait
+            # keverné egy 2×2-es táblába (F8). Kimenet megadása nélkül nincs szám.
+            used, locs, near = {}, [], set()
             for blk in st.get("secondary_data") or []:
                 for v in blk["values"]:
                     if v.get("field") not in NUMERIC_TEMPLATE:
                         continue
-                    if want and want not in _norm_outcome(v.get("outcome")):
+                    nv = _norm_outcome(v.get("outcome"))
+                    if not want or nv != want:
+                        if want and v.get("status") == "verified" and nv:
+                            near.add(str(v.get("outcome")))
                         continue
                     if v.get("status") != "verified":
                         skipped_unverified += 1 if v.get("status") == "unverified" else 0
@@ -979,6 +986,9 @@ def outcome_rows(merged, outcome=None, for_analysis=False):
                 row["forras_oldal"] = "; ".join(sorted(set(locs)))[:300]
                 row["megjegyzes"] = ("Metaheadhunter: áttekintésből átvett, az elsődleges közleménnyel ELLENŐRZÖTT "
                                      "érték(ek) (EP6); a hiányzó cellákat az elsődleges közleményből töltsd ki.")
+            if near:
+                row["megjegyzes"] = (row["megjegyzes"] + " Más kimenet(ek) ellenőrzött értékei NEM kerültek "
+                                     "ebbe a sorba: %s." % "; ".join(sorted(near)))[:300]
         rows.append(row)
     return header, rows, skipped_unverified
 
@@ -1142,12 +1152,35 @@ def studies_ma(merged, now=None):
             "studies": out}
 
 
+_NUMBER_RE = re.compile(r"^[+-]?(\d+([.,]\d*)?|[.,]\d+)([eE][+-]?\d+)?$")
+
+
+def excel_safe(value):
+    """Táblázatkezelő-képlet elleni védelem (SEC-6): a ``= + - @``, TAB vagy CR kezdetű SZÖVEGES cella elé aposztróf
+    (mint a SoF-exportnál). A szám (pl. -0.5) változatlan, hogy az elemzési táblában szám maradjon. A címkék és
+    hivatkozások külső metaadatból (PubMed/Crossref/OpenAlex, más áttekintések irodalomjegyzéke) jönnek."""
+    if value is None:
+        return value
+    s = str(value)
+    if s[:1] in ("=", "+", "-", "@", "\t", "\r") and not _NUMBER_RE.match(s.strip()):
+        return "'" + s
+    return value
+
+
+def excel_unsafe(value):
+    """Az excel_safe visszafordítása a visszatöltéskor (az aposztróf csak a képlet-jel elé került)."""
+    s = "" if value is None else str(value)
+    if s[:1] == "'" and s[1:2] in ("=", "+", "-", "@", "\t", "\r"):
+        return s[1:]
+    return s
+
+
 def _csv_text(header, rows):
     buf = io.StringIO()
     w = csv.DictWriter(buf, fieldnames=header, delimiter=";", lineterminator="\n", extrasaction="ignore")
     w.writeheader()
     for r in rows:
-        w.writerow(r)
+        w.writerow(dict((k, excel_safe(v)) for k, v in r.items()))
     return buf.getvalue()
 
 
@@ -1203,6 +1236,13 @@ def run_export(project_dir, outcome=None, to_project=False, prisma=False, for_an
                             "--for-analysis requires the EP5 sign-off (H009)."))
         return {"ok": False, "data": None, "warnings": warnings, "errors": errors,
                 "pending": [{"checkpoint": "EP5", "n": 1}], "exit_code": 4, "next": "signoff"}
+    if for_analysis and not (outcome and _norm_outcome(outcome)):
+        # egy elemzési tábla = egy kimenet (F8): kimenet nélkül a különböző kimenetek ellenőrzött számai keverednének
+        errors.append(_expl("Az elemzési exporthoz (--for-analysis) add meg a kimenetet is (--outcome \"…\"): egy "
+                            "elemzési tábla egyetlen kimenet adatait tartalmazhatja.",
+                            "--for-analysis needs --outcome: one analysis table holds one outcome only."))
+        return {"ok": False, "data": None, "warnings": warnings, "errors": errors, "pending": [], "exit_code": 2,
+                "next": "export --for-analysis --outcome \"…\""}
     ex = S.path(project_dir, "exports")
     files = []
     rel_ex = S.HH_REL + "/exports/"

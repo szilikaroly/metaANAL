@@ -1,5 +1,5 @@
 {
- "description": "Mintaértékelések (szk.appraisal/v1 + a CSONK ellenőrzése)",
+ "description": "Mintaértékelések (szk.appraisal/v1 + a motor ellenőrzése)",
  "routes": [
   {
    "method": "GET",
@@ -8,7 +8,7 @@
     "rater": "SzK",
     "target": "o1"
    },
-   "etag": "26308fa6e2dde977",
+   "etag": "aef1628adb77040d",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -24,7 +24,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "rob2",
       "scope": "assignment",
-      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "instrument_sha256": "7257e53a2eea9dc7ec8efa9911481afb76f2014f7b18055631da79e0ea6ab804",
       "target": {
        "unit": "ARONSON1948",
        "study_id": "ARONSON1948",
@@ -175,12 +175,25 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "rob2",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "scope": "assignment",
+      "target": {
+       "unit": "ARONSON1948",
+       "study_id": "ARONSON1948",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
       "complete": true,
       "expected": 22,
       "answered": 22,
       "completeness_text": "22/22",
+      "per_pass": null,
       "missing": [],
       "invalid": [],
       "domains": [
@@ -191,20 +204,36 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "1-g"
+        ],
+        "judgement": "low",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Rejtett (1.2 I/VI), véletlen vagy nem ismert szekvencia (1.1 I/VI/NI), nincs problémára utaló kiinduló különbség (1.3 N/VN/NI) → alacsony.",
+         "en": "Concealed (1.2 Y/PY), random or unknown sequence (1.1 Y/PY/NI), no baseline problem (1.3 N/PN/NI) → low."
         }
        },
        {
         "domain": "2",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "2.3",
+         "2.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "2.1",
          "2.2",
@@ -212,9 +241,23 @@
          "2.4"
         ],
         "missing": [],
+        "not_asked": [
+         "2.7"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "2-e",
+         "2-g"
+        ],
+        "judgement": "low",
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
         }
        },
        {
@@ -224,30 +267,61 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "3.3"
         ],
         "missing": [],
+        "not_asked": [
+         "3.2",
+         "3.3",
+         "3.4"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "3-a"
+        ],
+        "judgement": "low",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Outcome data for (nearly) all participants (3.1 Y/PY)."
         }
        },
        {
         "domain": "4",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "4.3",
+         "4.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "4.3",
          "4.4"
         ],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "4-g"
+        ],
+        "judgement": "low",
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
         }
        },
        {
@@ -257,34 +331,120 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "5-d"
+        ],
+        "judgement": "low",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Analysed per a pre-specified plan (5.1 Y/PY), no selection."
         }
        }
       ],
       "overall": {
-       "implied": "low",
+       "implied": "some_concerns",
        "algorithm": "conservative",
+       "official": false,
+       "basis": "rob2-2019-flowchart-conservative",
+       "label": {
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
        "text": {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
-       }
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
+       "lines": [
+        {
+         "hu": "1. domén (Randomizációs folyamat): Alacsony — Rejtett (1.2 I/VI), véletlen vagy nem ismert szekvencia (1.1 I/VI/NI), nincs problémára utaló kiinduló különbség (1.3 N/VN/NI) → alacsony.",
+         "en": "Domain 1 (Randomisation process): Low — Concealed (1.2 Y/PY), random or unknown sequence (1.1 Y/PY/NI), no baseline problem (1.3 N/PN/NI) → low."
+        },
+        {
+         "hu": "2. domén (Eltérés a tervezett beavatkozástól): Némi aggály — A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Domain 2 (Deviations from intended interventions): Some concerns — Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
+        },
+        {
+         "hu": "3. domén (Hiányzó kimeneti adatok): Alacsony — Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Domain 3 (Missing outcome data): Low — Outcome data for (nearly) all participants (3.1 Y/PY)."
+        },
+        {
+         "hu": "4. domén (A kimenet mérése): Némi aggály — Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Domain 4 (Measurement of the outcome): Some concerns — Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
+        },
+        {
+         "hu": "5. domén (A közölt eredmény kiválasztása): Alacsony — Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Domain 5 (Selection of the reported result): Low — Analysed per a pre-specified plan (5.1 Y/PY), no selection."
+        },
+        {
+         "hu": "Implikált összítélet: Némi aggály — a legrosszabb domén szerint.",
+         "en": "Implied overall: Some concerns — set by the worst domain."
+        },
+        {
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+        }
+       ],
+       "provisional": false,
+       "judgement": "low",
+       "level": "some"
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {},
+      "overrides": [
+       {
+        "domain": "2",
+        "pass": null,
+        "judgement": "low",
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "reason_missing": true,
+        "decision_missing": true
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "judgement": "low",
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "reason_missing": true,
+        "decision_missing": true
+       },
+       {
+        "domain": "overall",
+        "pass": null,
+        "judgement": "low",
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "reason_missing": true,
+        "decision_missing": true
+       }
+      ],
       "guards": [],
       "notes": [
        {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
-      "warnings": []
+      "warnings": [
+       {
+        "hu": "Az implikálttól eltérő ítélet indoklás nélkül (X017): D2, D4, összítélet",
+        "en": "Judgement differs from the implied one without a reason (X017)."
+       }
+      ]
      }
     },
     "warnings": [],
@@ -303,7 +463,7 @@
     "rater": "KP",
     "target": "o1"
    },
-   "etag": "45ab6df5c9f6f935",
+   "etag": "bb9ca44a0cc928d7",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -319,7 +479,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "rob2",
       "scope": "assignment",
-      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "instrument_sha256": "7257e53a2eea9dc7ec8efa9911481afb76f2014f7b18055631da79e0ea6ab804",
       "target": {
        "unit": "ARONSON1948",
        "study_id": "ARONSON1948",
@@ -464,12 +624,25 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "rob2",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "scope": "assignment",
+      "target": {
+       "unit": "ARONSON1948",
+       "study_id": "ARONSON1948",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
       "complete": true,
       "expected": 22,
       "answered": 22,
       "completeness_text": "22/22",
+      "per_pass": null,
       "missing": [],
       "invalid": [],
       "domains": [
@@ -482,20 +655,36 @@
         "unknown_at": [
          "1.2"
         ],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "1-c"
+        ],
+        "judgement": "some_concerns",
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "nincs információ: 1.2",
-         "en": "no information at 1.2"
+         "hu": "Nincs információ a rejtésről (1.2 NI) → némi aggály.",
+         "en": "No information on concealment (1.2 NI) → some concerns."
         }
        },
        {
         "domain": "2",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "2.3",
+         "2.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "2.1",
          "2.2",
@@ -503,9 +692,23 @@
          "2.4"
         ],
         "missing": [],
+        "not_asked": [
+         "2.7"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "2-e",
+         "2-g"
+        ],
+        "judgement": "low",
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
         }
        },
        {
@@ -515,30 +718,61 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "3.3"
         ],
         "missing": [],
+        "not_asked": [
+         "3.2",
+         "3.3",
+         "3.4"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "3-a"
+        ],
+        "judgement": "low",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Outcome data for (nearly) all participants (3.1 Y/PY)."
         }
        },
        {
         "domain": "4",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "4.3",
+         "4.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "4.3",
          "4.4"
         ],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "4-g"
+        ],
+        "judgement": "low",
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
         }
        },
        {
@@ -548,34 +782,111 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "5-d"
+        ],
+        "judgement": "low",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Analysed per a pre-specified plan (5.1 Y/PY), no selection."
         }
        }
       ],
       "overall": {
        "implied": "some_concerns",
        "algorithm": "conservative",
+       "official": false,
+       "basis": "rob2-2019-flowchart-conservative",
+       "label": {
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
        "text": {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
-       }
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
+       "lines": [
+        {
+         "hu": "1. domén (Randomizációs folyamat): Némi aggály — Nincs információ a rejtésről (1.2 NI) → némi aggály.",
+         "en": "Domain 1 (Randomisation process): Some concerns — No information on concealment (1.2 NI) → some concerns."
+        },
+        {
+         "hu": "2. domén (Eltérés a tervezett beavatkozástól): Némi aggály — A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Domain 2 (Deviations from intended interventions): Some concerns — Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
+        },
+        {
+         "hu": "3. domén (Hiányzó kimeneti adatok): Alacsony — Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Domain 3 (Missing outcome data): Low — Outcome data for (nearly) all participants (3.1 Y/PY)."
+        },
+        {
+         "hu": "4. domén (A kimenet mérése): Némi aggály — Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Domain 4 (Measurement of the outcome): Some concerns — Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
+        },
+        {
+         "hu": "5. domén (A közölt eredmény kiválasztása): Alacsony — Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Domain 5 (Selection of the reported result): Low — Analysed per a pre-specified plan (5.1 Y/PY), no selection."
+        },
+        {
+         "hu": "Implikált összítélet: Némi aggály — a legrosszabb domén szerint.",
+         "en": "Implied overall: Some concerns — set by the worst domain."
+        },
+        {
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+        }
+       ],
+       "provisional": false,
+       "judgement": "some_concerns",
+       "level": "some"
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {},
+      "overrides": [
+       {
+        "domain": "2",
+        "pass": null,
+        "judgement": "low",
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "reason_missing": true,
+        "decision_missing": true
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "judgement": "low",
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "reason_missing": true,
+        "decision_missing": true
+       }
+      ],
       "guards": [],
       "notes": [
        {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
-      "warnings": []
+      "warnings": [
+       {
+        "hu": "Az implikálttól eltérő ítélet indoklás nélkül (X017): D2, D4",
+        "en": "Judgement differs from the implied one without a reason (X017)."
+       }
+      ]
      }
     },
     "warnings": [],
@@ -594,7 +905,7 @@
     "rater": "SzK",
     "target": "o1"
    },
-   "etag": "7bd62dc6943401cf",
+   "etag": "a66753949292ddb6",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -610,7 +921,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "rob2",
       "scope": "assignment",
-      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "instrument_sha256": "7257e53a2eea9dc7ec8efa9911481afb76f2014f7b18055631da79e0ea6ab804",
       "target": {
        "unit": "FERGUSON1949",
        "study_id": "FERGUSON1949",
@@ -721,27 +1032,43 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "rob2",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "scope": "assignment",
+      "target": {
+       "unit": "FERGUSON1949",
+       "study_id": "FERGUSON1949",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
       "complete": false,
       "expected": 22,
       "answered": 19,
       "completeness_text": "19/22",
+      "per_pass": null,
       "missing": [
        {
         "item": "2.7",
         "pass": null,
-        "key": "2.7"
+        "key": "2.7",
+        "official_id": "2.7"
        },
        {
         "item": "4.5",
         "pass": null,
-        "key": "4.5"
+        "key": "4.5",
+        "official_id": "4.5"
        },
        {
         "item": "5.2",
         "pass": null,
-        "key": "5.2"
+        "key": "5.2",
+        "official_id": "5.2"
        }
       ],
       "invalid": [],
@@ -753,22 +1080,36 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "1-g"
+        ],
+        "judgement": null,
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Rejtett (1.2 I/VI), véletlen vagy nem ismert szekvencia (1.1 I/VI/NI), nincs problémára utaló kiinduló különbség (1.3 N/VN/NI) → alacsony.",
+         "en": "Concealed (1.2 Y/PY), random or unknown sequence (1.1 Y/PY/NI), no baseline problem (1.3 N/PN/NI) → low."
         }
        },
        {
         "domain": "2",
         "pass": null,
-        "implied": "high",
+        "implied": null,
         "algorithm": "conservative",
         "forced_by": [
-         "2.6"
+         "2.3",
+         "2.4"
         ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "2.1",
          "2.2",
@@ -778,9 +1119,17 @@
         "missing": [
          "2.7"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "2-e"
+        ],
+        "judgement": "high",
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "'Nem' / 'Valószínűleg nem' itt: 2.6",
-         "en": "'No' or 'Probably no' at 2.6"
+         "hu": "hiányzó válasz: 2.7 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 2.7 — no implied judgement yet"
         }
        },
        {
@@ -790,13 +1139,29 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "3.3"
         ],
         "missing": [],
+        "not_asked": [
+         "3.2",
+         "3.3",
+         "3.4"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "3-a"
+        ],
+        "judgement": null,
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Outcome data for (nearly) all participants (3.1 Y/PY)."
         }
        },
        {
@@ -806,6 +1171,7 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "4.3",
          "4.4"
@@ -813,9 +1179,15 @@
         "missing": [
          "4.5"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 4.5",
-         "en": "unanswered: 4.5"
+         "hu": "hiányzó válasz: 4.5 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 4.5 — no implied judgement yet"
         }
        },
        {
@@ -825,33 +1197,81 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [
          "5.2"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 5.2",
-         "en": "unanswered: 5.2"
+         "hu": "hiányzó válasz: 5.2 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 5.2 — no implied judgement yet"
         }
        }
       ],
       "overall": {
-       "implied": "high",
+       "implied": null,
        "algorithm": "conservative",
+       "official": false,
+       "basis": "rob2-2019-flowchart-conservative",
+       "label": {
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
        "text": {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
-       }
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
+       "lines": [
+        {
+         "hu": "1. domén (Randomizációs folyamat): Alacsony — Rejtett (1.2 I/VI), véletlen vagy nem ismert szekvencia (1.1 I/VI/NI), nincs problémára utaló kiinduló különbség (1.3 N/VN/NI) → alacsony.",
+         "en": "Domain 1 (Randomisation process): Low — Concealed (1.2 Y/PY), random or unknown sequence (1.1 Y/PY/NI), no baseline problem (1.3 N/PN/NI) → low."
+        },
+        {
+         "hu": "2. domén (Eltérés a tervezett beavatkozástól): — — hiányzó válasz: 2.7 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 2 (Deviations from intended interventions): — — unanswered: 2.7 — no implied judgement yet"
+        },
+        {
+         "hu": "3. domén (Hiányzó kimeneti adatok): Alacsony — Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Domain 3 (Missing outcome data): Low — Outcome data for (nearly) all participants (3.1 Y/PY)."
+        },
+        {
+         "hu": "4. domén (A kimenet mérése): — — hiányzó válasz: 4.5 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 4 (Measurement of the outcome): — — unanswered: 4.5 — no implied judgement yet"
+        },
+        {
+         "hu": "5. domén (A közölt eredmény kiválasztása): — — hiányzó válasz: 5.2 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 5 (Selection of the reported result): — — unanswered: 5.2 — no implied judgement yet"
+        },
+        {
+         "hu": "Implikált összítélet: — (hiányos domén) — a legrosszabb domén szerint.",
+         "en": "Implied overall: — (incomplete domain) — set by the worst domain."
+        },
+        {
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+        }
+       ],
+       "provisional": false,
+       "judgement": null,
+       "level": null
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {},
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
       "warnings": []
@@ -873,7 +1293,7 @@
     "rater": "ai",
     "target": "o1"
    },
-   "etag": "7e878f09b056fcdf",
+   "etag": "110ce09f90b397ce",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -889,7 +1309,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "rob2",
       "scope": "assignment",
-      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "instrument_sha256": "7257e53a2eea9dc7ec8efa9911481afb76f2014f7b18055631da79e0ea6ab804",
       "target": {
        "unit": "ROSENTHAL1960",
        "study_id": "ROSENTHAL1960",
@@ -1000,12 +1420,25 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "rob2",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "scope": "assignment",
+      "target": {
+       "unit": "ROSENTHAL1960",
+       "study_id": "ROSENTHAL1960",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
       "complete": true,
       "expected": 22,
       "answered": 22,
       "completeness_text": "22/22",
+      "per_pass": null,
       "missing": [],
       "invalid": [],
       "domains": [
@@ -1018,20 +1451,36 @@
         "unknown_at": [
          "1.2"
         ],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "1-c"
+        ],
+        "judgement": null,
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "nincs információ: 1.2",
-         "en": "no information at 1.2"
+         "hu": "Nincs információ a rejtésről (1.2 NI) → némi aggály.",
+         "en": "No information on concealment (1.2 NI) → some concerns."
         }
        },
        {
         "domain": "2",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "2.3",
+         "2.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "2.1",
          "2.2",
@@ -1039,9 +1488,23 @@
          "2.4"
         ],
         "missing": [],
+        "not_asked": [
+         "2.7"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "2-e",
+         "2-g"
+        ],
+        "judgement": null,
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
         }
        },
        {
@@ -1051,30 +1514,61 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "3.3"
         ],
         "missing": [],
+        "not_asked": [
+         "3.2",
+         "3.3",
+         "3.4"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "3-a"
+        ],
+        "judgement": null,
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Outcome data for (nearly) all participants (3.1 Y/PY)."
         }
        },
        {
         "domain": "4",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "4.3",
+         "4.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "4.3",
          "4.4"
         ],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "4-g"
+        ],
+        "judgement": null,
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
         }
        },
        {
@@ -1084,34 +1578,96 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "5-d"
+        ],
+        "judgement": null,
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Analysed per a pre-specified plan (5.1 Y/PY), no selection."
         }
        }
       ],
       "overall": {
        "implied": "some_concerns",
        "algorithm": "conservative",
+       "official": false,
+       "basis": "rob2-2019-flowchart-conservative",
+       "label": {
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
        "text": {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
-       }
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
+       "lines": [
+        {
+         "hu": "1. domén (Randomizációs folyamat): Némi aggály — Nincs információ a rejtésről (1.2 NI) → némi aggály.",
+         "en": "Domain 1 (Randomisation process): Some concerns — No information on concealment (1.2 NI) → some concerns."
+        },
+        {
+         "hu": "2. domén (Eltérés a tervezett beavatkozástól): Némi aggály — A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Domain 2 (Deviations from intended interventions): Some concerns — Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
+        },
+        {
+         "hu": "3. domén (Hiányzó kimeneti adatok): Alacsony — Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Domain 3 (Missing outcome data): Low — Outcome data for (nearly) all participants (3.1 Y/PY)."
+        },
+        {
+         "hu": "4. domén (A kimenet mérése): Némi aggály — Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Domain 4 (Measurement of the outcome): Some concerns — Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
+        },
+        {
+         "hu": "5. domén (A közölt eredmény kiválasztása): Alacsony — Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Domain 5 (Selection of the reported result): Low — Analysed per a pre-specified plan (5.1 Y/PY), no selection."
+        },
+        {
+         "hu": "Implikált összítélet: Némi aggály — a legrosszabb domén szerint.",
+         "en": "Implied overall: Some concerns — set by the worst domain."
+        },
+        {
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+        }
+       ],
+       "provisional": false,
+       "judgement": null,
+       "level": "some"
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {},
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+       },
+       {
+        "hu": "AI-vázlat: emberi jóváhagyásig csak javaslat, és SOHA nem számít második értékelőnek (6. döntés).",
+        "en": "AI draft: only a suggestion until approved by a human, and NEVER a second rater (decision 6)."
        }
       ],
-      "warnings": []
+      "warnings": [
+       {
+        "hu": "Az AI-vázlat 40 tételénél hiányzik a kötelező bizonyíték vagy egyszerű nyelvű indoklás.",
+        "en": "40 AI-draft item(s) lack the required evidence or plain-language rationale."
+       }
+      ]
      }
     },
     "warnings": [],
@@ -1130,7 +1686,7 @@
     "rater": "SzK",
     "target": "o1"
    },
-   "etag": "2faedb45c8c546b2",
+   "etag": "689b2e2de8d30993",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -1146,7 +1702,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "rob2",
       "scope": "assignment",
-      "instrument_sha256": "c1cbb2f245ebb28508db6993204741367b7e324c525011ef04b9bc4e37cd2bdc",
+      "instrument_sha256": "7257e53a2eea9dc7ec8efa9911481afb76f2014f7b18055631da79e0ea6ab804",
       "target": {
        "unit": "HART1977",
        "study_id": "HART1977",
@@ -1298,12 +1854,25 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "rob2",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "scope": "assignment",
+      "target": {
+       "unit": "HART1977",
+       "study_id": "HART1977",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
       "complete": true,
       "expected": 22,
       "answered": 22,
       "completeness_text": "22/22",
+      "per_pass": null,
       "missing": [],
       "invalid": [],
       "domains": [
@@ -1314,20 +1883,36 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "1-g"
+        ],
+        "judgement": "some_concerns",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Rejtett (1.2 I/VI), véletlen vagy nem ismert szekvencia (1.1 I/VI/NI), nincs problémára utaló kiinduló különbség (1.3 N/VN/NI) → alacsony.",
+         "en": "Concealed (1.2 Y/PY), random or unknown sequence (1.1 Y/PY/NI), no baseline problem (1.3 N/PN/NI) → low."
         }
        },
        {
         "domain": "2",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "2.3",
+         "2.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "2.1",
          "2.2",
@@ -1335,9 +1920,23 @@
          "2.4"
         ],
         "missing": [],
+        "not_asked": [
+         "2.7"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "2-e",
+         "2-g"
+        ],
+        "judgement": "low",
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
         }
        },
        {
@@ -1347,30 +1946,61 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "3.3"
         ],
         "missing": [],
+        "not_asked": [
+         "3.2",
+         "3.3",
+         "3.4"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "3-a"
+        ],
+        "judgement": "low",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Outcome data for (nearly) all participants (3.1 Y/PY)."
         }
        },
        {
         "domain": "4",
         "pass": null,
-        "implied": "low",
+        "implied": "some_concerns",
         "algorithm": "conservative",
-        "forced_by": [],
+        "forced_by": [
+         "4.3",
+         "4.4"
+        ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
          "4.3",
          "4.4"
         ],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "4-g"
+        ],
+        "judgement": "low",
+        "level": "some",
+        "label": {
+         "hu": "Némi aggály",
+         "en": "Some concerns"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
         }
        },
        {
@@ -1380,34 +2010,120 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [
+         "5-d"
+        ],
+        "judgement": "low",
+        "level": "low",
+        "label": {
+         "hu": "Alacsony",
+         "en": "Low"
+        },
         "text": {
-         "hu": "egyik jelző-kérdés sem jelez problémát",
-         "en": "no signalling question flags a problem"
+         "hu": "Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Analysed per a pre-specified plan (5.1 Y/PY), no selection."
         }
        }
       ],
       "overall": {
-       "implied": "low",
+       "implied": "some_concerns",
        "algorithm": "conservative",
+       "official": false,
+       "basis": "rob2-2019-flowchart-conservative",
+       "label": {
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
        "text": {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
-       }
+        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       },
+       "lines": [
+        {
+         "hu": "1. domén (Randomizációs folyamat): Alacsony — Rejtett (1.2 I/VI), véletlen vagy nem ismert szekvencia (1.1 I/VI/NI), nincs problémára utaló kiinduló különbség (1.3 N/VN/NI) → alacsony.",
+         "en": "Domain 1 (Randomisation process): Low — Concealed (1.2 Y/PY), random or unknown sequence (1.1 Y/PY/NI), no baseline problem (1.3 N/PN/NI) → low."
+        },
+        {
+         "hu": "2. domén (Eltérés a tervezett beavatkozástól): Némi aggály — A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
+         "en": "Domain 2 (Deviations from intended interventions): Some concerns — Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
+        },
+        {
+         "hu": "3. domén (Hiányzó kimeneti adatok): Alacsony — Szinte minden résztvevőre van kimeneti adat (3.1 I/VI).",
+         "en": "Domain 3 (Missing outcome data): Low — Outcome data for (nearly) all participants (3.1 Y/PY)."
+        },
+        {
+         "hu": "4. domén (A kimenet mérése): Némi aggály — Az ismeret befolyásolhatta az értékelést (4.4 I/VI/NI), de valószínűleg nem tette (4.5 N/VN) → némi aggály.",
+         "en": "Domain 4 (Measurement of the outcome): Some concerns — Knowledge could have influenced assessment (4.4 Y/PY/NI) but probably did not (4.5 N/PN) → some concerns."
+        },
+        {
+         "hu": "5. domén (A közölt eredmény kiválasztása): Alacsony — Előre rögzített elemzési terv szerint (5.1 I/VI), nincs kiválasztás.",
+         "en": "Domain 5 (Selection of the reported result): Low — Analysed per a pre-specified plan (5.1 Y/PY), no selection."
+        },
+        {
+         "hu": "Implikált összítélet: Némi aggály — a legrosszabb domén szerint.",
+         "en": "Implied overall: Some concerns — set by the worst domain."
+        },
+        {
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+        }
+       ],
+       "provisional": false,
+       "judgement": "some_concerns",
+       "level": "some"
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {},
+      "overrides": [
+       {
+        "domain": "1",
+        "pass": null,
+        "judgement": "some_concerns",
+        "implied": "low",
+        "algorithm": "conservative",
+        "reason_missing": false,
+        "decision_missing": false
+       },
+       {
+        "domain": "2",
+        "pass": null,
+        "judgement": "low",
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "reason_missing": true,
+        "decision_missing": true
+       },
+       {
+        "domain": "4",
+        "pass": null,
+        "judgement": "low",
+        "implied": "some_concerns",
+        "algorithm": "conservative",
+        "reason_missing": true,
+        "decision_missing": true
+       }
+      ],
       "guards": [],
       "notes": [
        {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
-      "warnings": []
+      "warnings": [
+       {
+        "hu": "Az implikálttól eltérő ítélet indoklás nélkül (X017): D2, D4",
+        "en": "Judgement differs from the implied one without a reason (X017)."
+       }
+      ]
      }
     },
     "warnings": [],
@@ -1426,7 +2142,7 @@
     "rater": "SzK",
     "target": "o1"
    },
-   "etag": "c442ecc7a416057c",
+   "etag": "bc07b6f9afc81a87",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -1442,7 +2158,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "robins-i",
       "scope": "assignment",
-      "instrument_sha256": "6cc02902dc6b9bde2bb82d25002df9b6b8adcda2a670d27fa36e4dc4467dab24",
+      "instrument_sha256": "e88d43342973571e2040b91f9fca7401e1f6cc5a5971abb41f6219b54452397e",
       "target": {
        "unit": "FRIMODT1973",
        "study_id": "FRIMODT1973",
@@ -1493,112 +2209,157 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "robins-i",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "d740a69ec4189babbacce0160f46625fe758c623c5f54de62d0604e727a84252",
+      "scope": "assignment",
+      "target": {
+       "unit": "FRIMODT1973",
+       "study_id": "FRIMODT1973",
+       "outcome": "o1",
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "o1"
+      },
       "complete": false,
-      "expected": 28,
+      "expected": 30,
       "answered": 8,
-      "completeness_text": "8/28",
+      "completeness_text": "8/30",
+      "per_pass": null,
       "missing": [
        {
         "item": "2.1",
         "pass": null,
-        "key": "2.1"
+        "key": "2.1",
+        "official_id": "2.1"
        },
        {
         "item": "2.2",
         "pass": null,
-        "key": "2.2"
+        "key": "2.2",
+        "official_id": "2.2"
        },
        {
         "item": "2.3",
         "pass": null,
-        "key": "2.3"
+        "key": "2.3",
+        "official_id": "2.3"
        },
        {
         "item": "2.4",
         "pass": null,
-        "key": "2.4"
+        "key": "2.4",
+        "official_id": "2.4"
        },
        {
         "item": "2.5",
         "pass": null,
-        "key": "2.5"
+        "key": "2.5",
+        "official_id": "2.5"
        },
        {
         "item": "3.1",
         "pass": null,
-        "key": "3.1"
+        "key": "3.1",
+        "official_id": "3.1"
        },
        {
         "item": "3.2",
         "pass": null,
-        "key": "3.2"
+        "key": "3.2",
+        "official_id": "3.2"
        },
        {
         "item": "3.3",
         "pass": null,
-        "key": "3.3"
+        "key": "3.3",
+        "official_id": "3.3"
        },
        {
         "item": "4.1",
         "pass": null,
-        "key": "4.1"
+        "key": "4.1",
+        "official_id": "4.1"
        },
        {
         "item": "4.2",
         "pass": null,
-        "key": "4.2"
-       },
-       {
-        "item": "4.3",
-        "pass": null,
-        "key": "4.3"
+        "key": "4.2",
+        "official_id": "4.2"
        },
        {
         "item": "5.1",
         "pass": null,
-        "key": "5.1"
+        "key": "5.1",
+        "official_id": "5.1"
        },
        {
         "item": "5.2",
         "pass": null,
-        "key": "5.2"
+        "key": "5.2",
+        "official_id": "5.2"
        },
        {
         "item": "5.3",
         "pass": null,
-        "key": "5.3"
+        "key": "5.3",
+        "official_id": "5.3"
+       },
+       {
+        "item": "5.4",
+        "pass": null,
+        "key": "5.4",
+        "official_id": "5.4"
+       },
+       {
+        "item": "5.5",
+        "pass": null,
+        "key": "5.5",
+        "official_id": "5.5"
        },
        {
         "item": "6.1",
         "pass": null,
-        "key": "6.1"
+        "key": "6.1",
+        "official_id": "6.1"
        },
        {
         "item": "6.2",
         "pass": null,
-        "key": "6.2"
+        "key": "6.2",
+        "official_id": "6.2"
        },
        {
         "item": "6.3",
         "pass": null,
-        "key": "6.3"
+        "key": "6.3",
+        "official_id": "6.3"
+       },
+       {
+        "item": "6.4",
+        "pass": null,
+        "key": "6.4",
+        "official_id": "6.4"
        },
        {
         "item": "7.1",
         "pass": null,
-        "key": "7.1"
+        "key": "7.1",
+        "official_id": "7.1"
        },
        {
         "item": "7.2",
         "pass": null,
-        "key": "7.2"
+        "key": "7.2",
+        "official_id": "7.2"
        },
        {
         "item": "7.3",
         "pass": null,
-        "key": "7.3"
+        "key": "7.3",
+        "official_id": "7.3"
        }
       ],
       "invalid": [],
@@ -1606,21 +2367,36 @@
        {
         "domain": "1",
         "pass": null,
-        "implied": "serious",
+        "implied": "moderate",
         "algorithm": "conservative",
         "forced_by": [
-         "1.1",
-         "1.3",
-         "1.6"
+         "1.1"
         ],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [
-         "1.2"
+         "1.2",
+         "1.3"
         ],
         "missing": [],
+        "not_asked": [
+         "1.4",
+         "1.5",
+         "1.6"
+        ],
+        "routing_conflicts": [],
+        "rule_path": [
+         "1-h"
+        ],
+        "judgement": null,
+        "level": "some",
+        "label": {
+         "hu": "Mérsékelt",
+         "en": "Moderate"
+        },
         "text": {
-         "hu": "'Nem' / 'Valószínűleg nem' itt: 1.1, 1.3, 1.6",
-         "en": "'No' or 'Probably no' at 1.1, 1.3, 1.6"
+         "hu": "Várható zavarás, a fontos domének megfelelően kontrollálva → mérsékelt.",
+         "en": "Confounding expected, important domains appropriately controlled → moderate."
         }
        },
        {
@@ -1630,6 +2406,7 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [
          "2.1",
@@ -1638,9 +2415,15 @@
          "2.4",
          "2.5"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 2.1, 2.2, 2.3, 2.4, 2.5",
-         "en": "unanswered: 2.1, 2.2, 2.3, 2.4, 2.5"
+         "hu": "hiányzó válasz: 2.1, 2.2, 2.3, 2.4, 2.5 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 2.1, 2.2, 2.3, 2.4, 2.5 — no implied judgement yet"
         }
        },
        {
@@ -1650,15 +2433,22 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [
          "3.1",
          "3.2",
          "3.3"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 3.1, 3.2, 3.3",
-         "en": "unanswered: 3.1, 3.2, 3.3"
+         "hu": "hiányzó válasz: 3.1, 3.2, 3.3 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 3.1, 3.2, 3.3 — no implied judgement yet"
         }
        },
        {
@@ -1668,15 +2458,21 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [
          "4.1",
-         "4.2",
-         "4.3"
+         "4.2"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 4.1, 4.2, 4.3",
-         "en": "unanswered: 4.1, 4.2, 4.3"
+         "hu": "hiányzó válasz: 4.1, 4.2 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 4.1, 4.2 — no implied judgement yet"
         }
        },
        {
@@ -1686,15 +2482,24 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [
          "5.1",
          "5.2",
-         "5.3"
+         "5.3",
+         "5.4",
+         "5.5"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 5.1, 5.2, 5.3",
-         "en": "unanswered: 5.1, 5.2, 5.3"
+         "hu": "hiányzó válasz: 5.1, 5.2, 5.3, 5.4, 5.5 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 5.1, 5.2, 5.3, 5.4, 5.5 — no implied judgement yet"
         }
        },
        {
@@ -1704,15 +2509,23 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [
          "6.1",
          "6.2",
-         "6.3"
+         "6.3",
+         "6.4"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 6.1, 6.2, 6.3",
-         "en": "unanswered: 6.1, 6.2, 6.3"
+         "hu": "hiányzó válasz: 6.1, 6.2, 6.3, 6.4 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 6.1, 6.2, 6.3, 6.4 — no implied judgement yet"
         }
        },
        {
@@ -1722,35 +2535,91 @@
         "algorithm": "conservative",
         "forced_by": [],
         "unknown_at": [],
+        "partial_at": [],
         "routers": [],
         "missing": [
          "7.1",
          "7.2",
          "7.3"
         ],
+        "not_asked": [],
+        "routing_conflicts": [],
+        "rule_path": [],
+        "judgement": null,
+        "level": null,
+        "label": null,
         "text": {
-         "hu": "hiányzó válasz: 7.1, 7.2, 7.3",
-         "en": "unanswered: 7.1, 7.2, 7.3"
+         "hu": "hiányzó válasz: 7.1, 7.2, 7.3 — a domén implikált ítélete még nem számolható",
+         "en": "unanswered: 7.1, 7.2, 7.3 — no implied judgement yet"
         }
        }
       ],
       "overall": {
-       "implied": "serious",
+       "implied": null,
        "algorithm": "conservative",
+       "official": false,
+       "basis": "robins-i-2016-criteria-conservative",
+       "label": {
+        "hu": "Konzervatív szabály a ROBINS-I (2016) kritériumai szerint — NEM a hivatalos ROBINS-I algoritmus",
+        "en": "Conservative rule following the ROBINS-I (2016) criteria — NOT the official ROBINS-I algorithm"
+       },
        "text": {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
-       }
+        "hu": "Konzervatív szabály a ROBINS-I (2016) kritériumai szerint — NEM a hivatalos ROBINS-I algoritmus",
+        "en": "Conservative rule following the ROBINS-I (2016) criteria — NOT the official ROBINS-I algorithm"
+       },
+       "lines": [
+        {
+         "hu": "1. domén (Zavaró tényezők (confounding) miatti torzítás): Mérsékelt — Várható zavarás, a fontos domének megfelelően kontrollálva → mérsékelt.",
+         "en": "Domain 1 (Bias due to confounding): Moderate — Confounding expected, important domains appropriately controlled → moderate."
+        },
+        {
+         "hu": "2. domén (A résztvevők beválasztásából eredő torzítás): — — hiányzó válasz: 2.1, 2.2, 2.3, 2.4, 2.5 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 2 (Bias in selection of participants into the study): — — unanswered: 2.1, 2.2, 2.3, 2.4, 2.5 — no implied judgement yet"
+        },
+        {
+         "hu": "3. domén (A beavatkozások besorolásából eredő torzítás): — — hiányzó válasz: 3.1, 3.2, 3.3 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 3 (Bias in classification of interventions): — — unanswered: 3.1, 3.2, 3.3 — no implied judgement yet"
+        },
+        {
+         "hu": "4. domén (A tervezett beavatkozástól való eltérés miatti torzítás): — — hiányzó válasz: 4.1, 4.2 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 4 (Bias due to deviations from intended interventions): — — unanswered: 4.1, 4.2 — no implied judgement yet"
+        },
+        {
+         "hu": "5. domén (Hiányzó adatok miatti torzítás): — — hiányzó válasz: 5.1, 5.2, 5.3, 5.4, 5.5 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 5 (Bias due to missing data): — — unanswered: 5.1, 5.2, 5.3, 5.4, 5.5 — no implied judgement yet"
+        },
+        {
+         "hu": "6. domén (A kimenet mérésének torzítása): — — hiányzó válasz: 6.1, 6.2, 6.3, 6.4 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 6 (Bias in measurement of outcomes): — — unanswered: 6.1, 6.2, 6.3, 6.4 — no implied judgement yet"
+        },
+        {
+         "hu": "7. domén (A közölt eredmény kiválasztásának torzítása): — — hiányzó válasz: 7.1, 7.2, 7.3 — a domén implikált ítélete még nem számolható",
+         "en": "Domain 7 (Bias in selection of the reported result): — — unanswered: 7.1, 7.2, 7.3 — no implied judgement yet"
+        },
+        {
+         "hu": "Implikált összítélet: — (hiányos domén) — a legrosszabb domén szerint.",
+         "en": "Implied overall: — (incomplete domain) — set by the worst domain."
+        },
+        {
+         "hu": "Konzervatív szabály (robins-i-2016-criteria-conservative) — NEM a hivatalos ROBINS-I algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (robins-i-2016-criteria-conservative) — NOT the official ROBINS-I algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+        }
+       ],
+       "provisional": false,
+       "judgement": null,
+       "level": null
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {},
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "KONZERVATÍV — amit a válaszok kikényszerítenek; nem a hivatalos folyamatábra",
-        "en": "CONSERVATIVE — what the answers force; not the official flowchart"
+        "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). A 3. és 7. domén a polaritás-alapú szabályt használja. A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
+        "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Domains 3 and 7 use the polarity rule. The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
        }
       ],
       "warnings": []
@@ -1772,7 +2641,7 @@
     "rater": "SzK",
     "target": "XGB-PE"
    },
-   "etag": "44ca5b488905c06c",
+   "etag": "4809108bf1ca8c5b",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -1788,7 +2657,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "probast-ai",
       "scope": "both",
-      "instrument_sha256": "e495d498653a241166a6f368944555255df3d5e4a83f87efb0a0fb36c3fb6cac",
+      "instrument_sha256": "f84793c62b792e4271392ddaec3168657749fe139fe2f67524637e379ea62d6a",
       "target": {
        "unit": "LEE2023",
        "study_id": "LEE2023",
@@ -1897,6 +2766,7 @@
       "applicability": [
        {
         "domain": "1",
+        "pass": "development",
         "judgement": "low",
         "rationale": ""
        }
@@ -1909,114 +2779,24 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "probast-ai",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "e42ff234e5a9a7e930560e91da1a7063a251433ca657b7418e9f9b9dc7c12fd3",
+      "scope": "both",
+      "target": {
+       "unit": "LEE2023",
+       "study_id": "LEE2023",
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": "XGB-PE"
+      },
       "complete": false,
       "expected": 34,
       "answered": 16,
       "completeness_text": "16/34",
-      "missing": [
-       {
-        "item": "1.1",
-        "pass": "evaluation",
-        "key": "evaluation/1.1"
-       },
-       {
-        "item": "1.2",
-        "pass": "evaluation",
-        "key": "evaluation/1.2"
-       },
-       {
-        "item": "1.3",
-        "pass": "evaluation",
-        "key": "evaluation/1.3"
-       },
-       {
-        "item": "2.1",
-        "pass": "evaluation",
-        "key": "evaluation/2.1"
-       },
-       {
-        "item": "2.2",
-        "pass": "evaluation",
-        "key": "evaluation/2.2"
-       },
-       {
-        "item": "2.3",
-        "pass": "evaluation",
-        "key": "evaluation/2.3"
-       },
-       {
-        "item": "2.4",
-        "pass": "evaluation",
-        "key": "evaluation/2.4"
-       },
-       {
-        "item": "3.1",
-        "pass": "evaluation",
-        "key": "evaluation/3.1"
-       },
-       {
-        "item": "3.2",
-        "pass": "evaluation",
-        "key": "evaluation/3.2"
-       },
-       {
-        "item": "3.3",
-        "pass": "evaluation",
-        "key": "evaluation/3.3"
-       },
-       {
-        "item": "3.4",
-        "pass": "evaluation",
-        "key": "evaluation/3.4"
-       },
-       {
-        "item": "4.1",
-        "pass": "evaluation",
-        "key": "evaluation/4.1"
-       },
-       {
-        "item": "4.2",
-        "pass": "evaluation",
-        "key": "evaluation/4.2"
-       },
-       {
-        "item": "4.3",
-        "pass": "evaluation",
-        "key": "evaluation/4.3"
-       },
-       {
-        "item": "4.4",
-        "pass": "evaluation",
-        "key": "evaluation/4.4"
-       },
-       {
-        "item": "4.5",
-        "pass": "evaluation",
-        "key": "evaluation/4.5"
-       },
-       {
-        "item": "4.6",
-        "pass": "evaluation",
-        "key": "evaluation/4.6"
-       },
-       {
-        "item": "4.7",
-        "pass": "evaluation",
-        "key": "evaluation/4.7"
-       }
-      ],
-      "invalid": [],
-      "domains": [],
-      "overall": {
-       "implied": null,
-       "algorithm": "none",
-       "text": {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
-       }
-      },
       "per_pass": {
        "development": {
         "expected": 16,
@@ -2031,14 +2811,279 @@
         "text": "0/18"
        }
       },
+      "missing": [
+       {
+        "item": "1.1",
+        "pass": "evaluation",
+        "key": "evaluation/1.1",
+        "official_id": "1.1"
+       },
+       {
+        "item": "1.2",
+        "pass": "evaluation",
+        "key": "evaluation/1.2",
+        "official_id": "1.2"
+       },
+       {
+        "item": "1.3",
+        "pass": "evaluation",
+        "key": "evaluation/1.3",
+        "official_id": "1.3"
+       },
+       {
+        "item": "2.1",
+        "pass": "evaluation",
+        "key": "evaluation/2.1",
+        "official_id": "2.1"
+       },
+       {
+        "item": "2.2",
+        "pass": "evaluation",
+        "key": "evaluation/2.2",
+        "official_id": "2.2"
+       },
+       {
+        "item": "2.3",
+        "pass": "evaluation",
+        "key": "evaluation/2.3",
+        "official_id": "2.3"
+       },
+       {
+        "item": "2.4",
+        "pass": "evaluation",
+        "key": "evaluation/2.4",
+        "official_id": "2.4"
+       },
+       {
+        "item": "3.1",
+        "pass": "evaluation",
+        "key": "evaluation/3.1",
+        "official_id": "3.1"
+       },
+       {
+        "item": "3.2",
+        "pass": "evaluation",
+        "key": "evaluation/3.2",
+        "official_id": "3.2"
+       },
+       {
+        "item": "3.3",
+        "pass": "evaluation",
+        "key": "evaluation/3.3",
+        "official_id": "3.3"
+       },
+       {
+        "item": "3.4",
+        "pass": "evaluation",
+        "key": "evaluation/3.4",
+        "official_id": "3.4"
+       },
+       {
+        "item": "4.1",
+        "pass": "evaluation",
+        "key": "evaluation/4.1",
+        "official_id": "4.1"
+       },
+       {
+        "item": "4.2",
+        "pass": "evaluation",
+        "key": "evaluation/4.2",
+        "official_id": "4.2"
+       },
+       {
+        "item": "4.3",
+        "pass": "evaluation",
+        "key": "evaluation/4.3",
+        "official_id": "4.3"
+       },
+       {
+        "item": "4.4",
+        "pass": "evaluation",
+        "key": "evaluation/4.4",
+        "official_id": "4.4"
+       },
+       {
+        "item": "4.5",
+        "pass": "evaluation",
+        "key": "evaluation/4.5",
+        "official_id": "4.5"
+       },
+       {
+        "item": "4.6",
+        "pass": "evaluation",
+        "key": "evaluation/4.6",
+        "official_id": "4.6"
+       },
+       {
+        "item": "4.7",
+        "pass": "evaluation",
+        "key": "evaluation/4.7",
+        "official_id": "4.7"
+       }
+      ],
+      "invalid": [],
+      "domains": [
+       {
+        "domain": "1",
+        "pass": "development",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "flags": [],
+        "judgement": "low",
+        "text": null
+       },
+       {
+        "domain": "1",
+        "pass": "evaluation",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "1.1",
+         "1.2",
+         "1.3"
+        ],
+        "flags": [],
+        "judgement": null,
+        "text": null
+       },
+       {
+        "domain": "2",
+        "pass": "development",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "flags": [],
+        "judgement": "low",
+        "text": null
+       },
+       {
+        "domain": "2",
+        "pass": "evaluation",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "2.1",
+         "2.2",
+         "2.3",
+         "2.4"
+        ],
+        "flags": [],
+        "judgement": null,
+        "text": null
+       },
+       {
+        "domain": "3",
+        "pass": "development",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "flags": [],
+        "judgement": "low",
+        "text": null
+       },
+       {
+        "domain": "3",
+        "pass": "evaluation",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "3.1",
+         "3.2",
+         "3.3",
+         "3.4"
+        ],
+        "flags": [],
+        "judgement": null,
+        "text": null
+       },
+       {
+        "domain": "4",
+        "pass": "development",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [],
+        "flags": [
+         "4.1"
+        ],
+        "judgement": "high",
+        "text": {
+         "hu": "jelzések (nem ítélet): probléma: 4.1",
+         "en": "flags (not a judgement): problem: 4.1"
+        }
+       },
+       {
+        "domain": "4",
+        "pass": "evaluation",
+        "implied": null,
+        "algorithm": "none",
+        "forced_by": [],
+        "unknown_at": [],
+        "routers": [],
+        "missing": [
+         "4.1",
+         "4.2",
+         "4.3",
+         "4.4",
+         "4.5",
+         "4.6",
+         "4.7"
+        ],
+        "flags": [],
+        "judgement": null,
+        "text": null
+       }
+      ],
+      "overall": {
+       "implied": null,
+       "algorithm": "none",
+       "official": false,
+       "basis": null,
+       "label": {
+        "hu": "HOLISZTIKUS — a PROBAST+AI-nak nincs algoritmusa",
+        "en": "HOLISTIC — PROBAST+AI has no algorithm"
+       },
+       "text": {
+        "hu": "HOLISZTIKUS — a PROBAST+AI-nak nincs algoritmusa",
+        "en": "HOLISTIC — PROBAST+AI has no algorithm"
+       },
+       "lines": [],
+       "provisional": false,
+       "judgement": null,
+       "level": null
+      },
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {},
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
+        "hu": "Az összítélet nem a doménítéletek gépies összesítése, hanem indokolt mérlegelés; egy domén jelzése is felülbírálható, ha a teljes kép alátámasztja — de ezt mindig ki kell mondani. A munkapad csak a „Nem / Valószínűleg nem / Nincs információ” válaszokat jelzi segítségként.",
+        "en": "The overall judgement is a reasoned call, not a mechanical roll-up; a single domain flag can be overridden when the full picture supports it — always say so. The workbench only flags 'No / Probably no / No information' answers as an aid."
        }
       ],
       "warnings": []
@@ -2059,7 +3104,7 @@
    "query": {
     "rater": "SzK"
    },
-   "etag": "45ac83de1d6817ae",
+   "etag": "ae83f27fc7f33f76",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -2075,7 +3120,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "tripod-ai",
       "scope": "both",
-      "instrument_sha256": "e8c8d63f4f10127c7d1f4ace759be68f386f0cf947aa83921a704812c5c6be02",
+      "instrument_sha256": "493b910c6c1ec3decf1bf06ed2685cc0f301bd52ab0af29424a282f8d51c5483",
       "target": {
        "unit": "LEE2023",
        "study_id": "LEE2023",
@@ -2258,106 +3303,362 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "tripod-ai",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "67cbcefcf1fb55066a17b2971aa6488b2cc33c154a34168becf90f5e369839f3",
+      "scope": "both",
+      "target": {
+       "unit": "LEE2023",
+       "study_id": "LEE2023",
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
       "complete": true,
       "expected": 52,
       "answered": 52,
       "completeness_text": "52/52",
+      "per_pass": null,
       "missing": [],
       "invalid": [],
       "domains": [],
       "overall": {
        "implied": null,
        "algorithm": "none",
+       "official": false,
+       "basis": null,
+       "label": {
+        "hu": "Nincs ítélet — jelentési ellenőrzés",
+        "en": "No judgement — reporting check"
+       },
        "text": {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
-       }
+        "hu": "Nincs ítélet — jelentési ellenőrzés",
+        "en": "No judgement — reporting check"
+       },
+       "lines": [
+        {
+         "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+         "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+        }
+       ],
+       "provisional": false,
+       "judgement": null,
+       "level": null
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": {
        "scope": "both",
+       "applies_to": [
+        "D",
+        "E",
+        "D;E"
+       ],
+       "expected": 52,
+       "answered": 52,
+       "assessed": 44,
        "counts": {
         "present": 26,
         "partial": 9,
         "missing": 9,
-        "not_applicable": 8
+        "not_applicable": 8,
+        "unanswered": 0
        },
+       "reported_pct": 59.09090909090909,
+       "reported_or_partial_pct": 79.54545454545455,
+       "reported_text": "59.1%",
+       "completeness_text": "52/52",
        "missing_items": [
         {
-         "item": "3a",
-         "applies_to": "D;E"
-        },
-        {
          "item": "3b",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "6a",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "introduction"
         },
         {
          "item": "6b",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "8c",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "9a",
-         "applies_to": "D"
-        },
-        {
-         "item": "12a",
-         "applies_to": "D"
+         "applies_to": "D",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "12b",
-         "applies_to": "D"
-        },
-        {
-         "item": "12g",
-         "applies_to": "E"
+         "applies_to": "D",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "13",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "18a",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "18b",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "19",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "open_science"
         },
         {
          "item": "20a",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "23a",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "results"
         },
         {
          "item": "23b",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "27b",
-         "applies_to": "D"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "results"
         },
         {
          "item": "27c",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "discussion"
+        },
+        {
+         "item": "3a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "introduction"
+        },
+        {
+         "item": "6a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "8c",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12a",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12g",
+         "applies_to": "E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "18a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "open_science"
+        },
+        {
+         "item": "19",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "ppi"
+        },
+        {
+         "item": "23a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "results"
+        },
+        {
+         "item": "27b",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "discussion"
+        }
+       ],
+       "partial_items": [
+        {
+         "item": "3a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "introduction"
+        },
+        {
+         "item": "6a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "8c",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12a",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12g",
+         "applies_to": "E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "18a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "open_science"
+        },
+        {
+         "item": "19",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "ppi"
+        },
+        {
+         "item": "23a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "results"
+        },
+        {
+         "item": "27b",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "discussion"
+        }
+       ],
+       "not_reported": [
+        {
+         "item": "3b",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "introduction"
+        },
+        {
+         "item": "6b",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "9a",
+         "applies_to": "D",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "12b",
+         "applies_to": "D",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "13",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "18b",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "open_science"
+        },
+        {
+         "item": "20a",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "results"
+        },
+        {
+         "item": "23b",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "results"
+        },
+        {
+         "item": "27c",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "discussion"
+        }
+       ],
+       "unassessed": [],
+       "by_section": [
+        {
+         "section": "title",
+         "present": 1,
+         "partial": 0,
+         "missing": 0,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "abstract",
+         "present": 1,
+         "partial": 0,
+         "missing": 0,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "introduction",
+         "present": 1,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 1,
+         "unanswered": 0
+        },
+        {
+         "section": "methods",
+         "present": 14,
+         "partial": 4,
+         "missing": 4,
+         "not_applicable": 4,
+         "unanswered": 0
+        },
+        {
+         "section": "open_science",
+         "present": 3,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 1,
+         "unanswered": 0
+        },
+        {
+         "section": "ppi",
+         "present": 0,
+         "partial": 1,
+         "missing": 0,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "results",
+         "present": 4,
+         "partial": 1,
+         "missing": 2,
+         "not_applicable": 1,
+         "unanswered": 0
+        },
+        {
+         "section": "discussion",
+         "present": 2,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 1,
+         "unanswered": 0
         }
        ],
        "note": {
@@ -2365,11 +3666,13 @@
         "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
        }
       },
+      "conventions": {},
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
+        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+        "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
        }
       ],
       "warnings": []
@@ -2390,7 +3693,7 @@
    "query": {
     "rater": "SzK"
    },
-   "etag": "005f74bdcd310a38",
+   "etag": "7cd9655ff94d2837",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -2406,7 +3709,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "tripod-ai",
       "scope": "both",
-      "instrument_sha256": "e8c8d63f4f10127c7d1f4ace759be68f386f0cf947aa83921a704812c5c6be02",
+      "instrument_sha256": "493b910c6c1ec3decf1bf06ed2685cc0f301bd52ab0af29424a282f8d51c5483",
       "target": {
        "unit": "VARGA2024",
        "study_id": "VARGA2024",
@@ -2568,47 +3871,67 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "tripod-ai",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "67cbcefcf1fb55066a17b2971aa6488b2cc33c154a34168becf90f5e369839f3",
+      "scope": "both",
+      "target": {
+       "unit": "VARGA2024",
+       "study_id": "VARGA2024",
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
       "complete": false,
       "expected": 52,
       "answered": 45,
       "completeness_text": "45/52",
+      "per_pass": null,
       "missing": [
        {
         "item": "5a",
         "pass": null,
-        "key": "5a"
+        "key": "5a",
+        "official_id": "5a"
        },
        {
         "item": "8b",
         "pass": null,
-        "key": "8b"
+        "key": "8b",
+        "official_id": "8b"
        },
        {
         "item": "12a",
         "pass": null,
-        "key": "12a"
+        "key": "12a",
+        "official_id": "12a"
        },
        {
         "item": "13",
         "pass": null,
-        "key": "13"
+        "key": "13",
+        "official_id": "13"
        },
        {
         "item": "18c",
         "pass": null,
-        "key": "18c"
+        "key": "18c",
+        "official_id": "18c"
        },
        {
         "item": "20c",
         "pass": null,
-        "key": "20c"
+        "key": "20c",
+        "official_id": "20c"
        },
        {
         "item": "26",
         "pass": null,
-        "key": "26"
+        "key": "26",
+        "official_id": "26"
        }
       ],
       "invalid": [],
@@ -2616,83 +3939,344 @@
       "overall": {
        "implied": null,
        "algorithm": "none",
+       "official": false,
+       "basis": null,
+       "label": {
+        "hu": "Nincs ítélet — jelentési ellenőrzés",
+        "en": "No judgement — reporting check"
+       },
        "text": {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
-       }
+        "hu": "Nincs ítélet — jelentési ellenőrzés",
+        "en": "No judgement — reporting check"
+       },
+       "lines": [
+        {
+         "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+         "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+        }
+       ],
+       "provisional": false,
+       "judgement": null,
+       "level": null
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": {
        "scope": "both",
+       "applies_to": [
+        "D",
+        "E",
+        "D;E"
+       ],
+       "expected": 52,
+       "answered": 45,
+       "assessed": 37,
        "counts": {
+        "present": 22,
         "partial": 7,
         "missing": 8,
-        "present": 22,
         "not_applicable": 8,
         "unanswered": 7
        },
+       "reported_pct": 59.45945945945946,
+       "reported_or_partial_pct": 78.37837837837837,
+       "reported_text": "59.5%",
+       "completeness_text": "45/52",
        "missing_items": [
         {
-         "item": "1",
-         "applies_to": "D;E"
-        },
-        {
          "item": "2",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "abstract"
         },
         {
          "item": "5b",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "8a",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "10",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "11",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "12e",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "12f",
-         "applies_to": "E"
-        },
-        {
-         "item": "16",
-         "applies_to": "D;E"
+         "applies_to": "E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "17",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "18e",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "18f",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "21",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "open_science"
         },
         {
          "item": "22",
-         "applies_to": "D"
+         "applies_to": "D",
+         "status": "missing",
+         "section": "results"
         },
         {
          "item": "27a",
-         "applies_to": "D"
+         "applies_to": "D",
+         "status": "missing",
+         "section": "discussion"
+        },
+        {
+         "item": "1",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "title"
+        },
+        {
+         "item": "8a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "10",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12e",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "16",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "18e",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "open_science"
+        },
+        {
+         "item": "21",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "results"
+        }
+       ],
+       "partial_items": [
+        {
+         "item": "1",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "title"
+        },
+        {
+         "item": "8a",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "10",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12e",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "16",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "18e",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "open_science"
+        },
+        {
+         "item": "21",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "results"
+        }
+       ],
+       "not_reported": [
+        {
+         "item": "2",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "abstract"
+        },
+        {
+         "item": "5b",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "11",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "12f",
+         "applies_to": "E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "17",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "18f",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "open_science"
+        },
+        {
+         "item": "22",
+         "applies_to": "D",
+         "status": "missing",
+         "section": "results"
+        },
+        {
+         "item": "27a",
+         "applies_to": "D",
+         "status": "missing",
+         "section": "discussion"
+        }
+       ],
+       "unassessed": [
+        {
+         "item": "5a",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "8b",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "12a",
+         "applies_to": "D",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "13",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "18c",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "open_science"
+        },
+        {
+         "item": "20c",
+         "applies_to": "E",
+         "status": null,
+         "section": "results"
+        },
+        {
+         "item": "26",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "discussion"
+        }
+       ],
+       "by_section": [
+        {
+         "section": "title",
+         "present": 0,
+         "partial": 1,
+         "missing": 0,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "abstract",
+         "present": 0,
+         "partial": 0,
+         "missing": 1,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "introduction",
+         "present": 3,
+         "partial": 0,
+         "missing": 0,
+         "not_applicable": 1,
+         "unanswered": 0
+        },
+        {
+         "section": "methods",
+         "present": 11,
+         "partial": 4,
+         "missing": 4,
+         "not_applicable": 3,
+         "unanswered": 4
+        },
+        {
+         "section": "open_science",
+         "present": 2,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 1,
+         "unanswered": 1
+        },
+        {
+         "section": "ppi",
+         "present": 1,
+         "partial": 0,
+         "missing": 0,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "results",
+         "present": 3,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 2,
+         "unanswered": 1
+        },
+        {
+         "section": "discussion",
+         "present": 2,
+         "partial": 0,
+         "missing": 1,
+         "not_applicable": 1,
+         "unanswered": 1
         }
        ],
        "note": {
@@ -2700,11 +4284,13 @@
         "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
        }
       },
+      "conventions": {},
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
+        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+        "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
        }
       ],
       "warnings": []
@@ -2725,7 +4311,7 @@
    "query": {
     "rater": "SzK"
    },
-   "etag": "0fbc70a428c5ebb7",
+   "etag": "c1ab2cb7f377280e",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -2741,7 +4327,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "tripod-ai",
       "scope": "both",
-      "instrument_sha256": "e8c8d63f4f10127c7d1f4ace759be68f386f0cf947aa83921a704812c5c6be02",
+      "instrument_sha256": "493b910c6c1ec3decf1bf06ed2685cc0f301bd52ab0af29424a282f8d51c5483",
       "target": {
        "unit": "manuscript",
        "study_id": null,
@@ -2903,47 +4489,67 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "tripod-ai",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "67cbcefcf1fb55066a17b2971aa6488b2cc33c154a34168becf90f5e369839f3",
+      "scope": "both",
+      "target": {
+       "unit": "manuscript",
+       "study_id": null,
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
       "complete": false,
       "expected": 52,
       "answered": 45,
       "completeness_text": "45/52",
+      "per_pass": null,
       "missing": [
        {
         "item": "5a",
         "pass": null,
-        "key": "5a"
+        "key": "5a",
+        "official_id": "5a"
        },
        {
         "item": "8b",
         "pass": null,
-        "key": "8b"
+        "key": "8b",
+        "official_id": "8b"
        },
        {
         "item": "12a",
         "pass": null,
-        "key": "12a"
+        "key": "12a",
+        "official_id": "12a"
        },
        {
         "item": "13",
         "pass": null,
-        "key": "13"
+        "key": "13",
+        "official_id": "13"
        },
        {
         "item": "18c",
         "pass": null,
-        "key": "18c"
+        "key": "18c",
+        "official_id": "18c"
        },
        {
         "item": "20c",
         "pass": null,
-        "key": "20c"
+        "key": "20c",
+        "official_id": "20c"
        },
        {
         "item": "26",
         "pass": null,
-        "key": "26"
+        "key": "26",
+        "official_id": "26"
        }
       ],
       "invalid": [],
@@ -2951,16 +4557,39 @@
       "overall": {
        "implied": null,
        "algorithm": "none",
+       "official": false,
+       "basis": null,
+       "label": {
+        "hu": "Nincs ítélet — jelentési ellenőrzés",
+        "en": "No judgement — reporting check"
+       },
        "text": {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
-       }
+        "hu": "Nincs ítélet — jelentési ellenőrzés",
+        "en": "No judgement — reporting check"
+       },
+       "lines": [
+        {
+         "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+         "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
+        }
+       ],
+       "provisional": false,
+       "judgement": null,
+       "level": null
       },
-      "per_pass": null,
       "amstar2": null,
+      "grade": null,
       "nos": null,
       "tripod": {
        "scope": "both",
+       "applies_to": [
+        "D",
+        "E",
+        "D;E"
+       ],
+       "expected": 52,
+       "answered": 45,
+       "assessed": 38,
        "counts": {
         "present": 22,
         "partial": 8,
@@ -2968,70 +4597,316 @@
         "not_applicable": 7,
         "unanswered": 7
        },
+       "reported_pct": 57.89473684210526,
+       "reported_or_partial_pct": 78.94736842105263,
+       "reported_text": "57.9%",
+       "completeness_text": "45/52",
        "missing_items": [
         {
-         "item": "2",
-         "applies_to": "D;E"
-        },
-        {
          "item": "3a",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "5b",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "introduction"
         },
         {
          "item": "6a",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "8c",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "11",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "12f",
-         "applies_to": "E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "12g",
-         "applies_to": "E"
-        },
-        {
-         "item": "17",
-         "applies_to": "D;E"
+         "applies_to": "E",
+         "status": "missing",
+         "section": "methods"
         },
         {
          "item": "18a",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "18f",
-         "applies_to": "D;E"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "open_science"
         },
         {
          "item": "19",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "22",
-         "applies_to": "D"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "ppi"
         },
         {
          "item": "23a",
-         "applies_to": "D;E"
-        },
-        {
-         "item": "27a",
-         "applies_to": "D"
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "results"
         },
         {
          "item": "27b",
-         "applies_to": "D"
+         "applies_to": "D",
+         "status": "missing",
+         "section": "discussion"
+        },
+        {
+         "item": "2",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "abstract"
+        },
+        {
+         "item": "5b",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "11",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12f",
+         "applies_to": "E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "17",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "18f",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "open_science"
+        },
+        {
+         "item": "22",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "results"
+        },
+        {
+         "item": "27a",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "discussion"
+        }
+       ],
+       "partial_items": [
+        {
+         "item": "2",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "abstract"
+        },
+        {
+         "item": "5b",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "11",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "12f",
+         "applies_to": "E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "17",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "methods"
+        },
+        {
+         "item": "18f",
+         "applies_to": "D;E",
+         "status": "partial",
+         "section": "open_science"
+        },
+        {
+         "item": "22",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "results"
+        },
+        {
+         "item": "27a",
+         "applies_to": "D",
+         "status": "partial",
+         "section": "discussion"
+        }
+       ],
+       "not_reported": [
+        {
+         "item": "3a",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "introduction"
+        },
+        {
+         "item": "6a",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "8c",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "12g",
+         "applies_to": "E",
+         "status": "missing",
+         "section": "methods"
+        },
+        {
+         "item": "18a",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "open_science"
+        },
+        {
+         "item": "19",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "ppi"
+        },
+        {
+         "item": "23a",
+         "applies_to": "D;E",
+         "status": "missing",
+         "section": "results"
+        },
+        {
+         "item": "27b",
+         "applies_to": "D",
+         "status": "missing",
+         "section": "discussion"
+        }
+       ],
+       "unassessed": [
+        {
+         "item": "5a",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "8b",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "12a",
+         "applies_to": "D",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "13",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "methods"
+        },
+        {
+         "item": "18c",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "open_science"
+        },
+        {
+         "item": "20c",
+         "applies_to": "E",
+         "status": null,
+         "section": "results"
+        },
+        {
+         "item": "26",
+         "applies_to": "D;E",
+         "status": null,
+         "section": "discussion"
+        }
+       ],
+       "by_section": [
+        {
+         "section": "title",
+         "present": 1,
+         "partial": 0,
+         "missing": 0,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "abstract",
+         "present": 0,
+         "partial": 1,
+         "missing": 0,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "introduction",
+         "present": 2,
+         "partial": 0,
+         "missing": 1,
+         "not_applicable": 1,
+         "unanswered": 0
+        },
+        {
+         "section": "methods",
+         "present": 11,
+         "partial": 4,
+         "missing": 3,
+         "not_applicable": 4,
+         "unanswered": 4
+        },
+        {
+         "section": "open_science",
+         "present": 3,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 0,
+         "unanswered": 1
+        },
+        {
+         "section": "ppi",
+         "present": 0,
+         "partial": 0,
+         "missing": 1,
+         "not_applicable": 0,
+         "unanswered": 0
+        },
+        {
+         "section": "results",
+         "present": 3,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 2,
+         "unanswered": 1
+        },
+        {
+         "section": "discussion",
+         "present": 2,
+         "partial": 1,
+         "missing": 1,
+         "not_applicable": 0,
+         "unanswered": 1
         }
        ],
        "note": {
@@ -3039,11 +4914,13 @@
         "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
        }
       },
+      "conventions": {},
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "HOLISZTIKUS — nincs algoritmus, emberi ítélet",
-        "en": "HOLISTIC — no algorithm, human judgement"
+        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
+        "en": "TRIPOD+AI measures reporting completeness, not methodological soundness."
        }
       ],
       "warnings": []
@@ -3064,7 +4941,7 @@
    "query": {
     "rater": "SzK"
    },
-   "etag": "eb30eed0c3042749",
+   "etag": "363cdbcdea1c319d",
    "envelope": {
     "ok": true,
     "schema": "szk.ma.appraisal-view/v1",
@@ -3080,7 +4957,7 @@
       "schema": "szk.appraisal/v1",
       "tool": "amstar2",
       "scope": null,
-      "instrument_sha256": "caae05a3fb16bd92f14692a2668a6cffa996b932922f8e1442dcbf77d9399bec",
+      "instrument_sha256": "5d537ced232d0fb404f515fa55bc0f8612e240133c3ac88d493351c4e84a2e80",
       "target": {
        "unit": "review",
        "study_id": null,
@@ -3128,13 +5005,21 @@
         "value": "yes"
        },
        "9": {
-        "value": "yes"
+        "value": null,
+        "parts": {
+         "RCT": "yes",
+         "NRSI": "not_applicable"
+        }
        },
        "10": {
         "value": "yes"
        },
        "11": {
-        "value": "yes"
+        "value": null,
+        "parts": {
+         "RCT": "yes",
+         "NRSI": "not_applicable"
+        }
        },
        "12": {
         "value": "yes"
@@ -3158,17 +5043,31 @@
      "check": {
       "schema": "szk.appraisal-result/v1",
       "tool": "amstar2",
-      "engine_version": "stub",
+      "validator_version": null,
+      "engine_version": "0.1.0",
       "legacy": false,
+      "instrument_sha256": "606e891390a9183f92cb4382f65a9f2fd580d169f5a8408b1b43c0aaef8b714c",
+      "scope": "all",
+      "target": {
+       "unit": "review",
+       "study_id": null,
+       "outcome": null,
+       "result": null,
+       "model": null,
+       "index_test": null,
+       "key": null
+      },
       "complete": false,
       "expected": 16,
       "answered": 15,
       "completeness_text": "15/16",
+      "per_pass": null,
       "missing": [
        {
         "item": "13",
         "pass": null,
-        "key": "13"
+        "key": "13",
+        "official_id": "13"
        }
       ],
       "invalid": [],
@@ -3176,12 +5075,26 @@
       "overall": {
        "implied": "high",
        "algorithm": "published",
+       "official": true,
+       "basis": null,
+       "label": {
+        "hu": "Publikált algoritmus (kritikus hibák és gyengeségek száma)",
+        "en": "Published algorithm (counts of critical flaws and weaknesses)"
+       },
        "text": {
-        "hu": "PUBLIKÁLT algoritmus",
-        "en": "PUBLISHED algorithm"
-       }
+        "hu": "Publikált algoritmus (kritikus hibák és gyengeségek száma)",
+        "en": "Published algorithm (counts of critical flaws and weaknesses)"
+       },
+       "lines": [
+        {
+         "hu": "Besorolás: MAGAS (kritikus hiba 0; nem kritikus gyengeség 1) — IDEIGLENES: 1 tétel hiányzik · ha a „részben igen” kritikus tételen gyengeség lenne: MÉRSÉKELT",
+         "en": "Rating: HIGH (critical flaws 0; non-critical weaknesses 1) — PROVISIONAL: 1 item(s) unanswered · if 'partial yes' on a critical item counted as a weakness: MODERATE"
+        }
+       ],
+       "provisional": true,
+       "judgement": null,
+       "level": "low"
       },
-      "per_pass": null,
       "amstar2": {
        "convention": "meets",
        "rating": "high",
@@ -3193,6 +5106,10 @@
        "weaknesses": [
         "3"
        ],
+       "partial_yes_critical": [
+        "4"
+       ],
+       "not_applicable": [],
        "unanswered": [
         "13"
        ],
@@ -3209,21 +5126,49 @@
          "3",
          "4"
         ],
+        "partial_yes_critical": [
+         "4"
+        ],
+        "not_applicable": [],
         "unanswered": [
          "13"
         ],
         "provisional": true
        },
        "differs": true,
-       "kb_ref": "AMSTAR2-00"
+       "kb_ref": "AMSTAR2-00",
+       "text": {
+        "hu": "Besorolás: MAGAS (kritikus hiba 0; nem kritikus gyengeség 1) — IDEIGLENES: 1 tétel hiányzik · ha a „részben igen” kritikus tételen gyengeség lenne: MÉRSÉKELT",
+        "en": "Rating: HIGH (critical flaws 0; non-critical weaknesses 1) — PROVISIONAL: 1 item(s) unanswered · if 'partial yes' on a critical item counted as a weakness: MODERATE"
+       },
+       "note": {
+        "hu": "Az AMSTAR 2 az áttekintés eredményeibe vetett bizalmat minősíti, nem a bizonyosságot (az a GRADE).",
+        "en": "AMSTAR 2 rates confidence in the review's results, not certainty (that is GRADE)."
+       },
+       "parts": {
+        "9": {
+         "RCT": "yes",
+         "NRSI": "not_applicable"
+        },
+        "11": {
+         "RCT": "yes",
+         "NRSI": "not_applicable"
+        }
+       },
+       "parts_missing": []
       },
+      "grade": null,
       "nos": null,
       "tripod": null,
+      "conventions": {
+       "amstar2.partial_yes_critical": "meets"
+      },
+      "overrides": [],
       "guards": [],
       "notes": [
        {
-        "hu": "PUBLIKÁLT algoritmus",
-        "en": "PUBLISHED algorithm"
+        "hu": "Magas: nincs kritikus hiba, legfeljebb 1 nem kritikus gyengeség; mérsékelt: nincs kritikus hiba, 1-nél több gyengeség; alacsony: 1 kritikus hiba; kritikusan alacsony: 1-nél több kritikus hiba. A „Részben igen” kritikus tételen a projekt konvenciója szerint (KB AMSTAR2-00: „meets”) nem hiba; ha a másik konvencióval („weakness”) más lenne a besorolás, azt is mutatjuk.",
+        "en": "High: no critical flaw, at most 1 non-critical weakness; moderate: no critical flaw, more than 1 weakness; low: 1 critical flaw; critically low: more than 1. A 'Partial yes' on a critical item meets the item under the project convention (KB AMSTAR2-00: 'meets'); the 'weakness' classification is shown too when it differs."
        }
       ],
       "warnings": []

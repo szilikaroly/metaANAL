@@ -297,6 +297,14 @@ def _gui_available():
         return False
 
 
+def _headhunter_available():
+    import importlib.util
+    try:
+        return importlib.util.find_spec("metaelemzes.headhunter.facade") is not None
+    except (ImportError, ValueError):
+        return False
+
+
 # (név, argv, bemenő szerződések, kimenő szerződések, igények)
 ENGINE_COMMANDS = (
     ("analyze", ("ma.py", "analyze"), ("szk.ma.analysis-spec/v1",), ("szk.ma.run/v1", "szk.ma.plot/v2"), ()),
@@ -316,7 +324,9 @@ ENGINE_COMMANDS = (
     ("grade", ("ma.py", "grade"), ("szk.ma.grade/v1",), ("szk.ma.grade/v1", "szk.ma.sof/v1"), ()),
     ("kettos", ("ma.py", "kettos"), ("szk.ma.consensus/v1",), ("szk.ma.compare-result/v1", "szk.ma.consensus/v1",
                                                                 "szk.ma.provenance/v1"), ()),
-    ("figure", ("ma.py", "figure"), ("szk.ma.plot/v2",), (), ()),
+    ("figure", ("ma.py", "figure"), ("szk.ma.plot/v2", "szk.ma.run/v1"), (), ()),
+    # Metaheadhunter: a saját szerződései (szk.ma.headhunter.*/v1) a csomagban élnek (metaelemzes/headhunter/contracts)
+    ("headhunter", ("ma.py", "headhunter"), (), (), ("metaelemzes.headhunter",)),
     ("contracts", ("ma.py", "contracts"), (), (), ()),
     ("gui", ("ma.py", "gui"), (), (), ("ma_gui",)),
     ("selftest", ("ma.py", "selftest"), (), (), ()),
@@ -327,7 +337,7 @@ def capabilities():
     """A motor szk.capabilities/v1 kézfogása (`ma.py --capabilities`): parancsok, szerződések (a
     metaelemzes/contracts/ sémafájljainak bájt-sha256-ja és iránya a motor szemszögéből), igények."""
     from . import contracts
-    have = {"sqlite3.fts5": _fts5_ok(), "ma_gui": _gui_available()}
+    have = {"sqlite3.fts5": _fts5_ok(), "ma_gui": _gui_available(), "metaelemzes.headhunter": _headhunter_available()}
     missing = [m for m in ("sqlite3.fts5",) if not have[m]]
     cmds = [{"name": name, "argv": list(argv), "in": list(cin), "out": list(cout), "needs": list(needs),
              "available": all(have.get(n, True) for n in needs)} for name, argv, cin, cout, needs in ENGINE_COMMANDS]
@@ -1526,6 +1536,18 @@ def grade_get(project_dir, outcome_id):
     return _jsonable(_projekt.load_grade_doc(project_dir, outcome_id))
 
 
+def grade_computed_certainty(doc):
+    """A GRADE-dokumentum kiindulásából és lépéseiből adódó szint (high | moderate | low | very low), vagy None, ha
+    nyitott domén / feloldatlan „suspected” miatt nem adódik — a felület ezt a rögzített EMBERI bizonyosság mellé
+    teszi, ha eltér (a végső bizonyosság emberi ítélet, GRADE-09)."""
+    if not isinstance(doc, dict):
+        return None
+    try:
+        return _projekt.grade_doc_certainty(doc)
+    except (ValueError, TypeError, KeyError):
+        return None
+
+
 def grade_put(project_dir, outcome_id, doc, actor=None):
     """`ma.py grade save <projekt> --doc grade.json [--outcome o1] --json`: ellenőrzött mentés → a mentett
     szk.ma.grade/v1. A bizonyosság a lépésekből számolódik; null, amíg bármely domén nyitott vagy a publikációs
@@ -1577,6 +1599,13 @@ def sof(run, assumed_risks=None, certainty=None, footnotes=None, project_dir=Non
 def sof_save(project_dir, doc):
     """`ma.py grade sof … --save`: a SoF mentése (06_kezirat/sof/<kimenet>.sof.json; X008 ezt veti össze)."""
     return _jsonable(_grade_help().save_sof(project_dir, doc))
+
+
+def sof_problems(project_dir, doc):
+    """A SoF bizonyosság-oszlopa vs. a kimenet RÖGZÍTETT GRADE-ítélete (4. döntés; X008) → [magyar szöveg]; üres
+    lista: menthető. A munkapad a saját (If-Match-es) írása előtt ezzel ellenőriz — ugyanaz a szabály, mint a
+    sof_save-é (piszkozat, feloldatlan publikációs torzítás, jóvá nem hagyott AI-vázlat vagy eltérő szint: hiba)."""
+    return list(_grade_help().sof_certainty_problems(project_dir, doc))
 
 
 def sof_load(project_dir, outcome_id):
@@ -1645,10 +1674,204 @@ def kettos_project_report(project_dir, outcome, key=None):
     return _jsonable(kettos.agreement_report(kettos.compare_project(project_dir, outcome, key=key)))
 
 
-# ================================================================== v1: E4c ábrák a plot_data.json-ból
-def render_figure(plot, kind, lang="hu", annotate=False):
-    """`ma.py figure --plot <futás> --kind cumulative|bubble|loo [--lang en] [--annotate] --json`: a motor SVG-je egy
-    szk.ma.plot/v2 dokumentumból → {svg, lang, kind}; forest / funnel / doi: None (a futás saját SVG-je a hiteles).
+# ================================================================== v1: ábrák (E4c + a futás forest/funnel/Doi-ábrái)
+RUN_FIGURE_KINDS = ("forest", "funnel", "doi")
+_FIGURE_CORE_KEYS = ("schema", "measure", "k", "level", "studies", "summaries", "heterogeneity")
+_FIGURE_SKIP_KEYS = frozenset(("source", "sources", "provenance", "notes"))
+_FIGURE_SKIP_SUFFIX = ("label", "title", "note")
+
+
+def _figure_core(doc):
+    """A plot-dokumentum számbeli magja (a fidelitás-őrhöz): mérték, k, szint, vizsgálati sorok, összesítések,
+    heterogenitás a számokkal és a kész szám-szövegekkel (display_text, weight_text …) — az eredet-lokátorok és a
+    tisztán szöveges feliratok (…label, …title, …note) nélkül: azok számot nem hordoznak, és egy motorfrissítés
+    után a felirat-szöveg változhat, a futás számai nem."""
+    def strip(v):
+        if isinstance(v, dict):
+            return {k: strip(x) for k, x in v.items()
+                    if k not in _FIGURE_SKIP_KEYS and not str(k).endswith(_FIGURE_SKIP_SUFFIX)}
+        if isinstance(v, (list, tuple)):
+            return [strip(x) for x in v]
+        return v
+    doc = json.loads(json.dumps(_jsonable(doc), ensure_ascii=False))
+    return {k: strip(doc.get(k)) for k in _FIGURE_CORE_KEYS if k in doc}
+
+
+def _run_root(run_dir, desc, project_root):
+    """A projektgyökér: a megadott, különben a run.json projekt-relatív fájlútjaiból visszafejtve."""
+    if project_root is not None:
+        return os.path.abspath(os.fspath(project_root))
+    rel = ((desc.get("files") or {}).get("results") or {}).get("path")
+    if isinstance(rel, str) and not os.path.isabs(rel):
+        parts = os.path.dirname(rel).split("/")
+        here = os.path.abspath(run_dir)
+        tail = here.replace(os.sep, "/").split("/")[-len(parts):]
+        if parts and tail == parts:
+            return os.path.abspath(os.path.join(here, *([os.pardir] * len(parts))))
+    return None
+
+
+def _rerender_run_figure(run_dir, kind, lang, annotate, project_root=None, plot=None, run_id=None):
+    """A rögzített futás forest / funnel / Doi-ábrája más nyelvvel vagy rétegekkel: a futás SAJÁT adatfájljából
+    (sha256-egyezéssel) és rögzített opcióiból (results.json) a motor újraszámolja, majd a kész plot-dokumentum
+    számbeli magját összeveti a futás plot_data.json-jával — eltérésnél nem rajzol (ValueError). Új szám így
+    nem keletkezhet: az ábra minden száma ugyanaz, mint a futásé."""
+    from . import pipeline, tableio, spec as S
+    run_dir = os.path.abspath(os.fspath(run_dir))
+    try:
+        with open(os.path.join(run_dir, "run.json"), "rb") as fh:
+            desc = json.loads(fh.read().decode("utf-8-sig"))
+        with open(os.path.join(run_dir, "results.json"), "rb") as fh:
+            res = json.loads(fh.read().decode("utf-8-sig"))
+    except (OSError, ValueError, UnicodeDecodeError) as exc:
+        raise ValueError("a futás mappájából hiányzik vagy olvashatatlan a run.json / results.json (%s)"
+                         % type(exc).__name__) from None
+    if not isinstance(desc, dict) or desc.get("schema") != S.RUN_SCHEMA or not isinstance(res, dict):
+        raise ValueError("a mappa nem egy rögzített futásé (szk.ma.run/v1 run.json kell)")
+    if run_id is not None and desc.get("run_id") != run_id:
+        raise ValueError("a run.json run_id-je (%s) nem a kért futásé (%s)" % (desc.get("run_id"), run_id))
+    data = desc.get("data") or {}
+    rel = data.get("path")
+    if not isinstance(rel, str) or not rel:
+        raise ValueError("a run.json nem rögzíti az adatfájlt (data.path)")
+    root = _run_root(run_dir, desc, project_root)
+    if os.path.isabs(rel):
+        data_file = rel
+    elif root is not None:
+        data_file = os.path.normpath(os.path.join(root, *rel.split("/")))
+    else:
+        raise ValueError("a futás adatfájlja projekt-relatív (%s), de a projektgyökér nem állapítható meg" % rel)
+    try:
+        with open(data_file, "rb") as fh:
+            raw = fh.read()
+    except OSError:
+        raise ValueError("a futás adatfájlja (%s) nem olvasható; az ábra csak a futás saját SVG-jéből "
+                         "exportálható" % rel) from None
+    if not data.get("sha256") or hashlib.sha256(raw).hexdigest() != data.get("sha256"):
+        raise ValueError("az adatfájl (%s) a futás óta megváltozott (sha256); más nyelvű vagy rétegzett ábra csak "
+                         "a futás adataiból készülhet — futtasd újra az elemzést (Rögzítés), vagy exportáld a "
+                         "futás saját SVG-jét" % rel)
+    rows, meta = tableio.read_table_bytes(raw, (res.get("input") or {}).get("path") or rel)
+    flt = (res.get("input") or {}).get("filters") or {}
+    exclude, include = flt.get("exclude") or None, flt.get("include") or None
+    frep = []
+    table_rows = rows
+    rows = tableio.apply_filters(rows, exclude, include, meta=meta, report=frep)
+    meta["filters"] = {"exclude": exclude, "include": include}
+    opts = dict(res.get("options") or {})
+    if not opts.get("measure"):
+        raise ValueError("a results.json nem rögzíti az opciókat (options.measure)")
+    opts["filter_report"] = frep
+    out, es = pipeline.run(rows, opts, meta, table_rows=table_rows)
+    if out.get("primary") is None:
+        raise ValueError("a futásban nincs összesített becslés (k = 0); nincs ábra")
+    if plot is None:
+        try:
+            with open(os.path.join(run_dir, "plot_data.json"), "rb") as fh:
+                plot = json.loads(fh.read().decode("utf-8-sig"))
+        except (OSError, ValueError, UnicodeDecodeError):
+            raise ValueError("a futás plot_data.json-ja hiányzik; a fidelitás nem ellenőrizhető") from None
+    stored_info = (plot or {}).get("meta") if isinstance((plot or {}).get("meta"), dict) else None
+    again = pipeline.plot_data(out, es, run_info=stored_info and {
+        "run_id": stored_info.get("run_id"), "spec_sha256": stored_info.get("spec_sha256"),
+        "data_sha256": stored_info.get("data_sha256")}, provenance=pipeline.load_provenance(data_file))
+    if _figure_core(again) != _figure_core(plot):
+        raise ValueError("a motor újraszámolt ábra-adata nem azonos a futás plot_data.json-jával (más motorverzió "
+                         "vagy módosult futásmappa); futtasd újra az elemzést (Rögzítés)")
+    if kind == "doi":
+        svg = pipeline.make_doi_plot(out, es, lang=lang, annotate=annotate)
+        if svg is None:
+            raise ValueError("ebben a futásban nincs Doi-plot (LFK-index; legalább 3 vizsgálat kell)")
+    else:
+        forest, funnel, _data = pipeline.make_plots(out, es, lang=lang, annotate=annotate)
+        svg = forest if kind == "forest" else funnel
+    return {"svg": svg, "lang": lang, "kind": kind, "source": "run_rerender", "run_id": desc.get("run_id")}
+
+
+def render_figure(plot, kind, lang="hu", annotate=False, run_dir=None, project_root=None, run_id=None):
+    """`ma.py figure --plot <futás> --kind … [--lang en] [--annotate] --json`: a motor SVG-je → {svg, lang, kind}.
+
+    - cumulative / bubble / loo: a szk.ma.plot/v2 dokumentum kész blokkjából (újraszámolás nélkül).
+    - forest / funnel / doi: run_dir (a rögzített futás mappája) mellett a motor a futás saját adatfájljából és
+      rögzített opcióiból újrarajzolja a kért nyelvvel / rétegekkel; az újraszámolt számbeli magnak bájtra egyeznie
+      kell a futás plot_data.json-jával (különben ValueError) — így az ábra a futás számait hordozza. A futás
+      nyelvével és annotálásával a kimenet azonos a futás saját forest.svg / funnel.svg / doi.svg fájljával.
+      run_dir nélkül: None (a hívó a futás saját SVG-jére vált).
     Hiányzó blokk / ismeretlen fajta → ValueError magyar üzenettel."""
     from . import pipeline
+    if kind in RUN_FIGURE_KINDS:
+        if run_dir is None:
+            return None
+        from .plots import check_lang
+        return _rerender_run_figure(run_dir, kind, check_lang(lang or "hu"), bool(annotate),
+                                    project_root=project_root, plot=plot, run_id=run_id)
     return pipeline.render_figure(plot, kind, lang, annotate)
+
+
+def figure_static_texts():
+    """A motor ábráinak KÓDBA ÉGETETT (adat nélküli) feliratai mindkét nyelven — pl. a contour-enhanced funnel
+    sáv-jelmagyarázata („p > 0.10 sötét · 0.05–0.10 …”). A munkapad számhűség-ellenőrzése (6.7) ezekkel azonosítja a
+    nem a futás számaiból, hanem a rajzolóból jövő számokat; a %-helyőrzős sablonok nincsenek benne."""
+    import html
+    from . import pipeline
+    from . import plots as P
+    out = set()
+    for table in (P.TEXTS, getattr(pipeline, "_PLOT_TEXTS", {})):
+        for entry in table.values():
+            for v in (entry or {}).values() if isinstance(entry, dict) else ():
+                for part in (v if isinstance(v, (list, tuple)) else (v,)):
+                    if isinstance(part, str) and "%" not in part.replace("%%", ""):
+                        out.add(html.unescape(part.replace("%%", "%")))
+    return sorted(out)
+
+
+# ================================================================== Metaheadhunter (meglévő metaanalízisek bányászata)
+# Vékony burok a metaelemzes.headhunter.facade fölött: minden függvény a parancssor JSON-borítékát adja
+# ({ok, command, data, warnings, errors, pending, next, exit_code}) — ugyanaz a kód fut, mint a
+# `ma.py headhunter … --json` parancsnál. Kilépési kód (exit_code): 0 rendben · 1 hiba · 2 használati hiba ·
+# 3 forrás részleges · 4 emberi döntésre vár. Emberi döntést csak `actor="user:<név>"` rögzíthet (N3).
+# Az API-kulcsok csak környezeti változóból jönnek (MA_CONTACT_EMAIL, MA_OPENALEX_APIKEY, MA_SCOPUS_APIKEY,
+# MA_SCOPUS_INSTTOKEN, MA_NCBI_APIKEY); a homlokzat kulcsot nem fogad, nem ír ki és nem naplóz.
+HEADHUNTER_STEPS = ("find_reviews", "extract", "resolve", "dedupe", "overlap", "screen_propose", "update_search",
+                    "cite_search", "merge", "prisma", "export", "report")
+
+
+def _hh():
+    from .headhunter import facade
+    return facade
+
+
+def headhunter_init(project_dir, question, pico=None, mode="harvest", actor=None):
+    """`ma.py headhunter init <projekt> --question … [--pico p.json] [--mode harvest|own_update] --json`: a
+    Metaheadhunter indítása (01_kereses/headhunter/state.json, PICO, kizárási okok, forrásválasztás)."""
+    return _hh().init(project_dir, question, pico=pico, mode=mode, actor=actor)
+
+
+def headhunter_status(project_dir):
+    """`ma.py headhunter status <projekt> --json`: lépések, ellenőrzőpontok (EP1–EP6), függő döntések."""
+    return _hh().status(project_dir)
+
+
+def headhunter_sources(project_dir=None, check=False):
+    """`ma.py headhunter sources [<projekt>] [--check] --json`: a források (PubMed, Europe PMC, OpenAlex, Scopus,
+    ClinicalTrials.gov, Crossref) állapota; check=True: próbakérés forrásonként (exit_code 3, ha valamelyik nem
+    érhető el). A kulcsoknak csak a jelenléte látszik, az értéke soha."""
+    return _hh().sources_status(project_dir, check=check)
+
+
+def headhunter_run_step(project_dir, step, **options):
+    """Egy lépés (HEADHUNTER_STEPS; pl. find_reviews, extract, resolve, dedupe, overlap, screen_propose,
+    update_search, merge, prisma) a CLI kapcsolóinak megfelelő opciókkal (max=50, sources="pubmed,europepmc",
+    dry_run=True …). exit_code 4: emberi döntésre vár — a `pending` lista mondja meg, melyik ellenőrzőponton."""
+    return _hh().run_step(project_dir, step, **options)
+
+
+def headhunter_decide(project_dir, kind, target, value, actor, **kw):
+    """`ma.py headhunter decide …`: emberi döntés rögzítése a döntésnaplóba (actor = "user:<név>"; az ágens és a
+    program csak javasol)."""
+    return _hh().decide(project_dir, kind, target, value, actor, **kw)
+
+
+def headhunter_verify(project_dir, for_analysis=False):
+    """`ma.py headhunter verify <projekt> [--for-analysis] --json`: a gépi ellenőrzések (H001–H020)."""
+    return _hh().verify(project_dir, for_analysis=for_analysis)

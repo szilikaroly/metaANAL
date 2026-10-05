@@ -123,6 +123,8 @@
           sp.parent ? ' (' + t('plan.parent', { name: sp.parent }) + ')' : '',
           run.data && run.data.sha256 ? [' · ' + t('results.data') + ' ', h('code', { title: run.data.sha256 }, A.shortSha(run.data.sha256))] : null),
         h('span', { 'class': 'hdr-spacer' }),
+        // commit-futás ábrái → az ábra-export (#/figures?run=…): közlésre szánt SVG/PNG/PDF, számhűség-ellenőrzéssel
+        run.run_id && !run._explore ? h('a', { 'class': 'btn btn-sm btn-ghost', id: 'results-figures', href: ctx.href('figures', { run: run.run_id }) }, t('adp.nav.figures')) : null,
         h('a', { 'class': 'btn btn-sm btn-ghost', href: ctx.href('analysis', { outcome: outcome.id, spec: sp.name || null }) }, t('results.toPlan'))),
       run.stale === true ? h('p', { 'class': 'res-stale', role: 'note' }, MA.ui.badge('stale', 'X001'), ' ', t('results.staleNote')) : null,
       run.stale === null && run.run_id ? h('p', { 'class': 'muted', role: 'note' }, MA.ui.badge('neutral', t('analysis.run.unknown')), ' ', t('analysis.run.unknownTitle')) : null,

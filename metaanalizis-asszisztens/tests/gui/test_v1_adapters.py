@@ -4,7 +4,9 @@
 - ``svgaudit``: stdlib-audit és a szerver számhűség-újraellenőrzése a motor valódi SVG-jén (BCG commit-futás).
 - validator: a bridge-mód golden-kimenetekből (1.0.0) — H1 (üres TRIPOD → 1/52), H2 (csak fejlesztési menet →
   32/34), H3 („Strongly suspected” → HIGH), H4 („PY” vs „Partial yes”) reprodukciója, és hogy az őrök kijavítják;
-  json-mód (V1) utólagos őrökkel, a pluginnak átadott bemenet szöveg nélkül; absent/unusable → 424.
+  H12 (eltérő polaritás → az érintett domének és az összítélet nem megbízható) és H13 (eltérő számozás → a tétel nem
+  megy át, az eredmény nem összevethető) módtól függetlenül; json-mód (V1) utólagos őrökkel, a pluginnak átadott
+  bemenet szöveg nélkül; absent/unusable → 424.
 - figure-forge: H5 (modulszintű és futásközbeni ModuleNotFoundError → unusable, pontos teendő), legacy audit (a fájl
   mellé írt .editability.json a tmp-ben), F1 json-audit, F2 meta-export (fejléc- és út-ellenőrzés).
 - composer: explicit interpreter (nem futtatható, abszolút shebangú szkript — H7), csonka állapot → újrapróbálás,
@@ -236,8 +238,12 @@ class ValidatorAdapterTests(_Tmp):
         ad = self.adapter({"mode": "legacy"})
         st = ad.status()
         self.assertEqual((st["state"], st["mode"]), ("legacy", "bridge"))
-        self.assertEqual(st["guards"], ["H1", "H2", "H3", "H4"])
+        self.assertEqual(st["guards"], ["H1", "H2", "H3", "H4", "H12", "H13"])        # természetes sorrend
+        self.assertEqual({t: v["guards"] for t, v in st["tools"].items() if v["guards"]},
+                         {"tripod-ai": ["H1"], "probast-ai": ["H2"], "grade": ["H3"], "amstar2": ["H4"],
+                          "quadas2": ["H12"], "robins-e": ["H12"], "robins-i": ["H12", "H13"], "quips": ["H13"]})
         self.assertIn("V1", st["remedy"]["hu"])
+        self.assertIn("H1, H2, H3, H4, H12, H13", st["remedy"]["hu"])
         # RoB 2: implikált ítélet a validatortól, a motor szintjeire (tiers) képezve, NEM hivatalos
         res = ad.check(DOCS["rob2"], instrument=_instrument("rob2"))
         self.assertTrue(res["ok"], res)
@@ -309,6 +315,64 @@ class ValidatorAdapterTests(_Tmp):
         self.assertIn("strongly_suspected", sent)
         d = ad.check(DOCS["rob2"])["data"]
         self.assertEqual(d["guards"], [])
+
+    def test_h12_h13_polarity_and_numbering(self):
+        """H12/H13 (az e2e_v1 elfogadási teszt találata): a validator 1.0.0 QUADAS-2 1.2/1.3, ROBINS-E 2.3/5.2/6.2 és
+        ROBINS-I 6.3 polaritása eltér a publikált eszköztől, a ROBINS-I 4.3–4.6/5.2/5.3 és a QUIPS tételei más
+        számozásúak. Az őr a json-módban is él, amíg a kézfogás ismert hibaként hirdeti."""
+        capture = os.path.join(self.tmp, "captured_h13.json")
+        base = {"complete": False, "expected": 30, "answered": 3, "missing": [], "invalid": [], "domains": [],
+                "overall": {"implied": "high", "algorithm": "conservative"}}
+        issues = [{"id": "H12", "summary": "polarity", "fixed_in": "1.2.0"},
+                  {"id": "H13", "summary": "numbering", "fixed_in": "1.2.0"}]
+        ad = self.adapter({"mode": "json", "version": "1.1.0", "capture": capture, "known_issues": issues,
+                           "results": {t: dict(base, tool=t) for t in ("robins-i", "quadas2", "quips", "rob2")}}, "h13")
+        self.assertEqual(ad.status()["guards"], ["H12", "H13"])
+        # ROBINS-I: a 4.3 és az 5.2 MÁS kérdés a validatorban → nem megy át; a 6.3 polaritása eltér → H12
+        doc = {"schema": "szk.appraisal/v1", "tool": "robins-i", "scope": "assignment",
+               "answers": {k: {"value": "no"} for k in ("4.1", "4.3", "5.1", "5.2", "6.3")}}
+        d = ad.check(doc, instrument=_instrument("robins-i"))["data"]
+        sent = json.loads(_rt(capture))
+        self.assertEqual(sorted(sent["answers"]), ["4.1", "5.1", "6.3"])
+        h13 = [g for g in d["guards"] if g["id"] == "H13"][0]
+        self.assertEqual((h13["items"], h13["effect"]), (["4.3", "5.2"], "numbering_differs"))
+        self.assertIn("4.3, 4.4, 4.5, 4.6, 5.2, 5.3", h13["message"]["hu"])
+        self.assertFalse(d["comparable"])
+        h12 = [g for g in d["guards"] if g["id"] == "H12"][0]
+        self.assertEqual((h12["items"], h12["domains"], h12["effect"]), (["6.3"], ["6"], "polarity_differs"))
+        self.assertEqual(d["unreliable_domains"], ["6"])
+        self.assertFalse(d["overall"]["reliable"])
+        # QUADAS-2: az 1.2/1.3 „yes” a publikált eszközben jó válasz; a validator fordítva olvassa → H12, domén 1
+        doc = {"schema": "szk.appraisal/v1", "tool": "quadas2", "answers": {k: {"value": "yes"} for k in ("1.1", "1.2", "1.3")}}
+        d = ad.check(doc, instrument=_instrument("quadas2"))["data"]
+        self.assertEqual([g["id"] for g in d["guards"]], ["H12"])
+        self.assertEqual(d["unreliable_domains"], ["1"])
+        self.assertFalse(d["overall"]["reliable"])
+        self.assertNotIn("comparable", d)
+        # QUADAS-2 érintett tétel nélkül: nincs őr, az összítélet nincs megjelölve
+        doc["answers"] = {"1.1": {"value": "yes"}, "2.1": {"value": "yes"}}
+        d = ad.check(doc, instrument=_instrument("quadas2"))["data"]
+        self.assertEqual(d["guards"], [])
+        self.assertNotIn("reliable", d["overall"])
+        # QUIPS: a motor a–g betűjelei és a validator azonosítói diszjunktak → a validator azonosítói a H13 listája
+        ids, changed = V.renumbered(_instrument("quips"))
+        self.assertTrue(ids and ids == frozenset(changed))
+        self.assertFalse(ids & {str(it["id"]) for it in _instrument("quips")["items"]})
+        # RoB 2: egyik őr sem érinti
+        d = ad.check(DOCS["rob2"], instrument=_instrument("rob2"))["data"]
+        self.assertEqual(d["guards"], [])
+        # a javított verzióban (a kézfogás nem hirdeti) nincs őr, minden válasz átmegy
+        ad2 = self.adapter({"mode": "json", "version": "1.2.0", "capture": capture, "known_issues": [],
+                            "results": {"robins-i": dict(base, tool="robins-i")}}, "h13b")
+        doc = {"schema": "szk.appraisal/v1", "tool": "robins-i", "scope": "assignment",
+               "answers": {k: {"value": "no"} for k in ("4.3", "6.3")}}
+        d = ad2.check(doc, instrument=_instrument("robins-i"))["data"]
+        self.assertEqual(sorted(json.loads(_rt(capture))["answers"]), ["4.3", "6.3"])
+        self.assertEqual(d["guards"], [])
+        self.assertNotIn("comparable", d)
+
+    def test_guard_order(self):
+        self.assertEqual(V.guard_order({"H13", "H2", "H12", "H1", "X"}), ["H1", "H2", "H12", "H13", "X"])
 
     def test_unavailable(self):
         for cfg in (None, {"mode": "unusable", "missing": ["yaml"]}):
@@ -652,6 +716,7 @@ class FigureRoutesEngine(_RouteBase):
                              if s.get("pi_text") else "<text>%s</text>" % s["display_text"]["en"]
                              for s in plot["summaries"])
             texts += "".join("<text>%s</text>" % t["text"] for t in plot["axis"]["ticks"])
+            texts += "<text>%s</text>" % plot["heterogeneity"]["text"]["en"].replace("<", "&lt;")   # lábléc
             return {"svg": '<svg xmlns="http://www.w3.org/2000/svg"><g id="layer-rows">%s</g></svg>' % texts,
                     "lang": lang}
 
@@ -665,6 +730,27 @@ class FigureRoutesEngine(_RouteBase):
         self.assertTrue(d["qc"]["numbers"]["ok"], d["qc"]["numbers"])
         self.assertEqual(d["qc"]["stdlib"]["named_layers"], 1)
         self.assertEqual(env["warnings"], [])
+
+    def test_real_engine_redraws_run_figures_in_english(self):
+        """A valódi motor render_figure-je a futás mappájából angol, rétegzett forest/funnel/Doi-SVG-t rajzol (a
+        számbeli mag a futás plot_data.json-jához kötve); a szerver számhűség-ellenőrzése zöld. Megváltozott
+        adatfájlnál a motor nem rajzol újra: a futás saját SVG-je készül, a motor okával."""
+        self.assertIs(RF._render_fn(), api.render_figure)
+        for kind in ("forest", "funnel", "doi"):
+            st, _h, env = self.call("POST", "/api/figures/export", {"run_id": self.rid, "kind": kind, "lang": "en",
+                                                                    "stem": "real_%s" % kind})
+            self.assertEqual(st, 200, env)
+            d = env["data"]
+            self.assertEqual((d["renderer"]["svg_source"], d["lang"]["used"]), ("engine_render", "en"), kind)
+            self.assertTrue(d["qc"]["numbers"]["ok"], (kind, d["qc"]["numbers"]))
+            self.assertGreaterEqual(d["qc"]["stdlib"]["named_layers"], 1, kind)
+        with open(os.path.join(self.proj, H.O1), "a", encoding="utf-8") as fh:
+            fh.write("\n")                                   # az adattábla változott: a futás ELAVULT
+        st, _h, env = self.call("POST", "/api/figures/export", {"run_id": self.rid, "kind": "forest", "lang": "en",
+                                                                "stem": "stale_forest"})
+        self.assertEqual(st, 200, env)
+        self.assertEqual(env["data"]["renderer"]["svg_source"], "run_file")
+        self.assertTrue(any("nem rajzolta újra" in w for w in env["warnings"]), env["warnings"])
 
     def test_converter_on_path(self):
         bindir = os.path.join(self.tmp, "bin")

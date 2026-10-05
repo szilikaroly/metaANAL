@@ -1,6 +1,6 @@
 # MA-munkapad — validáló és grafikus felület a metaanalízis-motorhoz, a figure-forge és a validator (PROBAST+AI / TRIPOD+AI) pluginnal vagy önállóan
 
-**Végleges terv** · Dátum: 2026-10-04 · Állapot: **elfogadva** (2026-10-04, a 11. fejezet ajánlott válaszaival); az MVP kész; a v1 motor-oldala (E4c, E6, E8 teljes, E9, E10, natív értékelő eszközök, homlokzat és CLI) 2026-10-05-én integrálva, a v1 felület-oldali illesztése folyamatban
+**Végleges terv** · Dátum: 2026-10-04 · Állapot: **elfogadva** (2026-10-04, a 11. fejezet ajánlott válaszaival); az MVP kész; a **v1 kész és integrálva** (2026-10-05): motor (E4c, E6, E8 teljes, E9, E10, natív értékelő eszközök, homlokzat és CLI), felület (értékelések, GRADE/SoF, Protokoll, kettős kinyerés, adapterek, ábra-export, pillanatkép-lefedettség) és a Metaheadhunter bekötése (`TERV_metaheadhunter.md`); a 9.3 elfogadási pontjai zöldek
 
 Alapja: három független javaslat (*local-server-first*, *offline-first*, *plugin-ecosystem-first*) és két független
 bírálat. Mindkét bíráló a **local-server-first** utat választotta (41/50 és 40/50 pont; a plugin-út 38 és 39, az
@@ -1594,7 +1594,7 @@ Az `estimated` **mindig a motor döntése**: becslés `true`, algebrai átalakí
 | munkapad ← motor validálás | `api.validate_table` (E2 a motorral együtt jön) | `szk.ma.validation/v1` |
 | munkapad, figure-forge ← motor ábra | `plot_data` v1 (séma nélkül) olvasása is | `szk.ma.plot/v2` |
 | motor ← munkapad elemzés | spec → argv (`spec.py`) | `analyze --spec` |
-| munkapad ← validator | legacy bridge (1.0.0) + H1–H4 őrök | `szk.instrument/v1`, `szk.appraisal-result/v1` (V1) |
+| munkapad ← validator | legacy bridge (1.0.0) + H1–H4, H12, H13 őrök | `szk.instrument/v1`, `szk.appraisal-result/v1` (V1) |
 | figure-forge ← munkapad | csak `audit` (F1 után) és `flowchart` | `szk.figure-request/v1` (F2/F3/F5) |
 | munkapad ← composer | `flow-json` séma nélkül | `szk.prisma-flow/v1` (C1) |
 | presubmit ← motor | — | `szk.facts/v1` (P1) |
@@ -1630,6 +1630,8 @@ Az `estimated` **mindig a motor döntése**: becslés `true`, algebrai átalakí
 | H9 | motor | a V-megállapításokban nincs sor/oszlop; a `plot_data.json`-ban nincs `row_index`/séma, a feliratok magyarok; az SVG-ben nincsenek rétegek; a `doi.svg` kötőjel-mínuszt ír; a meta-regresszióhoz nincs kovariancia; opciónév-eltérés (`--ht-centre`→`h_centre`, `--robust`→`metareg_robust`) | E2–E5, E3 |
 | H10 | Anamnézis-app | `localStorage('anam_cases')` betegeseteket tárol (a `file://` oldalak Chromiumban közös tároló-origón osztoznak) | ezt a mintát **nem** vesszük át (7.6) |
 | H11 | vault | a `~/Documents/claude` alatt (mélység 2) minden projektet `git add -A` + push a munkamenet végén | 7.5 rétegek; PR-VA1 |
+| H12 | validator 1.0.0 referenciafájljai (polaritás-címkék) | a QUADAS-2 1.2/1.3, a ROBINS-E 2.3/6.2 és a ROBINS-I 6.3 „reverse” címkét kap (a publikált eszközben a „yes” a jó válasz), a ROBINS-E 5.2 nem — így pl. a QUADAS-2 1.2 = „yes” (esetkontroll-elrendezés elkerülve) a validatorban magas kockázatot kényszerít (v1 elfogadási teszt) | bridge- és json-módban is őr: az érintett domének (`unreliable_domains`) és az összítélet validator-ítélete `reliable: false`, a motor ítélete számít; a validator-doboz „Összevetés a motorral” sora megnevezi az okot |
+| H13 | validator 1.0.0 tételszámozás | a ROBINS-I 4.3–4.6, 5.2, 5.3 (2016-os számozás) és a QUIPS a–g tételei a validatorban más azonosítójúak / ugyanaz az azonosító MÁS kérdés (v1 elfogadási teszt) | az érintett válaszok nem mennek át a pluginnak; a validator teljessége és ítélete `comparable: false`, a doboz ezt írja ki |
 
 ### 5.1 Felderítés, interpreter-választás, kézfogás
 
@@ -2366,8 +2368,61 @@ dokumentációt, tartalékot nem; +15% javasolt. A plugin-PR-ek kicsik, visszafe
 > SoF, AMSTAR 2 mindkét konvencióval; GRADE-tár a 4. döntéssel; `ma.py grade …`), valamint natív eszköz-definíciók
 > (`metaelemzes/instruments/`, a validator 1.0.0-ból, `szk.instrument/v1`) és értékelés-motor (`metaelemzes/appraisal.py`:
 > teljesség — PROBAST+AI menetenként 16/34 —, implikált ítélet, X017, κ, konszenzus, forgalmi lámpa, `rob`-szinkron, AI-vázlat
-> a 6. döntés szerint; `ma.py appraisal …`). A munkapad a homlokzat-függvényeket név szerint köti; a felület-oldali
-> illesztés (fixture-újragenerálás, az AI-vázlat jóváhagyásának motor-ellenőrzése) folyamatban.
+> a 6. döntés szerint; `ma.py appraisal …`). A munkapad a homlokzat-függvényeket név szerint köti.
+>
+> **Állapot (2026-10-05, integráció — v1 kész):**
+> - **Homlokzat:** az értékelés-, GRADE/SoF-, kettős kinyerés- és ábra-függvények a munkapad által keresett neveken
+>   (`api.appraisal_problems` a `validate` álneve); `api.render_figure(plot, kind, lang, annotate, run_dir=…)` a
+>   forest / funnel / Doi-ábrát is megrajzolja magyarul vagy angolul, rétegekkel — a futás VÁLTOZATLAN adatfájljából
+>   (sha256) és rögzített opcióiból újraszámolva, a számbeli magot a futás `plot_data.json`-jához kötve (eltérésnél nem
+>   rajzol; a munkapad ilyenkor a futás saját SVG-jét exportálja az okkal); a futás nyelvével bájtra a futás saját
+>   SVG-je; `ma.py figure --kind forest|funnel|doi|cumulative|bubble|loo`. `api.sof_problems` (X008-szabály a munkapad
+>   SoF-írása előtt), `api.headhunter_*`, képesség: `headhunter`.
+> - **Döntések a felületen:** a GRADE végső bizonyossága emberi ítélet (GRADE-09) — a motor számolt szintje csak
+>   előtöltés, rögzítéskor az ember megerősítése kötelező (422 `needs_certainty` + `computed_certainty`); a „gyanított”
+>   publikációs torzítás feloldatlan, amíg az ember 0-t vagy −1-et nem választ (4. döntés); az AI-vázlat jóváhagyását a
+>   motor tartalmi ellenőrzése (6. döntés: tételenkénti indoklás + idézet) kapuzza; a SoF bizonyossága csak a
+>   rögzített GRADE-é lehet (X008).
+> - **Egy AMSTAR 2-út:** a párhuzamos `GET/PUT /api/amstar2` megszűnt; az egyetlen végpont az értékelésé
+>   (`/api/appraisals/review/amstar2`, `review.amstar2.<értékelő>.json`), a besorolás mindkét konvencióval a
+>   `check.amstar2`-ben. A konszenzus-vázlat (`consensus_of`) a felületen sem értékelő, a fájl-kulcs a motoréval azonos
+>   (target.key → kimenet / eredmény / modell / indexteszt).
+> - **Törzskorlát:** az értékelés- és GRADE-dokumentumot vivő utak (`/api/appraisals/…`, `/api/grade/…`) 1 MB-ot
+>   kapnak (TRIPOD+AI AI-vázlat 52 tétel indoklással), a többi 64 KB marad (T11).
+> - **Pillanatkép:** az eszköz-definíciók, értékelések (a kliens pontos kulcsaival), konszenzus-nézet, forgalmi lámpa,
+>   GRADE + tanács + SoF, Protokoll, kettős kinyerés jegyzéke (az összevetés csak adattáblákkal), ábra-export,
+>   adapterek és a Metaheadhunter állapota benne van; kitakarás: a bizonyíték-idézetek az idézet-kitakarással, B/C
+>   osztályban az értékelők monogrammal a kulcsokban és az adatban egyformán (a `consensus` / `ai` nem név), a
+>   _privat/ futásra hivatkozó v1-nézet soha, API-kulcs értéke soha; a Metaheadhunter lépéseinek és döntéseinek pontos
+>   parancsa. Audit-csomag: GRADE (`grade`) és Metaheadhunter-állapot (`headhunter`, döntésnapló hash-lánccal;
+>   gyorsítótár és forrás-szövegrészek nélkül).
+> - **Felület:** a validator keresztellenőrző doboza az értékelő panel lábában; az Eredményekből link a futás
+>   ábra-exportjára (`#/figures?run=…`); a Metaheadhunter képernyő regisztrálva (PRISMA fül).
+> - **Elfogadás (9.3):** az értékelési munkafolyamatok a validator 1.0.0-val (bridge, H1–H4 őrökkel; valódi pluginnal)
+>   és a json-módú csonkkal végigvihetők; PROBAST+AI 34 slot, menetenként helyes teljesség; az ábrák számhűsége a
+>   szerver újraellenőrzésével 100% (a motor angol, rétegzett forest/funnel/Doi-ábráján is); E2E zöld; a
+>   lánc-visszajátszás változatlanul 100% a leképezhetőkre. Tesztek: `run_parallel.py --gui` 2445 teszt OK,
+>   `source_cases.py` 3283 PASS / 0 FAIL, a böngészős UI-csomag 22/22 zöld, `build_gui.py --check` és
+>   `build_plugin.py --check` tiszta, `ma.py selftest` zöld.
+>
+> **Állapot (2026-10-05, v1 elfogadás automatizálva):** `node tests/gui/ui/e2e_v1.spec.js` (a `run_all.js` része) a
+> VALÓDI szerverrel, ideiglenes projekteken (`tests/gui/ui/e2e_v1_server.py`, `e2e_v1_xrules.py`) végigviszi a 9.3-at:
+> 1. értékelések — RoB 2 két emberi értékelővel a felületen, AI-vázlat (jelvény, kezdőbarát indoklás, jóváhagyás nélkül
+> nem rögzíthető, kimarad a κ-ból), κ → konszenzus → forgalmi lámpa → rob-szinkron; ROBINS-I/E, QUADAS-2, NOS,
+> TRIPOD+AI (52 tétel, D/E), AMSTAR 2 (mindkét konvenció), PROBAST+AI (34 hely, 16 + 18) a motorral ÉS a validator
+> 1.0.0 bridge-módjával („Összevetés a motorral”: egyezik, vagy megnevezett ok); „magas RoB nélkül” gyermek-futás →
+> X003/X006 tiszta; 2. GRADE motor-tanáccsal, „gyanított” publikációs torzítás → X019 / GATE_BLOCKED, amíg ember nem
+> dönt; SoF két alapkockázattal, CSV képletinjekció-őrrel és Markdown; 3. kettős kinyerés A/B → összevetés → egyeztetés
+> → konszenzus-CSV → elemzés; 4. kumulatív és buborékábra a motor geometriájával; 5. ábra-export hu/en bájtra a motor
+> `render_figure`-je, figure-forge audit (matplotlibes interpreterrel), különben „nem használható” + teendő, plugin
+> nélkül a beépített SVG-audit; 6. composer-híd (teszt-csonk); 7. Metaheadhunter a felületről kazettákkal
+> (`tests/reference/headhunter/cassettes/gui_e2e/`, élő hálózat nélkül) a PRISMA-ellenőrzésig; 8. a teljes
+> X001–X022 készlet egy felépített projekten, és a FINAL-kapu a végigvitt projekten (előbb tilt, javítás után átenged);
+> 9. lánc-visszajátszás 100%. A teszt két új validator-1.0.0 hibát talált (5.0 **H12** polaritás, **H13** számozás) —
+> őrrel kezelve. Javítva még: a Metaheadhunter képernyő nem kezelt ABORTED-elutasítása és a keret előtti festés
+> (`screens/headhunter.js`), a frissítés záró dátuma a felületről (`#hh-up-end`). Tesztek: `run_parallel.py --gui`
+> 2448 OK, `source_cases.py` 3283 PASS / 0 FAIL, `run_all.js --python` 23/23 zöld (benne `e2e_v1` 285/285; matplotlibes
+> figure-forge-dzsal 287/287), `build_gui.py --check` és `build_plugin.py --check` tiszta, `ma.py selftest` zöld.
 
 **Elfogadás:**
 

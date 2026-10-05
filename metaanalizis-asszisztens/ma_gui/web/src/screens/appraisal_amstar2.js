@@ -3,7 +3,7 @@
  * (terv 3.5.13, 4.11, 4.15 amstar2_hints, 5.4).
  *
  * Egység: review (a saját áttekintés), eszköz: amstar2 → 04_torzitas_kockazat/appraisals/review.amstar2.<értékelő>.json
- * (ugyanaz a fájl, mint a GET/PUT /api/amstar2-é). Űrlap és mentés: MA.apprPanel (/api/appraisals/review/amstar2);
+ * (az AMSTAR 2 egyetlen végpontja). Űrlap és mentés: MA.apprPanel (/api/appraisals/review/amstar2);
  * a besorolás a motor check.amstar2 mezője (rating, alternative, differs, provisional) — a felület nem számol.
  * A javaslatok: GET /api/audit/project → amstar2_hints {tétel: {suggested, evidence[]}} (csak javaslat; az ember dönt).
  */
@@ -26,6 +26,19 @@
 
   function ids(list) { return list && list.length ? list.join(', ') : '—'; }
 
+  /** a résztételek (9., 11.: RCT / NRSI) állása a motor check.amstar2.parts-ából — a tétel értékét a motor képzi */
+  function partsLine(am) {
+    var parts = am && am.parts;
+    if (!parts || !Object.keys(parts).length) { return null; }
+    return h('p', { 'class': 'muted am-parts', id: 'am-parts' }, t('appraisal.am.parts'), ' ',
+      Object.keys(parts).map(function (k, i) {
+        var pv = parts[k] || {};
+        return [i ? ' · ' : '', h('span', { dataset: { item: k } }, k + ': ' + Object.keys(pv).map(function (pid) {
+          return pid + ' ' + (pv[pid] ? A.answerLabel(S.inst, pv[pid]) : '—');
+        }).join(', '))];
+      }));
+  }
+
   function classification(view, check) {
     var am = check && check.amstar2;
     if (!am) { return h('p', { 'class': 'muted', id: 'am-class' }, t('appraisal.am.noRating')); }
@@ -38,6 +51,11 @@
       alt ? h('p', { 'class': ['am-alt', am.differs ? 'is-diff' : 'is-same'], id: 'am-alt' },
         am.differs ? [h('strong', { i18n: 'appraisal.am.sensitivity' }), ' ', t('appraisal.am.ifWeakness'), ' ', ratingBadge(alt)]
           : t('appraisal.am.same')) : null,
+      partsLine(am),
+      // a motor AMSTAR 2-figyelmeztetései (pl. a 9. / 11. tétel RCT-re és NRSI-re külön ítélendő — F3)
+      check.warnings && check.warnings.length ? h('ul', { 'class': 'am-warnings', id: 'am-warnings' }, check.warnings.map(function (w) {
+        return h('li', null, MA.ui.badge('warning', null, { srLabel: t('appraisal.am.warning') }), ' ', pick(w && w.text ? w.text : w));
+      })) : null,
       h('p', { 'class': 'ap-note' }, MA.ui.badge('info', null), ' ', t('appraisal.am.notGrade')));
   }
 

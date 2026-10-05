@@ -111,6 +111,9 @@
 
   function touch() {
     S.dirty = true;
+    S.prefill = null;                       // a szerkesztés után a korábbi motor-előtöltés elavult (FID-2)
+    var hs = MA.dom.$('#gr-human-cert-sel');
+    if (hs) { delete hs.dataset.user; }
     refreshStatus();
   }
 
@@ -381,8 +384,15 @@
       var parts = [];
       if (S.dirty) {
         parts.push(h('span', { 'class': 'muted' }, t('grade.cert.afterSave')));
+      } else if (g && g.certainty && g.certainty_source === 'human') {
+        // rögzített / megadott EMBERI bizonyosság — nem a motor javaslata (FID-3); ha a lépésekből más adódik, az is látszik
+        var comp = S.view.computed_certainty || null;
+        parts.push(h('strong', { 'class': 'gr-cert-val', id: 'gr-cert-val', dataset: { source: 'human' } }, certLabel(g.certainty)), ' ',
+          h('span', { 'class': 'muted' }, t(g.status === 'recorded' ? 'grade.cert.recordedHuman' : 'grade.cert.human2')),
+          comp && comp !== g.certainty ? [' ', h('span', { 'class': 'gr-cert-engine-diff', id: 'gr-cert-engine' }, MA.ui.badge('warning', null), ' ',
+            t('grade.cert.engineDiffers', { cert: certLabel(comp) }))] : null);
       } else if (g && g.certainty) {
-        parts.push(h('strong', { 'class': 'gr-cert-val', id: 'gr-cert-val' }, certLabel(g.certainty)), ' ', h('span', { 'class': 'muted' }, t('grade.cert.engine')));
+        parts.push(h('strong', { 'class': 'gr-cert-val', id: 'gr-cert-val', dataset: { source: 'computed' } }, certLabel(g.certainty)), ' ', h('span', { 'class': 'muted' }, t('grade.cert.engine')));
       } else if (st.unresolved.length) {
         parts.push(h('span', { id: 'gr-cert-val' }, '—'), ' ', h('span', { 'class': 'muted' }, t('grade.cert.unresolved')));
       } else if (st.missing.length) {
@@ -394,6 +404,13 @@
     }
     var human = MA.dom.$('#gr-human-cert');
     if (human) { human.hidden = !needHumanCertainty(); }
+    // a végső bizonyosság emberi ítélet (GRADE-09): a motor számolt szintje csak előtöltés
+    var hsel = MA.dom.$('#gr-human-cert-sel');
+    if (hsel && hsel.dataset.user !== '1') {
+      // előtöltés = a motor MOSTANI számolt szintje (FID-2: elavult előtöltés nem rögzíthető véletlenül); szerkesztés közben üres
+      var pre = S.dirty ? '' : (S.prefill || (g && g.certainty) || '');
+      hsel.value = pre || '';
+    }
     var why = [];
     if (!S.view.run) { why.push(t('grade.gate.noRun')); }
     if (S.view.run && S.view.run.stale === true) { why.push(t('grade.gate.stale')); }
@@ -414,7 +431,7 @@
   function needHumanCertainty() {
     var g = S.view.grade;
     var st = state();
-    return !S.dirty && !!g && !g.certainty && !st.missing.length && !st.unresolved.length;
+    return !S.dirty && !!g && !st.missing.length && !st.unresolved.length;
   }
 
   function validate() {
@@ -470,7 +487,9 @@
       if (btn) { btn.disabled = false; }
       if (err.code === 'GATE_BLOCKED' || err.code === 'VALIDATION') { showGate(err); }
       if (err.code === 'VALIDATION' && err.details && err.details.needs_certainty) {
-        // a piszkozat elmentődött: friss ETag és nézet, majd az ember választja ki a szintet
+        // a piszkozat elmentődött: friss ETag és nézet, majd az ember választja ki a szintet; az előtöltés a motor
+        // most számolt szintje (a 422 computed_certainty-je), nem a korábbi
+        S.prefill = err.details.computed_certainty || null;
         reload(ctx).then(function () {
           var hcs = MA.dom.$('#gr-human-cert');
           if (hcs) { hcs.hidden = false; }
@@ -550,8 +569,15 @@
       oninput: function () { r.label = label.value; S.sofDirty = true; } });
     var per = r.source === 'external' ? h('input', { type: 'text', id: 'sof-per-' + i, value: r.per_1000 || '', inputmode: 'decimal',
       'aria-label': t('sof.risk.per1000') + ' — ' + String(i + 1), oninput: function () { r.per_1000 = per.value; S.sofDirty = true; } }) : null;
+    // külső alapkockázat forrása (GRADE 12: a feltételezett kockázat forrását közölni kell) — a lábjegyzetbe kerül (F11)
+    var citeWarn = h('span', { 'class': 'sof-cite-warn', id: 'sof-cite-warn-' + i, role: 'status' });
+    function syncCite() { MA.dom.mount(citeWarn, r.source === 'external' && !(r.note || '').trim() ? [MA.ui.badge('warning', null), ' ', t('sof.risk.noCite')] : null); }
+    var cite = r.source === 'external' ? h('input', { type: 'text', id: 'sof-cite-' + i, value: r.note || '', maxlength: '500', size: '28',
+      placeholder: t('sof.risk.citePh'), 'aria-label': t('sof.risk.cite') + ' — ' + String(i + 1), 'aria-describedby': 'sof-cite-warn-' + i,
+      oninput: function () { r.note = cite.value; S.sofDirty = true; syncCite(); } }) : null;
+    syncCite();
     return h('li', { 'class': 'sof-risk' },
-      src, label, per, per ? h('span', { 'class': 'muted' }, t('sof.risk.perUnit')) : null,
+      src, label, per, per ? h('span', { 'class': 'muted' }, t('sof.risk.perUnit')) : null, cite, cite ? citeWarn : null,
       S.sofInputs.assumed_risks.length > 1 ? h('button', { type: 'button', 'class': 'btn-icon', 'aria-label': t('sof.risk.remove', { n: String(i + 1) }),
         onclick: function () { S.sofInputs.assumed_risks.splice(i, 1); S.sofDirty = true; rerenderRisks(); } }, '×') : null);
   }
@@ -576,7 +602,8 @@
     var lang = h('select', { id: 'sof-lang', 'aria-label': t('sof.export.lang') }, ['en', 'hu'].map(function (l) { return h('option', { value: l }, t('sof.export.lang.' + l)); }));
     function body() {
       return { assumed_risks: S.sofInputs.assumed_risks.map(function (r) {
-        return { label: (r.label || '').trim() || null, source: r.source, per_1000: r.source === 'external' ? ((r.per_1000 || '').trim() || null) : null };
+        return { label: (r.label || '').trim() || null, source: r.source, per_1000: r.source === 'external' ? ((r.per_1000 || '').trim() || null) : null,
+          note: r.source === 'external' ? ((r.note || '').trim() || null) : null };
       }), footnotes: S.sofInputs.footnotes.filter(function (n) { return (n.text || '').trim(); }).map(function (n) { return { text: n.text.trim() }; }) };
     }
     function put(dry) {
@@ -698,7 +725,7 @@
       oninput: function () { S.doc.mid_text = mid.value; touch(); } });
     var human = h('div', { id: 'gr-human-cert', 'class': 'pf-field', hidden: true },
       h('label', { htmlFor: 'gr-human-cert-sel' }, t('grade.cert.human')),
-      h('select', { id: 'gr-human-cert-sel', 'aria-describedby': 'gr-human-cert-help' }, [h('option', { value: '' }, t('grade.choose'))].concat(
+      h('select', { id: 'gr-human-cert-sel', 'aria-describedby': 'gr-human-cert-help', onchange: function (e) { e.target.dataset.user = '1'; } }, [h('option', { value: '' }, t('grade.choose'))].concat(
         (v.vocab.certainties || []).map(function (c) { return h('option', { value: c }, certLabel(c)); }))),
       h('span', { 'class': 'pf-hint muted', id: 'gr-human-cert-help' }, t('grade.cert.humanHelp')));
     var j = v.journal;

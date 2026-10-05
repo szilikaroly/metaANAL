@@ -62,6 +62,7 @@
       "publication_bias"
      ],
      "run_matches": null,
+     "computed_certainty": null,
      "conventions": {
       "grade_suspected": "unresolved"
      },
@@ -262,6 +263,7 @@
       "publication_bias"
      ],
      "run_matches": null,
+     "computed_certainty": null,
      "conventions": {
       "grade_suspected": "unresolved"
      },
@@ -472,6 +474,7 @@
       "run_id": "20261004T211200Z-a1f3c2",
       "start": "high",
       "start_reason": null,
+      "design": null,
       "domains": {
        "risk_of_bias": {
         "rating": null,
@@ -486,7 +489,8 @@
          "k_assessed": 0,
          "k": 13,
          "high_rob_studies": [],
-         "sensitivity_run": null
+         "sensitivity_run": null,
+         "rob_tool_source": null
         },
         "suggestion": {
          "rating": null,
@@ -1049,7 +1053,8 @@
           "GRADE-08",
           "GRADE-08a",
           "D-S13-009"
-         ]
+         ],
+         "design": null
         },
         "dose_response": {
          "suggested": false,
@@ -1281,6 +1286,7 @@
          }
         ],
         "certainty": "low",
+        "certainty_basis": "parameter",
         "certainty_symbols": "⊕⊕◯◯",
         "certainty_text": {
          "hu": "⊕⊕◯◯ alacsony",
@@ -1314,7 +1320,12 @@
          "absolute": "sof.absolute (grade_help.absolute_effect)",
          "certainty": "paraméter"
         },
-        "warnings": [],
+        "warnings": [
+         {
+          "hu": "A bizonyosság paraméterként megadva, rögzített GRADE-ítélet nélkül: a SoF így nem menthető (save_sof), és a projekt-audit X008-cal jelzi.",
+          "en": "Certainty given as a parameter without a recorded GRADE judgement: this SoF cannot be saved (save_sof), and the project audit flags it (X008)."
+         }
+        ],
         "outcome_text": {
          "hu": "TBC-incidencia",
          "en": "TB incidence"

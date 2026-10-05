@@ -271,10 +271,31 @@ def build_flow(state, reviews, studies_doc, decisions, update_doc=None, merged=N
 
     # ---- own_update: korábbi változat
     if mode == "own_update":
+        # PRISMA 2020, frissített áttekintés: „New studies included” = a frissítésben bevont jelentések vizsgálatai
+        # közül azok, amelyek a korábbi változatban MÉG NEM szerepeltek; egy korábban bevont vizsgálat új jelentése
+        # (pl. 5 éves utánkövetés) új JELENTÉS, de nem új vizsgálat (F7) — a „Total studies” a két halmaz uniója.
+        study_of = {}
+        for s in (studies_doc or {}).get("studies") or []:
+            for rp in s.get("reports") or []:
+                study_of[rp.get("rec_id")] = s.get("study_id")
+        inc_recs = list(hh.get("included_rec_ids") or [])
+        inc_studies = set(study_of.get(r, r) for r in inc_recs)
+        new_studies = inc_studies - set(prev_studies)
+        companions = sorted(r for r in inc_recs if study_of.get(r, r) in prev_studies)
+        flow["included_studies"] = len(new_studies)
         flow["previous_studies"] = len(prev_studies)
         flow["previous_reports"] = len(prev_recs)
-        flow["total_studies"] = len(prev_studies) + int(flow.get("included_studies") or 0)
+        flow["total_studies"] = len(set(prev_studies) | new_studies)
         flow["total_reports"] = len(prev_recs) + int(flow.get("included_reports") or 0)
+        hh["new_reports_of_previous_studies"] = len(companions)
+        hh["new_reports_of_previous_studies_rec_ids"] = companions
+        if companions:
+            hh["previous_studies_note"] = _expl(
+                "%d új jelentés korábban már bevont vizsgálathoz tartozik (%s): ezek az „új jelentések” között "
+                "számítanak, az „új vizsgálatok” között nem — lábjegyzetben közöld." % (len(companions),
+                                                                                      ", ".join(companions[:10])),
+                "%d new report(s) belong to previously included studies (%s): counted as new reports, not as new "
+                "studies — report this in a footnote." % (len(companions), ", ".join(companions[:10])))
 
     # ---- összevetés a merged.json-nal
     if merged is not None:

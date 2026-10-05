@@ -39,7 +39,7 @@ MAX_QUOTE = 1000
 UNIT_REVIEW = "review"
 UNIT_MANUSCRIPT = "manuscript"
 SPECIAL_UNITS = (UNIT_REVIEW, UNIT_MANUSCRIPT)
-RESERVED_SEGMENTS = ("consensus", "inbox", "import", "export", "rob-summary", "rob-sync")
+RESERVED_SEGMENTS = ("consensus", "inbox", "import", "export", "rob-summary", "rob-sync", "agreement")
 RATER_CONSENSUS = "consensus"
 RATER_AI = "ai"
 RESERVED_RATERS = (RATER_CONSENSUS, RATER_AI)
@@ -69,9 +69,11 @@ ENGINE = {
     "implied": ("appraisal_implied", (), "az implikált ítéletek"),
     "tripod": ("tripod_check", (), "a TRIPOD+AI jelentési teljessége"),
     "amstar2": ("amstar2_consistency", (), "az AMSTAR 2 besorolása (mindkét konvencióval)"),
-    "validate": ("appraisal_validate", ("validate_appraisal",), "az értékelés szerkezeti ellenőrzése"),
+    "validate": ("appraisal_validate", ("validate_appraisal", "appraisal_problems"),
+                 "az értékelés szerkezeti és tartalmi ellenőrzése (6. döntés: AI-vázlat indoklása; 4. döntés)"),
     "consensus": ("appraisal_consensus", ("appraisal_agreement",),
                   "két független értékelő egyezése (κ) és az eltérések"),
+    "pooled": ("appraisal_agreement_pooled", (), "az összes kettősen értékelt egység összevont egyezése (κ)"),
     "rob_summary": ("rob_summary", ("appraisal_rob_summary",), "a forgalmi lámpa adatai (szk.rob-summary/v1)"),
     "rob_sync": ("rob_sync_proposal", ("sync_rob_proposal", "appraisal_sync_rob", "rob_column_sync"),
                  "a kinyerési tábla rob oszlopának szinkron-javaslata"),
@@ -177,12 +179,13 @@ def check(doc, inst=None, project_dir=None):
     return res
 
 
-def validate_engine(doc, inst=None):
-    """A motor szerkezeti ellenőrzése (ha van ilyen függvénye) → problémák listája."""
+def validate_engine(doc, inst=None, project_dir=None):
+    """A motor szerkezeti ellenőrzése (ha van ilyen függvénye) → problémák listája. project_dir: a projekt-szintű
+    szabályok is (pl. C osztályú projektben AI-vázlat nem menthető — 6. döntés, 7.4); a végpontok MINDIG átadják."""
     fn = engine_fn("validate")
     if fn is None:
         return []
-    out = _call(fn, doc, instrument=inst)
+    out = _call(fn, doc, instrument=inst, project_dir=project_dir)
     if isinstance(out, dict):
         out = out.get("problems") or out.get("errors") or []
     return [str(p) for p in (out or [])]
@@ -307,11 +310,43 @@ def siblings(app, unit, tool, target):
     return out
 
 
+# a cél (target.key) hiányában a fájlnév cél-része az eszköz egységéből — a motor appraisal.derived_target_key-ével
+# azonos szabály (M5: két kimenet értékelése nem ütközhet egy fájlon)
+_KEY_FALLBACK = {"result": ("outcome", "result"), "outcome": ("outcome",), "model": ("model",),
+                 "index_test": ("index_test",)}
+
+
+def target_key(doc, inst=None):
+    """A fájlnév cél-része: target.key, különben az eszköz egysége szerinti mező (outcome / result / model /
+    index_test) fájlnév-alakban; None, ha egyik sincs."""
+    tg = doc.get("target") if isinstance(doc.get("target"), dict) else {}
+    k = tg.get("key")
+    if isinstance(k, str) and k:
+        return k
+    for field in _KEY_FALLBACK.get((inst or {}).get("unit"), ()):
+        v = tg.get(field)
+        if isinstance(v, str) and v.strip():
+            v = v.strip()
+            v = v if TARGET_RE.match(v) else _SLUG_BAD.sub("_", v).strip("_")[:64]
+            if v and TARGET_RE.match(v):
+                return v
+    return None
+
+
+def is_consensus_doc(doc):
+    """Konszenzus-dokumentum-e: status 'consensus', VAGY van consensus_of (a még feloldatlan konszenzus-vázlat is) —
+    a motor appraisal.is_consensus_doc-jával azonos (C1): soha nem független értékelő, és csak a consensus-fájlba
+    kerülhet."""
+    if not isinstance(doc, dict):
+        return False
+    return doc.get("status") == "consensus" or (isinstance(doc.get("consensus_of"), list) and bool(doc["consensus_of"]))
+
+
 def is_human(doc, rater=None):
     """Független emberi értékelés-e (a κ és a konszenzus csak ezeket látja; 6. döntés)."""
     if not isinstance(doc, dict):
         return False
-    if doc.get("origin") == "ai_draft":
+    if doc.get("origin") == "ai_draft" or is_consensus_doc(doc):
         return False
     r = rater or doc.get("assessor")
     return isinstance(r, str) and r.lower() not in RESERVED_RATERS and doc.get("status") != "consensus"

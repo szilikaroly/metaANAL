@@ -42,8 +42,8 @@ class CompactTests(unittest.TestCase):
         self.assertNotIn("fej", out)
         self.assertNotIn("megjegyzés\n", out)
         self.assertNotIn("sorvégi", out)
-        self.assertIn("var b='/* nem megjegyzés */';", out)
-        self.assertIn("return a*b;", out)                    # sor eleji szorzás nem megjegyzés
+        self.assertIn("b='/* nem megjegyzés */';", out)       # (a var-ok összevonva: var a=1,b=…)
+        self.assertIn("return a*b}", out)                    # sor eleji szorzás nem megjegyzés ('}' előtt ';' nélkül)
 
     @unittest.skipIf(shutil.which("node") is None, "node nincs telepítve")
     def test_compacted_product_script_parses(self):

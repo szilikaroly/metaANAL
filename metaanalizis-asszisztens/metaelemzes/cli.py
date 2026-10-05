@@ -17,7 +17,10 @@ Parancsok (magyar álnévvel):
                           save, approve, list, agreement (κ), consensus, rob-summary, sync-rob
   grade                   GRADE-tanács, GRADE-tár és SoF (v1): advice, save, show, record, sof, amstar2
   kettos   / kettős       kettős (független) adatkinyerés (v1): compare, reconcile, report, status (X009)
-  figure   / abra         kumulatív / buborék / leave-one-out motor-SVG a plot_data.json-ból (v1)
+  headhunter              Metaheadhunter: meglévő metaanalízisek bányászata (find, extract, resolve, dedupe,
+                          overlap, screen, update-search, merge, prisma, signoff …; sources --check)
+  figure   / abra         a futás ábrái (forest, funnel, Doi, kumulatív, buborék, leave-one-out) más nyelven /
+                          rétegekkel (v1)
   rules    / szabalyok    a motor V/P/X-szabályai (rules export --json)
   contracts / szerzodesek az adatszerződések (JSON Schema) jegyzéke és ellenőrzése
   gui      / munkapad     MA-munkapad: helyi, böngészős felület (ma_gui); gui snapshot: csak olvasható
@@ -1303,9 +1306,20 @@ def _plot_doc(path):
     return doc
 
 
+def _figure_run_dir(path):
+    """--plot → a rögzített futás mappája (run.json mellett), ha van ilyen; különben None."""
+    p = os.path.abspath(path)
+    d = p if os.path.isdir(p) else os.path.dirname(p)
+    return d if os.path.isfile(os.path.join(d, "run.json")) else None
+
+
 def cmd_figure(a):
     from . import api
-    res = api.render_figure(_plot_doc(a.plot), a.kind, a.lang, a.annotate)
+    run_dir = _figure_run_dir(a.plot) if a.kind in api.RUN_FIGURE_KINDS else None
+    if a.kind in api.RUN_FIGURE_KINDS and run_dir is None:
+        raise ValueError("a(z) %s ábra újrarajzolásához a rögzített futás mappája (vagy run.json-ja) kell a --plot-ban"
+                         % a.kind)
+    res = api.render_figure(_plot_doc(a.plot), a.kind, a.lang, a.annotate, run_dir=run_dir)
     if res is None:
         raise ValueError("a(z) %s ábra a futás saját SVG-je (%s.svg)" % (a.kind, a.kind))
     if a.json:
@@ -1329,6 +1343,20 @@ def _kettos_subcommand(argv):
         return None
     from . import kettos
     return kettos.cli_main(list(argv[1:]))
+
+
+# ------------------------------------------------------------ headhunter (Metaheadhunter)
+HEADHUNTER_NAMES = ("headhunter", "metaheadhunter")
+
+
+def _headhunter_subcommand(argv):
+    """argv[0] = headhunter|metaheadhunter → a Metaheadhunter saját parancssora (metaelemzes.headhunter.__main__ →
+    cli.main; kilépési kódok 0 rendben · 1 hiba · 2 használati hiba · 3 forrás részleges · 4 emberi döntésre vár);
+    más parancsnál None."""
+    if not argv or argv[0] not in HEADHUNTER_NAMES:
+        return None
+    from .headhunter import __main__ as hh_main
+    return hh_main.main(list(argv[1:]), prog="ma.py %s" % argv[0])
 
 
 def cmd_selftest(a):
@@ -1999,11 +2027,19 @@ def build_parser():
                    help="kettős (független) adatkinyerés: compare, reconcile, report, status (X009); súgó: "
                         "ma.py kettos -h")
 
+    # ---- Metaheadhunter — saját parancssor: metaelemzes.headhunter (az argparse előtt ágazik el)
+    sub.add_parser("headhunter", aliases=["metaheadhunter"], add_help=False,
+                   help="meglévő metaanalízisek bányászata (Metaheadhunter): init, sources [--check], find, "
+                        "extract, resolve, dedupe, overlap, screen, update-search, merge, prisma, signoff, export; "
+                        "súgó: ma.py headhunter -h")
+
     # ---- v1: E4c ábrák a futás plot_data.json-jából
-    fg = sub.add_parser("figure", aliases=["abra"], help="kumulatív / buborék / leave-one-out ábra (motor-SVG) a "
-                        "plot_data.json-ból, más nyelven vagy rétegekkel")
-    fg.add_argument("--plot", required=True, help="a futás mappája, run.json-ja vagy plot_data.json-ja")
-    fg.add_argument("--kind", required=True, choices=list(PIPE_FIGURE_KINDS))
+    fg = sub.add_parser("figure", aliases=["abra"], help="a futás ábrái (motor-SVG) más nyelven vagy rétegekkel: "
+                        "kumulatív / buborék / leave-one-out a plot_data.json-ból; forest / funnel / Doi a futás "
+                        "változatlan adataiból újrarajzolva (fidelitás-ellenőrzéssel)")
+    fg.add_argument("--plot", required=True, help="a futás mappája, run.json-ja vagy plot_data.json-ja (forest / "
+                    "funnel / doi: a mappa vagy a run.json)")
+    fg.add_argument("--kind", required=True, choices=list(PIPE_FIGURE_KINDS) + ["forest", "funnel", "doi"])
     fg.add_argument("--lang", default="hu", choices=LANGS)
     fg.add_argument("--annotate", action="store_true", help="elnevezett rétegek és soronkénti csoportok (data-*)")
     fg.add_argument("--out", help="az SVG fájl (alap: stdout)")
@@ -2021,6 +2057,9 @@ def main(argv=None):
     if sub_rc is not None:
         return sub_rc
     sub_rc = _kettos_subcommand(list(argv) if argv is not None else sys.argv[1:])
+    if sub_rc is not None:
+        return sub_rc
+    sub_rc = _headhunter_subcommand(list(argv) if argv is not None else sys.argv[1:])
     if sub_rc is not None:
         return sub_rc
     parser = build_parser()

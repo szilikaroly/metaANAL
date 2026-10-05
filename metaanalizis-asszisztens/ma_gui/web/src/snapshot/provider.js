@@ -6,7 +6,8 @@
  *     (status/severity/stage/agent, limit) a data.items-en; a KB-kereső csak a beágyazott tételekben keres;
  *   - író kérés (POST/PUT): semmi sem íródik — párbeszédablak a PONTOS paranccsal (Windows és macOS/Linux
  *     alakban, másolható; a platformé rögtön a vágólapra kerül), a kérés READ_ONLY hibával zárul;
- *   - olvasó POST (validálás, explore, átváltó, fájl-URL): a beágyazott eredmény, vagy csendes READ_ONLY.
+ *   - olvasó POST (validálás, kettős összevetés, explore, átváltó, fájl-URL): a beágyazott eredmény, vagy csendes
+ *     READ_ONLY.
  * Hálózatot nem használ (a lap CSP-je: connect-src 'none'); munkamenet, token és változásfigyelés nincs.
  * Számot nem formáz: minden számszöveg a motoré; itt csak darabszám és azonosító jelenik meg.
  */
@@ -221,6 +222,11 @@
     if (method === 'POST' && path === '/api/validate' && body && body.dataset) {
       var v = ROUTES[key('POST', path, { dataset: body.dataset })];
       if (v) { return clone(v); }
+    }
+    // kettős kinyerés: a beágyazott összevetés kimenetenként (csak adattáblákkal készül)
+    if (method === 'POST' && path === '/api/compare' && body && body.outcome) {
+      var cmp = ROUTES[key('POST', path, { outcome: body.outcome })];
+      if (cmp) { return clone(cmp); }
     }
     var c = classify(method, path, body || {});
     if (c.kind === 'write') {

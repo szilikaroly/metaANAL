@@ -62,7 +62,7 @@
   "access": "institutional",
   "url": "https://www.scopus.com/",
   "claude_integration": "kézi (böngésző, intézményi; Magyarországon jellemzően EISZ-en át — ellenőrizendő); programból Scopus API (api_key, dev.elsevier.com, intézményi IP-ről)",
-  "notes": "Cheung 2016 (p. 123; K-CHE16-011), Morvaridzadeh 2020 (p. 2 §2.1) és Zhang 2022 (p. 6; K-ZHA22-015) nevezi meg; a hozzáférési modellt a források nem közlik (K-MOR20-011). A Scopus API-kulcs lehetőségét az ESZKOZOK_ES_HOZZAFERESEK.md 6. pontja írja le. Klinikai áttekintésben a Web of Science-szel felcserélhető kiegészítő forrás (D-S03-001).",
+  "notes": "Cheung 2016 (p. 123; K-CHE16-011), Morvaridzadeh 2020 (p. 2 §2.1) és Zhang 2022 (p. 6; K-ZHA22-015) nevezi meg; a hozzáférési modellt a források nem közlik (K-MOR20-011). A Scopus API-kulcs lehetőségét az ESZKOZOK_ES_HOZZAFERESEK.md 6. pontja írja le. Klinikai áttekintésben a Web of Science-szel felcserélhető kiegészítő forrás (D-S03-001). A Metaheadhunter (`ma.py headhunter`) a kulcsot csak környezeti változóból olvassa (MA_SCOPUS_APIKEY; intézményi hálózaton kívül MA_SCOPUS_INSTTOKEN); a saját gépen igazolás: `ma.py headhunter sources --check --sources scopus` (ESZKOZOK_ES_HOZZAFERESEK.md 6a).",
   "source_ids": "cheung2016,morvaridzadeh2020,zhang2022_jslhr"
  },
  {
@@ -271,7 +271,7 @@
   "access": "free",
   "url": "https://openalex.org/",
   "claude_integration": "WebFetch API (api.openalex.org; a kérésben e-mail-címmel — 'polite pool'); szk-plugins: composer (kiegészítő harvest, 5D validálás)",
-  "notes": "kiegészítés: a feltöltött források nem említik. Csak kiegészítő felderítésre és metaadat-ellenőrzésre: lefedettsége és rangsorolása nem azonos a bibliográfiai adatbázisokéval, ezért a dokumentált adatbázis-keresést nem helyettesíti (D-S03-011). Az ESZKOZOK_ES_HOZZAFERESEK.md 6. szerint kulcs nem kell, elég az e-mail-cím (D-S00-012); a hozzáférési feltételeket (kulcs, kvóta) használat előtt ellenőrizd. A source_id a módszertani igényt jelöli, nem az eszköz ajánlását.",
+  "notes": "kiegészítés: a feltöltött források nem említik. Csak kiegészítő felderítésre és metaadat-ellenőrzésre: lefedettsége és rangsorolása nem azonos a bibliográfiai adatbázisokéval, ezért a dokumentált adatbázis-keresést nem helyettesíti (D-S03-011). Az ESZKOZOK_ES_HOZZAFERESEK.md 6. szerint kulcs nem kell, elég az e-mail-cím (D-S00-012); a hozzáférési feltételeket (kulcs, kvóta) használat előtt ellenőrizd. A lista-lekérdezések kulcs nélküli napi kerete IP-nként közös és gyorsan elfogyhat; a Metaheadhunter (`ma.py headhunter`) ingyenes saját kulcsot a MA_OPENALEX_APIKEY környezeti változóból használ (ellenőrzés: `ma.py headhunter sources --check`). A source_id a módszertani igényt jelöli, nem az eszköz ajánlását.",
   "source_ids": "cochrane_handbook"
  },
  {

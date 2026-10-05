@@ -45,9 +45,10 @@ MARKETPLACE_NAME = "anamnezis-asszisztens"
 AUTHOR = "Szili Károly"
 REPOSITORY = "https://github.com/szilikaroly/anamnezis-asszisztens"
 DISPLAY_NAME = "Metaanalízis-asszisztens"
-DESCRIPTION = ("Szisztematikus áttekintés és metaanalízis Claude Code-ban: orkesztrátor és három alágens (tervező, "
-               "ellenőrző, értékelő), metafor-ral validált számítási motor (csak Python standard könyvtár), "
-               "SQL-tudásbázis, projektnapló szakaszkapukkal és helyi grafikus munkapad.")
+DESCRIPTION = ("Szisztematikus áttekintés és metaanalízis Claude Code-ban: orkesztrátor és négy alágens (tervező, "
+               "ellenőrző, értékelő, Metaheadhunter — meglévő metaanalízisek bányászata), metafor-ral validált "
+               "számítási motor (csak Python standard könyvtár), SQL-tudásbázis, projektnapló szakaszkapukkal és "
+               "helyi grafikus munkapad.")
 MARKETPLACE_DESCRIPTION = ("Szili Károly Claude Code-pluginjai: szisztematikus áttekintés és metaanalízis "
                            "(metaanalizis plugin).")
 KEYWORDS = ["meta-analysis", "systematic-review", "metaanalizis", "prisma", "grade", "metafor",

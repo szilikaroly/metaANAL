@@ -214,7 +214,12 @@ async function modalOk(page, label) {
     for (const f of ['png', 'pdf', 'tiff', 'pptx']) {
       check(await p.$eval('#fig-fmt-' + f, (c) => c.disabled), f + ': letiltva');
     }
-    check((await txt(p, '.adp-fmt[data-format="png"]')).indexOf('rsvg-convert') >= 0, 'PNG: átalakító-teendő');
+    // UX-8: a motor-SVG leírása a valós viselkedést mondja (választott nyelv, szakzsargon nélkül), és az azonos
+    // teendő csak egyszer (a többi formátumnál rövid utalás)
+    const pdfTxt = await txt(p, '.adp-fmt[data-format="pdf"]');
+    const pngTxt = await txt(p, '.adp-fmt[data-format="png"]');
+    check((pdfTxt + pngTxt).split('Telepítsd').length - 1 === 1, 'UX-8: a PDF/PNG közös teendője egyszer szerepel');
+    check(pngTxt.indexOf('ugyanaz az ok') >= 0 || pdfTxt.indexOf('ugyanaz az ok') >= 0, 'UX-8: a második formátumnál rövid utalás');
     check((await txt(p, '.adp-fmt[data-format="tiff"]')).indexOf('figure-forge') >= 0, 'TIFF: figure-forge kell');
     check(await p.$eval('#fig-stem', (i) => i.value) === 'fig_forest_o1', 'alapértelmezett fájlnév');
     await p.fill('#fig-stem', '-rossz név');
@@ -269,6 +274,18 @@ async function modalOk(page, label) {
     await go(p, 'figures', { run: RUN_ID });
     await p.waitForSelector('#fig-form');
     check(await p.$eval('#fig-r-ff', (r) => !r.disabled && r.checked), 'F2: figure-forge elérhető és alapértelmezett');
+    // UX-8: a motor-SVG leírása a valós viselkedést mondja (választott nyelv, szakzsargon nélkül) — a mostani motorral
+    // (render_figure megvan: nincs „frissítsd a motort” teendő; a fixture-világ ezt a függvényt hiányzónak mutatja)
+    const okView = FIG.routes.filter((r) => r.method === 'GET' && r.path === '/api/figures' && (r.query || {}).fx === 'ok')[0];
+    await p.evaluate((env) => {
+      const e = JSON.parse(JSON.stringify(env));
+      e.data.renderers.forEach((r) => { if (r.id === 'engine') { r.render_fn = 'render_figure'; r.remedy = null; } });
+      window.MA.dev.fixtures.route('GET', '/api/figures', () => ({ envelope: e }), { first: true });
+    }, okView.envelope);
+    await go(p, 'figures', { run: RUN_ID, lang: 'hu' });
+    await p.waitForSelector('#fig-form');
+    const engNote = await p.evaluate(() => { const r = document.getElementById('fig-r-engine'); const box = r && r.closest('.adp-choice-row'); return box ? box.textContent : ''; });
+    check(engNote.indexOf('választott nyelven') >= 0 && engNote.indexOf('angol felirat') < 0 && engNote.indexOf('U+2212') < 0, 'UX-8: motor-SVG: felirat a választott nyelven, nincs „U+2212” (' + engNote.slice(0, 120) + ')');
     for (const f of ['pdf', 'png', 'tiff', 'pptx']) {
       check(await p.$eval('#fig-fmt-' + f, (c) => !c.disabled), f + ': elérhető figure-forge-dzsal');
     }
@@ -357,6 +374,44 @@ async function modalOk(page, label) {
     const down = await mount(DOCS.rob2);
     check(down.indexOf('nem érhető el') >= 0 && down.indexOf('claude plugin install validator') >= 0, '424: érthető üzenet a teendővel');
     await finish(o, 'validator');
+  });
+
+  await test('UX-9 / FID-4: H13 mellett nincs „munkapad-teljesség”, a „nem hivatalos” mondat egyszer; a motor-összevetés a kattintáskori dokumentumra', async () => {
+    const o = await openPage('#/capabilities');
+    const p = o.page;
+    await screen(p, 'capabilities');
+    await p.evaluate(() => {
+      // a valódi validator ROBINS-I-válaszának alakja (H13: más tételszámozás → a teljesség nem összevethető)
+      window.MA.dev.fixtures.route('POST', '/api/validator/check', () => ({ envelope: { ok: true, schema: 'szk.ma.validator-check/v1', warnings: [], meta: {}, data: {
+        tool: 'robins-i', mode: 'legacy', legacy: true, validator_version: '1.0.0', complete: false, answered: 25, expected: 28, completeness_text: '25/28',
+        comparable: false, validator_reported: { answered: 25, expected: 28, trusted: true },
+        overall: { algorithm: 'conservative', implied: 'serious', official: false },
+        guards: [{ id: 'H13', effect: 'numbering_differs', message: { hu: 'H13: a validator a ROBINS-I régi tételszámozását használja — a teljessége nem vethető össze a motoréval.', en: 'H13: numbering differs.' } }],
+        notes: [{ hu: 'Ez a validator implikált ítélete (konzervatív szabály), NEM a hivatalos folyamatábra eredménye; az ítélet a Tiéd.', en: 'Not the official flowchart.' }] } } }), { first: true });
+      window.__engDocs = [];
+      const d = { schema: 'szk.appraisal/v1', tool: 'robins-i', scope: 'assignment', answers: { '1.1': { value: 'yes' } }, target: { unit: 'S04', key: 'x1' } };
+      window.__doc = d;
+      const el = window.MA.adaptersValidator.box(() => window.__doc, { id: 'adp-val-run', engine: (doc) => new Promise((res) => {
+        window.__engDocs.push(JSON.stringify(doc));
+        setTimeout(() => res({ answered: 30, expected: 30, overall: { implied: 'serious', algorithm: 'conservative' } }), 50);
+      }) });
+      el.id = 'adp-val-h13';
+      document.getElementById('screen-root').appendChild(el);
+    });
+    await p.click('#adp-val-run');
+    await p.evaluate(() => { window.__doc.answers['1.1'].value = 'no'; });   // a kattintás UTÁNI módosítás nem számít (FID-4)
+    await p.waitForSelector('#adp-val-h13 .adp-val-result');
+    const box = await txt(p, '#adp-val-h13');
+    check(box.indexOf('a munkapad számolja') < 0, 'UX-9: H13 mellett nincs „Teljesség (a munkapad számolja)” sor');
+    check(box.indexOf('átadott tételek: 25/28') >= 0 && box.indexOf('nem összevethető') >= 0, 'UX-9: a 25/28 a validatornak átadott tételek, nem összevethető');
+    check(box.split('NEM a hivatalos folyamatábra').length - 1 === 1, 'UX-9: a „nem hivatalos” mondat egyszer');
+    const engDocs = await p.evaluate(() => window.__engDocs);
+    check(engDocs.length === 1 && JSON.parse(engDocs[0]).answers['1.1'].value === 'yes', 'FID-4: a motor-ellenőrzés a kattintáskori dokumentumra fut');
+    const cmp = await p.$$eval('#adp-val-h13 .adp-val-cmp li', (ls) => ls.map((l) => l.dataset.k + ':' + l.dataset.agree + ':' + l.textContent));
+    const comp = cmp.filter((x) => x.indexOf('completeness:') === 0)[0] || '';
+    check(/^completeness:0:/.test(comp) && comp.indexOf('25/28') >= 0 && comp.indexOf('30/30') >= 0 && comp.indexOf('H13') >= 0, 'FID-4: eltérés a motor 30/30-ával, az ok a H13-őr (' + comp.slice(0, 160) + ')');
+    check(cmp.some((x) => /^overall:1:/.test(x)), 'FID-4: az implikált ítélet egyezik a motoréval');
+    await finish(o, 'validator-H13');
   });
 
   await test('HU ↔ EN és sötét téma az adapter-képernyőkön', async () => {

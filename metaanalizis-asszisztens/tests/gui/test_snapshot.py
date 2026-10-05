@@ -41,6 +41,13 @@ from ma_gui import activity, server, snapshot, store  # noqa: E402
 
 BCG = os.path.join(ROOT, "peldak", "bcg_oltas_RR.csv")
 CELL_MARKER = "54321"                    # egy n1-cella (Hart & Sutherland 1977) egyedi értéke
+# a hiány-ellenőrzés hexa- és számkörnyezetet kizáró mintával, hogy egy sha256-ban vagy hosszabb számban
+# véletlenül előforduló „54321” ne adjon hamis találatot
+CELL_MARKER_RE = re.compile(r"(?<![0-9A-Za-z])%s(?![0-9A-Za-z])" % CELL_MARKER)
+
+
+def has_cell_marker(text):
+    return CELL_MARKER_RE.search(text) is not None
 QUOTE_MARKER = "IDEZETMARKER-7f3a"
 PRIVATE_MARKER = "PRIVATMARKER-c0ffee"
 PDF_MARKER = b"PDFTARTALOMMARKER-91"
@@ -242,7 +249,8 @@ class TemplateAndCspTests(_ProjectCase):
                   "stage": "S09", "kb_refs": ["D-S09-007", "V011"], "alternatives": "fix", "supersedes": 2,
                   "severity": "major", "title": "Cím", "detail": "r", "evidence": "e", "id": 3, "status": "fixed",
                   "resolution": "javítva", "verdict": "PASS", "summary": "ok", "mode": "commit",
-                  "spec": {"name": "o1_primary"}}
+                  "spec": {"name": "o1_primary"}, "options": {"question": "BCG és TBC"}, "target": "rv-pmid-1",
+                  "value": "include", "reason": "PICO"}
         parser = engine_cli.build_parser()
         seen = 0
         for c in self.data["commands"]:
@@ -255,6 +263,12 @@ class TemplateAndCspTests(_ProjectCase):
             elif argv[1:3] == ["gui", "audit-export"]:
                 from ma_gui import audit_export
                 audit_export.build_parser().parse_args(argv[3:])
+            elif argv[1] == "headhunter":
+                # a Metaheadhunter saját parancssora (ma.py headhunter … → metaelemzes.headhunter.cli)
+                from metaelemzes.headhunter import cli as hh_cli
+                with contextlib.redirect_stderr(io.StringIO()):
+                    ns = hh_cli.build_parser().parse_args(argv[2:])
+                self.assertTrue(hasattr(ns, "func"), argv)
             else:
                 with contextlib.redirect_stderr(io.StringIO()):
                     ns = parser.parse_args(argv[1:])
@@ -345,7 +359,7 @@ class RedactionMatrixTests(unittest.TestCase):
         env = d["routes"][self._table_key()]
         self.assertFalse(env["ok"])
         self.assertIn("B osztály", env["error"]["message"])
-        self.assertTrue(CELL_MARKER not in text, "B: cellaérték (tábla, eredet, ábra-oszlop) nem kerülhet bele")
+        self.assertFalse(has_cell_marker(text), "B: cellaérték (tábla, eredet, ábra-oszlop) nem kerülhet bele")
         self.assertFalse(d["manifest"]["policy"]["include"]["data_tables"])
         keys = [r["key"] for r in d["manifest"]["redactions"]]
         self.assertIn("data_tables", keys)
@@ -372,7 +386,7 @@ class RedactionMatrixTests(unittest.TestCase):
         text, d, info = self.out["C"]
         self.assertFalse(d["routes"][self._table_key()]["ok"])
         self.assertIn("C osztály", d["routes"][self._table_key()]["error"]["message"])
-        self.assertTrue(CELL_MARKER not in text, "nem szerepelhet: %r" % (CELL_MARKER,))
+        self.assertFalse(has_cell_marker(text), "nem szerepelhet: %r" % (CELL_MARKER,))
         with self.assertRaises(snapshot.SnapshotError) as cm:
             build(self.roots["C"], self.home, include={"data_tables": True})
         self.assertEqual(cm.exception.code, "FORBIDDEN")
