@@ -231,8 +231,11 @@ class TestMantelHaenszelPeto(unittest.TestCase):
         self.assertTrue(math.isnan(r.stat) and math.isnan(r.p))
         self.assertTrue(r.warnings)
         for rv in ("sato", "gr"):
-            M.mantel_haenszel([0, 0], [50, 10], [50, 10], [50, 10], measure="RD", rd_var=rv)
-            M.mantel_haenszel([10, 20], [10, 20], [10, 20], [10, 20], measure="RD", rd_var=rv)
+            # rma.mh(measure="RD"): b -1, se 0, ill. b 0, se 0 (mindkét varianciaképlet 0-t ad)
+            r = M.mantel_haenszel([0, 0], [50, 10], [50, 10], [50, 10], measure="RD", rd_var=rv)
+            self.assertEqual((r.estimate, r.se), (-1.0, 0.0), rv)
+            r = M.mantel_haenszel([10, 20], [10, 20], [10, 20], [10, 20], measure="RD", rd_var=rv)
+            self.assertEqual((r.estimate, r.se), (0.0, 0.0), rv)
 
     def test_rd_zero_vs_full(self):
         r = M.mantel_haenszel([0], [2], [50], [50], measure="RD")

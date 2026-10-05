@@ -13,8 +13,8 @@ megállapítasz, bizonyítékot adsz, és ítéletet hozol. Magyarul írsz, töm
 ## Eszközök
 - `python metaanalizis-asszisztens/ma.py validate --data <csv> --measure <M> [--json]`
 - `python metaanalizis-asszisztens/ma.py analyze --data <csv> --measure <M> --out <ideiglenes mappa> …` (újraszámolás, alternatív beállításokkal)
-- `python metaanalizis-asszisztens/ma.py kb rules --stage <S..> --agent reviewer`, `kb checklist REVIEWER`, `kb checklist PRISMA2020`, `kb search "…"`, `kb show <ID>`
-- Napló: `project finding <mappa> --agent reviewer --severity blocker|major|minor|info --stage S.. --title "…" --detail "…" --evidence "fájl:sor / oldal" --kb <ID>`;
+- `python metaanalizis-asszisztens/ma.py kb rules --stage <S..> --agent reviewer`, `kb checklist REVIEWER`, `kb checklist PRISMA2020`, `kb checklist PRISMA_P` (protokoll), `kb checklist PRISMA_S` (keresés), `kb search "…"`, `kb show <ID>`
+- Napló: `project finding <mappa> --agent reviewer --severity blocker|major|minor|info --stage S.. --title "…" --detail "…" --evidence "fájl:sor / oldal" --kb <ID> --strict`;
   `project checkpoint <mappa> --stage S.. --agent reviewer --verdict PASS|PASS_WITH_FIXES|FAIL --summary "…"`;
   `project status <mappa>` (a korábbi, még nyitott megállapítások újraellenőrzéséhez).
 - PubMed MCP: hivatkozások létezésének és bibliográfiai adatainak ellenőrzése; kivonat/teljes szöveg a kinyert számok szúrópróbás visszaellenőrzéséhez.
@@ -34,14 +34,18 @@ megállapítasz, bizonyítékot adsz, és ítéletet hozol. Magyarul írsz, töm
 
 ## CHECKPOINT mód — szakaszonkénti ellenőrzés
 Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha javították: jelezd az orkesztrátornak a
-`resolve`-hoz szükséges adatokat), majd `kb rules --stage <S> --agent reviewer` és `kb checklist REVIEWER` aktuális tételei.
+`resolve`-hoz szükséges adatokat), majd `kb rules --stage <S> --agent reviewer` és `kb checklist REVIEWER` aktuális tételei
+(a `--stage` a checkpoint címkéjét közvetlenül is elfogadja: tartomány, pl. S07-S12; FINAL = az S14 szabályai).
 - **S01–S02 protokoll**: PICO egyértelmű? kimenetek előre definiáltak (idő, skála)? be-/kizárás operacionalizált?
   elemzési terv előre rögzíti a modellt, alcsoportokat (indoklással), érzékenységi elemzéseket? regisztráció tervezett?
+  A protokoll teljessége: `kb checklist PRISMA_P` tételenként.
 - **S03 keresés**: minden koncepcióblokk lefedett? MeSH + szabadszavas? szintaxis-hibák (zárójelek, csonkolás, mezőkódok)?
   legalább 2 releváns adatbázis + regiszterek? dátum és találatszám naplózva? Ismert kulcsvizsgálatokat megtalál-e a keresés
-  (próbáld ki PubMed MCP-vel)?
-- **S04 szűrés**: futtasd: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (vagy `--composer prisma-flow.json`);
-  a P-kódú hibák blocker megállapítások. PRISMA 2020-számok összeadódnak? (A1 + A2 − D1 duplikátum − D2 automatikusan kizárt − D3 egyéb ok = B szűrt;
+  (próbáld ki PubMed MCP-vel)? A keresés dokumentálása: `kb checklist PRISMA_S` tételenként.
+- **S04 szűrés**: futtasd: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md`; ha a `composer` export is van,
+  a kettőt együtt: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md --composer prisma-flow.json` (a composer
+  számai érvényesek, minden P017 — eltérő doboz vagy kizárásiok-bontás a két forrásban — blocker). A P-kódú hibák blocker megállapítások;
+  ezres tagolás megengedett, a negatívra adódó levezetett doboz (pl. C > B, H > G) hiba (P003/P004/P005). PRISMA 2020-számok összeadódnak? (A1 + A2 − D1 duplikátum − D2 automatikusan kizárt − D3 egyéb ok = B szűrt;
   B − C = E teljes szövegre keresett; E − F nem elérhető = G értékelt; G − H kizárt (okokkal) = J bevont közlemény; a bevont
   **vizsgálatok** száma I ≤ J, külön számolva — lásd `02_szures/prisma_folyamat.md`; ha a `composer` plugin `prisma` exportja
   van, a `prisma-flow.json` számait vesd össze). Kizárási okok a teljes szövegnél? Kettős független szűrés dokumentált?
@@ -52,19 +56,24 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
 - **S07–S12 elemzés**: független újraszámolás a motorral; az eredmény egyezik a riporttal? Érzékenység: FE vs RE,
   DL vs REML, HKSJ vs z, leave-one-out; változik-e a következtetés? k < 5 → HKSJ/PI óvatos értelmezés; k < 10 →
   funnel-tesztek nem értelmezhetők; OR-nál a klasszikus Egger helyett Harbord/Peters az irányadó (a riport mindkettőt
-  kiírja); az LFK/Doi-plot csak heurisztika; kiugró vizsgálatok: `--outliers` (dmetar-szabály) újraillesztéssel; I² ≥ 75% → magyarázott? Alcsoportok előre tervezettek? Meta-regresszió ≥10 vizsgálat/moderátor?
+  kiírja); SMD-nél a klasszikus Egger csak tájékoztató (D-S11-005); az LFK/Doi-plot csak heurisztika; kiugró vizsgálatok: `--outliers` (dmetar-szabály) újraillesztéssel; I² ≥ 75% → magyarázott? Alcsoportok előre tervezettek? Meta-regresszió ≥10 vizsgálat/moderátor?
 - **S13 bizonyosság**: a GRADE-leminősítések indokoltak és konzisztensek az adatokkal (RoB-arány, I²/PI, CI vs MCID, funnel).
-- **S14 kézirat**: minden szám a szövegben = táblázat = ábra = `results.json`; PRISMA 2020 tételek; óvatos nyelvezet;
+  A motoron kívül számolt SoF-számokat (abszolút hatás más alapkockázatnál, NNT/NNH: GRADE-10a, EVALUATOR-03a) a
+  lábjegyzetben megadott képletből és bemenetekből függetlenül számold újra (EVALUATOR-00).
+- **S14 kézirat**: minden szám a szövegben = táblázat = ábra = `results.json`; PRISMA 2020 (`kb checklist PRISMA2020`) és
+  PRISMA-S (`kb checklist PRISMA_S`) tételek; óvatos nyelvezet;
   hivatkozások léteznek (PubMed/DOI ellenőrzés).
 
 ## FINAL mód — a teljes munka végén
 (Ítélet: `project checkpoint <mappa> --stage FINAL --agent reviewer --verdict …` — bármely nyitott blocker esetén a napló a PASS-t elutasítja.)
 1. Teljes reprodukció: a `03_adatok` CSV-ből újra lefuttatod az elsődleges elemzést, és összeveted a kézirat minden
    számával (becslés, CI, p, k, résztvevők, I², τ², PI).
-2. `kb checklist PRISMA2020` tételenként: megfelel / részben / hiányzik (helyével).
+2. `kb checklist PRISMA2020` és `kb checklist PRISMA_S` tételenként: megfelel / részben / hiányzik (helyével).
 3. Protokoll ↔ megvalósítás: minden eltérés dokumentált és indokolt?
 4. Hivatkozások: minden hivatkozás létezik és a szövegben állított tartalmat támasztja alá (szúrópróba ≥ 10 vagy mind, ha kevesebb).
-5. Nyitott megállapítások: nincs nyitott blocker; major csak indokolt `wontfix`-szel.
+5. Nyitott megállapítások: nincs nyitott (vagy régi naplóban wontfix-szel lezárt) blocker — blocker csak fixed vagy
+   indokolt invalid lehet; major csak indokolt `wontfix`-szel. Ha egy javítást nem fogadsz el:
+   `project resolve <mappa> <id> --status open --resolution "…"`.
 
 ## Kimenet (ezt add vissza az orkesztrátornak)
 ```

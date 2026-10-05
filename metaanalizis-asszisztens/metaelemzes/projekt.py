@@ -5,7 +5,9 @@ szabályaira hivatkozik (kb_refs).
 
 Kapu (gate): PASS / PASS_WITH_FIXES nem rögzíthető, amíg az adott szakaszra (vagy szakasz nélkül)
 nyitott 'blocker' megállapítás van; a záró, FINAL ellenőrzőpontnál bármely szakasz nyitott blockere
-elég az elutasításhoz. A szakaszkód csak S00–S14, tartomány (pl. S01-S02 → S01, S02) vagy FINAL lehet.
+elég az elutasításhoz. Blocker csak fixed vagy indokolt invalid státusszal zárható (a régi naplóban
+wontfix-szel lezárt blocker továbbra is blokkol); a megállapítás újranyitható (open).
+A szakaszkód csak S00–S14, tartomány (pl. S01-S02 → S01, S02) vagy FINAL lehet.
 """
 import datetime
 import hashlib
@@ -181,10 +183,11 @@ def _check_agent(agent, warnings):
         warnings.append("Ismeretlen ágensnév: %r (ismert: %s) — a napló így rögzíti." % (agent, ", ".join(KNOWN_AGENTS)))
 
 
-def check_kb_refs(kb_refs, kb_db=None):
+def check_kb_refs(kb_refs, kb_db=None, notes=None):
     """KB-hivatkozások ellenőrzése a tudásbázisban → (normalizált szöveg, ismeretlen azonosítók, hiba).
-    Elválasztó: vessző, pontosvessző, '|' vagy szóköz. Ha a tudásbázis nem érhető el, minden
-    azonosító ellenőrizetlen, és a harmadik elem a hiba leírása."""
+    Elválasztó: vessző, pontosvessző, '|' vagy szóköz. A szövegrész-azonosító (kb search '#<chunk_id>')
+    a stabil '<forrás>#<sorszám>' alakban kerül a naplóba (notes listába: a csere leírása). Ha a
+    tudásbázis nem érhető el, minden azonosító ellenőrizetlen, és a harmadik elem a hiba leírása."""
     if kb_refs is None:
         return None, [], None
     ids = []
@@ -195,10 +198,18 @@ def check_kb_refs(kb_refs, kb_db=None):
         return None, [], None
     try:
         from . import kb
-        known = kb.existing_ids(ids, kb_db)
+        canon = kb.canonical_ids(ids, kb_db)
     except Exception as exc:   # a napló a tudásbázis hibája esetén is használható maradjon
         return ",".join(ids), ids, "a tudásbázis nem érhető el (%s: %s)" % (type(exc).__name__, exc)
-    return ",".join(ids), [i for i in ids if i not in known], None
+    refs = []
+    for i in ids:
+        r = canon.get(i) or i
+        if r != i and notes is not None:
+            notes.append("Szövegrész-hivatkozás stabil alakban rögzítve: %s → %s (a sorszám-azonosító a kb ingest "
+                         "után mást jelölhet)" % (i, r))
+        if r not in refs:
+            refs.append(r)
+    return ",".join(refs), [i for i in ids if canon.get(i) is None], None
 
 
 def _prepare(agent, stage, kb_refs, kb_db, strict, warnings, check_kb=True):
@@ -207,7 +218,7 @@ def _prepare(agent, stage, kb_refs, kb_db, strict, warnings, check_kb=True):
         _check_agent(agent, warnings)
     refs, unknown, err = (kb_refs, [], None)
     if check_kb:
-        refs, unknown, err = check_kb_refs(kb_refs, kb_db)
+        refs, unknown, err = check_kb_refs(kb_refs, kb_db, warnings)
     if unknown:
         msg = ("Ismeretlen tudásbázis-azonosító(k): %s — ellenőrizd: kb show <ID> / kb search; kitalált "
                "azonosítót ne adj meg." % ", ".join(unknown)) if err is None else \
@@ -253,22 +264,44 @@ def add_finding(project_dir, agent, severity, title, detail=None, stage=None, ev
         con.close()
 
 
+RESOLVE_STATUSES = ("fixed", "wontfix", "invalid", "open")
+
+
 def resolve_finding(project_dir, finding_id, status, resolution):
+    """Megállapítás lezárása (fixed | wontfix | invalid) vagy újranyitása (open). Blocker csak fixed vagy
+    indokolt invalid státusszal zárható. Újranyitáskor a korábbi lezárás a megoldás szövegében megmarad."""
+    if status not in RESOLVE_STATUSES:
+        raise ValueError("státusz: %s" % ", ".join(RESOLVE_STATUSES))
     con = connect(project_dir)
-    n = con.execute("UPDATE finding SET status=?, resolution=?, resolved_ts=? WHERE id=?",
-                    (status, resolution, _now(), finding_id)).rowcount
-    con.commit()
-    con.close()
-    if not n:
-        raise ValueError("nincs ilyen megállapítás: %s" % finding_id)
+    try:
+        row = con.execute("SELECT severity, status, resolution FROM finding WHERE id=?", (finding_id,)).fetchone()
+        if row is None:
+            raise ValueError("nincs ilyen megállapítás: %s" % finding_id)
+        if row["severity"] == "blocker" and status == "wontfix":
+            raise ValueError("A #%s blocker: csak fixed vagy indokolt invalid státusszal zárható, wontfix-szel nem — "
+                             "javítatlan blocker mellett a szakasz nem kaphat PASS-t." % finding_id)
+        if row["severity"] == "blocker" and status == "invalid" and not (resolution or "").strip():
+            raise ValueError("A #%s blocker invalid státuszú lezárásához indoklás kell." % finding_id)
+        if status == "open":
+            if row["status"] == "open":
+                raise ValueError("a #%s megállapítás már nyitott" % finding_id)
+            con.execute("UPDATE finding SET status='open', resolution=?, resolved_ts=NULL WHERE id=?",
+                        ("újranyitva: %s (korábban %s: %s)" % (resolution, row["status"], row["resolution"] or "–"),
+                         finding_id))
+        else:
+            con.execute("UPDATE finding SET status=?, resolution=?, resolved_ts=? WHERE id=?",
+                        (status, resolution, _now(), finding_id))
+        con.commit()
+    finally:
+        con.close()
 
 
 def open_blockers(con, stages):
-    """A megadott szakaszok PASS-át akadályozó nyitott blockerek. FINAL: bármely szakasz blockere;
-    egyébként a szakasz nélküliek, az érintett szakaszra (vagy azt lefedő tartományra) rögzítettek,
-    és a régi, érvénytelen szakaszcímkéjűek."""
-    rows = con.execute("SELECT id, stage_id, title FROM finding WHERE status='open' AND severity='blocker' "
-                       "ORDER BY id").fetchall()
+    """A megadott szakaszok PASS-át akadályozó blockerek: a nyitottak és a (régi naplóban) wontfix-szel
+    lezártak. FINAL: bármely szakasz blockere; egyébként a szakasz nélküliek, az érintett szakaszra (vagy
+    azt lefedő tartományra) rögzítettek, és a régi, érvénytelen szakaszcímkéjűek."""
+    rows = con.execute("SELECT id, stage_id, title, status FROM finding WHERE status IN ('open','wontfix') "
+                       "AND severity='blocker' ORDER BY id").fetchall()
     if FINAL in stages:
         return rows
     want = set(stages)
@@ -293,7 +326,16 @@ def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None):
                          if FINAL in stages else "ennél a szakasznál (%s)" % ", ".join(stages))
                 raise ValueError("%d nyitott 'blocker' megállapítás van — %s; %s nem adható. Nyitott: %s" % (
                     len(blockers), where, verdict, "; ".join(
-                        "#%d [%s] %s" % (r["id"], r["stage_id"] or "–", r["title"]) for r in blockers)))
+                        "#%d [%s] %s%s" % (r["id"], r["stage_id"] or "–", r["title"],
+                                           " (wontfix — blocker így nem zárható)" if r["status"] == "wontfix" else "")
+                        for r in blockers)))
+        if FINAL in stages and verdict != "FAIL" and warnings is not None:
+            unverified = ["%s #%d: %s" % (t, r["id"], r["kb_unverified"]) for t, cond in (
+                ("decision", " AND status='active'"), ("finding", ""), ("grade", "")) for r in con.execute(
+                "SELECT id, kb_unverified FROM %s WHERE kb_unverified IS NOT NULL%s ORDER BY id" % (t, cond))]
+            if unverified:
+                warnings.append("A záró ellenőrzőpontnál ellenőrizetlen KB-hivatkozás maradt (a ma-ellenorzo szerint "
+                                "blocker; javítás: új döntés --supersedes-szel, --kb … --strict): %s" % "; ".join(unverified))
         rid = None
         for st in stages:
             rid = con.execute("INSERT INTO checkpoint (ts, stage_id, agent, verdict, summary) VALUES (?,?,?,?,?)",
@@ -308,38 +350,62 @@ _GRADE_LEVELS = ("very low", "low", "moderate", "high")
 _GRADE_DOWN = ("risk_of_bias", "inconsistency", "indirectness", "imprecision", "publication_bias")
 _SIGNED = re.compile(r"^\s*([+\-\u2212\u2013])\s*([0-3])(?![0-9.,])")
 _ZERO = re.compile(r"^\s*0(?![0-9.,])")
+# „nincs” jelentésű szöveg ('nincs', 'nincs felminősítés', 'none', '–', 'n/a'): 0 lépés
+_NONE = re.compile(r"^\s*(?:[-\u2013\u2014\u2212]+|n/?a|none|no(?: upgrades?)?|not applicable|nem alkalmazható|"
+                   r"nincs(?:en)?(?: (?:fel|le)minősítés)?)\s*(?:$|[.,;:(])", re.I)
 
 
 def _grade_step(text):
-    """A domén-szöveg elején álló előjeles lépés (pl. '−1 súlyos' → -1, '+1 nagy hatás' → +1, '0' → 0);
-    None, ha nincs ilyen (szabad szöveg: nem találgatunk)."""
+    """A domén-szöveg elején álló előjeles lépés (pl. '−1 súlyos' → -1, '+1 nagy hatás' → +1, '0' → 0,
+    'nincs' / 'none' / '–' → 0); None, ha nincs ilyen (szabad szöveg: nem találgatunk)."""
     if text is None:
         return None
     m = _SIGNED.match(str(text))
     if m:
         return (1 if m.group(1) == "+" else -1) * int(m.group(2))
-    return 0 if _ZERO.match(str(text)) else None
+    return 0 if (_ZERO.match(str(text)) or _NONE.match(str(text))) else None
 
 
 def grade_consistency(certainty, **domains):
     """A GRADE-bizonyosság és a domén-lépések összhangja. A kiindulás magas (RCT, ROBINS-I) vagy
-    alacsony (megfigyeléses), ezért a bizonyosság [alacsony − L + F, magas − L + F] között lehet
-    (L: a leminősítések összege, F: a felminősítéseké; 'very low'–'high' közé vágva).
-    Csak az előjeles lépést tartalmazó doménekből számol; ellentmondásnál figyelmeztető szöveg, különben None."""
+    alacsony (megfigyeléses); L: a leminősítések összege, F: a felminősítéseké ('very low'–'high' közé
+    vágva). Ha mind az öt leminősítési domén előjeles lépés (és a felminősítés is az, vagy nincs megadva),
+    csak a két kiindulásból elérhető szint fogadható el: magas − L + F vagy alacsony − L + F. Egyébként
+    a [alacsony − L + F, magas − L + F] tartomány, ahol a szabad szövegű (nem pontozott) domén lefelé, a
+    szabad szövegű felminősítés felfelé nyitja a tartományt (nem találgatunk); a meg nem adott és a „nincs”
+    jelentésű ('nincs', 'none', '–', 'n/a') domén 0.
+    Ellentmondásnál figyelmeztető szöveg, különben None."""
     if certainty not in _GRADE_LEVELS:
         return None
     steps = {d: _grade_step(domains.get(d)) for d in _GRADE_DOWN + ("upgrades",)}
     if all(v is None for v in steps.values()):
         return None
+    if (steps["upgrades"] or 0) < 0:
+        return ("A felminősítés nem lehet negatív (%r): a leminősítést a megfelelő doménnél add meg."
+                % domains.get("upgrades"))
+
+    def given(d):
+        return domains.get(d) is not None and str(domains.get(d)).strip() != ""
+
+    unscored = [d for d in _GRADE_DOWN if given(d) and steps[d] is None]
+    up_unknown = given("upgrades") and steps["upgrades"] is None
     down = sum(abs(steps[d]) for d in _GRADE_DOWN if steps[d] is not None)
-    up = abs(steps["upgrades"] or 0)
+    up = steps["upgrades"] or 0
     c = _GRADE_LEVELS.index(certainty) + 1
-    hi = max(1, min(4, 4 - down + up))
-    lo = min(4, max(1, 2 - down + up))
-    if lo <= c <= hi:
-        return None
-    rng = ("csak '%s'" % _GRADE_LEVELS[lo - 1]) if lo == hi else \
-        ("'%s'–'%s'" % (_GRADE_LEVELS[lo - 1], _GRADE_LEVELS[hi - 1]))
+    rct, obs = max(1, min(4, 4 - down + up)), max(1, min(4, 2 - down + up))
+    if all(steps[d] is not None for d in _GRADE_DOWN) and not up_unknown:
+        if c in (rct, obs):
+            return None
+        rng = ("csak '%s'" % _GRADE_LEVELS[rct - 1]) if rct == obs else \
+            ("'%s' (RCT/ROBINS-I kiindulás) vagy '%s' (megfigyeléses kiindulás)" % (
+                _GRADE_LEVELS[rct - 1], _GRADE_LEVELS[obs - 1]))
+    else:
+        hi = 4 if up_unknown else rct
+        lo = 1 if unscored else obs
+        if lo <= c <= hi:
+            return None
+        rng = ("csak '%s'" % _GRADE_LEVELS[lo - 1]) if lo == hi else \
+            ("'%s'–'%s'" % (_GRADE_LEVELS[lo - 1], _GRADE_LEVELS[hi - 1]))
     return ("A bizonyosság ('%s') nem egyeztethető össze a megadott lépésekkel (leminősítés összesen %s, "
             "felminősítés összesen %s): a kiindulástól (RCT: magas; megfigyeléses: alacsony) függően %s lehet. "
             "Ellenőrizd a domének értékét vagy a végső ítéletet."
@@ -447,6 +513,16 @@ def _log_warnings(con):
     for table in ("decision", "finding", "grade"):
         for r in con.execute("SELECT id, kb_unverified FROM %s WHERE kb_unverified IS NOT NULL ORDER BY id" % table):
             out.append("Ellenőrizetlen KB-hivatkozás: %s #%d: %s" % (table, r["id"], r["kb_unverified"]))
+        for r in con.execute("SELECT id, kb_refs FROM %s WHERE kb_refs IS NOT NULL ORDER BY id" % table):
+            rowids = [x for x in re.split(r"[,;|\s]+", r["kb_refs"]) if re.fullmatch(r"#?\d+", x)]
+            if rowids:
+                out.append("Instabil szövegrész-hivatkozás (a sorszám-azonosító a kb ingest után mást jelölhet): "
+                           "%s #%d: %s — add meg '<forrás>#<sorszám>' alakban (kb search)" % (
+                               table, r["id"], ", ".join(rowids)))
+    for r in con.execute("SELECT id, stage_id, title FROM finding WHERE severity='blocker' AND status='wontfix' "
+                         "ORDER BY id"):
+        out.append("Wontfix-szel lezárt blocker: finding #%d [%s] %s — blocker csak fixed vagy indokolt invalid "
+                   "státusszal zárható; a kapukat továbbra is blokkolja" % (r["id"], r["stage_id"] or "–", r["title"]))
     for table in ("decision", "finding", "checkpoint"):
         for r in con.execute("SELECT id, stage_id FROM %s WHERE stage_id IS NOT NULL ORDER BY id" % table):
             if _stored_stages(r["stage_id"]) is None:

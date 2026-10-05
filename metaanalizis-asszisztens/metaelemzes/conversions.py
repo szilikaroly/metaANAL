@@ -72,15 +72,18 @@ def sd_from_ci(lower, upper, n, level=0.95, use_t=True):
     return math.sqrt(n) * (upper - lower) / (2.0 * crit)
 
 
-def se_from_ci(lower, upper, level=0.95, log_scale=False):
-    """Hatásméret SE-je a CI-ből (arányoknál log_scale=True: ln(U), ln(L))."""
+def se_from_ci(lower, upper, level=0.95, log_scale=False, df=None):
+    """Hatásméret SE-je a CI-ből (arányoknál log_scale=True: ln(U), ln(L)); kis mintánál df-fel
+    t-eloszlás (pl. két csoport MD-jénél df = n1 + n2 − 2; Cochrane 6.5.2.3)."""
     _check_level(level)
     _check_interval(lower, upper)
+    if df is not None and not df > 0:
+        raise ConversionError("df > 0 szükséges, kapott: %r" % (df,))
     if log_scale:
         if lower <= 0 or upper <= 0:
             raise ConversionError("log-skálához pozitív határok kellenek")
         lower, upper = math.log(lower), math.log(upper)
-    crit = dist.norm_ppf(0.5 + level / 2.0)
+    crit = dist.t_ppf(0.5 + level / 2.0, df) if df else dist.norm_ppf(0.5 + level / 2.0)
     return (upper - lower) / (2.0 * crit)
 
 
@@ -189,7 +192,13 @@ def corr_from_change(sd_baseline, sd_final, sd_change_):
         if sd is None or not sd > 0:
             raise ConversionError("%s > 0 szükséges, kapott: %r" % (name, sd))
     _check_sd(sd_change_, "a változás SD-je")
-    return (sd_baseline ** 2 + sd_final ** 2 - sd_change_ ** 2) / (2 * sd_baseline * sd_final)
+    r = (sd_baseline ** 2 + sd_final ** 2 - sd_change_ ** 2) / (2 * sd_baseline * sd_final)
+    if abs(r) > 1 + 1e-9:
+        # |SD_b − SD_f| <= SD_változás <= SD_b + SD_f kell (háromszög-egyenlőtlenség)
+        raise ConversionError("a visszaszámolt korreláció (%.4g) a [−1, 1] tartományon kívül esik: a három SD "
+                              "nem lehet ugyanabból a vizsgálatból (a változás SD-je %g és %g között lehet) — "
+                              "ellenőrizd a forrást" % (r, abs(sd_baseline - sd_final), sd_baseline + sd_final))
+    return max(-1.0, min(1.0, r))
 
 
 def split_shared_control(n_control, k_arms):

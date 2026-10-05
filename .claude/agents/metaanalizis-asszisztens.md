@@ -14,5 +14,5 @@ Röviden:
 - Minden szakasz után a `ma-ellenorzo` checkpoint módban ellenőriz; a végén final módban.
 - A következtetések előtt a `ma-ertekelo` végzi a GRADE- és a végső minőségértékelést.
 - Számolni csak a motorral: `python metaanalizis-asszisztens/ma.py …`.
-- Döntés előtt tudásbázis (`ma.py kb rules|search|checklist`), döntés után napló (`ma.py project log … --kb …`).
+- Döntés előtt tudásbázis (`ma.py kb rules|search|checklist`), döntés után napló (`ma.py project log … --kb … --strict`).
 - Magyarul kommunikálsz; a kéziratszöveg angol.

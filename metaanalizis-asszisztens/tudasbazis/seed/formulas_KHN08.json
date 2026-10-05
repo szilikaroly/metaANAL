@@ -26,11 +26,11 @@
   "name": "Variance of the raw MD assuming equal variances",
   "expression": "V_eq = (n1 + n2)/(n1*n2) * Sp^2 ;  SE_eq = sqrt(V_eq)",
   "variables": "n1, n2 = group sample sizes; Sp^2 = pooled within-group variance; V_eq, SE_eq = variance and standard error of Ybar1 - Ybar2.",
-  "engine_ref": null,
+  "engine_ref": "effect_sizes.md",
   "stage_id": "S07",
   "source_id": "khan2020",
   "locator": "Ch8 §8.1(a) p. 161; Ex 8.1 pp. 161–162",
-  "notes": "Worked: Ex 8.1 V_eq = 1.261542, SE_eq = 1.1232. The engine's effect_sizes.md uses only the unequal-variance form."
+  "notes": "Worked: Ex 8.1 V_eq = 1.261542, SE_eq = 1.1232. Engine: effect_sizes.md(vtype='pooled') (`--md-vtype pooled`, metafor vtype 'HO'); the default is the unequal-variance form."
  },
  {
   "formula_id": "F-KHN08-004",
@@ -103,11 +103,11 @@
   "name": "Glass's delta",
   "expression": "Delta = (Xbar1 - Xbar2) / s2",
   "variables": "Xbar1, Xbar2 = treatment and control means; s2 = SD of the control group only.",
-  "engine_ref": null,
+  "engine_ref": "effect_sizes.glass_delta",
   "stage_id": "S07",
   "source_id": "khan2020",
   "locator": "Ch8 §8.2 p. 165",
-  "notes": "Glass, McGaw & Smith 1981. MetaXL 'Glass' uses the same definition. In Ex 8.12 it moves Bonjer from 1.58 to 1.89. Not implemented in the engine."
+  "notes": "Glass, McGaw & Smith 1981. MetaXL 'Glass' uses the same definition. In Ex 8.12 it moves Bonjer from 1.58 to 1.89. Engine: effect_sizes.glass_delta (`ma.py analyze --measure SMD_GLASS`; the default `--glass-vtype METAN` is this uncorrected Δ, as in MetaXL and Stata metan)."
  },
  {
   "formula_id": "F-KHN08-011",
@@ -125,22 +125,22 @@
   "name": "Variance of the SMD with 2(N-2) denominator (book's Var(g); MetaXL 'Cohen')",
   "expression": "Var(g) = (n1 + n2)/(n1*n2) + g^2 / (2*(n1 + n2 - 2)) ;  SE = sqrt(Var)",
   "variables": "n1, n2 = group sizes; g = SMD with (n-1) pooled SD (MetaXL 'Cohen' d); N = n1 + n2.",
-  "engine_ref": null,
+  "engine_ref": "effect_sizes.smd_variance_from_estimate",
   "stage_id": "S07",
   "source_id": "khan2020",
   "locator": "Ch8 pp. 165–166; Ex 8.3 p. 167",
-  "notes": "[R] Worked: Ex 8.3 g = 0.72, N = 76 (assumed 38/38) → Var = 0.056134, SE = 0.236927; reproduces only with 2(N-2) = 148. Same formula reproduces MetaXL 'Cohen' (Q = 163.885 for the operative-time data). Not in the engine (effect_sizes.smd offers LS = 2N, LS2, UB)."
+  "notes": "[R] Worked: Ex 8.3 g = 0.72, N = 76 (assumed 38/38) → Var = 0.056134, SE = 0.236927; reproduces only with 2(N-2) = 148. Same formula reproduces MetaXL 'Cohen' (Q = 163.885 for the operative-time data). Engine: vtype 'METAN_COHEN' (effect_sizes.smd_variance_from_estimate); MetaXL 'Cohen' is `--measure COHEN_D --smd-vtype METAN_COHEN`, a reported g or d is `ma.py convert smd-var --vtype METAN_COHEN`. The engine default LS uses 2N."
  },
  {
   "formula_id": "F-KHN08-013",
   "name": "Variance of Glass's delta",
   "expression": "Var(Delta) = (n1 + n2)/(n1*n2) + Delta^2 / (2*(n2 - 1)) ;  SE = sqrt(Var)",
   "variables": "n1, n2 = treatment and control group sizes; Delta = Glass's delta.",
-  "engine_ref": null,
+  "engine_ref": "effect_sizes.glass_delta",
   "stage_id": "S07",
   "source_id": "khan2020",
   "locator": "Ch8 pp. 165–166",
-  "notes": "The SE paragraph on p. 166 prints '2(n2 - 2)', a typo; MetaXL 'Glass' output (Q = 179.401) matches n2 - 1. Not implemented in the engine."
+  "notes": "The SE paragraph on p. 166 prints '2(n2 - 2)', a typo; MetaXL 'Glass' output (Q = 179.401) matches n2 - 1. Engine: effect_sizes.glass_delta with vtype='METAN' (`--measure SMD_GLASS --glass-vtype METAN`, the default) uses exactly this variance."
  },
  {
   "formula_id": "F-KHN08-014",
@@ -158,11 +158,11 @@
   "name": "MetaXL/admetan 'Hedges' g and its variance",
   "expression": "g = J * d, J = 1 - 3/(4N - 9) ;  Var(g) = N/(n1*n2) + g^2 / (2*(N - 3.94))",
   "variables": "d = SMD with (n-1) pooled SD; N = n1 + n2; n1, n2 = group sizes; J = approximate small-sample correction.",
-  "engine_ref": null,
+  "engine_ref": "effect_sizes.smd_variance_from_estimate",
   "stage_id": "S07",
   "source_id": "khan2020",
   "locator": "Ch8 Ex 8.12 pp. 185–189; Figs 8.4–8.6",
-  "notes": "Reverse-engineered by the note-taker (not printed in the book); agrees with Stata metan/admetan documentation. Reproduces Q = 163.590, Bonjer FE weight 26.0%, Ng 2008 CI (0.68, 1.53); 2(N-2) instead gives Q = 163.65. The engine does not implement the 2(N-3.94) variance; R metafor gives Q = 163.71."
+  "notes": "Reverse-engineered by the note-taker (not printed in the book); agrees with Stata metan/admetan documentation. Reproduces Q = 163.590, Bonjer FE weight 26.0%, Ng 2008 CI (0.68, 1.53); 2(N-2) instead gives Q = 163.65. Engine: vtype 'METAN_HEDGES' (effect_sizes.smd_variance_from_estimate, always with this approximate J): `--measure SMD --smd-vtype METAN_HEDGES`. R metafor gives Q = 163.71."
  },
  {
   "formula_id": "F-KHN08-016",

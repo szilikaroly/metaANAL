@@ -6,7 +6,8 @@ Konvenciók (Cochrane/PRISMA): négyzetméret ∝ súly, gyémánt = összesíte
 vízszintes vonal a gyémánt alatt = predikciós intervallum, arány-mértékeknél log-skála.
 """
 import math
-from xml.sax.saxutils import escape
+import re
+from xml.sax.saxutils import escape as _escape
 
 from .effect_sizes import RATIO_MEASURES, PROPORTION, back_transform, pft_of_p
 
@@ -16,6 +17,15 @@ MUTED = "#6b6b6b"
 GRID = "#d9d9d9"
 ACCENT = "#1f4e79"
 PI_COLOR = "#b03a2e"
+
+# az XML 1.0-ban tiltott vezérlőkarakterek (pl. Word-sortörés \x0b, PDF-ből másolt \x0c)
+_XML_ILLEGAL = re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]")
+
+
+def escape(s):
+    """XML-escape (&, <, >) + a tiltott vezérlőkarakterek szóközre cserélése: az SVG mindig jól formált."""
+    return _escape(_XML_ILLEGAL.sub(" ", str(s)))
+
 
 # az ábrázolási (elemzési) skála ≠ az értelmezési skála: a tengelyfeliratok visszatranszformáltak
 TRANSFORMED_MEASURES = ("PLN", "PLO", "PAS", "PFT", "ZCOR")
@@ -48,18 +58,29 @@ def fmt_triple(est, lo, hi):
 
 
 def _nice_ticks(lo, hi, n=5):
+    """Kerek beosztás [lo, hi]-ban: a legkisebb, legalább span/n szép lépés; ha így kevesebb mint
+    min(4, n) tick jutna, a következő kisebb szép lépés. A tickek i·lépés alakúak (nincs halmozódó
+    lebegőpontos hiba, nincs '-0')."""
     span = hi - lo
     if span <= 0:
         return [lo]
     raw = span / n
     mag = 10 ** math.floor(math.log10(raw))
-    step = min((m * mag for m in (1, 2, 2.5, 5, 10) if m * mag >= raw), default=10 * mag)
-    start = math.ceil(lo / step) * step
-    ticks = []
-    t = start
-    while t <= hi + 1e-12:
-        ticks.append(round(t, 10))
-        t += step
+    steps = [m * mag for m in (1, 2, 2.5, 5, 10)]
+
+    def make(step):
+        out = []
+        for i in range(int(math.ceil(lo / step - 1e-9)), int(math.floor(hi / step + 1e-9)) + 1):
+            t = float("%.12g" % (i * step))
+            out.append(0.0 if t == 0 else t)
+        return out
+
+    cand = [st for st in steps if st >= raw * (1 - 1e-9)]
+    step = cand[0] if cand else 10 * mag
+    ticks = make(step)
+    smaller = [st for st in steps if st < step]
+    while len(ticks) < min(4, n) and smaller:
+        ticks = make(smaller.pop())
     return ticks
 
 
@@ -136,13 +157,22 @@ class _Axis(object):
             ticks = self._transformed_ticks()
         else:
             ticks = [(t, "%g" % t) for t in _nice_ticks(self.lo, self.hi)]
-        # egymásra csúszó feliratok elhagyása
-        out = []
-        for pos, lab in ticks:
-            if out and abs(self.x(pos) - self.x(out[-1][0])) < min_px:
-                continue
-            out.append((pos, lab))
-        return out
+        # egymásra csúszó feliratok elhagyása; a nullhatás tickje (pl. OR = 1) mindig megmarad, a
+        # többi a tőle mért távolság sorrendjében, ha minden megtartottól legalább min_px-re van
+        null = default_null(self.measure)
+        anchor = [t for t in ticks if null is not None and abs(t[0] - null) < 1e-12]
+        if not anchor:
+            out = []
+            for pos, lab in ticks:
+                if out and abs(self.x(pos) - self.x(out[-1][0])) < min_px:
+                    continue
+                out.append((pos, lab))
+            return out
+        out = anchor[:1]
+        for pos, lab in sorted((t for t in ticks if t is not anchor[0]), key=lambda t: abs(t[0] - null)):
+            if all(abs(self.x(pos) - self.x(q)) >= min_px for q, _ in out):
+                out.append((pos, lab))
+        return sorted(out)
 
     def _transformed_ticks(self):
         m, nh = self.measure, self.n_harmonic
@@ -192,8 +222,27 @@ def forest_data(measure, labels, yi, vi, weights_pct, summaries, level=0.95, n_h
             axis_n = len(vals) / sum(1.0 / v for v in vals) if vals else None
         else:
             axis_n = float(n_harmonic)
+    if measure == "PFT" and axis_n:
+        # egy n az egész ábrán: a jelölő, a CI-vonal és a gyémánt a saját feliratának (saját n-nel vagy
+        # m = 1/Var(t)-vel visszatranszformált értékének) tengelyhelyén, a tengely n-jével (axis_n);
+        # az eredeti FT-skálás értékek az 'analysis' mezőben
+        for s in studies:
+            _place_pft(s, ("y", "lo", "hi"), s["display"], axis_n)
+        for sm in list(summaries or []) + [sec["summary"] for sec in sections or [] if sec.get("summary")]:
+            if sm.get("display"):
+                _place_pft(sm, ("estimate", "ci_lower", "ci_upper"), sm["display"], axis_n)
+            if sm.get("pi_display") and sm.get("pi_lower") is not None:
+                _place_pft(sm, ("pi_lower", "pi_upper"), sm["pi_display"], axis_n, "analysis_pi")
     return {"measure": measure, "ratio_scale": measure in RATIO_MEASURES, "level": level,
             "axis_n": axis_n, "studies": studies, "summaries": summaries, "sections": sections}
+
+
+def _place_pft(d, keys, display, axis_n, store="analysis"):
+    d[store] = [d.get(k) for k in keys]
+    for k, v in zip(keys, display):
+        pos = forward_transform("PFT", v, axis_n) if v is not None else None
+        if pos is not None:
+            d[k] = pos
 
 
 def _single_n(n_info, i):

@@ -1,0 +1,881 @@
+{
+ "description": "GET /api/capabilities, POST /api/capabilities/refresh — ma_gui.caps.Caps.report() alakja (components[] + matrix (caps.build_matrix) + problems); állapotok 4.1: ok | unusable | legacy | absent.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/capabilities",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.capabilities-matrix/v1",
+    "data": {
+     "schema": "szk.ma.capabilities-matrix/v1",
+     "generated": "2026-10-04T21:00:00Z",
+     "probing": false,
+     "components": [
+      {
+       "id": "metaelemzes",
+       "plugin": "metaelemzes",
+       "label": {
+        "hu": "motor",
+        "en": "engine"
+       },
+       "state": "ok",
+       "mode": "api",
+       "version": "0.2.0",
+       "handshake": "ok",
+       "home": null,
+       "source": "builtin",
+       "python_version": "3.11.9",
+       "commands": [],
+       "features": [
+        "analyze",
+        "validate",
+        "convert",
+        "prisma",
+        "project",
+        "kb"
+       ],
+       "contracts": [
+        {
+         "name": "szk.ma.validation/v1",
+         "version": 1,
+         "dir": [
+          "out"
+         ],
+         "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+         "local": "match",
+         "ok": true
+        },
+        {
+         "name": "szk.ma.plot/v2",
+         "version": 2,
+         "dir": [
+          "out"
+         ],
+         "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+         "local": "match",
+         "ok": true
+        }
+       ],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [],
+       "problems": [],
+       "todo": null,
+       "note": null,
+       "elapsed_ms": 3
+      },
+      {
+       "id": "validator",
+       "plugin": "validator",
+       "label": "validator",
+       "state": "legacy",
+       "mode": "bridge",
+       "version": "1.0.0",
+       "handshake": "missing",
+       "home": null,
+       "source": "marketplace",
+       "python_version": "3.11.9",
+       "commands": [],
+       "features": [],
+       "contracts": [],
+       "drift": [],
+       "guards": [
+        "H1",
+        "H2",
+        "H3",
+        "H4"
+       ],
+       "known_issues": [
+        {
+         "id": "H3",
+         "summary": "GRADE publication bias 'suspected' unresolved",
+         "fixed_in": "1.1.0"
+        }
+       ],
+       "missing_modules": [],
+       "problems": [
+        {
+         "code": "no_handshake",
+         "level": "warning",
+         "hu": "Nincs --capabilities: verzióhoz rögzített bridge-adapter (V1 kell a JSON-szerződéshez)",
+         "en": "No --capabilities: version-pinned bridge adapter (V1 needed for the JSON contract)"
+        }
+       ],
+       "todo": null,
+       "note": null,
+       "elapsed_ms": 3
+      },
+      {
+       "id": "figure-forge",
+       "plugin": "figure-forge",
+       "label": "figure-forge",
+       "state": "unusable",
+       "mode": null,
+       "version": "0.2.1",
+       "handshake": "failed",
+       "home": null,
+       "source": "marketplace",
+       "python_version": null,
+       "commands": [],
+       "features": [],
+       "contracts": [],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [
+        "matplotlib"
+       ],
+       "problems": [
+        {
+         "code": "missing_modules",
+         "level": "error",
+         "hu": "matplotlib hiányzik",
+         "en": "matplotlib missing"
+        }
+       ],
+       "todo": {
+        "hu": "Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "note": null,
+       "elapsed_ms": 3
+      },
+      {
+       "id": "composer",
+       "plugin": "composer",
+       "label": "composer",
+       "state": "ok",
+       "mode": "flow-json",
+       "version": "1.4.1",
+       "handshake": "ok",
+       "home": null,
+       "source": "marketplace",
+       "python_version": "3.11.9",
+       "commands": [],
+       "features": [
+        "prisma"
+       ],
+       "contracts": [
+        {
+         "name": "szk.prisma-flow/v1",
+         "version": 1,
+         "dir": [
+          "out"
+         ],
+         "sha256": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+         "local": "missing",
+         "ok": true
+        }
+       ],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [],
+       "problems": [],
+       "todo": null,
+       "note": {
+        "hu": "shebang: explicit interpreterrel hívva",
+        "en": "shebang: called with an explicit interpreter"
+       },
+       "elapsed_ms": 3
+      },
+      {
+       "id": "presubmit",
+       "plugin": "presubmit",
+       "label": "presubmit",
+       "state": "absent",
+       "mode": null,
+       "version": null,
+       "handshake": "not_run",
+       "home": null,
+       "source": null,
+       "python_version": null,
+       "commands": [],
+       "features": [],
+       "contracts": [],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [],
+       "problems": [],
+       "todo": {
+        "hu": "Telepítés: claude plugin install presubmit@szk-plugins — vagy add meg a plugin mappáját az SZK_PRESUBMIT_HOME környezeti változóban.",
+        "en": "Install: claude plugin install presubmit@szk-plugins — or set SZK_PRESUBMIT_HOME to the plugin folder."
+       },
+       "note": null,
+       "elapsed_ms": 3
+      }
+     ],
+     "matrix": {
+      "table": {
+       "label": {
+        "hu": "Tábla, élő V-validáció, átváltó, eredet, kettős kinyerés",
+        "en": "Table, live V-validation, converter, provenance, dual extraction"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "teljes",
+        "en": "full"
+       },
+       "plugin": null,
+       "with_plugin": null,
+       "note": null,
+       "guards": []
+      },
+      "plots": {
+       "label": {
+        "hu": "Forest / funnel / Doi / LOO / befolyás / kumulatív / buborék, lefúrás",
+        "en": "Forest / funnel / Doi / LOO / influence / cumulative / bubble, drill-down"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "teljes (interaktív SVG)",
+        "en": "full (interactive SVG)"
+       },
+       "plugin": null,
+       "with_plugin": null,
+       "note": null,
+       "guards": []
+      },
+      "pub_figure": {
+       "label": {
+        "hu": "Publikációs ábra",
+        "en": "Publication figure"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "motor-SVG (EN felirat, rétegek, U+2212) + böngészős PNG „ELŐNÉZET — QC NÉLKÜL” vízjellel",
+        "en": "engine SVG (EN labels, layers, U+2212) + browser PNG with a 'PREVIEW — NO QC' watermark"
+       },
+       "plugin": "figure-forge",
+       "with_plugin": "unusable",
+       "note": {
+        "hu": "matplotlib hiányzik; Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "matplotlib missing; Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "guards": []
+      },
+      "figure_audit": {
+       "label": {
+        "hu": "Ábra-audit",
+        "en": "Figure audit"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "stdlib SVG-ellenőrzés a motor-SVG-n",
+        "en": "stdlib SVG check of the engine SVG"
+       },
+       "plugin": "figure-forge",
+       "with_plugin": "unusable",
+       "note": {
+        "hu": "matplotlib hiányzik; Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "matplotlib missing; Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "guards": []
+      },
+      "rob": {
+       "label": {
+        "hu": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI",
+        "en": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "doménszintű ítélettábla, forgalmi lámpa, a rob oszlop karbantartása",
+        "en": "domain-level judgement table, traffic light, upkeep of the rob column"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "jelző-kérdéses űrlapok, teljesség, implikált ítélet, NOS-csillagok; régi verzió (bridge)",
+        "en": "signalling-question forms, completeness, implied judgement, NOS stars; old version (bridge)"
+       },
+       "guards": []
+      },
+      "probast": {
+       "label": {
+        "hu": "PROBAST+AI",
+        "en": "PROBAST+AI"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "doménszintű ítélet (4 domén × Low/High/Unclear, két menet) + alkalmazhatóság",
+        "en": "domain-level judgement (4 domains × Low/High/Unclear, two passes) + applicability"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "16 + 18 jelző-kérdés, menettel minősített teljesség; régi verzió (bridge); H2: menettel minősített kulcs, cella-alapú olvasás",
+        "en": "16 + 18 signalling questions, pass-qualified completeness; old version (bridge); H2: pass-qualified keys, cell-based reading"
+       },
+       "guards": [
+        "H2"
+       ]
+      },
+      "tripod": {
+       "label": {
+        "hu": "TRIPOD+AI",
+        "en": "TRIPOD+AI"
+       },
+       "standalone": false,
+       "standalone_note": {
+        "hu": "nem elérhető (a tétellista a validator referenciájából jön)",
+        "en": "not available (the item list comes from the validator reference)"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "52 altétel D/E szűréssel, hőtérkép, hiánylista, saját kézirat; régi verzió (bridge); H1: a teljességet a munkapad számolja",
+        "en": "52 sub-items with D/E filter, heat map, gap list, own manuscript; old version (bridge); H1: completeness is computed by the workbench"
+       },
+       "guards": [
+        "H1"
+       ]
+      },
+      "grade": {
+       "label": {
+        "hu": "GRADE + SoF",
+        "en": "GRADE + SoF"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "motor-tanácsadó (grade_help), grade_consistency, SoF a motorból",
+        "en": "engine advisor (grade_help), grade_consistency, SoF from the engine"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "+ validator rollup_grade (V2 után megbízható); régi verzió (bridge); H3: a „Suspected” publikációs torzítás feloldatlan, amíg ember nem dönt",
+        "en": "+ validator rollup_grade (reliable after V2); old version (bridge); H3: publication bias 'Suspected' stays unresolved until a human decides"
+       },
+       "guards": [
+        "H3"
+       ]
+      },
+      "amstar2": {
+       "label": {
+        "hu": "AMSTAR 2",
+        "en": "AMSTAR 2"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "KB AMSTAR2-lista + project audit bizonyíték-javaslatok + kézi besorolás + amstar2_consistency",
+        "en": "KB AMSTAR2 list + project audit evidence hints + manual rating + amstar2_consistency"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "validator rollup_amstar2 (V4 után konvencióval); régi verzió (bridge); H4: kanonikus partial_yes, a besorolás „weakness” konvencióként címkézve",
+        "en": "validator rollup_amstar2 (with explicit convention after V4); old version (bridge); H4: canonical partial_yes, rating labelled as the 'weakness' convention"
+       },
+       "guards": [
+        "H4"
+       ]
+      },
+      "prisma": {
+       "label": {
+        "hu": "PRISMA",
+        "en": "PRISMA"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "kézi űrlap + élő P001–P016 + X014/X015",
+        "en": "manual form + live P001–P016 + X014/X015"
+       },
+       "plugin": "composer",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "a composer-állapot élő olvasása (flow-json); a kézfogás nem deklarál ilyen parancsot — legacy (bridge) mód",
+        "en": "live read of the composer state (flow-json); no such command in the handshake — legacy (bridge) mode"
+       },
+       "guards": []
+      },
+      "prisma_figure": {
+       "label": {
+        "hu": "PRISMA-folyamatábra",
+        "en": "PRISMA flow diagram"
+       },
+       "standalone": false,
+       "standalone_note": {
+        "hu": "önállóan csak a számok és az ellenőrzésük; a rajzot a figure-forge készíti",
+        "en": "standalone: numbers and checks only; the drawing needs figure-forge"
+       },
+       "plugin": "figure-forge",
+       "with_plugin": "unusable",
+       "note": {
+        "hu": "matplotlib hiányzik; Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "matplotlib missing; Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "guards": []
+      },
+      "manuscript": {
+       "label": {
+        "hu": "Kézirat-számok",
+        "en": "Manuscript numbers"
+       },
+       "standalone": false,
+       "standalone_note": {
+        "hu": "—",
+        "en": "—"
+       },
+       "plugin": "presubmit",
+       "with_plugin": "absent",
+       "note": {
+        "hu": "nincs telepítve; Telepítés: claude plugin install presubmit@szk-plugins — vagy add meg a plugin mappáját az SZK_PRESUBMIT_HOME környezeti változóban.",
+        "en": "not installed; Install: claude plugin install presubmit@szk-plugins — or set SZK_PRESUBMIT_HOME to the plugin folder."
+       },
+       "guards": []
+      }
+     },
+     "problems": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr29"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/capabilities/refresh",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.capabilities-matrix/v1",
+    "data": {
+     "schema": "szk.ma.capabilities-matrix/v1",
+     "generated": "2026-10-05T09:30:00Z",
+     "probing": false,
+     "components": [
+      {
+       "id": "metaelemzes",
+       "plugin": "metaelemzes",
+       "label": {
+        "hu": "motor",
+        "en": "engine"
+       },
+       "state": "ok",
+       "mode": "api",
+       "version": "0.2.0",
+       "handshake": "ok",
+       "home": null,
+       "source": "builtin",
+       "python_version": "3.11.9",
+       "commands": [],
+       "features": [
+        "analyze",
+        "validate",
+        "convert",
+        "prisma",
+        "project",
+        "kb"
+       ],
+       "contracts": [
+        {
+         "name": "szk.ma.validation/v1",
+         "version": 1,
+         "dir": [
+          "out"
+         ],
+         "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+         "local": "match",
+         "ok": true
+        },
+        {
+         "name": "szk.ma.plot/v2",
+         "version": 2,
+         "dir": [
+          "out"
+         ],
+         "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+         "local": "match",
+         "ok": true
+        }
+       ],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [],
+       "problems": [],
+       "todo": null,
+       "note": null,
+       "elapsed_ms": 3
+      },
+      {
+       "id": "validator",
+       "plugin": "validator",
+       "label": "validator",
+       "state": "legacy",
+       "mode": "bridge",
+       "version": "1.0.0",
+       "handshake": "missing",
+       "home": null,
+       "source": "marketplace",
+       "python_version": "3.11.9",
+       "commands": [],
+       "features": [],
+       "contracts": [],
+       "drift": [],
+       "guards": [
+        "H1",
+        "H2",
+        "H3",
+        "H4"
+       ],
+       "known_issues": [
+        {
+         "id": "H3",
+         "summary": "GRADE publication bias 'suspected' unresolved",
+         "fixed_in": "1.1.0"
+        }
+       ],
+       "missing_modules": [],
+       "problems": [
+        {
+         "code": "no_handshake",
+         "level": "warning",
+         "hu": "Nincs --capabilities: verzióhoz rögzített bridge-adapter (V1 kell a JSON-szerződéshez)",
+         "en": "No --capabilities: version-pinned bridge adapter (V1 needed for the JSON contract)"
+        }
+       ],
+       "todo": null,
+       "note": null,
+       "elapsed_ms": 3
+      },
+      {
+       "id": "figure-forge",
+       "plugin": "figure-forge",
+       "label": "figure-forge",
+       "state": "unusable",
+       "mode": null,
+       "version": "0.2.1",
+       "handshake": "failed",
+       "home": null,
+       "source": "marketplace",
+       "python_version": null,
+       "commands": [],
+       "features": [],
+       "contracts": [],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [
+        "matplotlib"
+       ],
+       "problems": [
+        {
+         "code": "missing_modules",
+         "level": "error",
+         "hu": "matplotlib hiányzik",
+         "en": "matplotlib missing"
+        }
+       ],
+       "todo": {
+        "hu": "Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "note": null,
+       "elapsed_ms": 3
+      },
+      {
+       "id": "composer",
+       "plugin": "composer",
+       "label": "composer",
+       "state": "ok",
+       "mode": "flow-json",
+       "version": "1.4.1",
+       "handshake": "ok",
+       "home": null,
+       "source": "marketplace",
+       "python_version": "3.11.9",
+       "commands": [],
+       "features": [
+        "prisma"
+       ],
+       "contracts": [
+        {
+         "name": "szk.prisma-flow/v1",
+         "version": 1,
+         "dir": [
+          "out"
+         ],
+         "sha256": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+         "local": "missing",
+         "ok": true
+        }
+       ],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [],
+       "problems": [],
+       "todo": null,
+       "note": {
+        "hu": "shebang: explicit interpreterrel hívva",
+        "en": "shebang: called with an explicit interpreter"
+       },
+       "elapsed_ms": 3
+      },
+      {
+       "id": "presubmit",
+       "plugin": "presubmit",
+       "label": "presubmit",
+       "state": "absent",
+       "mode": null,
+       "version": null,
+       "handshake": "not_run",
+       "home": null,
+       "source": null,
+       "python_version": null,
+       "commands": [],
+       "features": [],
+       "contracts": [],
+       "drift": [],
+       "guards": [],
+       "known_issues": [],
+       "missing_modules": [],
+       "problems": [],
+       "todo": {
+        "hu": "Telepítés: claude plugin install presubmit@szk-plugins — vagy add meg a plugin mappáját az SZK_PRESUBMIT_HOME környezeti változóban.",
+        "en": "Install: claude plugin install presubmit@szk-plugins — or set SZK_PRESUBMIT_HOME to the plugin folder."
+       },
+       "note": null,
+       "elapsed_ms": 3
+      }
+     ],
+     "matrix": {
+      "table": {
+       "label": {
+        "hu": "Tábla, élő V-validáció, átváltó, eredet, kettős kinyerés",
+        "en": "Table, live V-validation, converter, provenance, dual extraction"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "teljes",
+        "en": "full"
+       },
+       "plugin": null,
+       "with_plugin": null,
+       "note": null,
+       "guards": []
+      },
+      "plots": {
+       "label": {
+        "hu": "Forest / funnel / Doi / LOO / befolyás / kumulatív / buborék, lefúrás",
+        "en": "Forest / funnel / Doi / LOO / influence / cumulative / bubble, drill-down"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "teljes (interaktív SVG)",
+        "en": "full (interactive SVG)"
+       },
+       "plugin": null,
+       "with_plugin": null,
+       "note": null,
+       "guards": []
+      },
+      "pub_figure": {
+       "label": {
+        "hu": "Publikációs ábra",
+        "en": "Publication figure"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "motor-SVG (EN felirat, rétegek, U+2212) + böngészős PNG „ELŐNÉZET — QC NÉLKÜL” vízjellel",
+        "en": "engine SVG (EN labels, layers, U+2212) + browser PNG with a 'PREVIEW — NO QC' watermark"
+       },
+       "plugin": "figure-forge",
+       "with_plugin": "unusable",
+       "note": {
+        "hu": "matplotlib hiányzik; Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "matplotlib missing; Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "guards": []
+      },
+      "figure_audit": {
+       "label": {
+        "hu": "Ábra-audit",
+        "en": "Figure audit"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "stdlib SVG-ellenőrzés a motor-SVG-n",
+        "en": "stdlib SVG check of the engine SVG"
+       },
+       "plugin": "figure-forge",
+       "with_plugin": "unusable",
+       "note": {
+        "hu": "matplotlib hiányzik; Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "matplotlib missing; Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "guards": []
+      },
+      "rob": {
+       "label": {
+        "hu": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI",
+        "en": "RoB 2 / ROBINS-I/E / QUADAS-2 / NOS / QUIPS / JBI"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "doménszintű ítélettábla, forgalmi lámpa, a rob oszlop karbantartása",
+        "en": "domain-level judgement table, traffic light, upkeep of the rob column"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "jelző-kérdéses űrlapok, teljesség, implikált ítélet, NOS-csillagok; régi verzió (bridge)",
+        "en": "signalling-question forms, completeness, implied judgement, NOS stars; old version (bridge)"
+       },
+       "guards": []
+      },
+      "probast": {
+       "label": {
+        "hu": "PROBAST+AI",
+        "en": "PROBAST+AI"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "doménszintű ítélet (4 domén × Low/High/Unclear, két menet) + alkalmazhatóság",
+        "en": "domain-level judgement (4 domains × Low/High/Unclear, two passes) + applicability"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "16 + 18 jelző-kérdés, menettel minősített teljesség; régi verzió (bridge); H2: menettel minősített kulcs, cella-alapú olvasás",
+        "en": "16 + 18 signalling questions, pass-qualified completeness; old version (bridge); H2: pass-qualified keys, cell-based reading"
+       },
+       "guards": [
+        "H2"
+       ]
+      },
+      "tripod": {
+       "label": {
+        "hu": "TRIPOD+AI",
+        "en": "TRIPOD+AI"
+       },
+       "standalone": false,
+       "standalone_note": {
+        "hu": "nem elérhető (a tétellista a validator referenciájából jön)",
+        "en": "not available (the item list comes from the validator reference)"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "52 altétel D/E szűréssel, hőtérkép, hiánylista, saját kézirat; régi verzió (bridge); H1: a teljességet a munkapad számolja",
+        "en": "52 sub-items with D/E filter, heat map, gap list, own manuscript; old version (bridge); H1: completeness is computed by the workbench"
+       },
+       "guards": [
+        "H1"
+       ]
+      },
+      "grade": {
+       "label": {
+        "hu": "GRADE + SoF",
+        "en": "GRADE + SoF"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "motor-tanácsadó (grade_help), grade_consistency, SoF a motorból",
+        "en": "engine advisor (grade_help), grade_consistency, SoF from the engine"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "+ validator rollup_grade (V2 után megbízható); régi verzió (bridge); H3: a „Suspected” publikációs torzítás feloldatlan, amíg ember nem dönt",
+        "en": "+ validator rollup_grade (reliable after V2); old version (bridge); H3: publication bias 'Suspected' stays unresolved until a human decides"
+       },
+       "guards": [
+        "H3"
+       ]
+      },
+      "amstar2": {
+       "label": {
+        "hu": "AMSTAR 2",
+        "en": "AMSTAR 2"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "KB AMSTAR2-lista + project audit bizonyíték-javaslatok + kézi besorolás + amstar2_consistency",
+        "en": "KB AMSTAR2 list + project audit evidence hints + manual rating + amstar2_consistency"
+       },
+       "plugin": "validator",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "validator rollup_amstar2 (V4 után konvencióval); régi verzió (bridge); H4: kanonikus partial_yes, a besorolás „weakness” konvencióként címkézve",
+        "en": "validator rollup_amstar2 (with explicit convention after V4); old version (bridge); H4: canonical partial_yes, rating labelled as the 'weakness' convention"
+       },
+       "guards": [
+        "H4"
+       ]
+      },
+      "prisma": {
+       "label": {
+        "hu": "PRISMA",
+        "en": "PRISMA"
+       },
+       "standalone": true,
+       "standalone_note": {
+        "hu": "kézi űrlap + élő P001–P016 + X014/X015",
+        "en": "manual form + live P001–P016 + X014/X015"
+       },
+       "plugin": "composer",
+       "with_plugin": "legacy",
+       "note": {
+        "hu": "a composer-állapot élő olvasása (flow-json); a kézfogás nem deklarál ilyen parancsot — legacy (bridge) mód",
+        "en": "live read of the composer state (flow-json); no such command in the handshake — legacy (bridge) mode"
+       },
+       "guards": []
+      },
+      "prisma_figure": {
+       "label": {
+        "hu": "PRISMA-folyamatábra",
+        "en": "PRISMA flow diagram"
+       },
+       "standalone": false,
+       "standalone_note": {
+        "hu": "önállóan csak a számok és az ellenőrzésük; a rajzot a figure-forge készíti",
+        "en": "standalone: numbers and checks only; the drawing needs figure-forge"
+       },
+       "plugin": "figure-forge",
+       "with_plugin": "unusable",
+       "note": {
+        "hu": "matplotlib hiányzik; Állítsd be a FIGURE_FORGE_PYTHON-t egy matplotlibes értelmezőre.",
+        "en": "matplotlib missing; Set FIGURE_FORGE_PYTHON to an interpreter with matplotlib."
+       },
+       "guards": []
+      },
+      "manuscript": {
+       "label": {
+        "hu": "Kézirat-számok",
+        "en": "Manuscript numbers"
+       },
+       "standalone": false,
+       "standalone_note": {
+        "hu": "—",
+        "en": "—"
+       },
+       "plugin": "presubmit",
+       "with_plugin": "absent",
+       "note": {
+        "hu": "nincs telepítve; Telepítés: claude plugin install presubmit@szk-plugins — vagy add meg a plugin mappáját az SZK_PRESUBMIT_HOME környezeti változóban.",
+        "en": "not installed; Install: claude plugin install presubmit@szk-plugins — or set SZK_PRESUBMIT_HOME to the plugin folder."
+       },
+       "guards": []
+      }
+     },
+     "problems": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr30"
+    }
+   }
+  }
+ ]
+}

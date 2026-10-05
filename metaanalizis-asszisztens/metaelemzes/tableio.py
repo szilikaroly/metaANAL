@@ -5,8 +5,10 @@ tizedesvessző, ezres tagolás, oszlopnév-szinonimák; sorszűrők (--exclude/-
 import codecs
 import csv
 import io
+import math
 import re
 import unicodedata
+from collections import Counter
 
 # kanonikus oszlopnév -> elfogadott szinonimák. Az összevetés kis/nagybetű-, ékezet-,
 # szóköz-, kötőjel- és aláhúzásjel-független (lásd _norm). Ha több fejléc is ugyanarra a
@@ -125,10 +127,69 @@ def canonical_columns(header):
             if best is None or (prio, pos) < best[0]:
                 cand[canon] = ((prio, pos), col)
     winners = {col: canon for canon, (_, col) in cand.items()}
+    # a vesztes oszlop kulcsa nem ütközhet a nyertessel (különben a sor-dictben felülírná):
+    # 'M1,m1' → a második 'm1.1' kulcsot kap
+    taken = set(winners.values())
+    reserved = {c.strip() for c in header}
     mapping = {}
     for col in header:
-        mapping[col] = winners.get(col, col.strip())
+        key = winners.get(col)
+        if key is None:
+            key = col.strip()
+            if key and key in taken:
+                n = 1
+                while "%s.%d" % (key, n) in taken or "%s.%d" % (key, n) in reserved:
+                    n += 1
+                key = "%s.%d" % (key, n)
+            taken.add(key)
+        mapping[col] = key
     return mapping
+
+
+def _unique_header(header):
+    """Azonos fejlécnevek: a későbbiek '.1', '.2' utótagot kapnak (mint a pandas), hogy minden
+    oszlop külön kulcs legyen, és az első nyerjen."""
+    reserved = {h.strip() for h in header}
+    seen = Counter()
+    out = []
+    for h in header:
+        s = h.strip()
+        if s and seen[s]:
+            n = seen[s]
+            while "%s.%d" % (s, n) in reserved:
+                n += 1
+            seen[s] = n + 1
+            h = "%s.%d" % (s, n)
+            reserved.add(h)
+        else:
+            seen[s] += 1
+        out.append(h)
+    return out
+
+
+def _duplicate_columns(orig, header, mapping):
+    """Az ugyanarra a kanonikus névre illeszkedő, de figyelmen kívül hagyott oszlopok (számoszlopnál,
+    vagy ha a név azonos): [{column, position, key, canonical, used, used_position}]."""
+    lookup = _alias_lookup()
+    pos_of = {}
+    for pos, col in enumerate(header):
+        if mapping[col] in ALIASES:
+            pos_of.setdefault(mapping[col], pos)
+    out = []
+    for pos, (o, col) in enumerate(zip(orig, header)):
+        hit = lookup.get(_norm(o))
+        canon = hit[0] if hit else None
+        wpos = pos_of.get(canon)
+        if wpos is None or wpos == pos:
+            continue
+        if canon in NUMERIC or _norm(o) == _norm(orig[wpos]):
+            out.append({"column": o.strip(), "position": pos + 1, "key": mapping[col], "canonical": canon,
+                        "used": orig[wpos].strip(), "used_position": wpos + 1})
+    return out
+
+
+class _NotFinite(ValueError):
+    pass
 
 
 def parse_number(text):
@@ -141,10 +202,15 @@ def parse_number(text):
     if t.lower() in NA_TOKENS:
         return None
     if _num_dot.match(t):
-        return float(t)
-    if _num_comma.match(t):
-        return float(t.replace(",", "."))
-    raise ValueError("nem szám: %r" % text)
+        v = float(t)
+    elif _num_comma.match(t):
+        v = float(t.replace(",", "."))
+    else:
+        raise ValueError("nem szám: %r" % text)
+    if not math.isfinite(v):
+        # '1e400' → inf: ugyanúgy hiba, mint a szó szerinti 'inf'
+        raise _NotFinite("nem véges szám (túlcsordul)")
+    return v
 
 
 def _clean(text):
@@ -231,6 +297,9 @@ def _decode(raw):
     raise ValueError("ismeretlen karakterkódolás")
 
 
+_C0_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
 def read_table(path):
     """CSV/TSV → (sorok listája dict-ként, metaadat).
 
@@ -263,7 +332,8 @@ def read_table(path):
             records.append((start, r))
     if not records:
         raise ValueError("üres fájl: %s" % path)
-    header = records[0][1]
+    orig_header = records[0][1]
+    header = _unique_header(orig_header)
     mapping = canonical_columns(header)
     numeric_cells = [val for _, r in records[1:] for col, val in zip(header, r) if mapping[col] in NUMERIC]
     mark = _decimal_mark(numeric_cells)
@@ -290,11 +360,12 @@ def read_table(path):
                 except ValueError as exc:
                     row[key] = None
                     pe = {"line": line_no, "column": col, "value": val}
-                    if isinstance(exc, _Ambiguous):
+                    if isinstance(exc, (_Ambiguous, _NotFinite)):
                         pe["note"] = str(exc)
                     parse_errors.append(pe)
             else:
-                v = val.strip()
+                # XML-ben tiltott C0 vezérlőkarakterek (pl. PDF-ből másolt címkében): szóköz, mint az SVG-ben
+                v = _C0_CONTROL.sub(" ", val).strip()
                 if v.lower() in NA_TOKENS:
                     row[key] = None
                 elif key in TEXT_COLUMNS:
@@ -312,8 +383,29 @@ def read_table(path):
         row["_line"] = line_no
         rows.append(row)
     meta = {"path": path, "encoding": enc, "delimiter": delim, "decimal_mark": mark, "columns": header,
-            "mapping": mapping, "parse_errors": parse_errors, "ambiguous": ambiguous, "n_rows": len(rows)}
+            "mapping": mapping, "parse_errors": parse_errors, "ambiguous": ambiguous, "n_rows": len(rows),
+            "duplicate_columns": _duplicate_columns(orig_header, header, mapping)}
+    keys = set(mapping.values())
+    if "study" not in keys and "study_id" in keys:
+        _labels_from_study_id(rows)
+        meta["label_column"] = next(c.strip() for c in header if mapping[c] == "study_id")
     return rows, meta
+
+
+def _labels_from_study_id(rows):
+    """Nincs címkeoszlop, de van study_id ('Study ID', 'Trial'): a címke a study_id; ha több sor
+    osztozik rajta (több karú vizsgálat), sorszám-utótaggal egyedivé téve ('Smith 2001 (2)')."""
+    cnt = Counter(r.get("study_id") for r in rows if r.get("study_id"))
+    seen = Counter()
+    for r in rows:
+        sid = r.get("study_id")
+        if not sid:
+            continue
+        if cnt[sid] > 1:
+            seen[sid] += 1
+            r["study"] = "%s (%d)" % (sid, seen[sid])
+        else:
+            r["study"] = sid
 
 
 def write_csv(path, header, rows, delimiter=","):
@@ -333,7 +425,10 @@ def _fmt(v):
 # ------------------------------------------------------------------ oszlopnevek
 def _row_keys(meta, rows=None):
     if meta and meta.get("mapping") is not None:
-        return list(dict.fromkeys(meta["mapping"].values()))
+        keys = list(dict.fromkeys(meta["mapping"].values()))
+        if meta.get("label_column") and "study" not in keys:
+            keys.append("study")         # a study_id-ből képzett címke (read_table) is szűrhető
+        return keys
     keys = []
     for r in rows or []:
         for k in r:
@@ -347,6 +442,8 @@ def _available(meta, rows=None):
         parts = []
         for orig, key in meta["mapping"].items():
             parts.append(orig.strip() if orig.strip() == key else "%s (= %s)" % (orig.strip(), key))
+        if meta.get("label_column") and "study" not in meta["mapping"].values():
+            parts.append("study (= a(z) %s oszlopból képzett címke)" % meta["label_column"])
         return ", ".join(parts)
     return ", ".join(_row_keys(meta, rows))
 
@@ -391,7 +488,10 @@ _ROB = {
     "low": {"low", "alacsony", "low risk", "alacsony kockazat"},
     "some": {"some", "some concerns", "unclear", "unclear risk", "kozepes", "moderate", "nehany aggaly",
              "nem egyertelmu", "bizonytalan"},
+    "no_info": {"no information", "no info", "nincs informacio", "nincs adat"},
 }
+# a RoB 2 / ROBINS-I hivatalos alakja: 'High risk of bias', 'Serious risk of bias', 'Magas torzítási kockázat'
+_ROB_SUFFIX = re.compile(r" (risk( of bias)?|(torzitasi )?kockazat(u)?)$")
 _ROB_COLUMN_HINTS = ("bias", "torzitas", "kockazat")
 
 
@@ -415,14 +515,68 @@ def _canon_value(v, rob):
     if num is not None:
         t = "1" if num == 1 else ("0" if num == 0 else t)
     if rob:
+        rt = _ROB_SUFFIX.sub("", re.sub(r"[\s_\-]+", " ", t).strip())
         for canon, group in _ROB.items():
-            if t in group:
+            if t in group or rt in group:
                 return canon
     if t in _YES:
         return "yes"
     if t in _NO:
         return "no"
     return t
+
+
+# az alcsoport-szintekhez: csak ugyanannak a kategóriának az írásmódjai esnek egybe (a szűrők high/some
+# csoportjai itt nem: a ROBINS-I 'serious' és 'critical', a RoB 1 'unclear' külön szint marad)
+_ROB_LEVEL = {
+    "low": {"low", "alacsony", "low risk", "alacsony kockazat"},
+    "some concerns": {"some", "some concerns", "nehany aggaly"},
+    "unclear": {"unclear", "unclear risk", "nem egyertelmu", "bizonytalan"},
+    "moderate": {"moderate", "kozepes"},
+    "high": {"high", "magas", "high risk", "magas kockazat"},
+    "serious": {"serious", "sulyos"},
+    "critical": {"critical", "kritikus"},
+    "no information": {"no information", "no info", "nincs informacio", "nincs adat"},
+}
+
+
+def rob_levels(values):
+    """RoB-oszlop alcsoport-szintjei: ugyanannak a kategóriának eltérő írásmódjai ('high', 'High risk of
+    bias', 'Magas torzítási kockázat') egy szint, az elsőként előforduló alakkal; a fel nem ismert érték
+    változatlan. Visszaad: (szintek, {írásmód: a szint alakja} az összevont írásmódokra)."""
+    first, merged, out = {}, {}, []
+    for v in values:
+        t = _token(v)
+        rt = _ROB_SUFFIX.sub("", re.sub(r"[\s_\-]+", " ", t).strip())
+        lv = next((k for k, grp in _ROB_LEVEL.items() if t in grp or rt in grp), None)
+        if lv is None:
+            out.append(v)
+            continue
+        lab = first.setdefault(lv, v)
+        if lab != v:
+            merged[v] = lab
+        out.append(lab)
+    return out, merged
+
+
+def is_rob_column(key):
+    return _is_rob_column(key)
+
+
+def rob_category(v):
+    """RoB-cella → 'high' | 'low' | 'some' | 'no_info'; üres → None; fel nem ismert → ''."""
+    if v is None or not str(v).strip():
+        return None
+    c = _canon_value(v, True)
+    return c if c in _ROB else ""
+
+
+def yes_no(v):
+    """igen/nem-cella → 'yes' | 'no'; üres → None; fel nem ismert → ''."""
+    if v is None or not str(v).strip():
+        return None
+    c = _canon_value(v, False)
+    return c if c in ("yes", "no") else ""
 
 
 def _number(v):
@@ -437,8 +591,9 @@ def _number(v):
 def values_equal(cell, value, column=None):
     """Szűrő-összevetés normalizálás után: számok numerikusan ('1' = 1.0, '2005' = 2005.0),
     igen/yes/y/i/true/1 egymással, nem/no/n/false/0 egymással; RoB-oszlopban high/magas/
-    'high risk'/serious/súlyos = high, low/alacsony = low, 'some concerns'/unclear/közepes/
-    moderate = some. Egyébként kis/nagybetű- és ékezetfüggetlen szövegegyezés."""
+    'high risk'/serious/súlyos/critical = high, low/alacsony = low, 'some concerns'/unclear/közepes/
+    moderate = some, 'no information' = no_info; a ' risk of bias' / ' (torzítási) kockázat' utótag
+    nem számít ('High risk of bias' = high). Egyébként kis/nagybetű- és ékezetfüggetlen szövegegyezés."""
     if cell is None:
         return False
     a, b = _number(cell), _number(value)
@@ -446,6 +601,29 @@ def values_equal(cell, value, column=None):
         return abs(a - b) <= 1e-9 * max(1.0, abs(a), abs(b))
     rob = column is not None and _is_rob_column(column)
     return _canon_value(cell, rob) == _canon_value(value, rob)
+
+
+def _level_text(v):
+    """Cella szintként (a pipeline alcsoport-szintjével azonosan): NumText → eredeti szöveg, egész float → '2'."""
+    if isinstance(v, NumText):
+        return str(v)
+    if isinstance(v, float) and v.is_integer():
+        return str(int(v))
+    return str(v).strip()
+
+
+def _code_level(rows, key, val):
+    """Ha az oszlopban a szűrőértékkel számként egyenlő cellák szövege eltér ('01' és '1', '1.0' és '1'),
+    és a szűrőérték szó szerint az egyik: ez a szint (szövegként); egyébként None (numerikus összevetés)."""
+    num = _number(val)
+    if num is None:
+        return None
+    texts = set()
+    for v in (r.get(key) for r in rows):
+        x = _number(v) if v is not None else None
+        if x is not None and abs(x - num) <= 1e-9 * max(1.0, abs(num), abs(x)):
+            texts.add(_level_text(v))
+    return val if len(texts) > 1 and val in texts else None
 
 
 def _row_label(row, i, label_col="study"):
@@ -460,6 +638,8 @@ def apply_filters(rows, exclude=None, include=None, meta=None, report=None):
 
     Az oszlopnév a resolve_column-nal oldódik fel (eredeti fejléc, kanonikus név vagy
     szinonima); ismeretlen oszlop → ValueError. Az értékek összevetése: values_equal.
+    Ha az oszlop számként egyenlő, de szövegként eltérő kódokat tartalmaz ('01' és '1'), és az érték szó
+    szerint az egyik, csak az a szint egyezik (mint az alcsoport-elemzésben, ahol ezek külön szintek).
     Ha `report` lista, szűrőnként hozzáfűzi: {"filter", "mode", "removed", "removed_labels"}.
     Sorrend: előbb az include-ok, aztán az exclude-ok."""
     labels = {id(r): _row_label(r, i) for i, r in enumerate(rows)}
@@ -471,7 +651,13 @@ def apply_filters(rows, exclude=None, include=None, meta=None, report=None):
                 raise ValueError("érvénytelen szűrő: %r (alak: oszlop=érték)" % cond)
             key = resolve_column(col, meta, rows)
             val = val.strip()
-            hit = [values_equal(r.get(key), val, key) for r in out]
+            code = _code_level(rows, key, val)
+            if code is not None:
+                # számként egyenlő, de szövegként eltérő szintek ('01' és '1'): mint az alcsoport-elemzésben,
+                # a szó szerint egyező szint számít
+                hit = [r.get(key) is not None and _level_text(r.get(key)) == code for r in out]
+            else:
+                hit = [values_equal(r.get(key), val, key) for r in out]
             keep = [r for r, h in zip(out, hit) if (h if mode == "include" else not h)]
             removed = [r for r, h in zip(out, hit) if not (h if mode == "include" else not h)]
             if isinstance(report, list):

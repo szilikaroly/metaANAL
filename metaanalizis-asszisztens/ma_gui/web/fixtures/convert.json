@@ -1,0 +1,326 @@
+{
+ "description": "POST /api/convert — szk.ma.convert-request/v1 → szk.ma.convert-result/v1 (4.7). Az értékek a motor metaelemzes.conversions függvényeiből (n=40, medián 12,5, Q1 10, Q3 16; SE 0,42 n=52; CI 10,1–14,3 n=48; …). Az estimated a motor döntése (becslés: true, algebrai: false).",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/convert",
+   "body": {
+    "kind": "median_to_mean_sd"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.convert-result/v1",
+    "data": {
+     "schema": "szk.ma.convert-result/v1",
+     "kind": "median_to_mean_sd",
+     "engine_version": "0.2.0",
+     "outputs": {
+      "mean": 12.854875,
+      "sd": 4.613579408876527
+     },
+     "outputs_text": {
+      "mean": {
+       "hu": "12,85",
+       "en": "12.85"
+      },
+      "sd": {
+       "hu": "4,61",
+       "en": "4.61"
+      }
+     },
+     "estimated": true,
+     "method": {
+      "id": "luo2018+wan2014",
+      "citation": "Cochrane Handbook 6.5.2.5",
+      "function": "conversions.mean_from_median / sd_from_median",
+      "kb_refs": [
+       "KONV-MEDIAN-01"
+      ]
+     },
+     "assumptions": [
+      {
+       "hu": "közel normális eloszlás",
+       "en": "approximately normal distribution"
+      }
+     ],
+     "warnings": [
+      {
+       "hu": "a medián Q1-hez közelebb: ferde eloszlás gyanúja (V013)",
+       "en": "the median is closer to Q1: skewness suspected (V013)"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex16"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/convert",
+   "body": {
+    "kind": "median_to_mean_sd",
+    "method": "hozo"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.convert-result/v1",
+    "data": {
+     "schema": "szk.ma.convert-result/v1",
+     "kind": "median_to_mean_sd",
+     "engine_version": "0.2.0",
+     "outputs": {
+      "mean": 13.5,
+      "sd": 4.869326509870006
+     },
+     "outputs_text": {
+      "mean": {
+       "hu": "13,50",
+       "en": "13.50"
+      },
+      "sd": {
+       "hu": "4,87",
+       "en": "4.87"
+      }
+     },
+     "estimated": true,
+     "method": {
+      "id": "hozo2005+wan2014",
+      "citation": "Hozo 2005; Cochrane Handbook 6.5.2.5",
+      "function": "conversions.mean_from_median(method='hozo') / sd_from_median",
+      "kb_refs": [
+       "KONV-MEDIAN-01"
+      ]
+     },
+     "assumptions": [
+      {
+       "hu": "közel normális eloszlás",
+       "en": "approximately normal distribution"
+      }
+     ],
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex17"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/convert",
+   "body": {
+    "kind": "se_to_sd"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.convert-result/v1",
+    "data": {
+     "schema": "szk.ma.convert-result/v1",
+     "kind": "se_to_sd",
+     "engine_version": "0.2.0",
+     "outputs": {
+      "sd": 3.028663071389751
+     },
+     "outputs_text": {
+      "sd": {
+       "hu": "3,03",
+       "en": "3.03"
+      }
+     },
+     "estimated": false,
+     "method": {
+      "id": "se_to_sd",
+      "citation": "Cochrane Handbook 6.5.2.2",
+      "function": "conversions.sd_from_se",
+      "kb_refs": [
+       "KONV-SE-01"
+      ]
+     },
+     "assumptions": [],
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex18"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/convert",
+   "body": {
+    "kind": "ci_to_sd"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.convert-result/v1",
+    "data": {
+     "schema": "szk.ma.convert-result/v1",
+     "kind": "ci_to_sd",
+     "engine_version": "0.2.0",
+     "outputs": {
+      "sd": 7.2321587621677486
+     },
+     "outputs_text": {
+      "sd": {
+       "hu": "7,23",
+       "en": "7.23"
+      }
+     },
+     "estimated": false,
+     "method": {
+      "id": "ci_to_sd_t",
+      "citation": "Cochrane Handbook 6.5.2.3",
+      "function": "conversions.sd_from_ci",
+      "kb_refs": [
+       "KONV-CI-01"
+      ]
+     },
+     "assumptions": [
+      {
+       "hu": "t-eloszlás (n < 60)",
+       "en": "t distribution (n < 60)"
+      }
+     ],
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex19"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/convert",
+   "body": {
+    "kind": "combine_groups"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.convert-result/v1",
+    "data": {
+     "schema": "szk.ma.convert-result/v1",
+     "kind": "combine_groups",
+     "engine_version": "0.2.0",
+     "outputs": {
+      "n": 55,
+      "mean": 12.636363636363637,
+      "sd": 3.023296192125386
+     },
+     "outputs_text": {
+      "n": {
+       "hu": "55",
+       "en": "55"
+      },
+      "mean": {
+       "hu": "12,64",
+       "en": "12.64"
+      },
+      "sd": {
+       "hu": "3,02",
+       "en": "3.02"
+      }
+     },
+     "estimated": false,
+     "method": {
+      "id": "combine_groups",
+      "citation": "Cochrane Handbook 6.5.2.10 (Table 6.5.a)",
+      "function": "conversions.combine_groups",
+      "kb_refs": [
+       "KONV-COMB-01"
+      ]
+     },
+     "assumptions": [],
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex20"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/convert",
+   "body": {
+    "kind": "change_sd"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.convert-result/v1",
+    "data": {
+     "schema": "szk.ma.convert-result/v1",
+     "kind": "change_sd",
+     "engine_version": "0.2.0",
+     "outputs": {
+      "sd": 4.52990066116245
+     },
+     "outputs_text": {
+      "sd": {
+       "hu": "4,53",
+       "en": "4.53"
+      }
+     },
+     "estimated": true,
+     "method": {
+      "id": "change_sd_corr",
+      "citation": "Cochrane Handbook 6.5.2.8",
+      "function": "conversions.sd_change",
+      "kb_refs": [
+       "KONV-CHG-01"
+      ]
+     },
+     "assumptions": [
+      {
+       "hu": "imputált korreláció (r = 0,5)",
+       "en": "imputed correlation (r = 0.5)"
+      }
+     ],
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex21"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/convert",
+   "body": {
+    "kind": "ci_to_sd",
+    "method": "invalid"
+   },
+   "status": 422,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "VALIDATION",
+     "http": 422,
+     "message": "a konfidencia-intervallum alsó határa nagyobb a felsőnél"
+    }
+   }
+  }
+ ]
+}

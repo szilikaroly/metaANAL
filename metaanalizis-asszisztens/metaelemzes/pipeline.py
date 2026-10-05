@@ -16,6 +16,7 @@ from . import bias as B
 from . import sensitivity as SE
 from . import validate as V
 from . import plots as P
+from . import tableio
 from .tableio import NumText
 
 DEFAULTS = {
@@ -287,15 +288,16 @@ def run(rows, options=None, meta=None):
         out["input"]["filters"] = flt
     # 1) validálás; a vizsgálat-szintű 'error' tételek sorai TÉNYLEG kimaradnak
     findings = V.validate(rows, measure, meta, opt)
-    blocking = V.blocking_reasons(findings) if hasattr(V, "blocking_reasons") else V.blocking_labels(findings)
+    # soronként (nem címkénként): több karú vizsgálatnál csak a hibás sor marad ki
+    blocking = V.blocking_rows(findings)
     # 2) hatásméretek
     es = E.compute(rows, measure, label_col=opt["label_col"], smd_vtype=opt["smd_vtype"],
                    j_method=opt["j_method"], cc=opt["cc"], cc_to=opt["cc_to"], drop00=opt["drop00"],
-                   skip_labels=blocking, md_vtype=opt["md_vtype"], glass_vtype=opt["glass_vtype"],
+                   skip_rows=blocking, md_vtype=opt["md_vtype"], glass_vtype=opt["glass_vtype"],
                    gen_smd_vtype=opt["gen_smd_vtype"])
     findings += V.check_effect_sizes(es)
     out["validation"] = {"summary": V.summarize(findings), "findings": findings,
-                         "blocked_studies": sorted(blocking)}
+                         "blocked_studies": sorted({E.row_label(rows[i], i, opt["label_col"]) for i in blocking})}
     out["kb_refs"] = sorted(set(f["code"] for f in findings))
     k = len(es)
     nh = E.harmonic_mean(es.ni) if measure == "PFT" else None
@@ -348,13 +350,13 @@ def run(rows, options=None, meta=None):
         cols4 = [[r.get(c) for r in es.rows] for c in ("e1", "n1", "e2", "n2")]
         try:
             out["mh"] = M.mantel_haenszel(*cols4, measure=measure, level=opt["level"], labels=es.labels,
-                                          cc=opt["cc"], rd_var=opt["rd_var"])
+                                          cc=opt["cc"], rd_var=opt["rd_var"], h_centre=hc)
         except (M.ModelError, ArithmeticError, ValueError) as exc:
             out["warnings"].append("MH: %s" % exc)
     if measure == "OR" and opt["peto"]:
         cols4 = [[r.get(c) for r in es.rows] for c in ("e1", "n1", "e2", "n2")]
         try:
-            out["peto"] = M.peto(*cols4, level=opt["level"], labels=es.labels)
+            out["peto"] = M.peto(*cols4, level=opt["level"], labels=es.labels, h_centre=hc)
         except (M.ModelError, ArithmeticError, ValueError) as exc:
             out["warnings"].append("Peto: %s" % exc)
     out["back_transformed"] = {
@@ -383,9 +385,15 @@ def run(rows, options=None, meta=None):
                                    "kimaradt." % (opt["subgroup"], ", ".join(missing)))
         else:
             grp = [_level_str(g) for g in groups]
+            if tableio.is_rob_column(col):
+                grp, merged = tableio.rob_levels(grp)
+                if merged:
+                    out["warnings"].append("Alcsoport (%s): ugyanannak a RoB-kategóriának eltérő írásmódjai egy szintbe "
+                                           "kerültek (%s); egységesítsd az adattáblában." % (opt["subgroup"], "; ".join(
+                                               "'%s' = '%s'" % kv for kv in sorted(merged.items()))))
             try:
                 sg = MO.subgroup_analysis(es.yi, es.vi, grp, es.labels, opt["model"], opt["tau2"], opt["ci"],
-                                          opt["level"], opt["common_tau2"], opt["pi"])
+                                          opt["level"], opt["common_tau2"], opt["pi"], h_centre=hc)
             except (M.ModelError, ArithmeticError) as exc:
                 sg = None
                 out["warnings"].append("Alcsoport-elemzés: %s" % exc)
@@ -422,8 +430,9 @@ def run(rows, options=None, meta=None):
                 opt["metareg_test"], opt["level"], robust=bool(opt["metareg_robust"]))
             if mr_tau2 == "FE" and opt["metareg_test"] == "knha":
                 out["warnings"].append("Meta-regresszió: a Knapp–Hartung-próba nem közös hatású (FE) modellhez "
-                                       "készült (a metafor is figyelmeztet); FE-súlyokkal a modell-alapú SE a Stata "
-                                       "regress [aw=1/v] (nem robusztus) SE-je. Wald-próbához: z teszt.")
+                                       "készült (a metafor is figyelmeztet); FE-súlyokkal a modell-alapú SE így a "
+                                       "Stata regress [aw=1/v] (nem robusztus) SE-je. Wald-típusú próbához a z "
+                                       "tesztet válaszd (metareg_test = z).")
         except (M.ModelError, ArithmeticError) as exc:
             out["warnings"].append("Meta-regresszió: %s" % exc)
     # 5) kis-vizsgálat hatások (minden teszt külön: egyik hibája nem viszi magával a többit)
@@ -442,7 +451,7 @@ def run(rows, options=None, meta=None):
         # így pontosan az elsődleges eredmény, mint a metafor trimfill-ben)
         _bias("trimfill", "trim-and-fill", lambda: B.trim_and_fill(
             es.yi, es.vi, es.labels, opt["model"], opt["tau2"], opt["trimfill_estimator"],
-            ci_method=ci_eff or "z", level=opt["level"], trim_model=opt["trimfill_trim_model"]))
+            ci_method=ci_eff or "z", level=opt["level"], trim_model=opt["trimfill_trim_model"], h_centre=hc))
         # Doi-plot / LFK-index (heurisztikus, érzékenységi jellegű; Furuya-Kanamori et al. 2018)
         _bias("lfk", "LFK-index", lambda: B.doi_plot_data(es.yi, es.vi))
         # bináris kimenet 2×2 cellákkal: Harbord és Peters (log OR alapú; Sterne et al. 2011)
@@ -454,6 +463,12 @@ def run(rows, options=None, meta=None):
                                    "standard hibája nem független, ezért álpozitív eredményre hajlamos); a Harbord- "
                                    "és a Peters-teszt az ajánlott (Sterne et al. 2011). Mindkettő log OR alapú%s."
                                    % ("" if measure == "OR" else ", akkor is, ha az elemzés %s skálán történt" % measure))
+    # GEN + --gen-smd-vtype: közölt SMD-k (ugyanaz az yi–vi összefüggés)
+    smd_like = measure in ("SMD", "COHEN_D", "SMD_GLASS", "SMCC") or (measure == "GEN" and opt.get("gen_smd_vtype"))
+    if smd_like and bias.get("egger") is not None:
+        bias["smd_note"] = ("SMD-nél a klasszikus Egger-teszt csak tájékoztató: az SMD és a standard hibája "
+                            "összefügg, ezért torzítás nélkül is álpozitív lehet (Pustejovsky & Rodgers 2019; "
+                            "D-S11-005).")
     if k < opt["bias_min_k"]:
         bias["note"] = ("k = %d < %d: a funnel-aszimmetria tesztek eredménye csak tájékoztató, "
                         "nem értelmezhető (Sterne et al. 2011)." % (k, opt["bias_min_k"]))
@@ -542,42 +557,33 @@ def _pr_bound_warning(out, es, level):
 def _pft_range_warning(out, es, nh, pft_n):
     """PFT: a visszatranszformált összesített pontbecslés a saját vizsgálatai megfigyelt arányainak
     tartományán kívül (nagyon eltérő mintanagyságoknál a Miller-inverz félrevezető; Schwarzer et al. 2019)."""
-    p = []
-    for r in es.rows:
-        try:
-            p.append(float(r["x"]) / float(r["n"]))
-        except (KeyError, TypeError, ValueError, ZeroDivisionError):
-            p.append(None)
-    if any(v is None for v in p):
+    try:
+        p = [float(r["x"]) / float(r["n"]) for r in es.rows]
+    except (KeyError, TypeError, ValueError, ZeroDivisionError):
         return
-
-    def outside(est, idx):
-        ps = [p[i] for i in idx]
-        return est is not None and (est < min(ps) - 1e-9 or est > max(ps) + 1e-9), (min(ps), max(ps))
-
-    allix = list(range(len(p)))
     bad = []
+
+    def check(lab, est, idx):
+        lo, hi = min(p[i] for i in idx), max(p[i] for i in idx)
+        if est is not None and (est < lo - 1e-9 or est > hi + 1e-9):
+            bad.append("%s: %s, megfigyelt tartomány [%s; %s]" % (lab, _fmt4(est), _fmt4(lo), _fmt4(hi)))
+
     for key, lab in (("ivhet", "IVhet"), ("random", "véletlen hatású"), ("fixed", "közös hatású")):
         r = out.get(key)
-        if r is None:
-            continue
-        est = _display("PFT", r.estimate, None, None, nh, pft_n, r.se)[0]
-        if outside(est, allix)[0]:
-            bad.append("%s %s" % (lab, _fmt4(est)))
+        if r is not None:
+            check(lab, _display("PFT", r.estimate, None, None, nh, pft_n, r.se)[0], range(len(p)))
     sg = out.get("subgroups")
     for g in (sg.groups if sg is not None else []):
-        idx = g.get("indices") or []
-        if g.k >= 2 and idx and outside((g.get("display") or [None])[0], idx)[0]:
-            bad.append("alcsoport '%s' %s" % (g.group, _fmt4(g.display[0])))
+        if g.k >= 2 and g.get("indices") and g.get("display"):
+            check("alcsoport '%s'" % g.group, g.display[0], g.indices)
     if bad:
         out["warnings"].append(
-            "Freeman–Tukey-visszatranszformálás (%s): az összesített becslés (%s) a megfigyelt arányok "
-            "tartományán ([%s; %s]) kívül esik — nagyon eltérő mintanagyságoknál a Miller-inverz félrevezető "
-            "(Schwarzer et al. 2019; K-KHN0607-079). Elsődleges elemzésként logit (--measure PLO) vagy binomiális "
-            "GLMM (R: metafor rma.glmm / meta metaprop) ajánlott; érzékenységi elemzésként a másik "
-            "visszatranszformálás (--pft-backtransform %s)." % (
-                "harmonikus átlag n = %.4g" % nh if pft_n != "variance" else "m = 1/Var(t)",
-                "; ".join(bad), _fmt4(min(p)), _fmt4(max(p)),
+            "Freeman–Tukey-visszatranszformálás (%s): az összesített becslés a megfigyelt arányok tartományán "
+            "kívül esik (%s) — nagyon eltérő mintanagyságoknál a Miller-inverz félrevezető (Schwarzer et al. "
+            "2019; K-KHN0607-079). Elsődleges elemzésként logit (--measure PLO) vagy binomiális GLMM (R: metafor "
+            "rma.glmm / meta metaprop) ajánlott; érzékenységi elemzésként a másik visszatranszformálás "
+            "(--pft-backtransform %s)." % (
+                ("harmonikus átlag n = %.4g" % nh) if pft_n != "variance" else "m = 1/Var(t)", "; ".join(bad),
                 "variance" if pft_n != "variance" else "harmonic"))
 
 
@@ -659,7 +665,9 @@ def make_plots(out, es, opt=None):
                 "ci_lower": g.ci_lower, "ci_upper": g.ci_upper,
                 "display": g.get("display") or _display(measure, g.estimate, g.ci_lower, g.ci_upper, ng, pft_n, g.se),
                 "pi_lower": None, "pi_upper": None,
-                "note": ("τ² = %.3g; I² = %.0f%%" % (g.tau2, g.I2)) if g.k > 1 else None}})
+                # közös hatású modellnél a τ² nem becsült: '–', mint a láblécben
+                "note": ("τ² = %s; I² = %.0f%%" % ("–" if opt.get("model") == "fixed" else "%.3g" % g.tau2, g.I2))
+                if g.k > 1 else None}})
     per_study_n = es.ni if measure == "PFT" else None
     if measure == "PFT" and pft_n == "variance":
         # MetaXL: a vizsgálati sor m-je is 1/Var(t) = 1/(4·v_i) = n_i + 0,5
@@ -734,7 +742,12 @@ def _short(measure):
             "PFT": "Arány", "COR": "r", "ZCOR": "r", "GEN": "Hatás"}.get(measure, measure)
 
 
+PLOT_FILES = ("forest.svg", "funnel.svg", "doi.svg", "plot_data.json")
+
+
 def write_outputs(out, es, outdir, report_md=None, plots=True):
+    """A kimenetek írása. Egy korábbi futás ábrafájljai (PLOT_FILES), amelyeket ez a futás nem ír újra
+    (--no-plots, k = 0, k < 3 → nincs doi.svg), törlődnek, hogy a mappa ne keverjen két elemzést."""
     os.makedirs(outdir, exist_ok=True)
     paths = {}
     if plots and out.get("primary") is not None:
@@ -752,6 +765,10 @@ def write_outputs(out, es, outdir, report_md=None, plots=True):
         with open(p, "w", encoding="utf-8") as fh:
             json.dump(to_jsonable(data), fh, ensure_ascii=False, indent=1)
         paths["plot_data.json"] = p
+    for name in PLOT_FILES:
+        p = os.path.join(outdir, name)
+        if name not in paths and os.path.isfile(p):
+            os.remove(p)
     p = os.path.join(outdir, "results.json")
     with open(p, "w", encoding="utf-8") as fh:
         json.dump(to_jsonable(out), fh, ensure_ascii=False, indent=1)

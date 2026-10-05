@@ -541,12 +541,13 @@ class TestIngestAttribution(_Tmp):
         code, so, se = run_cli("kb", "--db", self.db, "ingest", self.write("Khanna_2019_statins.txt", "Statin trials pooled with rosuvastatin."),
                                "--citation", "Khanna 2019")
         self.assertEqual(code, 0, se)
-        res = kb.ingest(self.write("Cheung_2014_metaSEM.txt", "metaSEM structural equation."), db=self.db)
+        # a fájlnév a cheung2016 fájl-tippjére (57cc7782) illeszkedik, de más dokumentum: saját forrás, figyelmeztetéssel
+        res = kb.ingest(self.write("Cheung_2014_metaSEM_57cc7782.txt", "metaSEM structural equation."), db=self.db)
         ft = self.fulltext()
         self.assertEqual(ft["khan2020"], 1)
         self.assertEqual(ft["cheung2016"], 1)
         self.assertEqual(kb.show("khanna_2019_statins", db=self.db)["citation"], "Khanna 2019")
-        self.assertEqual(res[0][0], "cheung_2014_metasem")
+        self.assertEqual(res[0][0], "cheung_2014_metasem_57cc7782")
         self.assertIn("cheung2016", res[0][2])                    # a figyelmeztetés megnevezi
         hit = self.chunk_hits("rosuvastatin")
         self.assertEqual([h["source_id"] for h in hit], ["khanna_2019_statins"])
@@ -792,7 +793,7 @@ class TestAgentDocsMatchKb(_Tmp):
         wanted = set()
         for f in docs:
             with open(f, encoding="utf-8") as fh:
-                wanted |= set(re.findall(r"kb checklist ([A-Z0-9]+)", fh.read()))
+                wanted |= set(re.findall(r"kb checklist ([A-Z0-9_]+)", fh.read()))
         self.assertEqual(sorted(wanted - names), [])
 
 

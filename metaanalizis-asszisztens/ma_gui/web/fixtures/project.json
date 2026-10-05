@@ -1,0 +1,116 @@
+{
+ "description": "GET /api/project — szk.ma.project/v1 (4.17) + futásidejű mezők: path, user, badges (fül-jelvények, 3.5.0).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/project",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.project/v1",
+    "data": {
+     "schema": "szk.ma.project/v1",
+     "title": "BCG-oltás és tuberkulózis",
+     "question": {
+      "P": "oltatlan személyek (13 vizsgálat, 1948–1980)",
+      "I": "BCG-oltás",
+      "C": "nem oltott kontroll",
+      "O": "TBC-incidencia"
+     },
+     "review_type": "intervention",
+     "data_class": "A",
+     "locale": "hu",
+     "outcomes": [
+      {
+       "id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "data": "03_adatok/o1.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": "o1_primary",
+       "grade_start": "high"
+      },
+      {
+       "id": "o2",
+       "name": {
+        "hu": "Mortalitás",
+        "en": "Mortality"
+       },
+       "data": "03_adatok/o2.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": null,
+       "grade_start": "high"
+      }
+     ],
+     "appraisal_tools": [
+      "rob2"
+     ],
+     "composer": null,
+     "doc_roots": [
+      "_privat/pdf"
+     ],
+     "conventions": {
+      "amstar2_partial_yes_critical": "meets",
+      "grade_suspected": "unresolved"
+     },
+     "path": "reviews/bcg-oltas",
+     "user": {
+      "initials": "SzK"
+     },
+     "badges": {
+      "prisma": [
+       {
+        "kind": "warning",
+        "text": "1"
+       }
+      ],
+      "extraction": [
+       {
+        "kind": "error",
+        "text": "1"
+       },
+       {
+        "kind": "warning",
+        "text": "3"
+       }
+      ],
+      "analysis": [
+       {
+        "kind": "stale",
+        "text": "elavult"
+       }
+      ],
+      "appraisal": [
+       {
+        "kind": "progress",
+        "text": "12/13"
+       }
+      ],
+      "grade": [
+       {
+        "kind": "progress",
+        "text": "1/2 kész"
+       }
+      ],
+      "log": [
+       {
+        "kind": "blocker",
+        "text": "2"
+       }
+      ]
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_fx03"
+    }
+   }
+  }
+ ]
+}

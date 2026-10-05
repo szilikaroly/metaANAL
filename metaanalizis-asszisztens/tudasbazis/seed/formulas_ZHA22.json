@@ -52,7 +52,7 @@
   "stage_id": "S07",
   "source_id": "zhang2022_jslhr",
   "locator": "p. 8, Eq. 7",
-  "notes": "Known issues (extraction notes' recomputation): the source calls n~ 'the harmonic mean' but it is half the harmonic mean (1/n~ = 1/n_MT + 1/n_ST); since (N-2)/(N-4) = df/(df-2), the expression is Hedges' (1981) exact variance of the UNCORRECTED d with delta estimated by g, not Var(g). Requires N > 4. Not implemented in the engine (effect_sizes.smd offers vtype 'LS', 'LS2', 'UB'). State which variance is used."
+  "notes": "Known issues (extraction notes' recomputation): the source calls n~ 'the harmonic mean' but it is half the harmonic mean (1/n~ = 1/n_MT + 1/n_ST); since (N-2)/(N-4) = df/(df-2), the expression is Hedges' (1981) exact variance of the UNCORRECTED d with delta estimated by g, not Var(g). Requires N > 4. Not implemented in the engine (effect_sizes.SMD_VTYPES: LS, LS2, UB, METAN_COHEN, METAN_HEDGES). State which variance is used."
  },
  {
   "formula_id": "F-ZHA22-006",
@@ -167,13 +167,13 @@
  {
   "formula_id": "F-ZHA22-016",
   "name": "Higgins & Thompson (2002) test-based CI for H and I^2",
-  "expression": "if Q > k: SE(ln H) = 0.5*(ln Q - ln(k-1)) / (sqrt(2Q) - sqrt(2k - 3)); else: SE(ln H) = sqrt( 1/(2(k-2)) * (1 - 1/(3(k-2)^2)) ) ;  CI_H = exp( ln H +/- 1.96*SE(ln H) ), bounds floored at 1 ;  I^2 bound = (H^2 - 1)/H^2, floored at 0",
+  "expression": "if Q > k: SE(ln H) = 0.5*(ln Q - ln(k-1)) / (sqrt(2Q) - sqrt(2k - 3)); else: SE(ln H) = sqrt( 1/(2(k-2)) * (1 - 1/(3(k-2)^2)) ) ;  CI_H = exp( ln(max(H, 1)) +/- 1.96*SE(ln H) ) (engine default 'truncated'; 'untruncated': centre ln H), bounds floored at 1 ;  I^2 bound = (H^2 - 1)/H^2, floored at 0",
   "variables": "Q = Cochran's Q; k = number of studies; H = sqrt(Q/(k-1))",
   "engine_ref": "models.i2_ci_higgins_thompson",
   "stage_id": "S09",
   "source_id": "zhang2022_jslhr",
   "locator": "pp. 10–11",
-  "notes": "Higgins & Thompson (2002) test-based method, as implemented by the engine. The source does not name the CI method for I^2 and H; recomputation shows the printed k = 22 values I^2 = 75.0% [62.1, 83.5] and H = 2.00 [1.62, 2.46] reproduce exactly. Variant: meta centres the interval at ln(max(H, 1)); this differs only when Q < k - 1 (H < 1). For k = 19, Q = 17.45 meta's variant gives the printed H = 1.00 [1.00, 1.40] and I^2 = 0.0% [0.0, 48.9], whereas models.i2_ci_higgins_thompson (centred at ln H) gives upper limits of 1.38 and 47.3% (checked)."
+  "notes": "Higgins & Thompson (2002) test-based method, as implemented by the engine. The source does not name the CI method for I^2 and H; recomputation shows the printed k = 22 values I^2 = 75.0% [62.1, 83.5] and H = 2.00 [1.62, 2.46] reproduce exactly. Centre: the engine default models.i2_ci_higgins_thompson(h_centre='truncated') (`--ht-centre truncated`) is the R meta convention ln(max(H, 1)); h_centre='untruncated' (`--ht-centre untruncated`) centres at ln H. The two differ only when Q < k - 1 (H < 1). For k = 19, Q = 17.45 the default gives the printed H = 1.00 [1.00, 1.40] and I^2 = 0.0% [0.0, 48.9]; 'untruncated' gives upper limits of 1.38 and 47.3% (checked)."
  },
  {
   "formula_id": "F-ZHA22-017",
@@ -246,11 +246,11 @@
   "name": "Outlier rule of dmetar::find.outliers",
   "expression": "outlier_i  <=>  upper_i < lower_pooled  OR  lower_i > upper_pooled ;  [lower_i, upper_i] = y_i +/- 1.96*sqrt(v_i)",
   "variables": "y_i, v_i = effect and variance of study i; [lower_pooled, upper_pooled] = 95% CI of the pooled random-effects estimate",
-  "engine_ref": null,
+  "engine_ref": "sensitivity.outlier_screen",
   "stage_id": "S12",
   "source_id": "zhang2022_jslhr",
   "locator": "pp. 10–11",
-  "notes": "Background: this is dmetar's documented rule; the source only says that the flagged studies' CIs do not overlap the summary estimate in the forest plot. Heuristic; not implemented as such in the engine (effect_sizes.study_ci gives the study CI; sensitivity.influence flags |rstudent| > 1.96). Removing flagged studies is a post hoc sensitivity analysis, not the primary result."
+  "notes": "Background: this is dmetar's documented rule; the source only says that the flagged studies' CIs do not overlap the summary estimate in the forest plot. Heuristic. Engine: sensitivity.outlier_screen applies this rule and refits without the flagged studies (`ma.py analyze … --outliers`, results.json sensitivity.outliers); sensitivity.influence gives the metafor influence diagnostics. Removing flagged studies is a post hoc sensitivity analysis, not the primary result."
  },
  {
   "formula_id": "F-ZHA22-024",
@@ -268,11 +268,11 @@
   "name": "Random-effects power of the pooled test (dmetar::power.analysis)",
   "expression": "v_d = (n1 + n2)/(n1*n2) + d^2/(2(n1 + n2)) ;  v_m = (v_d / k) * f ;  lambda = d / sqrt(v_m) ;  power = 1 - Phi(z_{1-alpha/2} - lambda) + Phi(-z_{1-alpha/2} - lambda)",
   "variables": "d = expected effect size; n1, n2 = average group sizes; k = expected number of studies; f = heterogeneity multiplier (1 fixed, 1.33 low, 1.67 moderate, 2 high); alpha = significance level; Phi = standard normal CDF",
-  "engine_ref": null,
+  "engine_ref": "power.power_analysis",
   "stage_id": "S02",
   "source_id": "zhang2022_jslhr",
   "locator": "p. 5",
-  "notes": "Background (dmetar implementation), not printed in the source, which only shows the call power.analysis(d = 0.7, k = 18, n1 = 15, n2 = 15, p = .05, heterogeneity = 'moderate') with power above 90%. Not implemented in the engine."
+  "notes": "Background (dmetar implementation), not printed in the source, which only shows the call power.analysis(d = 0.7, k = 18, n1 = 15, n2 = 15, p = .05, heterogeneity = 'moderate') with power above 90%. Engine: power.power_analysis (`ma.py power --k 18 --effect 0.7 --n1 15 --n2 15 --heterogeneity moderate`; `--target-power 0.8` gives the k needed)."
  },
  {
   "formula_id": "F-ZHA22-026",

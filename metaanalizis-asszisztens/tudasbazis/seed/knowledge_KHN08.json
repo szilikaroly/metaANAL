@@ -254,7 +254,7 @@
   "stage_id": "S07",
   "kind": "convention",
   "title": "Motor és metafor eltérése a könyv számaitól",
-  "body": "R metafor's escalc(\"SMD\") uses the exact J and vi = 1/n1 + 1/n2 + g²/(2N), which gives Q = 163.71 for the operative-time data instead of the book's 163.59. The engine's effect_sizes.smd default (vtype=\"LS\", exact J) is the same as metafor's, so its per-study variances, weights and Q will differ from the printed MetaXL values in the 3rd–4th decimal. The MetaXL variances (2(N − 2), 2(N − 3.94)) are not implemented in the engine. [note: this comparison comes from the note-taker's metafor cross-check; it is not in the book.]",
+  "body": "R metafor's escalc(\"SMD\") uses the exact J and vi = 1/n1 + 1/n2 + g²/(2N), which gives Q = 163.71 for the operative-time data instead of the book's 163.59. The engine's effect_sizes.smd default (vtype=\"LS\", exact J) is the same as metafor's, so its per-study variances, weights and Q will differ from the printed MetaXL values in the 3rd–4th decimal. The MetaXL variances are available in the engine: 2(N − 2) as `--measure COHEN_D --smd-vtype METAN_COHEN` (MetaXL 'Cohen') and 2(N − 3.94) as `--measure SMD --smd-vtype METAN_HEDGES` (MetaXL 'Hedges'). [note: this comparison comes from the note-taker's metafor cross-check; it is not in the book.]",
   "source_id": "khan2020",
   "locator": "Ch8 Ex 8.12 pp. 185–189 (note-taker's cross-check)",
   "tags": "metafor escalc engine motor effect_sizes.smd variance variancia discrepancy eltérés reproducibility reprodukálhatóság MetaXL Q 163.71 163.59 tolerance tolerancia"
@@ -574,7 +574,7 @@
   "stage_id": "S11",
   "kind": "guidance",
   "title": "Nem tárgyalt torzítás-tesztek; kevés vizsgálat",
-  "body": "The chapter does not cover Egger's or Begg's test, trim-and-fill, fail-safe N or p-curve; its only tools are visual (funnel and Doi plots) plus the LFK index. [note: Cochrane Handbook v6 advises that funnel-plot asymmetry tests are generally not used with fewer than 10 studies (Ex 8.12 has k = 9), and that asymmetry has causes other than publication bias, including heterogeneity; the engine provides bias.egger_test, bias.begg_test, bias.trim_and_fill, bias.doi_plot_data and bias.failsafe_n_rosenthal. Fail-safe N is discouraged by Cochrane v6 and must not be read as evidence against publication bias.]",
+  "body": "The chapter does not cover Egger's or Begg's test, trim-and-fill, fail-safe N or p-curve; its only tools are visual (funnel and Doi plots) plus the LFK index. [note: Cochrane Handbook v6 advises that funnel-plot asymmetry tests are generally not used with fewer than 10 studies (Ex 8.12 has k = 9), and that asymmetry has causes other than publication bias, including heterogeneity; the engine provides bias.egger_test, bias.begg_test, bias.trim_and_fill, bias.doi_plot_data (Doi plot and LFK index, at most a pre-specified supplement: D-S11-015) and bias.failsafe_n_rosenthal. Fail-safe N is discouraged by Cochrane v6 and must not be read as evidence against publication bias.]",
   "source_id": "khan2020",
   "locator": "Ch8 §8.8 pp. 189–191",
   "tags": "Egger test Begg test trim and fill fail-safe N p-curve not covered nem tárgyalt small number of studies kevés vizsgálat k<10 publication bias publikációs torzítás"
@@ -654,7 +654,7 @@
   "stage_id": "S13",
   "kind": "criterion",
   "title": "Értékelési szempont: kisvizsgálat-hatások",
-  "body": "A funnel plot and a Doi plot with its LFK index should be present and interpreted correctly, as evidence on small-study effects or publication bias rather than on heterogeneity. [note: the book does not discuss when these tools become unreliable; per Cochrane v6, conclusions should be hedged when k < 10 or heterogeneity is extreme, and the LFK index is a developer-proposed tool with heuristic thresholds.]",
+  "body": "A funnel plot (and, only if pre-specified with k ≥ 10, a Doi plot with its LFK index as a supplement: D-S11-015) should be present and interpreted correctly, as evidence on small-study effects or publication bias rather than on heterogeneity. [note: the book does not discuss when these tools become unreliable; per Cochrane v6, conclusions should be hedged when k < 10 or heterogeneity is extreme, and the LFK index is a developer-proposed tool with heuristic thresholds.]",
   "source_id": "khan2020",
   "locator": "Ch8 §8.8 pp. 189–191",
   "tags": "evaluator criterion értékelési szempont small-study effects kisvizsgálat-hatás funnel plot tölcsérdiagram Doi plot LFK publication bias publikációs torzítás"
@@ -684,7 +684,7 @@
   "stage_id": "S14",
   "kind": "guidance",
   "title": "Mit kell modellenként közölni",
-  "body": "For each model, report the pooled estimate with SE and 95% CI, z and the two-sided P, Q (df, P) and I², and τ² for the random-effects model. Report both the funnel plot and the Doi plot; the Doi plot carries the LFK index and its verbal category in the subtitle. [note: PRISMA 2020 (item 13d) expects the τ² estimator and the CI method to be named, and Cochrane v6 recommends a prediction interval for random-effects results; the chapter reports neither.]",
+  "body": "For each model, report the pooled estimate with SE and 95% CI, z and the two-sided P, Q (df, P) and I², and τ² for the random-effects model. Report the funnel plot. The book also reports the Doi plot, with the LFK index and its verbal category in the subtitle; include it only if pre-specified, with k ≥ 10, next to a contour-enhanced funnel and a suitable regression test (D-S11-015, D-S11-019). [note: PRISMA 2020 (item 13d) expects the τ² estimator and the CI method to be named, and Cochrane v6 recommends a prediction interval for random-effects results; the chapter reports neither.]",
   "source_id": "khan2020",
   "locator": "Ch8 Ex 8.7, 8.10, 8.11; Figs 8.7–8.10",
   "tags": "reporting jelentés pooled estimate összesített becslés standard error confidence interval konfidenciaintervallum p-value p-érték Cochran Q I squared tau squared funnel plot Doi plot LFK"

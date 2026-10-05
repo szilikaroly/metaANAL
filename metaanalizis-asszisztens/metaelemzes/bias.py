@@ -139,11 +139,17 @@ def begg_test(yi, vi, method="auto", continuity=False):
     k = len(yi)
     if k < 3:
         raise ModelError("Begg-teszt: k >= 3 szükséges")
+    # a μ-höz képesti eltérések kerekítési zaja (néhány ulp) ne legyen külön rang (álkötés-mentes τ = ±1)
+    tol = 1e-12 * max(abs(a) for a in yi)
+    if max(yi) - min(yi) <= tol:
+        # azonos hatásméreteknél minden t*_i = 0 (metafor ranktest: tau = NA, p = NA)
+        raise ModelError("Begg-teszt: nem számolható — a hatásméretek azonosak, így minden standardizált "
+                         "hatás 0 és a Kendall-τ nem definiált")
     w = [1.0 / v for v in vi]
     sw = sum(w)
     mu = sum(a * b for a, b in zip(w, yi)) / sw
     vstar = [v - 1.0 / sw for v in vi]
-    tstar = [(y - mu) / math.sqrt(vs) if vs > 0 else 0.0 for y, vs in zip(yi, vstar)]
+    tstar = [(y - mu) / math.sqrt(vs) if vs > 0 and abs(y - mu) > tol else 0.0 for y, vs in zip(yi, vstar)]
     conc = disc = 0
     ties_x = ties_y = 0
     for i in range(k):
@@ -221,7 +227,8 @@ _TRIM_MODELS = {"fixed": "fixed", "fe": "fixed", "common": "fixed", "ce": "fixed
 
 
 def trim_and_fill(yi, vi, labels=None, model="random", tau2_method=None, estimator="L0",
-                  side=None, ci_method="z", level=0.95, maxiter=100, trim_model=None):
+                  side=None, ci_method="z", level=0.95, maxiter=100, trim_model=None,
+                  h_centre="truncated"):
     """Duval–Tweedie trim-and-fill (a metafor::trimfill / meta::trimfill logikája szerint).
 
     model / tau2_method / ci_method / level: a KORRIGÁLT (kitöltött) adatokra illesztett,
@@ -245,6 +252,7 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method=None, estimat
     eredmény (mint a metaforban). Eltérés a metafor 4.4-től k0 > 0 esetén: a metafor a
     kitöltött adatokat test='z'-vel és 95%-os szinttel illeszti újra (a test/level nem
     öröklődik); ugyanezt itt ci_method='z', level=0.95 adja.
+    h_centre: a korrigált modell H/I² intervallumának középpontja (lásd models.heterogeneity()).
     """
     k = len(yi)
     if k < 3:
@@ -276,6 +284,10 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method=None, estimat
         mr_method = "REML"
     side_rule = None
     if side is None:
+        if max(vi) - min(vi) <= 1e-12 * max(vi):
+            # az y ~ √v regresszió √v-oszlopa a tengelymetszettel kollineáris (metafor trimfill: hiba)
+            raise ModelError("trim-and-fill: a mintavételi varianciák azonosak, így a hiányzó vizsgálatok "
+                             "oldala (y ~ √v regresszió) nem becsülhető")
         x = [[1.0, math.sqrt(v)] for v in vi]
         mr = meta_regression(yi, vi, x, ["intercept", "sei"], mr_method)
         side = "right" if mr.coefficients[1]["estimate"] < 0 else "left"
@@ -324,7 +336,7 @@ def trim_and_fill(yi, vi, labels=None, model="random", tau2_method=None, estimat
     all_y = list(yi) + filled_y
     all_v = list(vi) + filled_v
     adjusted = meta_analysis(all_y, all_v, model, tau2_method, ci_method, level,
-                             labels=list(labels) + filled_labels)
+                             labels=list(labels) + filled_labels, h_centre=h_centre)
     return MetaResult(kind="trimfill", side=side, side_rule=side_rule, estimator=estimator, k0=k0,
                       se_k0=se_k0, trim_model=trim_m, trim_estimate=sign * beta,
                       iterations=it, filled_yi=filled_y, filled_vi=filled_v,

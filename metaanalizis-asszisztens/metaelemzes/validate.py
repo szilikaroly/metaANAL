@@ -8,7 +8,7 @@ from collections import Counter
 
 from .effect_sizes import (REQUIRED_COLUMNS, CONTINUOUS, BINARY, PROPORTION, CORRELATION, PAIRED,
                            PAIRED_INPUTS)
-from .tableio import values_equal
+from .tableio import values_equal, rob_category, yes_no
 
 # kód: (súlyosság, rövid cím, magyarázat/teendő, forrás)
 RULES = {
@@ -22,8 +22,10 @@ RULES = {
              "elemzésből, amíg nem javítod.", "engine"),
     "V004": ("error", "Érvénytelen mintanagyság",
              "Nem egész n, vagy túl kicsi: folytonos adatnál n < 2 (karonként), bináris és arány-adatnál "
-             "n < 1, korrelációnál n < 4. A vizsgálat kimarad az elemzésből.", "engine"),
-    "V005": ("error", "Nem pozitív SD", "Az SD <= 0; valószínű adatkinyerési hiba.", "engine"),
+             "n < 1, korrelációnál n < 4, GEN-nél (ha megadod) n < 1. A vizsgálat kimarad az elemzésből.",
+             "engine"),
+    "V005": ("error", "Nem pozitív SD", "Az SD <= 0 (GEN-nél: negatív SE); valószínű adatkinyerési hiba.",
+             "engine"),
     "V006": ("error", "Érvénytelen eseményszám", "Az eseményszám negatív vagy nagyobb, mint n.", "engine"),
     "V007": ("warning", "Ismétlődő vizsgálat-azonosító",
              "Ugyanaz a címke többször: többkarú vizsgálat vagy kettős közlés? Az egységelemzési "
@@ -78,7 +80,35 @@ RULES = {
              "A sorban több cella van, mint a fejlécben (tipikusan idézőjel nélküli tizedesvessző "
              "vesszővel tagolt fájlban): az értékek elcsúsztak, a sor kimarad az elemzésből. Tedd "
              "idézőjelbe a tizedesvesszős számokat, vagy használj pontosvesszős tagolást.", "engine"),
+    # (V025: a munkapad-tervben foglalt kód)
+    "V026": ("error", "Nincs elemezhető vizsgálat",
+             "k = 0: minden sor kimaradt (validálási hiba, kettős nulla, nem számolható hatásméret) vagy "
+             "a tábla üres; az elemzés nem futtatható. Lásd a kizárt sorokat és az okukat.", "engine"),
+    "V027": ("warning", "Fel nem ismert kategóriaérték",
+             "A rob / estimated cella értéke egyik elfogadott kategóriának sem felel meg, ezért a sor nem "
+             "számít magas RoB-únak (V019, --exclude rob=high), illetve becsültnek (V018, --exclude "
+             "estimated=igen). rob: low / some concerns / high (RoB 2), low / moderate / serious / critical "
+             "/ no information (ROBINS-I), alacsony / közepes / magas ('… risk of bias' / '… kockázat' "
+             "alakban is); estimated: igen / nem.", "Cochrane Handbook 8 (RoB 2), 25 (ROBINS-I)"),
+    "V028": ("warning", "Ismétlődő oszlop",
+             "Több fejléc illeszkedik ugyanarra az oszlopra (pl. kétszer 'm1', vagy 'mean1' és 'm1'): az "
+             "elemzés az elsőt (a szinonimák közül az elsőbbségit) használja, a többi külön oszlopként "
+             "marad. Töröld vagy nevezd át a fölösleges oszlopot.", "engine"),
+    "V030": ("error", "Numerikusan kezelhetetlen variancia",
+             "Egy vizsgálat mintavételi varianciája olyan kicsi (pl. vi = 1e-300), hogy a súlyok túlcsordulnának: "
+             "az elemzés nem futtatható. Valószínű adatkinyerési hiba — ellenőrizd a vi/SE (vagy az SD) értékét.",
+             "engine"),
+    "V029": ("warning", "Hiányzó vizsgálat-címke",
+             "A sornak nincs vizsgálat-címkéje (study / Szerző / author / label / ID oszlop vagy study_id), "
+             "ezért sorszámot kap (#1, #2, …): a forest plot, a riport és a szűrők nem nevezik meg a "
+             "vizsgálatot, és a sorszám a szűréstől függ. Adj címkeoszlopot (pl. 'Szerző, év').", "engine"),
 }
+
+
+def _az(n):
+    """Névelő szám elé: 'az' (1, 5, 50–59, 500–599, 1000–1999 …: magánhangzóval ejtett), különben 'a'."""
+    t = str(int(n))
+    return "az" if t[0] == "5" or (t[0] == "1" and len(t) in (1, 4, 7)) else "a"
 
 
 def _finding(code, study=None, detail=""):
@@ -172,7 +202,7 @@ def _high_rob(v):
 
 
 def _is_int(x):
-    return x == int(x)
+    return math.isfinite(x) and x == int(x)
 
 
 def blocking_labels(findings):
@@ -192,16 +222,30 @@ def blocking_reasons(findings):
     return {lab: ", ".join(codes) for lab, codes in out.items()}
 
 
+def blocking_rows(findings):
+    """Sorindex (a validált `rows` listában) → a hibakódok szövege, a sorhoz kötött 'error' tételekből.
+    Ezt kapja az effect_sizes.compute(skip_rows=...): ismétlődő címkéknél (több karú vizsgálat)
+    csak a hibás sor marad ki, az azonos címkéjű érvényes sor nem."""
+    out = {}
+    for f in findings:
+        if f.get("severity") == "error" and f.get("row") is not None:
+            codes = out.setdefault(f["row"], [])
+            if f["code"] not in codes:
+                codes.append(f["code"])
+    return {i: ", ".join(codes) for i, codes in out.items()}
+
+
 def validate(rows, measure, meta=None, options=None):
     """Visszaad: findings lista (dict).
 
-    Az 'error' súlyosságú, vizsgálathoz kötött tételek blokkolják az adott vizsgálatot:
-    a hívó a blocking_labels(findings) halmazt adja át az effect_sizes.compute(skip_labels=...)
+    Az 'error' súlyosságú, sorhoz kötött tételek (f['row'] = sorindex) blokkolják az adott sort:
+    a hívó a blocking_rows(findings) szótárt adja át az effect_sizes.compute(skip_rows=...)
     paraméterének (a pipeline és a CLI így tesz). A globális (study=None) hibák (pl. V001)
     az egész elemzést érintik. A k-szabályok (V015/V016) az elemezhető k-ra vonatkoznak:
     a validálás a hatásméret-számítás kizárásait is figyelembe veszi (options: a compute
     beállításai, pl. cc, cc_to, drop00; alapértelmezés a motor alapbeállítása)."""
     from .effect_sizes import compute, row_label, EffectSizeError
+    from .models import _check as _check_variances, ModelError
     opts = {k: v for k, v in (options or {}).items() if k in _COMPUTE_OPTIONS and v is not None}
     corrects = opts.get("cc", 0.5) > 0 and opts.get("cc_to", "only0") != "none"
     out = []
@@ -226,8 +270,21 @@ def validate(rows, measure, meta=None, options=None):
                 missing_cols.append(part)
                 out.append(_finding("V001", None, "%s oszlop(ok) kell(enek): %s" % (
                     name, _alt_text(PAIRED_INPUTS[part]))))
-    labels = [row_label(r, i, opts.get("label_col", "study")) for i, r in enumerate(rows)]
+    label_col = opts.get("label_col", "study")
+    labels = [row_label(r, i, label_col) for i, r in enumerate(rows)]
     by_line = {r.get("_line"): lab for lab, r in zip(labels, rows) if r.get("_line") is not None}
+    row_of_line = {r.get("_line"): i for i, r in enumerate(rows) if r.get("_line") is not None}
+    for d in (meta or {}).get("duplicate_columns") or []:
+        out.append(_finding("V028", None, "'%s' (%d. oszlop) ugyanarra illeszkedik (%s), mint '%s' (%d. oszlop): "
+                            "%s %d. oszlop számít, %s %d. oszlop '%s' néven külön marad" % (
+                                d["column"], d["position"], d["canonical"], d["used"], d["used_position"],
+                                _az(d["used_position"]), d["used_position"], _az(d["position"]), d["position"],
+                                d["key"])))
+    unlabelled = [lab for lab, r in zip(labels, rows)
+                  if r.get(label_col) is None or str(r.get(label_col)).strip() == ""]
+    if unlabelled:
+        out.append(_finding("V029", None, "%d sor címke nélkül: %s" % (
+            len(unlabelled), ", ".join(unlabelled[:10]) + (", …" if len(unlabelled) > 10 else ""))))
     needed = set(req) | ({"vi", "sei"} if measure == "GEN" else set())
     if measure == "GEN" and opts.get("gen_smd_vtype"):
         needed |= {"n1", "n2"}
@@ -242,90 +299,50 @@ def validate(rows, measure, meta=None, options=None):
             if filtered and pe.get("line") not in by_line:
                 continue
             lab = by_line.get(pe.get("line"))
+            ri = row_of_line.get(pe.get("line"))
             if pe.get("kind") == "ragged":
                 out.append(_finding("V024", lab, "%d. sor: %s" % (pe["line"], pe.get("note", ""))))
-                if lab is not None:
-                    ragged.add(lab)
+                if ri is not None:
+                    out[-1]["row"] = ri
+                    ragged.add(ri)
                 continue
             canon = mapping.get(pe["column"], pe["column"])
             detail = "%d. sor, %s oszlop: %r" % (pe["line"], pe["column"], pe["value"])
             if pe.get("note"):
                 detail += " (%s)" % pe["note"]
-            if canon in needed:
-                out.append(_finding("V003", lab, detail))
-            else:
-                out.append(_finding("V021", lab, detail))
+            out.append(_finding("V003" if canon in needed else "V021", lab, detail))
+            if ri is not None:
+                out[-1]["row"] = ri
         for am in meta.get("ambiguous", []):
             if filtered and am.get("line") not in by_line:
                 continue
             out.append(_finding("V023", by_line.get(am.get("line")),
                                 "%d. sor, %s oszlop: %s" % (am["line"], am["column"], am["note"])))
+            if row_of_line.get(am.get("line")) is not None:
+                out[-1]["row"] = row_of_line[am["line"]]
     if missing_cols or gen_missing:
         return out       # a soronkénti ellenőrzésekhez hiányzik egy kötelező oszlop
     for lab, cnt in Counter(labels).items():
         if cnt > 1:
             out.append(_finding("V007", lab, "%d sor ugyanazzal a címkével" % cnt))
-    for lab, r in zip(labels, rows):
-        if lab in ragged:
+    if (meta or {}).get("label_column") and label_col == "study":
+        # a címke a study_id-ből készült (tableio.read_table): a közös azonosító sorszám-utótagot kapott
+        sids = Counter(str(r.get("study_id")).strip() for r in rows
+                       if r.get("study_id") is not None and str(r.get("study_id")).strip())
+        for sid, cnt in sids.items():
+            if cnt > 1:
+                out.append(_finding("V007", sid, "%d sor ugyanazzal a(z) %s azonosítóval (címkéjük: %s (1) … (%d))"
+                                    % (cnt, meta["label_column"], sid, cnt)))
+    for i, (lab, r) in enumerate(zip(labels, rows)):
+        if i in ragged:
             continue
-        missing = [c for c in req if r.get(c) is None]
-        if measure == "GEN" and r.get("vi") is None and r.get("sei") is None and not (
-                opts.get("gen_smd_vtype") and r.get("n1") is not None and r.get("n2") is not None):
-            missing.append("vi/sei" + (" (vagy n1 és n2)" if opts.get("gen_smd_vtype") else ""))
-        if missing:
-            out.append(_finding("V002", lab, "hiányzik: " + ", ".join(missing)))
-        if any(r.get(c) is None for c in req):
-            continue
-        if measure in PAIRED:
-            _paired_row_checks(out, lab, r, measure)
-        elif measure in CONTINUOUS:
-            for nc in ("n1", "n2"):
-                if r[nc] < 2 or not _is_int(r[nc]):
-                    out.append(_finding("V004", lab, "%s = %g (folytonos adatnál egész n >= 2 kell)" % (nc, r[nc])))
-            for sc in ("sd1", "sd2"):
-                if r[sc] <= 0:
-                    out.append(_finding("V005", lab, "%s = %g" % (sc, r[sc])))
-            for mc, sc in (("m1", "sd1"), ("m2", "sd2")):
-                if r[mc] >= 0 and r[sc] > 0 and r[mc] < 2 * r[sc]:
-                    out.append(_finding("V013", lab, "%s=%g < 2·%s=%g" % (mc, r[mc], sc, 2 * r[sc])))
-            if min(r["n1"], r["n2"]) < 10:
-                out.append(_finding("V020", lab, "n1=%g, n2=%g" % (r["n1"], r["n2"])))
-        elif measure in BINARY:
-            ok = True
-            for ec, nc in (("e1", "n1"), ("e2", "n2")):
-                if r[nc] < 1 or not _is_int(r[nc]):
-                    out.append(_finding("V004", lab, "%s = %g (bináris adatnál egész n >= 1 kell)" % (nc, r[nc])))
-                    ok = False
-                if r[ec] < 0 or r[ec] > r[nc] or not _is_int(r[ec]):
-                    out.append(_finding("V006", lab, "%s = %g, %s = %g" % (ec, r[ec], nc, r[nc])))
-                    ok = False
-            if ok:
-                cells = (r["e1"], r["n1"] - r["e1"], r["e2"], r["n2"] - r["e2"])
-                if (r["e1"] == 0 and r["e2"] == 0) or (cells[1] == 0 and cells[3] == 0):
-                    out.append(_finding("V008", lab, _double_zero_detail(r, measure, opts, corrects)))
-                elif min(cells) == 0 and corrects and (measure != "RD" or opts.get("cc_to") == "all"):
-                    # RD-nél alapértelmezésben nincs korrekció (effect_sizes.two_by_two)
-                    out.append(_finding("V009", lab, "+%g minden cellához" % opts.get("cc", 0.5)))
-        elif measure in PROPORTION:
-            if r["n"] < 1 or not _is_int(r["n"]):
-                out.append(_finding("V004", lab, "n = %g (arány-adatnál egész n >= 1 kell)" % r["n"]))
-            elif r["x"] < 0 or r["x"] > r["n"] or not _is_int(r["x"]):
-                out.append(_finding("V006", lab, "x = %g, n = %g" % (r["x"], r["n"])))
-            elif r["x"] in (0, r["n"]) and measure in ("PR", "PLN", "PLO") and corrects:
-                out.append(_finding("V009", lab, "x = %g / n = %g; +%g korrekció" % (r["x"], r["n"],
-                                                                                   opts.get("cc", 0.5))))
-        elif measure in CORRELATION:
-            if not -1 < r["r"] < 1:
-                out.append(_finding("V010", lab, "r = %g" % r["r"]))
-            if r["n"] < 4 or not _is_int(r["n"]):
-                out.append(_finding("V004", lab, "n = %g (korrelációnál egész n >= 4 kell)" % r["n"]))
-        if _yes(r.get("estimated")):
-            out.append(_finding("V018", lab))
-        if _high_rob(r.get("rob")):
-            out.append(_finding("V019", lab))
+        start = len(out)
+        _row_checks(out, lab, r, measure, req, opts, corrects)
+        for f in out[start:]:
+            f["row"] = i
     # vizsgálatok közötti mintázatok (folytonos)
     if measure in CONTINUOUS:
-        good = [(lab, r) for lab, r in zip(labels, rows) if lab not in ragged
+        good = [(lab, r) for i, (lab, r) in enumerate(zip(labels, rows)) if i not in ragged
                 and all(r.get(c) is not None for c in req) and r["sd1"] > 0 and r["sd2"] > 0]
         sds = [r[c] for _, r in good for c in ("sd1", "sd2")]
         means = [abs(r[c]) for _, r in good for c in ("m1", "m2") if r[c] != 0]
@@ -353,13 +370,12 @@ def validate(rows, measure, meta=None, options=None):
                                             (mc, r[mc], mmean, sc, sdr)))
         _shared_control(out, good, lambda r: (r["m2"], r["sd2"]), "n2")
     if measure in BINARY:
-        good_b = [(lab, r) for lab, r in zip(labels, rows) if lab not in ragged
+        good_b = [(lab, r) for i, (lab, r) in enumerate(zip(labels, rows)) if i not in ragged
                   and all(r.get(c) is not None for c in req) and r["n2"] > 0]
         _shared_control(out, good_b, lambda r: (round(r["e2"] / r["n2"], 4),), "n2")
     # elemezhető k: a motor ugyanazokkal a kizárásokkal számol, mint az elemzés
-    blocked = blocking_reasons(out)
     try:
-        es = compute(rows, measure, skip_labels=blocked, **opts)
+        es = compute(rows, measure, skip_rows=blocking_rows(out), **opts)
     except EffectSizeError:
         es = None
     k = len(es) if es is not None else 0
@@ -370,11 +386,93 @@ def validate(rows, measure, meta=None, options=None):
                 continue
             out.append(_finding("V022", lab, why))
     n_rows = len(rows)
+    if k == 0:
+        # k = 0-nál a kevés vizsgálatra vonatkozó tanács (V015/V016) értelmetlen: a V026 a hiba
+        out.append(_finding("V026", None, "k = 0 elemezhető vizsgálat (%d sorból)" % n_rows))
+        return out
+    try:
+        _check_variances(es.yi, es.vi, es.labels)
+    except ModelError as exc:
+        out.append(_finding("V030", None, str(exc)))
     if k < 5:
         out.append(_finding("V015", None, "k = %d elemezhető vizsgálat (%d sorból)" % (k, n_rows)))
     if k < 10:
         out.append(_finding("V016", None, "k = %d" % k))
     return out
+
+
+def _row_checks(out, lab, r, measure, req, opts, corrects):
+    """Egy sor ellenőrzései (V002–V010, V013, V018–V020, V027); a hívó a tételekhez a sorindexet is felírja."""
+    missing = [c for c in req if r.get(c) is None]
+    if measure == "GEN" and r.get("vi") is None and r.get("sei") is None and not (
+            opts.get("gen_smd_vtype") and r.get("n1") is not None and r.get("n2") is not None):
+        missing.append("vi/sei" + (" (vagy n1 és n2)" if opts.get("gen_smd_vtype") else ""))
+    if missing:
+        out.append(_finding("V002", lab, "hiányzik: " + ", ".join(missing)))
+    if any(r.get(c) is None for c in req):
+        return
+    if measure in PAIRED:
+        _paired_row_checks(out, lab, r, measure)
+    elif measure in CONTINUOUS:
+        for nc in ("n1", "n2"):
+            if r[nc] < 2 or not _is_int(r[nc]):
+                out.append(_finding("V004", lab, "%s = %g (folytonos adatnál egész n >= 2 kell)" % (nc, r[nc])))
+        for sc in ("sd1", "sd2"):
+            if r[sc] <= 0:
+                out.append(_finding("V005", lab, "%s = %g" % (sc, r[sc])))
+        for mc, sc in (("m1", "sd1"), ("m2", "sd2")):
+            if r[mc] >= 0 and r[sc] > 0 and r[mc] < 2 * r[sc]:
+                out.append(_finding("V013", lab, "%s=%g < 2·%s=%g" % (mc, r[mc], sc, 2 * r[sc])))
+        if min(r["n1"], r["n2"]) < 10:
+            out.append(_finding("V020", lab, "n1=%g, n2=%g" % (r["n1"], r["n2"])))
+    elif measure in BINARY:
+        ok = True
+        for ec, nc in (("e1", "n1"), ("e2", "n2")):
+            if r[nc] < 1 or not _is_int(r[nc]):
+                out.append(_finding("V004", lab, "%s = %g (bináris adatnál egész n >= 1 kell)" % (nc, r[nc])))
+                ok = False
+            if r[ec] < 0 or r[ec] > r[nc] or not _is_int(r[ec]):
+                out.append(_finding("V006", lab, "%s = %g, %s = %g" % (ec, r[ec], nc, r[nc])))
+                ok = False
+        if ok:
+            cells = (r["e1"], r["n1"] - r["e1"], r["e2"], r["n2"] - r["e2"])
+            if (r["e1"] == 0 and r["e2"] == 0) or (cells[1] == 0 and cells[3] == 0):
+                out.append(_finding("V008", lab, _double_zero_detail(r, measure, opts, corrects)))
+            elif min(cells) == 0 and corrects and (measure != "RD" or opts.get("cc_to") == "all"):
+                # RD-nél alapértelmezésben nincs korrekció (effect_sizes.two_by_two)
+                out.append(_finding("V009", lab, "+%g minden cellához" % opts.get("cc", 0.5)))
+    elif measure in PROPORTION:
+        if r["n"] < 1 or not _is_int(r["n"]):
+            out.append(_finding("V004", lab, "n = %g (arány-adatnál egész n >= 1 kell)" % r["n"]))
+        elif r["x"] < 0 or r["x"] > r["n"] or not _is_int(r["x"]):
+            out.append(_finding("V006", lab, "x = %g, n = %g" % (r["x"], r["n"])))
+        elif r["x"] in (0, r["n"]) and measure in ("PR", "PLN", "PLO") and corrects:
+            out.append(_finding("V009", lab, "x = %g / n = %g; +%g korrekció" % (r["x"], r["n"],
+                                                                               opts.get("cc", 0.5))))
+    elif measure in CORRELATION:
+        if not -1 < r["r"] < 1:
+            out.append(_finding("V010", lab, "r = %g" % r["r"]))
+        if r["n"] < 4 or not _is_int(r["n"]):
+            out.append(_finding("V004", lab, "n = %g (korrelációnál egész n >= 4 kell)" % r["n"]))
+    elif measure == "GEN":
+        # ugyanazok a kizárások, mint az effect_sizes.compute GEN-ágában (ott csak V022 lenne belőlük)
+        if r.get("vi") is None and r.get("sei") is not None and r["sei"] < 0:
+            out.append(_finding("V005", lab, "sei = %g (negatív SE; valószínű adatkinyerési hiba)" % r["sei"]))
+        if r.get("n") is not None and (r["n"] < 1 or not _is_int(r["n"])):
+            out.append(_finding("V004", lab, "n = %g (GEN-nél egész n >= 1 kell)" % r["n"]))
+        if opts.get("gen_smd_vtype") and r.get("vi") is None and r.get("sei") is None:
+            for nc in ("n1", "n2"):
+                if r.get(nc) is not None and (r[nc] < 1 or not _is_int(r[nc])):
+                    out.append(_finding("V004", lab, "%s = %g (a --gen-smd-vtype varianciájához egész n >= 1 kell)"
+                                        % (nc, r[nc])))
+    if _yes(r.get("estimated")):
+        out.append(_finding("V018", lab))
+    if _high_rob(r.get("rob")):
+        out.append(_finding("V019", lab))
+    if rob_category(r.get("rob")) == "":
+        out.append(_finding("V027", lab, "rob = %r" % str(r["rob"]).strip()))
+    if yes_no(r.get("estimated")) == "":
+        out.append(_finding("V027", lab, "estimated = %r" % str(r["estimated"]).strip()))
 
 
 def _shared_control(out, pairs, key_fn, n_col):

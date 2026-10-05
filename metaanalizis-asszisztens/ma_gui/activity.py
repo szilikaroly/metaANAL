@@ -327,7 +327,8 @@ def verify_chain(path, anchor=None):
             data = fh.read()
     except FileNotFoundError:
         if anchor:
-            return False, int(anchor.get("seq") or 1), "A tevékenységnapló hiányzik, pedig rögzített fej tartozik hozzá."
+            return (False, int(anchor.get("seq") or 1),
+                    "A tevékenységnapló hiányzik, pedig rögzített fej tartozik hozzá.")
         return True, None, "Nincs tevékenységnapló (üres lánc)."
     lines = data.split(b"\n")
     partial = lines[-1] != b""
@@ -405,14 +406,18 @@ def _msvc_quote(arg):
     return "".join(out)
 
 
-def cmd_quote(arg):
-    """Egy argumentum rerun.cmd-be: CRT-idézés, a cmd.exe metakarakterei idézőjelen kívül '^'-pal,
-    a '%' kettőzve (batch-fájlban az idézőjel sem véd tőle)."""
+def _crt_arg(arg):
     if any(c in arg for c in "\r\n\x00"):
         raise ValueError("sortörés nem adható át cmd-parancssorban")
-    s = _msvc_quote(arg) if (arg == "" or any(c in _CMD_SPECIAL for c in arg)) else arg
+    return _msvc_quote(arg) if (arg == "" or any(c in _CMD_SPECIAL for c in arg)) else arg
+
+
+def _cmd_escape(line):
+    """A cmd.exe rétege: a '%' kettőzve (batch-fájlban idézőjelben is kell), a metakarakterek
+    '^'-pal ott, ahol a cmd szerint idézőjelen kívül vagyunk. A cmd minden '"'-nél vált (a CRT
+    '\\"'-escape-jét nem ismeri), ezért az állapotot az egész soron át kell követni."""
     out, inq = [], False
-    for ch in s:
+    for ch in line:
         if ch == '"':
             inq = not inq
             out.append(ch)
@@ -425,8 +430,23 @@ def cmd_quote(arg):
     return "".join(out)
 
 
+def cmd_line(args):
+    """Argumentumlista → rerun.cmd-sor (CRT-idézés + cmd-escape); sortörésnél ValueError."""
+    return _cmd_escape(" ".join(_crt_arg(a) for a in args))
+
+
+def cmd_quote(arg):
+    """Egyetlen argumentum rerun.cmd-be (önálló sorként értelmezve)."""
+    return cmd_line([arg])
+
+
 def _safe_comment(text):
     return re.sub(r"[^A-Za-z0-9_.:\- ]", "_", text)
+
+
+def _record_label(rec):
+    return "seq %s - %s - %s" % (_safe_comment(str(rec.get("seq"))), _safe_comment(str(rec.get("action", ""))),
+                                 _safe_comment(str(rec.get("ts", ""))))
 
 
 def _commands(records):
@@ -439,17 +459,17 @@ def _commands(records):
 def render_rerun_sh(records, cd_rel="."):
     lines = ["#!/bin/sh",
              "# MA-munkapad - ujrafuttato szkript (%s alapjan, a naplo sorrendjeben)" % SCHEMA,
-             "# Hasznalat: sh rerun.sh   (felulirhato: PYTHON=..., MA_PY=/ut/a/ma.py)",
+             "# Hasznalat: sh rerun.sh   (felulirhato: MA_PYTHON=..., MA_PY=/ut/a/ma.py)",
              "set -eu",
              'cd "$(dirname "$0")/%s"' % cd_rel.replace('"', ""),
-             'PYTHON="${PYTHON:-python3}"',
+             'MA_PYTHON="${MA_PYTHON:-python3}"',
              'MA_PY="${MA_PY:-ma.py}"', ""]
     n = 0
     for rec, argv in _commands(records):
         kind, rest, prog = _split_program(argv)
-        head = {"ma": '"$PYTHON" "$MA_PY"', "py": '"$PYTHON" ' + shlex.quote(prog), "exe": shlex.quote(prog)}[kind]
-        lines.append("# seq %s - %s - %s" % (rec.get("seq"), _safe_comment(str(rec.get("action", ""))),
-                                              _safe_comment(str(rec.get("ts", "")))))
+        head = {"ma": '"$MA_PYTHON" "$MA_PY"', "py": '"$MA_PYTHON" ' + shlex.quote(prog),
+                "exe": shlex.quote(prog)}[kind]
+        lines.append("# " + _record_label(rec))
         lines.append(" ".join([head] + [shlex.quote(a) for a in rest]))
         n += 1
     if not n:
@@ -460,20 +480,24 @@ def render_rerun_sh(records, cd_rel="."):
 def render_rerun_cmd(records, cd_rel="."):
     lines = ["@echo off",
              "rem MA-munkapad - ujrafuttato szkript (%s alapjan, a naplo sorrendjeben)" % SCHEMA,
-             "rem Hasznalat: rerun.cmd   (felulirhato: set PYTHON=..., set MA_PY=C:\\ut\\ma.py)",
+             "rem Hasznalat: rerun.cmd   (felulirhato: set MA_PYTHON=..., set MA_PY=C:\\ut\\ma.py)",
              "chcp 65001 >nul",
              "setlocal",
              'cd /d "%%~dp0%s"' % cd_rel.replace("/", "\\").replace('"', "").replace("%", "%%"),
-             'if not defined PYTHON set "PYTHON=py -3"',
+             'if not defined MA_PYTHON set "MA_PYTHON=py -3"',
              'if not defined MA_PY set "MA_PY=ma.py"', ""]
     n = 0
     for rec, argv in _commands(records):
-        lines.append("rem seq %s - %s - %s" % (rec.get("seq"), _safe_comment(str(rec.get("action", ""))),
-                                                _safe_comment(str(rec.get("ts", "")))))
+        lines.append("rem " + _record_label(rec))
         kind, rest, prog = _split_program(argv)
         try:
-            head = {"ma": '%PYTHON% "%MA_PY%"', "py": "%PYTHON% " + cmd_quote(prog), "exe": cmd_quote(prog)}[kind]
-            lines.append(" ".join([head] + [cmd_quote(a) for a in rest]))
+            if kind == "ma":
+                line = '%MA_PYTHON% "%MA_PY%"' + (" " + cmd_line(rest) if rest else "")
+            elif kind == "py":
+                line = "%MA_PYTHON% " + cmd_line([prog] + rest)
+            else:
+                line = cmd_line([prog] + rest)
+            lines.append(line)
         except ValueError:
             lines.append("echo HIBA: a seq %s parancsa sortorest tartalmaz, cmd-ben nem futtathato. 1>&2"
                          % rec.get("seq"))

@@ -24,7 +24,7 @@
   "stage_id": "S00",
   "kind": "tool",
   "title": "MetaXL és Stata a könyvben; a könyv munkafolyamata",
-  "body": "All analyses in the book are demonstrated in MetaXL, a free MS Excel add-in downloadable from the Internet with an instruction manual (forest plots, FE/RE/IVhet/QE models, Doi plot); Stata code is supplied for each effect measure in later chapters, and Ch 1–2 contain no code. The book's workflow is: identify the outcome type, choose the effect-size measure, choose the statistical model, run the analysis in software, then interpret the output, with one chapter per measure. [note: MetaXL's RE and IVhet use the DerSimonian–Laird tau^2 (external knowledge, not stated in Ch 1–2); the local engine reproduces IVhet via models.meta_analysis(model='ivhet') with tau^2_DL but implements neither the QE model nor the LFK index.]",
+  "body": "All analyses in the book are demonstrated in MetaXL, a free MS Excel add-in downloadable from the Internet with an instruction manual (forest plots, FE/RE/IVhet/QE models, Doi plot); Stata code is supplied for each effect measure in later chapters, and Ch 1–2 contain no code. The book's workflow is: identify the outcome type, choose the effect-size measure, choose the statistical model, run the analysis in software, then interpret the output, with one chapter per measure. [note: MetaXL's RE and IVhet use the DerSimonian–Laird tau^2 (external knowledge, not stated in Ch 1–2); the local engine reproduces IVhet via models.meta_analysis(model='ivhet') with tau^2_DL and computes the Doi plot and LFK index (bias.doi_plot_data: doi.svg, results.json bias.lfk), but does not implement the QE model.]",
   "source_id": "khan2020",
   "locator": "Preface pp. viii–ix",
   "tags": "MetaXL Excel add-in bővítmény Stata software szoftver workflow munkafolyamat effect size hatásméret model choice modellválasztás IVhet engine motor"
@@ -624,7 +624,7 @@
   "stage_id": "S11",
   "kind": "pitfall",
   "title": "Publikációs, közlési és nyelvi torzítás",
-  "body": "Publication/reporting bias arises because studies with negative or non-significant effects are less often accepted, and sponsors and authors may withhold results that do not support their intended outcome; the missing studies distort the pooled result, sometimes unnoticed. Language bias arises because non-English publications are overlooked. Detect with a funnel or Doi plot/LFK index, acknowledging that funnel-plot tests have low power and that asymmetry has many causes. Fix: search unpublished and non-English sources and report the potential impact of the bias on the conclusions. [note: funnel-plot asymmetry signals small-study effects, of which publication bias is only one cause (others: true heterogeneity, weaker methods in small studies, chance); use asymmetry tests only with at least 10 studies (Cochrane Handbook v6 ch. 13).]",
+  "body": "Publication/reporting bias arises because studies with negative or non-significant effects are less often accepted, and sponsors and authors may withhold results that do not support their intended outcome; the missing studies distort the pooled result, sometimes unnoticed. Language bias arises because non-English publications are overlooked. Detect with a (contour-enhanced) funnel plot and, when k ≥ 10, a test suited to the measure; a Doi plot/LFK index only if pre-specified in the protocol, with k ≥ 10, as a supplement from the authors' approach and never as a substitute for the funnel plot (D-S11-015, D-S11-001), acknowledging that funnel-plot tests have low power and that asymmetry has many causes. Fix: search unpublished and non-English sources and report the potential impact of the bias on the conclusions. [note: funnel-plot asymmetry signals small-study effects, of which publication bias is only one cause (others: true heterogeneity, weaker methods in small studies, chance); use asymmetry tests only with at least 10 studies (Cochrane Handbook v6 ch. 13).]",
   "source_id": "khan2020",
   "locator": "Ch2 §2.8.2 p. 32; Ch1 §1.4 p. 7",
   "tags": "publication bias publikációs torzítás reporting bias közlési torzítás language bias nyelvi torzítás unpublished nem publikált sponsor szponzor funnel plot tölcsérábra pitfall buktató small-study effects kis vizsgálatok hatása"
@@ -644,7 +644,7 @@
   "stage_id": "S11",
   "kind": "concept",
   "title": "Doi-plot és LFK-index (szerzői nézet)",
-  "body": "The Doi plot is an alternative graph for detecting publication bias, and the LFK index quantifies its asymmetry. The authors claim the Doi plot is 'much less ambiguous' visually and the LFK index has 'much greater power' than funnel-plot tests; illustrations are in §§4.9, 5.9 and 8.8 and details in Ch 12. Ch 1–2 give no LFK formula or decision thresholds, and the engine does not implement the LFK index. [note: these claims come from the method's developers; funnel plots with regression-based tests remain the mainstream approach in Cochrane guidance.]",
+  "body": "The Doi plot is an alternative graph for detecting publication bias, and the LFK index quantifies its asymmetry. The authors claim the Doi plot is 'much less ambiguous' visually and the LFK index has 'much greater power' than funnel-plot tests; illustrations are in §§4.9, 5.9 and 8.8 and details in Ch 12. Ch 1–2 give no LFK formula or decision thresholds. The engine computes the LFK index and the Doi plot in every analyze run (bias.doi_plot_data: results.json bias.lfk, doi.svg); use them only as D-S11-015 allows. [note: these claims come from the method's developers; funnel plots with regression-based tests remain the mainstream approach in Cochrane guidance.]",
   "source_id": "khan2020",
   "locator": "Ch2 §2.8.2 p. 33",
   "tags": "Doi plot LFK index publication bias publikációs torzítás asymmetry aszimmetria power erő Furuya-Kanamori authors' view szerzői nézet funnel plot tölcsérábra"
@@ -654,7 +654,7 @@
   "stage_id": "S11",
   "kind": "criterion",
   "title": "Értékelési szempont: publikációs és közlési torzítás",
-  "body": "Evaluator criterion: publication and reporting bias were assessed (funnel and/or Doi plot with LFK), the low power of funnel-plot tests is acknowledged, and the potential impact on the conclusions is discussed. Significant publication bias or reporting anomalies make the results inaccurate.",
+  "body": "Evaluator criterion: publication and reporting bias were assessed (a contour-enhanced funnel plot, with a test suited to the measure only when k ≥ 10; a Doi plot with LFK only as a pre-specified supplement from the authors' approach, never as a substitute), the low power of funnel-plot tests is acknowledged, and the potential impact on the conclusions is discussed. Significant publication bias or reporting anomalies make the results inaccurate. [note: D-S11-001, D-S11-015; AMSTAR 2 item 15: the Doi plot/LFK does not replace the funnel-based assessment.]",
   "source_id": "khan2020",
   "locator": "Ch2 pp. 32–33; §2.9.2 p. 35",
   "tags": "evaluator criterion értékelési szempont publication bias publikációs torzítás reporting bias közlési torzítás impact hatás conclusions következtetések"
@@ -844,7 +844,7 @@
   "stage_id": "S08",
   "kind": "convention",
   "title": "A könyv elemzéseinek reprodukálása a motorral",
-  "body": "To reproduce the book's analyses in the engine, match the source's settings. FE is models.meta_analysis(model='fixed') with a z-based CI. Classical RE is model='random' with tau2_method='DL' and ci_method='z'; the engine defaults (REML, HKSJ) will give different output from MetaXL and the book. IVhet is model='ivhet', which uses tau^2_DL and a z CI. QE and the LFK index are not implemented, so take those results from MetaXL. [note: for a new review, report the pre-specified primary model with current methods (e.g. REML with HKSJ and a prediction interval) and use the book's settings only for verification or as a sensitivity analysis.]",
+  "body": "To reproduce the book's analyses in the engine, match the source's settings. FE is models.meta_analysis(model='fixed') with a z-based CI. Classical RE is model='random' with tau2_method='DL' and ci_method='z'; the engine defaults (REML, HKSJ) will give different output from MetaXL and the book. IVhet is model='ivhet', which uses tau^2_DL and a z CI. The Doi plot and LFK index come from bias.doi_plot_data (results.json bias.lfk, doi.svg); QE is not implemented, so take QE results from MetaXL. [note: for a new review, report the pre-specified primary model with current methods (e.g. REML with HKSJ and a prediction interval) and use the book's settings only for verification or as a sensitivity analysis.]",
   "source_id": "khan2020",
   "locator": "Ch2 §2.2.4 p. 22; §2.5 p. 25; §2.6.2–2.6.3 pp. 27–28",
   "tags": "engine motor reproduce reprodukálás MetaXL DerSimonian Laird DL REML HKSJ IVhet z-based z-alapú settings beállítások"

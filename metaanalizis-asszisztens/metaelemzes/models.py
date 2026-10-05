@@ -43,7 +43,7 @@ class MetaResult(object):
 
 
 # ------------------------------------------------------------- alapelemek
-def _check(yi, vi):
+def _check(yi, vi, labels=None):
     if len(yi) != len(vi):
         raise ModelError("yi és vi hossza eltér")
     if len(yi) < 1:
@@ -51,6 +51,14 @@ def _check(yi, vi):
     for v in vi:
         if not (v > 0) or math.isinf(v):
             raise ModelError("minden vi-nek pozitív, véges számnak kell lennie")
+    # a REML-nyomok (Σ w_i S₋ᵢ)² tagjai ~ k²·w⁴: ennél kisebb vi-nél (pl. 1e-300) túlcsordulnának
+    k, vmin = len(vi), min(vi)
+    w = 1.0 / vmin
+    if not math.isfinite(k * k * w * w * w * w):
+        i = list(vi).index(vmin)
+        raise ModelError("a(z) %s vizsgálat varianciája (vi = %g) numerikusan kezelhetetlenül kicsi (a súlyok "
+                         "túlcsordulnának); valószínű adatkinyerési hiba — ellenőrizd a vi/SE értékét" % (
+                             labels[i] if labels and i < len(labels) else "%d." % (i + 1), vmin))
 
 
 def ratio_stat(est, se):
@@ -573,7 +581,7 @@ def meta_analysis(yi, vi, model="random", tau2_method=None, ci_method=None, leve
     Az eredményben weights_raw a nyers inverz-variancia súlyok (1/v_i, ill. 1/(v_i + τ²)),
     sum_weights ezek összege; weights_pct = 100·weights_raw/sum_weights.
     """
-    _check(yi, vi)
+    _check(yi, vi, labels)
     _check_h_centre(h_centre)
     yi = [float(y) for y in yi]
     vi = [float(v) for v in vi]

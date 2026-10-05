@@ -314,8 +314,8 @@
   "checklist": "PREFLIGHT",
   "section": "Adatvédelem és szerzői jog",
   "ord": 32,
-  "text": "Betegszintű vagy személyazonosításra alkalmas adat, illetve szerzői jogvédett teljes szöveg nem kerülhet verziókövetésbe. Ezt a gyökér .gitignore mintái (`*_PHI*`, `*beteg_adat*`) biztosítják, a forrásdokumentumok pedig csak a gitignore-olt `tudasbazis/forrasok/` mappában lehetnek. Érzékeny adattal nem szabad a vault által GitHubra szinkronizált `~/Documents/claude` alatt dolgozni.",
-  "how_to_verify": "A `git check-ignore -v <érzékeny fájl>` találatot ad, és a `git status --porcelain` nem mutat PDF-et, tudásbázis-sqlite-ot vagy betegadatot. A projektmappa nem a `~/Documents/claude` alatt van, vagy ott a .gitignore kizárja az érzékeny fájlokat.",
+  "text": "Betegszintű vagy személyazonosításra alkalmas adat, illetve szerzői jogvédett teljes szöveg nem kerülhet verziókövetésbe. Ezt a gyökér .gitignore mintái (`*_[Pp][Hh][Ii]`, `*_[Pp][Hh][Ii][._-]*`, `[Pp][Hh][Ii]_*`, `*.[Pp][Hh][Ii].*`, `*beteg_adat*`) biztosítják — a betegszintű fájl nevében a PHI (kis- vagy nagybetűvel) önálló tagként, elválasztóval (`_`, `.` vagy `-`) álljon, vagy a név tartalmazza a `beteg_adat` tagot; a más szó részeként álló „phi” (pl. `dengue_philippines`) nem számít —, a forrásdokumentumok pedig csak a gitignore-olt `tudasbazis/forrasok/` mappában lehetnek. Érzékeny adattal nem szabad a vault által GitHubra szinkronizált `~/Documents/claude` alatt dolgozni.",
+  "how_to_verify": "A `git check-ignore -v <érzékeny fájl>` találatot ad, a projekt rendes fájljaira (pl. `<mappa>/00_protokoll/protokoll.md`, `<mappa>/03_adatok/adatkinyeres.csv`, `<mappa>/projekt.sqlite`) viszont nem — a „phi” betűsort más szó részeként tartalmazó mappanévnél (pl. `dengue_philippines`) sem — (különben a projekt nem kerül verziókövetésbe), és a `git status --porcelain` nem mutat PDF-et, tudásbázis-sqlite-ot vagy betegadatot. A projektmappa nem a `~/Documents/claude` alatt van, vagy ott a .gitignore kizárja az érzékeny fájlokat.",
   "stage_id": "S00",
   "source_ids": "engine"
  },
@@ -414,7 +414,7 @@
   "checklist": "REVIEWER",
   "section": "S02 Protokoll és regisztráció",
   "ord": 8,
-  "text": "A protokollt a szűrés megkezdése előtt regisztrálták (PROSPERO vagy OSF), az azonosító és a dátum szerepel. A regisztráció hiánya az AMSTAR 2 szerint kritikus gyengeség, és ilyenkor minden alcsoport- és érzékenységi döntést potenciálisan utólagosnak kell tekinteni.",
+  "text": "A protokollt a szűrés megkezdése előtt regisztrálták (PROSPERO vagy OSF), az azonosító és a dátum szerepel. A regisztráció hiánya jelentési hiány (PRISMA 2020 24a), és az AMSTAR 2 2. tételén legfeljebb „részben igen”-t ad, ha van írott, előre rögzített protokoll; kritikus hiba („nem”) csak akkor, ha nincs előre rögzített protokoll (D-S02-019). Regisztráció nélkül az alcsoport- és érzékenységi döntéseket potenciálisan utólagosnak kell tekinteni, hacsak a dátumozott protokoll.md nem rögzítette őket előre.",
   "how_to_verify": "`protokoll.md` 1. pont: regisztrációs azonosító és dátum. A PROSPERO/OSF-rekord nyilvános oldala (WebFetch) a címben és a kérdésben egyezik, a regisztráció dátuma pedig korábbi a szűrés kezdeténél (a szűrőplatform exportja szerint). Hiány esetén: major. KB: K-MOR20-006, K-MOR20-007, K-SIM24-008, K-ZHA22-013.",
   "stage_id": "S02",
   "source_ids": "prisma2020,amstar2,morvaridzadeh2020,simplypsychology2024,zhang2022_jslhr"
@@ -525,7 +525,7 @@
   "section": "S04 Szűrés és kiválasztás",
   "ord": 19,
   "text": "A PRISMA 2020 folyamatábra számai hibátlanul átmennek a motor automatikus ellenőrzésén. A P-kódú hibák (error súlyosság) blocker megállapítások.",
-  "how_to_verify": "`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (vagy `--composer prisma-flow.json`, illetve `--A1 … --I`), kilépési kód 0. Error súlyosságú kódok: P001–P007, P009, P010, P015. A warningokat (P008 hiányzó kizárási okok, P013 lezáratlan szűrés, P014, P016) javítani vagy indokolni kell, és át kell nézni a P011 (levezetett érték) és a P012 (nem ellenőrizhető összefüggés) tételeit is. KB: K-KHN0102-019, K-KHN0102-020, K-SIM24-027.",
+  "how_to_verify": "`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (vagy `--composer prisma-flow.json`, illetve `--A1 … --I`), kilépési kód 0. Ha composer `prisma-flow.json` és `02_szures/prisma_folyamat.md` is van, együtt futtasd (`--md … --composer …`): a composer számai érvényesek, és minden P017 (a két forrás egy dobozának vagy okonkénti kizárási bontásának eltérése) blocker. Error súlyosságú kódok: P001–P007, P009, P010, P015, P017. A warningokat (P008 hiányzó kizárási okok, P013 lezáratlan szűrés, P014, P016) javítani vagy indokolni kell, és át kell nézni a P011 (levezetett érték) és a P012 (nem ellenőrizhető összefüggés) tételeit is. KB: K-KHN0102-019, K-KHN0102-020, K-SIM24-027.",
   "stage_id": "S04",
   "source_ids": "prisma2020,khan2020,simplypsychology2024,engine"
  },
@@ -545,7 +545,7 @@
   "section": "S04 Szűrés és kiválasztás",
   "ord": 21,
   "text": "Szűrés → teljes szöveg: E = B − C (teljes szövegre keresett), G = E − F (értékelt, ahol F a be nem szerezhető jelentések száma), és J = G − H, ehhez hozzáadva az egyéb módszerek ágából bevont jelentéseket. H a teljes szöveg alapján kizárt jelentések száma, és az okonkénti bontás összege pontosan H.",
-  "how_to_verify": "A `ma.py prisma check` nem jelez P003-, P004-, P005-, P007- vagy P008-hibát (egyéb módszerek ágánál P009- vagy P016-jelzést sem), és a `02_szures/` kizárási okainak okonkénti száma összesen H. KB: K-KHA26-041, K-KHA26-042, K-MOR20-076.",
+  "how_to_verify": "A `ma.py prisma check` nem jelez P003-, P004-, P005-, P007-, P008- vagy (több forrásnál) P017-jelzést (egyéb módszerek ágánál P009- vagy P016-jelzést sem), és a `02_szures/` kizárási okainak okonkénti száma összesen H. KB: K-KHA26-041, K-KHA26-042, K-MOR20-076.",
   "stage_id": "S04",
   "source_ids": "prisma2020,kharbach2026_tools,morvaridzadeh2020,engine"
  },
@@ -604,7 +604,7 @@
   "checklist": "REVIEWER",
   "section": "S05 Adatkinyerés",
   "ord": 27,
-  "text": "A motor adatvalidálása lefutott, és minden tételét kezelték. Error (V001–V006, V010, V024) nem maradhat. A figyelmeztetéseket egyenként, forrás-visszaellenőrzéssel vagy indoklással kell lezárni: V007 ismétlődő azonosító, V008 kettős nulla esemény, V011 SE/SD-gyanú, V012 mértékegység, V014 szélsőséges hatás, V015 kevés vizsgálat, V017 közös kontroll, V020 nagyon kis minta, V021 nem szám érték nem kötelező oszlopban, V022 kizárt sor, V023 kétértelmű szám. Az info-jelzéseket (V009, V013, V016, V018, V019) a későbbi ellenőrzéseknél kell felhasználni.",
+  "text": "A motor adatvalidálása lefutott, és minden tételét kezelték. Error (V001–V006, V010, V024, V026, V030) nem maradhat. A figyelmeztetéseket egyenként, forrás-visszaellenőrzéssel vagy indoklással kell lezárni: V007 ismétlődő azonosító, V008 kettős nulla esemény, V011 SE/SD-gyanú, V012 mértékegység, V014 szélsőséges hatás, V015 kevés vizsgálat, V017 közös kontroll, V020 nagyon kis minta, V021 nem szám érték nem kötelező oszlopban, V022 kizárt sor, V023 kétértelmű szám, V027 fel nem ismert rob/estimated kategória, V028 ismétlődő oszlop, V029 hiányzó vizsgálat-címke. Az info-jelzéseket (V009, V013, V016, V018, V019) a későbbi ellenőrzéseknél kell felhasználni.",
   "how_to_verify": "`ma.py validate --data <mappa>/03_adatok/adatkinyeres.csv --measure <M> --json`: a kimenet `summary.error` értéke 0 (az `analyze` results.json-jában ugyanez `validation.summary.error`), és minden warninghoz van megjegyzés az `adatkinyeres.csv` `megjegyzes` oszlopában vagy egy megállapításban. A szabályok: `ma.py kb rules --stage S05 --agent reviewer` (a motor V-szabályaival együtt). KB: K-KHN0102-028.",
   "stage_id": "S05",
   "source_ids": "engine,cochrane_handbook,khan2020"
@@ -705,7 +705,7 @@
   "section": "S05 Adatkinyerés",
   "ord": 37,
   "text": "Minden konverzió vizsgálatonként naplózott, módszerrel és helyes hivatkozással. Medián/IQR vagy tartomány → átlag/SD: Luo 2018 (átlag) és Wan 2014 (SD). A Hozo 2005 csak a medián és tartomány esetére vonatkozik, és ott is a Luo- és Wan-becslő a jobb, ezért legfeljebb forrás-reprodukcióhoz használható. Ide tartozik még az SE/CI/t/p → SD/SE átváltás, a csoportok összevonása és a változás-SD imputált korrelációval. A konverziók közel normális eloszlást feltételeznek. A becsült vagy imputált sorok `estimated=igen` jelölést kapnak (V018), és tervezett nélkülük egy érzékenységi elemzés.",
-  "how_to_verify": "Az `adatkinyeres.csv` `estimated` és `megjegyzes` oszlopa; a konverziók (`ma.py convert median|se|ci|se-from-ci|combine|change|paired-sums …`, t- vagy p-értékből a `metaelemzes.conversions` függvényeivel) és kimenetük a `03_adatok/` mappában; a V018-lista megegyezik a jelölt sorokkal. KB: K-MOR20-024, K-MOR20-026, K-SIM24-044, K-CHE16-016; F-MOR20-010, F-MOR20-002.",
+  "how_to_verify": "Az `adatkinyeres.csv` `estimated` és `megjegyzes` oszlopa; a konverziók (`ma.py convert median|se|ci|se-from-ci|combine|change|paired-sums …`, t- vagy p-értékből `ma.py convert d-from-t|sd-from-t|se-from-p …`) és kimenetük a `03_adatok/` mappában; a V018-lista megegyezik a jelölt sorokkal. KB: K-MOR20-024, K-MOR20-026, K-SIM24-044, K-CHE16-016; F-MOR20-010, F-MOR20-002.",
   "stage_id": "S05",
   "source_ids": "wan2014,luo2018,cochrane_handbook,morvaridzadeh2020,simplypsychology2024,cheung2016,engine"
  },
@@ -815,7 +815,7 @@
   "section": "S07 Hatásméret",
   "ord": 48,
   "text": "Egy elemzésben egyetlen közös mérőszám szerepel. Az eltérő mérőszámot közlő vizsgálatokat nem szabad pusztán emiatt kizárni: dokumentált, közelítő konverzióval (d ↔ ln OR ↔ r, a varianciával együtt) bevonhatók. A konverzió feltevéseit rögzíteni kell (ln OR → d: logisztikus eloszlás; d ↔ r: kétcsoportos elrendezés), a konvertált vizsgálatokat jelölni, és érzékenységi elemzéssel vizsgálni.",
-  "how_to_verify": "A konverziók naplója a `03_adatok/` mappában. A `ma.py convert` ezeket nem kínálja, ezért a `metaelemzes.conversions` `logor_to_d`, `d_to_logor`, `r_to_d` és `d_to_r` függvényével kell számolni (képletek: F-KHN0102-012, F-KHN0102-013, F-SIM24-010, F-SIM24-011). A konvertált sorokat a `megjegyzes` oszlop jelöli, és a kizárási okok között nincs „más hatásmértéket közölt”. KB: K-CHE16-018, K-SIM24-042, K-SIM24-044, K-KHN0102-027.",
+  "how_to_verify": "A konverziók naplója a `03_adatok/` mappában. A konverzió parancsa: `ma.py convert logor-to-d|d-to-logor|r-to-d|d-to-r` (képletek: F-KHN0102-012, F-KHN0102-013, F-SIM24-010, F-SIM24-011). A konvertált sorokat a `megjegyzes` oszlop jelöli, és a kizárási okok között nincs „más hatásmértéket közölt”. KB: K-CHE16-018, K-SIM24-042, K-SIM24-044, K-KHN0102-027.",
   "stage_id": "S07",
   "source_ids": "cochrane_handbook,borenstein2009,cheung2016,simplypsychology2024,khan2020"
  },

@@ -14,7 +14,7 @@ magyarul kommunikálj vele, a kéziratba szánt szövegeket angolul írd. Szakma
 | Mi | Hol / hogyan |
 |---|---|
 | Számítási motor (csak Python standard könyvtár, metaforral validált) | `python metaanalizis-asszisztens/ma.py <parancs>` (ha nincs `python`, akkor `python3`) |
-| Tudásbázis (SQLite + FTS5) | `python metaanalizis-asszisztens/ma.py kb search "…"`, `kb rules --stage S08 --agent planner`, `kb checklist PRISMA2020`, `kb show <ID>`, `kb sql "SELECT …"` |
+| Tudásbázis (SQLite + FTS5) | `python metaanalizis-asszisztens/ma.py kb search "…"`, `kb rules --stage S08 --agent planner`, `kb checklist PRISMA2020` (továbbá `PRISMA_P`, `PRISMA_S`, `PREFLIGHT`, `REVIEWER`, `EVALUATOR`, `AMSTAR2`, `GRADE`), `kb show <ID>`, `kb sql "SELECT …"` |
 | Projektnapló (SQLite) | `python metaanalizis-asszisztens/ma.py project status <mappa>`, `project log …`, `project finding …`, `project checkpoint …` |
 | Alágensek | `ma-tervezo`, `ma-ellenorzo`, `ma-ertekelo` (Agent eszközzel hívod őket) |
 | Eszköz- és hozzáférés-lista | általános: `metaanalizis-asszisztens/ESZKOZOK_ES_HOZZAFERESEK.md`; projektenként: `<projekt>/00_protokoll/eszkozok_hozzaferesek.md` (a ma-tervezo írja, a `kb sql "SELECT * FROM tool"` és `kb checklist PREFLIGHT` alapján) |
@@ -29,9 +29,15 @@ S14 jelentés (PRISMA 2020).
 1. **Semmilyen számot nem találsz ki.** Minden hatásméret-bemenet a forrásból (oldal/táblázat megjelölésével)
    vagy dokumentált konverzióból (`ma.py convert …`) származik; a becsült értékek `estimated=igen` jelölést kapnak.
 2. **Minden számítást a motor végez** (`ma.py analyze`), nem fejben vagy ad hoc kóddal. Ha a motor nem tud
-   valamit, mondd ki, és javasolj validált eszközt (R metafor/meta).
+   valamit, mondd ki, és javasolj validált eszközt (R metafor/meta). Egyetlen kivétel a tudásbázisban dokumentált,
+   a motor által nem számolt SoF-képletek köre — abszolút hatás más alapkockázatnál és NNT/NNH (GRADE-10a,
+   D-S13-012, EVALUATOR-03a): ezeket lépésenként kiírva (képlet, bemenetek forrással, eredmény) a SoF-lábjegyzetbe
+   kell rögzíteni, és a `ma-ellenorzo` az S13-ban függetlenül újraszámolja (EVALUATOR-00).
 3. **Minden módszertani döntés a tudásbázisból indul**: előtte `kb rules`/`kb search`, utána
-   `project log … --kb <szabály-ID-k>`. Ha a tudásbázis nem fedi le a kérdést, írd le, mire alapozod
+   `project log … --kb <szabály-ID-k> --strict`. Ha a --strict hibát ad, keresd meg az azonosítót (kb search /
+   kb show) vagy hagyd el; --strict nélkül ismeretlen ID-t ne naplózz. Teljes szöveges találatra a kb search
+   [forrás#sorszám] hivatkozását add meg (a #<szám> sorszám-azonosító újratöltéskor változik; a napló stabil alakra
+   alakítja). Ha a tudásbázis nem fedi le a kérdést, írd le, mire alapozod
    (forrás + oldal a teljes szöveges találatból) — kitalált szabály-ID-t soha ne adj meg.
 4. **Hivatkozást csak ellenőrzötten** adsz meg (PubMed MCP / DOI). Kitalált vagy nem ellenőrzött hivatkozás tilos.
 5. **Emberi döntés kell** a végső be-/kizáráshoz, az adatkinyerés kettős ellenőrzéséhez és a torzítási kockázat
@@ -42,7 +48,10 @@ S14 jelentés (PRISMA 2020).
 6. **Kapuk:** egy szakasz csak akkor zárható, ha a `ma-ellenorzo` PASS vagy PASS_WITH_FIXES ítéletet adott, és
    nincs nyitott `blocker` megállapítás (`project status`). A projektnapló ezt technikailag is kikényszeríti
    (a szakaszkód S00–S14, tartomány pl. `S01-S02`, vagy a záró `FINAL`, amelyet bármely nyitott blocker blokkol).
-7. Beteg-azonosításra alkalmas adat nem kerülhet a repóba (lásd a gyökér `.gitignore`-t).
+7. Beteg-azonosításra alkalmas adat nem kerülhet a repóba: a gyökér `.gitignore` azokat a fájlokat zárja ki, amelyek
+   nevében a PHI (kis- vagy nagybetűvel) önálló, elválasztott tagként áll (`*_[Pp][Hh][Ii]`, `*_[Pp][Hh][Ii][._-]*`,
+   `[Pp][Hh][Ii]_*`, `*.[Pp][Hh][Ii].*`) vagy a `beteg_adat` rész szerepel (`*beteg_adat*`) — a betegszintű fájlt így
+   nevezd el (pl. `betegek_PHI.csv`); a más szó részeként álló „phi” (pl. `dengue_philippines`) nem számít.
 
 ## Munkafolyamat
 
@@ -50,7 +59,10 @@ S14 jelentés (PRISMA 2020).
 - Ha nincs projektmappa: `python metaanalizis-asszisztens/ma.py project init <mappa> --title "…" --question "…"`
   (létrehozza a mappaszerkezetet, a sablonokat és a `projekt.sqlite` naplót).
 - Ha van: `project status <mappa>` — innen folytasd (nyitott megállapítások, utolsó ellenőrzőpontok).
-- Ellenőrizd, hogy a tudásbázis felépült-e: `ma.py kb stats` (első futáskor automatikusan felépül).
+- Indítási ellenőrzés (D-S00-001; `kb rules --stage S00 --agent orchestrator`): `ma.py kb stats` (felépült-e a
+  tudásbázis; első futáskor automatikusan felépül) és `ma.py selftest`. **Sikertelen selftest mellett elemzés nem
+  indulhat.** Rögzítsd: `project log <mappa> --agent orchestrator --stage S00 --decision "preflight kész" --kb D-S00-001 --strict`.
+- Szakaszváltáskor a saját szabályaidat is nézd meg: `kb rules --stage <S> --agent orchestrator` (pl. S01: D-S01-016).
 
 ### 1. Tervezés → `ma-tervezo` (KEZDÉSKOR, és ha a kérdés/terjedelem érdemben változik)
 Add át: a kutatási kérdést, a projektmappát, a felhasználó ismert megkötéseit (határidő, célfolyóirat,
@@ -58,25 +70,32 @@ elérhető adatbázisok). A tervező visszaadja: PICO(S), protokoll-vázlat, ker
 elemzési terv (hatásméret, modell, τ²-becslő, CI-módszer, előre tervezett alcsoportok, érzékenységi
 elemzések, torzítás-vizsgálat), GRADE-terv és az **eszköz/hozzáférés előfeltétel-listát (S00)**.
 → Mutasd be tömören a felhasználónak; a nyitott kérdéseket tedd fel (pl. AskUserQuestion).
-→ Utána `ma-ellenorzo` checkpoint S01–S02 (protokoll-ellenőrzés), csak PASS után haladj.
+→ Utána `ma-ellenorzo` checkpoint S01–S02 (protokoll-ellenőrzés); csak PASS vagy PASS_WITH_FIXES ítélet után, nyitott
+  blocker nélkül haladj (6. alapszabály).
 
 ### 2. Végrehajtás szakaszonként
 Minden szakasz végén hívd a `ma-ellenorzo`-t **checkpoint módban** (add meg: projektmappa, szakasz, mely
 fájlok változtak). Tipikus pontok:
 - S03 keresés: stratégia (blokkok, szinonimák, MeSH/Emtree, szűrők), adatbázisonkénti szintaxis, dátum,
-  találatszámok a `01_kereses/kereses_naplo.md`-ben.
-- S04 szűrés: PRISMA-számok konzisztenciája (`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md`, vagy
-  `--composer prisma-flow.json`; P001–P0xx szabályok), kizárási okok a teljes szövegnél.
+  találatszámok a `01_kereses/kereses_naplo.md`-ben (PRISMA-S: `kb checklist PRISMA_S`).
+- S04 szűrés: PRISMA-számok konzisztenciája (`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md`, composer
+  export esetén ugyanabban a futásban `--composer prisma-flow.json` is — az eltérő doboz vagy kizárásiok-bontás P017-hiba; P001–P017
+  szabályok), kizárási okok a teljes szövegnél.
 - S05 adatkinyerés: `ma.py validate --data … --measure …`; a gyanús tételek (V011 SE/SD, V012 mértékegység,
   V014 szélsőséges hatás) forrás-visszaellenőrzése.
-- S06 RoB: eszköz megfelelősége (RoB 2 RCT-re, ROBINS-I nem randomizáltra, NOS megfigyelésesre, QUADAS-2
+- S06 RoB: eszköz megfelelősége (RoB 2 RCT-re, ROBINS-I nem randomizáltra, ROBINS-E expozíciós megfigyelésesre — a NOS
+  csak doménenként, összpontszám nélkül —, QUADAS-2
   diagnosztikusra; predikciós modellnél PROBAST+AI — erre a `probast-tripod-ai` skill használható).
 - S07–S12 elemzés: `ma.py analyze --data … --measure … --project <mappa> --out <mappa>/05_elemzes/<kimenet>`
-  (bináris OR-nál a kis-vizsgálat teszt Harbord/Peters, nem a klasszikus Egger);
+  (bináris OR-nál a kis-vizsgálat teszt Harbord/Peters, nem a klasszikus Egger; SMD-nél a klasszikus Egger csak
+  tájékoztató — D-S11-005);
   az előre tervezett érzékenységi elemzések (`--exclude rob=high`, `--exclude estimated=igen`, FE vs RE,
   másik τ²-becslő, `--outliers`, `--ci hksj_adhoc`) külön kimeneti mappába. A τ²-becslő alapértelmezése modellenként
-  dől el (RE: REML; IVhet: DL) — a `results.json` minden blokkjában a ténylegesen használt `tau2_method` szerepel.
-- S14 kézirat: PRISMA 2020 (`kb checklist PRISMA2020`), a `report.md` angol Methods-bekezdése kiindulásnak.
+  dől el (RE: REML; IVhet: DL) — a `results.json` modellblokkjai (`random`, `primary`, `bias.trimfill.adjusted`) a
+  ténylegesen használt `tau2_method`-ot mutatják; az érzékenységi elemzések (leave-one-out, kumulatív) ugyanezzel a
+  becslővel futnak.
+- S14 kézirat: PRISMA 2020 (`kb checklist PRISMA2020`) és PRISMA-S (`kb checklist PRISMA_S`), a `report.md` angol
+  Methods-bekezdése kiindulásnak.
 
 ### 3. Értékelés → `ma-ertekelo` (kimenetenként, a következtetések megírása ELŐTT)
 GRADE (5 leminősítési szempont; megfigyeléses vizsgálatoknál felminősítés), Summary of Findings táblázat,
@@ -110,9 +129,10 @@ A pluginokra névvel hivatkozz (ne slash-paranccsal a kódban/szövegben); ha eg
 Az alágens válaszát ne másold szó szerint a felhasználónak: foglald össze (ítélet, blokkoló tételek, teendők).
 
 **Megállapítások lezárása:** ha egy ellenőrzői megállapítást kijavítottatok, a javítás után rögzítsd:
-`project resolve <mappa> <id> --status fixed --resolution "mit és hol javítottunk"` (vagy `wontfix` indoklással),
-majd kérd a `ma-ellenorzo`-t, hogy ellenőrizze újra (`project show <mappa> finding <id>`). Blocker csak `fixed`
-vagy indokolt `invalid` státusszal zárható.
+`project resolve <mappa> <id> --status fixed --resolution "mit és hol javítottunk"` (nem blocker megállapításnál
+`wontfix` indoklással is), majd kérd a `ma-ellenorzo`-t, hogy ellenőrizze újra (`project show <mappa> finding <id>`).
+Blocker csak `fixed` vagy indokolt `invalid` státusszal zárható. A napló a blocker wontfix-ét elutasítja. Ha az
+ellenőrző nem fogadja el a javítást: `project resolve <mappa> <id> --status open --resolution "miért"`.
 
 ## Kimeneti konvenciók
 - Eredmény-közlés: becslés [95% CI], p, k, résztvevők száma, I², τ², predikciós intervallum (RE esetén).

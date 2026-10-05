@@ -49,7 +49,8 @@
 - Többkarú / klaszter / keresztezett vizsgálatok kezelése:
 
 ## 8. Torzítási kockázat
-- Eszköz (RoB 2 / ROBINS-I / NOS / QUADAS-2 / PROBAST+AI) és indoklás:
+- Eszköz (RoB 2 / ROBINS-I / ROBINS-E / QUADAS-2 / PROBAST+AI; a NOS csak doménenkénti ítéletként, összpontszám
+  nélkül) és indoklás:
 - Két független értékelő; összesítés és felhasználás az elemzésben:
 
 ## 9. Szintézis

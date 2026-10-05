@@ -1,0 +1,973 @@
+{
+ "description": "GET /api/engine — api.engine_info(): verzió, önteszt, mértékek, opció- és szabály-metaadat (3.2, 3.4). Valós motor-metaadatból generálva.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/engine",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.engine-info/v1",
+    "data": {
+     "schema": "szk.ma.engine-info/v1",
+     "engine_version": "0.2.0",
+     "python": "3.12.4",
+     "selftest": {
+      "ok": true,
+      "cases": 192,
+      "checks": 3268,
+      "passed": 3268,
+      "failed": 0,
+      "elapsed_ms": 204
+     },
+     "kb": {
+      "ok": true,
+      "items": 1184,
+      "db_sha256": "5be1c0a4e27f0d5b0f3c7b9a1e6d2c48a9f0b3e7d1c5a2f6e8b4d0c9a7e3f1b2"
+     },
+     "contracts": {
+      "ma.validation": 1,
+      "ma.analysis-spec": 1,
+      "ma.run": 1,
+      "ma.plot": 2,
+      "ma.convert-request": 1,
+      "ma.convert-result": 1,
+      "ma.provenance": 1,
+      "ma.studies": 1,
+      "ma.project-audit": 1
+     },
+     "measures": [
+      {
+       "id": "MD",
+       "label": {
+        "hu": "Átlagkülönbség (MD)",
+        "en": "Mean difference (MD)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "SMD",
+       "label": {
+        "hu": "Standardizált átlagkülönbség (Hedges g)",
+        "en": "Standardised mean difference (Hedges g)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "COHEN_D",
+       "label": {
+        "hu": "Standardizált átlagkülönbség (Cohen d, korrekció nélkül)",
+        "en": "Standardised mean difference (Cohen d, uncorrected)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "ROM",
+       "label": {
+        "hu": "Válaszhányados (ratio of means)",
+        "en": "Ratio of means (ROM)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "log",
+       "ratio": true
+      },
+      {
+       "id": "SMD_GLASS",
+       "label": {
+        "hu": "Standardizált átlagkülönbség (Glass Δ, a kontroll SD-jével)",
+        "en": "Standardised mean difference (Glass Δ, control SD)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "MC",
+       "label": {
+        "hu": "Átlagos változás (párosított, nyers)",
+        "en": "Mean change (paired, raw)"
+       },
+       "family": "paired",
+       "required_columns": [
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "SMCC",
+       "label": {
+        "hu": "Standardizált átlagos változás (a változás SD-jével)",
+        "en": "Standardised mean change (change-score SD)"
+       },
+       "family": "paired",
+       "required_columns": [
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "OR",
+       "label": {
+        "hu": "Esélyhányados (OR)",
+        "en": "Odds ratio (OR)"
+       },
+       "family": "binary",
+       "required_columns": [
+        "e1",
+        "n1",
+        "e2",
+        "n2"
+       ],
+       "scale": "log",
+       "ratio": true
+      },
+      {
+       "id": "RR",
+       "label": {
+        "hu": "Relatív kockázat (RR)",
+        "en": "Risk ratio (RR)"
+       },
+       "family": "binary",
+       "required_columns": [
+        "e1",
+        "n1",
+        "e2",
+        "n2"
+       ],
+       "scale": "log",
+       "ratio": true
+      },
+      {
+       "id": "RD",
+       "label": {
+        "hu": "Kockázatkülönbség (RD)",
+        "en": "Risk difference (RD)"
+       },
+       "family": "binary",
+       "required_columns": [
+        "e1",
+        "n1",
+        "e2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "PR",
+       "label": {
+        "hu": "Arány",
+        "en": "Proportion"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "PLN",
+       "label": {
+        "hu": "Arány (log)",
+        "en": "Proportion (log)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "log",
+       "ratio": false
+      },
+      {
+       "id": "PLO",
+       "label": {
+        "hu": "Arány (logit)",
+        "en": "Proportion (logit)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "logit",
+       "ratio": false
+      },
+      {
+       "id": "PAS",
+       "label": {
+        "hu": "Arány (arcsin)",
+        "en": "Proportion (arcsine)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "asin_sqrt",
+       "ratio": false
+      },
+      {
+       "id": "PFT",
+       "label": {
+        "hu": "Arány (Freeman–Tukey)",
+        "en": "Proportion (Freeman–Tukey)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "pft",
+       "ratio": false
+      },
+      {
+       "id": "COR",
+       "label": {
+        "hu": "Korreláció (r)",
+        "en": "Correlation (r)"
+       },
+       "family": "correlation",
+       "required_columns": [
+        "r",
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "ZCOR",
+       "label": {
+        "hu": "Korreláció (Fisher z → r)",
+        "en": "Correlation (Fisher z → r)"
+       },
+       "family": "correlation",
+       "required_columns": [
+        "r",
+        "n"
+       ],
+       "scale": "atanh",
+       "ratio": false
+      },
+      {
+       "id": "GEN",
+       "label": {
+        "hu": "Generikus hatásméret",
+        "en": "Generic effect size"
+       },
+       "family": "generic",
+       "required_columns": [
+        "yi"
+       ],
+       "scale": "identity",
+       "ratio": false
+      }
+     ],
+     "options": {
+      "measure": {
+       "default": "SMD",
+       "type": "enum",
+       "choices": [
+        "MD",
+        "SMD",
+        "COHEN_D",
+        "ROM",
+        "SMD_GLASS",
+        "MC",
+        "SMCC",
+        "OR",
+        "RR",
+        "RD",
+        "PR",
+        "PLN",
+        "PLO",
+        "PAS",
+        "PFT",
+        "COR",
+        "ZCOR",
+        "GEN"
+       ],
+       "cli": "--measure",
+       "help": "hatásméret (a szükséges oszlopokat lásd lent)"
+      },
+      "model": {
+       "default": "random",
+       "type": "enum",
+       "choices": [
+        "random",
+        "fixed",
+        "ivhet"
+       ],
+       "cli": "--model",
+       "help": null
+      },
+      "tau2": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "DL",
+        "REML",
+        "ML",
+        "PM",
+        "HE",
+        "SJ"
+       ],
+       "cli": "--tau2",
+       "help": "τ²-becslő (alap: a modellé — random → REML, ivhet → DL, a Doi 2015 szerint; ivhet-nél más becslő figyelmeztetéssel)"
+      },
+      "ci": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "z",
+        "t",
+        "hksj",
+        "hksj_adhoc"
+       ],
+       "cli": "--ci",
+       "help": "alap: random→hksj, fixed→z"
+      },
+      "pi": {
+       "default": "t_k-2",
+       "type": "enum",
+       "choices": [
+        "t_k-2",
+        "t_k-1",
+        "z"
+       ],
+       "cli": "--pi",
+       "help": null
+      },
+      "level": {
+       "default": 0.95,
+       "type": "number",
+       "choices": null,
+       "cli": "--level",
+       "help": "megbízhatósági szint: 0.95 vagy 95"
+      },
+      "smd_vtype": {
+       "default": "LS",
+       "type": "enum",
+       "choices": [
+        "LS",
+        "LS2",
+        "UB",
+        "METAN_COHEN",
+        "METAN_HEDGES"
+       ],
+       "cli": "--smd-vtype",
+       "help": "SMD / Cohen d / SMCC variancia: LS (alap), LS2 (Borenstein), UB (torzítatlan), METAN_COHEN (Stata metan/MetaXL: N/(n1n2) + d²/(2(N−2))), METAN_HEDGES (N/(n1n2) + g²/(2(N−3.94)), közelítő J)"
+      },
+      "j_method": {
+       "default": "exact",
+       "type": "enum",
+       "choices": [
+        "exact",
+        "approx"
+       ],
+       "cli": "--j-method",
+       "help": null
+      },
+      "cc": {
+       "default": 0.5,
+       "type": "number",
+       "choices": null,
+       "cli": "--cc",
+       "help": "folytonossági korrekció (>= 0; 0 = nincs)"
+      },
+      "cc_to": {
+       "default": "only0",
+       "type": "enum",
+       "choices": [
+        "only0",
+        "all",
+        "none"
+       ],
+       "cli": "--cc-to",
+       "help": "only0: csak nulla cellás vizsgálatnál (RD-nél nincs korrekció, Cochrane 10.4.4.1); all: minden vizsgálatnál (RD-nél is, metafor to='all'); none: soha"
+      },
+      "drop00": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "yes",
+        "no"
+       ],
+       "cli": "--drop00",
+       "help": null
+      },
+      "mh": {
+       "default": false,
+       "type": "bool",
+       "choices": null,
+       "cli": "--mh",
+       "help": "Mantel–Haenszel (bináris)"
+      },
+      "peto": {
+       "default": false,
+       "type": "bool",
+       "choices": null,
+       "cli": "--peto",
+       "help": "Peto OR"
+      },
+      "rd_var": {
+       "default": "sato",
+       "type": "enum",
+       "choices": [
+        "sato",
+        "gr"
+       ],
+       "cli": "--rd-var",
+       "help": null
+      },
+      "subgroup": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--subgroup",
+       "help": "alcsoport-oszlop"
+      },
+      "common_tau2": {
+       "default": false,
+       "type": "bool",
+       "choices": null,
+       "cli": "--common-tau2",
+       "help": null
+      },
+      "moderators": {
+       "default": [],
+       "type": "list",
+       "choices": null,
+       "cli": "--moderators",
+       "help": "meta-regresszió moderátorai, vesszővel"
+      },
+      "metareg_test": {
+       "default": "knha",
+       "type": "enum",
+       "choices": [
+        "knha",
+        "z"
+       ],
+       "cli": "--metareg-test",
+       "help": null
+      },
+      "cumulative": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--cumulative",
+       "help": "kumulatív elemzés rendező oszlopa (pl. year)"
+      },
+      "title": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--title",
+       "help": null
+      },
+      "left_label": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--left-label",
+       "help": "forest plot bal oldali felirat (pl. 'kontroll jobb')"
+      },
+      "right_label": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--right-label",
+       "help": null
+      },
+      "label_col": {
+       "default": "study",
+       "type": "string",
+       "choices": null,
+       "cli": null,
+       "help": null
+      },
+      "bias_min_k": {
+       "default": 10,
+       "type": "number",
+       "choices": null,
+       "cli": null,
+       "help": null
+      },
+      "trimfill_estimator": {
+       "default": "L0",
+       "type": "enum",
+       "choices": [
+        "L0",
+        "R0"
+       ],
+       "cli": "--trimfill-estimator",
+       "help": null
+      },
+      "md_vtype": {
+       "default": "unequal",
+       "type": "string",
+       "choices": null,
+       "cli": "--md-vtype",
+       "help": "MD variancia: unequal (alap; sd1²/n1 + sd2²/n2, metafor LS) vagy pooled (közös SD, metafor HO)"
+      },
+      "glass_vtype": {
+       "default": "METAN",
+       "type": "enum",
+       "choices": [
+        "METAN",
+        "LS",
+        "LS2",
+        "UB",
+        "SMD1H"
+       ],
+       "cli": "--glass-vtype",
+       "help": "SMD_GLASS variancia: METAN (alap; Stata metan/MetaXL), LS, LS2, UB, SMD1H (metafor)"
+      },
+      "gen_smd_vtype": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "LS",
+        "LS2",
+        "UB",
+        "METAN_COHEN",
+        "METAN_HEDGES"
+       ],
+       "cli": "--gen-smd-vtype",
+       "help": "GEN: ha egy sorban nincs vi/sei, de van n1 és n2, a yi-t közölt SMD-nek veszi és ezzel a képlettel számol varianciát"
+      },
+      "pft_backtransform": {
+       "default": "harmonic",
+       "type": "enum",
+       "choices": [
+        "harmonic",
+        "variance"
+       ],
+       "cli": "--pft-backtransform",
+       "help": "PFT visszatranszformálás n-je: harmonic (alap; metafor/meta) vagy variance (MetaXL: m = 1/Var(t) az adott összesített becslésből)"
+      },
+      "h_centre": {
+       "default": "truncated",
+       "type": "enum",
+       "choices": [
+        "truncated",
+        "untruncated"
+       ],
+       "cli": "--ht-centre",
+       "help": "a Higgins–Thompson H/I² CI középpontja: truncated (alap; ln max(1, H), R meta) vagy untruncated (½·ln(Q/df), Borenstein 2009)"
+      },
+      "trimfill_trim_model": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "fixed",
+        "random"
+       ],
+       "cli": "--trimfill-trim-model",
+       "help": "a trim-and-fill vágási modellje (alap: az elsődleges modell, mint a metafor; fixed: közös hatással vág, a kitöltött adatokat az elsődleges modellel összesíti — a meta::trimfill alapértelmezése)"
+      },
+      "egger_ci_dist": {
+       "default": "t",
+       "type": "enum",
+       "choices": [
+        "t",
+        "norm"
+       ],
+       "cli": "--egger-ci-dist",
+       "help": "az Egger-tengelymetszet CI-je: t (alap; t(k−2), metafor) vagy norm (z, dmetar)"
+      },
+      "begg_method": {
+       "default": "auto",
+       "type": "enum",
+       "choices": [
+        "auto",
+        "exact",
+        "normal"
+       ],
+       "cli": "--begg-method",
+       "help": "Begg-teszt: auto (alap; metafor: pontos Kendall-eloszlás, kötésnél normális), exact, normal (Stata metabias)"
+      },
+      "begg_continuity": {
+       "default": false,
+       "type": "bool",
+       "choices": null,
+       "cli": "--begg-continuity",
+       "help": "Begg normális közelítés folytonossági korrekcióval (Stata metabias 2. sora)"
+      },
+      "metareg_robust": {
+       "default": false,
+       "type": "bool",
+       "choices": null,
+       "cli": "--robust",
+       "help": "meta-regresszió: robusztus (HC1 szendvics) SE-k, t(k−p) és robusztus F is (Stata regress, vce(robust)); --moderators kell hozzá"
+      },
+      "outliers": {
+       "default": false,
+       "type": "bool",
+       "choices": null,
+       "cli": "--outliers",
+       "help": "kiugró vizsgálatok szűrése (dmetar::find.outliers: a vizsgálat CI-je teljesen az összesített CI-n kívül) és újraillesztés nélkülük (érzékenységi elemzés)"
+      },
+      "metareg_tau2": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": null,
+       "help": null
+      },
+      "subgroup_prespecified": {
+       "default": false,
+       "type": "bool",
+       "choices": null,
+       "cli": null,
+       "help": null
+      },
+      "mid": {
+       "default": null,
+       "type": "object",
+       "choices": null,
+       "cli": null,
+       "help": "GRADE MID-küszöbök {low, high} (E10)"
+      },
+      "assumed_risks": {
+       "default": [],
+       "type": "list",
+       "choices": null,
+       "cli": null,
+       "help": "SoF alapkockázatok (E10)"
+      },
+      "plot_locale": {
+       "default": "en",
+       "type": "enum",
+       "choices": [
+        "en",
+        "hu"
+       ],
+       "cli": null,
+       "help": "ábrafeliratok nyelve"
+      }
+     },
+     "rules": [
+      {
+       "id": "V001",
+       "severity": "error",
+       "title": {
+        "hu": "Hiányzó kötelező oszlop",
+        "en": "Missing required column"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V002",
+       "severity": "error",
+       "title": {
+        "hu": "Hiányzó kötelező érték",
+        "en": "Missing required value"
+       },
+       "source": "Cochrane Handbook 6.5.2"
+      },
+      {
+       "id": "V003",
+       "severity": "error",
+       "title": {
+        "hu": "Nem szám érték",
+        "en": "Non-numeric value"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V004",
+       "severity": "error",
+       "title": {
+        "hu": "Érvénytelen mintanagyság",
+        "en": "Invalid sample size"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V005",
+       "severity": "error",
+       "title": {
+        "hu": "Nem pozitív SD",
+        "en": "Non-positive SD"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V006",
+       "severity": "error",
+       "title": {
+        "hu": "Érvénytelen eseményszám",
+        "en": "Invalid event count"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V007",
+       "severity": "warning",
+       "title": {
+        "hu": "Ismétlődő vizsgálat-azonosító",
+        "en": "Duplicate study identifier"
+       },
+       "source": "Cochrane Handbook 23.3"
+      },
+      {
+       "id": "V008",
+       "severity": "warning",
+       "title": {
+        "hu": "Kettős nulla esemény",
+        "en": "Double-zero events"
+       },
+       "source": "Cochrane Handbook 10.4.4"
+      },
+      {
+       "id": "V009",
+       "severity": "info",
+       "title": {
+        "hu": "Nulla cella",
+        "en": "Zero cell"
+       },
+       "source": "Cochrane Handbook 10.4.4.1"
+      },
+      {
+       "id": "V010",
+       "severity": "error",
+       "title": {
+        "hu": "Érvénytelen korreláció",
+        "en": "Invalid correlation"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V011",
+       "severity": "warning",
+       "title": {
+        "hu": "SD helyett SE gyanúja",
+        "en": "Suspected SE reported as SD"
+       },
+       "source": "Cochrane Handbook 6.5.2.2"
+      },
+      {
+       "id": "V012",
+       "severity": "warning",
+       "title": {
+        "hu": "Mértékegység-eltérés gyanúja",
+        "en": "Suspected unit mismatch"
+       },
+       "source": "Cochrane Handbook 6.5.2"
+      },
+      {
+       "id": "V013",
+       "severity": "info",
+       "title": {
+        "hu": "Ferde eloszlás gyanúja",
+        "en": "Suspected skewness"
+       },
+       "source": "Cochrane Handbook 10.5.3"
+      },
+      {
+       "id": "V014",
+       "severity": "warning",
+       "title": {
+        "hu": "Szélsőséges hatásméret",
+        "en": "Extreme effect size"
+       },
+       "source": "Borenstein 2009; gyakorlati szabály"
+      },
+      {
+       "id": "V015",
+       "severity": "warning",
+       "title": {
+        "hu": "Kevés vizsgálat",
+        "en": "Few studies"
+       },
+       "source": "Cochrane Handbook 10.10.4"
+      },
+      {
+       "id": "V016",
+       "severity": "info",
+       "title": {
+        "hu": "Publikációs torzítás tesztje alulerőzött",
+        "en": "Publication-bias test underpowered"
+       },
+       "source": "Sterne et al. 2011 BMJ"
+      },
+      {
+       "id": "V017",
+       "severity": "warning",
+       "title": {
+        "hu": "Közös kontrollkar többszöri használata",
+        "en": "Shared control arm used repeatedly"
+       },
+       "source": "Cochrane Handbook 23.3.4"
+      },
+      {
+       "id": "V018",
+       "severity": "info",
+       "title": {
+        "hu": "Becsült (imputált) értékek",
+        "en": "Estimated (imputed) values"
+       },
+       "source": "Cochrane Handbook 6.5.2.10"
+      },
+      {
+       "id": "V019",
+       "severity": "info",
+       "title": {
+        "hu": "Magas torzítási kockázatú vizsgálatok",
+        "en": "Studies at high risk of bias"
+       },
+       "source": "Cochrane Handbook 7–8"
+      },
+      {
+       "id": "V020",
+       "severity": "warning",
+       "title": {
+        "hu": "Nagyon kis mintájú vizsgálat",
+        "en": "Very small study"
+       },
+       "source": "Borenstein 2009 8. fejezet"
+      },
+      {
+       "id": "V021",
+       "severity": "warning",
+       "title": {
+        "hu": "Nem szám érték nem kötelező oszlopban",
+        "en": "Non-numeric value in optional column"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V022",
+       "severity": "warning",
+       "title": {
+        "hu": "Kizárt sor a hatásméret-számításból",
+        "en": "Row excluded from effect-size calculation"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V023",
+       "severity": "warning",
+       "title": {
+        "hu": "Kétértelmű számformátum",
+        "en": "Ambiguous number format"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V024",
+       "severity": "error",
+       "title": {
+        "hu": "Elcsúszott sor",
+        "en": "Shifted row"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V025",
+       "severity": "warning",
+       "title": {
+        "hu": "Képletnek látszó szöveges cella",
+        "en": "Text cell that looks like a formula"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V026",
+       "severity": "error",
+       "title": {
+        "hu": "Nincs elemezhető vizsgálat",
+        "en": "No analysable study"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V027",
+       "severity": "warning",
+       "title": {
+        "hu": "Fel nem ismert kategóriaérték",
+        "en": "Unrecognised category value"
+       },
+       "source": "Cochrane Handbook 8 (RoB 2), 25 (ROBINS-I)"
+      },
+      {
+       "id": "V028",
+       "severity": "warning",
+       "title": {
+        "hu": "Ismétlődő oszlop",
+        "en": "Duplicate column"
+       },
+       "source": "engine"
+      },
+      {
+       "id": "V029",
+       "severity": "warning",
+       "title": {
+        "hu": "Hiányzó vizsgálat-címke",
+        "en": "Missing study label"
+       },
+       "source": "engine"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 3,
+     "project_rev": 41,
+     "request_id": "q_fx02"
+    }
+   }
+  }
+ ]
+}

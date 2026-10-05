@@ -564,7 +564,7 @@
   "stage_id": "S11",
   "kind": "pitfall",
   "title": "Tölcsérábra túlértelmezése k = 7 mellett",
-  "body": "With 7 studies the book's text calls publication bias 'evident' from funnel asymmetry, while the figure caption says only 'slight asymmetry' and the LFK index says minor; the visual asymmetry is driven by one high-SE study (Raue 2011, SE 1.44, one event per arm). Report a quantitative index (e.g., LFK) and use cautious wording; do not infer publication bias from a single outlying small study.",
+  "body": "With 7 studies the book's text calls publication bias 'evident' from funnel asymmetry, while the figure caption says only 'slight asymmetry' and the LFK index says minor; the visual asymmetry is driven by one high-SE study (Raue 2011, SE 1.44, one event per arm). With k = 7 no asymmetry test or index (LFK included) should be interpreted (D-S11-001): describe the funnel cautiously, and do not infer publication bias from a single outlying small study.",
   "source_id": "khan2020",
   "locator": "Ch5 pp. 113–115; Fig. 5.10 p. 114",
   "tags": "funnel plot tölcsérábra overinterpretation túlértelmezés few studies kevés vizsgálat publication bias publikációs torzítás outlier kiugró érték cautious wording óvatos megfogalmazás"
@@ -574,7 +574,7 @@
   "stage_id": "S11",
   "kind": "guidance",
   "title": "Hiányzó publikációs torzítás-módszerek",
-  "body": "The chapter offers only graphical methods (funnel and Doi plots) and the LFK index; Egger's and Begg's tests, trim-and-fill, fail-safe N and p-curve are not covered. Its cross-reference to 'Chapter 13' for publication bias is wrong: in the book publication bias is Ch 12 (Ch 13 is dose-response meta-analysis). [note: the engine offers bias.egger_test, bias.begg_test, bias.trim_and_fill, bias.failsafe_n_rosenthal and bias.doi_plot_data (Doi plot and LFK index). Fail-safe N is discouraged by the Cochrane Handbook v6 and must not be presented as evidence against publication bias; trim-and-fill is a sensitivity analysis, not a correction.]",
+  "body": "The chapter offers only graphical methods (funnel and Doi plots) and the LFK index; Egger's and Begg's tests, trim-and-fill, fail-safe N and p-curve are not covered. Its cross-reference to 'Chapter 13' for publication bias is wrong: in the book publication bias is Ch 12 (Ch 13 is dose-response meta-analysis). [note: the engine offers bias.egger_test, bias.begg_test, bias.trim_and_fill, bias.failsafe_n_rosenthal and bias.doi_plot_data (Doi plot and LFK index — the developers' method, at most a pre-specified supplement with k ≥ 10: D-S11-015). Fail-safe N is discouraged by the Cochrane Handbook v6 and must not be presented as evidence against publication bias; trim-and-fill is a sensitivity analysis, not a correction.]",
   "source_id": "khan2020",
   "locator": "Ch5 §5.9 p. 113",
   "tags": "Egger Begg trim-and-fill fail-safe N publication bias publikációs torzítás cross-reference kereszthivatkozás limitation korlát"
@@ -774,7 +774,7 @@
   "stage_id": "S13",
   "kind": "criterion",
   "title": "Kis vizsgálatok hatása és publikációs torzítás",
-  "body": "Small-study effects and publication bias should be assessed both visually (funnel and Doi plots) and quantitatively (e.g., LFK index), and the narrative must not overstate bias that rests on a single high-SE study. [note: with k ≥ 10 a regression-based asymmetry test recommended by Cochrane Handbook v6 should accompany the plots; the LFK index is a developer-proposed alternative, and asymmetry signals small-study effects rather than proving publication bias.]",
+  "body": "Small-study effects and publication bias should be assessed visually (a contour-enhanced funnel plot) and, with k ≥ 10, with a regression test suited to the measure (the Doi plot and LFK index at most as a pre-specified supplement: D-S11-015), and the narrative must not overstate bias that rests on a single high-SE study. [note: with k ≥ 10 a regression-based asymmetry test recommended by Cochrane Handbook v6 should accompany the plots; the LFK index is a developer-proposed alternative, and asymmetry signals small-study effects rather than proving publication bias.]",
   "source_id": "khan2020",
   "locator": "Ch5 §5.9 pp. 113–115",
   "tags": "evaluator criterion értékelési szempont publication bias publikációs torzítás small-study effects kis vizsgálatok hatása funnel plot tölcsérábra LFK"

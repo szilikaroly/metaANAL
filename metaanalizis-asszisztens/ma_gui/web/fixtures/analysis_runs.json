@@ -1,0 +1,1211 @@
+{
+ "description": "GET /api/runs?outcome=<id> — egy kimenet commit-futásai (szk.ma.run/v1 + szerveroldali mezők: outcome_id, stale (X001), participants_text, rob_high, primary.i2_text/pi_text, expanded_argv). A ?primary=1 változat a runs.json-ban. GET /api/runs/<run_id> — egy futás leírója (a dev-fixture ebből építi a gyermek-futások commit-eredményét).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/runs",
+   "query": {
+    "outcome": "o1"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.runs/v1",
+    "data": {
+     "runs": [
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "mode": "commit",
+       "outcome_id": "o1",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "2f7b212d0dec1648d5755bf452eb286995d09e46e9d09cd3649d2d013d66e5d8",
+        "name": "o1_primary",
+        "parent": null,
+        "purpose": "primary"
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2",
+        "--project",
+        "."
+       ],
+       "expanded_argv": [
+        "ma.py",
+        "analyze",
+        "--data",
+        "03_adatok/o1.csv",
+        "--measure",
+        "RR",
+        "--subgroup",
+        "allokáció",
+        "--cumulative",
+        "év",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2"
+       ],
+       "engine_version": "0.2.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/results.json",
+         "sha256": "9ed738ece1a073016f3667a52722383e9aa6eb647a63d964987e9358b14180c2"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/plot_data.json",
+         "sha256": "42c380fc9dae94b7716867b80642ba168c470096d2b5bf28f757eb08f8d5ab75"
+        },
+        "report": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/report.md",
+         "sha256": "5440e0731de1b3805e4e235739be07311206adcd494a326924e58380d8abe9b3"
+        },
+        "forest_svg": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/forest.svg",
+         "sha256": "eaae70c7adb497238450643c0df8b7648856cb9ee5770f6975c46b1ceecb9081"
+        },
+        "funnel_svg": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/funnel.svg",
+         "sha256": "d8af4e13daeeeb67b3828c26aa3162467ba56fb86cf68fdab55834d13b2be412"
+        },
+        "doi_svg": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/doi.svg",
+         "sha256": "e59fea09f90af89ff17ac9925447054888f9dce479a74f923beac018c1c59874"
+        }
+       },
+       "k": 13,
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0,49 [0,33; 0,73]",
+         "en": "0.49 [0.33; 0.73]"
+        },
+        "i2_text": {
+         "hu": "92%",
+         "en": "92%"
+        },
+        "pi_text": {
+         "hu": "[0,13; 1,79]",
+         "en": "[0.13; 1.79]"
+        },
+        "tau2_text": {
+         "hu": "0,313",
+         "en": "0.313"
+        }
+       },
+       "measure": "RR",
+       "participants_text": {
+        "hu": "357 347",
+        "en": "357,347"
+       },
+       "rob_high": 4,
+       "stale": false,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 6
+       },
+       "client_seq": 57,
+       "elapsed_ms": 84,
+       "started": "2026-10-04T21:12:00Z",
+       "finished": "2026-10-04T21:12:00Z"
+      },
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261004T211500Z-c9d2a7",
+       "mode": "commit",
+       "outcome_id": "o1",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary_no_estim.json",
+        "sha256": "120595c847db04e2af6994cbb66ebaedbe97ea1942bc75879ae561f2ee790e21",
+        "name": "o1_primary_no_estim",
+        "parent": "o1_primary",
+        "purpose": "sensitivity"
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary_no_estim.json",
+        "--out",
+        "05_elemzes/o1/20261004T211500Z-c9d2a7",
+        "--project",
+        "."
+       ],
+       "expanded_argv": [
+        "ma.py",
+        "analyze",
+        "--data",
+        "03_adatok/o1.csv",
+        "--measure",
+        "RR",
+        "--subgroup",
+        "allokáció",
+        "--cumulative",
+        "év",
+        "--exclude",
+        "estimated=igen",
+        "--out",
+        "05_elemzes/o1/20261004T211500Z-c9d2a7"
+       ],
+       "engine_version": "0.2.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/results.json",
+         "sha256": "7c5a7687278673433cd93ebdb18517d30f960e3b6d91f032882f284b5bfc5eee"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/plot_data.json",
+         "sha256": "b7feaeccecea74706fb69153cfd019ec7b151ea331e0c4c9a7381b783edce462"
+        },
+        "report": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/report.md",
+         "sha256": "e082fac3ae0a2b4171e26fd7fdbc74baef497899d87d39f8b082316c0bf9997e"
+        },
+        "forest_svg": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/forest.svg",
+         "sha256": "103ef7a19b2d708f0613f9b2010628b99bc1535a6c3163a3c993d82ea83d6c57"
+        },
+        "funnel_svg": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/funnel.svg",
+         "sha256": "a5273c93a755550a805040cd7b5a60d9eabacae79efeed54df45b699a55dcc54"
+        },
+        "doi_svg": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/doi.svg",
+         "sha256": "699c25c8ef6e56da0915b2e65e71cf044e4ec26332dda8330ae236db2b1360c5"
+        }
+       },
+       "k": 11,
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0,51 [0,32; 0,80]",
+         "en": "0.51 [0.32; 0.80]"
+        },
+        "i2_text": {
+         "hu": "93%",
+         "en": "93%"
+        },
+        "pi_text": {
+         "hu": "[0,12; 2,07]",
+         "en": "[0.12; 2.07]"
+        },
+        "tau2_text": {
+         "hu": "0,342",
+         "en": "0.342"
+        }
+       },
+       "measure": "RR",
+       "participants_text": {
+        "hu": "339 190",
+        "en": "339,190"
+       },
+       "rob_high": 3,
+       "stale": false,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 3
+       },
+       "client_seq": null,
+       "elapsed_ms": 84,
+       "started": "2026-10-04T21:15:00Z",
+       "finished": "2026-10-04T21:15:00Z"
+      },
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261003T180200Z-4c0d1e",
+       "mode": "commit",
+       "outcome_id": "o1",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "595625edf416052bd692c5e983321dac7cc2d52e2830923b90077d4721b78474",
+        "name": "o1_primary",
+        "parent": null,
+        "purpose": "primary"
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261003T180200Z-4c0d1e",
+        "--project",
+        "."
+       ],
+       "expanded_argv": [
+        "ma.py",
+        "analyze",
+        "--data",
+        "03_adatok/o1.csv",
+        "--measure",
+        "RR",
+        "--subgroup",
+        "allokáció",
+        "--cumulative",
+        "év",
+        "--out",
+        "05_elemzes/o1/20261003T180200Z-4c0d1e"
+       ],
+       "engine_version": "0.2.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "4c0dcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/results.json",
+         "sha256": "3679c59b85014a204cd8a7be295638810d0b468c1cc700a6527c30f8833195d3"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/plot_data.json",
+         "sha256": "f4f9a097ea97ee2ccea96ff87ec465371d74d7b31f9047ae21c8d3e49682d8c7"
+        },
+        "report": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/report.md",
+         "sha256": "590f120c602d0ac07626c6a8cf3aa5a897d3cec439c7048b4e5fdc4f037920f2"
+        },
+        "forest_svg": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/forest.svg",
+         "sha256": "f9d6af6d51c92afc324bcbf1c49e96d380ab274756621e6a217127fb932bc796"
+        },
+        "funnel_svg": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/funnel.svg",
+         "sha256": "b8afe805d301522fcf66f184fec61b449dda7d803e1bd2b96d7bf2f3b1410e04"
+        },
+        "doi_svg": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/doi.svg",
+         "sha256": "d443002c569c8326d0f7391da973f7aa61a7bf14281a22b9e37fab746b0ff6ff"
+        }
+       },
+       "k": 13,
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0,50 [0,34; 0,74]",
+         "en": "0.50 [0.34; 0.74]"
+        },
+        "i2_text": {
+         "hu": "92%",
+         "en": "92%"
+        },
+        "pi_text": {
+         "hu": "[0,14; 1,81]",
+         "en": "[0.14; 1.81]"
+        },
+        "tau2_text": {
+         "hu": "0,309",
+         "en": "0.309"
+        }
+       },
+       "measure": "RR",
+       "participants_text": {
+        "hu": "357 347",
+        "en": "357,347"
+       },
+       "rob_high": 4,
+       "stale": true,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 6
+       },
+       "client_seq": 12,
+       "elapsed_ms": 84,
+       "started": "2026-10-03T18:02:00Z",
+       "finished": "2026-10-03T18:02:00Z"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an09"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs",
+   "query": {
+    "outcome": "o2"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.runs/v1",
+    "data": {
+     "runs": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an10"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261004T211200Z-a1f3c2",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261004T211200Z-a1f3c2",
+     "mode": "commit",
+     "outcome_id": "o1",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary.json",
+      "sha256": "2f7b212d0dec1648d5755bf452eb286995d09e46e9d09cd3649d2d013d66e5d8",
+      "name": "o1_primary",
+      "parent": null,
+      "purpose": "primary"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary.json",
+      "--out",
+      "05_elemzes/o1/20261004T211200Z-a1f3c2",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261004T211200Z-a1f3c2"
+     ],
+     "engine_version": "0.2.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/results.json",
+       "sha256": "9ed738ece1a073016f3667a52722383e9aa6eb647a63d964987e9358b14180c2"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/plot_data.json",
+       "sha256": "42c380fc9dae94b7716867b80642ba168c470096d2b5bf28f757eb08f8d5ab75"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/report.md",
+       "sha256": "5440e0731de1b3805e4e235739be07311206adcd494a326924e58380d8abe9b3"
+      },
+      "forest_svg": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/forest.svg",
+       "sha256": "eaae70c7adb497238450643c0df8b7648856cb9ee5770f6975c46b1ceecb9081"
+      },
+      "funnel_svg": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/funnel.svg",
+       "sha256": "d8af4e13daeeeb67b3828c26aa3162467ba56fb86cf68fdab55834d13b2be412"
+      },
+      "doi_svg": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/doi.svg",
+       "sha256": "e59fea09f90af89ff17ac9925447054888f9dce479a74f923beac018c1c59874"
+      }
+     },
+     "k": 13,
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0,49 [0,33; 0,73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0,13; 1,79]",
+       "en": "[0.13; 1.79]"
+      },
+      "tau2_text": {
+       "hu": "0,313",
+       "en": "0.313"
+      }
+     },
+     "measure": "RR",
+     "participants_text": {
+      "hu": "357 347",
+      "en": "357,347"
+     },
+     "rob_high": 4,
+     "stale": false,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "client_seq": 57,
+     "elapsed_ms": 84,
+     "started": "2026-10-04T21:12:00Z",
+     "finished": "2026-10-04T21:12:00Z"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an11"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261003T180200Z-4c0d1e",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261003T180200Z-4c0d1e",
+     "mode": "commit",
+     "outcome_id": "o1",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary.json",
+      "sha256": "595625edf416052bd692c5e983321dac7cc2d52e2830923b90077d4721b78474",
+      "name": "o1_primary",
+      "parent": null,
+      "purpose": "primary"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary.json",
+      "--out",
+      "05_elemzes/o1/20261003T180200Z-4c0d1e",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261003T180200Z-4c0d1e"
+     ],
+     "engine_version": "0.2.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "4c0dcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/results.json",
+       "sha256": "3679c59b85014a204cd8a7be295638810d0b468c1cc700a6527c30f8833195d3"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/plot_data.json",
+       "sha256": "f4f9a097ea97ee2ccea96ff87ec465371d74d7b31f9047ae21c8d3e49682d8c7"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/report.md",
+       "sha256": "590f120c602d0ac07626c6a8cf3aa5a897d3cec439c7048b4e5fdc4f037920f2"
+      },
+      "forest_svg": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/forest.svg",
+       "sha256": "f9d6af6d51c92afc324bcbf1c49e96d380ab274756621e6a217127fb932bc796"
+      },
+      "funnel_svg": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/funnel.svg",
+       "sha256": "b8afe805d301522fcf66f184fec61b449dda7d803e1bd2b96d7bf2f3b1410e04"
+      },
+      "doi_svg": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/doi.svg",
+       "sha256": "d443002c569c8326d0f7391da973f7aa61a7bf14281a22b9e37fab746b0ff6ff"
+      }
+     },
+     "k": 13,
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0,50 [0,34; 0,74]",
+       "en": "0.50 [0.34; 0.74]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0,14; 1,81]",
+       "en": "[0.14; 1.81]"
+      },
+      "tau2_text": {
+       "hu": "0,309",
+       "en": "0.309"
+      }
+     },
+     "measure": "RR",
+     "participants_text": {
+      "hu": "357 347",
+      "en": "357,347"
+     },
+     "rob_high": 4,
+     "stale": true,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "client_seq": 12,
+     "elapsed_ms": 84,
+     "started": "2026-10-03T18:02:00Z",
+     "finished": "2026-10-03T18:02:00Z"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an12"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261004T211500Z-c9d2a7",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261004T211500Z-c9d2a7",
+     "mode": "commit",
+     "outcome_id": "o1",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_no_estim.json",
+      "sha256": "120595c847db04e2af6994cbb66ebaedbe97ea1942bc75879ae561f2ee790e21",
+      "name": "o1_primary_no_estim",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_no_estim.json",
+      "--out",
+      "05_elemzes/o1/20261004T211500Z-c9d2a7",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--exclude",
+      "estimated=igen",
+      "--out",
+      "05_elemzes/o1/20261004T211500Z-c9d2a7"
+     ],
+     "engine_version": "0.2.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/results.json",
+       "sha256": "7c5a7687278673433cd93ebdb18517d30f960e3b6d91f032882f284b5bfc5eee"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/plot_data.json",
+       "sha256": "b7feaeccecea74706fb69153cfd019ec7b151ea331e0c4c9a7381b783edce462"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/report.md",
+       "sha256": "e082fac3ae0a2b4171e26fd7fdbc74baef497899d87d39f8b082316c0bf9997e"
+      },
+      "forest_svg": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/forest.svg",
+       "sha256": "103ef7a19b2d708f0613f9b2010628b99bc1535a6c3163a3c993d82ea83d6c57"
+      },
+      "funnel_svg": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/funnel.svg",
+       "sha256": "a5273c93a755550a805040cd7b5a60d9eabacae79efeed54df45b699a55dcc54"
+      },
+      "doi_svg": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/doi.svg",
+       "sha256": "699c25c8ef6e56da0915b2e65e71cf044e4ec26332dda8330ae236db2b1360c5"
+      }
+     },
+     "k": 11,
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0,51 [0,32; 0,80]",
+       "en": "0.51 [0.32; 0.80]"
+      },
+      "i2_text": {
+       "hu": "93%",
+       "en": "93%"
+      },
+      "pi_text": {
+       "hu": "[0,12; 2,07]",
+       "en": "[0.12; 2.07]"
+      },
+      "tau2_text": {
+       "hu": "0,342",
+       "en": "0.342"
+      }
+     },
+     "measure": "RR",
+     "participants_text": {
+      "hu": "339 190",
+      "en": "339,190"
+     },
+     "rob_high": 3,
+     "stale": false,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 3
+     },
+     "client_seq": null,
+     "elapsed_ms": 84,
+     "started": "2026-10-04T21:15:00Z",
+     "finished": "2026-10-04T21:15:00Z"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an13"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091600Z-a7b8c9",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091600Z-a7b8c9",
+     "mode": "commit",
+     "outcome_id": "o1",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_no_rob_high.json",
+      "sha256": "f97946a077fb5d26ddb2fa28afca919f93a9ddf77256d1d14041b70177ec947b",
+      "name": "o1_primary_no_rob_high",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_no_rob_high.json",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-a7b8c9",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--exclude",
+      "rob=high",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-a7b8c9"
+     ],
+     "engine_version": "0.2.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/results.json",
+       "sha256": "0994db16b4348752963f652f31a8e0f3cd61036fd45c6915e9b57da86694c9a1"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/plot_data.json",
+       "sha256": "20c1413d132fb30fd18fb36398867d658801ab0c53d3442439e138c564100f4b"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/report.md",
+       "sha256": "17550350fdbc6dfcfcd810c67944bcbc134aa58ff1809cc07c65b77bc0248b70"
+      },
+      "forest_svg": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/forest.svg",
+       "sha256": "ae7f5a535d057398ba6007e643f832cea6c8fba6f72a79e8234e8d9e7c581477"
+      },
+      "funnel_svg": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/funnel.svg",
+       "sha256": "ed5b81eaebaddd8ddf2a4ae7ee32bd728319b77bce258bda93fca20d4a83716c"
+      },
+      "doi_svg": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/doi.svg",
+       "sha256": "56b1978e082714f722cd2106ed9f7057ab538b5139ff08416dace1f3b7d1817c"
+      }
+     },
+     "k": 9,
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0,43 [0,27; 0,70]",
+       "en": "0.43 [0.27; 0.70]"
+      },
+      "i2_text": {
+       "hu": "94%",
+       "en": "94%"
+      },
+      "pi_text": {
+       "hu": "[0,10; 1,79]",
+       "en": "[0.10; 1.79]"
+      },
+      "tau2_text": {
+       "hu": "0,318",
+       "en": "0.318"
+      }
+     },
+     "measure": "RR",
+     "participants_text": {
+      "hu": "236 388",
+      "en": "236,388"
+     },
+     "rob_high": 0,
+     "stale": false,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 2
+     },
+     "client_seq": null,
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:16:00Z",
+     "finished": "2026-10-05T09:16:00Z"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an14"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091500Z-f1e2d3",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091500Z-f1e2d3",
+     "mode": "commit",
+     "outcome_id": "o1",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_fixed.json",
+      "sha256": "6297b2871e78cfaf33ea2acbe280c5b4d017312edc10bef2799c391248827857",
+      "name": "o1_primary_fixed",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_fixed.json",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-f1e2d3",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--model",
+      "fixed",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-f1e2d3"
+     ],
+     "engine_version": "0.2.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/results.json",
+       "sha256": "886695740a3d1a640c1ecc8adf39343f90df6805e6696e2826f2132629094069"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/plot_data.json",
+       "sha256": "6e34ea82933dc01c6747b2d28fd92c31fdb2c2c47f2504036f2614269bd60328"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/report.md",
+       "sha256": "ef131895722f9a03226d20baf6b789989b41b4caeecebe404e1664f7caf5a193"
+      },
+      "forest_svg": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/forest.svg",
+       "sha256": "37732a9f7e85182302f6f77f8fc5528345b95d02c750ffcbd6f4aef2870e5196"
+      },
+      "funnel_svg": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/funnel.svg",
+       "sha256": "7ba6fcea58258facd0ea1a9e5e16179bf20a975d96b9ff22abb16957b8e930ef"
+      },
+      "doi_svg": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/doi.svg",
+       "sha256": "8b5c5ac144e322b7ffa63f0b3242aff8a0475c7b557dd4058b8d4f0560274b85"
+      }
+     },
+     "k": 13,
+     "primary": {
+      "model": "fixed",
+      "display_text": {
+       "hu": "0,65 [0,60; 0,70]",
+       "en": "0.65 [0.60; 0.70]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": null,
+      "tau2_text": {
+       "hu": "–",
+       "en": "–"
+      }
+     },
+     "measure": "RR",
+     "participants_text": {
+      "hu": "357 347",
+      "en": "357,347"
+     },
+     "rob_high": 4,
+     "stale": false,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "client_seq": null,
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:16:00Z",
+     "finished": "2026-10-05T09:16:00Z"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an15"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091500Z-d1a2b3",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091500Z-d1a2b3",
+     "mode": "commit",
+     "outcome_id": "o1",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_dl.json",
+      "sha256": "b26326036263c3da11d29b451a4f843ed28898c0e7d113c83bc27f66e746c35d",
+      "name": "o1_primary_dl",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_dl.json",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-d1a2b3",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--tau2",
+      "DL",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-d1a2b3"
+     ],
+     "engine_version": "0.2.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/results.json",
+       "sha256": "4f679ab635d8f9a4e51accf1e3963f0f5b91c0b4028201b24570b0e8ffab12f6"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/plot_data.json",
+       "sha256": "d4b1ef79174333e194bf02d983eef6e9120045e3d43a4b5b67bae21d21f246a0"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/report.md",
+       "sha256": "732aa9b47eafae9bbbc0debdfee83aec7edc03b75ff6beb2d895b65ae153bee5"
+      },
+      "forest_svg": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/forest.svg",
+       "sha256": "db48f3098e8f97f32dae5d0a207e16d7234d3054d0841c7dc2c564629310c1b4"
+      },
+      "funnel_svg": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/funnel.svg",
+       "sha256": "5965528b689649b306fb1dd922086b816f7c32bfa606df3b7d0f5ec6fc195ba9"
+      },
+      "doi_svg": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/doi.svg",
+       "sha256": "93749481a45f18f1b57d299ced6538254086e1cbf956de9af3b000f574cbbc6c"
+      }
+     },
+     "k": 13,
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0,49 [0,33; 0,73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0,14; 1,77]",
+       "en": "[0.14; 1.77]"
+      },
+      "tau2_text": {
+       "hu": "0,309",
+       "en": "0.309"
+      }
+     },
+     "measure": "RR",
+     "participants_text": {
+      "hu": "357 347",
+      "en": "357,347"
+     },
+     "rob_high": 4,
+     "stale": false,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "client_seq": null,
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:16:00Z",
+     "finished": "2026-10-05T09:16:00Z"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an16"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091600Z-0f1e2d",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091600Z-0f1e2d",
+     "mode": "commit",
+     "outcome_id": "o1",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_no_outliers.json",
+      "sha256": "08fd9041e932333529b716a724d1720246a7ccf7caa194fcf7968c334c52190f",
+      "name": "o1_primary_no_outliers",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_no_outliers.json",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-0f1e2d",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--outliers",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-0f1e2d"
+     ],
+     "engine_version": "0.2.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/results.json",
+       "sha256": "ce5dd10f96c7eafb754b9c032e7ffd9ef833c55510b14aad37a3a98ced9d532c"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/plot_data.json",
+       "sha256": "601244a810afbe4c7ff86e450cd11f819a7e515d2358ade69f6c67244444e5aa"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/report.md",
+       "sha256": "e9889704a41c9dc6841ac7a56279a015580b1d97eab658451e83baec6c856d7e"
+      },
+      "forest_svg": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/forest.svg",
+       "sha256": "838af5a0bd5dd476653f02da85d5818f5e689ba3decacdece7f37eb804654e4b"
+      },
+      "funnel_svg": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/funnel.svg",
+       "sha256": "6a1d483fffaf09fc95f9e36e47f30fd009ee69c42cef0a3b42718bd03cee2e2f"
+      },
+      "doi_svg": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/doi.svg",
+       "sha256": "c7c5d8ff13d74f3c3bdd12766282c28f588371b75087f14c86bcf785f56c697d"
+      }
+     },
+     "k": 13,
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0,49 [0,33; 0,73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0,13; 1,79]",
+       "en": "[0.13; 1.79]"
+      },
+      "tau2_text": {
+       "hu": "0,313",
+       "en": "0.313"
+      }
+     },
+     "measure": "RR",
+     "participants_text": {
+      "hu": "357 347",
+      "en": "357,347"
+     },
+     "rob_high": 4,
+     "stale": false,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "client_seq": null,
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:16:00Z",
+     "finished": "2026-10-05T09:16:00Z"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an17"
+    }
+   }
+  }
+ ]
+}

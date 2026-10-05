@@ -50,6 +50,9 @@ ID_TABLES = (("decision_rule", "rule_id"), ("knowledge", "k_id"), ("formula", "f
              ("checklist_item", "item_id"), ("tool", "tool_id"), ("worked_example", "example_id"),
              ("source", "source_id"), ("stage", "stage_id"))
 
+# a seed ellenőrzőlistái (checklist_item.checklist; a `kb checklist` súgója is ezt sorolja)
+CHECKLISTS = ("PRISMA2020", "PRISMA_P", "PRISMA_S", "PREFLIGHT", "REVIEWER", "EVALUATOR", "AMSTAR2", "GRADE")
+
 SUPPORTED_EXT = (".pdf", ".docx", ".txt", ".md")
 
 
@@ -674,24 +677,29 @@ def _same_document_text(con, sid, pieces):
     return sum((old & new).values()) >= 0.9 * max(sum(old.values()), sum(new.values()))
 
 
+def _same_path(stored, path):
+    return bool(stored) and os.path.normcase(stored) == os.path.normcase(os.path.abspath(path))
+
+
 def _can_take(con, sid, path, digest, pieces, claimed):
-    """Kaphatja-e a fájl a sid forrást úgy, hogy közben más dokumentum szövege ne vesszen el?"""
+    """Kaphatja-e a fájl a sid forrást úgy, hogy közben más dokumentum szövege ne vesszen el?
+    Ugyanaz a dokumentum: azonos tartalom-hash, azonos útvonal (a fájl új változata), vagy egyfájlos /
+    nyilvántartás nélküli régi forrásnál legalább 90%-ban azonos szöveg. Az azonos fájlnév nem elég
+    (fulltext.pdf, download.pdf más mappából más dokumentum)."""
     if sid in claimed:
         return False, "a(z) '%s' forrást ebben a futásban már egy másik fájl kapta (%s)" % (
             sid, os.path.basename(claimed[sid]))
     n = con.execute("SELECT COUNT(*) FROM chunk WHERE source_id=?", (sid,)).fetchone()[0]
     if not n:
         return True, None
-    recs = con.execute("SELECT sha256, filename FROM ingest_file WHERE source_id=?", (sid,)).fetchall()
-    base = os.path.basename(path)
-    if not recs:   # régebbi betöltés: a felhasználói forrás sorában van a fájlnév és a hash
-        row = con.execute("SELECT short, notes, kind FROM source WHERE source_id=?", (sid,)).fetchone()
+    recs = [(r[0], r[1]) for r in con.execute("SELECT sha256, path FROM ingest_file WHERE source_id=?", (sid,))]
+    if not recs:   # régebbi betöltés: a felhasználói forrás sorában van a hash
+        row = con.execute("SELECT notes, kind FROM source WHERE source_id=?", (sid,)).fetchone()
         if row is not None and row["kind"] == "user" and (row["notes"] or "").startswith("sha256="):
-            recs = [((row["notes"] or "")[7:].strip(), row["short"])]
-    if recs:
-        if any(r[0] == digest or r[1] == base for r in recs):
-            return True, None      # ugyanaz a fájl (vagy annak új változata) → újratöltés
-    elif _same_document_text(con, sid, pieces):
+            recs = [((row["notes"] or "")[7:].strip(), None)]
+    if any(r[0] == digest or _same_path(r[1], path) for r in recs):
+        return True, None          # ugyanaz a fájl (vagy annak új változata) → újratöltés
+    if len(recs) <= 1 and _same_document_text(con, sid, pieces):
         return True, None
     return False, "a(z) '%s' forrás már egy másik dokumentum teljes szövegét tartalmazza" % sid
 
@@ -700,9 +708,14 @@ def _resolve_source(con, path, digest, pieces, claimed, use_hint=True):
     """Automatikus forrás-azonosító: file_hint (token-határon), különben a fájlnévből képzett
     azonosító; ha az már más dokumentumé, saját, hash-utótagos azonosító (és figyelmeztetés)."""
     tried = []
-    # ugyanez a fájl (tartalom-hash) korábban már betöltve → ugyanoda (átnevezett fájl sem duplikálódik)
-    for (sid,) in con.execute("SELECT source_id FROM ingest_file WHERE sha256=? ORDER BY source_id", (digest,)).fetchall():
-        if sid not in claimed:
+    # ugyanez a fájl (tartalom-hash), vagy ugyanazon az útvonalon korábban betöltött fájl új változata →
+    # ugyanoda (átnevezett fájl sem duplikálódik; többfájlos forrásban csak ennek a fájlnak a szövege cserélődik)
+    row = con.execute("SELECT source_id FROM ingest_file WHERE sha256=? ORDER BY source_id", (digest,)).fetchone()
+    if row:
+        return row[0], None
+    for sid, stored in con.execute("SELECT source_id, path FROM ingest_file WHERE path IS NOT NULL "
+                                   "ORDER BY source_id").fetchall():
+        if _same_path(stored, path):
             return sid, None
     hint_sid = _match_source(con, path) if use_hint else None
     for sid in ([hint_sid] if hint_sid else []) + [_slug(path)]:
@@ -717,12 +730,63 @@ def _resolve_source(con, path, digest, pieces, claimed, use_hint=True):
     return sid, "%s; ezért saját forrásként: %s (ha ugyanaz a dokumentum, add meg a --source-id-t)" % (tried[0], sid)
 
 
-def _delete_chunks(con, sid):
-    for row in con.execute("SELECT chunk_id, text, locator FROM chunk WHERE source_id=?", (sid,)).fetchall():
+def _delete_chunks(con, sid, shas=None):
+    """A forrás szövegrészeinek és nyilvántartásának törlése; shas esetén csak az ezekből a fájlokból származóké."""
+    cond, args = "", [sid]
+    if shas is not None:
+        cond = " IN (%s)" % ",".join("?" * len(shas))
+        args += list(shas)
+    cwhere = "source_id=?" + (" AND file_sha256" + cond if cond else "")
+    for row in con.execute("SELECT chunk_id, text, locator FROM chunk WHERE " + cwhere, args).fetchall():
         con.execute("INSERT INTO chunk_fts(chunk_fts, rowid, text, locator) VALUES('delete', ?, ?, ?)",
                     (row["chunk_id"], row["text"], row["locator"] or ""))
-    con.execute("DELETE FROM chunk WHERE source_id=?", (sid,))
-    con.execute("DELETE FROM ingest_file WHERE source_id=?", (sid,))
+    con.execute("DELETE FROM chunk WHERE " + cwhere, args)
+    con.execute("DELETE FROM ingest_file WHERE source_id=?" + (" AND sha256" + cond if cond else ""), args)
+
+
+def _stored_pieces(con, sid, shas=None):
+    sql, args = "SELECT locator, text FROM chunk WHERE source_id=?", [sid]
+    if shas is not None:
+        sql += " AND file_sha256 IN (%s)" % ",".join("?" * len(shas))
+        args += list(shas)
+    return [(r[0] or "", r[1]) for r in con.execute(sql + " ORDER BY seq", args)]
+
+
+def _replace_file(con, sid, f, digest, pieces):
+    """Automatikus (nem --source-id) betöltés: a fájl korábbi szövegének cseréje a sid forrásban.
+    Egyfájlos forrásnál a forrás teljes szövege cserélődik; többfájlos forrásnál (pl. egy mappa
+    --source-id-vel) csak ennek a fájlnak a szövegrészei. Változatlan szövegnél semmi nem törlődik
+    (a szövegrészek és azonosítóik megmaradnak). Visszaad: (beszúrandó-e, megjegyzés)."""
+    recs = con.execute("SELECT sha256, filename, path FROM ingest_file WHERE source_id=?", (sid,)).fetchall()
+    mine = [r for r in recs if r["sha256"] == digest or _same_path(r["path"], f)]
+    others = [r for r in recs if r not in mine]
+    new = [(loc or "", text) for loc, text in pieces]
+    multi = bool(mine and others)
+    shas = [r["sha256"] for r in mine] if multi else None
+    if multi and con.execute("SELECT COUNT(*) FROM chunk WHERE source_id=? AND file_sha256 IS NULL",
+                             (sid,)).fetchone()[0]:
+        # régi betöltés: nem tudni, melyik szövegrész melyik fájlé — csak a változatlan fájl fogadható el
+        if digest in shas:
+            return False, None
+        dirs = sorted({os.path.dirname(r["path"]) for r in recs if r["path"]})
+        raise KBError("a(z) '%s' forrás több fájlból áll (%s), és a korábbi betöltés nem fájlonkénti — a "
+                      "módosult fájlt a teljes mappával töltsd be újra: kb ingest %s --source-id %s" % (
+                          sid, ", ".join(r["filename"] for r in recs), dirs[0] if len(dirs) == 1 else "<mappa>", sid))
+    if _stored_pieces(con, sid, shas) == new:
+        cond = (" IN (%s)" % ",".join("?" * len(shas))) if multi else ""
+        con.execute("UPDATE chunk SET file_sha256=? WHERE source_id=?" + (" AND file_sha256" + cond if multi else ""),
+                    [digest, sid] + (shas or []))
+        con.execute("DELETE FROM ingest_file WHERE source_id=?" + (" AND sha256" + cond if multi else ""),
+                    [sid] + (shas or []))
+        return False, None
+    old = [r for r in (mine if multi else recs) if r["sha256"] != digest]
+    note = ("korábbi változat felülírva: %s" % ", ".join(
+        "%s (sha %s)" % (r["filename"], r["sha256"][:8]) for r in old)) if old else None
+    _delete_chunks(con, sid, shas)
+    if note and not multi:
+        con.execute("UPDATE source SET short=?, notes=? WHERE source_id=? AND kind='user'",
+                    (os.path.basename(f), "sha256=%s" % digest, sid))
+    return True, note
 
 
 def _list_files(path):
@@ -748,9 +812,13 @@ def ingest(path, source_id=None, citation=None, db=None, replace=True, report=No
     kihagyott vagy hibás fájlnál a source_id None, és a fájlnév mögött zárójelben az ok.
 
     - Forrás-azonosító: --source-id esetén mind ide kerül (a forrás meglévő szövege a futás elején
-      egyszer törlődik, a további fájlok hozzáfűződnek). Különben fájlonként saját forrás: file_hint
+      egyszer törlődik, a további fájlok hozzáfűződnek). Különben a korábban betöltött fájl (azonos
+      tartalom vagy azonos útvonal) a régi forrásába kerül, egyébként fájlonként saját forrás: file_hint
       (token-határon) vagy a fájlnévből képzett azonosító — más dokumentum szövegét sosem írja felül
-      csendben; ütközéskor hash-utótagos saját azonosítót kap, és ezt jelzi.
+      csendben (az azonos fájlnév nem elég); ütközéskor hash-utótagos saját azonosítót kap, és ezt jelzi.
+    - Újratöltés (--source-id nélkül): változatlan szövegnél semmi nem változik (a stabil
+      '<forrás>#<sorszám>' hivatkozások is megmaradnak); többfájlos forrásban csak az adott fájl
+      szövege cserélődik; az azonos útvonalon lévő új változat felülírja a régit, és ezt jelzi.
     - Egy hibás fájl nem állítja le a többit: fájlonként külön tranzakció.
     - Csak PDF/DOCX/TXT/MD (a kiterjesztés kis-/nagybetűtől függetlenül); más formátum elutasítva.
     - report: ha lista, fájlonként {"file","source_id","chunks","status","message"} kerül bele
@@ -787,7 +855,7 @@ def ingest(path, source_id=None, citation=None, db=None, replace=True, report=No
                 else:
                     # --citation: a felhasználó saját dokumentumként jelöli → nincs file_hint-egyezés
                     sid, note = _resolve_source(con, f, digest, pieces, claimed, use_hint=not citation)
-                    do_replace = replace
+                    do_replace = False
                 base = os.path.basename(f)
                 row = con.execute("SELECT kind FROM source WHERE source_id=?", (sid,)).fetchone()
                 if row is None:
@@ -798,12 +866,17 @@ def ingest(path, source_id=None, citation=None, db=None, replace=True, report=No
                 elif citation:
                     note = ((note + "; ") if note else "") + \
                         "a(z) '%s' a seed-ből származó forrás, a --citation nem írja felül" % sid
+                insert = True
                 if do_replace:
                     _delete_chunks(con, sid)
+                elif replace and not explicit:
+                    insert, replaced = _replace_file(con, sid, f, digest, pieces)
+                    if replaced:
+                        note = ((note + "; ") if note else "") + replaced
                 seq0 = con.execute("SELECT COALESCE(MAX(seq) + 1, 0) FROM chunk WHERE source_id=?", (sid,)).fetchone()[0]
-                for i, (loc, text) in enumerate(pieces):
-                    cur = con.execute("INSERT INTO chunk (source_id, seq, locator, text) VALUES (?,?,?,?)",
-                                      (sid, seq0 + i, loc, text))
+                for i, (loc, text) in enumerate(pieces if insert else []):
+                    cur = con.execute("INSERT INTO chunk (source_id, seq, locator, text, file_sha256) VALUES (?,?,?,?,?)",
+                                      (sid, seq0 + i, loc, text, digest))
                     con.execute("INSERT INTO chunk_fts(rowid, text, locator) VALUES (?,?,?)", (cur.lastrowid, text, loc or ""))
                 con.execute("INSERT OR REPLACE INTO ingest_file (source_id, sha256, filename, path, chunks, ts) "
                             "VALUES (?,?,?,?,?,?)", (sid, digest, base, os.path.abspath(f), len(pieces),
@@ -855,10 +928,15 @@ def search(query, limit=8, db=None, scopes=("rule", "knowledge", "chunk"), sourc
         con.close()
         return out
     if "rule" in scopes:
-        out["rule"] = [dict(r) for r in con.execute(
-            "SELECT r.rule_id AS id, r.stage_id, r.strength, r.applies_to, r.condition, r.recommendation, "
-            "r.source_ids, r.locator, bm25(rule_fts) AS score FROM rule_fts JOIN decision_rule r "
-            "ON r.rule_id = rule_fts.rule_id WHERE rule_fts MATCH ? ORDER BY score LIMIT ?", (fq, limit))]
+        sql = ("SELECT r.rule_id AS id, r.stage_id, r.strength, r.applies_to, r.condition, r.recommendation, "
+               "r.source_ids, r.locator, bm25(rule_fts) AS score FROM rule_fts JOIN decision_rule r "
+               "ON r.rule_id = rule_fts.rule_id WHERE rule_fts MATCH ?")
+        args = [fq]
+        if source:
+            # a szabály forrásai vesszős listában: csak a pontos elem illeszkedik (a --limit így a szűrt sorokat számolja)
+            sql += " AND instr(',' || REPLACE(COALESCE(r.source_ids, ''), ' ', '') || ',', ',' || ? || ',') > 0"
+            args.append(source)
+        out["rule"] = [dict(r) for r in con.execute(sql + " ORDER BY score LIMIT ?", args + [limit])]
     if "knowledge" in scopes:
         sql = ("SELECT k.k_id AS id, k.stage_id, k.kind, k.title, snippet(knowledge_fts, 2, '[', ']', ' … ', 24) AS snippet, "
                "k.source_id, k.locator, bm25(knowledge_fts) AS score FROM knowledge_fts JOIN knowledge k "
@@ -869,7 +947,9 @@ def search(query, limit=8, db=None, scopes=("rule", "knowledge", "chunk"), sourc
             args.append(source)
         out["knowledge"] = [dict(r) for r in con.execute(sql + " ORDER BY score LIMIT ?", args + [limit])]
     if "chunk" in scopes:
-        sql = ("SELECT c.chunk_id AS id, c.source_id, c.locator, snippet(chunk_fts, 0, '[', ']', ' … ', 30) AS snippet, "
+        # ref: stabil hivatkozás (<forrás>#<sorszám>); az id (chunk_id) újratöltéskor változhat
+        sql = ("SELECT c.chunk_id AS id, c.source_id || '#' || c.seq AS ref, c.source_id, c.seq, c.locator, "
+               "snippet(chunk_fts, 0, '[', ']', ' … ', 30) AS snippet, "
                "bm25(chunk_fts) AS score FROM chunk_fts JOIN chunk c ON c.chunk_id = chunk_fts.rowid "
                "WHERE chunk_fts MATCH ?")
         args = [fq]
@@ -881,20 +961,29 @@ def search(query, limit=8, db=None, scopes=("rule", "knowledge", "chunk"), sourc
     return out
 
 
+_CHUNK_REF = re.compile(r"(.+)#(\d+)")
+
+
 def _lookup(con, item_id):
+    """Azonosító → a tétel sora (és '_table'). Szövegrész: a stabil '<forrás>#<sorszám>' alak, vagy a
+    kb search '#<chunk_id>'-ja (ez újratöltéskor változhat); szövegrésznél a 'ref' a stabil alak."""
     for table, key in ID_TABLES:
         row = con.execute("SELECT * FROM %s WHERE %s = ?" % (table, key), (item_id,)).fetchone()
         if row:
             d = dict(row)
             d["_table"] = table
             return d
-    cid = item_id.lstrip("#")
-    if cid.isdigit():
-        row = con.execute("SELECT * FROM chunk WHERE chunk_id = ?", (int(cid),)).fetchone()
-        if row:
-            d = dict(row)
-            d["_table"] = "chunk"
-            return d
+    m = _CHUNK_REF.fullmatch(item_id)
+    if m:
+        row = con.execute("SELECT * FROM chunk WHERE source_id = ? AND seq = ?", (m.group(1), int(m.group(2)))).fetchone()
+    else:
+        cid = item_id.lstrip("#")
+        row = con.execute("SELECT * FROM chunk WHERE chunk_id = ?", (int(cid),)).fetchone() if cid.isdigit() else None
+    if row:
+        d = dict(row)
+        d["_table"] = "chunk"
+        d["ref"] = "%s#%d" % (d["source_id"], d["seq"])
+        return d
     return None
 
 
@@ -908,16 +997,26 @@ def show(item_id, db=None):
         con.close()
 
 
-def existing_ids(ids, db=None):
-    """A megadott azonosítók közül azok halmaza, amelyek léteznek a tudásbázisban
-    (szabály, tudás, képlet, ellenőrzőlista-tétel, eszköz, példa, forrás, szakasz, szövegrész)."""
+def canonical_ids(ids, db=None):
+    """azonosító → tárolható alakja: a szövegrész stabil '<forrás>#<sorszám>' alakban (a chunk_id
+    újratöltéskor változik), a többi változatlanul; ismeretlen azonosítónál None."""
     db = db or DEFAULT_DB
     ensure_built(db)
     con = connect(db, readonly=True)
     try:
-        return {i for i in ids if _lookup(con, i) is not None}
+        out = {}
+        for i in ids:
+            item = _lookup(con, i)
+            out[i] = None if item is None else (item["ref"] if item["_table"] == "chunk" else i)
+        return out
     finally:
         con.close()
+
+
+def existing_ids(ids, db=None):
+    """A megadott azonosítók közül azok halmaza, amelyek léteznek a tudásbázisban
+    (szabály, tudás, képlet, ellenőrzőlista-tétel, eszköz, példa, forrás, szakasz, szövegrész)."""
+    return {i for i, c in canonical_ids(ids, db).items() if c is not None}
 
 
 def normalize_stage(stage):
@@ -982,10 +1081,15 @@ _READONLY_SQL = re.compile(r"^\s*(select|with|pragma\s+table_info|explain)\b", r
 
 def query(sql, params=(), db=None, max_rows=500, timeout=10.0, info=None):
     """Csak-olvasó SQL (SELECT/WITH). Az adatbázis read-only módban nyílik meg.
-    max_rows: legfeljebb ennyi sor (0/None = korlát nélkül); timeout: másodperc (0/None = nincs),
-    utána a lekérdezés megszakad (KBError). info: ha dict, ide kerül {"truncated": bool, "max_rows": n}."""
+    max_rows: legfeljebb ennyi sor (0/None = korlát nélkül; negatív: KBError); timeout: másodperc
+    (0/None/negatív = nincs), utána a lekérdezés megszakad (KBError). info: ha dict, ide kerül
+    {"truncated": bool, "max_rows": n}."""
     if not _READONLY_SQL.match(sql):
         raise KBError("Csak SELECT / WITH lekérdezés engedélyezett.")
+    if max_rows is not None and max_rows < 0:
+        raise KBError("max_rows >= 0 szükséges (0 = korlát nélkül), kapott: %r" % (max_rows,))
+    if timeout is not None and not timeout > 0:
+        timeout = None
     db = db or DEFAULT_DB
     ensure_built(db)
     con = connect(db, readonly=True)

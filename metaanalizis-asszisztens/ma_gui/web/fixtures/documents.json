@@ -1,0 +1,143 @@
+{
+ "description": "GET/PUT /api/documents — szk.ma.documents/v1 (4.8): dokumentum-jegyzék, egyben az aláírt fájl-URL-ek allowlistje.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/documents",
+   "etag": "\"docs-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.documents/v1",
+    "data": {
+     "schema": "szk.ma.documents/v1",
+     "docs": [
+      {
+       "id": "file:_privat/pdf/aronson1948.pdf",
+       "root": "project",
+       "path": "_privat/pdf/aronson1948.pdf",
+       "sha256": null,
+       "pages": 8,
+       "title": "Aronson 1948 — Am Rev Tuberc"
+      },
+      {
+       "id": "file:_privat/pdf/ferguson1949.pdf",
+       "root": "project",
+       "path": "_privat/pdf/ferguson1949.pdf",
+       "sha256": null,
+       "pages": 14,
+       "title": "Ferguson & Simes 1949"
+      },
+      {
+       "id": "file:_privat/pdf/stein1953.pdf",
+       "root": "project",
+       "path": "_privat/pdf/stein1953.pdf",
+       "sha256": null,
+       "pages": 9,
+       "title": "Stein & Aronson 1953"
+      },
+      {
+       "id": "file:_privat/pdf/coetzee1968.pdf",
+       "root": "project",
+       "path": "_privat/pdf/coetzee1968.pdf",
+       "sha256": null,
+       "pages": 6,
+       "title": "<b>Coetzee</b> & Berjak <img src=x onerror=alert(2)>"
+      },
+      {
+       "id": "doi:10.0000/bcg.rosenthal1961",
+       "root": "composer_outdir",
+       "path": "pdf/rosenthal1961.pdf",
+       "sha256": null,
+       "pages": 10,
+       "title": "Rosenthal et al 1961"
+      },
+      {
+       "id": "file:_privat/pdf/normand-orpington.pdf",
+       "root": "project",
+       "path": "_privat/pdf/normand-orpington.pdf",
+       "sha256": null,
+       "pages": 11,
+       "title": "Orpington stroke unit trial"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex12"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/documents",
+   "etag": "\"docs-2\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.documents/v1",
+    "data": {
+     "schema": "szk.ma.documents/v1",
+     "docs": [
+      {
+       "id": "file:_privat/pdf/aronson1948.pdf",
+       "root": "project",
+       "path": "_privat/pdf/aronson1948.pdf",
+       "sha256": null,
+       "pages": 8,
+       "title": "Aronson 1948 — Am Rev Tuberc"
+      },
+      {
+       "id": "file:_privat/pdf/ferguson1949.pdf",
+       "root": "project",
+       "path": "_privat/pdf/ferguson1949.pdf",
+       "sha256": null,
+       "pages": 14,
+       "title": "Ferguson & Simes 1949"
+      },
+      {
+       "id": "file:_privat/pdf/stein1953.pdf",
+       "root": "project",
+       "path": "_privat/pdf/stein1953.pdf",
+       "sha256": null,
+       "pages": 9,
+       "title": "Stein & Aronson 1953"
+      },
+      {
+       "id": "file:_privat/pdf/coetzee1968.pdf",
+       "root": "project",
+       "path": "_privat/pdf/coetzee1968.pdf",
+       "sha256": null,
+       "pages": 6,
+       "title": "<b>Coetzee</b> & Berjak <img src=x onerror=alert(2)>"
+      },
+      {
+       "id": "doi:10.0000/bcg.rosenthal1961",
+       "root": "composer_outdir",
+       "path": "pdf/rosenthal1961.pdf",
+       "sha256": null,
+       "pages": 10,
+       "title": "Rosenthal et al 1961"
+      },
+      {
+       "id": "file:_privat/pdf/normand-orpington.pdf",
+       "root": "project",
+       "path": "_privat/pdf/normand-orpington.pdf",
+       "sha256": null,
+       "pages": 11,
+       "title": "Orpington stroke unit trial"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex13"
+    }
+   }
+  }
+ ]
+}

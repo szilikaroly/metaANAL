@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS decision_rule (
 
 CREATE TABLE IF NOT EXISTS checklist_item (
     item_id       TEXT PRIMARY KEY,
-    checklist     TEXT NOT NULL,            -- PRISMA2020 | PREFLIGHT | REVIEWER | EVALUATOR | AMSTAR2 | GRADE
+    checklist     TEXT NOT NULL,            -- PRISMA2020 | PRISMA_P | PRISMA_S | PREFLIGHT | REVIEWER | EVALUATOR | AMSTAR2 | GRADE
     section       TEXT,
     ord           INTEGER,
     text          TEXT NOT NULL,
@@ -107,11 +107,13 @@ CREATE TABLE IF NOT EXISTS worked_example (
 );
 
 -- teljes szöveg (csak helyben)
+-- stabil hivatkozás: <source_id>#<seq> (a chunk_id újratöltéskor változhat)
 CREATE TABLE IF NOT EXISTS chunk (
     chunk_id  INTEGER PRIMARY KEY,
     source_id TEXT NOT NULL REFERENCES source(source_id),
     seq       INTEGER NOT NULL,
     locator   TEXT,
+    file_sha256 TEXT,                       -- a forrásfájl (ingest_file.sha256): fájlonkénti újratöltés
     text      TEXT NOT NULL
 );
 

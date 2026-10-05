@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>MA-munkapad</title>
+<link rel="icon" href="data:,">
+<style nonce="{{CSP_NONCE}}">
+:root { --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --panel: #f3f4f6; --line: #d9dce1; --err: #b3261e; --ok: #1b6e3a; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #121314; --fg: #e8e8e8; --muted: #a3a7ad; --panel: #1d1f21; --line: #34373b; --err: #f2b8b5; --ok: #8fd6a6; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: var(--bg); color: var(--fg);
+       font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 1.4rem; margin: 0 0 4px; }
+h2 { font-size: 1rem; margin: 20px 0 6px; }
+.note { color: var(--muted); margin: 0 0 12px; }
+#status { padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+#status.err { color: var(--err); border-color: var(--err); }
+#status.ok { color: var(--ok); }
+pre { margin: 0; padding: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+      max-height: 420px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<main>
+<h1>MA-munkapad</h1>
+<p class="note">Ideiglenes helyőrző oldal — a teljes felület a ma_gui/web buildjéből kerül ide.</p>
+<p id="status" role="status" aria-live="polite">Munkamenet indítása…</p>
+<section aria-labelledby="h-engine"><h2 id="h-engine">Motor — GET /api/engine</h2><pre id="engine"></pre></section>
+<section aria-labelledby="h-privacy"><h2 id="h-privacy">Adatvédelem — GET /api/privacy</h2><pre id="privacy"></pre></section>
+<section aria-labelledby="h-caps"><h2 id="h-caps">Képességek — GET /api/capabilities</h2><pre id="capabilities"></pre></section>
+</main>
+<script nonce="{{CSP_NONCE}}">
+(function () {
+  'use strict';
+  var TOKEN_KEY = 'mag.token';
+  var SESSION_PATH = '/api/session';
+  var LAUNCH_RE = /^#launch=([A-Za-z0-9_-]{4,256})(?:&(.*))?$/;
+  var statusEl = document.getElementById('status');
+
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = kind || '';
+  }
+  function readToken() {
+    try { return window.sessionStorage.getItem(TOKEN_KEY); } catch (e) { return null; }
+  }
+  function writeToken(tok) {
+    try { window.sessionStorage.setItem(TOKEN_KEY, tok); } catch (e) { /* privát mód: csak memóriában */ }
+  }
+  // a #launch=<kód> kiolvasása és AZONNALI törlése a címsorból
+  function takeLaunchCode() {
+    var m = LAUNCH_RE.exec(window.location.hash || '');
+    if (!m) { return null; }
+    var rest = m[2] ? '#' + m[2] : '';
+    window.history.replaceState(null, '', window.location.pathname + window.location.search + rest);
+    return m[1];
+  }
+  function api(method, path, body) {
+    var headers = { 'Accept': 'application/json' };
+    var tok = readToken();
+    if (tok && path !== SESSION_PATH) { headers['X-MA-Token'] = tok; }
+    var init = { method: method, headers: headers, credentials: 'omit', cache: 'no-store', redirect: 'error' };
+    if (body !== undefined) {
+      headers['Content-Type'] = 'application/json';
+      init.body = JSON.stringify(body);
+    }
+    return window.fetch(path, init).then(function (res) {
+      return res.json().then(function (env) { return { status: res.status, env: env }; },
+        function () { return { status: res.status, env: null }; });
+    });
+  }
+  function show(id, path) {
+    var el = document.getElementById(id);
+    el.textContent = 'betöltés…';
+    return api('GET', path).then(function (r) {
+      el.textContent = JSON.stringify(r.env, null, 2);
+    }, function (err) {
+      el.textContent = 'Hálózati hiba: ' + String((err && err.message) || err);
+    });
+  }
+  function start() {
+    var code = takeLaunchCode();
+    var p;
+    if (code) {
+      p = api('POST', SESSION_PATH, { launch_code: code }).then(function (r) {
+        var d = r.env && r.env.ok ? r.env.data : null;
+        if (d && typeof d.token === 'string') { writeToken(d.token); return true; }
+        return !!readToken();
+      }, function () { return !!readToken(); });
+    } else {
+      p = Promise.resolve(!!readToken());
+    }
+    p.then(function (ok) {
+      if (!ok) {
+        setStatus('Nincs érvényes munkamenet: az indítókód lejárt vagy már felhasználták. Futtasd újra az indító ' +
+          'parancsot (python -m ma_gui --project <mappa>), és nyisd meg az általa kiírt címet.', 'err');
+        return null;
+      }
+      setStatus('Munkamenet aktív.', 'ok');
+      return Promise.all([show('engine', '/api/engine'), show('privacy', '/api/privacy'),
+        show('capabilities', '/api/capabilities')]);
+    });
+  }
+  start();
+})();
+</script>
+</body>
+</html>

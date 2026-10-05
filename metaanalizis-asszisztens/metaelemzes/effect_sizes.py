@@ -113,8 +113,11 @@ class EffectSizes(object):
         return len(self.yi)
 
     def add(self, label, yi, vi, ni=None, row=None, note="", index=None):
-        if vi is None or not (vi > 0) or math.isinf(vi) or math.isnan(vi) or math.isnan(yi):
+        if vi is None or not (vi > 0) or math.isinf(vi) or math.isnan(vi):
             self.excluded.append((label, "nem pozitív vagy hiányzó variancia (vi=%r)" % (vi,)))
+            return
+        if not math.isfinite(yi):
+            self.excluded.append((label, "nem véges hatásméret (yi=%r)" % (yi,)))
             return
         self.row_index.append(index if index is not None else len(self.labels))
         self.labels.append(label)
@@ -568,13 +571,16 @@ def row_label(row, i, label_col="study"):
 
 def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
             cc=0.5, cc_to="only0", drop00=None, ci_level=0.95, skip_labels=None,
-            md_vtype="unequal", glass_vtype="METAN", gen_smd_vtype=None):
+            md_vtype="unequal", glass_vtype="METAN", gen_smd_vtype=None, skip_rows=None):
     """Sorok (dict-ek listája, már számmá alakítva) → EffectSizes.
 
     A hibás sorokat nem dobja el csendben: az `excluded` listába kerülnek indoklással.
     skip_labels: azoknak a vizsgálatoknak a címkéi, amelyek 'error' súlyosságú validálási
     tételt kaptak (validate.blocking_labels); ezek "validálási hiba" indokkal kimaradnak.
     Lehet szótár is (címke → a hibakódok szövege), ekkor az indoklás a kódokat is tartalmazza.
+    skip_rows: mint a skip_labels, de SORINDEX szerint (a `rows` listában; halmaz vagy
+    sorindex → kódok szótár). Ismétlődő címkéknél (több karú vizsgálat) ez a helyes: csak a
+    hibás sor marad ki, az azonos címkéjű érvényes sor nem.
     Az es.row_index minden bevont vizsgálat eredeti sorindexét adja (a `rows` listában).
 
     Varianciakonvenciók:
@@ -600,16 +606,26 @@ def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
         cohen_vt = "LS"
         es.warnings.append("COHEN_D: az UB variancia a korrigált (Hedges g) becslőhöz tartozik; "
                            "LS-sel számoltunk.")
+    if measure == "SMD" and smd_vtype == "METAN_COHEN":
+        es.warnings.append("SMD: a METAN_COHEN variancia a korrekció nélküli Cohen d-hez tartozik; Hedges g-re "
+                           "alkalmazva egyik Stata metan / MetaXL konvencióval sem egyezik (metan-egyezéshez: SMD + "
+                           "METAN_HEDGES vagy COHEN_D + METAN_COHEN).")
+    elif measure == "COHEN_D" and smd_vtype == "METAN_HEDGES":
+        es.warnings.append("COHEN_D: a METAN_HEDGES variancia a Hedges g-hez tartozik; a korrekció nélküli Cohen "
+                           "d-re alkalmazva egyik Stata metan / MetaXL konvencióval sem egyezik (metan-egyezéshez: "
+                           "COHEN_D + METAN_COHEN vagy SMD + METAN_HEDGES).")
     smcc_vt = smd_vtype
     if measure == "SMCC" and smd_vtype not in SMCC_VTYPES:
         smcc_vt = "LS"
         es.warnings.append("SMCC: a(z) %s variancia nem értelmezett (csak LS vagy LS2); LS-sel számoltunk."
                            % smd_vtype)
     skip = skip_labels or ()
+    skip_r = skip_rows or ()
     for i, row in enumerate(rows):
         label = row_label(row, i, label_col)
-        if label in skip:
-            detail = skip.get(label) if isinstance(skip, dict) else None
+        if i in skip_r or label in skip:
+            src, key = (skip_r, i) if i in skip_r else (skip, label)
+            detail = src.get(key) if isinstance(src, dict) else None
             es.excluded.append((label, "validálási hiba: %s" % detail if detail else
                                 "validálási hiba (lásd a validálási tételeket)"))
             continue
@@ -671,7 +687,13 @@ def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
                 note = ""
                 ni = row.get("n")
                 if v is None and row.get("sei") is not None:
+                    if row["sei"] < 0:
+                        # a négyzetre emelés elfedné (valószínű adatkinyerési hiba, pl. CI-határ)
+                        raise EffectSizeError("GEN: sei = %g < 0 (negatív SE)" % row["sei"])
                     v = row["sei"] ** 2
+                if ni is not None and (ni < 1 or ni != int(ni)):
+                    # a résztvevőszám (GRADE) összegébe kerülne
+                    raise EffectSizeError("GEN: n = %g (egész n >= 1 kell)" % ni)
                 if (v is None and y is not None and gen_smd_vtype is not None
                         and row.get("n1") is not None and row.get("n2") is not None):
                     n1, n2 = row["n1"], row["n2"]
@@ -687,7 +709,8 @@ def compute(rows, measure, label_col="study", smd_vtype="LS", j_method="exact",
                 es.add(label, y, v, ni, row, note, index=i)
         except KeyError as exc:
             es.excluded.append((label, "hiányzó oszlop: %s" % exc))
-        except (EffectSizeError, ZeroDivisionError, ValueError, TypeError) as exc:
+        except (EffectSizeError, ArithmeticError, ValueError, TypeError) as exc:
+            # ArithmeticError: ZeroDivisionError és OverflowError (pl. sd = 1e200) — csak ez a sor marad ki
             es.excluded.append((label, "%s: %s" % (type(exc).__name__, exc)))
     if es.excluded:
         es.warnings.append("%d sor kimaradt a hatásméret-számításból (lásd: excluded)." % len(es.excluded))

@@ -202,10 +202,10 @@
   "name": "Subgroup percentage weight in MetaXL subgroup plots",
   "expression": "%W_g = sum_{i in g} %W_i(overall RE)",
   "variables": "%W_i(overall RE) = study i's percentage weight from the overall random-effects analysis; g = subgroup",
-  "engine_ref": null,
+  "engine_ref": "moderators.subgroup_analysis",
   "stage_id": "S10",
   "source_id": "khan2020",
   "locator": "Ch4 Fig. 4.5, p. 79",
-  "notes": "Inferred by recomputation, not stated in the source: old studies 11.8 + 34.6 + 8.0 + 13.4 = 67.8%; recent studies 32.2%. MetaXL estimates a separate DL tau2 within each subgroup (old about 0.1155, recent 0)."
+  "notes": "Inferred by recomputation, not stated in the source: old studies 11.8 + 34.6 + 8.0 + 13.4 = 67.8%; recent studies 32.2%. MetaXL estimates a separate DL tau2 within each subgroup (old about 0.1155, recent 0). Engine: moderators.subgroup_analysis weight_share_pct."
  }
 ]

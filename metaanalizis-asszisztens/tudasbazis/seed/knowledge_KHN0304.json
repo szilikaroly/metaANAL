@@ -714,7 +714,7 @@
   "stage_id": "S11",
   "kind": "check",
   "title": "Publikációs torzítás jelentése",
-  "body": "Confirm that a funnel plot (SE vs ln RR) and, where available, a Doi plot with the LFK index are reported, and flag any claim that publication bias is present made with k < 10 or without considering heterogeneity.",
+  "body": "Confirm that a funnel plot (SE vs ln RR) is reported (a Doi plot with the LFK index only if pre-specified, with k ≥ 10, as a supplement: D-S11-015), and flag any claim that publication bias is present made with k < 10 or without considering heterogeneity.",
   "source_id": "khan2020",
   "locator": "Ch4 pp. 83–84",
   "tags": "reviewer check ellenőrzés publication bias publikációs torzítás funnel plot tölcsérdiagram Doi plot LFK k<10 heterogeneity heterogenitás"
@@ -784,7 +784,7 @@
   "stage_id": "S11",
   "kind": "criterion",
   "title": "Kis vizsgálatok hatása / publikációs torzítás súlyozása",
-  "body": "Funnel and Doi/LFK plots should be examined; an LFK beyond ±2 ('major asymmetry', cut-off from Ch12 p. 260) is a warning sign about the pooled estimate, but with k < 10 it is suggestive only. [note: in GRADE, publication bias is rated 'undetected' or 'strongly suspected' by overall judgement; no funnel or LFK statistic is a mechanical downgrading rule, and asymmetry from heterogeneity or chance should not be counted as publication bias.]",
+  "body": "The funnel plot should be examined (the Doi plot/LFK only as a pre-specified supplement with k ≥ 10: D-S11-015). In the book's approach an LFK beyond ±2 ('major asymmetry', cut-off from Ch12 p. 260) is a warning sign about the pooled estimate, but with k < 10 it should not be interpreted (D-S11-001). [note: in GRADE, publication bias is rated 'undetected' or 'strongly suspected' by overall judgement; no funnel or LFK statistic is a mechanical downgrading rule, and asymmetry from heterogeneity or chance should not be counted as publication bias.]",
   "source_id": "khan2020",
   "locator": "Ch4 pp. 83–84; Ch12 p. 260",
   "tags": "evaluator criterion értékelési szempont publication bias publikációs torzítás LFK Doi plot funnel plot small-study effects GRADE downgrade leminősítés"
@@ -794,7 +794,7 @@
   "stage_id": "S14",
   "kind": "criterion",
   "title": "Jelentés teljessége",
-  "body": "A complete report includes a forest plot with per-study RR (95% CI) and % weight, a pooled row with Q, p and I2, and the back-transformed pooled RR with its CI, plus the funnel plot and the Doi plot with the LFK index. [note: PRISMA 2020 (items 13d, 20b, 21, 22) also asks for the model and tau2 estimator used, heterogeneity estimates, the results of reporting-bias assessments and the certainty of the evidence.]",
+  "body": "A complete report includes a forest plot with per-study RR (95% CI) and % weight, a pooled row with Q, p and I2, and the back-transformed pooled RR with its CI, plus the funnel plot (the Doi plot with the LFK index only if pre-specified, with k ≥ 10, next to a contour-enhanced funnel and a suitable regression test; otherwise leave it out of the manuscript: D-S11-015, D-S11-019). [note: PRISMA 2020 (items 13d, 20b, 21, 22) also asks for the model and tau2 estimator used, heterogeneity estimates, the results of reporting-bias assessments and the certainty of the evidence.]",
   "source_id": "khan2020",
   "locator": "Ch4 Figs. 4.1–4.9; pp. 83–84",
   "tags": "evaluator criterion értékelési szempont reporting jelentés forest plot erdődiagram weights súlyok pooled estimate összesített becslés completeness teljesség"

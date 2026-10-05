@@ -1,0 +1,89 @@
+{
+ "description": "GET /api/audit/project — szk.ma.project-audit/v1 (4.15): X-szabályok = „következő lépések” (3.5.1).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/audit/project",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.project-audit/v1",
+    "data": {
+     "schema": "szk.ma.project-audit/v1",
+     "project": "bcg-oltas",
+     "generated": "2026-10-04T21:13:00Z",
+     "summary": {
+      "error": 1,
+      "warning": 2,
+      "info": 0
+     },
+     "findings": [
+      {
+       "code": "X001",
+       "severity": "error",
+       "stage": "S08",
+       "outcome": "o1",
+       "title": "Az elsődleges commit-futás régebbi, mint az adattábla",
+       "detail": "run 20261003T180200Z-4c0d1e: data 4c0d… ≠ 03_adatok/o1.csv 9f3a…",
+       "artifacts": [
+        "05_elemzes/o1/20261003T180200Z-4c0d1e/run.json",
+        "03_adatok/o1.csv"
+       ],
+       "suggested_command": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json"
+       ],
+       "kb_refs": [
+        "D-S08-001"
+       ]
+      },
+      {
+       "code": "X005",
+       "severity": "warning",
+       "stage": "S12",
+       "outcome": "o1",
+       "title": "3 becsült sor, nincs „becsült nélkül” érzékenységi futás",
+       "detail": "estimated = igen: Kovács 2019, Tóth 2021, Rosenthal et al 1961",
+       "artifacts": [
+        "03_adatok/o1.csv"
+       ],
+       "suggested_command": null,
+       "kb_refs": [
+        "D-S12-002"
+       ]
+      },
+      {
+       "code": "X010",
+       "severity": "warning",
+       "stage": "S05",
+       "outcome": "o1",
+       "title": "7 elemzett cellának nincs forrásoldala",
+       "detail": "03_adatok/o1.prov.json: 7 cella source.page nélkül",
+       "artifacts": [
+        "03_adatok/o1.prov.json"
+       ],
+       "suggested_command": null,
+       "kb_refs": []
+      }
+     ],
+     "amstar2_hints": {
+      "4": {
+       "suggested": "partial_yes",
+       "evidence": [
+        "PRISMA-S: 4 adatbázis, regiszter 0"
+       ]
+      }
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 6,
+     "project_rev": 41,
+     "request_id": "q_fx09"
+    }
+   }
+  }
+ ]
+}

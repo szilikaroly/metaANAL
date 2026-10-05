@@ -357,7 +357,9 @@ class TestPipelineBias(_Tmp):
         self.assertNotIn("lfk", b)                          # azonos hatásméretek → az LFK nem számolható
         self.assertTrue(any(w.startswith("Torzítás-elemzés (LFK-index)") for w in out["warnings"]))
         self.assertIn("egger", b)                           # a többi teszt ettől még lefut
-        self.assertIn("begg", b)
+        # azonos hatásoknál a Kendall-τ nem definiált (metafor ranktest: NA) — metafor_fuzz:DT-2
+        self.assertNotIn("begg", b)
+        self.assertTrue(any(w.startswith("Torzítás-elemzés (Begg)") for w in out["warnings"]))
         # azonos hatásoknál a trim-and-fill nem konvergál (a metafor 4.4 trimfill is hibát ad):
         # külön figyelmeztetés, és az utána következő LFK is külön próbálkozik
         self.assertTrue(any(w.startswith("Torzítás-elemzés (trim-and-fill)") for w in out["warnings"]))

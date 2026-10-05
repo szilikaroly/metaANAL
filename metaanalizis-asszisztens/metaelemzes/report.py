@@ -422,6 +422,9 @@ def methods_text_en(out, plots=True):
     if sg is not None:
         if o.get("model") == "fixed":
             within = "common-effect models within subgroups"
+        elif o.get("model") == "ivhet" and sg.get("common_tau2") is not None:
+            within = "IVhet models within subgroups with a common τ² across subgroups (%s, from the " \
+                     "subgroup-factor model)" % TAU2_SHORT_EN.get(o.get("tau2") or "DL", o.get("tau2"))
         elif o.get("model") == "ivhet":
             within = "IVhet models within subgroups"
         elif sg.get("common_tau2") is not None:
@@ -432,7 +435,7 @@ def methods_text_en(out, plots=True):
         parts.append("%s analyses by %s were performed (%s), and differences between subgroups "
                      "were tested with a χ² test for subgroup differences (Q_between, based on the %s "
                      "standard errors of the subgroup estimates)." % (
-                         "Pre-specified subgroup" if o.get("subgroup_prespecified") else "Subgroup",
+                         "Pre-specified subgroup" if o.get("subgroup_prespecified") else "In addition, subgroup",
                          _col(out, "subgroup"), within,
                          "IVhet (heterogeneity-inflated)" if sg.get("Q_between_se") == "ivhet" else "Wald-type"))
     mr = out.get("metaregression")
@@ -491,6 +494,9 @@ def methods_text_en(out, plots=True):
         parts.append("For the binary outcome, the Harbord and Peters tests (both based on the log odds ratio) were "
                      "preferred to Egger's test, which is prone to false-positive results with odds ratios "
                      "(Sterne et al. 2011).")
+    if b.get("smd_note") and b.get("egger") is not None:
+        parts.append("For standardised mean differences, Egger's test was regarded as informative only, because "
+                     "the SMD and its standard error are correlated (Pustejovsky & Rodgers 2019).")
     if m in E.PROPORTION and b.get("performed") and plots:
         parts.append("For single-group proportions there is no meaningful null value, so funnel plots were drawn "
                      "without significance contours and asymmetry is difficult to interpret.")
@@ -714,6 +720,8 @@ def build_report(out, title=None, date=None, plots=True):
         L.append("")
         if o.get("model") == "fixed":
             within = "közös hatású modell alcsoportonként"
+        elif o.get("model") == "ivhet" and sg.get("common_tau2") is not None:
+            within = "IVhet modell alcsoportonként, közös τ² az alcsoportokban (τ² = %s)" % _f(sg.common_tau2, 4)
         elif o.get("model") == "ivhet":
             within = "IVhet modell alcsoportonként"
         elif sg.get("common_tau2") is not None:
@@ -810,13 +818,15 @@ def build_report(out, title=None, date=None, plots=True):
     if b.get("note"):
         L.append("> %s" % b["note"])
         L.append("")
-    if b.get("binary_note"):
-        L.append("> %s" % _md(b["binary_note"]))
-        L.append("")
+    for key in ("binary_note", "smd_note"):
+        if b.get(key):
+            L.append("> %s" % _md(b[key]))
+            L.append("")
     if b.get("egger") is not None:
         eg = b["egger"]
         L.append("- Egger-teszt%s: tengelymetszet = %s (SE %s; %d%% CI %s, %s-kvantilis), t(%d) = %s, %s" % (
-            " (bináris kimenetnél csak tájékoztató)" if b.get("binary_note") else "",
+            " (bináris kimenetnél csak tájékoztató)" if b.get("binary_note") else
+            " (SMD-nél csak tájékoztató)" if b.get("smd_note") else "",
             _f(eg.intercept, 3), _f(eg.se_intercept, 3), int(round((eg.get("level") or o["level"]) * 100)),
             "[%s; %s]" % (_f(eg.ci_lower, 3), _f(eg.ci_upper, 3)),
             "z" if eg.get("ci_dist") == "norm" else "t(k−2)", eg.df, _f(eg.t, 2), _p_eq(eg.p)))
@@ -847,7 +857,7 @@ def build_report(out, title=None, date=None, plots=True):
         L.append("- Doi-plot, LFK-index (heurisztikus, érzékenységi jellegű mutató; nem szignifikancia-teszt): "
                  "%s — %s (|LFK| ≤ 1: nincs, 1–2: kisebb, > 2: jelentős aszimmetria%s)" % (
                      _f(lf.lfk, 2), lf.category, "; `doi.svg`" if plots else ""))
-    if m in E.PROPORTION and b.get("performed"):
+    if m in E.PROPORTION and b.get("performed") and plots:
         L.append("- Egycsoportos aránynál nincs nullhatás: a funnel plot kontúrok nélkül készült, az aszimmetria "
                  "nehezen értelmezhető.")
     if not b.get("performed"):

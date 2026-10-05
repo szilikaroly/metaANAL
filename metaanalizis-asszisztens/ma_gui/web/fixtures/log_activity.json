@@ -1,0 +1,87 @@
+{
+ "description": "GET /api/log/activity — hash-láncolt tevékenységnapló + láncellenőrzés (4.16; ma_gui/routes/log.py).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/log/activity",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.activity-log/v1",
+    "data": {
+     "kind": "activity",
+     "items": [
+      {
+       "schema": "szk.ma.activity/v1",
+       "seq": 410,
+       "ts": "2026-10-04T21:10:00Z",
+       "actor": "user:SzK",
+       "action": "table.save",
+       "argv": null,
+       "inputs": {},
+       "outputs": {
+        "03_adatok/o1.csv": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+       },
+       "result": {
+        "exit_code": 0,
+        "summary": "13 sor"
+       },
+       "prev": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+       "schema": "szk.ma.activity/v1",
+       "seq": 411,
+       "ts": "2026-10-04T21:12:00Z",
+       "actor": "user:SzK",
+       "action": "analyze.commit",
+       "argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2"
+       ],
+       "inputs": {
+        "03_adatok/o1.csv": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+       },
+       "outputs": {},
+       "result": {
+        "exit_code": 0,
+        "summary": "k=13, RR 0.49 [0.33; 0.73]"
+       },
+       "prev": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      {
+       "schema": "szk.ma.activity/v1",
+       "seq": 412,
+       "ts": "2026-10-04T21:15:00Z",
+       "actor": "external",
+       "action": "file.external_change",
+       "argv": null,
+       "inputs": {},
+       "outputs": {
+        "03_adatok/o1.csv": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+       },
+       "result": null,
+       "prev": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+     ],
+     "total": 412,
+     "verify": {
+      "ok": true,
+      "first_bad_seq": null,
+      "message": null
+     },
+     "head": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr36"
+    }
+   }
+  }
+ ]
+}

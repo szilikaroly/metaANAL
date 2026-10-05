@@ -180,11 +180,11 @@
   "name": "Sampling variance of the raw mean difference (pooled)",
   "expression": "v_RMD = S2_pooled * (1/n1 + 1/n2)",
   "variables": "S2_pooled = pooled within-group variance; n1, n2 = group sizes",
-  "engine_ref": null,
+  "engine_ref": "effect_sizes.md",
   "stage_id": "S07",
   "source_id": "cheung2016",
   "locator": "p. 125, Table 1",
-  "notes": "Assumes equal group variances. The engine's effect_sizes.md uses the unpooled S1^2/n1 + S2^2/n2 instead; the two agree only when n1 = n2, so engine_ref is null for this exact form."
+  "notes": "Assumes equal group variances. Engine: effect_sizes.md(vtype='pooled') (`--md-vtype pooled`); the default effect_sizes.md uses the unpooled S1^2/n1 + S2^2/n2, and the two agree only when n1 = n2."
  },
  {
   "formula_id": "F-CHE16-018",

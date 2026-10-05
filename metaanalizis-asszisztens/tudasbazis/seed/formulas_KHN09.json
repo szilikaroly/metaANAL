@@ -26,11 +26,11 @@
   "name": "Variance of the raw mean difference assuming equal variances (referenced, not used)",
   "expression": "v = (n1 + n2)/(n1*n2) * Sp^2",
   "variables": "n1, n2 = arm sample sizes; Sp^2 = pooled within-group variance [(n1-1)S1^2 + (n2-1)S2^2]/(n1+n2-2), as defined in Ch 8.",
-  "engine_ref": null,
+  "engine_ref": "effect_sizes.md",
   "stage_id": "S07",
   "source_id": "khan2020",
   "locator": "Ch9 §9.2 p. 196 (pointer); Ch8 §8.1 p. 161",
-  "notes": "Printed in Ch 8 §8.1 (p. 161). Ch 9 only refers back to it and does not use it. effect_sizes.pooled_sd returns Sp (not this variance). State which variance formula was used."
+  "notes": "Printed in Ch 8 §8.1 (p. 161). Ch 9 only refers back to it and does not use it. effect_sizes.md(vtype='pooled') (`--md-vtype pooled`) uses this variance; effect_sizes.pooled_sd returns Sp. State which variance formula was used."
  },
  {
   "formula_id": "F-KHN09-004",

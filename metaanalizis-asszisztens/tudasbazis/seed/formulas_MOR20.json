@@ -338,7 +338,7 @@
   "stage_id": "S10",
   "source_id": "morvaridzadeh2020",
   "locator": "p. 2 §2.5 (subgroups planned; test [EXTERNAL])",
-  "notes": "Not reported by the source. This is the RevMan / Borenstein ch. 19 form that moderators.subgroup_analysis computes; under a common-effect model mu_w equals the overall estimate. The engine uses each subgroup's reported SE, so pass ci_method='z' for Wald SEs, and state whether tau^2 is common (common_tau2=True) or separate per subgroup."
+  "notes": "Not reported by the source. This is the RevMan / Borenstein ch. 19 form that moderators.subgroup_analysis computes; under a common-effect model mu_w equals the overall estimate. moderators.subgroup_analysis always uses the subgroup estimates' Wald SEs (sqrt(1/sum w), not HKSJ-adjusted; under IVhet the IVhet SEs), whatever ci_method is, so the test does not depend on the displayed CI method; state whether tau^2 is common (common_tau2=True) or separate per subgroup."
  },
  {
   "formula_id": "F-MOR20-032",

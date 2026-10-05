@@ -1,0 +1,26 @@
+/* project.css — Projekt megnyitása és adatvédelmi ellenőrzés (screens/project.js). Csak tokenek. */
+.pj-path { min-width: min(26em, 100%); }
+.pj-recent { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; margin-bottom: var(--sp-2); }
+.pj-recent-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.pj-open-form { margin: var(--sp-2) 0; }
+.pj-init summary { cursor: pointer; font-weight: 650; margin: var(--sp-2) 0; }
+.pj-status { font-weight: 600; }
+.pj-checks { list-style: none; margin: 0; padding: 0; }
+.pj-check { display: flex; align-items: baseline; gap: 6px; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: var(--fs-sm); }
+.pj-check:last-child { border-bottom: 0; }
+.pj-recs ul { margin: 0; padding-left: 18px; font-size: var(--fs-sm); }
+.pj-actions { margin-top: var(--sp-2); }
+.pj-classes { margin: 0; padding: 0; border: 0; }
+.pj-classes legend { font-weight: 650; margin-bottom: 4px; }
+.pj-class { margin-bottom: 6px; padding: 6px 10px; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.pj-class.is-current { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.pj-class-label { font-size: var(--fs-md); }
+.pj-class-desc { margin: 2px 0 0 1.6em; font-size: var(--fs-xs); }
+.pj-preview { margin-top: var(--sp-2); }
+.pj-diff { max-height: 50vh; overflow: auto; padding: var(--sp-2); white-space: pre; font-size: var(--fs-xs);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.pj-dl.is-add { background: var(--ok-bg); color: var(--ok); }
+.pj-dl.is-del { background: var(--crit-bg); color: var(--crit); }
+.pj-dl.is-hunk { color: var(--info); }
+.pj-note { font-size: var(--fs-sm); }
+.pj-agree { margin-top: var(--sp-2); font-weight: 650; }

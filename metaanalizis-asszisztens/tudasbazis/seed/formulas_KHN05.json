@@ -246,11 +246,11 @@
   "name": "Subgroup weight share in MetaXL subgroup output",
   "expression": "%W_g = Σ_{i ∈ g} %W_i*(overall RE)",
   "variables": "g = subgroup; %W_i* = per-study percent weight from the overall random-effects analysis; %W_g = weight shown on the subgroup summary row.",
-  "engine_ref": null,
+  "engine_ref": "moderators.subgroup_analysis",
   "stage_id": "S10",
   "source_id": "khan2020",
   "locator": "Ch5 Fig. 5.5 p. 110",
-  "notes": "Extractor's verification, not stated in the book: Old studies 14.7 + 23.3 + 11.3 + 15.1 = 64.4%, Recent 12.5 + 4.1 + 19.0 = 35.6%. The subgroup pooled estimates themselves use a separate DL τ² per subgroup (0.3520 Old, 0 Recent). moderators.subgroup_analysis computes subgroup estimates and Q-between (0.97, df 1, P = 0.32 with separate DL τ²) but does not output this weight share."
+  "notes": "Extractor's verification, not stated in the book: Old studies 14.7 + 23.3 + 11.3 + 15.1 = 64.4%, Recent 12.5 + 4.1 + 19.0 = 35.6%. The subgroup pooled estimates themselves use a separate DL τ² per subgroup (0.3520 Old, 0 Recent). moderators.subgroup_analysis computes subgroup estimates and Q-between (0.97, df 1, P = 0.32 with separate DL τ²) and outputs this weight share as weight_share_pct (results.json subgroups.groups[].weight_share_pct)."
  },
  {
   "formula_id": "F-KHN05-024",

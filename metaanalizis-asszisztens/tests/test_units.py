@@ -188,8 +188,11 @@ class TestValidation(unittest.TestCase):
         f = validate.validate([{"study": "a", "e1": 0, "n1": 10, "e2": 0, "n2": 10},
                                {"study": "a", "e1": 12, "n1": 10, "e2": 1, "n2": 10}], "OR")
         codes = [x["code"] for x in f]
-        for c in ("V008", "V006", "V007", "V015", "V016"):
+        for c in ("V008", "V006", "V007", "V026"):
             self.assertIn(c, codes)
+        # k = 0: a kevés vizsgálatra vonatkozó tanács (V015/V016) nem jelenik meg (robustness:R2-ROB-05)
+        self.assertNotIn("V015", codes)
+        self.assertNotIn("V016", codes)
 
     def test_rules_have_metadata(self):
         for code, (sev, title, advice, src) in validate.RULES.items():

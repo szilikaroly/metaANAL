@@ -16,7 +16,15 @@
 | Kizárt teljes szöveg okokkal (n = H = H1 + H2 + …) | | okonként felsorolva |
 | Bevont közlemények (n = J) és vizsgálatok (n = I) | | J = G − H (+ egyéb forrásból bevont közlemények); I ≤ J — a vizsgálatokat külön számold (egy vizsgálatnak több közleménye lehet) |
 | Ebből metaanalízisben (kimenetenként) | | |
-| Egyéb forrásból (hivatkozás-követés, szakértő) — külön ág | | |
+| Egyéb forrásból (hivatkozás-követés, szakértő) — külön ág | | azonosított rekordok |
+| Egyéb ág: teljes szövegre keresett | | |
+| Egyéb ág: nem elérhető teljes szöveg | | |
+| Egyéb ág: teljes szövegben értékelt | | értékelt = keresett − nem elérhető |
+| Egyéb ág: kizárt okokkal | | okonként: „n (ok: k; …)”; az ág bevont közleményei (értékelt − kizárt) a J-be számítanak |
+
+Számformátum: ezres tagolás megengedett (12 345, 12.345, 12,345); a D1/D2/D3 és a J/I sorban az értékeket „/” válassza
+el (pl. 1 345 / 0 / 12). Egy dobozba egyetlen szám kerüljön, a megjegyzés zárójelben (pl. 1 250 (PubMed 800; Embase 450));
+a zárójelen kívüli több szám (pl. 1 200 + 180) hibának számít. Üres vagy „–” cella = nincs kitöltve.
 
 ```mermaid
 flowchart TD

@@ -160,9 +160,10 @@ def sha256_file(path):
 
 
 def is_within(child, parent):
-    """child a parent alatt van-e (vagy azonos vele); Windows-on kis/nagybetű-független."""
-    c = os.path.normcase(os.path.abspath(str(child)))
-    p = os.path.normcase(os.path.abspath(str(parent)))
+    """child a parent alatt van-e (vagy azonos vele) a szimbolikus linkek feloldása után;
+    Windows-on kis/nagybetű-független."""
+    c = os.path.normcase(os.path.realpath(str(child)))
+    p = os.path.normcase(os.path.realpath(str(parent)))
     if c == p:
         return True
     return c.startswith(p.rstrip("\\/") + os.sep)
@@ -369,7 +370,8 @@ class _Parsed(object):
     __slots__ = ("fmt", "lead", "header", "rows", "tail", "uid_idx")
 
     def __init__(self, fmt, lead="", header=None, rows=None, tail="", uid_idx=None):
-        self.fmt, self.lead, self.header, self.rows, self.tail, self.uid_idx = fmt, lead, header, rows or [], tail, uid_idx
+        self.fmt, self.lead, self.header, self.rows = fmt, lead, header, rows or []
+        self.tail, self.uid_idx = tail, uid_idx
 
 
 def _codec(raw, enc):
@@ -639,6 +641,24 @@ def _encode(text, fmt, header, rows):
     return (_BOMS[fmt.encoding] if fmt.bom else b"") + body
 
 
+def _reads_back(data, header, rows):
+    """A mentendő bájtsor visszaolvasva ugyanazt a cellarácsot adja-e (fejléc, sorok, uid-ok)?
+    Igen: a _Parsed; nem: None (pl. a Sniffer más elválasztót ismerne fel). Uid-oszlop nélkül a
+    csupa üres sor eltűnik (a motor is kihagyja). Egyoszlopos táblánál az elválasztó közömbös."""
+    p = parse_csv_bytes(data)
+    got_header, got, _ = _assign_uids(p)
+    if not _same_cells(got_header, header):
+        return None
+    with_uid = p.uid_idx is not None
+    want = rows if with_uid else [r for r in rows if any(c.strip() for c in r[1])]
+    if len(want) != len(got):
+        return None
+    for (uid, cells), (guid, gcells, _) in zip(want, got):
+        if not _same_cells(cells, gcells) or (with_uid and uid != guid):
+            return None
+    return p
+
+
 def _normalize_submission(header, rows):
     """(uid nélküli fejléc, a row_uid oszlop helye a beküldött fejlécben, [(uid|None, cellák)])."""
     if not isinstance(header, (list, tuple)) or not all(isinstance(h, str) for h in header):
@@ -674,7 +694,8 @@ def _normalize_submission(header, rows):
             cells = cells[:uid_pos] + cells[uid_pos + 1:]
             uid = uid or cell_uid or None
         if uid is not None and (not isinstance(uid, str) or not UID_RE.match(uid)):
-            raise Invalid("A(z) %d. sor row_uid-ja érvénytelen (alak: r + 4–12 kisbetű/számjegy)." % (k + 1), {"row": k})
+            raise Invalid("A(z) %d. sor row_uid-ja érvénytelen (alak: r + 4–12 kisbetű/számjegy)." % (k + 1),
+                          {"row": k})
         out.append((uid, cells))
     return hdr, uid_pos, out
 
@@ -1073,14 +1094,17 @@ class ProjectStore(object):
                 _unlink(tmp)
             raise
         # utolsó ellenőrzés közvetlenül a csere előtt: közben nem írta-e át más (Excel, ágens)?
-        for rel, path, _, _ in prepared:
-            if expect and rel in expect:
-                now = _read_bytes(path, rel)
-                now_etag = None if now is None else sha256_bytes(now)
-                if now_etag != expect[rel]:
-                    for _, _, tmp, _ in prepared:
-                        _unlink(tmp)
-                    raise Conflict(rel, now_etag)
+        try:
+            for rel, path, _, _ in prepared:
+                if expect and rel in expect:
+                    now = _read_bytes(path, rel)
+                    now_etag = None if now is None else sha256_bytes(now)
+                    if now_etag != expect[rel]:
+                        raise Conflict(rel, now_etag)
+        except BaseException:
+            for _, _, tmp, _ in prepared:
+                _unlink(tmp)
+            raise
         done = []
         for i, (rel, path, tmp, sha) in enumerate(prepared):
             if self.watcher is not None:
@@ -1119,8 +1143,11 @@ class ProjectStore(object):
         if d.is_dir():
             for p in sorted(d.iterdir()):
                 if p.is_file() and not p.name.startswith(".") and p.suffix.lower() in (".csv", ".tsv"):
-                    rel = folder.rstrip("/") + "/" + p.name
-                    out.append({"dataset": rel, "etag": sha256_file(p)})
+                    try:
+                        etag = sha256_file(p)
+                    except OSError:
+                        etag = None             # zárolt fájl: a betöltés jelzi
+                    out.append({"dataset": self.rel(folder) + "/" + p.name, "etag": etag})
         return out
 
     def load_table(self, dataset):
@@ -1174,8 +1201,18 @@ class ProjectStore(object):
 
             self._precondition(rel, if_match, cur_etag, diff_fn)
             out_fmt = orig.fmt if orig is not None else (fmt or default_format())
-            text = _render(orig, hdr, sub_rows, out_fmt, write_uids, uid_pos)
-            data = _encode(text, out_fmt, hdr, sub_rows)
+            data = _encode(_render(orig, hdr, sub_rows, out_fmt, write_uids, uid_pos), out_fmt, hdr, sub_rows)
+            parsed = _reads_back(data, hdr, sub_rows)
+            if parsed is None:
+                # az elválasztó-felismerés (Sniffer) megbillenne: az idézőjelek egyértelműsítik
+                alt = out_fmt.copy()
+                alt.quoting = alt.header_quoting = "all"
+                data = _encode(_render(orig, hdr, sub_rows, alt, write_uids, uid_pos), alt, hdr, sub_rows)
+                parsed = _reads_back(data, hdr, sub_rows)
+            if parsed is None:
+                raise Invalid("A tábla így mentve nem olvasható vissza egyértelműen (a motor más "
+                              "elválasztót ismerne fel). Ellenőrizd az elválasztó karaktereket a cellákban.",
+                              {"dataset": rel})
             new_etag = sha256_bytes(data)
             writes = []
             if cur is None or data != cur:
@@ -1190,7 +1227,7 @@ class ProjectStore(object):
                 writes.append((prel, self.path(prel), json_bytes(doc)))
             if writes:
                 self._write_many(writes, expect={rel: cur_etag})
-            table = _to_table(rel, parse_csv_bytes(data), new_etag)
+            table = _to_table(rel, parsed, new_etag)
             self._remember(table)
         return table
 
@@ -1310,7 +1347,9 @@ class ChangeWatcher(object):
 
     A rev kezdőértéke a példány indulási ideje ezredmásodpercben, így egy korábbi szerverpéldány
     rev-je mindig „túl régi” → reset (teljes újratöltés). A saját írásokat a ProjectStore
-    note_write-tal jelzi; minden más változás 'external' (4.16: actor: external sor)."""
+    note_write-tal jelzi; minden más fájlváltozás 'external' (a szerver erre ír actor: external
+    sort, 4.16) — kivéve a projekt.sqlite-ot és az activity.jsonl-t, amelyek csak 'changed'-ben
+    szerepelnek."""
 
     def __init__(self, project_root, patterns=WATCH_PATTERNS, extra_files=(), history=1000, interval=1.5):
         self.root = Path(os.path.realpath(str(project_root)))
@@ -1443,7 +1482,10 @@ class ChangeWatcher(object):
                 external = set()
                 now = time.monotonic()
                 for key in changed:
-                    if key == DB_KEY:
+                    # a projekt.sqlite íróját nem ismerjük; a hozzáfűzős naplóra nem írunk
+                    # „külső szerkesztés” sort (különben a saját bejegyzés újabbat szülne)
+                    if key == DB_KEY or classify_key(key) == "activity":
+                        self._expected.pop(key, None)
                         continue
                     sha = self._files.get(key, (None, None))[1]
                     exp = self._expected.pop(key, None)

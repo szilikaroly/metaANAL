@@ -1,0 +1,471 @@
+{
+ "description": "GET/PUT /api/provenance?dataset= — {provenance: szk.ma.provenance/v1 (4.8), etag, state} (ma_gui/routes/table.py); a 'state' a store.load_provenance állapota (table_etag, in_sync — X022).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/provenance",
+   "query": {
+    "dataset": "03_adatok/o1.csv"
+   },
+   "etag": "\"prov-o1-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.provenance/v1",
+    "data": {
+     "provenance": {
+      "schema": "szk.ma.provenance/v1",
+      "table": "03_adatok/o1.csv",
+      "table_sha256": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333",
+      "cells": [
+       {
+        "row_uid": "rbcg01",
+        "field": "e1",
+        "value_as_entered": "4",
+        "method": "reported",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/aronson1948.pdf",
+         "page": 3,
+         "locator": "Table 1",
+         "quote": "4 cases of tuberculosis among 123 vaccinated"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg01",
+        "field": "n1",
+        "value_as_entered": "123",
+        "method": "reported",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/aronson1948.pdf",
+         "page": 3,
+         "locator": "Table 1",
+         "quote": "123 vaccinated"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg02",
+        "field": "e1",
+        "value_as_entered": "600",
+        "method": "reported",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/ferguson1949.pdf",
+         "page": 5,
+         "locator": "Table 2",
+         "quote": "6 of the 306 vaccinated children developed tuberculosis"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg04",
+        "field": "n1",
+        "value_as_entered": "13,598",
+        "method": "external_edit",
+        "estimated": false,
+        "source": {
+         "doc": null,
+         "page": null,
+         "locator": null,
+         "quote": null
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "external",
+        "extracted_at": "2026-10-04T18:40:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg06",
+        "field": "e2",
+        "value_as_entered": "372",
+        "method": "reconciled",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/stein1953.pdf",
+         "page": 4,
+         "locator": "Table 3",
+         "quote": "372 cases in the control group"
+        },
+        "conversion": null,
+        "reconciliation": {
+         "key": "Stein & Aronson 1953",
+         "a": "372",
+         "b": "327",
+         "chosen": "a",
+         "reason": "a Table 3 egyértelmű; B elírás",
+         "actor": "SzK"
+        },
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg09",
+        "field": "e1",
+        "value_as_entered": "29",
+        "method": "digitized",
+        "estimated": true,
+        "source": {
+         "doc": "file:_privat/pdf/coetzee1968.pdf",
+         "page": 4,
+         "locator": "Fig. 2",
+         "quote": null
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg10",
+        "field": "e1",
+        "value_as_entered": "17",
+        "method": "digitized",
+        "estimated": true,
+        "source": {
+         "doc": "doi:10.0000/bcg.rosenthal1961",
+         "page": 7,
+         "locator": "Figure 2",
+         "quote": "…at 12 months 17/1716 developed TB…"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": [
+         {
+          "value_as_entered": "16",
+          "method": "digitized",
+          "source": {
+           "doc": "doi:10.0000/bcg.rosenthal1961",
+           "page": 7,
+           "locator": "Figure 2"
+          },
+          "extracted_by": "SzK",
+          "extracted_at": "2026-09-30T10:00:00Z"
+         }
+        ]
+       }
+      ]
+     },
+     "etag": "prov-o1-1",
+     "state": {
+      "table_etag": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333",
+      "in_sync": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex08"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/provenance",
+   "query": {
+    "dataset": "03_adatok/o2.csv"
+   },
+   "etag": "\"prov-o2-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.provenance/v1",
+    "data": {
+     "provenance": {
+      "schema": "szk.ma.provenance/v1",
+      "table": "03_adatok/o2.csv",
+      "table_sha256": "398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550",
+      "cells": []
+     },
+     "etag": "prov-o2-1",
+     "state": {
+      "table_etag": "398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550",
+      "in_sync": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex09"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/provenance",
+   "query": {
+    "dataset": "03_adatok/o3.csv"
+   },
+   "etag": "\"prov-o3-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.provenance/v1",
+    "data": {
+     "provenance": {
+      "schema": "szk.ma.provenance/v1",
+      "table": "03_adatok/o3.csv",
+      "table_sha256": "4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7",
+      "cells": [
+       {
+        "row_uid": "rnrm02",
+        "field": "sd1",
+        "value_as_entered": "7",
+        "method": "reported",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/normand-orpington.pdf",
+         "page": 4,
+         "locator": "Table 2",
+         "quote": "mean (SD) length of stay 27 (7) days"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       }
+      ]
+     },
+     "etag": "prov-o3-1",
+     "state": {
+      "table_etag": "4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7",
+      "in_sync": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex10"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/provenance",
+   "etag": "\"prov-o1-2\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.provenance/v1",
+    "data": {
+     "provenance": {
+      "schema": "szk.ma.provenance/v1",
+      "table": "03_adatok/o1.csv",
+      "table_sha256": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333",
+      "cells": [
+       {
+        "row_uid": "rbcg01",
+        "field": "e1",
+        "value_as_entered": "4",
+        "method": "reported",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/aronson1948.pdf",
+         "page": 3,
+         "locator": "Table 1",
+         "quote": "4 cases of tuberculosis among 123 vaccinated"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg01",
+        "field": "n1",
+        "value_as_entered": "123",
+        "method": "reported",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/aronson1948.pdf",
+         "page": 3,
+         "locator": "Table 1",
+         "quote": "123 vaccinated"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg02",
+        "field": "e1",
+        "value_as_entered": "600",
+        "method": "reported",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/ferguson1949.pdf",
+         "page": 5,
+         "locator": "Table 2",
+         "quote": "6 of the 306 vaccinated children developed tuberculosis"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg04",
+        "field": "n1",
+        "value_as_entered": "13,598",
+        "method": "external_edit",
+        "estimated": false,
+        "source": {
+         "doc": null,
+         "page": null,
+         "locator": null,
+         "quote": null
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "external",
+        "extracted_at": "2026-10-04T18:40:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg06",
+        "field": "e2",
+        "value_as_entered": "372",
+        "method": "reconciled",
+        "estimated": false,
+        "source": {
+         "doc": "file:_privat/pdf/stein1953.pdf",
+         "page": 4,
+         "locator": "Table 3",
+         "quote": "372 cases in the control group"
+        },
+        "conversion": null,
+        "reconciliation": {
+         "key": "Stein & Aronson 1953",
+         "a": "372",
+         "b": "327",
+         "chosen": "a",
+         "reason": "a Table 3 egyértelmű; B elírás",
+         "actor": "SzK"
+        },
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg09",
+        "field": "e1",
+        "value_as_entered": "29",
+        "method": "digitized",
+        "estimated": true,
+        "source": {
+         "doc": "file:_privat/pdf/coetzee1968.pdf",
+         "page": 4,
+         "locator": "Fig. 2",
+         "quote": null
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": []
+       },
+       {
+        "row_uid": "rbcg10",
+        "field": "e1",
+        "value_as_entered": "17",
+        "method": "digitized",
+        "estimated": true,
+        "source": {
+         "doc": "doi:10.0000/bcg.rosenthal1961",
+         "page": 7,
+         "locator": "Figure 2",
+         "quote": "…at 12 months 17/1716 developed TB…"
+        },
+        "conversion": null,
+        "reconciliation": null,
+        "extracted_by": "SzK",
+        "extracted_at": "2026-10-01T09:12:00Z",
+        "verified_by": null,
+        "verified_at": null,
+        "history": [
+         {
+          "value_as_entered": "16",
+          "method": "digitized",
+          "source": {
+           "doc": "doi:10.0000/bcg.rosenthal1961",
+           "page": 7,
+           "locator": "Figure 2"
+          },
+          "extracted_by": "SzK",
+          "extracted_at": "2026-09-30T10:00:00Z"
+         }
+        ]
+       }
+      ]
+     },
+     "etag": "prov-o1-2",
+     "state": {
+      "table_etag": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333",
+      "in_sync": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex11"
+    }
+   }
+  }
+ ]
+}

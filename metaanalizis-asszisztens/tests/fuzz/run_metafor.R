@@ -52,26 +52,66 @@ cictrl_for <- function(vi) {
   list(tol = 1e-12 * s, maxiter = 10000, tau2.max = 1e8)
 }
 
-# rma.uni with scaled convergence control; on non-convergence retry with looser thresholds
+# rma.uni with scaled convergence control; on Fisher-scoring non-convergence retry with looser
+# thresholds and then with step halving (stepadj 0.5, 0.25). attr(fit, "thr") / "stepadj" record
+# what was needed (the comparator tags such fits as "mf_loose_thr").
 fit_rma <- function(yi, vi, method, test = "z", mods = NULL, tau2 = NULL) {
   last <- NULL
-  for (f in c(1e-12, 1e-10, 1e-8)) {
+  tries <- list(c(1e-12, 1), c(1e-10, 1), c(1e-8, 1), c(1e-10, 0.5), c(1e-8, 0.25))
+  for (tr in tries) {
+    ctrl <- ctrl_for(vi, tr[1])
+    ctrl$stepadj <- tr[2]
     res <- tryCatch({
       if (is.null(mods)) {
-        if (is.null(tau2)) rma(yi, vi, method = method, test = test, control = ctrl_for(vi, f))
-        else rma(yi, vi, method = method, test = test, tau2 = tau2, control = ctrl_for(vi, f))
+        if (is.null(tau2)) rma(yi, vi, method = method, test = test, control = ctrl)
+        else rma(yi, vi, method = method, test = test, tau2 = tau2, control = ctrl)
       } else {
-        rma(yi, vi, mods = mods, method = method, test = test, control = ctrl_for(vi, f))
+        rma(yi, vi, mods = mods, method = method, test = test, control = ctrl)
       }
     }, error = function(e) e)
     if (!inherits(res, "error")) {
-      attr(res, "thr") <- f
+      attr(res, "thr") <- if (tr[2] < 1) tr[1] * 10 else tr[1]
       return(res)
     }
     last <- res
     if (!grepl("converge", conditionMessage(res))) break
   }
   stop(conditionMessage(last))
+}
+
+# Same model fitted with step halving (stepadj = 0.5): leave1out()/influence()/cumul()/trimfill()
+# reuse the fit's control list for their internal refits, so this is how an internal
+# non-convergence can be retried.
+fit_rma_sa <- function(yi, vi, method, test = "z") {
+  ctrl <- ctrl_for(vi, 1e-10)
+  ctrl$stepadj <- 0.5
+  f <- rma(yi, vi, method = method, test = test, control = ctrl)
+  attr(f, "thr") <- 1e-9
+  f
+}
+
+# Run fun(fit); if it fails with a convergence error or returns NA in `key`, rerun it on the
+# step-halving fit and fill the NA positions (marks the result with $retry = TRUE).
+with_retry <- function(fun, yi, vi, method, test = "z", key = "estimate") {
+  fit <- fit_rma(yi, vi, method, test)
+  res <- tryCatch(fun(fit), error = function(e) e)
+  bad <- inherits(res, "error") || (method %in% c("REML", "ML") && any(is.na(res[[key]])))
+  if (!bad) return(res)
+  res2 <- tryCatch(fun(fit_rma_sa(yi, vi, method, test)), error = function(e) e)
+  if (inherits(res2, "error")) {
+    if (inherits(res, "error")) stop(conditionMessage(res))
+    return(res)
+  }
+  if (inherits(res, "error")) {
+    res2$retry <- TRUE
+    return(res2)
+  }
+  na <- is.na(res[[key]])
+  for (nm in names(res)) {
+    if (length(res[[nm]]) == length(na) && length(res2[[nm]]) == length(na)) res[[nm]][na] <- res2[[nm]][na]
+  }
+  res$retry <- TRUE
+  res
 }
 
 rma_out <- function(fit) {
@@ -145,10 +185,24 @@ do_uni <- function(d) {
       for (m in c("FE", "DL", "REML")) for (est in c("L0", "R0")) {
         R$trimfill[[paste(m, est, sep = "_")]] <- safe({
           fit <- fit_rma(yi, vi, m)
-          tf <- trimfill(fit, estimator = est)
-          list(k0 = tf$k0, side = tf$side, se.k0 = tf$se.k0, beta = c(tf$beta), se = tf$se,
-               tau2 = tf$tau2, ci.lb = tf$ci.lb, ci.ub = tf$ci.ub, pval = tf$pval,
-               fill = if (is.null(tf$fill)) numeric(0) else as.numeric(tf$yi[tf$fill]))
+          tf <- tryCatch(trimfill(fit, estimator = est), error = function(e) e)
+          if (inherits(tf, "error")) {
+            if (!grepl("converge", conditionMessage(tf))) stop(conditionMessage(tf))
+            tf <- trimfill(fit_rma_sa(yi, vi, m), estimator = est)   # internal refit retry
+          }
+          o <- list(k0 = tf$k0, side = tf$side, se.k0 = tf$se.k0, beta = c(tf$beta), se = tf$se,
+                    tau2 = tf$tau2, ci.lb = tf$ci.lb, ci.ub = tf$ci.ub, pval = tf$pval,
+                    fill = if (is.null(tf$fill)) numeric(0) else as.numeric(tf$yi[tf$fill]))
+          # metafor 4.4 refits the filled data WITHOUT the model's control list (default
+          # threshold 1e-5), so for REML/ML its estimate is only ~5 digits accurate: refit the
+          # same filled data (same method, test z, 95 %) with the tight control instead.
+          if (!is.null(tf$fill) && any(tf$fill)) {
+            rf <- fit_rma(as.numeric(tf$yi), as.numeric(tf$vi), m)
+            o$beta <- c(rf$beta); o$se <- rf$se; o$tau2 <- rf$tau2; o$ci.lb <- rf$ci.lb
+            o$ci.ub <- rf$ci.ub; o$pval <- rf$pval
+            o$beta_metafor_default_ctrl <- c(tf$beta)
+          }
+          o
         })
       }
     }
@@ -156,32 +210,33 @@ do_uni <- function(d) {
   if (want("leave1out") && k >= 2) {
     R$leave1out <- list()
     for (cfg in list(c("REML", "z"), c("DL", "knha"), c("FE", "z"), c("PM", "z"))) {
-      R$leave1out[[paste(cfg, collapse = "_")]] <- safe({
-        fit <- fit_rma(yi, vi, cfg[1], cfg[2])
+      R$leave1out[[paste(cfg, collapse = "_")]] <- safe(with_retry(function(fit) {
         l <- leave1out(fit)
         list(estimate = l$estimate, se = l$se, zval = l$zval, pval = l$pval, ci.lb = l$ci.lb,
              ci.ub = l$ci.ub, Q = l$Q, Qp = l$Qp, tau2 = l$tau2, I2 = l$I2, H2 = l$H2)
-      })
+      }, yi, vi, cfg[1], cfg[2]))
     }
   }
-  if (want("influence") && k >= 3) {
+  if (want("influence") && k >= 2) {
     R$influence <- list()
     for (m in c("REML", "DL", "FE")) {
-      R$influence[[m]] <- safe({
-        fit <- fit_rma(yi, vi, m)
+      R$influence[[m]] <- safe(with_retry(function(fit) {
         inf <- influence(fit)
         x <- inf$inf
         list(rstudent = x$rstudent, dffits = x$dffits, cook.d = x$cook.d, cov.r = x$cov.r,
              tau2.del = x$tau2.del, QE.del = x$QE.del, hat = x$hat, weight = x$weight,
-             dfbs = as.numeric(inf$dfbs[[1]]), inf = as.logical(inf$is.infl))
-      })
+             dfbs = as.numeric(inf$dfbs[[1]]), inf = as.logical(inf$is.infl), tau2 = fit$tau2)
+      }, yi, vi, m, key = "rstudent"))
     }
   }
   if (want("mods") && !is.null(d$mods)) {
     X <- do.call(rbind, lapply(d$mods, num))
     R$mods <- list()
-    for (m in METHODS) for (tst in c("z", "knha")) {
-      R$mods[[paste(m, tst, sep = "_")]] <- safe(mr_out(fit_rma(yi, vi, m, tst, mods = X)))
+    for (m in METHODS) {
+      t0 <- tryCatch(fit_rma(yi, vi, m)$tau2, error = function(e) NA_real_)   # R2 reference model
+      for (tst in c("z", "knha")) {
+        R$mods[[paste(m, tst, sep = "_")]] <- safe(c(mr_out(fit_rma(yi, vi, m, tst, mods = X)), list(tau2_0 = t0)))
+      }
     }
   }
   if (want("subgroup") && !is.null(d$groups)) {
@@ -220,12 +275,12 @@ do_uni <- function(d) {
     yr <- num(d$year)
     R$cumul <- list()
     for (cfg in list(c("REML", "z"), c("DL", "knha"))) {
-      R$cumul[[paste(cfg, collapse = "_")]] <- safe({
-        fit <- fit_rma(yi, vi, cfg[1], cfg[2])
-        cu <- cumul(fit, order = yr)
+      o <- order(yr)        # stable, ties keep the input order (as the engine)
+      R$cumul[[paste(cfg, collapse = "_")]] <- safe(with_retry(function(fit) {
+        cu <- cumul(fit)
         list(estimate = cu$estimate, se = cu$se, ci.lb = cu$ci.lb, ci.ub = cu$ci.ub,
-             tau2 = cu$tau2, I2 = cu$I2, order = order(yr))
-      })
+             tau2 = cu$tau2, I2 = cu$I2, order = o)
+      }, yi[o], vi[o], cfg[1], cfg[2]))
     }
   }
   R
@@ -248,7 +303,8 @@ rma_es <- function(e, method) {
 }
 
 do_bin <- function(d) {
-  df <- do.call(rbind, lapply(d$rows, function(r) data.frame(e1 = r$e1, n1 = r$n1, e2 = r$e2, n2 = r$n2)))
+  df <- do.call(rbind, lapply(d$rows, function(r) data.frame(e1 = as.numeric(r$e1), n1 = as.numeric(r$n1),
+                                                             e2 = as.numeric(r$e2), n2 = as.numeric(r$n2))))
   R <- list()
   if (want("escalc")) {
     E <- list()

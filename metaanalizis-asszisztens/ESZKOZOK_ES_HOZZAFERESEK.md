@@ -85,7 +85,11 @@ suspected” választ nem minősíti le. Az értékelő alágens ezt a domént k
 
 ## 8. Adatvédelem
 
-- Betegszintű adat nem kerülhet a repóba; a gyökér `.gitignore` a `*_PHI*`, `*beteg_adat*` mintákat kizárja.
+- Betegszintű adat nem kerülhet a repóba; a gyökér `.gitignore` a `*_[Pp][Hh][Ii]`, `*_[Pp][Hh][Ii][._-]*`,
+  `[Pp][Hh][Ii]_*`, `*.[Pp][Hh][Ii].*` és `*beteg_adat*` mintákat kizárja — a betegszintű fájl (vagy mappa) nevében tehát a PHI (kis- vagy nagybetűvel) önálló, elválasztott
+  tagként szerepeljen: a név végén `_PHI`, utána `.`, `_` vagy `-` (pl. `betegek_PHI.csv`, `kohorsz_PHI_v2.csv`), az
+  elején `PHI_`, vagy `.phi.` között; illetve a név tartalmazza a `beteg_adat` részt. A „phi” betűsor más szó részeként
+  (pl. `morphine-…`, `delphi-…`, `neutrophil-…`, `dengue_philippines`, `smith_phillips_2020.pdf`) nem zár ki semmit.
 - A **vault** plugin a `~/Documents/claude` alatti projekteket automatikusan feltölti a GitHubra. Érzékeny kinyerési adatot
   ne tárolj ott, vagy tedd `.gitignore`-ba.
 - A forrásdokumentumok teljes szövege (`tudasbazis/forrasok/`, `tudasbazis/*.sqlite`) szerzői jogvédett, ezért nem kerül a repóba.

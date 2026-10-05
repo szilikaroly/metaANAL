@@ -1,0 +1,262 @@
+{
+ "description": "GET /api/runs — commit-futások (szk.ma.run/v1) + szerveroldali mezők: outcome_id, stale (X001), participants_text, rob_high, grade, primary.i2_text. A ?primary=1 kimenetenként a legutóbbi elsődlegeset adja.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/runs",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.runs/v1",
+    "data": {
+     "runs": [
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "mode": "commit",
+       "outcome_id": "o1",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "7d2eaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "name": "o1_primary",
+        "parent": null
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2",
+        "--project",
+        "."
+       ],
+       "engine_version": "0.2.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/results.json",
+         "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/plot_data.json",
+         "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+       },
+       "k": 13,
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0,49 [0,33; 0,73]",
+         "en": "0.49 [0.33; 0.73]"
+        },
+        "i2_text": {
+         "hu": "92%",
+         "en": "92%"
+        },
+        "pi_text": {
+         "hu": "0,13–1,79",
+         "en": "0.13–1.79"
+        }
+       },
+       "participants_text": {
+        "hu": "357 347",
+        "en": "357,347"
+       },
+       "rob_high": 3,
+       "grade": {
+        "certainty": "very low"
+       },
+       "stale": false,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 0
+       },
+       "client_seq": 57,
+       "elapsed_ms": 84,
+       "started": "2026-10-04T21:12:00Z",
+       "finished": "2026-10-04T21:12:00Z"
+      },
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261003T180200Z-4c0d1e",
+       "mode": "commit",
+       "outcome_id": "o1",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "7d2eaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "name": "o1_primary",
+        "parent": null
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2",
+        "--project",
+        "."
+       ],
+       "engine_version": "0.2.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "4c0dcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/results.json",
+         "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/plot_data.json",
+         "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+       },
+       "k": 13,
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0,50 [0,34; 0,74]",
+         "en": "0.50 [0.34; 0.74]"
+        },
+        "i2_text": {
+         "hu": "92%",
+         "en": "92%"
+        },
+        "pi_text": {
+         "hu": "0,13–1,79",
+         "en": "0.13–1.79"
+        }
+       },
+       "participants_text": {
+        "hu": "357 347",
+        "en": "357,347"
+       },
+       "rob_high": 3,
+       "grade": {
+        "certainty": "very low"
+       },
+       "stale": true,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 0
+       },
+       "client_seq": 12,
+       "elapsed_ms": 84,
+       "started": "2026-10-03T18:02:00Z",
+       "finished": "2026-10-03T18:02:00Z"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_fx13"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs",
+   "query": {
+    "primary": "1"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.runs/v1",
+    "data": {
+     "runs": [
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "mode": "commit",
+       "outcome_id": "o1",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "7d2eaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "name": "o1_primary",
+        "parent": null
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2",
+        "--project",
+        "."
+       ],
+       "engine_version": "0.2.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/results.json",
+         "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/plot_data.json",
+         "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+       },
+       "k": 13,
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0,49 [0,33; 0,73]",
+         "en": "0.49 [0.33; 0.73]"
+        },
+        "i2_text": {
+         "hu": "92%",
+         "en": "92%"
+        },
+        "pi_text": {
+         "hu": "0,13–1,79",
+         "en": "0.13–1.79"
+        }
+       },
+       "participants_text": {
+        "hu": "357 347",
+        "en": "357,347"
+       },
+       "rob_high": 3,
+       "grade": {
+        "certainty": "very low"
+       },
+       "stale": false,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 0
+       },
+       "client_seq": 57,
+       "elapsed_ms": 84,
+       "started": "2026-10-04T21:12:00Z",
+       "finished": "2026-10-04T21:12:00Z"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_fx14"
+    }
+   }
+  }
+ ]
+}

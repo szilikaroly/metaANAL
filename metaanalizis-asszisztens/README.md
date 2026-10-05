@@ -64,16 +64,16 @@ tudásbázisba töltéséhez opcionálisan `pip install pypdf`.
 | Modellek | közös (fix) hatás, véletlen hatás (DL, REML, ML, PM, HE, SJ), IVhet (Doi 2015; τ² alapból DL, más becslő figyelmeztetéssel), Mantel–Haenszel (OR, RR, RD — Sato- vagy Greenland–Robins-variancia), Peto. `--tau2` alapértéke a modellé (random → REML, ivhet → DL), és az alcsoport-, torzítás- és érzékenységi elemzések is ezt kapják |
 | CI / PI | z, t, HKSJ, HKSJ ad hoc; predikciós intervallum t(k−2) / t(k−1) / z |
 | Heterogenitás | Q, I², τ², τ; H = max(1, √(Q/df)) és módosított H² = (Q − df)/df (Stata admetan); CI: Q-profile (metafor), Higgins–Thompson (a középpont `--ht-centre truncated` = R meta, vagy `untruncated`), Borenstein-féle τ²-CI |
-| Moderátorok | alcsoport (külön vagy közös τ²; Q_between; az alcsoport súlyrészesedése a teljes modellben, MetaXL/RevMan 'Subtotal'), vegyes hatású meta-regresszió (REML/ML/DL/FE, Wald vagy Knapp–Hartung; QM, QE, R²; kategóriás moderátor dummy-kódolással); `--robust`: HC1 szendvics SE-k t(k − p) próbákkal, robusztus F, súlyozott R² / root MSE (Stata `regress, vce(robust)`) |
-| Torzítás | Egger (a tengelymetszet CI-je t vagy z: `--egger-ci-dist`), bináris kimenetnél Harbord és Peters (log OR; az Egger ilyenkor csak tájékoztató, Sterne 2011), Begg–Mazumdar (`--begg-method auto/exact/normal`, `--begg-continuity`), trim-and-fill (L0/R0, metafor-algoritmus; `--trimfill-trim-model fixed` = meta::trimfill alapértelmezése), kontúr-javított funnel, Doi-plot + LFK-index (heurisztikus, érzékenységi jellegű), Rosenthal fail-safe N (csak tájékoztató) |
+| Moderátorok | alcsoport (külön vagy közös τ² — `--common-tau2` véletlen hatású és IVhet modellnél; Q_between; az alcsoport súlyrészesedése a teljes modellben, MetaXL/RevMan 'Subtotal'; a Methods csak `--subgroup-prespecified` mellett írja, hogy előre tervezett), vegyes hatású meta-regresszió (τ²-becslő: a `--tau2`, ha ott értelmezett, vagy `--metareg-tau2` REML/ML/DL/PM/HE/SJ/FE — FE = közös hatású meta-regresszió; Wald vagy Knapp–Hartung; QM, QE, R²; kategóriás moderátor dummy-kódolással); `--robust`: HC1 szendvics SE-k t(k − p) próbákkal, robusztus F, súlyozott R² / root MSE, a meta-regresszió súlyaival 1/(v+τ²) (= metafor `robust(…, adjust = TRUE)`); a Stata `regress [aw=1/v], vce(robust)` eredményét `--metareg-tau2 FE` adja |
+| Torzítás | Egger (a tengelymetszet CI-je t vagy z: `--egger-ci-dist`), bináris kimenetnél Harbord és Peters (log OR; az Egger ilyenkor csak tájékoztató, Sterne 2011); SMD-nél — `--measure GEN --gen-smd-vtype …` mellett is — a riport jelzi, hogy az Egger csak tájékoztató (Pustejovsky & Rodgers 2019), Begg–Mazumdar (`--begg-method auto/exact/normal`, `--begg-continuity`), trim-and-fill (L0/R0, metafor-algoritmus; `--trimfill-trim-model fixed` = meta::trimfill alapértelmezése), kontúr-javított funnel, Doi-plot + LFK-index (heurisztikus, érzékenységi jellegű), Rosenthal fail-safe N (csak tájékoztató) |
 | Érzékenység | leave-one-out, befolyás-diagnosztika (rstudent, DFFITS, Cook, cov.ratio, hat, DFBETAS — metafor-kritériumok), kumulatív elemzés, kiugró-szűrés (`--outliers`: dmetar::find.outliers szabály + újraillesztés) |
 | Visszatranszformálás | OR/RR/ROM exp, arányok, r; PFT: harmonikus átlag n (metafor/meta) vagy `--pft-backtransform variance` (MetaXL: m = 1/Var(t) minden összesített becslés saját SE-jéből) |
-| Erőelemzés | `ma.py power`: prospektív erő (Hedges & Pigott 2001, dmetar::power.analysis konvenció; fix / alacsony / közepes / magas heterogenitás vagy τ² / I²; OR → d), a szükséges k (`--target-power`) |
-| PRISMA | `ma.py prisma check`: a folyamatábra dobozszámainak konzisztenciája (PRISMA 2020 és 2009; P001–P016), bemenet JSON, a composer `prisma-flow.json`-ja, a projekt `prisma_folyamat.md` táblázata vagy `--A1 … --I` |
-| Konverziók | medián/IQR/tartomány → átlag/SD (Luo 2018, Wan 2014, Hozo 2005), SE/CI/t/p → SD/SE, csoportok összevonása, változás-SD, közös kontroll felosztása, d↔lnOR↔r, közölt SMD → variancia (`convert smd-var`), párosított összegek → átlagos változás és SD (`convert paired-sums`) |
-| Adatvalidálás | 20 szabály (V001–V020), pl. SD helyett SE gyanúja, mértékegység-eltérés, kettős nulla, közös kontroll, ferde eloszlás, kevés vizsgálat |
-| Kimenet | `report.md` (magyar összefoglaló + angol Methods-bekezdés, amely minden ténylegesen használt opciót megnevez), `forest.svg`, `funnel.svg`, `doi.svg`, `plot_data.json` (külső ábrakészítőhöz), `results.json`, `effect_sizes.csv` |
-| Bemenet | CSV/TSV; `;` vagy `,` elválasztó, tizedesvessző, UTF-8 / Windows-1250, magyar és metafor-féle oszlopnevek |
+| Erőelemzés | `ma.py power`: prospektív erő (Hedges & Pigott 2001, dmetar::power.analysis konvenció; fix / alacsony / közepes / magas heterogenitás vagy τ² / I²; OR → d — OR mellett `--v` / `--tau2` nem adható; ln OR-skálájú vizsgálati varianciához `--measure GEN --effect <ln OR> --v …`), a szükséges k (`--target-power`) |
+| PRISMA | `ma.py prisma check`: a folyamatábra dobozszámainak konzisztenciája (PRISMA 2020 és 2009; P001–P017; a negatívra adódó levezetett doboz, pl. C > B vagy H > G, hiba), bemenet JSON, a composer `prisma-flow.json`-ja, a projekt `prisma_folyamat.md` táblázata (ezres tagolással is; az egyéb módszerek ágának soraival), `--A1 … --I` és `--om-…` (egyéb ág). `--composer` és `--md` együtt: a composer számai érvényesek, minden eltérő doboz és kizárásiok-bontás (H, egyéb ág) P017-hiba |
+| Konverziók | `ma.py convert <fajta>`: medián/IQR/tartomány → átlag/SD (`median`; Luo 2018, Wan 2014, Hozo 2005), SE/CI → SD (`se`, `ci`), CI → SE (`se-from-ci`; kis mintánál `--df`: t-kvantilis), p → SE (`se-from-p`), t → összevont SD (`sd-from-t`) vagy Cohen d (`d-from-t`; `--hedges`: Hedges g = J·d, a variancia g-ből), csoportok összevonása (`combine`), változás-SD (`change`) és a korreláció visszaszámolása (`corr-from-change`; az egymásnak ellentmondó SD-kből adódó |r| > 1 hiba), közös kontroll felosztása (`split-control`), d↔lnOR↔r (`logor-to-d`, `d-to-logor`, `r-to-d`, `d-to-r`), közölt SMD → variancia (`smd-var`), párosított összegek → átlagos változás és SD (`paired-sums`) |
+| Adatvalidálás | 29 szabály (V001–V024, V026–V030; a V025 a munkapad-tervnek foglalt), pl. SD helyett SE gyanúja, mértékegység-eltérés, kettős nulla, közös kontroll, ferde eloszlás, kevés vizsgálat, nem számszerű érték opcionális oszlopban, a hatásméret-számításból kimaradt sor, kétértelmű számformátum, elcsúszott (kizárt) sor, nincs elemezhető vizsgálat (V026, k = 0: hiba, a `validate` is 1-gyel lép ki), fel nem ismert rob/estimated érték (V027), ismétlődő oszlop (V028, az első számít), hiányzó vizsgálat-címke (V029), numerikusan kezelhetetlenül kicsi variancia (V030, pl. vi = 1e-300: hiba, az `analyze` sem fut le); a hibás sor kimarad (több karú vizsgálatnál csak az a sor, nem az azonos címkéjű társa); a teljes lista: `ma.py kb rules --stage S05 --agent engine` |
+| Kimenet | `report.md` (magyar összefoglaló + angol Methods-bekezdés, amely minden ténylegesen használt opciót megnevez; értelmezési figyelmeztetések, pl. nyers arány CI-je [0, 1]-en kívül, PFT-becslés a megfigyelt tartományon kívül, az alapkockázattal össze nem egyeztethető RD, SMD-nél csak tájékoztató Egger), `forest.svg`, `funnel.svg`, `doi.svg`, `plot_data.json` (külső ábrakészítőhöz), `results.json`, `effect_sizes.csv`; `--no-plots` és újrafuttatás a mappában maradt, most nem készült ábrafájlokat törli. Az `analyze` a figyelmeztetéseket `FIGYELEM:` sorokban ki is írja |
+| Bemenet | CSV/TSV; `;` vagy `,` elválasztó, tizedesvessző, UTF-8 / Windows-1250, magyar és metafor-féle oszlopnevek. Külön címkeoszlop nélkül a `Study ID` / `Trial` (study_id) oszlop is címke (közös azonosítónál ` (1)`, ` (2)` utótaggal és V007-figyelmeztetéssel; szűrőben `study=…` néven is hivatkozható); ismétlődő fejlécnél az első oszlop számít (V028); a `rob` oszlop a RoB 2 / ROBINS-I hivatalos alakjait is ismeri (`High risk of bias`, `Serious/Critical risk of bias`, `Some concerns`, `No information`, `Magas torzítási kockázat`; `--subgroup rob`-nál ugyanannak a kategóriának eltérő írásmódjai egy szintbe kerülnek). Az `es` / `analyze` nem írja felül a `--data` fájlt |
 
 ### Validálás
 - `tests/reference/generate_metafor_reference.R` a metafor 4.4-gyel referencia-értékeket állít elő öt adatsorra
@@ -116,7 +116,7 @@ A [`TERV_validalo_grafikus_felulet.md`](TERV_validalo_grafikus_felulet.md) a bö
 | `knowledge` | saját szavainkkal összefoglalt tudásegységek (fogalom, útmutatás, küszöb, buktató, konvenció), oldal-/fejezet-hivatkozással |
 | `formula` | képletek, a motor megfelelő függvényére hivatkozva |
 | `decision_rule` | döntési szabályok (HA … → AKKOR …, erősség: must/should/consider/avoid) + a motor V-szabályai |
-| `checklist_item` | PRISMA 2020, PREFLIGHT, REVIEWER, EVALUATOR, AMSTAR 2, GRADE |
+| `checklist_item` | ellenőrzőlisták (`kb checklist <név>`): PRISMA 2020 (`PRISMA2020`), PRISMA-P (`PRISMA_P`, protokoll), PRISMA-S (`PRISMA_S`, keresés), `PREFLIGHT`, `REVIEWER`, `EVALUATOR`, AMSTAR 2 (`AMSTAR2`), `GRADE` |
 | `tool` | adatbázisok, felfedező eszközök, szoftverek — hozzáférési móddal és Claude-integrációval |
 | `worked_example` | a források kidolgozott számpéldái, ellenőrzési státusszal |
 | `chunk` (+ FTS5) | a forrásdokumentumok **teljes szövege** oldalanként / bekezdésenként — **csak helyben** |
@@ -134,6 +134,11 @@ python metaanalizis-asszisztens/ma.py kb stats
 A fájlneveket a `sources.json` `file_hint` mezője alapján ismeri fel (pl. `bookChapterSample`, `978-981-15-5032-4`),
 így a teljes szöveg a megfelelő forráshoz kapcsolódik.
 
+Az újratöltés idempotens: a változatlan fájl szövege (és a `<forrás>#<sorszám>` hivatkozás) megmarad; `--source-id`-vel
+betöltött többfájlos forrásban csak a módosult fájl szövege cserélődik; azonos nevű, de más mappából származó fájl
+saját forrást kap (FIGYELEM-mel). Teljes szöveges találatra a `kb search` [forrás#sorszám] azonosítójával hivatkozz
+(`--kb`).
+
 ### Bővítés új adatokkal
 1. **Új dokumentum teljes szövege:** `kb ingest <fájl> --source-id sajat2026 --citation "…"`.
 2. **Új szabály / tudásegység:** új JSON-fájl a `tudasbazis/seed/` mappába (`rules_<téma>.json`, `knowledge_<forrás>.json`)
@@ -144,7 +149,8 @@ A fájlneveket a `sources.json` `file_hint` mezője alapján ismeri fel (pl. `bo
 ## Projektnapló (`ma.py project …`)
 
 `project init <mappa>` létrehozza a munkamappát (`00_protokoll` … `07_ellenorzes`, sablonokkal) és a `projekt.sqlite`
-naplót: döntések (`log`, KB-hivatkozással), ellenőrzési megállapítások (`finding`, `resolve`), szakaszkapuk
+naplót: döntések (`log`, KB-hivatkozással), ellenőrzési megállapítások (`finding`, `resolve` — blocker csak fixed vagy
+indokolt invalid státusszal zárható, `--status open` újranyit), szakaszkapuk
 (`checkpoint` — nyitott *blocker* mellett PASS nem adható), GRADE-ítéletek (`grade`), futtatások adat-hash-sel
 (`analyze --project`), és `export` → Markdown döntési napló a kiegészítő anyaghoz.
 

@@ -90,6 +90,12 @@ RULES = {
     "P016": ("warning", "Egyéb módszerek ága: több keresett, mint azonosított",
              "Az egyéb módszerekkel azonosított rekordoknál több jelentést kerestél teljes szövegre; "
              "ellenőrizd a számokat.", "PRISMA 2020 1. ábra"),
+    # a P017-et a `prisma check` több fájlforrás összevetése adja (cli.cmd_prisma), nem a check_flow
+    "P017": ("error", "A források számai eltérnek",
+             "Ugyanaz a doboz (vagy a kizárási okok okonkénti bontása) a megadott fájlokban (composer "
+             "prisma-flow.json, --json, prisma_folyamat.md) más "
+             "értékű. A számok egyetlen forrása a composer export (ha van), a prisma_folyamat.md csak ellenőrzés: "
+             "javítsd az eltérő fájlt, és a kéziratban is az egyező számokat közöld.", "PRISMA 2020 1. ábra; D-S04-009"),
 }
 
 # kanonikus mezők (PRISMA 2020 betűjelekkel; lásd a modul docstringjét)
@@ -241,7 +247,7 @@ def _as_count(v):
     if isinstance(v, bool):
         raise ValueError("logikai érték, nem szám")
     if isinstance(v, str):
-        t = v.strip().replace(" ", "").replace(" ", "")
+        t = re.sub("[ \u00a0\u2009\u202f]", "", v.strip())
         try:
             v = float(t.replace(",", ".")) if re.match(r"^[+-]?\d+([.,]\d+)?$", t) else float(t)
         except ValueError:
@@ -257,6 +263,17 @@ def _as_count(v):
     return int(v)
 
 
+# ok nélküli kizárás címkéje (a composer is ezt írja) és a vele egyenértékű helykitöltők
+NO_REASON = "ok nélkül"
+_NO_REASON_LABELS = {NO_REASON, "nincs ok", "nincs megadva", "ismeretlen", "ismeretlen ok", "no reason",
+                     "not reported", "not specified", "unspecified", "unknown", "none", "n/a", "-", "–", "—"}
+
+
+def _is_no_reason(label):
+    t = re.sub(r"\s+", " ", str(label or "")).strip().lower().rstrip(".")
+    return not t or t in _NO_REASON_LABELS
+
+
 def _reasons_dict(v):
     """{ok: n} | [{"reason": .., "count": ..}] | [(ok, n)] → {ok: n (nyers)}."""
     if v is None:
@@ -266,7 +283,7 @@ def _reasons_dict(v):
     out = {}
     for item in v:
         if isinstance(item, dict):
-            key = item.get("reason") or item.get("ok") or item.get("label") or "ok nélkül"
+            key = item.get("reason") or item.get("ok") or item.get("label") or NO_REASON
             out[key] = out.get(key, 0) + (item.get("count", item.get("n")) or 0)
         else:
             key, n = item
@@ -314,7 +331,11 @@ def check_flow(flow, template=None):
     Ellenőrzések: nemnegatív egészek (P001); B = A1 + A2 (+ egyéb) − D1 − D2 − D3 (P002);
     E = B − C (P003); G = E − F (P004); J = G − H (+ egyéb ág) (P005); I ≤ J (P006);
     Σ okok = H (P007, P008); egyéb ág (P009, P016); metaanalízis ≤ I (P010); frissített
-    áttekintés (P015); a hiányzó dobozok levezetése (P011) vagy jelzése (P012)."""
+    áttekintés (P015); a hiányzó dobozok levezetése (P011) vagy jelzése (P012). A negatívra adódó
+    levezetett doboz lehetetlen folyamat: a megfelelő hibakódot kapja (pl. C > B → P003, H > G → P005).
+    Az ok nélküli kizárás (üres ok, „ok nélkül”) P008-at ad. Ha az egyéb módszerek ágának
+    értékelt/kizárt dobozai hiányoznak, a J − (G − H) többlet (legfeljebb az ágban azonosított
+    rekordok száma) nem ellenőrizhető (P012), nem P005."""
     tpl = (template or detect_template(flow)).upper().replace(" ", "").replace("_", "")
     if tpl not in TEMPLATES:
         raise PrismaError("ismeretlen sablon: %r (lehetséges: %s)" % (template, ", ".join(TEMPLATES)))
@@ -341,18 +362,25 @@ def check_flow(flow, template=None):
                 findings.append(_finding("P001", "%s[%s]: %s" % (rf, k, exc), [rf]))
                 continue
             if cnt is not None:
-                clean[str(k)] = cnt
+                key = NO_REASON if k is None or not str(k).strip() else str(k)
+                clean[key] = clean.get(key, 0) + cnt
         reasons[rf] = clean
     c = counts.get
     derived = {}
     unverifiable = []
+    # érvénytelen (P001) vagy lehetetlen (negatívra levezetett) doboz: a hibatétel már jelzi, a P012 nem sorolja
+    invalid = {x["fields"][0] for x in findings if x["fields"]}
 
     def need(fields, what):
         miss = [f for f in fields if c(f) is None and derived.get(f) is None]
-        if miss:
-            unverifiable.append("%s (hiányzik: %s)" % (what, ", ".join(_label(f) for f in miss)))
-            return False
-        return True
+        report = [f for f in miss if f not in invalid]
+        if report:
+            unverifiable.append("%s (hiányzik: %s)" % (what, ", ".join(_label(f) for f in report)))
+        return not miss
+
+    def impossible(code, detail, fields, box):
+        findings.append(_finding(code, detail, fields))
+        invalid.add(box)
 
     # --- azonosítás és szűrés előtti eltávolítás
     ident_parts = [c(k) for k in ("identified_databases", "identified_registers", "identified_other")]
@@ -364,18 +392,22 @@ def check_flow(flow, template=None):
         # duplikátum után = azonosított − duplikátum; a hiányzó duplikátum-doboz levezethető
         dup, after = c("duplicates_removed"), c("after_duplicates")
         if dup is None and ident is not None and after is not None:
-            derived["duplicates_removed"] = ident - after
             if ident - after >= 0:
+                derived["duplicates_removed"] = ident - after
                 findings.append(_finding("P011", "duplicates_removed (D1) = %d − %d = %d (nincs duplikátum-doboz)"
                                          % (ident, after, ident - after), ["duplicates_removed"]))
             else:
-                findings.append(_finding("P002", "a duplikátumszűrés után több rekord (%d), mint azonosított (%d)"
-                                         % (after, ident), ["after_duplicates", "identified_total"]))
+                impossible("P002", "a duplikátumszűrés után több rekord (%d), mint azonosított (%d)"
+                           % (after, ident), ["after_duplicates", "identified_total"], "duplicates_removed")
         elif dup is not None and ident is not None and after is not None and ident - dup != after:
             findings.append(_finding("P002", "after_duplicates = %d, de azonosított − duplikátum = %d − %d = %d"
                                      % (after, ident, dup, ident - dup), ["after_duplicates", "duplicates_removed"]))
         elif after is None and ident is not None and dup is not None:
-            derived["after_duplicates"] = ident - dup
+            if ident - dup >= 0:
+                derived["after_duplicates"] = ident - dup
+            else:
+                impossible("P002", "duplicates_removed (D1) = %d > azonosított = %d" % (dup, ident),
+                           ["duplicates_removed", "identified_total"], "after_duplicates")
         base = after if after is not None else derived.get("after_duplicates")
         other_rm = sum(c(k) or 0 for k in ("automation_removed", "other_removed"))
         if base is not None and c("screened") is not None:
@@ -384,16 +416,22 @@ def check_flow(flow, template=None):
                                          % (c("screened"), base, other_rm, base - other_rm),
                                          ["screened", "after_duplicates"]))
         elif base is not None and c("screened") is None:
-            derived["screened"] = base - other_rm
-            findings.append(_finding("P011", "screened (B) = %d (a duplikátumszűrés utáni számból)"
-                                     % derived["screened"], ["screened"]))
+            if base - other_rm >= 0:
+                derived["screened"] = base - other_rm
+                findings.append(_finding("P011", "screened (B) = %d (a duplikátumszűrés utáni számból)"
+                                         % derived["screened"], ["screened"]))
+            else:
+                impossible("P002", "egyéb eltávolítás = %d > duplikátum után = %d" % (other_rm, base),
+                           ["automation_removed", "other_removed", "after_duplicates"], "screened")
         else:
             need(("screened",) if base is not None else ("after_duplicates",), "B = duplikátum után − egyéb eltávolítás")
     else:
         removed = [c(k) for k in removed_keys]
         derived["removed_before_screening_total"] = sum(v for v in removed if v is not None)
         no_removal_box = all(c(k) is None for k in removed_keys)
-        if ident is not None and c("screened") is not None and no_removal_box and ident >= c("screened"):
+        if any(k in invalid for k in removed_keys):
+            pass     # kitöltött, de érvénytelen eltávolítás-doboz (P001): B ettől nem ellenőrizhető, nem „hiányzik”
+        elif ident is not None and c("screened") is not None and no_removal_box and ident >= c("screened"):
             # nincs eltávolítás-doboz: a különbség csak levezethető, nem ellenőrizhető
             derived["removed_before_screening_total"] = ident - c("screened")
             derived["screened_expected"] = c("screened")
@@ -430,27 +468,35 @@ def check_flow(flow, template=None):
                     c("sought"), b, c("excluded_screening"), b - c("excluded_screening")),
                     ["sought", "screened", "excluded_screening"]))
         elif b is not None and c("excluded_screening") is not None and c("sought") is None:
-            derived["sought"] = b - c("excluded_screening")
-            findings.append(_finding("P011", "sought (E) = B − C = %d" % derived["sought"], ["sought"]))
+            if b - c("excluded_screening") >= 0:
+                derived["sought"] = b - c("excluded_screening")
+                findings.append(_finding("P011", "sought (E) = B − C = %d" % derived["sought"], ["sought"]))
+            else:
+                impossible("P003", "excluded_screening (C) = %d > screened (B) = %d" % (c("excluded_screening"), b),
+                           ["excluded_screening", "screened"], "sought")
         else:
             need(("screened", "excluded_screening", "sought"), "E = B − C")
         e = c("sought") if c("sought") is not None else derived.get("sought")
         f_ = c("not_retrieved")
         if e is not None and c("assessed") is not None:
             if f_ is None:
-                derived["not_retrieved"] = e - c("assessed")
                 if e - c("assessed") < 0:
-                    findings.append(_finding("P004", "assessed (G) = %d > sought (E) = %d" % (c("assessed"), e),
-                                             ["assessed", "sought"]))
+                    impossible("P004", "assessed (G) = %d > sought (E) = %d" % (c("assessed"), e),
+                               ["assessed", "sought"], "not_retrieved")
                 else:
+                    derived["not_retrieved"] = e - c("assessed")
                     findings.append(_finding("P011", "not_retrieved (F) = E − G = %d" % derived["not_retrieved"],
                                              ["not_retrieved"]))
             elif e - f_ != c("assessed"):
                 findings.append(_finding("P004", "assessed (G) = %d, de E − F = %d − %d = %d" % (
                     c("assessed"), e, f_, e - f_), ["assessed", "sought", "not_retrieved"]))
         elif e is not None and c("assessed") is None and f_ is not None:
-            derived["assessed"] = e - f_
-            findings.append(_finding("P011", "assessed (G) = E − F = %d" % derived["assessed"], ["assessed"]))
+            if e - f_ >= 0:
+                derived["assessed"] = e - f_
+                findings.append(_finding("P011", "assessed (G) = E − F = %d" % derived["assessed"], ["assessed"]))
+            else:
+                impossible("P004", "not_retrieved (F) = %d > sought (E) = %d" % (f_, e),
+                           ["not_retrieved", "sought"], "assessed")
         else:
             need(("sought", "not_retrieved", "assessed"), "G = E − F")
     else:
@@ -461,8 +507,12 @@ def check_flow(flow, template=None):
                     c("assessed"), b, c("excluded_screening"), b - c("excluded_screening")),
                     ["assessed", "screened", "excluded_screening"]))
         elif b is not None and c("excluded_screening") is not None and c("assessed") is None:
-            derived["assessed"] = b - c("excluded_screening")
-            findings.append(_finding("P011", "assessed (G) = B − C = %d" % derived["assessed"], ["assessed"]))
+            if b - c("excluded_screening") >= 0:
+                derived["assessed"] = b - c("excluded_screening")
+                findings.append(_finding("P011", "assessed (G) = B − C = %d" % derived["assessed"], ["assessed"]))
+            else:
+                impossible("P003", "excluded_screening (C) = %d > screened (B) = %d" % (c("excluded_screening"), b),
+                           ["excluded_screening", "screened"], "assessed")
         else:
             need(("screened", "excluded_screening", "assessed"), "G = B − C")
     g = c("assessed") if c("assessed") is not None else derived.get("assessed")
@@ -482,6 +532,10 @@ def check_flow(flow, template=None):
             elif total is None:
                 derived[hf] = s
                 findings.append(_finding("P011", "%s = Σ okok = %d" % (_label(hf), s), [hf]))
+            missing = sum(v for k, v in rs.items() if _is_no_reason(k))
+            if missing:
+                findings.append(_finding("P008", "%s = %d, ebből %d kizárás ok nélkül" % (
+                    _label(hf), total if total is not None else s, missing), [hf, rf]))
         elif total:
             findings.append(_finding("P008", "%s = %d, okonkénti bontás nélkül" % (_label(hf), total), [hf, rf]))
     if h is None:
@@ -503,15 +557,34 @@ def check_flow(flow, template=None):
                                           "other_methods_not_retrieved"]))
         om_excl = om["excluded"] if om["excluded"] is not None else derived.get("other_methods_excluded")
         if om["assessed"] is not None and om_excl is not None:
-            other_j = om["assessed"] - om_excl
-            derived["other_methods_included_reports"] = other_j
+            if om_excl > om["assessed"]:
+                # nem olthatja ki a fő ág bevont jelentéseit (J = G − H + egyéb ág)
+                impossible("P005", "egyéb ág: other_methods_excluded = %d > other_methods_assessed = %d" % (
+                    om_excl, om["assessed"]), ["other_methods_excluded", "other_methods_assessed"],
+                    "other_methods_included_reports")
+            else:
+                other_j = om["assessed"] - om_excl
+                derived["other_methods_included_reports"] = other_j
         else:
             need(("other_methods_assessed", "other_methods_excluded"), "egyéb ág: bevont = értékelt − kizárt")
 
     # --- bevonás
     i_ = c("included_studies")
     j_ = c("included_reports")
-    if g is not None and h is not None:
+    if g is not None and h is not None and h > g:
+        impossible("P005", "excluded_eligibility (H) = %d > assessed (G) = %d" % (h, g),
+                   ["excluded_eligibility", "assessed"], "included_reports")
+    elif g is not None and h is not None and "other_methods_included_reports" in invalid:
+        # lehetetlen egyéb ág (P005): a J csak a fő ághoz mérhető — az ág legfeljebb az értékelt jelentéseit adhatja
+        main_j = g - h
+        awaiting = c("awaiting") or 0
+        if j_ is not None and not main_j <= j_ + awaiting <= main_j + om["assessed"]:
+            findings.append(_finding("P005", "included_reports (J) = %d%s, de G − H = %d − %d = %d (az egyéb ág "
+                                     "legfeljebb %d jelentést adhat)" % (
+                                         j_, (" + elbírálásra vár %d" % awaiting) if awaiting else "", g, h,
+                                         main_j, om["assessed"]),
+                                     ["included_reports", "assessed", "excluded_eligibility"]))
+    elif g is not None and h is not None:
         main_j = g - h
         derived["included_reports_expected"] = main_j + (other_j or 0)
         awaiting = c("awaiting") or 0
@@ -528,19 +601,29 @@ def check_flow(flow, template=None):
             else:
                 need(("included_studies",), "I ≤ G − H")
         elif j_ is not None:
-            if j_ + awaiting != derived["included_reports_expected"]:
+            extra = j_ + awaiting - main_j
+            if other_j is None and om["identified"] is not None and 0 < extra <= om["identified"]:
+                # az egyéb ág dobozai hiányoznak: a többlet onnan származhat, de nem ellenőrizhető
+                unverifiable.append("J = G − H + egyéb ág: a J többlete (%d − %d = %d) az egyéb módszerek ágából "
+                                    "bevont jelentés lehet (az ág értékelt/kizárt dobozai nélkül nem ellenőrizhető)"
+                                    % (j_ + awaiting, main_j, extra))
+            elif j_ + awaiting != derived["included_reports_expected"]:
                 txt = "included_reports (J) = %d%s, de G − H = %d − %d = %d" % (
                     j_, (" + elbírálásra vár %d" % awaiting) if awaiting else "", g, h, main_j)
                 if other_j is not None:
                     txt += " (+ egyéb ág %d = %d)" % (other_j, derived["included_reports_expected"])
                 findings.append(_finding("P005", txt, ["included_reports", "assessed", "excluded_eligibility"]))
+        elif derived["included_reports_expected"] - awaiting < 0:
+            impossible("P005", "elbírálásra vár %d > G − H%s = %d" % (
+                awaiting, " + egyéb ág" if other_j is not None else "", derived["included_reports_expected"]),
+                ["awaiting", "assessed", "excluded_eligibility"], "included_reports")
         else:
             derived["included_reports"] = derived["included_reports_expected"] - awaiting
             if i_ is None or i_ <= derived["included_reports"]:
                 findings.append(_finding("P011", "included_reports (J) = G − H%s = %d" % (
                     " + egyéb ág" if other_j is not None else "", derived["included_reports"]),
                     ["included_reports"]))
-    else:
+    elif g is None or h is None:
         need(("assessed", "excluded_eligibility"), "J = G − H")
     j_eff = j_ if j_ is not None else (derived.get("included_reports") if tpl == "PRISMA2020" else None)
     if i_ is not None and j_eff is not None and i_ > j_eff:
@@ -584,25 +667,81 @@ def from_composer(data):
     return flow
 
 
-_MD_LETTER = re.compile(r"\(\s*n\s*=\s*([A-Z]\d?)")
+_MD_LETTER = re.compile(r"[(,;]\s*n\s*=\s*([A-Z]\d?)")
 _INT = re.compile(r"(?<![\w.,])\d+(?![\w.,]?\d)")
+# ezres tagolás egy számon belül azonos elválasztóval: szóköz, NBSP, keskeny szóköz, pont vagy vessző
+# („12 345”, „12.345”, „1,500”); a „/”-rel vagy „;”-vel elválasztott értékeket nem érinti
+_GROUPED = re.compile(r"(?<![\w.,])\d{1,3}([ \u00a0\u2009\u202f.,])\d{3}(?:\1\d{3})*(?![\w.,]?\d)")
+# kitöltetlennek számító Szám-cella (gondolatjel, n/a)
+_MD_EMPTY = re.compile(r"^(?:[-–—−]+|n\.?\s*a\.?|n/a)$", re.I)
 _LETTER_FIELD = {"A1": "identified_databases", "A2": "identified_registers", "B": "screened",
                  "C": "excluded_screening", "E": "sought", "F": "not_retrieved", "G": "assessed",
                  "H": "excluded_eligibility", "J": "included_reports", "I": "included_studies"}
 
 
+def _ungroup(text):
+    return _GROUPED.sub(lambda m: re.sub(r"\D", "", m.group(0)), text or "")
+
+
 def _ints(text):
-    return [int(x) for x in _INT.findall(text or "")]
+    return [int(x) for x in _INT.findall(_ungroup(text))]
+
+
+_LIST_INT = re.compile(r"(?<![\w.])\d+(?![\w.]?\d)")
+
+
+def _slot_values(raw, slots):
+    """Többértékű Szám-cella (D1/D2/D3: 3, J/I: 2 doboz) értékei dobozonként (None = üres rész).
+
+    „/” vagy „;” elválasztóval részenként, ezres tagolással is („1 010 / 0 / 0”). Elválasztó nélkül a
+    szóközzel/vesszővel tagolt számsor lista, ha pontosan annyi szám, ahány doboz, és egyik sem kezdődik
+    0-val („118 115” → 118, 115; „100 200 300”), különben ezres tagolásként olvasandó („1 018 1 015” →
+    1018, 1015; „1 018” → 1018)."""
+    parts = re.split(r"[/;]", raw)
+    if len(parts) > 1:
+        out = []
+        for part in parts:
+            v = _ints(part)
+            out.append(v[0] if v else None)
+        return out
+    plain = _LIST_INT.findall(raw)
+    if len(plain) == slots and not any(len(x) > 1 and x.startswith("0") for x in plain):
+        return [int(x) for x in plain]
+    return _ints(raw)
+
+
+def _md_reasons(num):
+    """„60 (ok A: 40; ok B: 20)” → [(ok, n)]; a csak számból álló címke (pl. „60 = 40 + 20”) nem ok."""
+    rs = re.findall(r"([^;:()=,]+?)\s*[:=]\s*(\d+)", num)
+    return [(k.strip(), int(v)) for k, v in rs
+            if k.strip().lower() not in ("h", "n") and not re.fullmatch(r"[\d\s.,+]*", k.strip())]
+
+
+def _other_branch_field(low):
+    if "nem elérhető" in low or "nem elerheto" in low:
+        return "other_methods_not_retrieved"
+    if "keresett" in low:
+        return "other_methods_sought"
+    if "értékelt" in low or "ertekelt" in low:
+        return "other_methods_assessed"
+    if "kizárt" in low or "kizart" in low:
+        return "other_methods_excluded"
+    return "other_methods_identified"
 
 
 def parse_markdown_table(text):
     """A projekt `02_szures/prisma_folyamat.md` táblázata (| Lépés | Szám | Ellenőrzés |) → flow szótár.
 
-    A sorokat a Lépés-cella „(n = A1)” stb. betűjele azonosítja; a Szám-cella első egész száma
-    az érték. Különleges sorok: a D1/D2/D3 sor (Szám: „12 / 0 / 3” vagy „D1=12; D2=0; D3=3”),
-    a bevont sor (J és I: „8 / 6” vagy „J=8, I=6”), a kizárt sor okai („9 (ok A: 5; ok B: 4)”),
-    az „Ebből metaanalízisben” sor és az „Egyéb forrásból” sor (other_methods_identified).
-    Az üres Szám-cellák kimaradnak (a check_flow P012-vel jelzi őket)."""
+    A sorokat a Lépés-cella „(n = A1)” stb. betűjele azonosítja; a Szám-cella egész száma az érték
+    (ezres tagolással is: „12 345”, „12.345”, „12,345”; a zárójeles megjegyzés nem számít, de a
+    zárójelen kívüli több szám — pl. „1 200 + 180” — nem egyértelmű, P001). Különleges sorok: a D1/D2/D3 sor
+    (Szám: „12 / 0 / 3” vagy „D1=12; D2=0; D3=3”), a bevont sor (J és I: „8 / 6” vagy „J=8, I=6”;
+    elválasztó nélküli számsornál lásd _slot_values),
+    a kizárt sor okai („9 (ok A: 5; ok B: 4)”), az „Ebből metaanalízisben” sor, és az egyéb módszerek
+    ágának sorai („Egyéb forrásból / Egyéb ág …”: azonosított, keresett, nem elérhető, értékelt,
+    kizárt okokkal). Az üres (vagy „–”, „n/a”) Szám-cellák kimaradnak (a check_flow P012-vel jelzi
+    őket); a betűjeles doboz számként nem olvasható, kitöltött cellájának szövege kerül a mezőbe
+    (a check_flow P001-gyel jelzi)."""
     flow = {}
     for line in (text or "").splitlines():
         line = line.strip()
@@ -611,13 +750,16 @@ def parse_markdown_table(text):
         cells = [x.strip() for x in line.strip("|").split("|")]
         if len(cells) < 2 or set(cells[0]) <= set("-: "):
             continue
-        step, num = cells[0], cells[1]
+        step, raw = cells[0], cells[1]
+        num = _ungroup(raw)
         low = step.lower()
-        if not num or low.startswith("lépés"):
+        if not num or low.startswith("lépés") or _MD_EMPTY.match(num):
             continue
         if "d1" in low and ("d2" in low or "d3" in low):
             tagged = dict((k.upper(), int(v)) for k, v in re.findall(r"\b(D[123])\s*[=:]\s*(\d+)", num, re.I))
-            vals = _ints(re.sub(r"\bD[123]\s*[=:]", " ", num, flags=re.I)) if not tagged else []
+            vals = _slot_values(raw, 3) if not tagged else []
+            if not tagged and all(v is None for v in vals):
+                flow["duplicates_removed"] = raw
             for i, k in enumerate(("D1", "D2", "D3")):
                 v = tagged.get(k, vals[i] if i < len(vals) else None)
                 if v is not None:
@@ -625,35 +767,41 @@ def parse_markdown_table(text):
             continue
         letters = _MD_LETTER.findall(step)
         if "J" in letters and "I" in letters:
-            tagged = dict((k.upper(), int(v)) for k, v in re.findall(r"\b([JI])\s*[=:]\s*(\d+)", num))
-            vals = _ints(num) if not tagged else []
-            j = tagged.get("J", vals[0] if vals else None)
-            i = tagged.get("I", vals[1] if len(vals) > 1 else None)
+            tagged = dict((k.upper(), int(v)) for k, v in re.findall(r"\b([JI])\s*[=:]\s*(\d+)", num, re.I))
+            if tagged:
+                rest = _ints(re.sub(r"\b[JI]\s*[=:]\s*\d+", " ", num, flags=re.I))
+            else:
+                rest = _slot_values(raw, 2)
+            j = tagged["J"] if "J" in tagged else (rest.pop(0) if rest else None)
+            i = tagged["I"] if "I" in tagged else (rest.pop(0) if rest else None)
+            if j is None and i is None:
+                flow["included_reports"] = raw
             if j is not None:
                 flow["included_reports"] = j
             if i is not None:
                 flow["included_studies"] = i
             continue
-        if letters and letters[0] in _LETTER_FIELD:
-            vals = _ints(num)
-            if not vals:
-                continue
+        lettered = bool(letters) and letters[0] in _LETTER_FIELD
+        if lettered:
             field = _LETTER_FIELD[letters[0]]
-            flow[field] = vals[0]
-            if field == "excluded_eligibility":
-                rs = re.findall(r"([^;:()=,]+?)\s*[:=]\s*(\d+)", num)
-                rs = [(k.strip(), int(v)) for k, v in rs if k.strip().lower() not in ("h", "n")]
-                if rs:
-                    flow["excluded_eligibility_reasons"] = dict(rs)
+        elif "metaanal" in low:
+            field = "included_meta"
+        elif re.search(r"egy[ée]b (forr[áa]s|m[óo]dszer|[áa]g)", low):
+            field = _other_branch_field(low)
+        else:
             continue
-        if "metaanal" in low:
-            vals = _ints(num)
-            if vals:
-                flow["included_meta"] = vals[0]
-        elif "egyéb forrás" in low or "egyeb forras" in low:
-            vals = _ints(num)
-            if vals:
-                flow["other_methods_identified"] = vals[0]
+        vals = _ints(num)
+        if lettered and field not in ("excluded_eligibility", "other_methods_excluded") and \
+                len(_ints(re.sub(r"\([^()]*\)", " ", num))) > 1:
+            flow[field] = raw        # több szám a zárójelen kívül (pl. „1 200 + 180”): nem választunk → P001
+        elif vals:
+            flow[field] = vals[0]
+        elif lettered:
+            flow[field] = raw        # kitöltött, de számként nem olvasható doboz → P001
+        if vals and field in ("excluded_eligibility", "other_methods_excluded"):
+            rs = _md_reasons(num)
+            if rs:
+                flow[field + "_reasons"] = dict(rs)
     return flow
 
 

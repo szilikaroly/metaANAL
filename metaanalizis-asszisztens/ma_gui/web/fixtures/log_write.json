@@ -1,0 +1,94 @@
+{
+ "description": "POST /api/log/{finding,resolve,checkpoint} — szk.ma.log-write/v1; a GATE_BLOCKED üzenet a motor (projekt.checkpoint) valódi szövege (4.2, 6.6).",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/log/finding",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log-write/v1",
+    "data": {
+     "kind": "finding",
+     "id": 16,
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr37"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/log/resolve",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log-write/v1",
+    "data": {
+     "kind": "resolve",
+     "id": 7,
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr38"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/log/checkpoint",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log-write/v1",
+    "data": {
+     "kind": "checkpoint",
+     "id": 6,
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr39"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/log/checkpoint",
+   "body": {
+    "stage": "S05",
+    "verdict": "PASS"
+   },
+   "status": 409,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "GATE_BLOCKED",
+     "http": 409,
+     "message": "1 nyitott 'blocker' megállapítás van — ennél a szakasznál (S05); PASS nem adható. Nyitott: #15 [S05] SE/SD csere gyanú (Hart & Sutherland 1977)",
+     "details": {
+      "blockers": [
+       {
+        "id": 15,
+        "stage": "S05",
+        "title": "SE/SD csere gyanú (Hart & Sutherland 1977)",
+        "status": "open"
+       }
+      ],
+      "stage": "S05",
+      "verdict": "PASS"
+     }
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Stub-plugin szkript (tesztekhez): a viselkedést a _stubcore és a plugin-mappa stub.json-ja adja."""
+import os
+import sys
+
+_d = os.path.dirname(os.path.abspath(__file__))
+while not os.path.isfile(os.path.join(_d, "_stubcore.py")):
+    if os.path.dirname(_d) == _d:
+        sys.exit("_stubcore.py nem található")
+    _d = os.path.dirname(_d)
+sys.path.insert(0, _d)
+import _stubcore  # noqa: E402
+
+sys.exit(_stubcore.main(__file__))

@@ -114,22 +114,22 @@
   "name": "Modified H^2 (Stata)",
   "expression": "H2_mod = (Q - df) / df = I^2 / (1 - I^2) ;  I^2 = (Q - df) / Q",
   "variables": "Q = Cochran's Q; df = k - 1; I^2 = Higgins' I^2 as a proportion.",
-  "engine_ref": null,
+  "engine_ref": "models.heterogeneity",
   "stage_id": "S09",
   "source_id": "khan2020",
   "locator": "Ch11 p. 247 (output image); recomputation",
-  "notes": "[ext, verified] IHDChol: (49.69 - 27)/27 = 0.840 and I^2 = 45.7%. The engine's models.heterogeneity reports the classical H2 = Q/df, so the modified H2 = H2 - 1; do not compare the two directly."
+  "notes": "[ext, verified] IHDChol: (49.69 - 27)/27 = 0.840 and I^2 = 45.7%. models.heterogeneity reports both the classical H2 = Q/df (results.json random.heterogeneity.H2) and this modified form directly as H2_M = max(0, (Q - df)/df) (random.heterogeneity.H2_M); do not compare the two directly."
  },
  {
   "formula_id": "F-KHN1113-012",
   "name": "Robust (HC1 sandwich) variance of WLS coefficients",
   "expression": "V_rob(b) = N/(N - p) * (X'WX)^-1 [ SUM_j w_j^2 * e_j^2 * x_j x_j' ] (X'WX)^-1 ;  tests: t with N - p df",
   "variables": "X = design matrix (rows x_j; intercept plus covariates); W = diag(w_j), w_j = 1/SE_j^2 (fixed-effect weights); e_j = WLS residual; N = number of observations (studies); p = number of coefficients.",
-  "engine_ref": null,
+  "engine_ref": "moderators._robust_hc1",
   "stage_id": "S10",
   "source_id": "khan2020",
   "locator": "Ch11 §11.1.2 p. 245; p. 248 (output images); recomputation",
-  "notes": "[ext] Stata regress ... [aw=1/SE^2], vce(robust) (Huber–Eicker–White; Hedges, Tipton & Johnson 2010). The result does not change when the weights are rescaled (Stata rescales aweights to sum to N). Reproduces OR 0.6217 (0.5205, 0.7426) per unit of cholesterol reduction. Not implemented in the engine. [note: HC-type SEs are anti-conservative when there are few studies, and robust-error WLS meta-regression is a minority approach; the consensus is random-effects meta-regression with REML τ² and Knapp–Hartung tests.]"
+  "notes": "[ext] Stata regress ... [aw=1/SE^2], vce(robust) (Huber–Eicker–White; Hedges, Tipton & Johnson 2010). The result does not change when the weights are rescaled (Stata rescales aweights to sum to N). Reproduces OR 0.6217 (0.5205, 0.7426) per unit of cholesterol reduction. Engine: moderators._robust_hc1 via moderators.meta_regression(robust=True), i.e. `ma.py analyze --moderators … --robust` (results.json metaregression.robust); the book's fixed-effect-weighted form: `--moderators … --robust --metareg-tau2 FE` (meta_regression(tau2_method=\"FE\", robust=True); with the default REML weights 1/(v+τ²) the HC1 SEs equal metafor robust(…, adjust=TRUE), not Stata); see D-S10-007. [note: HC-type SEs are anti-conservative when there are few studies, and robust-error WLS meta-regression is a minority approach; the consensus is random-effects meta-regression with REML τ² and Knapp–Hartung tests.]"
  },
  {
   "formula_id": "F-KHN1113-013",
