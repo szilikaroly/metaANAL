@@ -929,8 +929,16 @@ def build_report(out, title=None, date=None, plots=True):
     L.append("## Vizsgálatonkénti hatásméretek")
     L.append("")
     if plots:
-        L.append("Lásd: `effect_sizes.csv`, `forest.svg`, `funnel.svg`%s." % (
-            ", `doi.svg`" if (out.get("bias") or {}).get("lfk") is not None else ""))
+        from .pipeline import bubble_moderator
+        extra = ""
+        if out.get("primary") is not None:
+            # E4c: a kumulatív és a buborék-ábra csak a ténylegesen futtatott elemzéshez készül (make_extra_plots)
+            if (out.get("sensitivity") or {}).get("cumulative"):
+                extra += ", `cumulative.svg`"
+            if bubble_moderator(out) is not None:
+                extra += ", `bubble.svg`"
+        L.append("Lásd: `effect_sizes.csv`, `forest.svg`, `funnel.svg`%s%s." % (
+            ", `doi.svg`" if (out.get("bias") or {}).get("lfk") is not None else "", extra))
     else:
         L.append("Lásd: `effect_sizes.csv` (ábrák nem készültek: --no-plots).")
     if es["excluded"]:

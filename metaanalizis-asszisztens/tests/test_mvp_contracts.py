@@ -42,7 +42,11 @@ EXACT = {("common", 1), ("capabilities", 1), ("ma.validation", 1), ("ma.analysis
          ("ma.provenance", 1)}
 PROSE = {("ma.validate-request", 1), ("ma.run", 1), ("ma.convert-request", 1), ("ma.convert-result", 1),
          ("ma.compare-result", 1), ("ma.consensus", 1), ("ma.studies", 1), ("ma.project-audit", 1),
-         ("ma.activity", 1), ("ma.project", 1)}
+         ("ma.activity", 1), ("ma.project", 1),
+         # v1: értékelés (instruments/appraisal), GRADE/SoF (E10), PRISMA-folyamatábra (E9)
+         ("instrument", 1), ("appraisal", 1), ("appraisal-result", 1), ("rob-summary", 1),
+         ("ma.appraisal-agreement", 1), ("ma.rob-sync-proposal", 1), ("ma.grade", 1), ("ma.sof", 1),
+         ("ff.flowchart", 1)}
 EXPECTED = EXACT | PROSE
 
 SUPPORTED = frozenset(["type", "required", "enum", "const", "pattern", "properties", "additionalProperties", "items",

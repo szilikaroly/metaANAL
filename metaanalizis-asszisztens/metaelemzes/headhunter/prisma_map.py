@@ -283,8 +283,8 @@ def build_flow(state, reviews, studies_doc, decisions, update_doc=None, merged=N
         hh["reviews_selected"] = mc.get("reviews_selected")
     sel = [r for r in reviews if r.get("status") == "selected"]
     hh["source_reviews"] = [{"review_id": r["review_id"],
-                             "label": "%s %s" % ((r.get("bib") or {}).get("first_author") or "",
-                                                 (r.get("bib") or {}).get("year") or "").strip() or r["review_id"],
+                             "label": ("%s %s" % ((r.get("bib") or {}).get("first_author") or "",
+                                                  (r.get("bib") or {}).get("year") or "")).strip() or r["review_id"],
                              "pmid": ((r.get("ids") or {}).get("pmid") or {}).get("value"),
                              "search_date": (r.get("search_date") or {}).get("value"),
                              "included_candidates": sum(1 for c in r.get("candidates") or []

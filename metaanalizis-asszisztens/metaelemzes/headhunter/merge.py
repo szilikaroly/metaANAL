@@ -145,6 +145,15 @@ def screening_status(records, decisions, state=None):
     return out
 
 
+def selected_reviews(reviews):
+    """A kiválasztott (EP1) áttekintések; ha még egy sincs kiválasztva, a nem kizárt/nem felváltott jelöltek (a
+    ``dedup``/``eligibility`` modulokkal azonos szabály — így a PRISMA-számok és az egyesített lista egyeznek)."""
+    sel = [r for r in reviews if r.get("status") == "selected"]
+    if sel:
+        return sel
+    return [r for r in reviews if r.get("status") not in ("excluded", "superseded")]
+
+
 def branch_membership(records, reviews):
     """Rekordonként (kanonikus, aktív) a PRISMA-ág: ``other`` (egyéb módszerek: kiválasztott áttekintés nem
     elutasított, bevonás-szerepű jelöltje, hivatkozáskövetés vagy kézi felvétel), ``database`` (csak a frissítő
@@ -154,9 +163,7 @@ def branch_membership(records, reviews):
     cmap = d.canonical_map(records)
     origins = d.effective_origins(records)
     counting = set()
-    for r in reviews:
-        if r.get("status") != "selected":
-            continue
+    for r in selected_reviews(reviews):
         for c in r.get("candidates") or []:
             if c.get("status") == "rejected" or c.get("role_in_review") not in INCLUDED_ROLES or not c.get("rec_id"):
                 continue
@@ -358,7 +365,7 @@ def build_merged(state, reviews, studies_doc, decisions, update_doc=None, now=No
     d = _d()
     state = state or {}
     reviews = effective_reviews(reviews, decisions)
-    selected = [r for r in reviews if r.get("status") == "selected"]
+    selected = selected_reviews(reviews)
     records = list((studies_doc or {}).get("records") or [])
     by_id = dict((r["rec_id"], r) for r in records)
     cmap = d.canonical_map(records)
@@ -557,7 +564,7 @@ def build_merged(state, reviews, studies_doc, decisions, update_doc=None, now=No
                               for v in blk["values"] if v.get("status") == "unverified")
     pending_studies = sum(1 for st in studies_out if st["status"] == "pending")
     counts = {
-        "reviews_selected": len(selected),
+        "reviews_selected": sum(1 for r in reviews if r.get("status") == "selected"),
         "citations_total": citations_total,
         "studies_total": len(studies_out),
         "studies_included": sum(1 for st in studies_out if st["status"] == "included"),
@@ -671,9 +678,18 @@ def run_merge(project_dir, now=None, with_prisma=True, env=None):
         data["prisma"] = {"ok": flow_res.get("ok"), "summary": flow_res.get("summary"),
                           "file": flow_res.get("file"), "check_command": flow_res.get("check_command")}
         data["files"].append(flow_res.get("file"))
-    nxt = "export" if exit_code == 0 else ("confirm / exclude (EP2–EP4)" if exit_code == 4 else "prisma --check")
-    if exit_code == 0 and not merged["final"]:
-        nxt = "signoff --actor user:<név>   (EP5), majd export"
+    first = next((p["checkpoint"] for p in pending if p["checkpoint"] in ("EP2", "EP3", "EP4")), None)
+    hint = {"EP2": "list %s candidates --status proposed   →   confirm/exclude --target rv-…#c…",
+            "EP3": "list %s proposals   →   confirm/exclude --target p-…",
+            "EP4": "list %s studies --status pending   →   confirm/exclude --target st-… (kizárásnál --reason-code X…)"}
+    if exit_code == 4 and first:
+        nxt = hint[first] % project_dir
+    elif exit_code == 0 and not merged["final"]:
+        nxt = "signoff %s --actor user:<név>   (EP5), majd export" % project_dir
+    elif exit_code == 0:
+        nxt = "export %s --outcome <kimenet> --to-project" % project_dir
+    else:
+        nxt = "prisma %s" % project_dir
     return {"ok": exit_code in (0, 4), "data": data, "warnings": warnings, "errors": [], "pending": pending,
             "exit_code": exit_code, "next": nxt}
 
@@ -713,18 +729,22 @@ def signoff(project_dir, actor, reason=None, now=None, env=None):
                           level="final", kb_refs=KB_SIGNOFF, content_sha256=merged["content_sha256"],
                           studies_included=counts["studies_included"], reports_included=counts["reports_included"])
     log_id = None
+    log_warn = []
     try:
         from .. import projekt
         log_id = projekt.log_decision(project_dir, "planner", "Metaheadhunter: végső bevonás lezárva (EP5) — %d "
                                       "vizsgálat, %d jelentés." % (counts["studies_included"],
                                                                    counts["reports_included"]),
                                       rationale=txt, stage="S04", kb_refs=",".join(KB_SIGNOFF), actor=actor,
-                                      check_kb=False)
+                                      strict=False, warnings=log_warn,
+                                      context=None)
     except Exception:
         log_id = None
     res2 = run_merge(project_dir, now=now, env=env)
     res2.setdefault("data", {})["signoff_decision"] = d["decision_id"]
     res2["data"]["project_log_id"] = log_id
+    for w in log_warn:
+        res2.setdefault("warnings", []).append(_warn("W-LOG", "Projektnapló: %s" % w, "Project log: %s" % w))
     if log_id is None:
         res2.setdefault("warnings", []).append(_warn(
             "W-LOG", "A projektnapló (projekt.sqlite) nem érhető el — a lezárás csak a decisions.jsonl-ban szerepel. "
@@ -899,15 +919,30 @@ def secondary_rows(merged, reviews_by_id=None):
         for blk in st.get("secondary_data") or []:
             evs = dict((e.get("evidence_id"), e) for e in (reviews_by_id.get(blk["review_id"]) or {}).get("evidence")
                        or [])
-            groups = {}
+            by_outcome = {}
             for v in blk["values"]:
-                groups.setdefault((v.get("outcome") or "", v.get("arm") or ""), []).append(v)
+                by_outcome.setdefault(v.get("outcome") or "", []).append(v)
+            groups = {}
+            for outc, vals in by_outcome.items():
+                fields = [v.get("field") for v in vals]
+                if len(fields) == len(set(fields)):
+                    groups[(outc, "")] = vals          # egy sor kimenetenként (n1/n2 … maguk jelölik a kart)
+                else:
+                    for v in vals:                     # ugyanaz a mező többször (több kar/időpont): karonként
+                        groups.setdefault((outc, v.get("arm") or ""), []).append(v)
             for (outc, arm), vals in sorted(groups.items()):
                 row = dict((c, "") for c in header)
                 row.update({"study": st["label"], "study_id": st["study_id"], "year": _fmt(prim.get("year")),
                             "subgroup": arm, "adat_forras": "masodlagos", "forras_attekintes": blk["review_id"],
                             "kimenet_az_attekintesben": outc})
+                arms = {}
+                for v in vals:
+                    f = str(v.get("field") or "")
+                    if v.get("arm") and f[-1:] in ("1", "2"):
+                        arms.setdefault(f[-1], v["arm"])
                 extra, locs, quotes, states = [], [], [], set()
+                if arms and not arm:
+                    extra.append(", ".join("%s. kar: %s" % (k, arms[k]) for k in sorted(arms)))
                 for v in vals:
                     states.add(v.get("status") or "unverified")
                     if v.get("field") in NUMERIC_TEMPLATE:

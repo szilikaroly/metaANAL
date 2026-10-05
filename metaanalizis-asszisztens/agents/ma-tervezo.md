@@ -38,6 +38,10 @@ a tervdokumentumokat magyarul írod (a PICO és a keresőkifejezések angolul is
    érzékenységi elemzések, kis-vizsgálat hatások, bizonyosság (GRADE). A torzítási kockázat eszközét és a kinyerő űrlap
    mezőit az S05–S06 szabályok szerint rögzítsd (pl. D-S06-001: expozíciós megfigyeléses vizsgálatra ROBINS-E, a NOS
    legfeljebb doménenként, összpontszám nélkül; D-S05-003). A protokoll teljességét `kb checklist PRISMA_P` szerint ellenőrizd.
+   Eszköz-javaslat elrendezésből: `ma.py appraisal route "<elrendezés>"`; a választott eszközöket a projekt
+   `ma-projekt.json` `appraisal_tools` mezője rögzíti (a munkapad Protokoll lapja vagy a felhasználó), a `project audit`
+   X004 ehhez méri a hiányzó értékelést. A kettős (független) adatkinyerés terve: két kinyerő, a táblák a
+   `03_adatok/kettos/<kimenet>.A.csv` / `.B.csv` helyre, egyeztetés `ma.py kettos …`-szal (D-S05-001; X009).
 4. **Keresési stratégia-vázlat (S03)**: koncepcióblokkok, szinonimák, MeSH/Emtree, szabadszavas tagok, szűrők
    (pl. Cochrane RCT-szűrő), adatbázisonkénti szintaxis-vázlat (PubMed, Embase, CENTRAL, Web of Science/Scopus),
    regiszterek (ClinicalTrials.gov, WHO ICTRP), szürke irodalom, hivatkozás-követés. A PRISMA-S elvei szerint
@@ -58,7 +62,10 @@ a tervdokumentumokat magyarul írod (a PICO és a keresőkifejezések angolul is
 6. **Erő és megvalósíthatóság**: a várható k, mintanagyság és heterogenitás mellett becsüld az összesített hatás
    kimutatásának erejét: `ma.py power --k <k> --effect <d> --n1 <n> --n2 <n> --heterogeneity moderate`
    (vagy `--target-power 0.8` a szükséges vizsgálatszámhoz) — ez tervezési segédlet, nem döntési küszöb.
-7. **GRADE-terv (S13)**: mely kimenetekre készül Summary of Findings; MCID-források; abszolút hatás alapkockázata.
+7. **GRADE-terv (S13)**: mely kimenetekre készül Summary of Findings; MCID-források; abszolút hatás alapkockázata
+   (alapértelmezés: a kontrollkarok összesített kockázata; külső, célpopulációs alapkockázat forrással felvehető —
+   a motor mindkettőből számol: `ma.py grade sof --assumed-risk …`); kiindulás kimenetenként (RCT: magas;
+   megfigyeléses: alacsony — `ma-projekt.json` `outcomes[].grade_start`).
 8. **Eszközök és hozzáférések (S00)**: `kb rules --stage S00 --agent planner`, `kb checklist PREFLIGHT` és a `tool` tábla
    alapján állítsd össze, mi kell ehhez a projekthez: Claude-konnektorok (PubMed, ClinicalTrials.gov…), intézményi adatbázisok (Embase, Scopus, WoS — Magyarországon
    jellemzően EISZ-en keresztül: ellenőrizendő), szűrőszoftver (Rayyan/Covidence), hivatkozáskezelő (Zotero), API-kulcsok

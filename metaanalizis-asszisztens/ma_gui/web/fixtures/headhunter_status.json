@@ -1,0 +1,883 @@
+{
+ "description": "Szintetikus Metaheadhunter-projekt (a PMID-ek 99…-kezdetűek, a címek „(synthetic)” jelölésűek — NEM valós közlemények). Generálja: python3 tests/gui/test_headhunter_fixtures.py --write",
+ "routes": [
+  {
+   "envelope": {
+    "data": {
+     "actor": "user:user",
+     "checkpoints": [
+      {
+       "at": null,
+       "decided_by": null,
+       "id": "EP1",
+       "open_items": 0,
+       "status": "done"
+      },
+      {
+       "at": null,
+       "decided_by": null,
+       "id": "EP2",
+       "open_items": 2,
+       "status": "pending"
+      },
+      {
+       "at": null,
+       "decided_by": null,
+       "id": "EP3",
+       "open_items": 3,
+       "status": "pending"
+      },
+      {
+       "at": null,
+       "decided_by": null,
+       "id": "EP4",
+       "open_items": 5,
+       "status": "pending"
+      },
+      {
+       "at": null,
+       "decided_by": null,
+       "id": "EP5",
+       "open_items": 1,
+       "status": "pending"
+      },
+      {
+       "at": null,
+       "decided_by": null,
+       "id": "EP6",
+       "open_items": 0,
+       "status": "done"
+      }
+     ],
+     "cli": {
+      "available": true,
+      "checkpoints": {
+       "EP1": 0,
+       "EP2": 2,
+       "EP3": 2,
+       "EP4": 5,
+       "EP5": 1,
+       "EP6": 0
+      },
+      "errors": [],
+      "exit_code": 4,
+      "final": false,
+      "findings": [
+       {
+        "code": "H017",
+        "en": "Stale step: merge.",
+        "hu": "Elavult lépés: merge — futtasd újra.",
+        "severity": "warning"
+       },
+       {
+        "code": "H017",
+        "en": "Stale step: prisma.",
+        "hu": "Elavult lépés: prisma — futtasd újra.",
+        "severity": "warning"
+       }
+      ],
+      "merged": {
+       "citations_total": 6,
+       "pending_decisions": 9,
+       "reports_included": 0,
+       "reviews_selected": 2,
+       "secondary_unverified": 1,
+       "studies_from_update": 0,
+       "studies_included": 0,
+       "studies_total": 5
+      },
+      "next": "list <projekt> candidates --status proposed   →   confirm/exclude --target rv-…#c…",
+      "ok": true,
+      "pending": [
+       {
+        "checkpoint": "EP2",
+        "n": 2,
+        "what": "Bizonytalan kinyert jelöltek megerősítése"
+       },
+       {
+        "checkpoint": "EP3",
+        "n": 2,
+        "what": "Duplikátum- és kapcsolás-javaslatok eldöntése"
+       },
+       {
+        "checkpoint": "EP4",
+        "n": 5,
+        "what": "Jogosultság a saját PICO szerint (szűrés)"
+       },
+       {
+        "checkpoint": "EP5",
+        "n": 1,
+        "what": "Végső bevonás lezárása (signoff)"
+       }
+      ],
+      "update_window": "2020-09-15",
+      "warnings": [
+       {
+        "code": "H017",
+        "en": "Stale step: merge.",
+        "hu": "Elavult lépés: merge — futtasd újra."
+       },
+       {
+        "code": "H017",
+        "en": "Stale step: prisma.",
+        "hu": "Elavult lépés: prisma — futtasd újra."
+       }
+      ]
+     },
+     "cli_runs": [
+      {
+       "cancel_requested": false,
+       "exit_code": 3,
+       "finished": "2026-10-05T13:10:58Z",
+       "run_id": "20261005T131058Z-72f7bb",
+       "started": "2026-10-05T13:10:58Z",
+       "status": "done",
+       "step": "update_search"
+      }
+     ],
+     "counts": {
+      "candidates": {
+       "confirmed": 4,
+       "proposed": 2
+      },
+      "decisions": 2,
+      "proposals_auto": 0,
+      "proposals_pending": 3,
+      "records": 6,
+      "reviews": {
+       "candidate": 1,
+       "selected": 2,
+       "total": 3
+      },
+      "studies": 6
+     },
+     "decisions_recent": [
+      {
+       "actor": "user:user",
+       "batch": null,
+       "decision_id": "d-20261005T131058Z-0002",
+       "evidence_ids": [],
+       "kb_refs": [
+        "D-S03-104"
+       ],
+       "kind": "update_window",
+       "level": null,
+       "prev_sha256": "60de0ab681aa8327a51f8611af9584b67c6953a3b3de988950ac162fc9acc5a8",
+       "proposed_by": null,
+       "quote": null,
+       "reason": "Frissítő keresés ablaka: horgony=latest (2021-03-15), átfedés=6 hónap, 2020-09-15..2026-10-05.",
+       "reason_code": null,
+       "schema": "szk.ma.headhunter.decision/v1",
+       "sha256": "4ee76b624a407d3230046c5a7ac2fbfd22381c5ba2ff8054efca513589c0e792",
+       "supersedes": null,
+       "target": {
+        "id": "update",
+        "type": "window"
+       },
+       "ts": "2026-10-05T13:10:58Z",
+       "value": "2020-09-15..2026-10-05"
+      },
+      {
+       "actor": "user:SzK",
+       "batch": null,
+       "decision_id": "d-20261005T131057Z-0001",
+       "evidence_ids": [],
+       "kb_refs": [
+        "D-S03-101"
+       ],
+       "kind": "criteria_set",
+       "level": null,
+       "prev_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+       "proposed_by": null,
+       "quote": null,
+       "reason": "PICO és kritériumok jóváhagyva: Csökkenti-e a szintetikus X-szer a halálozást Y-betegségben? (szintetikus példa)",
+       "reason_code": null,
+       "schema": "szk.ma.headhunter.decision/v1",
+       "sha256": "60de0ab681aa8327a51f8611af9584b67c6953a3b3de988950ac162fc9acc5a8",
+       "supersedes": null,
+       "target": {
+        "id": "pico",
+        "type": "project"
+       },
+       "ts": "2026-10-05T13:10:57Z",
+       "value": "approved"
+      }
+     ],
+     "files": {
+      "decisions": {
+       "bad_lines": 0,
+       "exists": true,
+       "lines": 2,
+       "path": "01_kereses/headhunter/decisions.jsonl"
+      },
+      "merged": {
+       "etag": "576bcef4b44a51e12b7630d95b518d73bb96153d3af30a0ea5b2c778b7c8cdde",
+       "exists": true,
+       "path": "01_kereses/headhunter/merged.json"
+      },
+      "overlap": {
+       "etag": "b9ab80281cc89e8a8a2b2320608a5641f542b91db615be524c990dbb507c1ac9",
+       "exists": true,
+       "path": "01_kereses/headhunter/overlap.json"
+      },
+      "prisma": {
+       "etag": "09f1c6218f55b35b012bbccd3dd25113073206e52d0d83531a4375eb6ef9f8b2",
+       "exists": true,
+       "path": "01_kereses/headhunter/prisma_flow.json"
+      },
+      "state": {
+       "etag": "7908c8ad0365c3a62bdd9c71a686a3f368060d39760616267fede2f86d13f5dc",
+       "exists": true,
+       "path": "01_kereses/headhunter/state.json"
+      },
+      "studies": {
+       "etag": "e9c64c5afa30cabed9a36f27ae2ebbef1a938d64fd44af86801794fa4ea1d736",
+       "exists": true,
+       "path": "01_kereses/headhunter/studies.json"
+      },
+      "update": {
+       "etag": "565ba9a0361efaf2dd3f015617879bd63ea3b35755459292a90f509f6716c85f",
+       "exists": true,
+       "path": "01_kereses/headhunter/update_search.json"
+      }
+     },
+     "help": {
+      "dedupe": {
+       "en": "Only reports with an identical identifier (PMID, DOI, PMCID, EID) are merged automatically — and this can be undone. Everything else (similar title and author; shared registration; the review's grouping) is only a proposal. When in doubt keep them separate (Bramer 2016; McKeown 2021): a false merge can lose a study. Companion reports (follow-up, secondary analysis) are linked to the study — the unit of analysis is the study, not the article. A ClinicalTrials.gov reference type alone is not enough for linking; the report's own registration statement is the strong signal.",
+       "hu": "Automatikusan csak az azonos azonosítójú (PMID, DOI, PMCID, EID) közlemények vonódnak össze — ez is visszavonható. Minden más (hasonló cím és szerző; közös regiszterszám; az áttekintés csoportosítása) csak javaslat. Kétség esetén tartsd meg külön (Bramer 2016; McKeown 2021): a hamis összevonás vizsgálatot veszíthet. A társközleményeket (követés, másodlagos elemzés) a vizsgálathoz kapcsoljuk — az elemzési egység a vizsgálat, nem a cikk. A ClinicalTrials.gov hivatkozástípusa önmagában nem elég a kapcsoláshoz; a közlemény saját regisztrációs nyilatkozata az erős jel."
+      },
+      "extract": {
+       "en": "We look for INCLUDED studies only, not the whole reference list. Most reliable is the Cochrane section 'References to studies included in this review' (high confidence); next the table of included studies (medium); the reference list + agent classification is low confidence and needs human confirmation. Every item shows its location (table, row, section) and a verbatim quote — no evidence is an error (H002). If the number of extracted studies differs from what the review reports, we warn you (H006). The search date is needed for the update; if not reported, publication date minus 12 months is the estimate (H008), which you must approve.",
+       "hu": "Csak a BEVONT vizsgálatokat keressük, nem a teljes irodalomjegyzéket. A legmegbízhatóbb a Cochrane „References to studies included in this review” szakasza (magas bizonyosság); utána a bevont vizsgálatok táblázata (közepes); az irodalomjegyzék + ágens-osztályozás alacsony bizonyosságú, emberi megerősítés kell. Minden tételnél ott a hely (táblázat, sor, szakasz) és a szó szerinti idézet — ha nincs bizonyíték, az hiba (H002). Ha a kinyert vizsgálatok száma eltér az áttekintés által közölttől, figyelmeztetünk (H006). A keresési dátum a frissítéshez kell; ha nincs közölve, a megjelenés előtti 12 hónap a becslés (H008), ezt neked kell jóváhagynod."
+      },
+      "intro": {
+       "en": "This is the 'other methods' branch (previous reviews and citation searching): it complements but does not replace the protocol's database search. The mined set inherits the source reviews' search gaps; the update search and your own screening only partly compensate. Numbers taken from reviews are secondary data and must be checked against the primary report before analysis (EP6). The tool never stores full texts — only bibliographic data and quotes of at most 300 characters.",
+       "hu": "Ez az előző áttekintések és a hivatkozáskövetés („egyéb módszerek”) ága: kiegészíti, de nem helyettesíti a protokoll szerinti adatbázis-keresést. A bányászott halmaz örökli a forrás-áttekintések keresési hiányait; ezt a frissítő keresés és a saját szűrés csak részben pótolja. Az áttekintésekből átvett számok másodlagos adatok: elemzés előtt az eredeti közleménnyel ellenőrizni kell őket (EP6). Teljes szöveget a program nem ment; csak bibliográfiai adatot és legfeljebb 300 karakteres idézetet."
+      },
+      "merge": {
+       "en": "The merged list shows for each study which reviews included it, under what label and on what evidence. The PRISMA flow has two branches: other methods (previous reviews + citation searching) and the database branch (update search); the engine checks the counts. Sign-off (EP5) is possible only when no decision is open. Numbers from reviews are secondary data: 37% of SMD meta-analyses had a difference above 0.1 in at least one study (Gøtzsche 2007), 20 of 34 Cochrane reviews had extraction errors (Jones 2005), error rates reach 50% (Mathes 2017) — so verify them against the primary report (EP6) before they enter the data table.",
+       "hu": "Az egyesített lista minden vizsgálatnál mutatja, mely áttekintések vonták be, milyen címkével és milyen bizonyíték alapján. A PRISMA-ábra két ága: az egyéb módszerek (előző áttekintések + hivatkozáskövetés) és az adatbázis-ág (frissítő keresés); a motor ellenőrzi a számokat. A lezárás (EP5) csak akkor lehetséges, ha nincs nyitott döntés. Az áttekintések számai másodlagos adatok: SMD-metaanalízisek 37%-ában volt legalább egy vizsgálatnál 0,1-nél nagyobb eltérés (Gøtzsche 2007), 34 Cochrane-áttekintésből 20-ban volt kinyerési hiba (Jones 2005), a hibaarány akár 50% (Mathes 2017) — ezért az elsődleges közleménnyel ellenőrizd őket (EP6), mielőtt az adattáblába kerülnek."
+      },
+      "overlap": {
+       "en": "Corrected Covered Area (Pieper 2014): CCA = (N − r) / (r·c − r), where N is the number of ticked cells, r the unique studies and c the reviews. Bands (guidance, not strict rules; Ying 2025): 0–5% slight, 6–10% moderate, 11–15% high, above 15% very high. When mining, overlap is not a bias (duplicates are merged): it shows how far the reviews found the same literature. With very high pairwise overlap (e.g. an update by the same authors) the older review can be replaced; low overlap with the same PICO suggests different criteria or search gaps (Hennessy & Johnson 2020). The numbers are the engine's values.",
+       "hu": "Corrected Covered Area (Pieper 2014): CCA = (N − r) / (r·c − r), ahol N a bejelölt cellák száma, r az egyedi vizsgálatok, c az áttekintések száma. Sávok (útmutató, nem merev szabály; Ying 2025): 0–5% enyhe, 6–10% mérsékelt, 11–15% magas, 15% fölött nagyon magas. Bányászatnál az átfedés nem torzítás (a duplumokat összevonjuk): azt mutatja, mennyire ugyanazt az irodalmat találták. Nagyon magas páronkénti átfedésnél (pl. ugyanazon szerzők frissítése) a régebbi áttekintés helyettesíthető; alacsony átfedés azonos PICO mellett eltérő kritériumokra vagy keresési hiányra utal (Hennessy & Johnson 2020). A számok a motor értékei."
+      },
+      "pico": {
+       "en": "The review search is built from the population (P) and intervention (I) terms (P AND I + SR/MA filter). An outcome block can narrow it, but avoid that when mining. The exclusion reason list (X1…) is used in screening and for the PRISMA exclusion reasons. Use 'update my own review' mode when you update your own previously published review.",
+       "hu": "A populáció (P) és a beavatkozás (I) kifejezéseiből épül az áttekintés-keresés (P ÉS I + SR/MA-szűrő). A kimenet-blokk szűkíthet, de bányászatnál inkább ne. A kizárási okok szótára (X1…) a szűréshez és a PRISMA kizárási okaihoz kell. A „saját áttekintés frissítése” mód akkor kell, ha a korábbi, saját közölt áttekintésedet frissíted."
+      },
+      "reviews": {
+       "en": "When mining, select EVERY systematic review that fits your PICO, not only the 'best' one: overlap is handled by de-duplication, while an omitted review can lose studies. The score is only an ordering (relevance, recency, size, Cochrane, open full text), not a quality judgement; AMSTAR 2-like signals (protocol, risk of bias, PRISMA) are informative only. Pollock 2019's decision tool and Ballard & Montgomery 2017's four conditions help the choice; quality mainly affects the reliability of secondary data.",
+       "hu": "Bányászathoz MINDEN PICO-ba illő szisztematikus áttekintést érdemes kiválasztani, nem csak a „legjobbat”: az átfedést a duplumszűrés kezeli, a kihagyott áttekintés viszont vizsgálatokat veszíthet. A pontszám csak sorrend (relevancia, frissesség, méret, Cochrane, nyílt teljes szöveg), nem minőségítélet; az AMSTAR 2 jellegű jelzések (protokoll, kockázatértékelés, PRISMA) csak tájékoztatnak. A választásban Pollock 2019 döntési eszköze és Ballard & Montgomery 2017 négy feltétele segít; a minőség főleg a másodlagos adatok megbízhatóságát érinti."
+      },
+      "screen": {
+       "en": "Being included by an earlier review is only context — your criteria may differ. At title/abstract level you may exclude without a reason; at full-text level a reason is required (PRISMA 16a). 'Not retrieved': the full text is unavailable (PRISMA F). Numbers taken from reviews are secondary: during screening they are informative only. Keys on the list: ↑/↓ move, I include, X exclude (with reason), T exclude on title/abstract, N not retrieved, W awaiting classification.",
+       "hu": "Az, hogy egy korábbi áttekintés bevonta, csak kontextus — a te kritériumaid eltérhetnek. Cím/absztrakt szinten kizárhatsz ok nélkül is; teljes szöveg szinten az ok kötelező (PRISMA 16a). „Nem szerezhető be”: a teljes szöveg nem érhető el (PRISMA F). Az áttekintésekből átvett számok másodlagosak: szűrésnél csak tájékoztatnak. Billentyűk a listán: ↑/↓ mozgás, I bevon, X kizár (okkal), T kizár cím/absztrakt alapján, N nem szerezhető be, W elbírálásra vár."
+      },
+      "sources": {
+       "en": "PubMed, Europe PMC and ClinicalTrials.gov work without a key; OpenAlex without a key uses a shared daily budget (free own key: MA_OPENALEX_APIKEY); Scopus only with a key (MA_SCOPUS_APIKEY, plus MA_SCOPUS_INSTTOKEN off campus). NEVER type a key here or into a file: only into an environment variable (see TELEPITES.md); the screen only shows whether it is set. If a source is unreachable we continue with the others and the search log states the gap.",
+       "hu": "PubMed, Europe PMC és ClinicalTrials.gov kulcs nélkül működik; az OpenAlex kulcs nélkül napi közös keretből dolgozik (ingyenes saját kulcs: MA_OPENALEX_APIKEY); a Scopus csak kulccsal (MA_SCOPUS_APIKEY, intézményen kívülről MA_SCOPUS_INSTTOKEN is). A kulcsot SOHA ne írd ide vagy fájlba: csak környezeti változóba (lásd TELEPITES.md), a felület csak azt mutatja, be van-e állítva. Ha egy forrás nem érhető el, a többivel folytatjuk, és a hiányt a keresési napló kimondja."
+      },
+      "update": {
+       "en": "By default the window starts at the latest source search date minus a 6-month overlap (for indexing delay) — a pragmatic default, not a literature rule; you decide. If the earliest and latest search dates are more than 24 months apart, the 'earliest' anchor is more sensitive. Queries are built from the PICO blocks without an SR filter; the preview shows the exact queries without running them. When and how to update: Garner 2016; a review goes out of date in a median of 5.5 years, but 23% within 2 years (Shojania 2007).",
+       "hu": "Az ablak kezdete alapból a legfrissebb forrás-keresés dátuma mínusz 6 hónap átfedés (az indexelési késés miatt) — ez pragmatikus alapérték, nem irodalmi szabály, te döntöd el. Ha a legkorábbi és a legfrissebb keresési dátum 24 hónapnál távolabb esik, a „legkorábbi” horgony érzékenyebb. A lekérdezések SR-szűrő nélkül, a PICO-blokkokból készülnek; az előnézet a pontos lekérdezéseket mutatja futtatás nélkül. Mikor és hogyan frissíts: Garner 2016; egy áttekintés medián 5,5 év alatt avul el, de 23%-uk 2 éven belül (Shojania 2007)."
+      }
+     },
+     "initialized": true,
+     "jobs": {
+      "active": null
+     },
+     "merged": {
+      "counts": {
+       "citations_total": 6,
+       "pending_decisions": 9,
+       "reports_included": 0,
+       "reviews_selected": 2,
+       "secondary_unverified": 1,
+       "studies_from_update": 0,
+       "studies_included": 0,
+       "studies_total": 5
+      },
+      "final": false,
+      "summary": {
+       "conflicts": 0,
+       "pending_candidates": 2,
+       "pending_proposals": 2,
+       "pending_studies": 5,
+       "secondary_unverified_included": 0,
+       "signoff_decision": null
+      }
+     },
+     "overlap": {
+      "band": "very_high",
+      "cca_pct": 20.0,
+      "cca_text": "20.0",
+      "level": "study"
+     },
+     "path": "01_kereses/headhunter",
+     "problems": [],
+     "sources": [
+      {
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key": "pubmed",
+       "key_configured": false,
+       "message": null,
+       "reset_at": null,
+       "status": "unknown"
+      },
+      {
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key": "europepmc",
+       "key_configured": null,
+       "message": null,
+       "reset_at": null,
+       "status": "unknown"
+      },
+      {
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key": "openalex",
+       "key_configured": false,
+       "message": null,
+       "reset_at": null,
+       "status": "unknown"
+      },
+      {
+       "checked_at": null,
+       "enabled": false,
+       "entitlement": "none",
+       "insttoken_configured": false,
+       "key": "scopus",
+       "key_configured": false,
+       "message": {
+        "en": "Scopus is not configured: the MA_SCOPUS_APIKEY environment variable is missing. Request a key at dev.elsevier.com (from your institution's network); see TELEPITES.md.",
+        "hu": "A Scopus nincs beállítva: hiányzik az MA_SCOPUS_APIKEY környezeti változó. Kulcsot a dev.elsevier.com oldalon kérhetsz (intézményi hálózatról; Magyarországon az intézményi Scopus-hozzáférés jellemzően az EISZ-en át érhető el); lásd TELEPITES.md."
+       },
+       "reset_at": null,
+       "status": "not_configured"
+      },
+      {
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key": "ctgov",
+       "key_configured": null,
+       "message": null,
+       "reset_at": null,
+       "status": "unknown"
+      },
+      {
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key": "crossref",
+       "key_configured": null,
+       "message": null,
+       "reset_at": null,
+       "status": "unknown"
+      }
+     ],
+     "state": {
+      "created": "2026-10-05T13:10:57Z",
+      "criteria": [],
+      "exclusion_reasons": [
+       {
+        "code": "X1",
+        "criterion": null,
+        "domain": "P",
+        "label": {
+         "en": "wrong population",
+         "hu": "nem megfelelő populáció"
+        }
+       },
+       {
+        "code": "X2",
+        "criterion": null,
+        "domain": "I",
+        "label": {
+         "en": "wrong intervention / exposure",
+         "hu": "nem megfelelő beavatkozás / expozíció"
+        }
+       },
+       {
+        "code": "X3",
+        "criterion": null,
+        "domain": "C",
+        "label": {
+         "en": "wrong comparator",
+         "hu": "nem megfelelő összehasonlítás (kontroll)"
+        }
+       },
+       {
+        "code": "X4",
+        "criterion": null,
+        "domain": "O",
+        "label": {
+         "en": "no relevant outcome reported",
+         "hu": "nem közöl releváns kimenetet"
+        }
+       },
+       {
+        "code": "X5",
+        "criterion": null,
+        "domain": "S",
+        "label": {
+         "en": "wrong study design",
+         "hu": "nem megfelelő vizsgálati elrendezés"
+        }
+       },
+       {
+        "code": "X6",
+        "criterion": null,
+        "domain": null,
+        "label": {
+         "en": "not a primary report (review, editorial, comment)",
+         "hu": "nem elsődleges közlemény (áttekintés, szerkesztőségi, kommentár)"
+        }
+       },
+       {
+        "code": "X7",
+        "criterion": null,
+        "domain": null,
+        "label": {
+         "en": "duplicate report / no new data",
+         "hu": "duplikált / új adatot nem tartalmazó közlemény"
+        }
+       },
+       {
+        "code": "X8",
+        "criterion": null,
+        "domain": null,
+        "label": {
+         "en": "retracted publication",
+         "hu": "visszavont közlemény"
+        }
+       },
+       {
+        "code": "X9",
+        "criterion": null,
+        "domain": "L",
+        "label": {
+         "en": "language (excluded per protocol)",
+         "hu": "nyelv (a protokoll szerint kizárva)"
+        }
+       },
+       {
+        "code": "X10",
+        "criterion": null,
+        "domain": null,
+        "label": {
+         "en": "other reason (detailed in the reason text)",
+         "hu": "egyéb ok (indoklásban részletezve)"
+        }
+       }
+      ],
+      "mode": "harvest",
+      "pico": {
+       "comparator": null,
+       "intervention": "drug X",
+       "other": null,
+       "outcomes": [],
+       "population": "Y disease",
+       "query_blocks": [
+        {
+         "concept": "P",
+         "mesh": [],
+         "terms": [
+          "Y disease"
+         ]
+        },
+        {
+         "concept": "I",
+         "mesh": [],
+         "terms": [
+          "drug X"
+         ]
+        }
+       ],
+       "question": "Csökkenti-e a szintetikus X-szer a halálozást Y-betegségben? (szintetikus példa)",
+       "study_designs": []
+      },
+      "project_link": {
+       "prisma_flow": "02_szures/prisma_flow.json",
+       "project_title": null,
+       "studies_json": "03_adatok/studies.json"
+      },
+      "settings": {
+       "contact_email_set": false,
+       "max_reviews": 50,
+       "overlap_window_months": 6,
+       "quote_max_chars": 300,
+       "reviewers": [],
+       "title_similarity_possible": 0.8,
+       "title_similarity_probable": 0.9
+      },
+      "tool_version": "metaelemzes-headhunter/1.0.0",
+      "updated": "2026-10-05T13:10:58Z"
+     },
+     "steps": [
+      {
+       "id": "sources",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      },
+      {
+       "id": "find_reviews",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      },
+      {
+       "id": "select_reviews",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      },
+      {
+       "id": "extract",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      },
+      {
+       "id": "resolve",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      },
+      {
+       "id": "dedupe",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      },
+      {
+       "id": "overlap",
+       "message": null,
+       "run_id": null,
+       "status": "done",
+       "updated": "2026-10-05T13:10:57Z"
+      },
+      {
+       "id": "screen",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      },
+      {
+       "id": "update_search",
+       "message": null,
+       "run_id": "20261005T131058Z-72f7bb",
+       "status": "needs_human",
+       "updated": "2026-10-05T13:10:58Z"
+      },
+      {
+       "id": "merge",
+       "message": {
+        "en": "Stale: an earlier step (update_search) changed — run it again.",
+        "hu": "Elavult: egy korábbi lépés (update_search) kimenete megváltozott — futtasd újra."
+       },
+       "run_id": null,
+       "status": "stale",
+       "updated": "2026-10-05T13:10:58Z"
+      },
+      {
+       "id": "prisma",
+       "message": {
+        "en": "Stale: an earlier step (update_search) changed — run it again.",
+        "hu": "Elavult: egy korábbi lépés (update_search) kimenete megváltozott — futtasd újra."
+       },
+       "run_id": null,
+       "status": "stale",
+       "updated": "2026-10-05T13:10:58Z"
+      },
+      {
+       "id": "export",
+       "message": null,
+       "run_id": null,
+       "status": "not_started",
+       "updated": null
+      }
+     ]
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-status/v1",
+    "warnings": []
+   },
+   "etag": "e5641f572aff1ab2c11904841396329e97b761b44d748ff2f3d414f26ea0b693",
+   "method": "GET",
+   "path": "/api/headhunter/status",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "initialized": true,
+     "lang": "hu",
+     "rows": [
+      {
+       "auth": "nincs; opcionális MA_NCBI_APIKEY (10 kérés/s 3 helyett)",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": false,
+       "message": "A PubMed állapota még nem ismert (futtasd: sources --check).",
+       "name": "PubMed",
+       "reset_at": null,
+       "role": "áttekintések keresése, metaadat, hivatkozás-feloldás (ecitmatch), regiszterszám (DataBank)",
+       "source": "pubmed",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "nincs",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": null,
+       "message": "Az Europe PMC állapota még nem ismert (futtasd: sources --check).",
+       "name": "Europe PMC",
+       "reset_at": null,
+       "role": "áttekintések keresése, nyílt teljes szöveg (bevont vizsgálatok kinyerése), hivatkozások, idézők",
+       "source": "europepmc",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "nem kötelező; ajánlott ingyenes kulcs: MA_OPENALEX_APIKEY (saját napi keret)",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": false,
+       "message": "Az OpenAlex állapota még nem ismert (futtasd: sources --check).",
+       "name": "OpenAlex",
+       "reset_at": null,
+       "role": "áttekintések keresése (type:review), irodalomjegyzék (referenced_works), idéző közlemények (cites:)",
+       "source": "openalex",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "MA_SCOPUS_APIKEY kötelező (dev.elsevier.com), MA_SCOPUS_INSTTOKEN opcionális (intézményi)",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": false,
+       "entitlement": "none",
+       "insttoken_configured": false,
+       "key_configured": false,
+       "message": "A Scopus nincs beállítva: hiányzik az MA_SCOPUS_APIKEY környezeti változó. Kulcsot a dev.elsevier.com oldalon kérhetsz (intézményi hálózatról; Magyarországon az intézményi Scopus-hozzáférés jellemzően az EISZ-en át érhető el); lásd TELEPITES.md.",
+       "name": "Scopus",
+       "reset_at": null,
+       "role": "áttekintések keresése (DOCTYPE(re)), irodalomjegyzék (view=REF, ha jogosult), idézők (REFEID)",
+       "source": "scopus",
+       "status": "not_configured",
+       "unverified_live": true
+      },
+      {
+       "auth": "nincs",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": null,
+       "message": "A ClinicalTrials.gov állapota még nem ismert (futtasd: sources --check).",
+       "name": "ClinicalTrials.gov",
+       "reset_at": null,
+       "role": "regiszter-rekordok (NCT), regiszter-keresés a frissítéshez",
+       "source": "ctgov",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "nincs (automatikus tartalék a DOI-feloldáshoz)",
+       "automatic": true,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": null,
+       "message": "A Crossref állapota még nem ismert (futtasd: sources --check).",
+       "name": "Crossref",
+       "reset_at": null,
+       "role": "DOI-metaadat tartalékként",
+       "source": "crossref",
+       "status": "unknown",
+       "unverified_live": false
+      }
+     ],
+     "state_etag": "7908c8ad0365c3a62bdd9c71a686a3f368060d39760616267fede2f86d13f5dc",
+     "warnings": []
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-sources/v1",
+    "warnings": []
+   },
+   "method": "GET",
+   "path": "/api/headhunter/sources",
+   "query": {
+    "lang": "hu"
+   },
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "initialized": true,
+     "lang": "en",
+     "rows": [
+      {
+       "auth": "none; optional MA_NCBI_APIKEY (10 requests/s instead of 3)",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": false,
+       "message": "The status of PubMed is not known yet (run: sources --check).",
+       "name": "PubMed",
+       "reset_at": null,
+       "role": "review search, metadata, citation matching (ecitmatch), registry numbers (DataBank)",
+       "source": "pubmed",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "none",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": null,
+       "message": "The status of Europe PMC is not known yet (run: sources --check).",
+       "name": "Europe PMC",
+       "reset_at": null,
+       "role": "review search, open full text (included-study extraction), references, citations",
+       "source": "europepmc",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "optional; a free key is recommended: MA_OPENALEX_APIKEY (own daily budget)",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": false,
+       "message": "The status of OpenAlex is not known yet (run: sources --check).",
+       "name": "OpenAlex",
+       "reset_at": null,
+       "role": "review search (type:review), reference lists (referenced_works), citing works (cites:)",
+       "source": "openalex",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "MA_SCOPUS_APIKEY required (dev.elsevier.com), MA_SCOPUS_INSTTOKEN optional (institutional)",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": false,
+       "entitlement": "none",
+       "insttoken_configured": false,
+       "key_configured": false,
+       "message": "Scopus is not configured: the MA_SCOPUS_APIKEY environment variable is missing. Request a key at dev.elsevier.com (from your institution's network); see TELEPITES.md.",
+       "name": "Scopus",
+       "reset_at": null,
+       "role": "review search (DOCTYPE(re)), reference lists (view=REF, if entitled), citing works (REFEID)",
+       "source": "scopus",
+       "status": "not_configured",
+       "unverified_live": true
+      },
+      {
+       "auth": "none",
+       "automatic": false,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": null,
+       "message": "The status of ClinicalTrials.gov is not known yet (run: sources --check).",
+       "name": "ClinicalTrials.gov",
+       "reset_at": null,
+       "role": "registry records (NCT), registry search for the update",
+       "source": "ctgov",
+       "status": "unknown",
+       "unverified_live": false
+      },
+      {
+       "auth": "none (automatic DOI fallback)",
+       "automatic": true,
+       "checked_at": null,
+       "enabled": true,
+       "entitlement": null,
+       "insttoken_configured": null,
+       "key_configured": null,
+       "message": "The status of Crossref is not known yet (run: sources --check).",
+       "name": "Crossref",
+       "reset_at": null,
+       "role": "DOI metadata as a fallback",
+       "source": "crossref",
+       "status": "unknown",
+       "unverified_live": false
+      }
+     ],
+     "state_etag": "7908c8ad0365c3a62bdd9c71a686a3f368060d39760616267fede2f86d13f5dc",
+     "warnings": []
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-sources/v1",
+    "warnings": []
+   },
+   "method": "GET",
+   "path": "/api/headhunter/sources",
+   "query": {
+    "lang": "en"
+   },
+   "status": 200
+  }
+ ]
+}

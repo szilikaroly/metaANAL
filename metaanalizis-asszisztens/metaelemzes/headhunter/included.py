@@ -2143,6 +2143,16 @@ def _norm_record(rec, source):
         ids["pmid"] = str(r["id"])
     if src == "PMC" and r.get("id"):
         ids["pmcid"] = str(r["id"])
+    # normalizált rekordok (pl. ``europepmc.reference_record``: ``source_db``/``pmid``/``pmcid``/``doi`` kulcsok) —
+    # élő próbán a normalizált Europe PMC-hivatkozások így elvesztették az API-tól kapott PMID-et
+    sdb = (r.get("source_db") or "").upper() if isinstance(r.get("source_db"), str) else ""
+    if sdb == "MED" and r.get("id") and "pmid" not in ids:
+        ids["pmid"] = str(r["id"])
+    if sdb == "PMC" and r.get("id") and "pmcid" not in ids:
+        ids["pmcid"] = str(r["id"])
+    for k in ("pmid", "pmcid"):
+        if isinstance(r.get(k), (str, int)) and r.get(k) and k not in ids:
+            ids[k] = str(r[k])
     # OpenAlex
     if isinstance(r.get("ids"), dict):
         for k in ("pmid", "pmcid", "doi", "openalex"):

@@ -97,6 +97,9 @@ RULE_TITLES_EN = {
     "X016": "Protocol deviation without decision: primary analysis is not the prespecified one",
     "X022": "Provenance sidecar does not belong to the current data table",
 }
+# a v1 X-szabályok (X002–X021) angol címe az audit.py-ból (egyetlen forrás; az MVP-címek azonosak)
+from .audit import TITLES_EN as _X_TITLES_EN  # noqa: E402
+RULE_TITLES_EN.update(_X_TITLES_EN)
 _RULE_KINDS = {"validate": "validation", "prisma": "prisma", "audit": "audit"}
 
 
@@ -301,12 +304,19 @@ ENGINE_COMMANDS = (
     ("es", ("ma.py", "es"), (), (), ()),
     ("convert", ("ma.py", "convert"), (), (), ()),
     ("power", ("ma.py", "power"), (), (), ()),
-    ("prisma", ("ma.py", "prisma", "check"), (), (), ()),
+    ("prisma", ("ma.py", "prisma", "check"), ("szk.ma.studies/v1",), ("szk.ff.flowchart/v1",), ()),
     ("project", ("ma.py", "project"), ("szk.ma.project/v1",), ("szk.ma.activity/v1",), ()),
     ("project-audit", ("ma.py", "project", "audit"), ("szk.ma.provenance/v1", "szk.ma.studies/v1"),
      ("szk.ma.project-audit/v1",), ()),
     ("kb", ("ma.py", "kb"), (), (), ("sqlite3.fts5",)),
     ("rules-export", ("ma.py", "rules", "export", "--json"), (), (), ()),
+    ("appraisal", ("ma.py", "appraisal"), ("szk.appraisal/v1",),
+     ("szk.instrument/v1", "szk.appraisal/v1", "szk.appraisal-result/v1", "szk.ma.appraisal-agreement/v1",
+      "szk.rob-summary/v1", "szk.ma.rob-sync-proposal/v1"), ()),
+    ("grade", ("ma.py", "grade"), ("szk.ma.grade/v1",), ("szk.ma.grade/v1", "szk.ma.sof/v1"), ()),
+    ("kettos", ("ma.py", "kettos"), ("szk.ma.consensus/v1",), ("szk.ma.compare-result/v1", "szk.ma.consensus/v1",
+                                                                "szk.ma.provenance/v1"), ()),
+    ("figure", ("ma.py", "figure"), ("szk.ma.plot/v2",), (), ()),
     ("contracts", ("ma.py", "contracts"), (), (), ()),
     ("gui", ("ma.py", "gui"), (), (), ("ma_gui",)),
     ("selftest", ("ma.py", "selftest"), (), (), ()),
@@ -959,45 +969,27 @@ def convert_cli(kind, params=None):
 
 # ------------------------------------------------------------------ PRISMA
 def prisma_check(flow, studies=None, template=None):
-    """A PRISMA-folyamatábra számainak ellenőrzése (= `prisma check --json F --out-format json`). flow: kanonikus
-    vagy 2009-es mezőnevek, vagy a composer prisma-flow.json-ja. studies: szk.ma.studies/v1 (dict vagy út): ha a
-    flow-ból hiányzik, az I (bevont vizsgálatok) = a vizsgálatok száma, a J (bevont jelentések) = a reports
-    rec_id-jeinek uniója; ha a flow-ban más érték áll, P017 (a források eltérnek)."""
+    """A PRISMA-folyamatábra számainak ellenőrzése (= `prisma check --json F [--studies S] --out-format json`). flow:
+    kanonikus vagy 2009-es mezőnevek, vagy a composer prisma-flow.json-ja. studies: szk.ma.studies/v1 (dict vagy út):
+    ha a flow-ból hiányzik, az I (bevont vizsgálatok) = a vizsgálatok száma, a J (bevont jelentések) = a reports
+    rec_id-jeinek uniója; ha a flow-ban más érték áll, P017 (a források eltérnek) — prisma.check_with_studies."""
     from . import prisma
-    if not isinstance(flow, dict):
-        raise ValueError("a flow objektum legyen")
-    flow = prisma.from_composer(flow) if "dedup_removed" in flow else dict(flow)
-    extra = []
-    if studies is not None:
-        if isinstance(studies, (str, os.PathLike)):
-            with open(studies, encoding="utf-8-sig") as fh:
-                studies = json.load(fh)
-        lst = studies.get("studies") if isinstance(studies, dict) else None
-        if not isinstance(lst, list):
-            raise ValueError("studies: szk.ma.studies/v1 dokumentum kell ({studies: [...]})")
-        ids = {str(s.get("study_id")) for s in lst if isinstance(s, dict) and s.get("study_id") not in (None, "")}
-        recs = {str(r.get("rec_id")) for s in lst if isinstance(s, dict) for r in (s.get("reports") or [])
-                if isinstance(r, dict) and r.get("rec_id") not in (None, "")}
-        vals, _reasons, _seen = prisma.normalize(flow)
-        sev, title, advice, ref = prisma.RULES["P017"]
-        for field, n in (("included_studies", len(ids)), ("included_reports", len(recs) if recs else None)):
-            if n is None:
-                continue
-            raw = vals.get(field)
-            try:
-                # a doboz szövegként is érkezhet (pl. a felület '15'-öt küld): ugyanaz az értelmezés, mint a P001-é
-                have = prisma._as_count(raw)
-            except ValueError:
-                continue        # értelmezhetetlen doboz: a check_flow P001-gyel jelzi, összevetni nem lehet
-            if have is None:
-                flow[field] = n     # hiányzó vagy üres doboz: a studies.json-ból
-            elif have != n:
-                extra.append({"code": "P017", "severity": sev, "title": title, "study": None,
-                              "detail": "%s: flow = %d, studies.json = %d" % (prisma.box_label(field), have, n),
-                              "advice": advice, "source": ref, "fields": [field]})
-    res = prisma.check_flow(flow, template)
-    res.findings = extra + res.findings
-    return _jsonable(res.to_dict())
+    if isinstance(studies, os.PathLike):
+        studies = os.fspath(studies)
+    return _jsonable(prisma.check_with_studies(flow, studies, template).to_dict())
+
+
+def prisma_flowchart(flow, studies=None, template=None, lang="en", title=None, out=None):
+    """Teljes PRISMA 2020 folyamatábra-specifikáció (szk.ff.flowchart/v1; = `prisma check … --emit-flowchart OUT`
+    fájltartalma) a figure-forge-nak (`ff.py flowchart --spec OUT --width double`). studies: szk.ma.studies/v1 (dict
+    vagy út; ebből az I). lang: 'en' (kézirat) | 'hu'. out: ha megadod, atomikusan ki is írja oda."""
+    from . import prisma
+    if isinstance(studies, os.PathLike):
+        studies = os.fspath(studies)
+    spec = _jsonable(prisma.flowchart(flow, studies=studies, template=template, lang=lang, title=title))
+    if out is not None:
+        prisma.write_flowchart(spec, os.fspath(out))
+    return spec
 
 
 # ------------------------------------------------------------------ projekt
@@ -1011,6 +1003,14 @@ def audit_gate_errors(project_dir):
     """A FINAL audit-kaput elutasító (error szintű) X-találatok."""
     from . import audit
     return _jsonable(audit.audit_gate_errors(project_dir))
+
+
+def checkpoint_gate_errors(project_dir, stage):
+    """Egy szakasz PASS-át blokkoló X-találatok (= audit.checkpoint_gate_errors): FINAL-nál minden error szintű;
+    S08-tól az X009 (lezáratlan kettős kinyerés). A `project checkpoint` PASS / PASS_WITH_FIXES ugyanezzel utasít
+    el. Érvénytelen szakasz → ValueError."""
+    from . import audit
+    return _jsonable(audit.checkpoint_gate_errors(project_dir, stage))
 
 
 def project_init(project_dir, title, question=None):
@@ -1268,3 +1268,383 @@ def kb_rules_for_field(field, db=None, context=None):
             if kb_rule_applies(it, context):
                 items.append(it)
     return {"schema": KB_RULES_SCHEMA, "field": field, "items": items}
+
+
+# ================================================================== v1: értékelés (szk.instrument / szk.appraisal)
+# A munkapad (ma_gui/routes/appraisal_common.ENGINE) ezeket a neveket keresi; a paraméternevek (instrument=, paths=,
+# studies=, column=, row_uids=) a felület kulcsszavas hívásaihoz igazodnak. Minden függvény ugyanazt adja, mint a
+# megfelelő `ma.py appraisal … --json` parancs.
+def _appraisal():
+    from . import appraisal
+    return appraisal
+
+
+def _appraisal_doc(doc):
+    """Értékelés-dokumentum: dict, vagy egy szk.appraisal/v1 fájl útja (AppraisalError, ha nem olvasható)."""
+    if isinstance(doc, (str, bytes, os.PathLike)):
+        return _appraisal().load(os.fsdecode(doc))
+    return doc
+
+
+def instruments_list():
+    """`ma.py appraisal instruments --json`: az értékelő eszközök összefoglalója ([{key, name, unit, family, algorithm,
+    items, sha256, licence, …}]; rob2, robins-i, robins-e, quadas2, nos, quips, jbi, probast-ai, tripod-ai, amstar2,
+    grade)."""
+    return _jsonable(_appraisal().instruments_list())
+
+
+def instrument_get(tool):
+    """`ma.py appraisal schema <eszköz> --json`: az eszköz szk.instrument/v1 definíciója (+ 'sha256'; tételenként a
+    'scopes' lista 'scope' néven is). Ismeretlen eszköz → KeyError."""
+    return _jsonable(_appraisal().instrument_get(tool))
+
+
+def instrument_route(design):
+    """`ma.py appraisal route "<elrendezés>" --json`: eszköz-javaslat a vizsgálati elrendezésből (szabad szöveg vagy
+    studies.json design-kód) → [{tool, name {hu, en}, why {hu, en}}]."""
+    return _jsonable(_appraisal().instrument_route(design))
+
+
+def appraisal_load(path):
+    """Egy értékelés-fájl (szk.appraisal/v1) beolvasása; hibás fájl → AppraisalError (ValueError)."""
+    return _appraisal().load(os.fspath(path))
+
+
+def appraisal_list(project_dir, tool=None):
+    """`ma.py appraisal list <projekt> --json`: a projekt értékelései (04_torzitas_kockazat/appraisals/) →
+    [{path, unit, tool, target, rater, status, origin, approved_by, complete, completeness_text, problems}]."""
+    A = _appraisal()
+    out = []
+    for e in A.list_appraisals(project_dir, tool=tool):
+        doc = e.get("doc")
+        row = collections.OrderedDict((("path", e["path"]), ("unit", e["unit"]), ("tool", e["tool"]),
+                                       ("target", e["target"]), ("rater", e["rater"]), ("status", None),
+                                       ("origin", None), ("approved_by", None), ("complete", None),
+                                       ("completeness_text", None), ("problems", list(e.get("problems") or []))))
+        if isinstance(doc, dict):
+            row.update(status=doc.get("status"), origin=doc.get("origin"), approved_by=doc.get("approved_by"))
+            try:
+                res = A.check(doc, project_dir=project_dir)
+                row.update(complete=res["complete"], completeness_text=res["completeness_text"])
+            except ValueError as exc:
+                row["problems"].append(str(exc))
+        out.append(row)
+    return _jsonable(out)
+
+
+def appraisal_check(doc, instrument=None, conventions=None, project_dir=None):
+    """`ma.py appraisal check <értékelés.json> [--project P] --json` → szk.appraisal-result/v1: teljesség (PROBAST+AI-
+    nál menetenként), érvénytelen válaszok, implikált doménítéletek és összítélet 'algorithm' címkével (a RoB 2 /
+    ROBINS / QUADAS-2 / QUIPS 'conservative' szabály NEM a hivatalos folyamatábra), felülbírálások (X017), AMSTAR 2
+    (mindkét konvenció), GRADE (a „suspected” publikációs torzítás feloldatlan; 4. döntés), NOS, TRIPOD+AI.
+    doc: dict vagy fájlút; instrument: definíció-dict (instrument_get) a natív helyett; project_dir: a projekt
+    konvenciói (ma-projekt.json) és a C osztály (AI-vázlat tilalma)."""
+    return _jsonable(_appraisal().check(_appraisal_doc(doc), instrument=instrument, conventions=conventions,
+                                        project_dir=project_dir))
+
+
+_COMPLETENESS_KEYS = ("schema", "tool", "scope", "target", "complete", "expected", "answered", "completeness_text",
+                      "per_pass", "missing", "invalid", "tripod", "warnings")
+_IMPLIED_KEYS = ("schema", "tool", "scope", "target", "domains", "overall", "overrides", "amstar2", "grade", "nos",
+                 "conventions", "notes")
+
+
+def appraisal_completeness(doc, instrument=None, project_dir=None):
+    """Az appraisal_check teljesség-része (cellánként; PROBAST+AI menetenként: per_pass)."""
+    res = appraisal_check(doc, instrument=instrument, project_dir=project_dir)
+    return collections.OrderedDict((k, res.get(k)) for k in _COMPLETENESS_KEYS)
+
+
+def appraisal_implied(doc, instrument=None, project_dir=None):
+    """Az appraisal_check implikált-ítélet része (domének, összítélet az algoritmus címkéjével, felülbírálások)."""
+    res = appraisal_check(doc, instrument=instrument, project_dir=project_dir)
+    return collections.OrderedDict((k, res.get(k)) for k in _IMPLIED_KEYS)
+
+
+# Szándékosan nincs 'appraisal_validate' nevű homlokzat-függvény: a munkapad ezen a néven keres, és a jelenlegi
+# munkapad-tesztek AI-vázlat mintája nem felel meg a 6. döntés tételenkénti indoklás-szabályának. A munkapad az
+# appraisal_problems-t veheti fel álnévként (a {errors}-t már kezeli); a motor modulja: appraisal.validate.
+def appraisal_problems(doc, instrument=None, project_dir=None):
+    """`ma.py appraisal validate <értékelés.json> [--project P] --json` → {ok, errors, warnings}: séma
+    (szk.appraisal/v1) + tartalom (ismert tétel, megengedett válasz, AI-vázlat: jóváhagyás és tételenkénti egyszerű
+    nyelvű indoklás idézettel — 6. döntés; GRADE-feloldás — 4. döntés; C osztály: nincs AI-vázlat)."""
+    p = _appraisal().problems(_appraisal_doc(doc), instrument=instrument, project_dir=project_dir)
+    return _jsonable(collections.OrderedDict((("ok", not p["errors"]), ("errors", list(p["errors"])),
+                                              ("warnings", list(p["warnings"])))))
+
+
+def appraisal_save(project_dir, doc, instrument=None, now=None, expect_sha256=None):
+    """`ma.py appraisal save <értékelés.json> --project P --json`: ellenőrzött, atomi mentés a
+    04_torzitas_kockazat/appraisals/<egység>.<eszköz>[.<cél>].<értékelő>.json útra (normalizálás, instrument_sha256,
+    implikált pillanatkép; lezárt státusznál teljesség és X017-indoklás) → {path, sha256, doc, check}.
+    Hibánál AppraisalError (.problems: a részletes lista)."""
+    return _jsonable(_appraisal().save(project_dir, _appraisal_doc(doc), instrument=instrument, now=now,
+                                       expect_sha256=expect_sha256))
+
+
+def appraisal_set_judgement(doc, domain, judgement, reason=None, pass_=None, rationale=None, project_dir=None,
+                            actor=None, instrument=None):
+    """Doménítélet (vagy domain='overall': összítélet) rögzítése; az implikálttól eltérőnél az indoklás kötelező
+    (X017), és project_dir mellett a felülbírálás döntésként a naplóba kerül → {doc, decision_id}."""
+    out, did = _appraisal().set_judgement(_appraisal_doc(doc), domain, judgement, reason=reason, pass_=pass_,
+                                          rationale=rationale, project_dir=project_dir, actor=actor,
+                                          instrument=instrument)
+    return _jsonable({"doc": out, "decision_id": did})
+
+
+def appraisal_approve_ai_draft(doc, approver, project_dir=None, now=None, instrument=None):
+    """`ma.py appraisal approve <vázlat.json> --approver SzK [--project P] --json`: AI-vázlat emberi jóváhagyása (6.
+    döntés: approved_by / approved_at; teljes vázlatnál status 'complete'; a jóváhagyott vázlat sem értékelő a κ-ban
+    és a konszenzusban). project_dir mellett ellenőrzött mentés is → {doc, check, saved: {path, sha256} | None}."""
+    A = _appraisal()
+    out, res = A.approve_ai_draft(_appraisal_doc(doc), approver, now=now, instrument=instrument)
+    saved = None
+    if project_dir is not None:
+        r = A.save(project_dir, out, instrument=instrument, now=now)
+        out, res, saved = r["doc"], r["check"], {"path": r["path"], "sha256": r["sha256"]}
+    return _jsonable(collections.OrderedDict((("doc", out), ("check", res), ("saved", saved))))
+
+
+def appraisal_consensus(doc_a, doc_b, instrument=None):
+    """`ma.py appraisal agreement <a.json> <b.json> --json`: két független EMBERI értékelés egyezése (egy pár) →
+    szk.ma.appraisal-agreement/v1 (Cohen-féle κ aszimptotikus SE-vel és CI-vel, tételenkénti eltérések). Az
+    AI-vázlatot (jóváhagyva sem) nem fogadja el (6. döntés)."""
+    return _jsonable(_appraisal().appraisal_consensus(_appraisal_doc(doc_a), _appraisal_doc(doc_b),
+                                                      instrument=instrument))
+
+
+def appraisal_agreement_pooled(pairs, instrument=None, level=0.95):
+    """Több (A, B) értékelés-pár összevont egyezése (pl. az összes vizsgálat RoB 2-je) →
+    szk.ma.appraisal-agreement/v1."""
+    pairs = [(_appraisal_doc(a), _appraisal_doc(b)) for a, b in pairs]
+    return _jsonable(_appraisal().agreement(pairs, instrument=instrument, level=level))
+
+
+def appraisal_build_consensus(doc_a, doc_b, resolutions=None, judgements=None, instrument=None, now=None, paths=None,
+                              project_dir=None):
+    """`ma.py appraisal consensus <a.json> <b.json> [--resolutions R.json] [--judgements J.json] [--project P]
+    --json`: konszenzus két független emberi értékelésből (resolutions: {tétel: {value, reason}} az eltérőkre). A
+    státusz csak akkor 'consensus', ha nincs feloldatlan tétel (különben 'draft'). project_dir mellett ellenőrzött
+    mentés (…<egység>.<eszköz>[.<cél>].consensus.json) → {doc, unresolved, saved: {path, sha256} | None}."""
+    A = _appraisal()
+    doc, unresolved = A.build_consensus(_appraisal_doc(doc_a), _appraisal_doc(doc_b), resolutions=resolutions,
+                                        judgements=judgements, instrument=instrument, now=now, paths=paths)
+    saved = None
+    if project_dir is not None:
+        r = A.save(project_dir, doc, instrument=instrument, now=now)
+        doc, saved = r["doc"], {"path": r["path"], "sha256": r["sha256"]}
+    return _jsonable(collections.OrderedDict((("doc", doc), ("unresolved", list(unresolved)), ("saved", saved))))
+
+
+def tripod_check(doc, instrument=None):
+    """TRIPOD+AI jelentési teljesség (52 altétel, D/E szűrő): darabszámok, közölt %, hiánylista, fejezetenként."""
+    return _jsonable(_appraisal().tripod_check(_appraisal_doc(doc), instrument=instrument))
+
+
+def amstar2_rating(answers, convention="meets"):
+    """AMSTAR 2 besorolás az értékelés-modul táblájával (convention: meets | weakness; a másik konvenció is)."""
+    return _jsonable(_appraisal().amstar2_rating(answers, convention=convention))
+
+
+def rob_summary(appraisals, tool, outcome=None, plot=None, studies=None, paths=None, instrument=None):
+    """szk.rob-summary/v1 (forgalmi lámpa + súlyarány kockázati szintenként) értékelés-dokumentumokból; plot: a
+    futás plot_data.json-ja (szk.ma.plot/v2). Projektből: project_rob_summary."""
+    return _jsonable(_appraisal().rob_summary(appraisals, tool, outcome=outcome, plot=plot, studies=studies,
+                                              paths=paths, instrument=instrument))
+
+
+def rob_sync_proposal(appraisals, header, rows, tool, row_uids=None, studies=None, column=None, paths=None,
+                      instrument=None):
+    """szk.ma.rob-sync-proposal/v1: a kinyerési tábla rob oszlopának javasolt cellái a végső összítéletekből
+    (eredet: 'calculated'). Projektből: project_rob_sync."""
+    return _jsonable(_appraisal().rob_sync_proposal(appraisals, header, rows, tool, row_uids=row_uids,
+                                                    studies=studies, column=column, paths=paths,
+                                                    instrument=instrument))
+
+
+def project_rob_summary(project_dir, outcome, tool=None, plot=None):
+    """`ma.py appraisal rob-summary <projekt> --outcome o1 [--tool rob2] [--plot <futás>] --json` →
+    szk.rob-summary/v1. plot: dict, vagy a futás mappája / run.json / plot_data.json (projekt-relatívan is)."""
+    if isinstance(plot, os.PathLike):
+        plot = os.fspath(plot)
+    return _jsonable(_appraisal().project_rob_summary(project_dir, outcome, tool=tool, plot=plot))
+
+
+def project_rob_sync(project_dir, outcome, tool=None, column=None):
+    """`ma.py appraisal sync-rob <projekt> --outcome o1 [--tool rob2] --json` (alkalmazás nélkül) →
+    szk.ma.rob-sync-proposal/v1 + table, table_sha256, outcome (az optimista alkalmazáshoz)."""
+    return _jsonable(_appraisal().project_rob_sync(project_dir, outcome, tool=tool, column=column))
+
+
+def apply_rob_sync(project_dir, proposal, actor=None, now=None, log=True):
+    """A rob-szinkron javaslat alkalmazása: formátumtartó, atomi CSV-írás, az eredet-oldalfájl frissítése
+    ('calculated'), és — ha van projektnapló és log=True — döntés a naplóba (S06, kontextus X003) →
+    {applied, table, table_sha256, provenance, decision_id}. A tábla időközbeni változásánál AppraisalError."""
+    res = dict(_appraisal().apply_rob_sync(project_dir, proposal, actor=actor, now=now))
+    res["decision_id"] = None
+    if log and res.get("applied") and os.path.isfile(_projekt.db_path(project_dir)):
+        res["decision_id"] = _projekt.log_decision(
+            project_dir, "user", "RoB-oszlop szinkron (%s, %d cella)" % (proposal.get("tool") or "?", res["applied"]),
+            rationale="A kinyerési tábla rob oszlopa a végső értékelési összítéletekhez igazítva (ma.py appraisal "
+                      "sync-rob --apply; eredet: calculated).",
+            stage="S06", actor=actor, check_kb=False,
+            context={"kind": "other", "code": "X003", "dataset": res.get("table"), "fields": ["rob"],
+                     "outcome": proposal.get("outcome")})
+    return _jsonable(res)
+
+
+def project_rob_sync_apply(project_dir, outcome, tool=None, column=None, actor=None):
+    """`ma.py appraisal sync-rob <projekt> --outcome o1 --apply --json`: javaslat + alkalmazás egy lépésben →
+    {proposal, result} (result: apply_rob_sync)."""
+    prop = project_rob_sync(project_dir, outcome, tool=tool, column=column)
+    return collections.OrderedDict((("proposal", prop), ("result", apply_rob_sync(project_dir, prop, actor=actor))))
+
+
+# ================================================================== v1: GRADE, SoF, AMSTAR 2 (E10)
+# A munkapad (ma_gui/routes/grade_engine.FUNCS) név és paraméternév szerint köti ezeket.
+def _grade_help():
+    from . import grade_help
+    return grade_help
+
+
+def grade_advice(run, rob_by_row=None, mid=None, project_dir=None, outcome_id=None, run_id=None, start=None,
+                 importance=None, rob_child=None, ois_rrr=None, alpha=0.05, power=0.8):
+    """`ma.py grade advice --run <futás> [--project P] [--outcome o1] [--mid …] --json` → szk.ma.grade/v1 PISZKOZAT:
+    minden domén ítélete, lépése és a bizonyosság null (csak javaslat); doménenként 'advisory' (a motor számai:
+    magas RoB súlyaránya, I², PI vs. null, CI vs. MID, OIS, tesztek értelmezhetősége) és 'suggestion' (javasolt ítélet
+    és lépés, kezdőknek is érthető „Miért?”: asks / because / change / uncertain). run: futásmappa, run.json,
+    results.json-dict, az analyze nézetmodellje vagy run_id (project_dir-rel)."""
+    return _jsonable(_grade_help().advice(run, rob_by_row=rob_by_row, mid=mid, project_dir=project_dir,
+                                          outcome_id=outcome_id, run_id=run_id, start=start, importance=importance,
+                                          rob_child=rob_child, ois_rrr=ois_rrr, alpha=alpha, power=power))
+
+
+def grade_get(project_dir, outcome_id):
+    """`ma.py grade show <projekt> --outcome o1 --json`: a kimenet mentett GRADE-ítélete
+    (06_kezirat/grade/<kimenet>.grade.json, szk.ma.grade/v1) vagy None."""
+    return _jsonable(_projekt.load_grade_doc(project_dir, outcome_id))
+
+
+def grade_put(project_dir, outcome_id, doc, actor=None):
+    """`ma.py grade save <projekt> --doc grade.json [--outcome o1] --json`: ellenőrzött mentés → a mentett
+    szk.ma.grade/v1. A bizonyosság a lépésekből számolódik; null, amíg bármely domén nyitott vagy a publikációs
+    torzítás „suspected” ítélete feloldatlan (0 / −1 indoklással; 4. döntés). Hibánál ValueError."""
+    if not isinstance(doc, dict):
+        raise ValueError("a GRADE-dokumentum JSON-objektum legyen (szk.ma.grade/v1)")
+    if doc.get("outcome_id") not in (None, outcome_id):
+        raise ValueError("a dokumentum kimenete (%s) nem a megadott (%s)" % (doc.get("outcome_id"), outcome_id))
+    return _jsonable(_projekt.save_grade_doc(project_dir, dict(doc, outcome_id=outcome_id), actor=actor))
+
+
+def grade_record(project_dir, outcome_id, doc=None, actor=None, kb_db=None, strict=False):
+    """`ma.py grade record <projekt> --outcome o1 --json`: a GRADE-ítélet rögzítése a projektnaplóba (add_grade
+    előjeles lépés-szövegekkel) és a fájlba (status 'recorded') → {id, doc, warnings, path}. doc: alapból a mentett
+    ítélet. Elutasítja (ValueError, minden okkal): commit-futás nélkül, nyitott domén, feloldatlan „suspected”
+    publikációs torzítás (X019), bizonyosság nélkül, jóvá nem hagyott AI-vázlat (6. döntés)."""
+    if doc is None:
+        doc = _projekt.load_grade_doc(project_dir, outcome_id)
+        if doc is None:
+            raise ValueError("nincs mentett GRADE-ítélet ehhez a kimenethez: %s (előbb: ma.py grade save)" % outcome_id)
+    elif doc.get("outcome_id") not in (None, outcome_id):
+        raise ValueError("a dokumentum kimenete (%s) nem a megadott (%s)" % (doc.get("outcome_id"), outcome_id))
+    return _jsonable(_projekt.record_grade_doc(project_dir, dict(doc, outcome_id=outcome_id), actor=actor,
+                                               kb_db=kb_db, strict=strict))
+
+
+def grade_list(project_dir):
+    """A projekt mentett GRADE-ítéletei (06_kezirat/grade/*.grade.json)."""
+    return _jsonable(_projekt.list_grade_docs(project_dir))
+
+
+def sof(run, assumed_risks=None, certainty=None, footnotes=None, project_dir=None, outcome_id=None, run_id=None,
+        label=None, intervention=None, comparison=None, population=None, setting=None, mid=None, design=None,
+        importance=None, grade=None):
+    """`ma.py grade sof --run <futás> [--project P] [--outcome o1] [--assumed-risk …] --format json` → szk.ma.sof/v1:
+    egy SoF-sor; minden szám a motoré (résztvevők, relatív hatás a futás display_text-jével, abszolút hatás /1000
+    CI-vel alapkockázatonként — alap: a kontroll-pool —, ⊕ bizonyosság, GRADE-megfogalmazás, lábjegyzetek).
+    grade: szk.ma.grade/v1 (a bizonyosság és a lábjegyzetek forrása); project_dir-rel a mentett ítélet is."""
+    return _jsonable(_grade_help().sof(run, assumed_risks=assumed_risks, certainty=certainty, footnotes=footnotes,
+                                       project_dir=project_dir, outcome_id=outcome_id, label=label,
+                                       intervention=intervention, comparison=comparison, population=population,
+                                       setting=setting, mid=mid, design=design, importance=importance, grade=grade,
+                                       run_id=run_id))
+
+
+def sof_save(project_dir, doc):
+    """`ma.py grade sof … --save`: a SoF mentése (06_kezirat/sof/<kimenet>.sof.json; X008 ezt veti össze)."""
+    return _jsonable(_grade_help().save_sof(project_dir, doc))
+
+
+def sof_load(project_dir, outcome_id):
+    """A kimenet mentett SoF-ja vagy None."""
+    return _jsonable(_grade_help().load_sof(project_dir, outcome_id))
+
+
+def sof_markdown(doc, lang="hu"):
+    """`ma.py grade sof … --format md`: a SoF Markdown-táblázatként (lábjegyzetekkel)."""
+    return _grade_help().sof_markdown(doc, lang=lang)
+
+
+def sof_csv(doc, lang="hu", delimiter=";"):
+    """`ma.py grade sof … --format csv`: Excel-biztos CSV (a CLI UTF-8 BOM-mal írja)."""
+    return _grade_help().sof_csv(doc, lang=lang, delimiter=delimiter)
+
+
+def sof_html(doc, lang="hu"):
+    """`ma.py grade sof … --format html`: egyszerű, escape-elt HTML-táblázat (Wordbe másoláshoz)."""
+    return _grade_help().sof_html(doc, lang=lang)
+
+
+def amstar2_consistency(answers, convention=None, claimed=None):
+    """`ma.py grade amstar2 --answers a.json [--convention meets|weakness] [--claimed …] --json`: AMSTAR 2 besorolás a
+    hivatalos algoritmussal MINDKÉT konvencióval (KB AMSTAR2-00; alap: a projekt 'meets' konvenciója), a konvenció-
+    érzékenység és — claimed mellett — a megadott besorolás összevetése. answers: {tétel: válasz}, {tétel: {value}}
+    vagy egy teljes szk.appraisal/v1 dokumentum."""
+    return _jsonable(_grade_help().amstar2_consistency(answers, convention=convention, claimed=claimed))
+
+
+# ================================================================== v1: kettős kinyerés (E6)
+# A munkapad (ma_gui/routes/extraction_dual_common.ENGINE) a compare / consensus_table / agreement_report
+# neveket keresi.
+from .kettos import agreement_report, compare, consensus_table, reconcile  # noqa: E402,F401
+
+
+def kettos_status(project_dir):
+    """`ma.py kettos status <projekt> --json`: a projekt kettős kinyeréseinek állapota (X009) →
+    {outcomes: [{outcome, paths, has_a, has_b, has_consensus, total, decided, unresolved, stale, auto, complete,
+    error}], unresolved_total}."""
+    from . import kettos
+    return _jsonable(kettos.project_status(project_dir))
+
+
+def kettos_project_compare(project_dir, outcome, key=None, tolerance=None, measure=None, spec=None):
+    """`ma.py kettos compare --project P --outcome o1 [--key …] [--tolerance …] [--measure …] [--spec …] --json` →
+    szk.ma.compare-result/v1 (03_adatok/kettos/<kimenet>.A.csv vs. .B.csv; a kulcs alapból a konszenzus-fájlé)."""
+    from . import kettos
+    return _jsonable(kettos.compare_project(project_dir, outcome, key=key, tolerance=tolerance, measure=measure,
+                                            spec=spec))
+
+
+def kettos_project_reconcile(project_dir, outcome, decisions, actor, key=None, write_csv=False):
+    """`ma.py kettos reconcile --project P --outcome o1 --decisions d.json [--write-csv] --json` →
+    szk.ma.consensus/v1 (a meglévő döntésekkel összefésülve; write_csv: a konszenzus-CSV és az eredet-oldalfájl is,
+    csak ha nincs feloldatlan eltérés — X009)."""
+    from . import kettos
+    return _jsonable(kettos.reconcile_project(project_dir, outcome, decisions, actor, key=key,
+                                              write_csv=write_csv)["consensus"])
+
+
+def kettos_project_report(project_dir, outcome, key=None):
+    """`ma.py kettos report --project P --outcome o1 --json`: egyetértési táblázat (κ, ICC) és Methods-szöveg
+    {text {hu, en}, table}."""
+    from . import kettos
+    return _jsonable(kettos.agreement_report(kettos.compare_project(project_dir, outcome, key=key)))
+
+
+# ================================================================== v1: E4c ábrák a plot_data.json-ból
+def render_figure(plot, kind, lang="hu", annotate=False):
+    """`ma.py figure --plot <futás> --kind cumulative|bubble|loo [--lang en] [--annotate] --json`: a motor SVG-je egy
+    szk.ma.plot/v2 dokumentumból → {svg, lang, kind}; forest / funnel / doi: None (a futás saját SVG-je a hiteles).
+    Hiányzó blokk / ismeretlen fajta → ValueError magyar üzenettel."""
+    from . import pipeline
+    return pipeline.render_figure(plot, kind, lang, annotate)

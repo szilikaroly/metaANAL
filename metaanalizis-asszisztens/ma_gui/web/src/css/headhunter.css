@@ -1,0 +1,74 @@
+/* css/headhunter.css — Metaheadhunter varázsló (screens/headhunter*.js). Csak tokenek (var(--…)), külső erőforrás nincs. */
+.hh-what { margin: var(--sp-1) 0 var(--sp-2); }
+.hh-what > summary { cursor: pointer; color: var(--accent); font-weight: 650; }
+.hh-what-body { margin: var(--sp-1) 0 0; max-width: 80ch; }
+.hh-small { font-size: var(--fs-xs); }
+.hh-narrow { max-width: 9em; }
+.hh-err { color: var(--crit); }
+.hh-guide { background: var(--info-bg); border-left: 3px solid var(--info-mark); padding: var(--sp-2) var(--sp-3); }
+
+/* lépéssor */
+.hh-steps { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--sp-2); padding: 0; margin: var(--sp-2) 0; }
+.hh-step-link { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: var(--sp-2); border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); color: var(--ink); text-decoration: none; }
+.hh-step-link:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: 2px; }
+.hh-step.is-current .hh-step-link { border: 2px solid var(--accent); background: var(--accent-soft); }
+.hh-step-num { font-weight: 700; color: var(--muted); }
+.hh-step-label { font-weight: 650; }
+.hh-step-badges, .hh-ids, .hh-feats, .hh-tiles { display: flex; flex-wrap: wrap; gap: 4px var(--sp-2); }
+
+/* kártya, feladat, azonosítók, idézetek */
+.hh-card:focus { outline: none; }
+.hh-card-head .panel-title, .hh-lead { margin: 0; }
+.hh-job { border-left: 4px solid var(--accent); }
+.hh-tail { max-height: 12em; overflow: auto; white-space: pre-wrap; font-size: var(--fs-xs); }
+.hh-id { white-space: nowrap; font-size: var(--fs-sm); }
+.hh-id-k, .hh-dl dt, .hh-tile-k { color: var(--muted); font-weight: 650; }
+.hh-id-v { font-family: var(--mono); }
+.hh-id.is-unconfirmed .hh-id-v { text-decoration: underline dotted var(--warn-mark); }
+.hh-quote { margin: 4px 0; }
+.hh-quote blockquote { margin: 0; padding: 4px var(--sp-2); border-left: 3px solid var(--line-strong); background: var(--surface-2); font-style: italic; }
+.hh-quote figcaption { font-size: var(--fs-xs); }
+.hh-dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px var(--sp-3); }
+.hh-dl dd { margin: 0; }
+
+/* listák */
+.hh-rv-items { list-style: none; padding: 0; margin: 0; }
+.hh-rv { display: grid; grid-template-columns: 5em 1fr auto; gap: var(--sp-2); padding: var(--sp-2); border-bottom: 1px solid var(--line); }
+.hh-rv.is-selected { background: var(--ok-bg); }
+.hh-rv.is-excluded, .hh-rv.is-superseded, .hh-cand.is-rejected { color: var(--muted); }
+.hh-rv-rank, .hh-rv-actions { display: flex; flex-direction: column; gap: 4px; }
+.hh-actions { white-space: nowrap; }
+.hh-prop { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--sp-2) var(--sp-3); margin-bottom: var(--sp-3); }
+.hh-prop-title { margin: 0; font-size: var(--fs-md); }
+.hh-feats { list-style: none; padding: 0; font-size: var(--fs-sm); }
+.hh-sbs tr.hh-diff > * { background: var(--warn-bg); }
+.hh-diff-mark { color: var(--warn); font-weight: 700; }
+
+/* átfedés (SVG) */
+.hh-tile { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--sp-2) var(--sp-3); background: var(--surface-2); min-width: 9em; }
+.hh-tile-v { font-size: var(--fs-xl); font-weight: 700; }
+.hh-heat-wrap, .hh-mx-host { overflow-x: auto; }
+.hh-heat, .hh-matrix { max-width: 100%; height: auto; }
+.hh-heat text, .hh-matrix text { fill: var(--plot-ink); font-size: 11px; }
+.hh-heat-cell rect { stroke: var(--surface); stroke-width: 2; fill: var(--surface-3); }
+.hh-heat-cell.band-slight rect { fill: var(--accent); fill-opacity: 0.18; }
+.hh-heat-cell.band-moderate rect { fill: var(--accent); fill-opacity: 0.4; }
+.hh-heat-cell.band-high rect { fill: var(--accent); fill-opacity: 0.65; }
+.hh-heat-cell.band-very_high rect { fill: var(--accent); fill-opacity: 0.92; }
+.hh-heat-cell.band-high text, .hh-heat-cell.band-very_high text { fill: var(--on-accent); font-weight: 700; }
+.hh-mx-cell rect { stroke: var(--surface); fill: var(--surface-2); }
+.hh-mx-cell.is-in rect { fill: var(--accent); fill-opacity: 0.55; }
+.hh-mx-cell.is-index rect { fill-opacity: 0.95; }
+
+/* szűrés, PRISMA */
+.hh-sc { display: grid; grid-template-columns: minmax(240px, 1fr) 2fr; gap: var(--sp-3); align-items: start; }
+.hh-sc-list { border: 1px solid var(--line); border-radius: var(--radius); max-height: 32em; overflow-y: auto; }
+.hh-sc-list:focus-visible { outline: var(--focus-width) solid var(--focus); }
+.hh-sc-row { display: flex; flex-wrap: wrap; gap: 4px var(--sp-2); align-items: center; padding: 6px var(--sp-2); border-bottom: 1px solid var(--line); cursor: pointer; }
+.hh-sc-row.is-selected { background: var(--accent-soft); outline: 2px solid var(--accent); outline-offset: -2px; }
+.hh-sc-label, .hh-pbox-v { font-weight: 700; }
+.hh-pcols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--sp-3); }
+.hh-pbox { display: flex; justify-content: space-between; gap: var(--sp-2); border: 1px solid var(--line); padding: 4px var(--sp-2); margin-bottom: 4px; }
+.hh-pinc { max-width: 420px; }
+@media (max-width: 900px) { .hh-sc, .hh-rv { grid-template-columns: 1fr; } }

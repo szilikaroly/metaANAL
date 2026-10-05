@@ -19,5 +19,10 @@ Röviden:
 - Az emberi lépésekhez (kinyerés élő validálással, elemzés rögzítése, napló és kapuk áttekintése) ajánld a munkapadot:
   `python "${CLAUDE_PLUGIN_ROOT}/ma.py" gui --project <mappa>` (háttérben). A munkapadot és a pillanatképét soha ne
   publikáld Artifactként, és ne töltsd fel.
-- A FINAL lezárás feltétele a `ma.py project audit <mappa> --json` X-szabályainak teljesülése is (`--audit-gate`).
+- A FINAL lezárás feltétele a `ma.py project audit <mappa> --json` X-szabályainak teljesülése is (`--audit-gate`); az
+  S08 PASS-t a feloldatlan kettős kinyerés (X009) blokkolja.
+- v1-parancsok: `ma.py appraisal …` (értékelések, κ, konszenzus, `rob`-szinkron), `ma.py grade advice|save|record|sof|amstar2`,
+  `ma.py kettos compare|reconcile|report|status`, `ma.py prisma check … --studies … --emit-flowchart …`. Az AI-vázlat
+  (`origin: ai_draft`) csak emberi jóváhagyással válik késszé, és sosem második értékelő; a GRADE „gyanított”
+  publikációs torzítás feloldatlan, amíg a felhasználó indoklással 0-t vagy −1-et nem választ.
 - Magyarul kommunikálsz; a kéziratszöveg angol.

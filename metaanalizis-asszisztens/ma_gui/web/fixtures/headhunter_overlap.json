@@ -1,0 +1,173 @@
+{
+ "description": "Szintetikus Metaheadhunter-projekt (a PMID-ek 99…-kezdetűek, a címek „(synthetic)” jelölésűek — NEM valós közlemények). Generálja: python3 tests/gui/test_headhunter_fixtures.py --write",
+ "routes": [
+  {
+   "envelope": {
+    "data": {
+     "N": 6,
+     "band": "very_high",
+     "c": 2,
+     "cca_pct": 20.0,
+     "cca_text": "20.0",
+     "exists": true,
+     "generated": "2026-10-05T13:10:57Z",
+     "kb_refs": [
+      "D-S13-101"
+     ],
+     "level": "study",
+     "model": "szk.ma.headhunter/v1",
+     "n_rows": 5,
+     "notes": {
+      "en": "Overall overlap (study level): CCA = 20.0% (very high; N = 6, r = 5, c = 2). Bands are guidance, not strict rules (Pieper 2014; Ying 2025). Very high pairwise overlap: rv-pmid-99000001–rv-pmid-99000002 (20.0%) — if one updates the other (e.g. same authors), the older review can be replaced. When mining, overlap is not a bias (duplicates are merged): it shows how far earlier reviews found the same literature.",
+      "hu": "Összesített átfedés (vizsgálat-szint): CCA = 20.0% (nagyon magas; N = 6, r = 5, c = 2). A sávok útmutatók, nem merev szabályok (Pieper 2014; Ying 2025). Nagyon magas páronkénti átfedés: rv-pmid-99000001–rv-pmid-99000002 (20.0%) — ha az egyik a másik frissítése (pl. ugyanazon szerzők), a régebbi helyettesíthető. Bányászatnál az átfedés nem torzítás (a duplumokat összevonjuk): azt mutatja, mennyire ugyanazt az irodalmat találták a korábbi áttekintések."
+     },
+     "pairs": [
+      {
+       "a": "rv-pmid-99000001",
+       "b": "rv-pmid-99000002",
+       "band": "very_high",
+       "cca_pct": 20.0,
+       "cca_text": "20.0",
+       "n_a": 3,
+       "n_b": 3,
+       "shared": 1
+      }
+     ],
+     "path": "01_kereses/headhunter/overlap.json",
+     "per_review": [
+      {
+       "index_for": 3,
+       "n": 3,
+       "review_id": "rv-pmid-99000001",
+       "unique": 2
+      },
+      {
+       "index_for": 2,
+       "n": 3,
+       "review_id": "rv-pmid-99000002",
+       "unique": 2
+      }
+     ],
+     "problems": [],
+     "r": 5,
+     "review_meta": {
+      "rv-pmid-99000001": {
+       "is_cochrane": true,
+       "label": "Author 2021",
+       "status": "selected",
+       "title": "Drug X for Y disease (synthetic Cochrane-style review)"
+      },
+      "rv-pmid-99000002": {
+       "is_cochrane": false,
+       "label": "Author 2022",
+       "status": "selected",
+       "title": "Effect of drug X on mortality in Y: a systematic review and meta-analysis (synthetic)"
+      },
+      "rv-pmid-99000003": {
+       "is_cochrane": false,
+       "label": "Author 2012",
+       "status": "candidate",
+       "title": "Narrative overview of X (synthetic)"
+      }
+     },
+     "reviews": [
+      "rv-pmid-99000001",
+      "rv-pmid-99000002"
+     ],
+     "rows": [
+      {
+       "in": [
+        true,
+        true
+       ],
+       "index_review": "rv-pmid-99000001",
+       "key": "st-0001",
+       "label": "Smith 2015",
+       "n_reviews": 2,
+       "rec_ids": [
+        "rec-pmid-99100101"
+       ]
+      },
+      {
+       "in": [
+        true,
+        false
+       ],
+       "index_review": "rv-pmid-99000001",
+       "key": "st-0002",
+       "label": "Jones 2016",
+       "n_reviews": 1,
+       "rec_ids": [
+        "rec-pmid-99100102"
+       ]
+      },
+      {
+       "in": [
+        false,
+        true
+       ],
+       "index_review": "rv-pmid-99000002",
+       "key": "st-0003",
+       "label": "Brown 2018",
+       "n_reviews": 1,
+       "rec_ids": [
+        "rec-pmid-99100103"
+       ]
+      },
+      {
+       "in": [
+        false,
+        true
+       ],
+       "index_review": "rv-pmid-99000002",
+       "key": "st-0004",
+       "label": "Brown 2019",
+       "n_reviews": 1,
+       "rec_ids": [
+        "rec-pmid-99100104"
+       ]
+      },
+      {
+       "in": [
+        true,
+        false
+       ],
+       "index_review": "rv-pmid-99000001",
+       "key": "st-0005",
+       "label": "Kim 2017",
+       "n_reviews": 1,
+       "rec_ids": [
+        "rec-pmid-99100105"
+       ]
+      }
+     ],
+     "rows_truncated": false,
+     "schema": "szk.ma.headhunter.overlap/v1",
+     "scope": null,
+     "warnings": [
+      {
+       "code": "wcca_unavailable",
+       "en": "wCCA not computed: 5 rows have no verified (checked against the primary report) sample size. Numbers taken from reviews are secondary data (EP6).",
+       "hu": "wCCA nem számolható: 5 sorhoz nincs ellenőrzött (az elsődleges közleménnyel egyeztetett) mintaelemszám. Az áttekintésből vett szám másodlagos adat (EP6)."
+      }
+     ],
+     "wcca_pct": null,
+     "wcca_text": null
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-overlap/v1",
+    "warnings": []
+   },
+   "etag": "b9ab80281cc89e8a8a2b2320608a5641f542b91db615be524c990dbb507c1ac9",
+   "method": "GET",
+   "path": "/api/headhunter/overlap",
+   "status": 200
+  }
+ ]
+}

@@ -170,6 +170,75 @@
     },
     "sha256": {
       "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/sha256"
+    },
+    "field": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 40,
+      "description": "secondary_verify: a másodlagos érték mezője (n1, e1, m1, sd1 …)"
+    },
+    "review_id": {
+      "oneOf": [
+        {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "secondary_verify: melyik áttekintés értékét ellenőrizte"
+    },
+    "outcome": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 300
+    },
+    "arm": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 80
+    },
+    "primary_locator": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 300,
+      "description": "secondary_verify: hol ellenőrizte az elsődleges közleményben (rec_id + oldal/táblázat)"
+    },
+    "primary_value": {
+      "type": [
+        "number",
+        "string",
+        "null"
+      ],
+      "description": "secondary_verify (discrepant): az elsődleges közlemény értéke"
+    },
+    "secondary_value": {
+      "type": [
+        "number",
+        "string",
+        "null"
+      ],
+      "description": "secondary_verify: az áttekintésből vett (ellenőrzött) érték, összevetéshez"
+    },
+    "content_sha256": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/sha256",
+      "description": "checkpoint EP5 (signoff): a lezárt merged.json vizsgálatlistájának tartalmi ujjlenyomata; ha később eltér, a lezárás érvénytelen (H017)"
+    },
+    "studies_included": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "reports_included": {
+      "type": "integer",
+      "minimum": 0
     }
   }
 }

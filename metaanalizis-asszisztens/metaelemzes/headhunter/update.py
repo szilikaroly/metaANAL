@@ -285,7 +285,10 @@ def _topic(query, concepts=("P", "I")):
         qt = [x for x in (_quote(t) for t in b["terms"]) if x]
         mesh = [str(m).replace('"', "") for m in b["mesh"] if str(m).strip()]
         pm.append("(%s)" % " OR ".join(["%s[tiab]" % t for t in qt] + ['"%s"[mh]' % m for m in mesh]))
-        ep.append("(%s)" % " OR ".join(list(qt) + ['MESH:"%s"' % m for m in mesh]))
+        # Europe PMC: cím/absztrakt/kulcsszó (a PubMed [tiab] megfelelője) — az alapértelmezett mező a nyílt teljes
+        # szövegben is keres, ami a frissítésnél sokszoros zajt ad (élőben: 338 vs 27 találat ugyanarra)
+        ep.append("(%s)" % " OR ".join(["(TITLE:%s OR ABSTRACT:%s OR KW:%s)" % (t, t, t) for t in qt] +
+                                       ['MESH:"%s"' % m for m in mesh]))
         if qt:
             oa.append("(%s)" % " OR ".join(qt))
             sc.append("TITLE-ABS-KEY(%s)" % " OR ".join(qt))
@@ -465,8 +468,9 @@ def _merge_into(into, new, prio):
 
 
 def dedupe_hits(records):
-    """A frissítés találatainak duplumszűrése egymás közt (L1 azonos azonosító). Visszaad: ``(egyedi rekordok,
-    duplikátumok száma)``. Determinisztikus (a bemenet sorrendjétől független kimeneti sorrend)."""
+    """A frissítés találatainak duplumszűrése egymás közt (L1: bármely közös PMID/DOI/PMCID/EID/OpenAlex/NCT —
+    unió-kereséssel, így a lánc-egyezés is egy rekord lesz). Visszaad: ``(egyedi rekordok, duplikátumok száma)``.
+    Determinisztikus (a bemenet sorrendjétől független kimeneti sorrend)."""
     def prio(rec):
         src = None
         for iv in (rec.get("ids") or {}).values():
@@ -474,34 +478,39 @@ def dedupe_hits(records):
                 src = iv.get("source")
                 break
         return _BIB_PRIORITY.index(src) if src in _BIB_PRIORITY else len(_BIB_PRIORITY)
-    by_key = {}
-    uniq = []
-    dup = 0
-    for rec in records:
-        hit = None
-        for k in _keys(rec):
-            if k in by_key:
-                hit = by_key[k]
-                break
-        if hit is None and not _keys(rec):
-            hit = next((u for u in uniq if u["rec_id"] == rec["rec_id"]), None)
-        if hit is None:
-            r = copy.deepcopy(rec)
-            uniq.append(r)
-            for k in _keys(r):
-                by_key[k] = r
-            continue
-        dup += 1
-        _merge_into(hit, rec, prio)
-        for k in _keys(hit):
-            by_key.setdefault(k, hit)
-    # a rec_id a legerősebb azonosítóból (pl. PMID-et az Europe PMC találata is hozhat)
+    parent = list(range(len(records)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    first = {}
+    for i, rec in enumerate(records):
+        keys = _keys(rec) or [("rec_id", rec["rec_id"])]
+        for k in keys:
+            if k in first:
+                a, b = find(first[k]), find(i)
+                if a != b:
+                    parent[max(a, b)] = min(a, b)
+            else:
+                first[k] = i
+    groups = {}
+    for i in range(len(records)):
+        groups.setdefault(find(i), []).append(i)
     d = _d()
-    for r in uniq:
-        if r["ids"]:
-            r["rec_id"] = d.rec_id_for(r["ids"])
+    uniq = []
+    for _root, idx in sorted(groups.items()):
+        members = sorted((records[i] for i in idx), key=lambda r: (prio(r), r["rec_id"]))
+        base = copy.deepcopy(members[0])
+        for other in members[1:]:
+            _merge_into(base, other, prio)
+        if base["ids"]:
+            base["rec_id"] = d.rec_id_for(base["ids"])  # a legerősebb azonosítóból
+        uniq.append(base)
     uniq.sort(key=lambda r: d.rec_sort_key(r["rec_id"]))
-    return uniq, dup
+    return uniq, len(records) - len(uniq)
 
 
 def _strip_route(records, route):

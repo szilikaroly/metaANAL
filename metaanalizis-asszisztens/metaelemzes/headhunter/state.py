@@ -188,6 +188,10 @@ def write_text_atomic(file_path, text):
             fh.write(text)
             fh.flush()
             os.fsync(fh.fileno())
+        try:
+            os.chmod(tmp, 0o644)  # a mkstemp 0600-at ad; a munkapad (ugyanaz a felhasználó) és a git olvassa
+        except OSError:  # pragma: no cover
+            pass
         os.replace(tmp, file_path)
     except BaseException:
         try:
@@ -1000,6 +1004,12 @@ def apply_candidate_decision(project_dir, review_id, cand_id, value, decision_id
             raise StateError("Nincs ilyen jelölt: %s#%s" % (review_id, cand_id), "NOT_FOUND")
         cand["status"] = "confirmed" if value == "confirm" else "rejected"
         cand.pop("needs_review", None)
+        if value == "confirm" and cand.get("role_in_review") == "unknown":
+            # irodalomjegyzékből jött (szerep: ismeretlen) jelölt emberi megerősítése = bevont vizsgálat (EP2);
+            # élő próbán enélkül a megerősített jelöltek kimaradtak a feloldásból (resolve csak a bevont szerepűeket
+            # veszi). Az eredeti szerep és a döntés nyoma megmarad.
+            cand["role_in_review"] = "included"
+            cand["role_origin"] = {"extracted": "unknown", "set_by": decision_id}
         ids = cand.setdefault("decision_ids", [])
         if decision_id not in ids:
             ids.append(decision_id)

@@ -13,12 +13,23 @@ megállapítasz, bizonyítékot adsz, és ítéletet hozol. Magyarul írsz, töm
 ## Eszközök
 - `python metaanalizis-asszisztens/ma.py validate --data <csv> --measure <M> [--json]`
 - `python metaanalizis-asszisztens/ma.py analyze --data <csv> --measure <M> --out <ideiglenes mappa> …` (újraszámolás, alternatív beállításokkal)
-- `python metaanalizis-asszisztens/ma.py project audit <mappa> --json` — projekt-audit (X-szabályok, `szk.ma.project-audit/v1`):
-  a fájlok összhangja (elavult commit-futás, a tábla `rob`-ja ≠ az értékelés összítélete, becsült / magas RoB-ú sorok
-  érzékenységi futása, forrásoldal-jelölés, eredet-oldalfájl, bevont vizsgálatok száma, protokoll-eltérés). A kimenet
-  `summary` (error / warning / info) és `findings` (code, severity, stage, title, detail, artifacts, suggested_command,
-  kb_refs) blokkja a bizonyíték. A munkapad ugyanezt a jelentést mutatja. Error szintű találatnál a kilépési kód 1
-  (a JSON ekkor is teljes a stdout-on).
+- `python metaanalizis-asszisztens/ma.py project audit <mappa> --json` — projekt-audit (X001–X022, `szk.ma.project-audit/v1`):
+  a fájlok összhangja. A kimenet `summary` (error / warning / info) és `findings` (code, severity, stage, title, detail,
+  artifacts, suggested_command, kb_refs, egyes szabályoknál studies / row_uids) blokkja a bizonyíték; a `not_checked`
+  lista mondja meg, mit nem lehetett ellenőrizni és miért. A munkapad ugyanezt a jelentést mutatja. Error szintű
+  találatnál a kilépési kód 1 (a JSON ekkor is teljes a stdout-on). A szabályok röviden (részletek: `ma.py kb show X0..`):
+  - adat és futás: X001 elavult commit-futás (S08-tól hiba) · X010 forrásoldal nélküli cella · X013 a becsült-jelölés ≠
+    az eredet · X022 az eredet-oldalfájl más táblához tartozik · X016 protokoll-eltérés döntés nélkül · X005 / X006 nincs
+    „becsült nélkül” / „magas RoB nélkül” érzékenységi futás;
+  - kettős kinyerés: X009 feloldatlan eltérés a két kinyerő táblája között (az S08 PASS-t a napló elutasítja);
+  - értékelés: X003 a tábla `rob`-ja ≠ a végső összítélet · X004 elemzett vizsgálat értékelés nélkül (S13-tól hiba) ·
+    X017 az implikálttól eltérő ítélet indoklás nélkül · X011 predikciós modelles áttekintésben PROBAST+AI nélküli
+    vizsgálat · X012 hiányos vagy a válaszokkal nem egyeztethető AMSTAR 2;
+  - GRADE / SoF: X007 a GRADE számai ≠ az elsődleges futás · X008 SoF-cella ≠ a motor szövege · X019 feloldatlan
+    „gyanított” publikációs torzítás (S13-tól hiba);
+  - PRISMA és ábrák: X014 több elemzett vizsgálat, mint bevont (I) · X015 `included_meta` ≠ a futás k-ja · X020 a
+    composerben elbírálatlan rekord · X021 a kizárási okok ≠ a szűrési döntési napló · X002 elavult exportált ábra ·
+    X018 a kéziratba jelölt ábra QC-ja nem tiszta.
 - Tevékenységnapló: ha a CLI-hívásaidat `MA_ACTIVITY_LOG=1 MA_ACTOR=agent:ma-ellenorzo` mellett futtatod, a projektbe
   író parancsok a `07_ellenorzes/activity.jsonl` hash-láncába is bekerülnek; a lánc épségét a
   `python metaanalizis-asszisztens/ma.py project activity <mappa> --json` ellenőrzi (sérült lánc: 1-es kód, blocker).
@@ -51,7 +62,8 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
 - **S03 keresés**: minden koncepcióblokk lefedett? MeSH + szabadszavas? szintaxis-hibák (zárójelek, csonkolás, mezőkódok)?
   legalább 2 releváns adatbázis + regiszterek? dátum és találatszám naplózva? Ismert kulcsvizsgálatokat megtalál-e a keresés
   (próbáld ki PubMed MCP-vel)? A keresés dokumentálása: `kb checklist PRISMA_S` tételenként.
-- **S04 szűrés**: futtasd: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md`; ha a `composer` export is van,
+- **S04 szűrés**: futtasd: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (ha van vizsgálat-térkép:
+  `--studies <mappa>/03_adatok/studies.json` — a bevont vizsgálatok száma, I, ebből jön, eltérésnél P017); ha a `composer` export is van,
   a kettőt együtt: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md --composer prisma-flow.json` (a composer
   számai érvényesek, minden P017 — eltérő doboz vagy kizárásiok-bontás a két forrásban — blocker). A P-kódú hibák blocker megállapítások;
   ezres tagolás megengedett, a negatívra adódó levezetett doboz (pl. C > B, H > G) hiba (P003/P004/P005). PRISMA 2020-számok összeadódnak? (A1 + A2 − D1 duplikátum − D2 automatikusan kizárt − D3 egyéb ok = B szűrt;
@@ -61,7 +73,17 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
 - **S05 adatkinyerés**: `ma.py validate` — minden error/warning tétel kezelve? Szúrópróba: a vizsgálatok ≥20%-a ÉS minden
   kiugró / befolyásos / V011–V014 által jelzett tétel visszaellenőrzése a forrásban (oldal/táblázat megjelöléssel).
   Irány-konvenció egységes? Mértékegységek? Többkarú vizsgálat / közös kontroll (V017)? Becsült értékek jelölve (V018)?
-- **S06 torzítási kockázat**: a vizsgálattípushoz illő eszköz; doménenkénti indoklás; két független értékelő; összesítés.
+  Kettős kinyerés: `ma.py kettos status <mappa> --json` — minden kimenetnél 0 feloldatlan eltérés kell (X009); az
+  eltérések okát és hatását a `ma.py kettos compare --project <mappa> --outcome <id> --json` mutatja, az egyetértést
+  (κ CI-vel, ICC) a `ma.py kettos report --project <mappa> --outcome <id>`. Feloldatlan eltérés mellett az S08 PASS-t a
+  napló elutasítja.
+- **S06 torzítási kockázat**: a vizsgálattípushoz illő eszköz (`ma.py appraisal route "<elrendezés>"`); doménenkénti
+  indoklás; két független értékelő; összesítés. Az értékelések: `ma.py appraisal list <mappa> --json` (státusz,
+  teljesség), egyenként `ma.py appraisal check <fájl> --project <mappa>`; az egyezés `ma.py appraisal agreement <a> <b>`
+  (κ CI-vel). Az implikált ítélet „konzervatív” címkéje NEM a hivatalos folyamatábra; az attól eltérő emberi ítéletnél az
+  indoklás kötelező (X017). AI-vázlat (`origin: ai_draft`) jóváhagyás nélkül nem végső ítélet, és jóváhagyva sem második
+  értékelő (6. döntés) — ha valaki annak számolta, blocker. A tábla `rob` oszlopa ↔ a végső összítélet: X003
+  (javítás: `ma.py appraisal sync-rob <mappa> --outcome <id>`, előbb javaslat, `--apply` csak az ember döntése után).
 - **S07–S12 elemzés**: független újraszámolás a motorral; az eredmény egyezik a riporttal? Érzékenység: FE vs RE,
   DL vs REML, HKSJ vs z, leave-one-out; változik-e a következtetés? k < 5 → HKSJ/PI óvatos értelmezés; k < 10 →
   funnel-tesztek nem értelmezhetők; OR-nál a klasszikus Egger helyett Harbord/Peters az irányadó (a riport mindkettőt
@@ -72,8 +94,12 @@ Mindig: `project status` → a nyitott megállapítások újraellenőrzése (ha 
   (major vagy minor, indoklással). Ha a motor a parancsot nem ismeri (régi változat), rögzítsd info megállapításként,
   hogy a projekt-audit nem futott.
 - **S13 bizonyosság**: a GRADE-leminősítések indokoltak és konzisztensek az adatokkal (RoB-arány, I²/PI, CI vs MCID, funnel).
-  A motoron kívül számolt SoF-számokat (abszolút hatás más alapkockázatnál, NNT/NNH: GRADE-10a, EVALUATOR-03a) a
-  lábjegyzetben megadott képletből és bemenetekből függetlenül számold újra (EVALUATOR-00).
+  A motor számait a `ma.py grade advice --run <futás> --project <mappa> --json` adja (doménenként `advisory` és javaslat);
+  a rögzített ítélet: `ma.py grade show <mappa> --outcome <id>`. Ha az ítélet enyhébb a javaslatnál és nincs indoklás, a
+  mentett dokumentum `override_warnings` mezője jelzi — major. A „gyanított” publikációs torzítás feloldatlan, amíg ember
+  indoklással 0-t vagy −1-et nem választ (4. döntés; X019). A SoF-számok a motoréi (`ma.py grade sof`; X008); a motoron
+  kívül számolt számokat (NNT/NNH: EVALUATOR-03a; abszolút hatás más alapkockázatnál, ha nem a `grade sof` számolta:
+  GRADE-10a) a lábjegyzetben megadott képletből és bemenetekből függetlenül számold újra (EVALUATOR-00).
 - **S14 kézirat**: minden szám a szövegben = táblázat = ábra = `results.json`; PRISMA 2020 (`kb checklist PRISMA2020`) és
   PRISMA-S (`kb checklist PRISMA_S`) tételek; óvatos nyelvezet;
   hivatkozások léteznek (PubMed/DOI ellenőrzés).

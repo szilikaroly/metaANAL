@@ -49,6 +49,10 @@ termelő megvalósításakor a sémát a tényleges kimenethez kell igazítani (
 | `szk.ma.rob-sync-proposal/v1` | `ma.rob-sync-proposal.v1.schema.json` | 6.5 | próza | out | motor (`appraisal.rob_sync_proposal`) | munkapad (rob-oszlop szinkron), CLI `appraisal sync-rob` |
 | `szk.ma.grade/v1` | `ma.grade.v1.schema.json` | 4.14 | próza | in, out | motor (`grade_help.advice` piszkozat; `projekt.save_grade_doc` / `record_grade_doc`; `06_kezirat/grade/`) | munkapad (GRADE-lap), projektnapló (`add_grade`), `project audit` (X007, X019) |
 | `szk.ma.sof/v1` | `ma.sof.v1.schema.json` | 4.14 | próza | out | motor (`grade_help.sof`; `06_kezirat/sof/`) | munkapad (SoF-tábla, export), `project audit` (X008) |
+| `szk.ff.flowchart/v1` | `ff.flowchart.v1.schema.json` | 4.12 | próza | out | motor (`prisma.flowchart`, `prisma check --emit-flowchart`) | figure-forge (`ff.py flowchart --spec`), munkapad (PRISMA) |
+
+A `szk.ma.project-audit/v1` megállapításai a v1-től opcionális `studies` mezőt is vihetnek (X004, X011, X017:
+az érintett vizsgálatok azonosítói; additív).
 
 Ugyanez géppel olvashatóan: `python3 -m metaelemzes.contracts --json` (a `metaelemzes.contracts.CONTRACTS`
 táblából, a fájlok sha256-jával).

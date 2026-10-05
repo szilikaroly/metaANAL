@@ -72,6 +72,9 @@ CONTRACTS = {
                       "munkapad (GRADE-lap), projekt.record_grade_doc, project audit (X007, X019)"),
     ("ma.sof", 1): (("out",), "motor (grade_help.sof; 06_kezirat/sof/<kimenet>.sof.json)",
                     "munkapad (SoF-tábla, export), project audit (X008)"),
+    # v1 PRISMA 2020 folyamatábra (E9)
+    ("ff.flowchart", 1): (("out",), "motor (prisma.flowchart; prisma check --emit-flowchart)",
+                          "figure-forge (ff.py flowchart --spec), munkapad (PRISMA-képernyő)"),
 }
 
 

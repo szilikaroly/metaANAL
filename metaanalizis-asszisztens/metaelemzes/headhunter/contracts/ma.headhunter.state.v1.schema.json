@@ -196,6 +196,13 @@
           },
           "label": {
             "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/i18n"
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "a PICO-terület, amelyhez az ok tartozik (P, I, C, O, S, L)"
           }
         }
       },

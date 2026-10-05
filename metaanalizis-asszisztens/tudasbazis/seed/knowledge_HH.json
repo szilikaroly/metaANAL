@@ -1,0 +1,272 @@
+[
+ {
+  "k_id": "K-HH-001",
+  "stage_id": "S03",
+  "kind": "definition",
+  "title": "Korrigált lefedett terület (CCA) — definíció és képlet",
+  "body": "The corrected covered area (CCA) quantifies how much the primary publications included in a set of reviews overlap (Pieper et al. 2014). Build a citation matrix with primary publications in rows and reviews in columns; the first occurrence of a primary publication is its index publication. CCA = (N − r) / (r × c − r), where N is the number of ticked cells (all inclusions, repeats counted), r the number of rows (index publications) and c the number of reviews; multiply by 100 for a percentage. In the words of the original abstract: the frequency of repeated occurrences of the index publications in other reviews divided by the product of index publications and reviews, reduced by the number of index publications. Hennessy & Johnson (2020) and Ying et al. (2025) give the same formula. For a pair of reviews (c = 2) it simplifies to (N − r) / r. It is not defined for fewer than two reviews or an empty matrix (the Metaheadhunter then reports null). Worked example used as a test: 3 reviews, r = 10 unique studies, N = 16 ticks gives CCA = (16 − 10) / (30 − 10) = 30%. The Metaheadhunter computes it at two levels: report level (Pieper's original, publications) and study level (companion reports merged into one study).",
+  "source_id": "pieper2014_cca",
+  "locator": "Pieper 2014 absztrakt (Study design and settings); Hennessy & Johnson 2020 (Step 1); Ying 2025 (2. szakasz)",
+  "tags": "CCA corrected covered area korrigált lefedett terület overlap átfedés citation matrix hivatkozási mátrix index publication formula képlet overview áttekintések áttekintése pairwise páronkénti"
+ },
+ {
+  "k_id": "K-HH-002",
+  "stage_id": "S13",
+  "kind": "threshold",
+  "title": "CCA-sávok: enyhe, mérsékelt, magas, nagyon magas átfedés (útmutató)",
+  "body": "Ying et al. (2025, Box 1, citing Pieper 2014) give example thresholds for interpreting the CCA: 0–5% slight, 6–10% moderate, 11–15% high and above 15% very high study overlap, and state that the thresholds serve as guidelines rather than strict rules. Secondary descriptions differ at the upper boundary (Hennessy & Johnson 2020 summarise Pieper's suggestion as below 5 slight and 15 or more high), so always report the CCA value itself next to its band. The Metaheadhunter rounds to one decimal and labels at most 5.0 slight, at most 10.0 moderate, at most 15.0 high, otherwise very high. In mining, high overlap is expected and harmless for the merged study list because duplicates are merged; it matters when results of overlapping reviews are combined or counted as independent confirmation.",
+  "source_id": "ying2025_wcca",
+  "locator": "Ying 2025 Box 1; Hennessy & Johnson 2020 (a CCA értelmezése)",
+  "tags": "CCA threshold küszöb band sáv slight enyhe moderate mérsékelt high magas very high nagyon magas overlap átfedés interpretation értelmezés"
+ },
+ {
+  "k_id": "K-HH-003",
+  "stage_id": "S13",
+  "kind": "guidance",
+  "title": "Az átfedés vizsgálatának öt lépése (Hennessy & Johnson 2020)",
+  "body": "Hennessy & Johnson (2020) argue that meta-review teams should do more than estimate and report the CCA, and recommend five steps, arranged as a decision tree (their Figure 2): (1) create the citation matrix following Pieper et al.; (2) 2a calculate the CCA across the entire matrix, 2b examine the matrix for reviews with complete or nearly complete overlap, 2c calculate the CCA for particular primary outcomes by limiting the matrix to the reviews of those outcomes; (3) handle complete or nearly complete overlap, for example by choosing the newest or most comprehensive review when one is newer or larger, and by treating an update by the same author team as the same review; (4) when overlap is high, triangulate the reasons by comparing the reviews' topic definitions (PICO or a similar framework), their search and study-selection strategies, and the outcomes examined and results; (5) report the process and findings transparently, including how complete overlap was handled and where overlapping reviews agree or disagree. They also stress that overlap of primary studies is not necessarily a bias and can often be a benefit.",
+  "source_id": "hennessy2020_cca",
+  "locator": "Hennessy & Johnson 2020, Step 1–5 és Figure 2 (nyílt szerzői kézirat: PMC8555740); absztrakt",
+  "tags": "overlap átfedés five steps öt lépés CCA citation matrix hivatkozási mátrix complete overlap teljes átfedés review update frissítés meta-review overview reporting jelentés"
+ },
+ {
+  "k_id": "K-HH-004",
+  "stage_id": "S13",
+  "kind": "concept",
+  "title": "wCCA: mintaelemszámmal súlyozott átfedés (Ying 2025)",
+  "body": "The weighted CCA (wCCA; Ying et al. 2025) modifies the CCA to account for differences in the information contributed by primary studies: each primary study is weighted by the square root of its sample size, so overlap in large studies counts more. It complements and does not replace the CCA. In the authors' worked example two reviews shared one randomised trial (n = 836): CCA 5.3% (slight), wCCA 6.6%; had the shared trial had 183 or 2,836 participants, the wCCA would have been 3.2% or 11.5%. The Metaheadhunter reports the wCCA for information only, and only when every sample size used has been verified against the primary report; otherwise it reports null.",
+  "source_id": "ying2025_wcca",
+  "locator": "Ying 2025 absztrakt; 2. szakasz (Calculating wCCA) és a kidolgozott példa",
+  "tags": "wCCA weighted corrected covered area súlyozott CCA sample size mintaelemszám square root négyzetgyök overlap átfedés information információ"
+ },
+ {
+  "k_id": "K-HH-005",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Kinyerési hibák SMD-metaanalízisekben (Gøtzsche 2007: 37%)",
+  "body": "Gøtzsche et al. (2007) tried to replicate two randomly selected trials from each of 27 meta-analyses published in 2004 that reported a standardized mean difference. For 10 of the 27 (37%) they could not replicate the result for at least one of the two trials within 0.1, and in 4 cases the point estimate differed by 0.6 or more; 17 meta-analyses (63%) had errors for at least one of the two trials. Common problems were erroneous numbers of patients, means, standard deviations and the sign of the effect estimate. When all trials of the 10 meta-analyses with errors of at least 0.1 were re-extracted, 7 of the 10 were erroneous; 1 was subsequently retracted and in 2 a significant difference disappeared or appeared. Implication for mining: numbers copied from a published review are secondary data and must be checked against the primary report before analysis (D-S05-101).",
+  "source_id": "gotzsche2007_extraction",
+  "locator": "Absztrakt (Results)",
+  "tags": "data extraction error adatkinyerési hiba SMD standardized mean difference secondary data másodlagos adat verify ellenőrzés meta-analysis reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-HH-006",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Kinyerési hibák Cochrane-áttekintésekben (Jones 2005: 20/34)",
+  "body": "Jones et al. (2005) repeated the data extraction for all systematic reviews of the Cochrane Cystic Fibrosis and Genetic Disorders Group, using the same publications as the review authors. Errors were found in 20 of 34 reviews, including incorrect calculations when converting data reported in primary articles into the form required for the review (2 reviews) and misinterpretation of reported data (7 reviews). All data-handling errors changed the summary results, although none affected the review conclusions. Even carefully produced reviews therefore contain extraction errors; numbers taken from them must be verified against the primary report (D-S05-101).",
+  "source_id": "jones2005_extraction",
+  "locator": "Absztrakt (Results)",
+  "tags": "data extraction error adatkinyerési hiba Cochrane review secondary data másodlagos adat conversion error átváltási hiba verify ellenőrzés"
+ },
+ {
+  "k_id": "K-HH-007",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Kinyerési hibák gyakorisága módszertani áttekintésben (Mathes 2017: akár 50%)",
+  "body": "Mathes, Klaßen & Pieper (2017) systematically reviewed methodological studies on data extraction errors in systematic reviews (search up to December 2016) and included six studies. They found a high rate of extraction errors (up to 50%), and the errors often influenced effect estimates; different extraction methods and reviewer characteristics had a moderate effect on error rates and effect estimates, and no study on reviewer training was found. The evidence base for established data extraction standards appears weak despite the high prevalence of errors.",
+  "source_id": "mathes2017_extraction",
+  "locator": "Absztrakt (Results, Conclusion)",
+  "tags": "data extraction error adatkinyerési hiba frequency gyakoriság methodological review módszertani áttekintés double extraction kettős kinyerés secondary data másodlagos adat"
+ },
+ {
+  "k_id": "K-HH-008",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Rejtett kettős közlés: 23%-os hatás-túlbecslés (Tramèr 1997)",
+  "body": "Tramèr et al. (1997) searched systematically for full reports of randomised trials of ondansetron for postoperative emesis (84 trials, 11,980 patients receiving ondansetron). Data from nine trials had been published in 14 further reports, duplicating data from 3,335 patients, and none used a clear cross reference. Overall 17% of the full reports and 28% of the patient data were duplicated, and trials reporting a greater treatment effect were significantly more likely to be duplicated. For intravenous ondansetron 4 mg versus placebo the number needed to treat was 6.4 when the 19 original reports were combined but 4.9 when all original and duplicate reports were combined; inclusion of duplicated data led to a 23% overestimation of antiemetic efficacy. Link companion reports to one study and count each study once (D-S04-102, D-S04-105).",
+  "source_id": "tramer1997_duplicate",
+  "locator": "Absztrakt (Results, Conclusions)",
+  "tags": "duplicate publication kettős közlés covert rejtett companion report társközlemény double counting kettős számolás overestimation túlbecslés ondansetron"
+ },
+ {
+  "k_id": "K-HH-009",
+  "stage_id": "S04",
+  "kind": "concept",
+  "title": "A kettős közlés hat mintázata; a szerzőség megbízhatatlan kritérium (von Elm 2004)",
+  "body": "von Elm et al. (2004) analysed duplicates identified in 56 systematic reviews in anaesthesia and analgesia (1131 main articles; 103 duplicates originating from 78 main articles). They identified six duplication patterns: 1A identical samples and identical outcomes; 1B as 1A but several duplicates assembled; 2 identical samples and different outcomes; 3A increasing sample and identical outcomes; 3B decreasing sample and identical outcomes; 4 different samples and different outcomes. Covert duplicates (without a cross-reference to the main article) made up 5.3% (65/1234) of the articles, and 64% of the duplicates had partly or completely different authorship from the main article. They conclude that duplication goes beyond simple copying and that authorship is an unreliable criterion; the Metaheadhunter therefore treats author-based matches without a shared trial registration only as tips for human review.",
+  "source_id": "vonelm2004_duplicate",
+  "locator": "Absztrakt (Data synthesis, Conclusions)",
+  "tags": "duplicate publication kettős közlés patterns mintázatok covert rejtett authorship szerzőség companion report társközlemény same study azonos vizsgálat"
+ },
+ {
+  "k_id": "K-HH-010",
+  "stage_id": "S04",
+  "kind": "tool",
+  "title": "Duplumszűrő módszerek pontossága: Ovid, Covidence, Rayyan (McKeown & Mir 2021)",
+  "body": "McKeown & Mir (2021) built a manually de-duplicated benchmark set from a topical search in MEDLINE, Embase, CENTRAL and PsycINFO and compared the default de-duplication of Ovid multifile search, EndNote desktop, Mendeley, Zotero, Covidence and Rayyan. Ovid, Covidence and Rayyan were the most accurate; Ovid and Covidence had the highest specificity and Rayyan the highest sensitivity. The authors give strategies to avoid unintentionally removing eligible studies. Accordingly, the Metaheadhunter merges only identifier-identical records automatically; fuzzy matches are proposals, and when in doubt both records are kept (D-S04-101).",
+  "source_id": "mckeown2021_dedup",
+  "locator": "Absztrakt (Methods, Results, Conclusion)",
+  "tags": "deduplication duplumszűrés accuracy pontosság sensitivity érzékenység specificity specificitás Ovid Covidence Rayyan EndNote Zotero Mendeley"
+ },
+ {
+  "k_id": "K-HH-011",
+  "stage_id": "S04",
+  "kind": "tool",
+  "title": "ASySD: automatikus duplumszűrő (Hair 2023)",
+  "body": "Hair et al. (2023) describe the Automated Systematic Search Deduplicator (ASySD), an open-source tool available as an R package and as a web application. On 5 unseen biomedical search datasets (1845 to 79,880 citations) it identified more duplicates than EndNote's automated option or the Systematic Review Assistant deduplication module, with a sensitivity of 0.95 to 0.99 and a specificity above 0.99, and it took less than 1 hour per dataset. The Metaheadhunter's own merging works on identifiers returned by bibliographic APIs; its records.ris export can be cross-checked in such a tool.",
+  "source_id": "hair2023_asysd",
+  "locator": "Absztrakt (Methods, Results)",
+  "tags": "ASySD deduplication duplumszűrés automated automatikus open source nyílt forráskódú R package sensitivity érzékenység specificity specificitás"
+ },
+ {
+  "k_id": "K-HH-012",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "A hivatkozáskövetés haszna és terminológiája (Hirt 2023)",
+  "body": "Hirt et al. (2023) mapped methodological studies on citation tracking in health-related systematic literature searching: 47 studies published between 1985 and 2021 were included. Most (96%) assessed citation tracking as a supplementary or stand-alone search method, and added value for evidence retrieval was found by 96% of them. Science Citation Index and Social Sciences Citation Index were the most common citation indexes; using several citation indexes in parallel, co-citing or co-cited references, iterations or software tools was rare, and the terminology was heterogeneous and frequently ambiguous. Mining the included studies of previous reviews and forward or backward citation searching are therefore supplementary methods that should be reported explicitly (D-S03-101).",
+  "source_id": "hirt2023_citation_tracking",
+  "locator": "Absztrakt",
+  "tags": "citation tracking hivatkozáskövetés citation searching backward forward előre hátra supplementary search kiegészítő keresés terminology terminológia scoping review"
+ },
+ {
+  "k_id": "K-HH-013",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "TARCiS: a hivatkozáskövetés terminológiája, alkalmazása és jelentése",
+  "body": "The TARCiS statement (Hirt et al., BMJ 2024;385:e078384) gives consensus guidance on the terminology, application and reporting of citation searching. Its PubMed record has no abstract, so the knowledge base cites it at title level only: check the published statement itself for its recommendations and reporting items. The Metaheadhunter search log records, for each citation search, the direction (backward or forward), the seed set, the citation index or tool, the date, the number of iterations and the number of records, so that these can be reported.",
+  "source_id": "tarcis2024",
+  "locator": "Cím és bibliográfiai adatok (a PubMed-rekordban nincs absztrakt)",
+  "tags": "TARCiS citation searching hivatkozáskövetés reporting jelentés terminology terminológia statement nyilatkozat forward backward"
+ },
+ {
+  "k_id": "K-HH-014",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Mikor és hogyan frissíts egy szisztematikus áttekintést (Garner 2016)",
+  "body": "Garner et al. (2016; Panel for updating guidance for systematic reviews) note that updating a systematic review is generally more efficient than starting all over again when new evidence emerges, and provide consensus guidance and a checklist to help authors, commissioners and editors decide when to update a review and then how to go about updating it. In the Metaheadhunter this frames the update step: a date-limited search from the latest documented search date of the selected source reviews, with a human-approved window (D-S03-104).",
+  "source_id": "garner2016_update",
+  "locator": "Absztrakt",
+  "tags": "update frissítés updating systematic review checklist ellenőrzőlista consensus konszenzus new evidence új bizonyíték when to update"
+ },
+ {
+  "k_id": "K-HH-015",
+  "stage_id": "S03",
+  "kind": "concept",
+  "title": "Milyen gyorsan avul el egy áttekintés (Shojania 2007: medián 5,5 év; 23% 2 éven belül)",
+  "body": "In a survival analysis of 100 quantitative systematic reviews (published 1995–2005 and indexed in ACP Journal Club; median 13 studies and 2663 participants per review), Shojania et al. (2007) found a qualitative or quantitative signal for updating in 57% (95% CI 47% to 67%). The median duration of survival free of a signal for updating was 5.5 years (CI 4.6 to 7.6 years), but a signal occurred within 2 years for 23% of reviews and within 1 year for 15%; in 7% it had already occurred at the time of publication. Cardiovascular topics and heterogeneity in the original review were associated with shorter survival. A review found by the Metaheadhunter may therefore be out of date even when it is recent, which is why the update search is part of the workflow.",
+  "source_id": "shojania2007_outdated",
+  "locator": "Absztrakt (Results)",
+  "tags": "out of date elavult survival analysis túlélési elemzés updating signal frissítési jelzés systematic review update search frissítő keresés"
+ },
+ {
+  "k_id": "K-HH-016",
+  "stage_id": "S01",
+  "kind": "concept",
+  "title": "Umbrella review (JBI): áttekintések szintézise",
+  "body": "Aromataris et al. (2015) describe the Joanna Briggs Institute methodology for umbrella reviews, a form of evidence synthesis that only considers systematic reviews and meta-analyses for inclusion and compares and contrasts their findings for a review question. The guidance covers presenting the question in Population, Intervention, Comparator, Outcome format, the inclusion criteria and search strategy, a critical appraisal tool with 10 questions for systematic reviews and meta-analyses, the details to extract from included reviews and a summary of evidence table. Difference from the Metaheadhunter: an umbrella review synthesises the reviews' results (the review is the unit), whereas mining extracts the reviews' included primary studies to build a new study-level synthesis.",
+  "source_id": "aromataris2015_umbrella",
+  "locator": "Absztrakt (Aims, Results)",
+  "tags": "umbrella review JBI Joanna Briggs Institute overview áttekintések áttekintése critical appraisal kritikai értékelés summary of evidence"
+ },
+ {
+  "k_id": "K-HH-017",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "Overview-k funkciói és négy feltétele (Ballard & Montgomery 2017)",
+  "body": "In a scoping review of overview methodology (24 papers; search to October 2015), Ballard & Montgomery (2017) discuss three proposed functions of overviews (identify gaps, explore heterogeneity, summarise evidence) and conclude that overviews cannot perform the first, are unlikely to achieve the second and third simultaneously, and can perform the third only when the identified systematic reviews (1) include primary trials that do not substantially overlap, (2) match the overview's scope, (3) are of high methodological quality and (4) are up to date. For mining, these conditions explain why overlap is measured (D-S03-108), why review quality matters mainly for the secondary data taken over (D-S05-101) and why an update search is needed (D-S03-104).",
+  "source_id": "ballard2017_overviews",
+  "locator": "Absztrakt (Results)",
+  "tags": "overview of reviews áttekintések áttekintése risk of bias torzítás overlap átfedés scope terjedelem quality minőség up-to-date naprakész four conditions négy feltétel"
+ },
+ {
+  "k_id": "K-HH-018",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "Cochrane Overviews of Reviews (Handbook V. fejezet)",
+  "body": "Chapter V of the Cochrane Handbook (Pollock M, Fernandes RM, Becker LA, Pieper D, Hartling L. Overviews of Reviews; last updated August 2023; in Handbook version 6.5, 2024) gives the methods for Cochrane overviews: they use explicit and systematic methods to search for and identify multiple systematic reviews on related research questions in the same topic area, in order to extract and analyse their results across important outcomes; the unit of searching, inclusion and data analysis is the systematic review rather than the primary study. Use it when the project itself is an overview; when the goal is a new study-level review built from mined studies, the Metaheadhunter workflow and the usual systematic-review chapters apply.",
+  "source_id": "cochrane_handbook",
+  "locator": "V. fejezet (Overviews of Reviews); nem PubMed-indexelt, a cochrane.org fejezetoldalának keresési találata alapján ellenőrizve (2026-10-05)",
+  "tags": "Cochrane overview of reviews áttekintések áttekintése Handbook chapter V fejezet unit of analysis elemzési egység systematic review"
+ },
+ {
+  "k_id": "K-HH-019",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Forrás-sajátosságok a Metaheadhunterben (PubMed, Europe PMC, OpenAlex, Scopus, ClinicalTrials.gov)",
+  "body": "Observed from the development environment on 2026-10-05 and built into the Metaheadhunter. Europe PMC: search a PMID with EXT_ID:<pmid> AND SRC:MED (the PMID: field returned a different article); fullTextXML answers HTTP 500, not 404, for articles without open-access full text, which means no open full text rather than a network error. PubMed: a DOI can be mapped with esearch <doi>[doi]; the EFetch XML DataBankList carries trial registration numbers. OpenAlex: single-work lookups (for example /works/pmid:…) were free, while list and filter queries draw on a shared daily budget per IP address; when it is exhausted the API answers 429 with a long Retry-After, and a free API key (MA_OPENALEX_APIKEY, sent as an Authorization: Bearer header) gives an own budget. Scopus: needs MA_SCOPUS_APIKEY (header X-ELS-APIKey; optional MA_SCOPUS_INSTTOKEN as X-ELS-Insttoken for institutional access); without a key it answers 401; reference lists (view=REF) need entitlement; its client was built from the Elsevier API documentation and is marked unverified-live until checked with `python -m metaelemzes.headhunter sources --check` on the user's machine. ClinicalTrials.gov: the reference type in referencesModule is unreliable (NCT00953927 lists its own main results paper, PMID 23391465, as BACKGROUND), so a ClinicalTrials.gov reference alone never links a report to a trial.",
+  "source_id": "engine",
+  "locator": "TERV_metaheadhunter.md 3.1",
+  "tags": "Europe PMC PubMed OpenAlex Scopus ClinicalTrials.gov API forrás source rate limit kvóta 429 401 403 API key kulcs Insttoken EISZ full text teljes szöveg registration regiszter"
+ },
+ {
+  "k_id": "K-HH-020",
+  "stage_id": "S03",
+  "kind": "convention",
+  "title": "Bizonyíték-lokátor, azonosító-proveniencia és másodlagos adat a Metaheadhunterben",
+  "body": "Every included-study claim mined from a review carries an evidence record: review id, locator (container such as a PMCID or the hash of the user's PDF, element id or table and row, section, page) and a verbatim quote of at most 300 characters, plus who extracted it (tool or agent) and a confidence level (high: Cochrane 'References to studies included in this review' sections, or table rows linked to the reference by a cross-reference; medium: table rows matched to the reference list by first author and year; low: reference-list candidates and agent classification). Identifiers are stored with provenance (source API, endpoint, time); identifiers taken from the review text or typed by the user count only after an API confirmation, and identifiers proposed by an agent are discarded. Numbers a review reports about a study are stored as secondary values with status unverified and become verified or discrepant only through a human check against the primary report (EP6). Human decisions are appended to decisions.jsonl with a SHA-256 hash chain.",
+  "source_id": "engine",
+  "locator": "TERV_metaheadhunter.md 1. (N1–N3), 4., 6.",
+  "tags": "evidence bizonyíték locator lokátor quote idézet provenance proveniencia identifier azonosító secondary data másodlagos adat unverified ellenőrizetlen decision log döntésnapló hash chain"
+ },
+ {
+  "k_id": "K-HH-021",
+  "stage_id": "S01",
+  "kind": "tool",
+  "title": "Döntési eszköz áttekintések bevonásához overview-ban (Pollock 2019)",
+  "body": "Pollock et al. (2019) developed an evidence-based decision tool from a multiple case study in which seven overviews were each conducted five times with different decisions about which systematic reviews to include (35 overviews in total). The tool asks four questions: (1) do Cochrane systematic reviews likely examine all relevant intervention comparisons and available data; (2) do the Cochrane reviews overlap; (3) do the non-Cochrane reviews overlap; (4) are researchers prepared and able to avoid double-counting outcome data from overlapping reviews, by ensuring that each primary study's outcome data are extracted from overlapping reviews only once. Question 4 is the core rule for mining: one study, one set of outcome data (D-S04-105).",
+  "source_id": "pollock2019_overview_tool",
+  "locator": "Absztrakt (Methods, Results)",
+  "tags": "decision tool döntési eszköz overview áttekintések áttekintése overlapping reviews átfedő áttekintések double counting kettős számolás Cochrane inclusion bevonás"
+ },
+ {
+  "k_id": "K-HH-022",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Az átfedést az overview-k közel fele nem említi (Pieper 2014)",
+  "body": "Pieper et al. (2014) systematically searched for overviews published from 2009 to 2011 and found that only 32 of 60 overviews mentioned overlapping reviews. The median CCA was 4.0; overlap tended to be higher in health technology assessment reports than in journal publications and increased with the number of publications. The authors conclude that overlap must be reported in well-conducted overviews and that the CCA method allows this comprehensively (D-S13-101).",
+  "source_id": "pieper2014_cca",
+  "locator": "Absztrakt (Results, Conclusions)",
+  "tags": "overlap átfedés reporting jelentés overview áttekintések áttekintése CCA median medián health technology assessment"
+ },
+ {
+  "k_id": "K-HH-023",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "PRIOR: jelentési útmutató overview-khoz (27 tétel, 19 altétel)",
+  "body": "The PRIOR statement (Gates et al. 2022) is the reporting guideline for overviews of reviews of healthcare interventions, developed with the EQUATOR Network process (evidence reviews, a modified Delphi exercise and a virtual consensus meeting). The final checklist has 27 main items with 19 sub-items across all stages of an overview. Use it when the work is published as an overview; a new study-level review built from mined studies is reported with PRISMA 2020 and PRISMA-S (D-S14-101, D-S14-102).",
+  "source_id": "prior2022",
+  "locator": "Absztrakt (Design, Results)",
+  "tags": "PRIOR reporting guideline jelentési útmutató overview áttekintések áttekintése checklist ellenőrzőlista EQUATOR Delphi"
+ },
+ {
+  "k_id": "K-HH-024",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Rekordkövetés és a PRISMA 2020 folyamatábra (Rethlefsen & Page 2022)",
+  "body": "Rethlefsen & Page (2022) answer common questions about using the PRISMA 2020 flow diagram and tracking records through the review process. They note that PRISMA 2020 and PRISMA-S recommend reporting the search strategies for all databases, registries and websites searched, that PRISMA-S also recommends reporting the number of records identified from each information source, and that the changes to the flow diagram were among the most challenging parts of the new guidance. Metaheadhunter mapping: records mined from previous reviews and from citation searching go to the other-methods branch, the date-limited update search goes to the databases and registers branch, and records already known from the other branch are counted among the duplicates with a footnote.",
+  "source_id": "rethlefsen2022_tracking",
+  "locator": "Absztrakt",
+  "tags": "PRISMA 2020 flow diagram folyamatábra record tracking rekordkövetés PRISMA-S records per source forrásonkénti rekordszám other methods egyéb módszerek"
+ },
+ {
+  "k_id": "K-HH-025",
+  "stage_id": "S04",
+  "kind": "tool",
+  "title": "Duplumszűrés EndNote-ban (Bramer 2016)",
+  "body": "Bramer et al. (2016, J Med Libr Assoc 104(3):240-3) describe a method for de-duplicating database search results for systematic reviews in EndNote. Its PubMed record has no abstract, so the knowledge base cites it at title level only; consult the article for the procedure. In the Metaheadhunter workflow such reference-manager de-duplication can be run on the exported records.ris as an independent cross-check of the identifier-based merging.",
+  "source_id": "bramer2016_dedup",
+  "locator": "Cím és bibliográfiai adatok (a PubMed-rekordban nincs absztrakt)",
+  "tags": "deduplication duplumszűrés EndNote reference manager hivatkozáskezelő database search adatbázis-keresés"
+ },
+ {
+  "k_id": "K-HH-026",
+  "stage_id": "S04",
+  "kind": "example",
+  "title": "BCG-vakcina metaanalízis (Colditz 1994) mint feloldási tesztpélda",
+  "body": "Colditz et al. (1994, JAMA 271(9):698-702; PMID 8309034; the PubMed record has no DOI) is the source of the 13-trial BCG vaccine data set known in R as dat.bcg (metafor/metadat) and used in this repository as a reference (tests/reference/metafor_reference.json, bcg). The trials date from 1948 to 1980, so several may have no PubMed record. For identifier resolution this is a deliberate stress test: a study label such as 'Aronson 1948' may legitimately stay unresolved, but a PMID must never be guessed; every accepted PMID must come from an API response whose first author matches the label (D-S03-103).",
+  "source_id": "colditz1994_bcg",
+  "locator": "Bibliográfiai adatok (PubMed esummary); tests/reference/metafor_reference.json (bcg.rows)",
+  "tags": "BCG tuberculosis tuberkulózis dat.bcg metafor Colditz example példa identifier resolution azonosító-feloldás unresolved feloldatlan old trials régi vizsgálatok"
+ },
+ {
+  "k_id": "K-HH-027",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "PRISMA-leképezés a Metaheadhunterben (prisma_flow.json)",
+  "body": "The Metaheadhunter writes 01_kereses/headhunter/prisma_flow.json (schema szk.prisma-flow/v1) with the engine's canonical box names. Counting order: first the other-methods branch (unique records mined from previous reviews and citation searching after identifier-based merging: other_methods_identified, other_methods_sought, other_methods_not_retrieved, other_methods_assessed, other_methods_excluded with other_methods_excluded_reasons), then the databases and registers branch for the update search (identified_databases summed over sources, identified_registers for ClinicalTrials.gov, duplicates_removed including the records already known from the other branch, screened, excluded_screening, sought, not_retrieved, assessed, excluded_eligibility with excluded_eligibility_reasons). included_reports = (assessed − excluded_eligibility) + (other_methods_assessed − other_methods_excluded); included_studies counts the study clusters with at least one included report, so it never exceeds included_reports. automation_removed stays 0 because a machine proposal is not a decision. The file is checked with `python metaanalizis-asszisztens/ma.py prisma check --json <file>`; any error is H011.",
+  "source_id": "engine",
+  "locator": "TERV_metaheadhunter.md 13.; metaelemzes/prisma.py (COUNT_FIELDS, REASON_FIELDS)",
+  "tags": "PRISMA 2020 flow diagram folyamatábra prisma_flow.json other methods egyéb módszerek update search frissítő keresés included reports bevont jelentések included studies bevont vizsgálatok prisma check"
+ }
+]

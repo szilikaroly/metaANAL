@@ -473,6 +473,10 @@ def checkpoint(project_dir, stage, agent, verdict, summary=None, warnings=None, 
                         "#%d [%s] %s%s" % (r["id"], r["stage_id"] or "–", r["title"],
                                            " (wontfix — blocker így nem zárható)" if r["status"] == "wontfix" else "")
                         for r in blockers)))
+            if not audit_gate:
+                # szakaszkapu (6.4): pl. X009 — lezáratlan kettős kinyerés mellett az S08 (és későbbi) PASS tilos
+                from . import audit
+                audit.require_stage_gate(project_dir, stages)
         if FINAL in stages and verdict != "FAIL" and warnings is not None:
             unverified = ["%s #%d: %s" % (t, r["id"], r["kb_unverified"]) for t, cond in (
                 ("decision", " AND status='active'"), ("finding", ""), ("grade", "")) for r in con.execute(

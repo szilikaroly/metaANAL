@@ -1805,8 +1805,9 @@ _AUTO = object()
 
 
 def write_outputs(out, es, outdir, report_md=None, plots=True, run_info=None, provenance=_AUTO):
-    """A kimenetek írása. Egy korábbi futás ábrafájljai (PLOT_FILES), amelyeket ez a futás nem ír újra
-    (--no-plots, k = 0, k < 3 → nincs doi.svg), törlődnek, hogy a mappa ne keverjen két elemzést.
+    """A kimenetek írása. Egy korábbi futás ábrafájljai (PLOT_FILES, EXTRA_PLOT_FILES), amelyeket ez a futás nem ír
+    újra (--no-plots, k = 0, k < 3 → nincs doi.svg, nincs kumulatív / buborék), törlődnek, hogy a mappa ne keverjen
+    két elemzést. A cumulative.svg és a bubble.svg csak a ténylegesen futtatott elemzésekhez készül (E4c).
     A plot_data.json a plot_schema opció szerint v2 (alapértelmezés) vagy v1; run_info: lásd plot_document.
     provenance: az eredet-oldalfájl (dict vagy None); alapból a beolvasott adatfájl mellől (load_provenance)."""
     if provenance is _AUTO:

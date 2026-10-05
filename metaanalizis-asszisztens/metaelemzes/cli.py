@@ -8,10 +8,16 @@ Parancsok (magyar álnévvel):
   convert  / konvertal    adatkinyerési konverziók (medián/IQR, SE, CI, t, p → SD/SE, SMD-variancia, párosított
                           összegek, közös kontroll felosztása, d ↔ log OR ↔ r)
   power    / ero          prospektív erőelemzés (Hedges & Pigott 2001; dmetar::power.analysis)
-  prisma   / prisma       PRISMA folyamatábra-számok ellenőrzése (prisma check; kilépési kód 1, ha hibás)
+  prisma   / prisma       PRISMA folyamatábra-számok ellenőrzése (prisma check; kilépési kód 1, ha hibás;
+                          --studies: a vizsgálat-térkép, --emit-flowchart: PRISMA 2020 folyamatábra-spec)
   kb       / tudasbazis   tudásbázis: build, ingest, search, show, rules, checklist, sql, stats
   project  / projekt      projektnapló: init, log, finding, resolve, checkpoint, grade, status, list, show, export,
                           audit (X-szabályok), activity (tevékenységnapló-lánc ellenőrzése)
+  appraisal / ertekeles   értékelő eszközök és értékelések (v1): instruments, schema, route, check, validate,
+                          save, approve, list, agreement (κ), consensus, rob-summary, sync-rob
+  grade                   GRADE-tanács, GRADE-tár és SoF (v1): advice, save, show, record, sof, amstar2
+  kettos   / kettős       kettős (független) adatkinyerés (v1): compare, reconcile, report, status (X009)
+  figure   / abra         kumulatív / buborék / leave-one-out motor-SVG a plot_data.json-ból (v1)
   rules    / szabalyok    a motor V/P/X-szabályai (rules export --json)
   contracts / szerzodesek az adatszerződések (JSON Schema) jegyzéke és ellenőrzése
   gui      / munkapad     MA-munkapad: helyi, böngészős felület (ma_gui); gui snapshot: csak olvasható
@@ -97,8 +103,8 @@ def _run_summary(out):
     return summ
 
 
-_ANALYZE_OUTPUTS = ("forest.svg", "funnel.svg", "doi.svg", "plot_data.json", "results.json", "effect_sizes.csv",
-                    "report.md", "run.json")
+_ANALYZE_OUTPUTS = ("forest.svg", "funnel.svg", "doi.svg", "cumulative.svg", "bubble.svg", "plot_data.json",
+                    "results.json", "effect_sizes.csv", "report.md", "run.json")
 
 
 def _same_file(a, b):
@@ -869,8 +875,20 @@ def cmd_prisma(a):
             raise ValueError("prisma check: a(z) %s táblázatának Szám oszlopa üres — töltsd ki a dobozokat "
                              "(A1, B, C …)" % a.md)
         raise ValueError("prisma check: adj meg bemenetet (--json, --composer, --md vagy --A1 … dobozértékek)")
+    flow_in = dict(flow)
+    if a.studies:
+        # E9: a vizsgálat-térkép (studies.json) az I / J forrása; eltérésnél P017 (= api.prisma_check(…, studies))
+        flow, extra, _counts = prisma.apply_studies(flow, a.studies)
+        mismatches = mismatches + extra
     res = prisma.check_flow(flow, template)
     res.findings = mismatches + res.findings
+    if a.emit_flowchart:
+        spec = prisma.flowchart(flow_in, studies=a.studies, template=template, lang=a.flowchart_lang)
+        prisma.write_flowchart(spec, a.emit_flowchart)
+        # a JSON-kimenet (stdout) változatlan marad: a fájl útja és a rajzolási tipp a stderr-re kerül
+        print("Folyamatábra-specifikáció (szk.ff.flowchart/v1): %s — rajzolás: %s" % (
+            a.emit_flowchart, spec.get("render_hint") or "ff.py flowchart --spec %s --width double" % a.emit_flowchart),
+            file=sys.stderr if a.out_format == "json" else sys.stdout)
     if a.out_format == "json":
         _print_json(res.to_dict())
     else:
@@ -886,6 +904,422 @@ def cmd_prisma(a):
             print("Levezetett értékek: %s" % ", ".join("%s = %s" % (k, v) for k, v in sorted(res.derived.items())
                                                         if not isinstance(v, dict)))
     return 0 if res.ok else 1
+
+
+# ----------------------------------------------------------- v1: közös segédek
+def _read_json_file(path, what):
+    """JSON-fájl beolvasása érthető magyar hibával (UTF-8, BOM-mal is)."""
+    try:
+        with open(path, encoding="utf-8-sig") as fh:
+            return json.load(fh)
+    except OSError as exc:
+        raise ValueError("%s nem olvasható (%s): %s" % (what, path, exc.strerror or exc))
+    except ValueError as exc:
+        raise ValueError("%s nem érvényes JSON (%s): %s" % (what, path, exc))
+
+
+def _hu(x):
+    """{hu, en} → a magyar szöveg; más érték változatlanul."""
+    return x.get("hu") if isinstance(x, dict) and "hu" in x else x
+
+
+def _v1_activity(a, d, action, summary, outputs):
+    """MA_ACTIVITY_LOG=1 mellett a sikeres, projektbe író v1-parancs bejegyzése a hash-láncba (E7)."""
+    from . import activity
+    activity.cli_record(d, a._argv, outputs=[o for o in outputs if o and os.path.exists(o)],
+                        result={"exit_code": 0, "summary": summary}, action=action,
+                        actor=_cli_actor(a) or activity.cli_actor(None))
+
+
+def _appraisal_error(exc):
+    """AppraisalError → 'HIBA: …' és a részletes problémák a stderr-en; kilépési kód 1."""
+    print("HIBA: %s" % exc, file=sys.stderr)
+    for p in getattr(exc, "problems", None) or []:
+        print("  - %s" % p, file=sys.stderr)
+    return 1
+
+
+# --------------------------------------------------------- appraisal (v1)
+def _print_check(res, path=None):
+    """Az szk.appraisal-result/v1 szöveges, kezdőknek is olvasható alakja."""
+    head = "Értékelés ellenőrzése%s — %s" % ((" (%s)" % path) if path else "", res.get("tool"))
+    print(head)
+    print("  Teljesség: %s%s" % (res["completeness_text"], " — KÉSZ" if res["complete"] else ""))
+    for ps, v in sorted((res.get("per_pass") or {}).items()):
+        print("    %s menet: %s" % (ps, v["text"]))
+    if res.get("missing"):
+        print("  Hiányzó válasz: %s" % ", ".join(m["key"] for m in res["missing"][:40]))
+    for inv in res.get("invalid") or []:
+        print("  Érvénytelen válasz: %s" % (inv.get("text") or inv.get("message") or inv))
+    for d in res.get("domains") or []:
+        txt = _hu(d.get("text"))
+        print("  D%s%s: implikált %s · ítélet %s%s" % (d["domain"], ("/" + d["pass"]) if d.get("pass") else "",
+                                                      d.get("implied") or "—", d.get("judgement") or "—",
+                                                      (" — %s" % txt) if txt else ""))
+    ov = res.get("overall") or {}
+    print("  Összítélet: implikált %s · ítélet %s" % (ov.get("implied") or "—", ov.get("judgement") or "—"))
+    if ov.get("label"):
+        print("    (%s)" % _hu(ov["label"]))
+    for line in ov.get("lines") or []:
+        if _hu(line):
+            print("    %s" % _hu(line))
+    for o in res.get("overrides") or []:
+        if o.get("reason_missing"):
+            print("  HIBA (X017): %s — az ítélet (%s) eltér az implikálttól (%s), indoklás nélkül" % (
+                "összítélet" if o["domain"] == "overall" else "D%s" % o["domain"], o.get("judgement"),
+                o.get("implied")))
+    for w in res.get("warnings") or []:
+        print("  FIGYELEM: %s" % _hu(w))
+    for n in res.get("notes") or []:
+        print("  Megjegyzés: %s" % _hu(n))
+
+
+def cmd_appraisal(a):
+    from . import api
+    from .appraisal import AppraisalError
+    c = a.ap_cmd
+    try:
+        if c == "instruments":
+            rows = api.instruments_list()
+            if a.json:
+                _print_json(rows)
+            else:
+                for r in rows:
+                    print("%-11s %-10s egység: %-12s algoritmus: %-13s %s" % (
+                        r.get("key"), _hu(r.get("name")) or "", r.get("unit") or "",
+                        (r.get("rollup") or {}).get("algorithm") or "", _hu(r.get("label")) or ""))
+            return 0
+        if c == "schema":
+            try:
+                doc = api.instrument_get(a.tool)
+            except KeyError as exc:
+                raise ValueError(str(exc).strip("'\""))
+            if a.json:
+                _print_json(doc)
+            else:
+                print("%s (%s) — %s" % (_hu(doc.get("name")), doc.get("key"), _hu((doc.get("source") or {})
+                                                                                   .get("attribution")) or ""))
+                for it in doc.get("items") or []:
+                    print("  %-18s %s" % (it.get("key"), _hu(it.get("text")) or ""))
+            return 0
+        if c == "route":
+            hits = api.instrument_route(a.design)
+            if a.json:
+                _print_json(hits)
+            else:
+                if not hits:
+                    print("Nincs javaslat — írd le az elrendezést (pl. randomizált, kohorsz, diagnosztikai "
+                          "pontosság, predikciós modell).")
+                for h in hits:
+                    print("%-11s %s — %s" % (h["tool"], _hu(h.get("name")), _hu(h.get("why"))))
+            return 0
+        if c == "check":
+            res = api.appraisal_check(a.file, project_dir=a.project)
+            if a.json:
+                _print_json(res)
+            else:
+                _print_check(res, a.file)
+            return 0 if res["complete"] else 1
+        if c == "validate":
+            res = api.appraisal_problems(a.file, project_dir=a.project)
+            if a.json:
+                _print_json(res)
+            else:
+                print("Értékelés-fájl (%s): %s" % (a.file, "RENDBEN" if res["ok"] else "%d hiba" % len(res["errors"])))
+                for e in res["errors"]:
+                    print("  HIBA: %s" % e)
+                for w in res["warnings"]:
+                    print("  FIGYELEM: %s" % _hu(w))
+            return 0 if res["ok"] else 1
+        if c == "save":
+            res = api.appraisal_save(a.project, a.file)
+            if a.json:
+                _print_json(res)
+            else:
+                print("Mentve: %s (teljesség: %s)" % (res["path"], res["check"]["completeness_text"]))
+            _v1_activity(a, a.project, "appraisal.save", "Értékelés mentve: %s" % res["path"],
+                         [os.path.join(a.project, *res["path"].split("/"))])
+            return 0
+        if c == "approve":
+            res = api.appraisal_approve_ai_draft(a.file, a.approver, project_dir=a.project)
+            if a.json:
+                _print_json(res)
+            else:
+                print("AI-vázlat jóváhagyva (%s): státusz %s, teljesség %s%s" % (
+                    a.approver, res["doc"].get("status"), res["check"]["completeness_text"],
+                    ("; mentve: %s" % res["saved"]["path"]) if res["saved"] else " (nincs mentve: --project)"))
+                print("  Az AI-vázlat jóváhagyva sem számít második értékelőnek (κ, konszenzus; 6. döntés).")
+            if res["saved"]:
+                _v1_activity(a, a.project, "appraisal.approve", "AI-vázlat jóváhagyva: %s" % res["saved"]["path"],
+                             [os.path.join(a.project, *res["saved"]["path"].split("/"))])
+            return 0
+        if c == "list":
+            rows = api.appraisal_list(a.dir, tool=a.tool)
+            if a.json:
+                _print_json(rows)
+            else:
+                if not rows:
+                    print("Nincs értékelés (04_torzitas_kockazat/appraisals/).")
+                for r in rows:
+                    print("%-60s %-9s %-8s %s%s" % (
+                        r["path"], r.get("status") or "?", r.get("completeness_text") or "—",
+                        "AI-vázlat" if r.get("origin") == "ai_draft" else "",
+                        ("; HIBA: " + "; ".join(r["problems"])) if r["problems"] else ""))
+            return 0
+        if c == "agreement":
+            res = api.appraisal_consensus(a.a, a.b)
+            if a.json:
+                _print_json(res)
+            else:
+                print("Egyezés (%s vs. %s, %s): %d/%d tétel egyezik (%s); %s" % (
+                    res["a"], res["b"], res["tool"], res["agree"], res["items_compared"], res["agreement_pct_text"],
+                    res["kappa_text"]))
+                for dd in res.get("disagreements") or []:
+                    print("  eltér: %s — %s: %s, %s: %s" % (dd["key"], res["a"], dd["a"], res["b"], dd["b"]))
+            return 0
+        if c == "consensus":
+            res_doc = _read_json_file(a.resolutions, "A feloldások fájlja") if a.resolutions else None
+            jud = _read_json_file(a.judgements, "Az ítéletek fájlja") if a.judgements else None
+            res = api.appraisal_build_consensus(a.a, a.b, resolutions=res_doc, judgements=jud, project_dir=a.project)
+            if a.json:
+                _print_json(res)
+            else:
+                print("Konszenzus: státusz %s, feloldatlan tétel: %d%s" % (
+                    res["doc"].get("status"), len(res["unresolved"]),
+                    ("; mentve: %s" % res["saved"]["path"]) if res["saved"] else ""))
+                if res["unresolved"]:
+                    print("  Feloldandó (--resolutions {tétel: {value, reason}}): %s" % ", ".join(res["unresolved"]))
+            if res["saved"]:
+                _v1_activity(a, a.project, "appraisal.consensus", "Konszenzus mentve: %s" % res["saved"]["path"],
+                             [os.path.join(a.project, *res["saved"]["path"].split("/"))])
+            return 1 if res["unresolved"] else 0
+        if c == "rob-summary":
+            res = api.project_rob_summary(a.dir, a.outcome, tool=a.tool, plot=a.plot)
+            if a.json:
+                _print_json(res)
+            else:
+                print("Torzítási kockázat (%s, kimenet: %s)" % (res.get("tool"), a.outcome))
+                for st in res.get("studies") or []:
+                    print("  %-28s %-14s %s" % (st.get("label") or st.get("study_id"), st.get("overall") or "—",
+                                                st.get("weight_text") or ""))
+                for w in res.get("weighted") or []:
+                    print("  %-10s %d vizsgálat, súly: %s" % (w.get("level"), w.get("n") or 0, w.get("text") or "—"))
+            return 0
+        if c == "sync-rob":
+            if a.apply:
+                res = api.project_rob_sync_apply(a.dir, a.outcome, tool=a.tool, column=a.column, actor=_cli_actor(a))
+                prop, done = res["proposal"], res["result"]
+            else:
+                res = prop = api.project_rob_sync(a.dir, a.outcome, tool=a.tool, column=a.column)
+                done = None
+            if a.json:
+                _print_json(res)
+            else:
+                print("rob-oszlop szinkron (%s, %s): %d változás, %d változatlan, %d ütközés" % (
+                    prop.get("tool"), prop.get("table"), len(prop.get("changes") or []),
+                    len(prop.get("unchanged") or []), len(prop.get("conflicts") or [])))
+                for ch in prop.get("changes") or []:
+                    print("  sor %s (%s): %r → %r" % (ch.get("row"), ch.get("row_uid") or "—", ch.get("before"),
+                                                     ch.get("after")))
+                if done is not None:
+                    print("Alkalmazva: %d cella (%s)%s" % (done["applied"], done["table"],
+                                                          ("; napló: döntés #%d" % done["decision_id"])
+                                                          if done.get("decision_id") else ""))
+                elif prop.get("changes"):
+                    print("Alkalmazás: ugyanez --apply kapcsolóval (a tábla formátuma megmarad).")
+            if done is not None and done.get("applied"):
+                _v1_activity(a, a.dir, "appraisal.sync-rob", "rob-oszlop szinkron: %d cella" % done["applied"],
+                             [os.path.join(a.dir, *done["table"].split("/"))])
+            return 0
+    except AppraisalError as exc:
+        return _appraisal_error(exc)
+    raise ValueError("ismeretlen appraisal-alparancs: %s" % c)
+
+
+# ------------------------------------------------------------- grade (v1)
+_POOL_WORDS = ("pool", "kontroll-pool", "control_pool", "control-pool", "kontroll")
+
+
+def _assumed_risk(text):
+    """--assumed-risk: 'pool' (a kontroll-pool), '12,5', 'címke=12,5' vagy 'címke=12,5@forrás' →
+    {label?, per_1000, source?}."""
+    t = str(text).strip()
+    if t.lower() in _POOL_WORDS:
+        return {"source": "control_pool"}
+    label, eq, rest = t.partition("=")
+    if not eq:
+        label, rest = None, t
+    val, at, src = rest.partition("@")
+    out = {"per_1000": val.strip()}
+    if label is not None and label.strip():
+        out["label"] = label.strip()
+    if at and src.strip():
+        out["source"] = src.strip()
+    if not out["per_1000"]:
+        raise argparse.ArgumentTypeError("--assumed-risk: 'pool', '12,5', 'címke=12,5' vagy 'címke=12,5@forrás' "
+                                         "alakban add meg (kapott: %r)" % text)
+    return out
+
+
+def _write_text(path, text, bom=False):
+    d = os.path.dirname(os.path.abspath(path))
+    os.makedirs(d, exist_ok=True)
+    with open(path, "w", encoding="utf-8-sig" if bom else "utf-8", newline="") as fh:
+        fh.write(text)
+
+
+def _print_advice(doc):
+    print("GRADE-tanács (PISZKOZAT — csak javaslat, a döntés a tiéd; kimenet: %s, futás: %s)" % (
+        doc.get("outcome_id"), doc.get("run_id")))
+    for d, dom in (doc.get("domains") or {}).items():
+        sg = dom.get("suggestion") or {}
+        step = sg.get("step")
+        print("  %-17s javaslat: %-16s lépés: %-3s (%s) %s" % (
+            d, sg.get("rating") or "—", "—" if step is None else "%+d" % step, sg.get("status") or "",
+            _hu(sg.get("summary")) or ""))
+        why = sg.get("why") or {}
+        for part, lab in (("asks", "Mit kérdez?"), ("because", "Miért ez?"), ("change", "Mi változtatná meg?"),
+                          ("uncertain", "Bizonytalanság:")):
+            if _hu(why.get(part)):
+                print("      %s %s" % (lab, _hu(why[part])))
+    print("A domének ítéletét és lépését te adod meg (ma.py grade save); a „gyanított” publikációs torzítás "
+          "feloldatlan, amíg 0-t vagy −1-et nem választasz indoklással.")
+
+
+def cmd_grade(a):
+    from . import api
+    c = a.g_cmd
+    if c == "advice":
+        rob = _read_json_file(a.rob_json, "A RoB-fájl") if a.rob_json else None
+        doc = api.grade_advice(a.run, rob_by_row=rob, mid=a.mid, project_dir=a.project, outcome_id=a.outcome,
+                               start=a.start, importance=a.importance)
+        if a.json:
+            _print_json(doc)
+        else:
+            _print_advice(doc)
+        return 0
+    if c == "sof":
+        doc = api.sof(a.run, assumed_risks=a.assumed_risk or None, certainty=a.certainty, project_dir=a.project,
+                      outcome_id=a.outcome, label=a.label, intervention=a.intervention, comparison=a.comparison,
+                      mid=a.mid)
+        saved = None
+        if a.save:
+            if not a.project:
+                raise ValueError("a --save-hez a projektmappa (--project) is kell")
+            doc = api.sof_save(a.project, doc)
+            from .grade_help import sof_path
+            saved = sof_path(a.project, doc["outcome_id"])
+        fmt = a.format
+        if fmt == "json":
+            text = json.dumps(doc, ensure_ascii=False, indent=1, allow_nan=False) + "\n"
+        elif fmt == "md":
+            text = api.sof_markdown(doc, lang=a.lang)
+        elif fmt == "csv":
+            text = api.sof_csv(doc, lang=a.lang, delimiter=";" if a.lang == "hu" else ",")
+        else:
+            text = api.sof_html(doc, lang=a.lang)
+        if a.out:
+            _write_text(a.out, text, bom=(fmt == "csv"))
+            print("Kiírva: %s" % a.out, file=sys.stderr if fmt == "json" else sys.stdout)
+        else:
+            sys.stdout.write(text if text.endswith("\n") else text + "\n")
+        if saved:
+            print("SoF mentve: %s" % saved, file=sys.stderr)
+            _v1_activity(a, a.project, "grade.sof", "SoF mentve: %s" % doc["outcome_id"], [saved])
+        return 0
+    if c == "show":
+        doc = api.grade_get(a.dir, a.outcome)
+        if doc is None:
+            print("Nincs mentett GRADE-ítélet ehhez a kimenethez: %s" % a.outcome, file=sys.stderr)
+            return 1
+        _print_json(doc)
+        return 0
+    if c == "save":
+        doc = _read_json_file(a.doc, "A GRADE-dokumentum")
+        oid = a.outcome or (doc.get("outcome_id") if isinstance(doc, dict) else None)
+        if not oid:
+            raise ValueError("add meg a kimenetet (--outcome) vagy töltsd ki az outcome_id mezőt")
+        saved = api.grade_put(a.dir, oid, doc, actor=_cli_actor(a))
+        if a.json:
+            _print_json(saved)
+        else:
+            print("GRADE mentve (%s): bizonyosság %s" % (oid, saved.get("certainty") or
+                                                         "— (nyitott vagy feloldatlan domén)"))
+            for w in [saved.get("consistency_warning")] + [_hu(x.get("text")) for x in
+                                                           saved.get("override_warnings") or []]:
+                if w:
+                    print("FIGYELEM: %s" % w, file=sys.stderr)
+        _v1_activity(a, a.dir, "grade.save", "GRADE mentve: %s" % oid,
+                     [os.path.join(a.dir, "06_kezirat", "grade", "%s.grade.json" % oid)])
+        return 0
+    if c == "record":
+        res = api.grade_record(a.dir, a.outcome, actor=_cli_actor(a), kb_db=a.kb_db, strict=a.strict)
+        if a.json:
+            _print_json(res)
+        else:
+            print("GRADE #%d rögzítve (%s: %s)" % (res["id"], a.outcome, res["doc"].get("certainty")))
+            for w in res.get("warnings") or []:
+                print("FIGYELEM: %s" % _hu(w), file=sys.stderr)
+        from . import projekt
+        _v1_activity(a, a.dir, "grade.record", "GRADE #%d rögzítve" % res["id"],
+                     [projekt.db_path(a.dir), os.path.join(a.dir, *res["path"].split("/"))])
+        return 0
+    if c == "amstar2":
+        answers = _read_json_file(a.answers, "Az AMSTAR 2 válaszfájl")
+        res = api.amstar2_consistency(answers, convention=a.convention, claimed=a.claimed)
+        if a.json:
+            _print_json(res)
+        else:
+            print("AMSTAR 2: %s" % (_hu(res.get("text")) or res.get("rating")))
+            if res.get("convention_sensitive") and _hu(res.get("sensitivity_text")):
+                print("  %s" % _hu(res["sensitivity_text"]))
+            if res.get("consistency_warning"):
+                print("FIGYELEM: %s" % _hu(res["consistency_warning"]))
+            for n in res.get("notes") or []:
+                print("  Megjegyzés: %s" % _hu(n))
+        return 0
+    raise ValueError("ismeretlen grade-alparancs: %s" % c)
+
+
+# ------------------------------------------------------------ figure (v1)
+def _plot_doc(path):
+    """--plot: futásmappa (plot_data.json), run.json (szk.ma.run/v1 → a mellette lévő plot_data.json) vagy maga a
+    plot_data.json → szk.ma.plot/v2 dict."""
+    p = path
+    if os.path.isdir(p):
+        p = os.path.join(p, "plot_data.json")
+    doc = _read_json_file(p, "Az ábra-adat")
+    if isinstance(doc, dict) and doc.get("schema") == "szk.ma.run/v1":
+        doc = _read_json_file(os.path.join(os.path.dirname(os.path.abspath(p)), "plot_data.json"), "Az ábra-adat")
+    return doc
+
+
+def cmd_figure(a):
+    from . import api
+    res = api.render_figure(_plot_doc(a.plot), a.kind, a.lang, a.annotate)
+    if res is None:
+        raise ValueError("a(z) %s ábra a futás saját SVG-je (%s.svg)" % (a.kind, a.kind))
+    if a.json:
+        _print_json(res)
+    elif a.out:
+        _write_text(a.out, res["svg"])
+        print("Kiírva: %s" % a.out)
+    else:
+        sys.stdout.write(res["svg"] if res["svg"].endswith("\n") else res["svg"] + "\n")
+    return 0
+
+
+# ------------------------------------------------------------ kettos (v1)
+KETTOS_NAMES = ("kettos", "kettős")
+
+
+def _kettos_subcommand(argv):
+    """argv[0] = kettos|kettős → a motor saját parancssora (kettos.cli_main: compare, reconcile, report, status);
+    más parancsnál None."""
+    if not argv or argv[0] not in KETTOS_NAMES:
+        return None
+    from . import kettos
+    return kettos.cli_main(list(argv[1:]))
 
 
 def cmd_selftest(a):
@@ -1026,7 +1460,7 @@ def build_parser():
     from .power import HETEROGENEITY_FACTORS, POWER_MEASURES
     from .prisma import TEMPLATES
     from .plots import LANGS
-    from .pipeline import PLOT_SCHEMAS
+    from .pipeline import PLOT_SCHEMAS, FIGURE_KINDS as PIPE_FIGURE_KINDS
     p = _Parser(prog="ma.py", description="Metaanalízis-motor (metaelemzes v%s)" % __version__)
     p.add_argument("--version", action="version", version=__version__)
     p.add_argument("--capabilities", action="store_true",
@@ -1264,9 +1698,13 @@ def build_parser():
     pg.add_argument("dir")
     pg.add_argument("--outcome", required=True)
     pg.add_argument("--certainty", required=True, choices=["high", "moderate", "low", "very low"])
+    grade_help = {"kb": _KB_HELP,
+                  "publication_bias": "előjeles lépéssel: \"0 nem észlelt: …\", \"0 gyanított (feloldva): <indok>\", "
+                                      "\"−1 gyanított: <jelek>\" vagy \"−1 erősen gyanított: …\"; a puszta "
+                                      "„suspected” / „gyanított” hibát ad (feloldatlan, 4. döntés)"}
     for name in ("effect", "rob", "inconsistency", "indirectness", "imprecision", "publication_bias",
                  "upgrades", "rationale", "kb"):
-        pg.add_argument("--" + name.replace("_", "-"), dest=name, help=_KB_HELP if name == "kb" else None)
+        pg.add_argument("--" + name.replace("_", "-"), dest=name, help=grade_help.get(name))
     pg.add_argument("--k", type=_nonneg_int, help="vizsgálatok száma (>= 0)")
     pg.add_argument("--participants", type=_nonneg_int, help="résztvevők száma (>= 0)")
     for sp in (pl, pf, pr, pc, pg, po):
@@ -1366,6 +1804,13 @@ def build_parser():
     pzc.add_argument("--template", default=None, type=lambda x: x.upper().replace("_", "").replace(" ", ""),
                      choices=TEMPLATES, help="PRISMA2020 | PRISMA2009 (alap: felismerés a mezőnevekből)")
     pzc.add_argument("--out-format", default="text", choices=["text", "json"])
+    pzc.add_argument("--studies", help="a vizsgálat-térkép (03_adatok/studies.json, szk.ma.studies/v1): ebből az I "
+                                       "(bevont vizsgálatok) és a hiányzó J; eltérésnél P017")
+    pzc.add_argument("--emit-flowchart", metavar="OUT.json",
+                     help="a teljes PRISMA 2020 folyamatábra-specifikáció kiírása (szk.ff.flowchart/v1) a figure-"
+                          "forge-nak: ff.py flowchart --spec OUT.json --width double")
+    pzc.add_argument("--flowchart-lang", default="en", choices=["en", "hu"],
+                     help="a folyamatábra nyelve (alap: en — a kéziratba)")
     pz.set_defaults(func=cmd_prisma)
 
     ru = sub.add_parser("rules", aliases=["szabalyok"], help="a motor V/P/X-szabályai")
@@ -1401,6 +1846,158 @@ def build_parser():
     gu.add_argument("--idle-hours", type=float, help="tétlenségi leállás órában (alap: 4; 0 = soha)")
     gu.set_defaults(func=cmd_gui)
 
+    # ---- v1: értékelés (RoB 2, ROBINS-I/E, QUADAS-2, NOS, QUIPS, JBI, PROBAST+AI, TRIPOD+AI, AMSTAR 2, GRADE)
+    ap = sub.add_parser("appraisal", aliases=["ertekeles"], help="értékelő eszközök és értékelések (RoB, PROBAST+AI, "
+                        "TRIPOD+AI, AMSTAR 2 …)",
+                        description="Értékelések (szk.appraisal/v1, 04_torzitas_kockazat/appraisals/): teljesség, "
+                                    "implikált ítélet, felülbírálás (X017), két értékelő egyezése (κ), konszenzus, "
+                                    "forgalmi lámpa, a kinyerési tábla rob oszlopának szinkronja. Az eszközök a motor "
+                                    "natív definíciói (forrás: szk-plugins validator 1.0.0). Az AI-vázlat "
+                                    "(origin: ai_draft) csak emberi jóváhagyással válhat késszé, és soha nem számít "
+                                    "második értékelőnek (6. döntés).")
+    aps = ap.add_subparsers(dest="ap_cmd")
+    x = aps.add_parser("instruments", help="az eszközök listája")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("schema", help="egy eszköz teljes definíciója (szk.instrument/v1; a validator --schema "
+                                      "megfelelője)")
+    x.add_argument("tool", help="pl. rob2, robins-i, robins-e, quadas2, nos, quips, jbi, probast-ai, tripod-ai, "
+                                "amstar2, grade")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("route", help="eszköz-javaslat a vizsgálati elrendezésből (pl. \"randomizált\", \"kohorsz\")")
+    x.add_argument("design", help="az elrendezés szabad szöveggel vagy studies.json design-kóddal")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("check", help="teljesség, implikált ítélet, felülbírálások (szk.appraisal-result/v1); kilépési "
+                       "kód 1, ha nem teljes")
+    x.add_argument("file", help="az értékelés JSON-fájlja")
+    x.add_argument("--project", help="projektmappa (konvenciók, adatosztály)")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("validate", help="szerkezeti és tartalmi ellenőrzés magyar hibaüzenetekkel; kilépési kód 1, ha "
+                       "hibás (AI-vázlatnál a tételenkénti idézet és egyszerű nyelvű indoklás is)")
+    x.add_argument("file")
+    x.add_argument("--project", help="projektmappa (pl. C osztály: AI-vázlat tilos)")
+    x.add_argument("--json", action="store_true", help="{ok, errors, warnings}")
+    x = aps.add_parser("save", help="ellenőrzött mentés a projekt értékelés-mappájába (a fájlnév a tartalomból)")
+    x.add_argument("file")
+    x.add_argument("--project", required=True)
+    x.add_argument("--actor", help="szereplő a tevékenységnaplóban (alap: MA_ACTOR)")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("approve", help="AI-vázlat emberi jóváhagyása (approved_by); --project mellett mentés is")
+    x.add_argument("file")
+    x.add_argument("--approver", required=True, help="a jóváhagyó monogramja (pl. SzK)")
+    x.add_argument("--project")
+    x.add_argument("--actor", help="szereplő a tevékenységnaplóban (alap: MA_ACTOR)")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("list", help="a projekt értékelései teljességgel")
+    x.add_argument("dir")
+    x.add_argument("--tool")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("agreement", help="két független emberi értékelés egyezése: Cohen-féle κ CI-vel, eltérések")
+    x.add_argument("a")
+    x.add_argument("b")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("consensus", help="konszenzus két értékelésből (feloldatlan tételnél státusz 'draft', kilépési "
+                       "kód 1)")
+    x.add_argument("a")
+    x.add_argument("b")
+    x.add_argument("--resolutions", help="JSON: {tétel: {value, reason}} az eltérő tételekre")
+    x.add_argument("--judgements", help="JSON: {domain_judgements: [...], applicability: [...], overall: {...}}")
+    x.add_argument("--project", help="projektmappa: a konszenzus mentése (….consensus.json)")
+    x.add_argument("--actor", help="szereplő a tevékenységnaplóban (alap: MA_ACTOR)")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("rob-summary", help="forgalmi lámpa és súlyarány kockázati szintenként (szk.rob-summary/v1)")
+    x.add_argument("dir")
+    x.add_argument("--outcome", required=True)
+    x.add_argument("--tool", help="alap: a projekt RoB-eszköze (appraisal_tools)")
+    x.add_argument("--plot", help="a futás mappája, run.json-ja vagy plot_data.json-ja (a súlyokhoz)")
+    x.add_argument("--json", action="store_true")
+    x = aps.add_parser("sync-rob", help="a kinyerési tábla rob oszlopa a végső összítéletekből (javaslat; --apply: "
+                       "alkalmazás + napló)")
+    x.add_argument("dir")
+    x.add_argument("--outcome", required=True)
+    x.add_argument("--tool")
+    x.add_argument("--column", help="új oszlop neve, ha a táblában még nincs rob oszlop (alap: rob)")
+    x.add_argument("--apply", action="store_true", help="a javaslat alkalmazása (formátumtartó írás, eredet: "
+                                                        "calculated, döntés a naplóba)")
+    x.add_argument("--actor", help="szereplő a naplóban (alap: MA_ACTOR)")
+    x.add_argument("--json", action="store_true")
+    ap.set_defaults(func=cmd_appraisal)
+
+    # ---- v1: GRADE, SoF, AMSTAR 2 (E10)
+    gr = sub.add_parser("grade", help="GRADE-tanács, GRADE-tár, Summary of Findings, AMSTAR 2",
+                        description="GRADE kimenetenként: a motor számai és javaslata (csak javaslat; a döntés az "
+                                    "emberé), az ítélet mentése (06_kezirat/grade/) és naplózása, SoF-tábla abszolút "
+                                    "hatással, AMSTAR 2 besorolás mindkét konvencióval. A publikációs torzítás "
+                                    "„gyanított” (suspected) ítélete feloldatlan, amíg 0-t vagy −1-et nem választasz "
+                                    "indoklással; az „erősen gyanított” −1 (4. döntés).")
+    grs = gr.add_subparsers(dest="g_cmd")
+    x = grs.add_parser("advice", help="GRADE-tanács egy commit-futásra (szk.ma.grade/v1 piszkozat, „Miért?” "
+                                      "szövegekkel)")
+    x.add_argument("--run", required=True, help="a futás mappája, run.json-ja vagy run_id-je (a --project-tel)")
+    x.add_argument("--project")
+    x.add_argument("--outcome")
+    x.add_argument("--start", choices=["high", "low"], help="kiindulás: high (RCT) vagy low (megfigyeléses)")
+    x.add_argument("--mid", help="minimális fontos különbség a megjelenítési skálán (pl. '0,75–1,25' vagy '±10')")
+    x.add_argument("--importance", choices=["critical", "important", "not important"])
+    x.add_argument("--rob-json", help="JSON: {row_uid: low|some|high} a futás rob oszlopa helyett")
+    x.add_argument("--json", action="store_true")
+    x = grs.add_parser("sof", help="Summary of Findings sor (szk.ma.sof/v1; md / csv / html export)")
+    x.add_argument("--run", required=True)
+    x.add_argument("--project")
+    x.add_argument("--outcome")
+    x.add_argument("--assumed-risk", action="append", type=_assumed_risk, metavar="KOCKÁZAT",
+                   help="alapkockázat /1000: 'pool' (a kontroll-pool; alap), '12,5', 'címke=12,5@forrás' (ismételhető)")
+    x.add_argument("--certainty", choices=["high", "moderate", "low", "very low"],
+                   help="bizonyosság (alap: a mentett GRADE-ítéletből, ha van)")
+    x.add_argument("--label", help="a kimenet neve a táblában")
+    x.add_argument("--intervention")
+    x.add_argument("--comparison")
+    x.add_argument("--mid", help="MID a „kevés vagy semmi különbség” megfogalmazáshoz")
+    x.add_argument("--format", default="json", choices=["json", "md", "csv", "html"])
+    x.add_argument("--lang", default="hu", choices=["hu", "en"])
+    x.add_argument("--out", help="kimeneti fájl (alap: stdout; csv: UTF-8 BOM-mal)")
+    x.add_argument("--save", action="store_true", help="mentés a 06_kezirat/sof/<kimenet>.sof.json-ba (X008)")
+    x.add_argument("--actor", help="szereplő a tevékenységnaplóban (alap: MA_ACTOR)")
+    x = grs.add_parser("show", help="a kimenet mentett GRADE-ítélete (JSON)")
+    x.add_argument("dir")
+    x.add_argument("--outcome", required=True)
+    x.add_argument("--json", action="store_true", help="JSON-kimenet (alapból is az)")
+    x = grs.add_parser("save", help="GRADE-ítélet mentése (bizonyosság a lépésekből; feloldatlan domén: null)")
+    x.add_argument("dir")
+    x.add_argument("--doc", required=True, help="a szk.ma.grade/v1 JSON (pl. a grade advice kimenete, kitöltve)")
+    x.add_argument("--outcome", help="alap: a dokumentum outcome_id-je")
+    x.add_argument("--actor", help="szereplő (alap: MA_ACTOR)")
+    x.add_argument("--json", action="store_true")
+    x = grs.add_parser("record", help="a mentett GRADE-ítélet rögzítése a projektnaplóba (feloldatlan „gyanított” "
+                       "publikációs torzítás, nyitott domén vagy jóvá nem hagyott AI-vázlat mellett elutasítja)")
+    x.add_argument("dir")
+    x.add_argument("--outcome", required=True)
+    x.add_argument("--actor", help="szereplő (alap: MA_ACTOR)")
+    x.add_argument("--kb-db", help="a KB-hivatkozások ellenőrzéséhez használt tudásbázis")
+    x.add_argument("--strict", action="store_true", help="ismeretlen KB-azonosító: hiba")
+    x.add_argument("--json", action="store_true")
+    x = grs.add_parser("amstar2", help="AMSTAR 2 besorolás mindkét konvencióval (meets / weakness) és konzisztencia")
+    x.add_argument("--answers", required=True, help="JSON: {tétel: válasz} vagy egy szk.appraisal/v1 dokumentum")
+    x.add_argument("--convention", choices=["meets", "weakness"], help="alap: meets (KB AMSTAR2-00)")
+    x.add_argument("--claimed", help="a máshol megadott besorolás összevetéshez (pl. moderate)")
+    x.add_argument("--json", action="store_true")
+    gr.set_defaults(func=cmd_grade)
+
+    # ---- v1: kettős kinyerés (E6) — saját parancssor: metaelemzes.kettos.cli_main (az argparse előtt ágazik el)
+    sub.add_parser("kettos", aliases=["kettős"], add_help=False,
+                   help="kettős (független) adatkinyerés: compare, reconcile, report, status (X009); súgó: "
+                        "ma.py kettos -h")
+
+    # ---- v1: E4c ábrák a futás plot_data.json-jából
+    fg = sub.add_parser("figure", aliases=["abra"], help="kumulatív / buborék / leave-one-out ábra (motor-SVG) a "
+                        "plot_data.json-ból, más nyelven vagy rétegekkel")
+    fg.add_argument("--plot", required=True, help="a futás mappája, run.json-ja vagy plot_data.json-ja")
+    fg.add_argument("--kind", required=True, choices=list(PIPE_FIGURE_KINDS))
+    fg.add_argument("--lang", default="hu", choices=LANGS)
+    fg.add_argument("--annotate", action="store_true", help="elnevezett rétegek és soronkénti csoportok (data-*)")
+    fg.add_argument("--out", help="az SVG fájl (alap: stdout)")
+    fg.add_argument("--json", action="store_true", help="{svg, lang, kind}")
+    fg.set_defaults(func=cmd_figure)
+
     st = sub.add_parser("selftest", aliases=["onteszt"], help="tesztek futtatása")
     st.set_defaults(func=cmd_selftest)
     return p
@@ -1409,6 +2006,9 @@ def build_parser():
 def main(argv=None):
     _utf8_stdout()
     sub_rc = _gui_subcommand(list(argv) if argv is not None else sys.argv[1:])
+    if sub_rc is not None:
+        return sub_rc
+    sub_rc = _kettos_subcommand(list(argv) if argv is not None else sys.argv[1:])
     if sub_rc is not None:
         return sub_rc
     parser = build_parser()
@@ -1435,6 +2035,10 @@ def main(argv=None):
     if a.cmd == "prisma" and not a.prisma_cmd:
         parser.parse_args([a.cmd, "-h"])
     if a.cmd in ("rules", "szabalyok") and not a.rules_cmd:
+        parser.parse_args([a.cmd, "-h"])
+    if a.cmd in ("appraisal", "ertekeles") and not a.ap_cmd:
+        parser.parse_args([a.cmd, "-h"])
+    if a.cmd == "grade" and not a.g_cmd:
         parser.parse_args([a.cmd, "-h"])
     try:
         return a.func(a)

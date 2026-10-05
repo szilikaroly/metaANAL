@@ -82,12 +82,16 @@ keresése). A szisztematikus keresést nem helyettesítik, mert nem reprodukálh
 | Plugin | Előfeltétel | Szerep |
 |---|---|---|
 | `composer` | `biopython`, `requests`; NCBI-hitelesítés `~/.config/ncbi/env` | PRISMA 2020 számok, PRISMA-S napló, PROSPERO-rekord, 5D bibliográfiai validálás |
-| `validator` | csak standard könyvtár | RoB-eszközválasztás, GRADE, AMSTAR 2, PROBAST+AI / TRIPOD+AI |
-| `figure-forge` | `matplotlib`, `numpy`, `pandas`, `lxml`, `python-pptx`, `Pillow` | a motor SVG-ábráinak auditja; PRISMA-folyamatábra |
+| `validator` | csak standard könyvtár | RoB-eszközválasztás, GRADE, AMSTAR 2, PROBAST+AI / TRIPOD+AI (a motor v1-ben ezeket natívan is tudja: `ma.py appraisal`, `ma.py grade`; forrás: validator 1.0.0) |
+| `figure-forge` | `matplotlib`, `numpy`, `pandas`, `lxml`, `python-pptx`, `Pillow` | a motor SVG-ábráinak auditja; PRISMA-folyamatábra a motor specifikációjából (`ma.py prisma check … --emit-flowchart`) |
 | `presubmit` | `python-docx` (PDF-hez PyMuPDF vagy `pdftotext`) | kézirat-ellenőrzés beadás előtt |
 
-**Ismert hiba a validatorban:** a GRADE-összesítés a publikációs torzítás doménjén a „suspected” és a „strongly
-suspected” választ nem minősíti le. Az értékelő alágens ezt a domént kézzel ellenőrzi.
+**Ismert hiba a validatorban (1.0.0):** a GRADE-összesítés a publikációs torzítás doménjén a „suspected” és a „strongly
+suspected” választ nem minősíti le. Az értékelő alágens ezt a domént kézzel ellenőrzi; a motor GRADE-tára (`ma.py grade
+save|record`, a munkapad GRADE-lapja) ezt kikényszeríti: a „gyanított” feloldatlan, amíg indoklással 0-t vagy −1-et nem
+választasz, az „erősen gyanított” −1 (11. fejezet, 4. döntés). További, a motor natív definícióinál javított
+validator-eltérések (QUADAS-2 és ROBINS-I/E polaritás, ROBINS-I 1.1, a megválaszolatlan domén „LOW”-ja, a QUIPS
+„Partly”, a NOS részleges csillaga): `ma.py appraisal schema <eszköz> --json` → `validator_differences`.
 
 ## 8. Adatvédelem
 

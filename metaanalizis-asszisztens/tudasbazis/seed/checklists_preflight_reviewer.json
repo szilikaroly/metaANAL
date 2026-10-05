@@ -285,7 +285,7 @@
   "section": "Pluginok (ha telepítve vannak)",
   "ord": 29,
   "text": "A validator plugin a RoB-eszközt választja és ellenőrzi a kitöltést, összesíti a GRADE- és AMSTAR 2-értékelést, és kezeli a PROBAST+AI / TRIPOD+AI eszközöket. Ismert hibája, hogy a GRADE-összesítés a publikációs torzítás doménjén a „suspected” és a „strongly suspected” választ nem minősíti le; ezt a domént kézzel kell ellenőrizni.",
-  "how_to_verify": "A plugin szerepel a Claude Code pluginlistájában. Az ismert hibát az `eszkozok_hozzaferesek.md` rögzíti, és az S13-ban a ma-ertekelo kézzel ellenőrzi a publikációs torzítás doménjét (`ma.py project grade … --publication-bias …`).",
+  "how_to_verify": "A plugin szerepel a Claude Code pluginlistájában. Az ismert hibát az `eszkozok_hozzaferesek.md` rögzíti, és az S13-ban a ma-ertekelo kézzel ellenőrzi a publikációs torzítás doménjét (`ma.py project grade … --publication-bias …`). A motor saját GRADE-tára (v1: `ma.py grade save|record`, munkapad GRADE-lap) ezt a hibát nem örökli: a „suspected” feloldatlan, amíg 0-t vagy −1-et nem választasz indoklással (4. döntés; X019). A RoB-, PROBAST+AI-, TRIPOD+AI- és AMSTAR 2-értékelést a motor natív eszközeivel is végezheted (`ma.py appraisal instruments`).",
   "stage_id": "S00",
   "source_ids": "engine,grade_handbook"
  },
@@ -745,7 +745,7 @@
   "section": "S06 Torzítási kockázat",
   "ord": 41,
   "text": "Minden bevont vizsgálatot értékeltek (RoB 2-nél kimenetenként, illetve eredményenként), doménenkénti ítélettel és szöveges indoklással. Két független értékelő dolgozott, és az egyeztetés dokumentált.",
-  "how_to_verify": "`rob.csv`: minden vizsgálat sorában a D1–D5 és az `osszesitett` oszlop kitöltve, `ertekelo1` ≠ `ertekelo2`, `egyeztetes` = igen; az indoklások és idézetek külön fájlban vagy megjegyzésben. Ha elérhető a validator plugin, a kitöltés-ellenőrzés kimenete is. KB: K-BOR09-020, K-SIM24-039.",
+  "how_to_verify": "`rob.csv`: minden vizsgálat sorában a D1–D5 és az `osszesitett` oszlop kitöltve, `ertekelo1` ≠ `ertekelo2`, `egyeztetes` = igen; az indoklások és idézetek külön fájlban vagy megjegyzésben. Ha elérhető a validator plugin, a kitöltés-ellenőrzés kimenete is. KB: K-BOR09-020, K-SIM24-039. v1: az értékelések JSON-ként a 04_torzitas_kockazat/appraisals/ mappában (`ma.py appraisal list <mappa>`: teljesség és státusz); az egyezés `ma.py appraisal agreement` (κ CI-vel), a konszenzus `ma.py appraisal consensus`. Az AI-vázlat (origin: ai_draft) nem számít második értékelőnek (6. döntés).",
   "stage_id": "S06",
   "source_ids": "rob2,robins_i,cochrane_handbook,prisma2020,amstar2,borenstein2009,simplypsychology2024"
  },
@@ -1165,7 +1165,7 @@
   "section": "S13 Bizonyosság (GRADE)",
   "ord": 83,
   "text": "A torzítási kockázat és a publikációs torzítás miatti leminősítés összhangban van az adatokkal: számít, hogy a súly mekkora része jön magas kockázatú vagy némi aggályt keltő vizsgálatokból. A publikációs torzítás ítélete a teljes képen alapul (a keresés teljessége, regiszterek, kis iparági vizsgálatok, kontúr-funnel, legalább 10 vizsgálatnál teszt), nem egyetlen nem szignifikáns teszten. Ha a validator plugin GRADE-összesítését használják, a publikációs torzítás doménjét kézzel kell ellenőrizni (ismert hiba).",
-  "how_to_verify": "A `rob.csv` és a results.json `primary.weights_pct` mezője (súlyarány RoB-kategóriánként); a results.json `bias` mezői; a `ma.py project grade … --rob` és `--publication-bias` indoklása. KB: K-MOR20-066, K-KHN1113-074, K-BOR09-069.",
+  "how_to_verify": "A `rob.csv` és a results.json `primary.weights_pct` mezője (súlyarány RoB-kategóriánként); a results.json `bias` mezői; a `ma.py project grade … --rob` és `--publication-bias` indoklása. KB: K-MOR20-066, K-KHN1113-074, K-BOR09-069. v1: a magas RoB-ú súlyarányt és a gyermek-futás hatását a `ma.py grade advice` domains.risk_of_bias.advisory adja; a forgalmi lámpa súlyaránnyal: `ma.py appraisal rob-summary <mappa> --outcome <id> --plot <futás>`; a „gyanított” publikációs torzítás feloldatlan (X019).",
   "stage_id": "S13",
   "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,morvaridzadeh2020,khan2020,borenstein2009,engine"
  },

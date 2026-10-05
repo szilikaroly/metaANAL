@@ -1177,6 +1177,8 @@ def _appraisals(ctx):
         status = str(doc.get("status") or "").strip().lower()
         if status not in _FINAL_STATUSES:
             continue
+        if doc.get("origin") == "ai_draft" and not _nonempty(doc.get("approved_by")):
+            continue        # jóváhagyatlan AI-vázlat soha nem végleges (6. döntés)
         target = doc.get("target") if isinstance(doc.get("target"), dict) else {}
         overall = doc.get("overall") if isinstance(doc.get("overall"), dict) else {}
         stem = name[:-5].split(".")
@@ -2671,17 +2673,42 @@ def coverage_warning(rep, project_dir):
             "<mappa>." % (DATA_DIR, _plural_list(tables, 5)))
 
 
-def gate_message(errors):
-    """A FINAL audit-kapu elutasításának szövege (üres lista: None)."""
+def gate_message(errors, stage=None):
+    """A kapu elutasításának szövege (üres lista: None). stage: a szakasz (alap: FINAL; pl. 'S08' az X009-hez)."""
     if not errors:
         return None
     groups = collections.OrderedDict()
     for f in errors:
         groups.setdefault((f["code"], f.get("outcome")), []).append(f)
-    return ("%d hiba szintű X-szabály találat van a projekt-auditban, ezért a FINAL ellenőrzőpont nem adható: %s "
-            "(részletek: ma.py project audit <mappa>)" % (len(errors), "; ".join(
+    where = "a FINAL ellenőrzőpont" if stage in (None, FINAL) else "a(z) %s PASS" % stage
+    return ("%d hiba szintű X-szabály találat van a projekt-auditban, ezért %s nem adható: %s "
+            "(részletek: ma.py project audit <mappa>)" % (len(errors), where, "; ".join(
                 "%s%s%s: %s" % (code, (" [%s]" % oid) if oid else "", (" (%d×)" % len(fs)) if len(fs) > 1 else "",
                                 fs[0]["title"]) for (code, oid), fs in groups.items())))
+
+
+def gated_stage(stages):
+    """A szakaszlistából (projekt.parse_stage) az a szakasz, amelynek PASS-át a GATE_STAGES kapui védik: a legkésőbbi
+    nem-FINAL szakasz (FINAL-nál S14), ha legalább egy kapu (pl. X009 → S08) erre vagy korábbra esik; különben None."""
+    idx = [_stage_index(LATE_STAGE if s == FINAL else s) for s in stages or ()]
+    idx = [i for i in idx if i is not None]
+    if not idx:
+        return None
+    top = max(idx)
+    if not any(_stage_index(g) <= top for g in GATE_STAGES.values()):
+        return None
+    return "S%02d" % top
+
+
+def require_stage_gate(project_dir, stages):
+    """PASS / PASS_WITH_FIXES előtt (projekt.checkpoint): ValueError, ha a szakasz kapuja (GATE_STAGES, pl. X009 az
+    S08-tól) error szintű találatot jelez. Kapu nélküli szakasznál nem fut audit."""
+    st = gated_stage(stages)
+    if st is None:
+        return
+    msg = gate_message(checkpoint_gate_errors(project_dir, st), st)
+    if msg:
+        raise ValueError(msg)
 
 
 def require_gate(project_dir, warnings=None):

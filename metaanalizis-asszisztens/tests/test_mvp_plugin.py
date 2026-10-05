@@ -225,7 +225,12 @@ class ManifestTest(unittest.TestCase):
 class GeneratedFilesTest(unittest.TestCase):
     def test_generated_tree(self):
         agents = sorted(f[:-3] for f in os.listdir(os.path.join(ROOT, "agents")) if f.endswith(".md"))
-        self.assertEqual(agents, ["ma-ellenorzo", "ma-ertekelo", "ma-tervezo", "metaanalizis-asszisztens"])
+        core = ["ma-ellenorzo", "ma-ertekelo", "ma-tervezo", "metaanalizis-asszisztens"]
+        self.assertTrue(set(core) <= set(agents), agents)
+        # a plugin ágensei pontosan a .claude/agents forrásai (v1: + ma-metaheadhunter)
+        src = os.path.join(REPO, ".claude", "agents")
+        if os.path.isdir(src):
+            self.assertEqual(agents, sorted(f[:-3] for f in os.listdir(src) if f.endswith(".md")))
         self.assertTrue(os.path.isfile(os.path.join(ROOT, "skills", "metaanalizis", "SKILL.md")))
 
     def test_frontmatter_and_header(self):

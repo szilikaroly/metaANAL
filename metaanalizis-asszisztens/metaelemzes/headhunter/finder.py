@@ -26,6 +26,7 @@ from __future__ import absolute_import
 import hashlib
 import math
 import re
+import unicodedata
 from datetime import datetime, timezone
 
 from . import net
@@ -39,8 +40,11 @@ QUOTE_MAX = 300
 DISCOVERY_SOURCES = ("pubmed", "europepmc", "openalex", "scopus")
 
 #: a rangsor alapsúlyai (TERV 5.3; a ``settings``-ből felülírhatók; összegük 1)
-DEFAULT_WEIGHTS = {"relevance": 0.25, "recency": 0.15, "size": 0.10, "systematic": 0.10, "meta_analysis": 0.10,
-                   "cochrane": 0.10, "open_fulltext": 0.10, "signals": 0.10}
+#: A relevancia (a P és I fogalom a címben; csak az absztraktban: fél pont) a legnagyobb súly: egy élő próbán
+#: (BCG–tuberkulózis) 0,25-ös súllyal a témába vágó klasszikus metaanalízisek (Colditz 1994, Mangtani 2014) a
+#: 80–110. helyre csúsztak a friss, nyílt, de más kérdésű (diagnosztikai) áttekintések mögé.
+DEFAULT_WEIGHTS = {"relevance": 0.60, "recency": 0.06, "size": 0.04, "systematic": 0.06, "meta_analysis": 0.06,
+                   "cochrane": 0.06, "open_fulltext": 0.06, "signals": 0.06}
 
 _ID_PRIORITY = {
     "pmid": ("pubmed", "europepmc", "scopus", "openalex"),
@@ -114,7 +118,10 @@ def build_queries(query, since=None, until=None, concepts=("P", "I")):
         for b in chosen:
             qt = [x for x in (_quote(t) for t in b["terms"]) if x]
             pm = ["%s[tiab]" % t for t in qt] + ['"%s"[mh]' % str(m).replace('"', "") for m in b["mesh"]]
-            ep = list(qt) + ['MESH:"%s"' % str(m).replace('"', "") for m in b["mesh"]]
+            # Europe PMC: mezőmegjelölés nélkül a TELJES SZÖVEGBEN is keres (élő próba, BCG: 892 találat a
+            # cím/absztrakt szerinti 78 helyett, sok más témájú áttekintéssel) → TITLE_ABS (+ KW, MeSH)
+            ep = ["TITLE_ABS:%s" % t for t in qt] + ["KW:%s" % t for t in qt] + \
+                ['MESH:"%s"' % str(m).replace('"', "") for m in b["mesh"]]
             pm_parts.append("(%s)" % " OR ".join(pm))
             ep_parts.append("(%s)" % " OR ".join(ep))
             if qt:
@@ -171,9 +178,38 @@ def _date_str(value, start=True):
     raise ValueError("Érvénytelen dátum: %r (várt: ÉÉÉÉ, ÉÉÉÉ-HH vagy ÉÉÉÉ-HH-NN)." % value)
 
 
+def _fold(text):
+    """Kisbetűs, ékezet nélküli alak (``Calmette-Guérin`` → ``calmette-guerin``)."""
+    t = unicodedata.normalize("NFKD", text or "")
+    return "".join(ch for ch in t if not unicodedata.combining(ch)).lower()
+
+
 def _tokens(text):
-    return [w for w in re.findall(r"[a-z0-9][a-z0-9-]{2,}", (text or "").lower())
+    return [w for w in re.findall(r"[a-z0-9][a-z0-9-]{2,}", _fold(text))
             if w not in _STOP and w not in ("and", "not")]
+
+
+_SUFFIXES = ("ations", "ation", "ions", "ion", "ings", "ing", "ies", "ous", "us", "es", "ed", "al", "e", "s")
+
+
+def _stem(word):
+    """Könnyű angol szótő a relevancia-egyezéshez (``vaccine``/``vaccination`` → ``vaccin``; ``bacillus``/
+    ``bacille`` → ``bacill``). Csak a rangsorhoz — a lekérdezést nem módosítja."""
+    for suf in _SUFFIXES:
+        if word.endswith(suf) and len(word) - len(suf) >= 4:
+            return word[:-len(suf)]
+    return word
+
+
+def _term_in(term, stems):
+    toks = [_stem(w) for w in _tokens(term)]
+    return bool(toks) and all(any(tt.startswith(w) for tt in stems) for w in toks)
+
+
+def _group_hits(rel_terms, text):
+    """Fogalomblokkonként: szerepel-e a blokk valamelyik kifejezése a szövegben (szótő-egyezéssel)."""
+    stems = set(_stem(w) for w in _tokens(text))
+    return [any(_term_in(t, stems) for t in group) for group in rel_terms or []]
 
 
 # ---------------------------------------------------------------------------------------------
@@ -923,6 +959,10 @@ def _candidate(cluster, rel_terms, today, weights, http):
             k_reported["also"] = k["also"]
         preview.append({"about": "k_reported", "quote": k["quote"], "locator": k["locator"]})
     preview.extend(sig_quotes)
+    # hibajegyzék/helyesbítés (élő próba: „Corrigendum: A Meta-Analysis of …" önálló jelöltként jelent meg)
+    erratum = "Published Erratum" in pub_types or bool(re.match(r"^\s*(corrigendum|erratum|correction|"
+                                                                r"retraction note|expression of concern)\b",
+                                                                title or "", re.I))
     is_meta = _is_meta(title, pub_types)
     systematic = _is_systematic(title, pub_types) or is_meta or is_cochrane
     signals = {"meta_analysis": is_meta, "protocol_registered": sig["protocol_registered"],
@@ -949,14 +989,21 @@ def _candidate(cluster, rel_terms, today, weights, http):
         "search_date": search_date,
         "k_reported": k_reported,
         "fulltext": fulltext,
-        "flags": {"retracted": retracted, "narrative_suspect": not systematic, "id_conflicts": conflicts,
+        "flags": {"retracted": retracted, "narrative_suspect": not systematic and not erratum,
+                  "erratum": erratum, "id_conflicts": conflicts,
                   "updates": updates, "enriched_from": sorted(set(s for s, rec, _a, _r, _sid in cluster
                                                                   if rec.get("_enriched"))),
                   "unverified_live": any(s == "scopus" for s in found_in)},
         "proposal": None,
         "evidence_preview": preview,
     }
-    if retracted:
+    if erratum and not retracted:
+        cand["proposal"] = {"action": "exclude", "reason": {
+            "hu": "Hibajegyzék / helyesbítés (erratum, corrigendum), nem önálló áttekintés — kizárás javasolt; "
+                  "az eredeti cikket válaszd ki (ha a listában van).",
+            "en": "Erratum/corrigendum notice, not a review in itself — exclusion proposed; select the original "
+                  "article instead."}}
+    elif retracted:
         cand["proposal"] = {"action": "exclude", "reason": {
             "hu": "Visszavont közlemény (Retracted Publication / RetractionIn) — kizárás javasolt.",
             "en": "Retracted publication — exclusion proposed."}}
@@ -966,6 +1013,8 @@ def _candidate(cluster, rel_terms, today, weights, http):
                   "(narratív áttekintés lehet) — ellenőrizd.",
             "en": "Title and publication type do not clearly indicate a systematic review or meta-analysis "
                   "(may be a narrative review) — please check."}}
+    # csak blokkonkénti igen/nem kerül a jelöltbe (az absztrakt maga nem — N4); a to_review_doc nem menti
+    cand["_abstract_hits"] = _group_hits(rel_terms, abstract) if abstract else []
     _rank(cand, rel_terms, today, weights)
     return cand
 
@@ -992,18 +1041,10 @@ def _fallback_date(cluster, bib):
 
 
 def _rank(cand, rel_terms, today, weights):
-    title = (cand["bib"].get("title") or "").lower()
-    title_tokens = set(_tokens(title))
     if rel_terms:
-        hits = 0
-        for group in rel_terms:
-            ok = False
-            for t in group:
-                toks = _tokens(t)
-                if toks and all(any(tt.startswith(w) for tt in title_tokens) for w in toks):
-                    ok = True
-                    break
-            hits += 1 if ok else 0
+        in_title = _group_hits(rel_terms, cand["bib"].get("title") or "")
+        in_abs = cand.get("_abstract_hits") or [False] * len(rel_terms)
+        hits = sum(1.0 if t else (0.5 if (i < len(in_abs) and in_abs[i]) else 0.0) for i, t in enumerate(in_title))
         relevance = hits / float(len(rel_terms))
     else:
         relevance = None
@@ -1034,7 +1075,7 @@ def _rank(cand, rel_terms, today, weights):
         "signals": round(sig_n / 4.0, 4),
     }
     score = sum(weights.get(k2, 0.0) * (v or 0.0) for k2, v in comps.items())
-    if cand["flags"]["retracted"]:
+    if cand["flags"]["retracted"] or cand["flags"].get("erratum"):
         score = 0.0
     cand["rank"] = {"score": round(score, 4), "components": comps}
 
@@ -1133,4 +1174,11 @@ def to_review_doc(cand, extracted_by="tool:headhunter"):
         doc["search_date"] = search_date
     if k_rep is not None:
         doc["k_reported"] = k_rep
+    # a gépi jelzések és a javaslat (pl. visszavont / hibajegyzék / narratív gyanú) a fájlban is megmaradnak —
+    # korábban csak a find kimenetében látszottak (additív mezők)
+    fl = cand.get("flags") or {}
+    doc["flags"] = dict((k, fl.get(k)) for k in ("retracted", "erratum", "narrative_suspect", "updates",
+                                                  "unverified_live") if k in fl)
+    if cand.get("proposal"):
+        doc["proposal"] = cand["proposal"]
     return doc

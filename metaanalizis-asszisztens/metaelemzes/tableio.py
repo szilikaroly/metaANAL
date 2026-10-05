@@ -801,7 +801,8 @@ def resolve_column(name, meta, rows=None):
 _YES = {"igen", "yes", "y", "i", "true", "1"}
 _NO = {"nem", "no", "n", "false", "0"}
 _ROB = {
-    "high": {"high", "magas", "high risk", "magas kockazat", "serious", "sulyos", "critical", "kritikus"},
+    "high": {"high", "magas", "high risk", "magas kockazat", "serious", "sulyos", "critical", "kritikus",
+             "very high", "nagyon magas"},      # ROBINS-E 'very high' (v1)
     "low": {"low", "alacsony", "low risk", "alacsony kockazat"},
     "some": {"some", "some concerns", "unclear", "unclear risk", "kozepes", "moderate", "nehany aggaly",
              "nem egyertelmu", "bizonytalan"},
@@ -853,6 +854,7 @@ _ROB_LEVEL = {
     "high": {"high", "magas", "high risk", "magas kockazat"},
     "serious": {"serious", "sulyos"},
     "critical": {"critical", "kritikus"},
+    "very high": {"very high", "nagyon magas"},
     "no information": {"no information", "no info", "nincs informacio", "nincs adat"},
 }
 

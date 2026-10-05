@@ -16,6 +16,7 @@ magyarul kommunikálj vele, a kéziratba szánt szövegeket angolul írd. Szakma
 | Számítási motor (csak Python standard könyvtár, metaforral validált) | `python metaanalizis-asszisztens/ma.py <parancs>` (ha nincs `python`, akkor `python3`; Windows-on `py -3` is lehet) |
 | Tudásbázis (SQLite + FTS5) | `python metaanalizis-asszisztens/ma.py kb search "…"`, `kb rules --stage S08 --agent planner`, `kb checklist PRISMA2020` (továbbá `PRISMA_P`, `PRISMA_S`, `PREFLIGHT`, `REVIEWER`, `EVALUATOR`, `AMSTAR2`, `GRADE`), `kb show <ID>`, `kb sql "SELECT …"` |
 | Projektnapló (SQLite) | `python metaanalizis-asszisztens/ma.py project status <mappa>`, `project log …`, `project finding …`, `project checkpoint …`, `project audit <mappa> --json` (X-szabályok) |
+| Értékelés, GRADE, kettős kinyerés (v1) | `ma.py appraisal …` (RoB 2, ROBINS-I/E, QUADAS-2, NOS, QUIPS, JBI, PROBAST+AI, TRIPOD+AI, AMSTAR 2: teljesség, implikált ítélet, κ, konszenzus, forgalmi lámpa, `rob`-szinkron), `ma.py grade advice|save|record|sof|amstar2`, `ma.py kettos compare|reconcile|report|status`, `ma.py prisma check … --studies … --emit-flowchart …`, `ma.py figure --kind cumulative|bubble|loo` |
 | MA-munkapad (helyi böngészős felület) | `python metaanalizis-asszisztens/ma.py gui --project <mappa>` — lásd lent: „MA-munkapad” |
 | Alágensek | `ma-tervezo`, `ma-ellenorzo`, `ma-ertekelo` (Agent eszközzel hívod őket) |
 | Eszköz- és hozzáférés-lista | általános: `metaanalizis-asszisztens/ESZKOZOK_ES_HOZZAFERESEK.md`; projektenként: `<projekt>/00_protokoll/eszkozok_hozzaferesek.md` (a ma-tervezo írja, a `kb sql "SELECT * FROM tool"` és `kb checklist PREFLIGHT` alapján) |
@@ -29,10 +30,11 @@ S14 jelentés (PRISMA 2020).
 
 1. **Semmilyen számot nem találsz ki.** Minden hatásméret-bemenet a forrásból (oldal/táblázat megjelölésével)
    vagy dokumentált konverzióból (`ma.py convert …`) származik; a becsült értékek `estimated=igen` jelölést kapnak.
-2. **Minden számítást a motor végez** (`ma.py analyze`), nem fejben vagy ad hoc kóddal. Ha a motor nem tud
+2. **Minden számítást a motor végez** (`ma.py analyze`; a GRADE-tanács, az OIS, a SoF abszolút hatásai és az AMSTAR 2
+   besorolás a v1-től: `ma.py grade advice|sof|amstar2`), nem fejben vagy ad hoc kóddal. Ha a motor nem tud
    valamit, mondd ki, és javasolj validált eszközt (R metafor/meta). Egyetlen kivétel a tudásbázisban dokumentált,
-   a motor által nem számolt SoF-képletek köre — abszolút hatás más alapkockázatnál és NNT/NNH (GRADE-10a,
-   D-S13-012, EVALUATOR-03a): ezeket lépésenként kiírva (képlet, bemenetek forrással, eredmény) a SoF-lábjegyzetbe
+   a motor által nem számolt képletek köre — NNT/NNH (EVALUATOR-03a), illetve az abszolút hatás, ha nem a `grade sof`
+   számolta (GRADE-10a, D-S13-012): ezeket lépésenként kiírva (képlet, bemenetek forrással, eredmény) a SoF-lábjegyzetbe
    kell rögzíteni, és a `ma-ellenorzo` az S13-ban függetlenül újraszámolja (EVALUATOR-00).
 3. **Minden módszertani döntés a tudásbázisból indul**: előtte `kb rules`/`kb search`, utána
    `project log … --kb <szabály-ID-k> --strict`. Ha a --strict hibát ad, keresd meg az azonosítót (kb search /
@@ -87,10 +89,19 @@ fájlok változtak). Tipikus pontok:
   export esetén ugyanabban a futásban `--composer prisma-flow.json` is — az eltérő doboz vagy kizárásiok-bontás P017-hiba; P001–P017
   szabályok), kizárási okok a teljes szövegnél.
 - S05 adatkinyerés: `ma.py validate --data … --measure …`; a gyanús tételek (V011 SE/SD, V012 mértékegység,
-  V014 szélsőséges hatás) forrás-visszaellenőrzése.
+  V014 szélsőséges hatás) forrás-visszaellenőrzése. Kettős kinyerés: a két kinyerő táblája a
+  `03_adatok/kettos/<kimenet>.A.csv` és `.B.csv`; `ma.py kettos compare --project <mappa> --outcome <id>` cellánként
+  összeveti (valószínű ok és hatás a hatásméretre), az eltérésekről az ember dönt indoklással (`ma.py kettos reconcile …
+  --decisions d.json`, vagy a munkapad Kettős kinyerés képernyője); feloldatlan eltérés mellett az S08 PASS nem adható
+  (X009).
 - S06 RoB: eszköz megfelelősége (RoB 2 RCT-re, ROBINS-I nem randomizáltra, ROBINS-E expozíciós megfigyelésesre — a NOS
   csak doménenként, összpontszám nélkül —, QUADAS-2
-  diagnosztikusra; predikciós modellnél PROBAST+AI — erre a `probast-tripod-ai` skill használható).
+  diagnosztikusra; predikciós modellnél PROBAST+AI — erre a `probast-tripod-ai` skill is használható). Javaslat:
+  `ma.py appraisal route "<elrendezés>"`. Az értékelések JSON-ként a `04_torzitas_kockazat/appraisals/` mappába kerülnek
+  (munkapad-űrlap, vagy `ma.py appraisal save`); két független emberi értékelő, egyezés: `ma.py appraisal agreement`
+  (κ CI-vel), konszenzus: `ma.py appraisal consensus`; a tábla `rob` oszlopa a végső összítéletekből:
+  `ma.py appraisal sync-rob <mappa> --outcome <id>` (javaslat; `--apply` a felhasználó jóváhagyásával). A `ma-ertekelo`
+  AI-vázlata (`origin: ai_draft`) csak emberi jóváhagyással válik késszé, és nem második értékelő.
 - S07–S12 elemzés: `ma.py analyze --data … --measure … --project <mappa> --out <mappa>/05_elemzes/<kimenet>/primary`
   (bináris OR-nál a kis-vizsgálat teszt Harbord/Peters, nem a klasszikus Egger; SMD-nél a klasszikus Egger csak
   tájékoztató — D-S11-005);
@@ -106,7 +117,10 @@ fájlok változtak). Tipikus pontok:
 
 ### 3. Értékelés → `ma-ertekelo` (kimenetenként, a következtetések megírása ELŐTT)
 GRADE (5 leminősítési szempont; megfigyeléses vizsgálatoknál felminősítés), Summary of Findings táblázat,
-klinikai jelentőség (MCID, abszolút hatás), AMSTAR 2 önellenőrzés. Rögzíti: `project grade …`.
+klinikai jelentőség (MCID, abszolút hatás), AMSTAR 2 önellenőrzés. A számokat és a doménenkénti javaslatot a motor adja
+(`ma.py grade advice`, `grade sof`, `grade amstar2`); az ítélet az értékelőé, és ahol szubjektív (pl. indirektség, a
+„gyanított” publikációs torzítás feloldása 0 vagy −1 között — 4. döntés), a felhasználóé. Rögzíti: `ma.py grade save` +
+`ma.py grade record` (vagy `project grade …`).
 
 ### 4. Végső ellenőrzés → `ma-ellenorzo` **final módban**
 Teljes reprodukció (adat → riport → kézirat számai), PRISMA 2020 tételenként, protokolltól való eltérések,
@@ -121,9 +135,10 @@ Végül: `project export <mappa>` → döntési és ellenőrzési napló a kieg�
 A munkapad böngészős felület ugyanahhoz a projektmappához és naplóhoz: a számokat ott is a motor adja, a felület és az
 ágensek ugyanazokat a fájlokat látják (amit az egyik rögzít, a másik is látja).
 - **Mikor ajánld:** az emberi lépésekhez — adatkinyerés élő validálással és forrásoldal-jelöléssel, átváltások, az
-  elemzés kipróbálása és rögzítése (commit-futás), a napló, a kapuk és a PRISMA-számok áttekintése (a későbbi
-  változatokban a RoB-űrlap, a GRADE/SoF és az ábra-export is) —, és ha a felhasználó az eredményt vizuálisan akarja
-  átnézni (interaktív forest, lefúrás a vizsgálatig). Amit a felület még nem tud, azt a parancssoros úton végezd.
+  elemzés kipróbálása és rögzítése (commit-futás), a napló, a kapuk és a PRISMA-számok áttekintése, a v1-től a kettős
+  kinyerés egyeztetése, a RoB / PROBAST+AI / TRIPOD+AI / AMSTAR 2 űrlapok (konszenzus-nézet, forgalmi lámpa), a
+  GRADE / SoF és az ábra-export is —, és ha a felhasználó az eredményt vizuálisan akarja átnézni (interaktív forest,
+  kumulatív és buborék-ábra, lefúrás a vizsgálatig). Amit a felület még nem tud, azt a parancssoros úton végezd.
 - **Indítás** a háttérben (a szerver a leállításig vagy 4 óra tétlenségig fut):
   `python metaanalizis-asszisztens/ma.py gui --project <mappa>`. A böngésző magától megnyílik; ha nem, a kiírt helyi
   címet (`http://127.0.0.1:<port>/#launch=…`) add át a felhasználónak. Az indítókód egyszer használható és 60 s-ig
@@ -153,8 +168,8 @@ A pluginokra névvel hivatkozz (ne slash-paranccsal a kódban/szövegben); ha eg
 | Plugin | Mire használd ebben a folyamatban |
 |---|---|
 | `composer` | irodalomgyűjtés és 5D bibliográfiai validálás; **PRISMA 2020 számok** (`prisma` → `prisma-flow.json`, PRISMA-S keresési napló) és **PROSPERO-rekord** (`protocol`). Ha használod, ez a PRISMA-számok egyetlen forrása; a `02_szures/prisma_folyamat.md` csak ellenőrzés. |
-| `validator` | torzítási kockázat eszközválasztása (`route`) és kitöltés-ellenőrzés (RoB 2, ROBINS-I, NOS, QUADAS-2 …); **GRADE** és **AMSTAR 2** összesítés; PROBAST+AI / TRIPOD+AI predikciós modelleknél. A GRADE publikációs torzítás-doménjét kézzel ellenőrizd (ismert hiba: a „suspected” nem minősít le). |
-| `figure-forge` | a motor `forest.svg` / `funnel.svg` ábráinak **`audit`-ja** (szerkeszthető szöveg, betűkészlet, tipográfia); PRISMA-folyamatábra rajzolása a composer által adott specifikációból. A forest/funnel rajzolását NE bízd rá (nincs gyémánt, PI, alcsoport, funnel). |
+| `validator` | torzítási kockázat eszközválasztása (`route`) és kitöltés-ellenőrzés (RoB 2, ROBINS-I, NOS, QUADAS-2 …); **GRADE** és **AMSTAR 2** összesítés; PROBAST+AI / TRIPOD+AI predikciós modelleknél. A motor v1-ben ugyanezek az eszközök natívan is megvannak (`ma.py appraisal`; forrás: validator 1.0.0); a validator GRADE publikációs torzítás-doménjét kézzel ellenőrizd (ismert hiba: a „suspected” nem minősít le — a motor GRADE-tára ezt kikényszeríti). |
+| `figure-forge` | a motor `forest.svg` / `funnel.svg` ábráinak **`audit`-ja** (szerkeszthető szöveg, betűkészlet, tipográfia); PRISMA 2020 folyamatábra rajzolása a motor specifikációjából (`ma.py prisma check … --studies 03_adatok/studies.json --emit-flowchart <ki.json>`, majd `ff.py flowchart --spec <ki.json> --width double`). A forest/funnel rajzolását NE bízd rá (nincs gyémánt, PI, alcsoport, funnel). |
 | `presubmit` | kézirat-ellenőrzés beadás előtt; a `claims` ellenőrzés a CI nélküli hatásbecsléseket jelzi — a becslést mindig így írd: „RR 0.49 (95% CI 0.33–0.73)”. |
 
 **Adatvédelem:** a `vault` plugin a `~/Documents/claude` alatti projekteket automatikusan GitHubra menti — betegszintű vagy
@@ -177,4 +192,6 @@ ellenőrző nem fogadja el a javítást: `project resolve <mappa> <id> --status 
 - Eredmény-közlés: becslés [95% CI], p, k, résztvevők száma, I², τ², predikciós intervallum (RE esetén).
 - Arány-mértékek visszatranszformálva; a skála megnevezve.
 - Óvatos, nem oksági nyelvezet megfigyeléses adatnál; a „nincs hatás” helyett „nem igazolt hatás / pontatlan becslés”.
-- Ábrák: `forest.svg`, `funnel.svg`; a `plot_data.json` külső ábrakészítőhöz (pl. figure-forge) is átadható.
+- Ábrák: `forest.svg`, `funnel.svg` (k ≥ 3: `doi.svg`; kumulatív elemzésnél `cumulative.svg`, egyetlen folytonos
+  moderátoros meta-regressziónál `bubble.svg`; más nyelven: `ma.py figure --plot <futás> --kind … --lang en`); a
+  `plot_data.json` külső ábrakészítőhöz (pl. figure-forge) is átadható.

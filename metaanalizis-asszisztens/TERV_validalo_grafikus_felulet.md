@@ -1,6 +1,6 @@
 # MA-munkapad — validáló és grafikus felület a metaanalízis-motorhoz, a figure-forge és a validator (PROBAST+AI / TRIPOD+AI) pluginnal vagy önállóan
 
-**Végleges terv** · Dátum: 2026-10-04 · Állapot: **elfogadva** (2026-10-04, a 11. fejezet ajánlott válaszaival); az MVP építése folyamatban
+**Végleges terv** · Dátum: 2026-10-04 · Állapot: **elfogadva** (2026-10-04, a 11. fejezet ajánlott válaszaival); az MVP kész; a v1 motor-oldala (E4c, E6, E8 teljes, E9, E10, natív értékelő eszközök, homlokzat és CLI) 2026-10-05-én integrálva, a v1 felület-oldali illesztése folyamatban
 
 Alapja: három független javaslat (*local-server-first*, *offline-first*, *plugin-ecosystem-first*) és két független
 bírálat. Mindkét bíráló a **local-server-first** utat választotta (41/50 és 40/50 pont; a plugin-út 38 és 39, az
@@ -1114,10 +1114,32 @@ parancsát. Így a képernyő, az export és a kézirat garantáltan ugyanazt a 
       "key_label": {"$ref": "#/$defs/text"}, "axis": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/axis"}]},
       "entries": {"type": "array", "items": {"type": "object", "properties": {
         "label": {"type": "string"}, "key_text": {"type": "string"}, "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
-        "i2_text": {"$ref": "#/$defs/text"}, "tau2_text": {"$ref": "#/$defs/text"}}}}}}]},
+        "i2_text": {"$ref": "#/$defs/text"}, "tau2_text": {"$ref": "#/$defs/text"},
+        "added_row_uid": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}, "row_index": {"type": "integer"}, "k": {"type": "integer"}}}},
+      "order": {"type": "object", "description": "E4c: a sorrend — oszlop, növekvő, számként vagy természetes rendezéssel, a hiányzó kulcsúak a végén",
+                "properties": {"column": {"type": "string"}, "label": {"$ref": "#/$defs/text"}, "direction": {"enum": ["ascending"]},
+                  "sort": {"enum": ["numeric","natural"]}, "missing_last": {"type": "boolean"}, "n_missing": {"type": "integer"},
+                  "mixed_types": {"type": "boolean"}, "row_uids": {"type": "array", "items": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}},
+                  "text": {"$ref": "#/$defs/text"}}},
+      "note": {"$ref": "#/$defs/text"}}}]},
     "bubble": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["moderator","points","line","band"],
-      "properties": {"band": {"description": "[[x, alsó, felső], …] — a motor számolja a koefficiens-kovarianciából"},
-                     "coef_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}}]},
+      "properties": {"band": {"type": "array", "items": {"type": "array", "minItems": 3, "maxItems": 3},
+                              "description": "[[x, alsó, felső], …] — a motor számolja a koefficiens-kovarianciából"},
+                     "coef_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+                     "moderator": {"oneOf": [{"type": "string"}, {"type": "object", "required": ["name","type"], "properties": {
+                       "name": {"type": "string"}, "label": {"$ref": "#/$defs/text"}, "type": {"enum": ["continuous","categorical"]}}}]},
+                     "points": {"type": "array", "items": {"type": "object", "properties": {
+                       "row_uid": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}, "x": {"type": "number"}, "y": {"type": "number"},
+                       "weight_pct": {"type": "number"}, "x_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+                       "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}, "weight_text": {"$ref": "#/$defs/text"}}}},
+                     "line": {"type": "array", "items": {"type": "array", "minItems": 2, "maxItems": 2}, "description": "[[x, ŷ], …]"},
+                     "pi_band": {"type": "array", "items": {"type": "array", "minItems": 3, "maxItems": 3},
+                                 "description": "[[x, alsó, felső], …] — predikciós sáv: ŷ ± krit·√(se² + τ²)"},
+                     "model": {"type": "object", "properties": {"test": {"enum": ["z","knha"]}, "df": {"type": ["integer","null"]},
+                       "crit": {"type": "number"}, "level": {"type": "number"}, "tau2": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
+                     "vcov": {"type": "array", "items": {"type": "array"}, "description": "az együttható-kovariancia (Knapp–Hartungnál s²-tel skálázva)"},
+                     "x_axis": {"$ref": "#/$defs/axis"}, "y_axis": {"$ref": "#/$defs/axis"},
+                     "band_label": {"$ref": "#/$defs/text"}, "pi_band_label": {"$ref": "#/$defs/text"}, "note": {"$ref": "#/$defs/text"}}}]},
     "notes": {"type": "array", "items": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}
   } }
 ```
@@ -1133,6 +1155,11 @@ funnel/Doi/LOO/kumulatív/befolyás tengelyeit (`$defs/axis`) és kész szövege
 kétnyelvű alakját (`text_i18n`). A `studies[].source` (dokumentum, oldal, hely) a tábla forrás-oszlopaiból, ennek
 hiányában az eredet-oldalfájlból (4.8) jön — így a lefúrás a PDF-oldalig a kinyerésben rögzített eredetből működik.
 Kötelező mező nem változott; a régebbi v2-olvasók az új mezőket figyelmen kívül hagyják.
+
+**E4c (v1, 2026-10-05).** A `cumulative` blokk `order` (rendezés) és `note` mezője és a sorok `added_row_uid` /
+`row_index` / `k` mezője; a `bubble` blokk leírása (moderátor, súlyozott pontok, illesztett egyenes, konfidencia- és
+predikciós sáv a motor rácsán a koefficiens-kovarianciából, `model.crit`, `vcov`, tengelyek, kész szövegek). A
+szöveges `bubble.moderator` továbbra is érvényes.
 
 ### 4.7 Átváltás — `szk.ma.convert-request/v1` → `szk.ma.convert-result/v1`
 
@@ -2204,6 +2231,16 @@ dokumentációt, tartalékot nem; +15% javasolt. A plugin-PR-ek kicsik, visszafe
 | Kumulatív + buborék (E4c: kovariancia, sáv, metafor `predict()` referencia), táblavirtualizálás | motor + munkapad | 0,5 |
 | figure-forge F2 (`meta`) + F3 (`rob`) + F5 (`--json`) + export-panel + szerver-újraellenőrzés | figure-forge + munkapad | 1,0 |
 | composer C1/C2/C4 + élő PRISMA + E9 (`--studies`, PRISMA 2020 folyamatábra-spec); E8 teljes (X002–X022) + FINAL audit-kapu | composer + motor + munkapad | 0,5 |
+
+> **Állapot (2026-10-05, motor):** a v1 motor-tételei elkészültek és a homlokzatra / CLI-re kötve:
+> E4c (`cumulative` / `bubble` blokk, `cumulative.svg` / `bubble.svg`, a sávok metafor `predict()`-tel egyeznek; `ma.py
+> figure`), E6 (`metaelemzes/kettos.py`; `ma.py kettos compare|reconcile|report|status`), E8 teljes (X001–X022, S08- és
+> FINAL-kapu), E9 (`prisma check --studies`, `--emit-flowchart` → `szk.ff.flowchart/v1`), E10 (`grade_help`: tanács, OIS,
+> SoF, AMSTAR 2 mindkét konvencióval; GRADE-tár a 4. döntéssel; `ma.py grade …`), valamint natív eszköz-definíciók
+> (`metaelemzes/instruments/`, a validator 1.0.0-ból, `szk.instrument/v1`) és értékelés-motor (`metaelemzes/appraisal.py`:
+> teljesség — PROBAST+AI menetenként 16/34 —, implikált ítélet, X017, κ, konszenzus, forgalmi lámpa, `rob`-szinkron, AI-vázlat
+> a 6. döntés szerint; `ma.py appraisal …`). A munkapad a homlokzat-függvényeket név szerint köti; a felület-oldali
+> illesztés (fixture-újragenerálás, az AI-vázlat jóváhagyásának motor-ellenőrzése) folyamatban.
 
 **Elfogadás:**
 

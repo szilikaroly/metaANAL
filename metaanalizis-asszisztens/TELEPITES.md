@@ -233,6 +233,24 @@ Parancssor nélkül: Windowson kattints duplán a `metaanalizis-asszisztens` map
 - Ha az Elemzés oldal azt írja, hogy még nincs kimenet, a „Kimenet felvétele” gombbal add meg (név, adattábla,
   hatásméret) — lásd [6. pont](#6-indítás).
 
+**A v1 újdonságai** (a munkapadon és parancssorból is; a számok mindkét úton a motoréi):
+
+- **Kettős kinyerés:** a második kinyerő a saját gépén dolgozik, a táblát fájlként küldi (11. fejezet, 5. döntés); a
+  két tábla a projekt `03_adatok/kettos/<kimenet>.A.csv` és `.B.csv` helyére kerül. Összevetés és egyeztetés: a munkapad
+  Kettős kinyerés képernyője, vagy `python ma.py kettos compare --project <projektmappa> --outcome o1`. Amíg feloldatlan
+  eltérés van, az S08 (szintézis) szakasz nem zárható.
+- **Értékelés:** RoB 2, ROBINS-I, ROBINS-E, QUADAS-2, NOS, QUIPS, JBI, PROBAST+AI, TRIPOD+AI és AMSTAR 2 űrlap magyar
+  súgóval (`python ma.py appraisal instruments`); két független értékelő egyezése (κ), konszenzus, forgalmi lámpa, a
+  kinyerési tábla `rob` oszlopának szinkronja. Claude csak **AI-vázlatot** készíthet (publikált cikkre, tételenként
+  idézettel és egyszerű nyelvű indoklással); azt neked kell jóváhagynod, és sosem számít második értékelőnek.
+- **GRADE és SoF:** a motor doménenként javaslatot ad „Miért?” magyarázattal (`python ma.py grade advice --run <futás>
+  --project <projektmappa>`), a döntés a tiéd; a SoF-táblát a motor számolja (`python ma.py grade sof …`). A publikációs
+  torzítás „gyanított” ítéletét neked kell feloldanod (0 vagy −1, indoklással), addig a GRADE nem rögzíthető.
+- **PRISMA 2020 folyamatábra** a figure-forge-hoz: `python ma.py prisma check --composer prisma-flow.json --studies
+  03_adatok/studies.json --emit-flowchart folyamatabra.json`.
+- **Ábrák:** kumulatív elemzésnél `cumulative.svg`, egyetlen folytonos moderátoros meta-regressziónál `bubble.svg`;
+  angolul vagy rétegekkel: `python ma.py figure --plot <futásmappa> --kind bubble --lang en --out bubble_en.svg`.
+
 **Pillanatkép és audit-csomag** (a munkapad indítása nélkül is; szintén a `metaanalizis-asszisztens` mappában):
 
 ```bash

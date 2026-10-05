@@ -208,9 +208,12 @@ class _Base(unittest.TestCase):
 class TestContract(_Base):
     def test_rules_metadata_complete(self):
         mvp = {"X001", "X003", "X005", "X006", "X010", "X013", "X014", "X016", "X022"}
-        self.assertEqual(set(A.RULES), mvp)
-        self.assertEqual(set(A.RULE_STAGES), mvp)
-        self.assertEqual(set(A.KB_REFS), mvp)
+        # v1 (E8 teljes): az MVP-szabályok megvannak; a teljes X001–X022 halmazt a test_v1_audit.TestMetadata őrzi
+        self.assertTrue(mvp <= set(A.RULES))
+        self.assertTrue(mvp <= set(A.RULE_STAGES))
+        self.assertTrue(mvp <= set(A.KB_REFS))
+        self.assertEqual(set(A.RULES), set(A.RULE_STAGES))
+        self.assertEqual(set(A.RULES), set(A.KB_REFS))
         for code, (sev, title, advice, src) in A.RULES.items():
             self.assertRegex(code, r"^X\d{3}$")
             self.assertIn(sev, ("error", "warning", "info"))
@@ -222,7 +225,7 @@ class TestContract(_Base):
                           "X010": "warning", "X013": "error", "X014": "error", "X016": "warning", "X022": "error"})
         self.assertFalse(set(A.RULES) & set(validate.RULES) | set(A.RULES) & set(prisma.RULES))
         table = A.rules_table()
-        self.assertEqual([r["code"] for r in table], sorted(mvp))
+        self.assertEqual([r["code"] for r in table if r["code"] in mvp], sorted(mvp))
         self.assertEqual(next(r for r in table if r["code"] == "X001")["escalation"],
                          {"from": "S08", "before": "warning"})
 
