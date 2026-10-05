@@ -1196,8 +1196,11 @@ def default_fulltext_cache_dir(env=None):
 
 
 def _looks_like_fulltext(body):
-    head = body[:400000] if isinstance(body, bytes) else str(body)[:400000].encode("utf-8", "replace")
-    return b"<body" in head and (b"<sec" in head or b"<article-meta" in head)
+    """Teljes szöveg-e (JATS ``<body>`` + ``<sec>``/``<article-meta>``) — a projekt-gyorsítótár biztonsági hálója (N4).
+    A TELJES választ nézzük (felülvizsgálat: korábban csak az első 400 kB-ot, így egy hosszú szerzőlistájú/front-részű
+    JATS teljes szövege a projektmappába kerülhetett volna)."""
+    data = body if isinstance(body, bytes) else str(body).encode("utf-8", "replace")
+    return b"<body" in data and (b"<sec" in data or b"<article-meta" in data)
 
 
 def _parse_retry_after(value, now):
