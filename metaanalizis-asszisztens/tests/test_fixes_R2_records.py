@@ -95,7 +95,7 @@ class TestNegativeDerivedBoxes(_Tmp):
         self.assert_no_negative(res)
         code, so, se = run_cli("prisma", "check", "--A1", "100", "--D1", "10", "--B", "90", "--C", "95")
         self.assertEqual(code, 1, so + se)
-        self.assertIn("excluded_screening (C) = 95 > screened (B) = 90", so)
+        self.assertIn("Kizárt rekordok (C) = 95 > Szűrt rekordok (B) = 90", so)
 
     def test_NF_01_excluded_reports_more_than_assessed_without_J(self):
         res = P.check_flow(dict(self.MAIN, excluded_eligibility=30,
@@ -134,7 +134,7 @@ class TestNegativeDerivedBoxes(_Tmp):
                                "--F", "0", "--G", "10", "--H", "12", "--reasons", "a: 12")
         self.assertEqual(code, 1, so + se)
         self.assertIn("HIBÁS", so)
-        self.assertIn("excluded_eligibility (H) = 12 > assessed (G) = 10", so)
+        self.assertIn("Kizárt jelentések (H) = 12 > Értékelt jelentések (G) = 10", so)
 
     def test_KBP_04_prisma2009_duplicates_more_than_identified(self):
         res = P.check_flow({"records_identified_database_searching": 50, "duplicates_removed": 60}, "PRISMA2009")
@@ -180,7 +180,7 @@ class TestThousandsSeparators(_Tmp):
                              "(n = H": "35 (wrong design: 20; wrong outcome: 15)", "(n = I)": "13 / 13"})
         code, so, se = self.md_check(fill_template(vals))
         self.assertEqual(code, 1, so + se)
-        self.assertIn("screened (B) = 9999", so)
+        self.assertIn("Szűrt rekordok (B) = 9999", so)
 
     def test_KBP_01_grouped_D_H_and_JI_rows(self):
         md = ("| Szűrés előtt eltávolítva: duplikátumok (D1), automatikusan kizárt (D2), egyéb (D3) | 1 010 / 0 / 0 | |\n"
@@ -197,7 +197,7 @@ class TestThousandsSeparators(_Tmp):
         code, so, se = self.md_check(fill_template(dict(BASE, **{"(n = B)": "2.5"})))
         self.assertEqual(code, 1, so + se)
         self.assertIn("[P001]", so)
-        self.assertIn("screened (B)", so)
+        self.assertIn("Szűrt rekordok (B)", so)
         # a gondolatjel / n/a kitöltetlennek számít
         flow = P.parse_markdown_table("| Azonosított rekordok — regiszterek (n = A2) | – |  |\n"
                                       "| Szűrt rekordok (n = B) | n/a | |\n")
@@ -257,7 +257,7 @@ class TestNoReasonExclusions(_Tmp):
                                  ([{"count": 15}], 15), ({"unspecified": 15}, 15)):
             details, res = self.p008(reasons)
             self.assertTrue(res.ok)
-            self.assertEqual(details, ["excluded_eligibility (H) = 15, ebből %d kizárás ok nélkül" % missing],
+            self.assertEqual(details, ["Kizárt jelentések (H) = 15, ebből %d kizárás ok nélkül" % missing],
                              reasons)
         details, _ = self.p008({"wrong population": 10, "wrong outcome": 5})
         self.assertEqual(details, [])

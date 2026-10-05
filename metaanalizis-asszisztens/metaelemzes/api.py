@@ -17,13 +17,15 @@ Minden függvény ugyanazt a JSON-képes dict-et / listát adja, mint a megfelel
                                            ma.py kb search|show|rules|checklist --json
 
 Továbbá: engine_info() (verzió, önteszt, mértékek, opció- és szabály-metaadat), read_table / write_table
-(formátumtartó nyers tábla), validate_table (nyers cellák → szk.ma.validation/v1), analyze (spec → nézetmodell:
+(formátumtartó nyers tábla; a meta column_map-jével), column_map, validate_table (nyers cellák →
+szk.ma.validation/v1; project_dir-rel az 'acknowledged' a „Nem hiba” döntésekből), analyze (spec → nézetmodell:
 eredmények, szk.ma.plot/v2, szk.ma.run/v1; explore: semmit nem ír, commit: kimenetek + run.json + projektnapló),
 convert (szk.ma.convert-request/v1 → szk.ma.convert-result/v1), kb_rules_for_field, a spec-segédek és a projektnapló
 vékony burka. A számok kizárólag a motorban keletkeznek; a JSON-ban NaN/Infinity helyett null áll.
 """
 import collections
 import datetime
+import glob
 import hashlib
 import json
 import os
@@ -42,6 +44,8 @@ from .activity import (ActivityError, ActivityLog, FORBIDDEN_KEYS, LOG_RELPATH, 
 from .activity import SCHEMA as ACTIVITY_SCHEMA  # noqa: F401
 from .projekt import (CONVENTIONS, DATA_CLASSES, PROJECT_META, REVIEW_TYPES, JournalRev, check_actor,  # noqa: F401
                       journal_marks, load_project_meta, save_project_meta, validate_project_meta)
+# a projektnapló szókincse (a felület legördülői és sémái ugyanezt használják; ma_gui csak az api-n át importál)
+from .projekt import KNOWN_AGENTS, RESOLVE_STATUSES, SEVERITIES, VERDICTS  # noqa: F401
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENGINE_INFO_SCHEMA = "szk.ma.engine-info/v1"
@@ -146,15 +150,59 @@ def measures():
             for m in E.ALL_MEASURES]
 
 
+# Az elemzési opciók csoportja az űrlapon (UX-11): az alapbeállítások elöl, a bináris adat és az ábra-feliratok
+# külön; a replikációs / varianciaváltozat- és kimenet-kapcsolók (advanced) összecsukva. Ismeretlen kulcs: advanced.
+OPTION_GROUPS = collections.OrderedDict((
+    ("basic", ("measure", "model", "tau2", "ci", "pi", "level", "subgroup", "subgroup_prespecified", "moderators",
+               "cumulative", "outliers")),
+    ("binary", ("cc", "cc_to", "drop00", "mh", "peto", "rd_var")),
+    ("plot", ("title", "left_label", "right_label", "label_col", "plot_locale")),
+    ("advanced", ("smd_vtype", "j_method", "md_vtype", "glass_vtype", "gen_smd_vtype", "pft_backtransform", "h_centre",
+                  "common_tau2", "metareg_test", "metareg_robust", "metareg_tau2", "trimfill_estimator",
+                  "trimfill_trim_model", "egger_ci_dist", "begg_method", "begg_continuity", "bias_min_k")),
+    ("output", ("plot_schema", "svg_annotate")),
+))
+ADVANCED_GROUPS = ("advanced", "output")
+# A felület súgója ott, ahol az argparse-súgó parancssori kapcsolóra vagy a parancssori súgó más részére utal
+# („lásd lent”, „--spec”): a felhasználó a munkapadon nem lát kapcsolókat (UX-11). A „help” a CLI-é marad.
+GUI_HELP = {
+    "measure": {"hu": "Hatásméret: milyen mérőszámmal hasonlítjuk össze a csoportokat (bináris kimenetnél pl. RR, OR, RD; "
+                      "folytonosnál MD, SMD). Ettől függ, mely oszlopok kellenek az adattáblában.",
+                "en": "Effect measure: how the groups are compared (binary outcomes: e.g. RR, OR, RD; continuous: MD, SMD). "
+                      "It determines which columns the data table needs."},
+    "metareg_tau2": {"hu": "A meta-regresszió τ²-becslője (alap: a fenti τ²-becslő, ha ott értelmezett, különben REML); "
+                           "FE = inverz-variancia súlyok, τ² = 0.",
+                     "en": "The τ² estimator of the meta-regression (default: the τ² estimator above if defined there, "
+                           "otherwise REML); FE = inverse-variance weights, τ² = 0."},
+    "metareg_robust": {"hu": "Meta-regresszió robusztus (HC1 szendvics) standard hibákkal, t(k−p)-vel és robusztus "
+                             "F-próbával. Moderátor(ok) kellenek hozzá.",
+                       "en": "Meta-regression with robust (HC1 sandwich) standard errors, t(k−p) and a robust F test. "
+                             "Needs moderator(s)."},
+}
+
+
+def _option_group(key):
+    for g, keys in OPTION_GROUPS.items():
+        if key in keys:
+            return g
+    return "advanced"
+
+
 def option_metadata():
     """Az elemzési opciók metaadata az argparse-ból és a pipeline.DEFAULTS-ból GENERÁLVA (spec.option_table):
-    kulcs → {default, type, choices, cli (fő kapcsoló), flags, dest, kind, nullable, required, help}."""
+    kulcs → {default, type, choices, cli (fő kapcsoló), flags, dest, kind, nullable, required, help, group,
+    advanced, gui_help?}. A group/advanced az űrlap tagolása (alap, bináris, ábra, haladó, kimenet); a gui_help
+    {hu, en} a felület súgója ott, ahol a CLI-súgó parancssori kapcsolóra hivatkozik."""
     from . import spec as S
     out = collections.OrderedDict()
     for r in S.option_table():
-        out[r["key"]] = {"default": r["default"], "type": r["type"], "choices": r["choices"], "cli": r["flag"],
-                         "flags": r["flags"], "dest": r["dest"], "kind": r["kind"], "nullable": r["nullable"],
-                         "required": r["required"], "help": r["help"]}
+        g = _option_group(r["key"])
+        d = {"default": r["default"], "type": r["type"], "choices": r["choices"], "cli": r["flag"],
+             "flags": r["flags"], "dest": r["dest"], "kind": r["kind"], "nullable": r["nullable"],
+             "required": r["required"], "help": r["help"], "group": g, "advanced": g in ADVANCED_GROUPS}
+        if r["key"] in GUI_HELP:
+            d["gui_help"] = dict(GUI_HELP[r["key"]])
+        out[r["key"]] = d
     return _jsonable(out)
 
 
@@ -218,6 +266,13 @@ def kb_status(db=None):
     return out
 
 
+def kb_ensure_built(db=None):
+    """A tudásbázis felépítése, ha hiányzik vagy elavult (= kb.ensure_built; a munkapad indításkor hívja).
+    → True, ha most épült újra; különben a kb.ensure_built visszatérési értéke."""
+    from . import kb
+    return kb.ensure_built(db)
+
+
 def _fts5_ok():
     try:
         import sqlite3
@@ -279,24 +334,55 @@ def capabilities():
         "known_issues": issues})
 
 
+def stages():
+    """A munkafolyamat szakaszai (S00–S14) magyar és angol névvel — a tudásbázis 'stage' seed-jéből, adatbázis-
+    építés nélkül (a felület a szakaszkódok mellé a nevet is kiírja, UX-08): [{id, name: {hu, en}}]."""
+    from . import kb
+    out = []
+    try:
+        files = sorted(glob.glob(os.path.join(kb.SEED_DIR, "stages*.json")))
+        rows = []
+        for f in files:
+            with open(f, encoding="utf-8") as fh:
+                rows.extend(x for x in json.load(fh) if isinstance(x, dict) and x.get("stage_id"))
+    except (OSError, ValueError):
+        return out
+    for r in sorted(rows, key=lambda x: (x.get("ord") is None, x.get("ord"), x["stage_id"])):
+        out.append({"id": r["stage_id"], "name": {"hu": r.get("name_hu") or r["stage_id"],
+                                                    "en": r.get("name_en") or r.get("name_hu") or r["stage_id"]}})
+    return out
+
+
 def engine_info(selftest=True, db=None):
     """A motor leírása a felületnek (GET /api/engine): verzió, Python, önteszt (selftest=False: null), a
-    tudásbázis állapota, szerződések (név → főverzió), mértékek, opció-metaadat és szabálylista."""
+    tudásbázis állapota, szerződések (név → főverzió), mértékek, opció-metaadat, szabálylista és a szakaszok
+    neve (stages)."""
     from . import contracts
     return _jsonable(collections.OrderedDict((
         ("schema", ENGINE_INFO_SCHEMA), ("engine_version", __version__), ("python", platform.python_version()),
         ("selftest", selftest_status() if selftest else None), ("kb", kb_status(db)),
         ("contracts", collections.OrderedDict(contracts.available())),
-        ("measures", measures()), ("options", option_metadata()), ("rules", rules_export()))))
+        ("measures", measures()), ("options", option_metadata()), ("rules", rules_export()),
+        ("stages", stages()))))
 
 
 # ------------------------------------------------------------------ tábla
+def column_map(header):
+    """Kanonikus oszlopnév → eredeti fejléc, a motor oszlopfelismerésével (tableio.column_map) — ugyanaz, mint
+    a validálási dokumentum column_map-je, de validálás nélkül (a GET /api/table is ezt adja)."""
+    from . import tableio
+    return tableio.column_map(header)
+
+
 def read_table(path):
     """CSV/TSV → (fejléc, sorok nyers cellaszövegként, formátum-metaadat) — tableio.read_raw (a kódolás,
     tagoló, sorvég, idézés, BOM és az üres sorok megőrzésével; a számokat nem értelmezi). A sorok a nem üres
-    adatsorok: az i. sor = a validate_file / analyze 'row' = i és a plot row_index = i."""
+    adatsorok: az i. sor = a validate_file / analyze 'row' = i és a plot row_index = i. A meta 'column_map'-je
+    a kanonikus oszlopnév → eredeti fejléc leképezés (column_map; a write_table figyelmen kívül hagyja)."""
     from . import tableio
-    return tableio.read_raw(path)
+    header, rows, meta = tableio.read_raw(path)
+    meta["column_map"] = tableio.column_map(header)
+    return header, rows, meta
 
 
 def write_table(path, header, rows_text, meta=None):
@@ -305,19 +391,96 @@ def write_table(path, header, rows_text, meta=None):
     return tableio.write_raw(path, header, rows_text, meta)
 
 
-def validate_table(header, rows_text, measure, options=None, decimal_mark=None, delimiter=None, lines=None):
-    """Nyers cellák → szk.ma.validation/v1 (ugyanaz az értelmezés és validálás, mint a fájlnál)."""
-    from . import validate
-    return _jsonable(validate.validation_document(header, rows_text, measure, options, decimal_mark=decimal_mark,
-                                                  delimiter=delimiter, lines=lines))
+def validate_table(header, rows_text, measure, options=None, decimal_mark=None, delimiter=None, lines=None,
+                   project_dir=None, dataset=None):
+    """Nyers cellák → szk.ma.validation/v1 (ugyanaz az értelmezés és validálás, mint a fájlnál).
 
-
-def validate_file(path, measure, options=None):
-    """`ma.py validate --data F --measure M --json`: szk.ma.validation/v1 + a korábbi 'k' kulcs."""
+    project_dir megadásakor minden megállapítás 'acknowledged' mezőt kap: a projektnapló legutóbbi aktív
+    „Nem hiba — indoklás” döntésének azonosítója, amelynek context-je ugyanarra a szabályra (code), sorra
+    (row_uid) és mezőkre (fields) vonatkozik (dataset: a tábla projekt-relatív útja; ha a döntés is megadta,
+    egyeznie kell) — különben null. Lásd acknowledge_findings."""
     from . import validate
-    doc = validate.validation_document_from_file(path, measure, options)
-    doc["k"] = doc["k_analysable"]
+    doc = validate.validation_document(header, rows_text, measure, options, decimal_mark=decimal_mark,
+                                       delimiter=delimiter, lines=lines, with_row_uids=project_dir is not None)
+    grid = doc.pop("_row_uids", None)
+    if project_dir is not None:
+        acknowledge_findings(doc, project_dir, dataset, grid)
     return _jsonable(doc)
+
+
+def validate_file(path, measure, options=None, project_dir=None, dataset=None):
+    """`ma.py validate --data F --measure M --json`: szk.ma.validation/v1 + a korábbi 'k' kulcs.
+    project_dir / dataset: mint a validate_table-nél (acknowledged)."""
+    from . import validate
+    doc = validate.validation_document_from_file(path, measure, options, with_row_uids=project_dir is not None)
+    grid = doc.pop("_row_uids", None)
+    doc["k"] = doc["k_analysable"]
+    if project_dir is not None:
+        acknowledge_findings(doc, project_dir, dataset, grid)
+    return _jsonable(doc)
+
+
+ACK_CONTEXT_KIND = "validation"
+
+
+def acknowledgements(project_dir):
+    """[(döntés-id, context)] — a projektnapló AKTÍV döntései, amelyek context-je validálási megállapításra
+    vonatkozik (kind = 'validation' vagy kind nélkül, de szabálykóddal). Nincs napló: []."""
+    if not os.path.isfile(_projekt.db_path(project_dir)):
+        return []
+    import sqlite3
+    try:
+        decisions = _projekt.list_items(project_dir, "decisions", status="active")
+    except (sqlite3.Error, OSError):         # zárolt / sérült napló: a validálás nem bukik el, csak nem jelöl
+        return []
+    out = []
+    for d in decisions:
+        ctx = d.get("context")
+        if not isinstance(ctx, dict) or not isinstance(ctx.get("code"), str):
+            continue
+        if ctx.get("kind", ACK_CONTEXT_KIND) != ACK_CONTEXT_KIND:
+            continue
+        out.append((d["id"], ctx))
+    return out
+
+
+def _finding_uids(f, grid):
+    """A megállapítás sorainak row_uid-jai: a 'row_uid' és (többsoros szabálynál) a 'rows' összes sora."""
+    out = [f["row_uid"]] if f.get("row_uid") else []
+    for r in f.get("rows") or ():
+        if grid is not None and isinstance(r, int) and 0 <= r < len(grid) and grid[r] and grid[r] not in out:
+            out.append(grid[r])
+    return out
+
+
+def acknowledge_findings(doc, project_dir, dataset=None, row_uids=None, entries=None):
+    """A validálási dokumentum megállapításaira az 'acknowledged' (döntés-id vagy None). Illeszkedés (a kulcs:
+    code, row_uid, fields): azonos szabálykód; a döntés row_uid-ja a megállapítás sorai között van (táblaszintű
+    megállapításnál a döntésnek sincs row_uid-ja); ha a döntés megadta a mezőket, azok a megállapítás mezői
+    (sorrendtől függetlenül); ha a döntés és a hívó is megadta a táblát (dataset), egyeznek. Több illeszkedő
+    döntésből a legutóbbi (legnagyobb azonosítójú) számít. row_uids: a 'rows' indexek → row_uid (a többsoros
+    szabályokhoz); entries: előre lekérdezett acknowledgements(project_dir)."""
+    entries = acknowledgements(project_dir) if entries is None else entries
+    for f in doc.get("findings") or ():
+        uids = _finding_uids(f, row_uids)
+        hit = None
+        for did, ctx in entries:
+            if ctx.get("code") != f.get("code"):
+                continue
+            if dataset and ctx.get("dataset") and ctx.get("dataset") != dataset:
+                continue
+            cu = ctx.get("row_uid")
+            if cu is None:
+                if uids:
+                    continue
+            elif cu not in uids:
+                continue
+            fields = ctx.get("fields")
+            if fields and sorted(fields) != sorted(f.get("fields") or []):
+                continue
+            hit = did if hit is None else max(hit, did)
+        f["acknowledged"] = hit
+    return doc
 
 
 def validate_request(req):
@@ -366,6 +529,20 @@ def save_spec(path, spec):
 def spec_sha256(spec):
     from . import spec as S
     return S.spec_sha256(spec)
+
+
+def project_run_files(project_root):
+    """A projekt commit-futásainak run.json-jai (= spec.project_run_files; a project audit, a munkapad futás-listája,
+    a pillanatkép és az audit-export ugyanezt a felderítést használja) → [(abszolút út, elrendezés, kimenet-mappa vagy
+    None, [(adatfájl, adat-sha256)])]."""
+    from . import spec as S
+    return S.project_run_files(project_root)
+
+
+def run_summary_text(summary):
+    """A futás rövid szövege a tevékenységnapló result.summary-jéhez (= activity.run_summary_text; a CLI és a
+    munkapad bájtra azonos szöveget ír): 'k=13, RR 0.49 [0.33; 0.73]'."""
+    return _activity.run_summary_text(summary)
 
 
 # ------------------------------------------------------------------ elemzés
@@ -452,6 +629,13 @@ def analyze(spec, table=None, mode="explore", outdir=None, project_root=None, sp
         rows, meta = tableio.parse_table(table.get("header") or [], table.get("rows") or [],
                                          table.get("decimal_mark"), table.get("delimiter"), table.get("lines"))
     table_rows = rows
+    prov_file = data_file
+    if prov_file is None:
+        try:
+            prov_file = S.data_path(spec, root)
+        except (S.SpecError, ValueError, KeyError, TypeError):
+            prov_file = None
+    provenance = pipeline.load_provenance(prov_file)
     exclude, include = S.filters_from_spec(spec)
     frep = []
     rows = tableio.apply_filters(rows, exclude, include, meta=meta, report=frep)
@@ -491,7 +675,8 @@ def analyze(spec, table=None, mode="explore", outdir=None, project_root=None, sp
             _refuse_overwrite(data_file, [os.path.join(outdir, n) for n in _ANALYZE_OUTPUTS])
             md = report.build_report(out, opts.get("title"), date or datetime.date.today().isoformat(), plots=plots)
             paths = pipeline.write_outputs(out, es, outdir, md, plots=plots,
-                                           run_info={"run_id": rid, "spec_sha256": digest, "data_sha256": data_sha})
+                                           run_info={"run_id": rid, "spec_sha256": digest, "data_sha256": data_sha},
+                                           provenance=provenance)
             files = paths
     except BaseException:
         if reserved is not None:
@@ -517,7 +702,7 @@ def analyze(spec, table=None, mode="explore", outdir=None, project_root=None, sp
                             equivalent_argv=command, data_file=data_file, data_sha256=data_sha,
                             data_rows=(out.get("input") or {}).get("n_rows"), files=files, project_root=root,
                             started=started, finished=finished, elapsed_ms=int((time.monotonic() - t0) * 1000),
-                            client_seq=client_seq)
+                            client_seq=client_seq, es=es)
     if data_file is None:
         desc["data"]["path"] = data_rel
     if mode == "commit":
@@ -534,7 +719,7 @@ def analyze(spec, table=None, mode="explore", outdir=None, project_root=None, sp
     plot = None
     if out.get("primary") is not None:
         plot = pipeline.plot_document(out, es, run_info={"run_id": rid, "spec_sha256": digest,
-                                                         "data_sha256": data_sha})
+                                                         "data_sha256": data_sha}, provenance=provenance)
     view = collections.OrderedDict((
         ("schema", ANALYSIS_RESULT_SCHEMA), ("run", desc), ("plot", plot), ("results", _results_view(out, data_rel)),
         ("validation_summary", dict((out.get("validation") or {}).get("summary") or {})),
@@ -545,25 +730,35 @@ def analyze(spec, table=None, mode="explore", outdir=None, project_root=None, sp
 
 
 # ------------------------------------------------------------------ átváltás (szk.ma.convert-*)
+def _tr(hu, en):
+    """Kétnyelvű szöveg (i18n-objektum, terv 4.0): {'hu': …, 'en': …}."""
+    return collections.OrderedDict((("hu", hu), ("en", en)))
+
+
 # kind → (CLI-fajta, kötelező/elfogadott numerikus bemenetek, kimenetek, becslés?, módszer-id, hivatkozás,
-#         függvény, KB-hivatkozások, feltevések)
+#         függvény, KB-hivatkozások, feltevések {hu, en})
 _CONVERT = collections.OrderedDict((
     ("median_to_mean_sd", ("median", ("n", "median", "q1", "q3", "min", "max"), ("mean", "sd"), True,
                            "luo2018+wan2014", "Cochrane Handbook 6.5.2.5; Luo 2018; Wan 2014",
                            "conversions.mean_from_median / sd_from_median",
-                           ("D-S05-010", "D-S05-011", "F-MOR20-010"), ("közel normális eloszlás",))),
+                           ("D-S05-010", "D-S05-011", "F-MOR20-010"), (_tr("közel normális eloszlás", "approximately normal distribution"),))),
     ("se_to_sd", ("se", ("se", "n"), ("sd",), False, "sd_from_se", "Cochrane Handbook 6.5.2.2",
                   "conversions.sd_from_se", ("D-S05-006", "F-MOR20-002"),
-                  ("a közölt érték a karátlag standard hibája (nem SD)",))),
+                  (_tr("a közölt érték a karátlag standard hibája (nem SD)",
+                       "the reported value is the standard error of the arm mean (not the SD)"),))),
     ("ci_to_sd", ("ci", ("lower", "upper", "n", "level"), ("sd",), False, "sd_from_ci_t", "Cochrane Handbook 6.5.2.2",
                   "conversions.sd_from_ci", ("D-S05-007", "F-MOR20-003"),
-                  ("a CI a karátlagé (nem a csoportközi különbségé); t-eloszlás n − 1 szabadsági fokkal",))),
+                  (_tr("a CI a karátlagé (nem a csoportközi különbségé); t-eloszlás n − 1 szabadsági fokkal",
+                       "the CI belongs to the arm mean (not to the between-group difference); t distribution with "
+                       "n − 1 degrees of freedom"),))),
     ("ci_to_se", ("se-from-ci", ("lower", "upper", "level", "df", "log"), ("se",), False, "se_from_ci",
                   "Cochrane Handbook 6.5.2.3", "conversions.se_from_ci", ("D-S05-008", "D-S05-009", "F-BOR09-032"),
-                  ("szimmetrikus CI (arány-mértéknél a log-skálán: log=igen)",))),
+                  (_tr("szimmetrikus CI (arány-mértéknél a log-skálán: log=igen)",
+                       "symmetric CI (for ratio measures on the log scale: log=yes)"),))),
     ("p_to_se", ("se-from-p", ("estimate", "p", "df", "log"), ("se",), False, "se_from_p",
                  "Cochrane Handbook 6.5.2.3", "conversions.se_from_p", ("D-S05-008", "D-S05-009", "F-BOR09-031"),
-                 ("pontos (nem kerekített, nem '<' alakú) kétoldali p-érték",))),
+                 (_tr("pontos (nem kerekített, nem '<' alakú) kétoldali p-érték",
+                      "exact (not rounded, not of the '<' form) two-sided p-value"),))),
     ("smd_variance", ("smd-var", ("g", "n1", "n2", "vtype", "j_method"), ("vi", "sei"), False, "smd_variance",
                       "Borenstein 2009 4. fejezet", "conversions.smd_variance", ("F-BOR09-030",), ())),
     ("combine_groups", ("combine", ("n1", "m1", "sd1", "n2", "m2", "sd2"), ("n", "mean", "sd"), False,
@@ -571,40 +766,64 @@ _CONVERT = collections.OrderedDict((
                         ("D-S05-015",), ())),
     ("change_sd", ("change", ("sd_baseline", "sd_final", "corr"), ("sd_change",), True, "sd_change_from_corr",
                    "Cochrane Handbook 6.5.2.8", "conversions.sd_change", ("D-S05-013", "F-MOR20-017"),
-                   ("a kiindulási és a végponti érték korrelációja (corr) más vizsgálatból vagy feltevésből származik",))),
+                   (_tr("a kiindulási és a végponti érték korrelációja (corr) más vizsgálatból vagy feltevésből származik",
+                       "the baseline–final correlation (corr) comes from another study or an assumption"),))),
     ("corr_from_change", ("corr-from-change", ("sd_baseline", "sd_final", "sd_change"), ("corr",), False,
                           "corr_from_change", "Cochrane Handbook 6.5.2.8", "conversions.corr_from_change",
                           ("D-S05-013",), ())),
     # a karonkénti kimenet: n_1, n_2, … (és events_1, …)
     ("split_shared_control", ("split-control", ("n", "arms", "events"), ("n", "events"), True, "split_shared_control",
                               "Cochrane Handbook 23.3.4", "conversions.split_shared_control", ("D-S05-015",),
-                              ("a közös kontrollcsoport egyenlő felosztása a karok között",))),
+                              (_tr("a közös kontrollcsoport egyenlő felosztása a karok között",
+                                   "the shared control group is split equally between the arms"),))),
     ("paired_sums", ("paired-sums", ("n", "sum_d", "sum_sq_dev"), ("mdiff", "sd_diff", "n"), False, "paired_from_sums",
                      "páros különbségek átlaga és SD-je az összegekből", "conversions.paired_from_sums",
                      ("D-S07-010",), ())),
     ("t_to_d", ("d-from-t", ("t", "n1", "n2", "vtype", "j_method", "hedges"), ("d", "g", "J", "vi", "sei"), False,
                 "d_from_t", "Borenstein 2009 4. fejezet", "conversions.d_from_t", ("D-S05-008",),
-                ("független mintás t-próba két karral",))),
+                (_tr("független mintás t-próba két karral", "independent-samples t-test with two arms"),))),
     ("logor_to_d", ("logor-to-d", ("y", "v"), ("y", "v"), True, "logor_to_d", "Borenstein 2009 7. fejezet",
                     "conversions.logor_to_d", ("D-S07-021", "F-KHN0102-012", "F-SIM24-012"),
-                    ("a mögöttes folytonos változó logisztikus eloszlású (Hasselblad–Hedges)",))),
+                    (_tr("a mögöttes folytonos változó logisztikus eloszlású (Hasselblad–Hedges)",
+                        "the underlying continuous variable follows a logistic distribution (Hasselblad–Hedges)"),))),
     ("d_to_logor", ("d-to-logor", ("y", "v"), ("y", "v"), True, "d_to_logor", "Borenstein 2009 7. fejezet",
                     "conversions.d_to_logor", ("D-S07-021", "F-KHN0102-013"),
-                    ("a mögöttes folytonos változó logisztikus eloszlású (Hasselblad–Hedges)",))),
+                    (_tr("a mögöttes folytonos változó logisztikus eloszlású (Hasselblad–Hedges)",
+                        "the underlying continuous variable follows a logistic distribution (Hasselblad–Hedges)"),))),
     ("r_to_d", ("r-to-d", ("y", "v"), ("y", "v"), True, "r_to_d", "Borenstein 2009 7. fejezet",
                 "conversions.r_to_d", ("D-S07-021", "F-KHN0102-014", "F-SIM24-011"),
-                ("a korreláció egy dichotóm csoportosítás pont-biszeriális megfelelője",))),
+                (_tr("a korreláció egy dichotóm csoportosítás pont-biszeriális megfelelője",
+                     "the correlation is the point-biserial counterpart of a dichotomous grouping"),))),
     ("d_to_r", ("d-to-r", ("y", "v", "n1", "n2"), ("y", "v"), True, "d_to_r", "Borenstein 2009 7. fejezet",
                 "conversions.d_to_r", ("D-S07-021", "F-SIM24-010"),
-                ("a d két, n1 és n2 létszámú csoport különbsége",))),
+                (_tr("a d két, n1 és n2 létszámú csoport különbsége",
+                     "d is the difference between two groups of sizes n1 and n2"),))),
 ))
 CONVERT_KINDS = tuple(_CONVERT)
 _BOOL_INPUTS = ("log", "hedges")
 _TEXT_INPUTS = ("vtype", "j_method")
 _TRUE = ("1", "true", "yes", "igen", "i", "y")
 _FALSE = ("0", "false", "no", "nem", "n", "")
-_ESTIMATED_NOTE = ("Becsült érték: jelöld az adattáblában (estimated=igen) és végezz nélküle érzékenységi elemzést "
-                   "(D-S05-023).")
+_ESTIMATED_NOTE = _tr("Becsült érték: jelöld az adattáblában (estimated=igen) és végezz nélküle érzékenységi "
+                      "elemzést (D-S05-023).",
+                      "Estimated value: mark it in the data table (estimated=yes) and run a sensitivity analysis "
+                      "without it (D-S05-023).")
+_SKEW_NOTE = _tr("Az átlag < 2·SD: nemnegatív változónál ferde eloszlás gyanúja (V013) — a mediánból becsült érték "
+                 "óvatosan kezelendő.",
+                 "Mean < 2·SD: for a non-negative variable this suggests a skewed distribution (V013) — treat the "
+                 "value estimated from the median with caution.")
+# a CLI (convert_values) magyar megjegyzéseinek angol megfelelője (a kulcs a szöveg eleje)
+_NOTE_EN = (("Az LS2 variancia Hedges-féle g-t feltételez",
+             "The LS2 variance assumes Hedges' g: to get Hedges' g (and its variance) set the hedges input."),
+            ("Az UB variancia Hedges-féle g-t feltételez",
+             "The UB variance assumes Hedges' g: to get Hedges' g (and its variance) set the hedges input."))
+
+
+def _note_i18n(text):
+    for prefix, en in _NOTE_EN:
+        if text.startswith(prefix):
+            return _tr(text, en)
+    return _tr(text, text)
 
 
 def _convert_input(kind, name, value):
@@ -617,17 +836,18 @@ def _convert_input(kind, name, value):
         t = str(value).strip().lower()
         if t in _TRUE or t in _FALSE:
             return t in _TRUE
-        raise ValueError("%s: %s: igen/nem érték kell, kapott: %r" % (kind, name, value))
+        # a hibaüzenet a mezőt nevezi meg, az értéket soha (T10: a bevitt cellaszöveg nem kerülhet hibába)
+        raise ValueError("%s: %s: igen/nem érték kell" % (kind, name))
     if name in _TEXT_INPUTS:
         if value is None:
             return None
         return str(value).strip().upper() if name == "vtype" else str(value).strip().lower()
     if isinstance(value, bool):
-        raise ValueError("%s: %s: szám kell, kapott: %r" % (kind, name, value))
+        raise ValueError("%s: %s: szám kell (logikai érték helyett)" % (kind, name))
     try:
         x = parse_number(value)
     except ValueError:
-        raise ValueError("%s: %s: nem értelmezhető szám: %r" % (kind, name, value))
+        raise ValueError("%s: %s: nem értelmezhető szám" % (kind, name)) from None
     if name == "level" and x is not None and 1 < x < 100:
         x = x / 100.0
     return x
@@ -668,6 +888,7 @@ def convert(request):
     'estimated' a motor döntése: becslés true, algebrai átalakítás false. A request 'target'-je visszhangként a
     válaszba kerül. outputs_text: kijelzési szöveg {hu, en} (a display_text konvenciója); cell_text: a cellába írandó
     szöveg a cél tábla tizedesjelével (target.decimal_mark, ennek hiányában target.delimiter; alapból ',').
+    assumptions és warnings: kétnyelvű szövegek ({hu, en}, terv 4.0) — a felület a választott nyelvet mutatja.
     Hibás kérés vagy érvénytelen bemenet: ValueError (magyar üzenettel)."""
     from . import conversions as C
     from .cli import convert_namespace, convert_values
@@ -709,10 +930,9 @@ def convert(request):
     warnings = []
     if kind == "median_to_mean_sd" and out.get("mean") is not None and out.get("sd") is not None and \
             out["mean"] < 2 * out["sd"]:
-        warnings.append("Az átlag < 2·SD: nemnegatív változónál ferde eloszlás gyanúja (V013) — a mediánból becsült "
-                        "érték óvatosan kezelendő.")
+        warnings.append(_SKEW_NOTE)
     if res.get("megjegyzés"):
-        warnings.append(res["megjegyzés"])
+        warnings.append(_note_i18n(res["megjegyzés"]))
     if estimated:
         warnings.append(_ESTIMATED_NOTE)
         kb_refs = tuple(kb_refs) + ("D-S05-023",)
@@ -723,7 +943,7 @@ def convert(request):
                                               for n, v in out.items())),
         ("estimated", estimated),
         ("method", {"id": mid, "citation": citation, "function": function, "kb_refs": list(kb_refs)}),
-        ("assumptions", list(assumptions)), ("warnings", warnings)))
+        ("assumptions", [dict(a) for a in assumptions]), ("warnings", [dict(w) for w in warnings])))
     if request.get("target") is not None:
         doc["target"] = request["target"]
     return _jsonable(doc)
@@ -763,13 +983,17 @@ def prisma_check(flow, studies=None, template=None):
         for field, n in (("included_studies", len(ids)), ("included_reports", len(recs) if recs else None)):
             if n is None:
                 continue
-            have = vals.get(field)
+            raw = vals.get(field)
+            try:
+                # a doboz szövegként is érkezhet (pl. a felület '15'-öt küld): ugyanaz az értelmezés, mint a P001-é
+                have = prisma._as_count(raw)
+            except ValueError:
+                continue        # értelmezhetetlen doboz: a check_flow P001-gyel jelzi, összevetni nem lehet
             if have is None:
-                flow[field] = n
+                flow[field] = n     # hiányzó vagy üres doboz: a studies.json-ból
             elif have != n:
                 extra.append({"code": "P017", "severity": sev, "title": title, "study": None,
-                              "detail": "%s (%s): flow = %d, studies.json = %d" % (
-                                  field, prisma.LETTERS.get(field, "?"), have, n),
+                              "detail": "%s: flow = %d, studies.json = %d" % (prisma.box_label(field), have, n),
                               "advice": advice, "source": ref, "fields": [field]})
     res = prisma.check_flow(flow, template)
     res.findings = extra + res.findings
@@ -794,11 +1018,53 @@ def project_init(project_dir, title, question=None):
     return {"dir": project_dir, "templates": _projekt.init(project_dir, title, question)}
 
 
+def outcome_from_args(outcome_id, name=None, data=None, measure=None, critical=None):
+    """Kimenet-leíró a megadott mezőkből; a mérték a motor mértékei közül (nagybetűsítve). → dict; ValueError."""
+    o = {"id": outcome_id}
+    if name is not None:
+        if isinstance(name, str):
+            if not name.strip():
+                raise ValueError("a kimenet neve nem lehet üres")
+            o["name"] = {"hu": name.strip(), "en": name.strip()}
+        else:
+            o["name"] = name
+    if data is not None:
+        o["data"] = str(data).replace("\\", "/")
+    if measure is not None:
+        m = str(measure).strip().upper()
+        known = [x["id"] for x in measures()]
+        if m not in known:
+            raise ValueError("ismeretlen hatásméret: %s (lehetséges: %s)" % (measure, ", ".join(known)))
+        o["measure"] = m
+    if critical is not None:
+        o["critical"] = bool(critical)
+    return o
+
+
+def project_outcome_doc(project_dir, meta, outcome, data_class=None, replace=False):
+    """A ma-projekt.json új tartalma a kimenettel (írás nélkül; a munkapad a saját tárolójával írja) →
+    (dokumentum, kimenet). Lásd projekt.outcome_meta_doc."""
+    return _projekt.outcome_meta_doc(project_dir, meta, outcome, data_class=data_class, replace=replace)
+
+
+def project_outcome_add(project_dir, outcome_id, name=None, data=None, measure=None, critical=None, data_class=None,
+                        replace=False):
+    """`ma.py project outcome <mappa> --id … --name … --data … --measure …`: kimenet felvétele a ma-projekt.json-ba
+    (ha még nincs ilyen fájl, létrejön) → {path, outcome, outcomes}."""
+    o = outcome_from_args(outcome_id, name, data, measure, critical)
+    doc, added = _projekt.add_outcome(project_dir, o, data_class=data_class, replace=replace)
+    return {"path": _projekt.project_meta_path(project_dir), "outcome": added,
+            "outcomes": [x.get("id") for x in doc.get("outcomes") or []]}
+
+
 def project_log(project_dir, agent, decision, rationale=None, stage=None, kb_refs=None, alternatives=None,
-                supersedes=None, kb_db=None, strict=False, actor=None):
+                supersedes=None, kb_db=None, strict=False, actor=None, context=None):
+    """Döntés a projektnaplóba → {id, warnings}. context: a döntés gépi kontextusa (projekt.check_context;
+    pl. „Nem hiba — indoklás”: {kind: 'validation', dataset, row_uid, code, fields}) — ebből jelöli a
+    validate_table(project_dir=…) a megállapítást 'acknowledged'-ként."""
     warns = []
     rid = _projekt.log_decision(project_dir, agent, decision, rationale, stage, kb_refs, alternatives, supersedes,
-                                kb_db=kb_db, strict=strict, warnings=warns, actor=actor)
+                                kb_db=kb_db, strict=strict, warnings=warns, actor=actor, context=context)
     return {"id": rid, "warnings": warns}
 
 
@@ -929,11 +1195,50 @@ def _field_tokens(field):
     return toks
 
 
-def kb_rules_for_field(field, db=None):
+_CTX_MODEL_RE = re.compile(r"(?:primary_model|options\.model)\s*==\s*'([A-Za-z_]+)'")
+_CTX_KMIN_RE = re.compile(r"^\s*k\s*(?:≥|>=)\s*(\d+)", re.I)
+_CTX_KMAX_RE = re.compile(r"(?<![A-Za-z0-9_])k\s*<\s*(\d+)")
+_CTX_MEASURE_RE = re.compile(r"options\.measure\s+in\s+\(([^)]*)\)")
+
+
+def kb_rule_applies(rule, context):
+    """Illik-e a döntési szabály egy futás kontextusára (UX-06) — csak a szabály saját gépi feltételeiből:
+    a machine_check-ben rögzített modell (``primary_model == 'fixed'``), az egyvizsgálatos visszaesés
+    (``model_fallback.reason == 'k = 1'``), a feltétel k-küszöbe (elején ``K ≥ 10, …``; bárhol ``k < 10``) és a mértéklista
+    (``options.measure in (SMD, COHEN_D)``). context: {model, k, measure} (bármelyik hiányozhat)."""
+    if not context:
+        return True
+    mc = rule.get("machine_check") or ""
+    cond = rule.get("title") or rule.get("condition") or ""
+    model, k, measure = context.get("model"), context.get("k"), context.get("measure")
+    if model:
+        need = set(_CTX_MODEL_RE.findall(mc))
+        if need and model not in need:
+            return False
+    if isinstance(k, int) and not isinstance(k, bool):
+        if "'k = 1'" in mc and k > 1:
+            return False
+        m = _CTX_KMIN_RE.match(cond)
+        if m and k < int(m.group(1)):
+            return False
+        m = _CTX_KMAX_RE.search(cond)                  # „… k < 10 …”: kevés vizsgálatra szóló szabály
+        if m and k >= int(m.group(1)):
+            return False
+    if measure:
+        m = _CTX_MEASURE_RE.search(mc)
+        if m:
+            allowed = {x.strip().strip("'\"").upper() for x in m.group(1).split(",")}
+            if str(measure).upper() not in allowed:
+                return False
+    return True
+
+
+def kb_rules_for_field(field, db=None, context=None):
     """A mezőre (results.json-kulcs, elemzési opció vagy V/P/X-kód) hivatkozó KB-döntési szabályok (a felület
     ⓚ-jelvényei, 3.5.7): {field, items: [{id, stage_id, strength, title, recommendation, machine_check}]}. A
     machine_check tokenjei közül egyezik: a mező neve, a CLI-kapcsolója, vagy pontozott útvonal eleme
-    (pl. 'options.model', 'random.tau2')."""
+    (pl. 'options.model', 'random.tau2'). context ({model, k, measure}, egy futásé): csak a futásra illő
+    szabályok (kb_rule_applies) — pl. véletlen hatású, k = 13 futásnál nincs fix hatású vagy k = 1-es szabály."""
     from . import kb
     if not isinstance(field, str) or not re.fullmatch(r"[A-Za-z0-9_.\-]{1,80}", field):
         raise ValueError("érvénytelen mezőnév: %r" % (field,))
@@ -958,7 +1263,8 @@ def kb_rules_for_field(field, db=None):
                 hit = True
                 break
         if hit or r["rule_id"] == field:
-            items.append({"id": r["rule_id"], "stage_id": r["stage_id"], "strength": r["strength"],
-                          "title": r["condition"], "recommendation": r["recommendation"],
-                          "machine_check": r["machine_check"]})
+            it = {"id": r["rule_id"], "stage_id": r["stage_id"], "strength": r["strength"],
+                  "title": r["condition"], "recommendation": r["recommendation"], "machine_check": r["machine_check"]}
+            if kb_rule_applies(it, context):
+                items.append(it)
     return {"schema": KB_RULES_SCHEMA, "field": field, "items": items}

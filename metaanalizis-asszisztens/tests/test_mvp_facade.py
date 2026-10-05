@@ -145,6 +145,26 @@ class TestCliApiParity(_Tmp):
         self.assertParity(["prisma", "check", "--json", f, "--out-format", "json"], res,
                           code=0 if res["ok"] else 1)
 
+    def test_prisma_check_raw_text_boxes_with_studies(self):
+        """P017 szövegként érkező dobozokkal (a felület '15'-öt küld): a motor ugyanúgy értelmez, mint a P001-nél;
+        korábban a részletszöveg '%d'-vel készült a nyers szövegből → TypeError."""
+        studies = {"schema": "szk.ma.studies/v1", "studies": [{"study_id": "a", "reports": [{"rec_id": "r"}]}]}
+        res = api.prisma_check({"dedup_removed": "1", "included_reports": "15", "included_studies": "13"},
+                               studies=studies)
+        p017 = sorted((f["fields"][0], f["detail"]) for f in res["findings"] if f["code"] == "P017")
+        self.assertEqual(p017, [("included_reports", "Bevont jelentések (J): flow = 15, studies.json = 1"),
+                                ("included_studies", "Bevont vizsgálatok (I): flow = 13, studies.json = 1")])
+        # tizedesvesszős / szóközös szöveg ugyanaz a szám → nincs P017; érvénytelen → csak P001 (nem P017, nem hiba)
+        same = api.prisma_check({"included_reports": " 1 ", "included_studies": "1,0"}, studies=studies)
+        self.assertNotIn("P017", [f["code"] for f in same["findings"]])
+        bad = api.prisma_check({"included_reports": "x", "included_studies": ""}, studies=studies)
+        codes = [f["code"] for f in bad["findings"]]
+        self.assertIn("P001", codes)
+        self.assertNotIn("P017", codes)
+        # üres doboz: a studies.json-ból töltődik (I = 1), mint a hiányzó
+        self.assertEqual(bad["counts"]["included_studies"], 1)
+        self.assertIsNone(bad["counts"]["included_reports"])
+
     def test_project_json_commands(self):
         p = self.project()
         projekt.log_decision(p, "planner", "REML", stage="S08", check_kb=False)
@@ -499,7 +519,8 @@ class TestConvert(unittest.TestCase):
         c = api.convert(self.req("ci_to_sd", {"lower": "10,1", "upper": "14,3", "n": "48", "level": "95"}))
         self.assertEqual(c["outputs"]["sd"], C.sd_from_ci(10.1, 14.3, 48, 0.95))
         skew = api.convert(self.req("median_to_mean_sd", {"n": "30", "median": "2", "q1": "1", "q3": "9"}))
-        self.assertTrue(any("V013" in w for w in skew["warnings"]))
+        # assumptions / warnings: kétnyelvű szövegek ({hu, en}; terv 4.7)
+        self.assertTrue(any("V013" in w["hu"] and "V013" in w["en"] for w in skew["warnings"]))
 
     def test_invalid_requests(self):
         bad = [None, {}, self.req("nincs", {}), {"schema": "x", "kind": "se_to_sd", "inputs": {}},

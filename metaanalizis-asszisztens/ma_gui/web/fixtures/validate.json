@@ -1,5 +1,5 @@
 {
- "description": "POST /api/validate — szk.ma.validation/v1 (4.3) a motor metaelemzes.validate kimenetéből, a piszkozat-tábla lokátoraival (row, row_uid, fields, blocking). A fejlesztői build a src/dev/extraction_backend.js-ben a szerkesztésekre is válaszol.",
+ "description": "POST /api/validate — szk.ma.validation/v1 (4.3): api.validate_table a kinyerés-tábla (table.json) nyers celláin, a row_uid oszloppal; acknowledged: a projektnapló „Nem hiba” döntései szerint (itt nincs ilyen → null). A fejlesztői build a src/dev/extraction_backend.js-ben a szerkesztésekre is válaszol. Generálta: tests/gui/ui/gen_fixtures_from_engine.py.",
  "routes": [
   {
    "method": "POST",
@@ -12,10 +12,10 @@
     "schema": "szk.ma.validation/v1",
     "data": {
      "schema": "szk.ma.validation/v1",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "measure": "RR",
-     "input_sha256": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333",
      "column_map": {
+      "row_uid": "row_uid",
       "study": "vizsgálat",
       "e1": "esemény1",
       "n1": "n1",
@@ -27,47 +27,100 @@
       "rob": "rob",
       "estimated": "estimated"
      },
+     "column_index": {
+      "row_uid": 0,
+      "study": 1,
+      "e1": 2,
+      "n1": 3,
+      "e2": 4,
+      "n2": 5,
+      "szélesség": 6,
+      "year": 7,
+      "allokáció": 8,
+      "rob": 9,
+      "estimated": 10
+     },
      "decimal_mark": ",",
+     "options": {
+      "label_col": "study",
+      "smd_vtype": "LS",
+      "j_method": "exact",
+      "cc": 0.5,
+      "cc_to": "only0",
+      "drop00": null,
+      "md_vtype": "unequal",
+      "glass_vtype": "METAN",
+      "gen_smd_vtype": null
+     },
+     "n_rows": 13,
      "summary": {
-      "error": 1,
-      "warning": 1,
+      "error": 3,
+      "warning": 0,
       "info": 6
      },
-     "k_analysable": 12,
+     "k_analysable": 11,
      "findings": [
-      {
-       "code": "V023",
-       "severity": "warning",
-       "title": "Kétértelmű számformátum",
-       "study": "Hart & Sutherland 1977",
-       "detail": "5. sor, n1 oszlop: ezres tagolásként értelmezve: 13,598 → 13598",
-       "advice": "A számot ezres tagolásként olvastuk (pl. '2,000' → 2000), mert tizedesjelként értelmetlen lenne vagy ellentmond a fájl tizedesjelének. Ellenőrizd a forrással.",
-       "source": "engine",
-       "row": 3,
-       "row_uid": "rbcg04",
-       "line": 5,
-       "fields": [
-        "n1"
-       ],
-       "blocking": false,
-       "kb_id": "V023",
-       "acknowledged": null
-      },
       {
        "code": "V006",
        "severity": "error",
        "title": "Érvénytelen eseményszám",
        "study": "Ferguson & Simes 1949",
-       "detail": "e1 = 600, n1 = 306",
-       "advice": "Az eseményszám negatív vagy nagyobb, mint n.",
-       "source": "engine",
        "row": 1,
+       "rows": [
+        1
+       ],
        "row_uid": "rbcg02",
        "line": 3,
        "fields": [
         "e1",
         "n1"
        ],
+       "detail": "e1 = 600, n1 = 306",
+       "advice": "Az eseményszám negatív vagy nagyobb, mint n.",
+       "source": "engine",
+       "blocking": true,
+       "kb_id": "V006",
+       "acknowledged": null
+      },
+      {
+       "code": "V004",
+       "severity": "error",
+       "title": "Érvénytelen mintanagyság",
+       "study": "Hart & Sutherland 1977",
+       "row": 3,
+       "rows": [
+        3
+       ],
+       "row_uid": "rbcg04",
+       "line": 5,
+       "fields": [
+        "n1"
+       ],
+       "detail": "n1 = 13.598 (bináris adatnál egész n >= 1 kell)",
+       "advice": "Nem egész n, vagy túl kicsi: folytonos adatnál n < 2 (karonként), bináris és arány-adatnál n < 1, korrelációnál n < 4, GEN-nél (ha megadod) n < 1. A vizsgálat kimarad az elemzésből.",
+       "source": "engine",
+       "blocking": true,
+       "kb_id": "V004",
+       "acknowledged": null
+      },
+      {
+       "code": "V006",
+       "severity": "error",
+       "title": "Érvénytelen eseményszám",
+       "study": "Hart & Sutherland 1977",
+       "row": 3,
+       "rows": [
+        3
+       ],
+       "row_uid": "rbcg04",
+       "line": 5,
+       "fields": [
+        "e1",
+        "n1"
+       ],
+       "detail": "e1 = 62, n1 = 13.598",
+       "advice": "Az eseményszám negatív vagy nagyobb, mint n.",
+       "source": "engine",
        "blocking": true,
        "kb_id": "V006",
        "acknowledged": null
@@ -77,15 +130,18 @@
        "severity": "info",
        "title": "Becsült (imputált) értékek",
        "study": "Coetzee & Berjak 1968",
-       "detail": "",
-       "advice": "Becsült/imputált adatot tartalmazó vizsgálatok: érzékenységi elemzés javasolt nélkülük.",
-       "source": "Cochrane Handbook 6.5.2.10",
        "row": 8,
+       "rows": [
+        8
+       ],
        "row_uid": "rbcg09",
        "line": 10,
        "fields": [
         "estimated"
        ],
+       "detail": "",
+       "advice": "Becsült/imputált adatot tartalmazó vizsgálatok: érzékenységi elemzés javasolt nélkülük.",
+       "source": "Cochrane Handbook 6.5.2.10",
        "blocking": false,
        "kb_id": "V018",
        "acknowledged": null
@@ -95,15 +151,18 @@
        "severity": "info",
        "title": "Becsült (imputált) értékek",
        "study": "Rosenthal et al 1961",
-       "detail": "",
-       "advice": "Becsült/imputált adatot tartalmazó vizsgálatok: érzékenységi elemzés javasolt nélkülük.",
-       "source": "Cochrane Handbook 6.5.2.10",
        "row": 9,
+       "rows": [
+        9
+       ],
        "row_uid": "rbcg10",
        "line": 11,
        "fields": [
         "estimated"
        ],
+       "detail": "",
+       "advice": "Becsült/imputált adatot tartalmazó vizsgálatok: érzékenységi elemzés javasolt nélkülük.",
+       "source": "Cochrane Handbook 6.5.2.10",
        "blocking": false,
        "kb_id": "V018",
        "acknowledged": null
@@ -113,15 +172,18 @@
        "severity": "info",
        "title": "Magas torzítási kockázatú vizsgálatok",
        "study": "Rosenthal et al 1961",
-       "detail": "",
-       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
-       "source": "Cochrane Handbook 7–8",
        "row": 9,
+       "rows": [
+        9
+       ],
        "row_uid": "rbcg10",
        "line": 11,
        "fields": [
         "rob"
        ],
+       "detail": "",
+       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
+       "source": "Cochrane Handbook 7–8",
        "blocking": false,
        "kb_id": "V019",
        "acknowledged": null
@@ -131,15 +193,18 @@
        "severity": "info",
        "title": "Magas torzítási kockázatú vizsgálatok",
        "study": "Comstock et al 1974",
-       "detail": "",
-       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
-       "source": "Cochrane Handbook 7–8",
        "row": 10,
+       "rows": [
+        10
+       ],
        "row_uid": "rbcg11",
        "line": 12,
        "fields": [
         "rob"
        ],
+       "detail": "",
+       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
+       "source": "Cochrane Handbook 7–8",
        "blocking": false,
        "kb_id": "V019",
        "acknowledged": null
@@ -149,15 +214,18 @@
        "severity": "info",
        "title": "Magas torzítási kockázatú vizsgálatok",
        "study": "Comstock & Webster 1969",
-       "detail": "",
-       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
-       "source": "Cochrane Handbook 7–8",
        "row": 11,
+       "rows": [
+        11
+       ],
        "row_uid": "rbcg12",
        "line": 13,
        "fields": [
         "rob"
        ],
+       "detail": "",
+       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
+       "source": "Cochrane Handbook 7–8",
        "blocking": false,
        "kb_id": "V019",
        "acknowledged": null
@@ -167,15 +235,18 @@
        "severity": "info",
        "title": "Magas torzítási kockázatú vizsgálatok",
        "study": "Comstock et al 1976",
-       "detail": "",
-       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
-       "source": "Cochrane Handbook 7–8",
        "row": 12,
+       "rows": [
+        12
+       ],
        "row_uid": "rbcg13",
        "line": 14,
        "fields": [
         "rob"
        ],
+       "detail": "",
+       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
+       "source": "Cochrane Handbook 7–8",
        "blocking": false,
        "kb_id": "V019",
        "acknowledged": null
@@ -185,16 +256,25 @@
       {
        "study": "Ferguson & Simes 1949",
        "row": 1,
-       "reason": "V006"
+       "row_uid": "rbcg02",
+       "line": 3,
+       "reason": "validálási hiba: V006"
+      },
+      {
+       "study": "Hart & Sutherland 1977",
+       "row": 3,
+       "row_uid": "rbcg04",
+       "line": 5,
+       "reason": "validálási hiba: V004, V006"
       }
      ]
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex05"
+     "request_id": "q_ex30"
     }
    }
   },
@@ -209,17 +289,37 @@
     "schema": "szk.ma.validation/v1",
     "data": {
      "schema": "szk.ma.validation/v1",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "measure": "RR",
-     "input_sha256": "398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550",
      "column_map": {
+      "row_uid": "row_uid",
       "study": "study",
       "e1": "e1",
       "n1": "n1",
       "e2": "e2",
       "n2": "n2"
      },
+     "column_index": {
+      "row_uid": 0,
+      "study": 1,
+      "e1": 2,
+      "n1": 3,
+      "e2": 4,
+      "n2": 5
+     },
      "decimal_mark": ",",
+     "options": {
+      "label_col": "study",
+      "smd_vtype": "LS",
+      "j_method": "exact",
+      "cc": 0.5,
+      "cc_to": "only0",
+      "drop00": null,
+      "md_vtype": "unequal",
+      "glass_vtype": "METAN",
+      "gen_smd_vtype": null
+     },
+     "n_rows": 4,
      "summary": {
       "error": 0,
       "warning": 1,
@@ -232,13 +332,21 @@
        "severity": "info",
        "title": "Nulla cella",
        "study": "Aronson 1948",
+       "row": 0,
+       "rows": [
+        0
+       ],
+       "row_uid": "rmrt01",
+       "line": 2,
+       "fields": [
+        "e1",
+        "n1",
+        "e2",
+        "n2"
+       ],
        "detail": "+0.5 minden cellához",
        "advice": "Folytonossági korrekció kerül alkalmazásra a vizsgálat hatásméreténél (mértéke: --cc, alapértelmezés 0,5; lásd a részleteket).",
        "source": "Cochrane Handbook 10.4.4.1",
-       "row": 0,
-       "row_uid": "rmrt01",
-       "line": 2,
-       "fields": [],
        "blocking": false,
        "kb_id": "V009",
        "acknowledged": null
@@ -248,13 +356,14 @@
        "severity": "warning",
        "title": "Kevés vizsgálat",
        "study": null,
-       "detail": "k = 4 elemezhető vizsgálat (4 sorból)",
-       "advice": "k < 5: a τ² becslése megbízhatatlan; HKSJ-CI és predikciós intervallum ajánlott, a véletlen hatású eredményt óvatosan értelmezd.",
-       "source": "Cochrane Handbook 10.10.4",
        "row": null,
+       "rows": [],
        "row_uid": null,
        "line": null,
        "fields": [],
+       "detail": "k = 4 elemezhető vizsgálat (4 sorból)",
+       "advice": "k < 5: a τ² becslése megbízhatatlan; HKSJ-CI és predikciós intervallum ajánlott, a véletlen hatású eredményt óvatosan értelmezd.",
+       "source": "Cochrane Handbook 10.10.4",
        "blocking": false,
        "kb_id": "V015",
        "acknowledged": null
@@ -264,13 +373,14 @@
        "severity": "info",
        "title": "Publikációs torzítás tesztje alulerőzött",
        "study": null,
-       "detail": "k = 4",
-       "advice": "k < 10: funnel-aszimmetria tesztek (Egger, Begg) nem ajánlottak.",
-       "source": "Sterne et al. 2011 BMJ",
        "row": null,
+       "rows": [],
        "row_uid": null,
        "line": null,
        "fields": [],
+       "detail": "k = 4",
+       "advice": "k < 10: funnel-aszimmetria tesztek (Egger, Begg) nem ajánlottak.",
+       "source": "Sterne et al. 2011 BMJ",
        "blocking": false,
        "kb_id": "V016",
        "acknowledged": null
@@ -280,10 +390,10 @@
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex06"
+     "request_id": "q_ex31"
     }
    }
   },
@@ -298,10 +408,10 @@
     "schema": "szk.ma.validation/v1",
     "data": {
      "schema": "szk.ma.validation/v1",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "measure": "MD",
-     "input_sha256": "4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7",
      "column_map": {
+      "row_uid": "row_uid",
       "study": "study",
       "m1": "m1",
       "sd1": "sd1",
@@ -311,7 +421,30 @@
       "n2": "n2",
       "estimated": "estimated"
      },
+     "column_index": {
+      "row_uid": 0,
+      "study": 1,
+      "m1": 2,
+      "sd1": 3,
+      "n1": 4,
+      "m2": 5,
+      "sd2": 6,
+      "n2": 7,
+      "estimated": 8
+     },
      "decimal_mark": ",",
+     "options": {
+      "label_col": "study",
+      "smd_vtype": "LS",
+      "j_method": "exact",
+      "cc": 0.5,
+      "cc_to": "only0",
+      "drop00": null,
+      "md_vtype": "unequal",
+      "glass_vtype": "METAN",
+      "gen_smd_vtype": null
+     },
+     "n_rows": 9,
      "summary": {
       "error": 1,
       "warning": 3,
@@ -324,16 +457,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Edinburgh",
-       "detail": "m1=55 < 2·sd1=94",
-       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
-       "source": "Cochrane Handbook 10.5.3",
        "row": 0,
+       "rows": [
+        0
+       ],
        "row_uid": "rnrm01",
        "line": 2,
        "fields": [
         "m1",
         "sd1"
        ],
+       "detail": "m1=55 < 2·sd1=94",
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -343,16 +479,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Edinburgh",
-       "detail": "m2=75 < 2·sd2=128",
-       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
-       "source": "Cochrane Handbook 10.5.3",
        "row": 0,
+       "rows": [
+        0
+       ],
        "row_uid": "rnrm01",
        "line": 2,
        "fields": [
         "m2",
         "sd2"
        ],
+       "detail": "m2=75 < 2·sd2=128",
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -362,16 +501,19 @@
        "severity": "error",
        "title": "Hiányzó kötelező érték",
        "study": "Montreal-Home",
-       "detail": "hiányzik: m1, sd1",
-       "advice": "A vizsgálat kimarad az elemzésből; pótold a közleményből, a szerzőtől, vagy dokumentált konverzióval (medián/IQR, SE, CI → SD).",
-       "source": "Cochrane Handbook 6.5.2",
        "row": 4,
+       "rows": [
+        4
+       ],
        "row_uid": "rnrm05",
        "line": 6,
        "fields": [
         "m1",
         "sd1"
        ],
+       "detail": "hiányzik: m1, sd1",
+       "advice": "A vizsgálat kimarad az elemzésből; pótold a közleményből, a szerzőtől, vagy dokumentált konverzióval (medián/IQR, SE, CI → SD).",
+       "source": "Cochrane Handbook 6.5.2",
        "blocking": true,
        "kb_id": "V002",
        "acknowledged": null
@@ -381,16 +523,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Newcastle",
-       "detail": "m1=52 < 2·sd1=90",
-       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
-       "source": "Cochrane Handbook 10.5.3",
        "row": 6,
+       "rows": [
+        6
+       ],
        "row_uid": "rnrm07",
        "line": 8,
        "fields": [
         "m1",
         "sd1"
        ],
+       "detail": "m1=52 < 2·sd1=90",
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -400,16 +545,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Newcastle",
-       "detail": "m2=41 < 2·sd2=68",
-       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
-       "source": "Cochrane Handbook 10.5.3",
        "row": 6,
+       "rows": [
+        6
+       ],
        "row_uid": "rnrm07",
        "line": 8,
        "fields": [
         "m2",
         "sd2"
        ],
+       "detail": "m2=41 < 2·sd2=68",
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -419,16 +567,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Umea",
+       "row": 7,
+       "rows": [
+        7
+       ],
+       "row_uid": "rnrm08",
+       "line": 9,
+       "fields": [
+        "m1",
+        "sd1"
+       ],
        "detail": "m1=21 < 2·sd1=32",
        "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
        "source": "Cochrane Handbook 10.5.3",
-       "row": 7,
-       "row_uid": "rnrm08",
-       "line": 9,
-       "fields": [
-        "m1",
-        "sd1"
-       ],
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -438,16 +589,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Umea",
-       "detail": "m2=31 < 2·sd2=54",
-       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
-       "source": "Cochrane Handbook 10.5.3",
        "row": 7,
+       "rows": [
+        7
+       ],
        "row_uid": "rnrm08",
        "line": 9,
        "fields": [
         "m2",
         "sd2"
        ],
+       "detail": "m2=31 < 2·sd2=54",
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -457,16 +611,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Uppsala",
-       "detail": "m1=30 < 2·sd1=54",
-       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
-       "source": "Cochrane Handbook 10.5.3",
        "row": 8,
+       "rows": [
+        8
+       ],
        "row_uid": "rnrm09",
        "line": 10,
        "fields": [
         "m1",
         "sd1"
        ],
+       "detail": "m1=30 < 2·sd1=54",
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -476,16 +633,19 @@
        "severity": "info",
        "title": "Ferde eloszlás gyanúja",
        "study": "Uppsala",
-       "detail": "m2=23 < 2·sd2=40",
-       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
-       "source": "Cochrane Handbook 10.5.3",
        "row": 8,
+       "rows": [
+        8
+       ],
        "row_uid": "rnrm09",
        "line": 10,
        "fields": [
         "m2",
         "sd2"
        ],
+       "detail": "m2=23 < 2·sd2=40",
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
        "blocking": false,
        "kb_id": "V013",
        "acknowledged": null
@@ -495,15 +655,18 @@
        "severity": "warning",
        "title": "SD helyett SE gyanúja",
        "study": "Orpington-Mild",
-       "detail": "sd1=7, sd1·√n=39, medián SD=23.5, sd2=4",
-       "advice": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
-       "source": "Cochrane Handbook 6.5.2.2",
        "row": 1,
+       "rows": [
+        1
+       ],
        "row_uid": "rnrm02",
        "line": 3,
        "fields": [
         "sd1"
        ],
+       "detail": "sd1=7, sd1·√n=39, medián SD=23.5, sd2=4",
+       "advice": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
+       "source": "Cochrane Handbook 6.5.2.2",
        "blocking": false,
        "kb_id": "V011",
        "acknowledged": null
@@ -513,15 +676,18 @@
        "severity": "warning",
        "title": "SD helyett SE gyanúja",
        "study": "Orpington-Mild",
-       "detail": "sd2=4, sd2·√n=22.6, medián SD=23.5, sd1=7",
-       "advice": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
-       "source": "Cochrane Handbook 6.5.2.2",
        "row": 1,
+       "rows": [
+        1
+       ],
        "row_uid": "rnrm02",
        "line": 3,
        "fields": [
         "sd2"
        ],
+       "detail": "sd2=4, sd2·√n=22.6, medián SD=23.5, sd1=7",
+       "advice": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
+       "source": "Cochrane Handbook 6.5.2.2",
        "blocking": false,
        "kb_id": "V011",
        "acknowledged": null
@@ -531,15 +697,18 @@
        "severity": "warning",
        "title": "SD helyett SE gyanúja",
        "study": "Montreal-Transfer",
-       "detail": "sd2=4, sd2·√n=28.8, medián SD=23.5, sd1=7",
-       "advice": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
-       "source": "Cochrane Handbook 6.5.2.2",
        "row": 5,
+       "rows": [
+        5
+       ],
        "row_uid": "rnrm06",
        "line": 7,
        "fields": [
         "sd2"
        ],
+       "detail": "sd2=4, sd2·√n=28.8, medián SD=23.5, sd1=7",
+       "advice": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
+       "source": "Cochrane Handbook 6.5.2.2",
        "blocking": false,
        "kb_id": "V011",
        "acknowledged": null
@@ -549,13 +718,14 @@
        "severity": "info",
        "title": "Publikációs torzítás tesztje alulerőzött",
        "study": null,
-       "detail": "k = 8",
-       "advice": "k < 10: funnel-aszimmetria tesztek (Egger, Begg) nem ajánlottak.",
-       "source": "Sterne et al. 2011 BMJ",
        "row": null,
+       "rows": [],
        "row_uid": null,
        "line": null,
        "fields": [],
+       "detail": "k = 8",
+       "advice": "k < 10: funnel-aszimmetria tesztek (Egger, Begg) nem ajánlottak.",
+       "source": "Sterne et al. 2011 BMJ",
        "blocking": false,
        "kb_id": "V016",
        "acknowledged": null
@@ -565,16 +735,18 @@
       {
        "study": "Montreal-Home",
        "row": 4,
-       "reason": "V002"
+       "row_uid": "rnrm05",
+       "line": 6,
+       "reason": "validálási hiba: V002"
       }
      ]
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex07"
+     "request_id": "q_ex32"
     }
    }
   }

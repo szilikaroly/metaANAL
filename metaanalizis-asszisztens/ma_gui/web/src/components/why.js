@@ -29,8 +29,12 @@
   var cache = {};
   var cur = null;
   var STRENGTH = { must: 1, should: 1, consider: 1, avoid: 1 };
+  // a KB-tétel olvasható mezői (UX-05); a gépi metaadat (kinek szól, fajta, gépi ellenőrzés) egy összecsukott
+  // „Haladó” blokkba kerül, a táblázat neve nem látszik
   var FIELDS = ['condition', 'recommendation', 'rationale', 'title', 'body', 'text', 'how_to_verify', 'expression', 'variables',
-    'strength', 'stage_id', 'applies_to', 'kind', 'checklist', 'section', 'machine_check', 'source_ids', 'source_id', 'locator', 'ref', 'notes', 'citation'];
+    'strength', 'stage_id', 'checklist', 'section', 'locator', 'ref', 'notes', 'citation'];
+  var ADV_FIELDS = ['applies_to', 'kind', 'machine_check'];
+  var SRC_FIELDS = ['source_ids', 'source_id'];
 
   function item(id) {
     if (!cache[id]) {
@@ -49,8 +53,19 @@
 
   function kbIds(spec) { return MA.proc.refs(spec.kb === undefined ? spec.code : spec.kb); }
 
+  /** a KB-szöveg vége gyakran angol keresőkulcs-lista („[EN: …]”) — a felhasználónak nem mutatjuk (UX-05) */
+  function plain(v) { return typeof v === 'string' ? v.replace(/\s*\[EN:[^\]]*\]\s*$/, '') : v; }
+
+  /** forrás-azonosító → olvasható név: 'engine' → „a motor szabálya”; a többi a KB 'source' táblájának rövid neve */
+  function srcLabel(id) { return id === 'engine' ? t('why.engineSrc') : id; }
+  function srcLine(parts) {
+    var seen = {};
+    return parts.filter(function (x) { return !!x; }).map(function (x) { return srcLabel(String(x).trim()); })
+      .filter(function (x) { if (!x || seen[x]) { return false; } seen[x] = true; return true; }).join(' · ');
+  }
+
   function sec(key, text, cls) {
-    var s = pick(text);
+    var s = plain(pick(text));
     return s ? h('div', { 'class': ['why-sec', cls] }, h('h4', { i18n: key }), h('p', null, s)) : null;
   }
 
@@ -71,7 +86,8 @@
       spec.detail ? null : sec('why.what', it.title ? it.condition || it.body : it.body),
       spec.advice ? null : sec('why.todo', it.recommendation || it.how_to_verify),
       sec('why.why', it.rationale),
-      sec('why.src', [it.source_ids || it.source_id, it.locator].filter(function (x) { return !!x; }).join(' · '), 'why-srcline'));
+      // a forrás egyszer: ha a hívó már megadta (spec.source), a KB-é nem ismétlődik (UX-04)
+      spec.source ? null : sec('why.src', srcLine(String(it.source_ids || it.source_id || '').split(',').concat([it.locator])), 'why-srcline'));
   }
 
   /** panel(spec) → <div class="why-panel"> (a KB-rész a kérés után töltődik be). */
@@ -89,7 +105,7 @@
       ev && (ev.quote || ev.page || ev.locator) ? h('div', { 'class': 'why-sec' }, h('h4', { i18n: 'why.evidence' }),
         ev.quote ? h('blockquote', { 'class': 'why-quote' }, '„' + pick(ev.quote) + '”') : null,
         h('p', { 'class': 'muted' }, [ev.page ? t('why.page', { page: String(ev.page) }) : '', pick(ev.locator)].filter(function (x) { return !!x; }).join(' · '))) : null,
-      sec('why.src', spec.source, 'why-srcline'),
+      spec.source ? sec('why.src', srcLine([spec.source]), 'why-srcline') : null,
       kbHost);
     if (kbHost) {
       item(ids[0]).then(function (it) {
@@ -187,17 +203,40 @@
     item(id).then(function (it) {
       MA.proc.pend(body, false);
       if (!it) { MA.dom.mount(body, MA.ui.emptyState('why.noKb')); return; }
-      var dl = h('dl', { 'class': 'kb-fields' });
-      FIELDS.forEach(function (f) {
-        var v = it[f];
-        if (v === undefined || v === null || v === '') { return; }
-        dl.appendChild(h('dt', null, t('why.f.' + f)));
-        dl.appendChild(h('dd', { 'class': f === 'text' || f === 'body' ? 'kb-long' : null }, f === 'strength' && STRENGTH[v] ? t('why.strength.' + v) : pick(v)));
-      });
+      function value(f, v) {
+        if (f === 'strength' && STRENGTH[v]) { return t('why.strength.' + v); }
+        if (f === 'stage_id') { return MA.proc.stageLabel(String(v)); }
+        return plain(pick(v));
+      }
+      function list(fields, cls) {
+        var dl = h('dl', { 'class': cls });
+        fields.forEach(function (f) {
+          var v = it[f];
+          if (v === undefined || v === null || v === '') { return; }
+          dl.appendChild(h('dt', null, t('why.f.' + f)));
+          dl.appendChild(h('dd', { 'class': f === 'text' || f === 'body' ? 'kb-long' : null }, value(f, v)));
+        });
+        return dl.childNodes.length ? dl : null;
+      }
+      // források név szerint (a 'source' tábla rövid neve; a motor szabályainál „a motor szabálya”)
+      var ids = [];
+      SRC_FIELDS.forEach(function (f) { String(it[f] || '').split(',').forEach(function (x) { x = x.trim(); if (x && ids.indexOf(x) < 0) { ids.push(x); } }); });
+      var srcList = ids.length ? h('ul', { 'class': 'kb-sources' }, ids.map(function (sid) {
+        var li = h('li', { dataset: { source: sid } }, srcLabel(sid));
+        if (sid !== 'engine') {
+          item(sid).then(function (src) {
+            var name = src ? pick(src.short || src.citation || '') : '';
+            if (name) { MA.dom.mount(li, name, src.citation && src.short ? h('span', { 'class': 'muted' }, ' — ' + pick(src.citation)) : null); }
+          }, function () { /* marad az azonosító */ });
+        }
+        return li;
+      })) : null;
+      var adv = list(ADV_FIELDS, 'kb-fields kb-adv');
       MA.dom.mount(body,
-        h('p', { 'class': 'kb-meta' }, MA.ui.badge('neutral', it.table || 'KB'), ' ',
-          it.local_only ? MA.ui.badge('warning', pick(it.note) || t('kb.localOnly'), { title: t('kb.localOnlyTitle') }) : null),
-        dl);
+        it.local_only ? h('p', { 'class': 'kb-meta' }, MA.ui.badge('warning', pick(it.note) || t('kb.localOnly'), { title: t('kb.localOnlyTitle') })) : null,
+        list(FIELDS, 'kb-fields'),
+        srcList ? [h('h4', { 'class': 'kb-src-h' }, t('why.f.source_ids')), srcList] : null,
+        adv ? h('details', { 'class': 'kb-adv-box' }, h('summary', null, t('why.advanced')), adv) : null);
     }, function (err) {
       MA.proc.pend(body, false);
       MA.dom.mount(body, MA.ui.errorBox(err));

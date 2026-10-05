@@ -15,7 +15,7 @@ import math
 from . import distributions as dist
 from . import linalg as la
 from .models import (ModelError, MetaResult, meta_analysis, estimate_tau2, optimize_tau2,
-                     variance_scale, tau2_info_warnings, ratio_stat)
+                     variance_scale, tau2_info_warnings, ratio_stat, polish_tau2)
 
 
 # ------------------------------------------------------------- alcsoportok
@@ -232,32 +232,43 @@ def _tau2_pm_mr(x, y, v, tol=1e-12, maxiter=1000):
     return 0.5 * (lo + hi)
 
 
+def _fs_mr_adj(x, y, v, method, tau2):
+    """A REML/ML Fisher-scoring lépés moderátorokkal τ²-nél, vagy None (nem véges / nem pozitív
+    információ)."""
+    w = [1.0 / (vi + tau2) for vi in v]
+    b, m, e, fit = _wls_fit(x, y, w)
+    r2w2 = sum((wi * ei) ** 2 for wi, ei in zip(w, e))
+    if method == "REML":
+        tr_p, tr_pp = fit.traces()
+        if not (tr_pp > 0) or not math.isfinite(tr_pp):
+            return None
+        adj = (r2w2 - tr_p) / tr_pp
+    else:  # ML
+        adj = (r2w2 - sum(w)) / sum(a * a for a in w)
+    return adj if math.isfinite(adj) else None
+
+
 def _fs_mr(x, y, v, method, start, scale, tol=1e-10, maxiter=1000, step=1.0):
     """REML/ML Fisher-scoring moderátorokkal (metafor rma.uni), lépésfelezéssel; step < 1:
-    csillapított lépések (metafor stepadj)."""
+    csillapított lépések (metafor stepadj). Konvergencia után szelő-lépéses finomítás
+    (models.polish_tau2: a lineáris konvergencia miatti ~1e-7 relatív maradékhiba ellen)."""
     tau2 = max(0.0, start)
     it = -1
     for it in range(maxiter):
-        w = [1.0 / (vi + tau2) for vi in v]
-        b, m, e, fit = _wls_fit(x, y, w)
-        r2w2 = sum((wi * ei) ** 2 for wi, ei in zip(w, e))
-        if method == "REML":
-            tr_p, tr_pp = fit.traces()
-            if not (tr_pp > 0) or not math.isfinite(tr_pp):
-                return tau2, False, it + 1
-            adj = (r2w2 - tr_p) / tr_pp
-        else:  # ML
-            adj = (r2w2 - sum(w)) / sum(a * a for a in w)
-        if not math.isfinite(adj):
+        raw = _fs_mr_adj(x, y, v, method, tau2)
+        if raw is None:
             return tau2, False, it + 1
-        adj *= step
+        adj = raw * step
         while tau2 + adj < 0:
             adj /= 2.0
             if abs(adj) < 1e-300:
                 adj = -tau2
                 break
+        t_old = tau2
         tau2 += adj
         if abs(adj) <= tol * max(tau2, scale):
+            if tau2 > 0 and adj != 0:
+                tau2 = polish_tau2(lambda t: _fs_mr_adj(x, y, v, method, t), t_old, raw, tau2, scale)
             return tau2, True, it + 1
     return tau2, False, it + 1
 
@@ -374,6 +385,46 @@ def _robust_hc1(x, y, w, b, m, e, names, level, idx, has_int):
     }
 
 
+# Tökéletes illeszkedés (minden reziduum csak kerekítési zaj). Két, egymást kiegészítő feltétel:
+#  1) relatív: rss <= PERFECT_FIT_RTOL · (a hatások centrált súlyozott négyzetösszege) — vagyis
+#     R² = 1 legalább 26 jegyig; eltolás-független (y + c ugyanazt adja);
+#  2) ábrázolási padló: rss <= PERFECT_FIT_FLOOR · Σ w y² — a reziduumok nem nagyobbak a bemenő
+#     hatásméretek saját kerekítésénél (néhány tucat ulp; pl. y_i = μ + b·x_i kerekítve, nagyon
+#     kicsi b-vel, ahol a centrált variáció is alig nagyobb a kerekítésnél).
+# Küszöbök a differenciális fuzz alapján (tests/fuzz, 2×3000 adatsor, minden valódi tökéletes
+# illeszkedés): pontos (racionális) rss/Σwy² <= 5.1e-33, a motor számolt értéke <= 9.1e-32,
+# centráltan <= 7.9e-28; a legkisebb nem tökéletes arány 3.6e-8. A régi, Σwy²-hez mért 1e-20
+# küszöb a ~10 jegyig egyező hatásokat (pl. 1000 + 1e-8 különbségek, arány 5.6e-24) tévesen
+# tökéletes illeszkedésnek vette.
+PERFECT_FIT_RTOL = 1e-26
+PERFECT_FIT_FLOOR = 1e-28
+
+
+def _variation(yc, y, w, centred):
+    """(a centrált súlyozott négyzetösszeg, Σ w y²): az előbbi tengelymetszet nélkül Σ w yc²."""
+    if centred:
+        sw = sum(w)
+        m = sum(wi * a for wi, a in zip(w, yc)) / sw
+        tss = sum(wi * (a - m) ** 2 for wi, a in zip(w, yc))
+    else:
+        tss = sum(wi * a * a for wi, a in zip(w, yc))
+    return tss, sum(wi * a * a for wi, a in zip(w, y))
+
+
+def is_perfect_fit(rss, tss, swy2):
+    """Tökéletes illeszkedés-e (a reziduális négyzetösszeg csak kerekítési zaj); lásd fent."""
+    return rss <= PERFECT_FIT_RTOL * tss or rss <= PERFECT_FIT_FLOOR * swy2
+
+
+def rounding_rss(tss, swy2):
+    """A még kerekítési zajnak tekintett legnagyobb súlyozott reziduális négyzetösszeg (az
+    is_perfect_fit két küszöbének összege). Tökéletes illeszkedésnél egy b_j együttható akkor
+    'nulla a kerekítésen belül', ha |b_j| <= sqrt(M_jj · rounding_rss), M = (XᵀWX)⁻¹: ekkora
+    (kerekítési szintű) reziduum ennyit mozdíthat rajta (Cauchy–Schwarz a W-normában); a közel-
+    kollineáris tervek felnagyított zaja így automatikusan benne van (M_jj nagy)."""
+    return PERFECT_FIT_RTOL * tss + PERFECT_FIT_FLOOR * swy2
+
+
 def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, robust=False):
     """Vegyes hatású meta-regresszió.
 
@@ -396,13 +447,21 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
     method = (tau2_method or "REML").upper()
     if method not in MR_TAU2_METHODS:
         raise ModelError("meta-regresszió τ²-becslő: %s" % ", ".join(MR_TAU2_METHODS))
-    tau2, tau2_info = _tau2_mr(x, yi, vi, method)
+    has_int = all(row[0] == 1.0 for row in x)
+    # Eltolás-független számolás: tengelymetszetes modellben a y_i - y_ref (y_ref = a középső
+    # adatérték) eltolt hatásokkal illesztünk; a meredekségek, a reziduumok és a τ² matematikailag
+    # változatlanok, csak a tengelymetszethez adódik vissza y_ref. Így a kerekítési hiba a hatások
+    # SZÓRÁSÁHOZ mérten kicsi, nem a nagyságukhoz (pl. 1000 + 1e-8-os különbségeknél is pontos).
+    y_ref = sorted(yi)[k // 2] if has_int else 0.0
+    yc = [y - y_ref for y in yi]
+    tau2, tau2_info = _tau2_mr(x, yc, vi, method)
     warnings = tau2_info_warnings(method, tau2_info)
     w = [1.0 / (v + tau2) for v in vi]
-    b, m, e = _wls(x, yi, w)
+    b, m, e = _wls(x, yc, w)
+    if has_int:
+        b[0] += y_ref
     vb = [row[:] for row in m]
     df_res = k - p
-    has_int = all(row[0] == 1.0 for row in x)
     idx = list(range(1, p)) if has_int else list(range(p))
     perfect = False
     q = 1.0
@@ -410,13 +469,13 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
         rss = sum(wi * ei * ei for wi, ei in zip(w, e))
         # tökéletes illeszkedés (y = Xb, pl. azonos y_i-k): a reziduumok csak kerekítési zaj, így a
         # KH-skála s² = 0 (metafor: se = 0, z = ±Inf, QM = NA) — nem a moderátorok kollinearitása
-        swy2 = sum(wi * yv * yv for wi, yv in zip(w, yi))
-        perfect = rss <= 1e-20 * max(swy2, 1e-300)
+        tss, swy2 = _variation(yc, yi, w, has_int)
+        perfect = is_perfect_fit(rss, tss, swy2)
         if perfect:
             q = 0.0
+            noise = rounding_rss(tss, swy2)
             for j in range(p):      # a kerekítési zajból adódó együttható (pl. 1e-17) pontosan 0
-                aj = math.sqrt(sum(wi * row[j] * row[j] for wi, row in zip(w, x)))
-                if abs(b[j]) * aj <= 1e-10 * math.sqrt(swy2):
+                if abs(b[j]) <= math.sqrt(max(m[j][j], 0.0) * noise):
                     b[j] = 0.0
             warnings.append("Knapp–Hartung: a modell tökéletesen illeszkedik (a súlyozott reziduális "
                             "négyzetösszeg csak kerekítési zaj), így a KH-skálázás s² = 0: az SE-k 0-k, a t-próbák "
@@ -456,7 +515,7 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
             qm_p = dist.chi2_sf(qm, len(idx))
     # reziduális heterogenitás (FE-súlyokkal)
     w0 = [1.0 / v for v in vi]
-    b0, m0, e0, fit0 = _wls_fit(x, yi, w0)
+    b0, m0, e0, fit0 = _wls_fit(x, yc, w0)
     qe = sum(wi * ei * ei for wi, ei in zip(w0, e0))
     tr_p0, _ = fit0.traces()
     s2 = df_res / tr_p0 if tr_p0 > 0 else None
@@ -469,7 +528,7 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
     r2 = None
     if has_int and method != "FE":
         tau2_0 = estimate_tau2(yi, vi, method)[0] if method != "DL" else \
-            _tau2_mr([[1.0] for _ in yi], yi, vi, "DL")[0]
+            _tau2_mr([[1.0] for _ in yi], yc, vi, "DL")[0]
         if tau2_0 > 0:
             r2 = max(0.0, 100.0 * (tau2_0 - tau2) / tau2_0)
         else:
@@ -480,7 +539,8 @@ def meta_regression(yi, vi, x, names, tau2_method="REML", test="z", level=0.95, 
     rob = None
     if robust:
         try:
-            rob = _robust_hc1(x, yi, w, b, m, e, names, level, idx, has_int)
+            # yc: a súlyozott R² eltolás-független, az eltolt hatásokkal pontosabban számolható
+            rob = _robust_hc1(x, yc, w, b, m, e, names, level, idx, has_int)
         except (ArithmeticError, ValueError) as exc:
             # a kiegészítő robusztus blokk hibája nem viheti magával a modell-alapú eredményt
             warnings.append("A robusztus (HC1) SE nem számolható (%s); a modell-alapú eredmények érvényesek." % exc)

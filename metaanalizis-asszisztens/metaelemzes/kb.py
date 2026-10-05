@@ -135,6 +135,34 @@ def _schema_hash(schema=None):
 ENGINE_RULESETS = (("validate", "S05"), ("prisma", "S04"), ("audit", None))
 ENGINE_RULE_KINDS = {"validate": "Adatvalidálási", "prisma": "PRISMA-számellenőrzési",
                      "audit": "Projekt-audit (kereszt-artefaktum)"}
+# A motor-szabályok „Miért fontos?” indoklása egyszerű nyelven (11. fejezet 6. döntés; UX-04): fajtánként és
+# súlyosságonként — nem a szabály fajtájának gépies címkéje ('Adatvalidálási szabály (error)').
+ENGINE_RULE_WHY = {
+    ("validate", "error"): "Hibás vagy hiányzó adattal a vizsgálat hatásmérete nem számolható helyesen. A motor ezt a "
+                           "sort kihagyja az elemzésből, amíg ki nem javítod, így az összesített eredmény kevesebb "
+                           "vizsgálaton alapulhat, mint amennyit bevontál.",
+    ("validate", "warning"): "Az adat lehet helyes, de az ilyen minta gyakran adatkinyerési hibát jelez (pl. SE az SD "
+                             "helyén, rossz mértékegység). Ha valóban hiba, az összesített eredményt is torzítja — "
+                             "nézd meg a forrásban, és ha rendben van, rögzítsd indoklással.",
+    ("validate", "info"): "Tájékoztatás: az elemzést nem állítja meg, de az eredmény értelmezésénél vagy egy "
+                          "érzékenységi elemzésnél számít.",
+    ("prisma", "error"): "A PRISMA-folyamatábra dobozainak számai egymásból következnek. Ha nem adódnak össze, a bíráló "
+                         "és az olvasó nem tudja követni, hány rekord és vizsgálat maradt ki, és miért.",
+    ("prisma", "warning"): "A PRISMA-számok valószínűleg nem egyeznek egymással vagy a bevont vizsgálatokkal; az "
+                           "átláthatóság miatt érdemes rendbe tenni, mielőtt a kéziratba kerülnek.",
+    ("prisma", "info"): "Tájékoztatás a PRISMA-folyamatábráról: hiányzó vagy még nem ellenőrizhető doboz.",
+    ("audit", "error"): "A projekt fájljai (adattábla, elemzési futás, eredet, értékelés, GRADE) összefüggenek. Ha az "
+                        "egyik megváltozik és a másik nem követi, a kéziratba elavult vagy nem ellenőrizhető szám "
+                        "kerülhet.",
+    ("audit", "warning"): "A projekt két része nincs összhangban (pl. egy döntés vagy egy futás hiányzik). Nem állítja "
+                          "meg a munkát, de a végső ellenőrzés előtt rendezni kell.",
+    ("audit", "info"): "Tájékoztatás a projekt állapotáról: mi hiányzik még ahhoz, hogy a motor ellenőrizni tudja.",
+}
+
+
+def engine_rule_rationale(mod, sev):
+    """A motor-szabály egyszerű nyelvű indoklása (fajta + súlyosság szerint)."""
+    return ENGINE_RULE_WHY.get((mod, sev)) or ENGINE_RULE_WHY.get((mod, "info"))
 
 
 def _engine_rules():
@@ -166,6 +194,7 @@ def _seed_fingerprint():
             h.update(fh.read())
     h.update(b"\0engine.RULES\0")
     h.update(json.dumps(_engine_rules(), sort_keys=True, ensure_ascii=False, default=str).encode("utf-8"))
+    h.update(json.dumps(sorted(("%s/%s" % k, v) for k, v in ENGINE_RULE_WHY.items()), ensure_ascii=False).encode("utf-8"))
     return h.hexdigest()
 
 
@@ -380,7 +409,7 @@ def build(path=None, keep_fulltext=True):
             kind = ENGINE_RULE_KINDS.get(mod, mod)
             cur.execute("INSERT INTO decision_rule (rule_id, stage_id, applies_to, condition, recommendation, "
                         "rationale, strength, machine_check, source_ids, locator) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                        (code, stage, "engine", title, advice, "%s szabály (%s)" % (kind, sev),
+                        (code, stage, "engine", title, advice, engine_rule_rationale(mod, sev) or kind,
                          "must" if sev == "error" else ("should" if sev == "warning" else "consider"),
                          "metaelemzes.%s:%s" % (mod, code), "engine", src))
         if keep_fulltext:

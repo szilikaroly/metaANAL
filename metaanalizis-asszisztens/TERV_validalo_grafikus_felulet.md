@@ -185,8 +185,12 @@ metaanalizis-asszisztens/
     adapters/ base.py validator.py figureforge.py composer.py presubmit.py
     web/src/  app.js api.js store.js grid.js geom.js plots/{forest,funnel,doi,series,influence,bubble,
               traffic,prisma}.js screens/*.js css/tokens.css i18n/{hu,en}.json selftest.js
-    web/build_gui.py  → ma_gui/static/index.html (egy fájl, nonce-helyek; ≤ 450 KB; determinisztikus)
-    static/index.html  a lefordított felület, verziókövetve (a felhasználónak nincs build-lépése)
+    web/build_gui.py  → ma_gui/web/dist/index.html (egy fájl, nonce-helyek; ≤ 600 KB — a kezdőknek szóló
+                       magyarázatok miatt emelve 450-ről, helyi lapként így is azonnali; determinisztikus) és
+                       ma_gui/web/dist/snapshot.html (a pillanatkép sablonja; ≤ 600 KB)
+    web/dist/index.html  a lefordított felület, verziókövetve; a szerver a GET /-re KÖZVETLENÜL ezt szolgálja ki
+                       (a felhasználónak nincs build-lépése)
+    static/index.html  csak tartalék oldal újraépítési útmutatással, ha a web/dist/ hiányzik
     fallback_instruments.json  doménnevek és ítéletskálák validator nélküli módhoz (sodródás-őrrel)
   tests/gui/  api, biztonság, adatvédelem, lánc-visszajátszás, adapter (golden + stub-pluginok), UI
   ma-munkapad.cmd  ma-munkapad.command
@@ -354,7 +358,21 @@ Minden `/api/*` kérés `X-MA-Token`-t kér (a GET is). A törzs csak `applicati
 | `POST /api/manuscript/check` (v2) | kézirat-ellenőrzés tényekkel | presubmit |
 | `POST /api/export/audit` · `POST /api/export/snapshot` | audit-csomag, pillanatkép | audit_export, snapshot |
 | `GET /api/changes?since=` | long-poll változásjelzés | store |
-| `GET /` | a statikus felület — **adat és token nélkül** | — |
+| `GET /` | a statikus felület (`ma_gui/web/dist/index.html`) — **adat és token nélkül** | — |
+
+**Megvalósítási pontosítások (MVP, 2026-10-05):**
+
+- `GET /api/specs` a spec-ek listája; az azonos tartalmú ismételt `PUT /api/specs/<név>` If-Match nélkül no-op
+  (a gyermek-spec újralétrehozása nem hiba), az eltérő 409.
+- `POST /api/analyze` commit: 409, ha az adattábla sha256-ja eltér a spec-ben rögzítettől (`stale_data`) vagy a
+  mentett spec más, mint a küldött (`spec_differs`); 403, ha az adattábla `_privat/` alatt van (a kimenetek kívül
+  kerülnének); 400 mentetlen (piszkozat) táblával. Az explore a meleg workerben fut, sávonként a legutolsó nyer.
+- A FINAL PASS ellenőrzőpont a felületen alapból az audit-kapuval fut; a `GATE_BLOCKED` részletei az X-hibákat
+  (`audit_errors`) is felsorolják.
+- A metaadat-írások (spec, PRISMA-folyamat, `studies.json`) mentés előtt a szabad szöveges PHI-mintákon mennek át
+  (TAJ, születési szó melletti teljes dátum, e-mail); a hiba a mezőt nevezi meg, az értéket soha.
+- A `ma.py gui snapshot` és a `ma.py gui audit-export` alparancs a munkapad futtatása nélkül készíti el a
+  pillanatképet és az audit-csomagot (ugyanaz a kód, mint a `POST /api/export/*`).
 
 **Hibakódok:**
 
@@ -821,6 +839,10 @@ A felület semmit nem ír közvetlenül az SQLite-ba, mindent a `projekt.*` füg
 - **Nyelvfüggő szöveg.** `i18n`-objektum: `{"hu": "…", "en": "…"}`. A motor mindkettőt előállítja; a felület
   nem kerekít újra. Ennek oka, hogy a JS `toFixed` és a Python `%` a pontos „döntetlennél” eltérően kerekít
   (0,125 → 0,13 vs. 0,12).
+- **Számok a szövegben (döntés, 2026-10-05).** A kész szövegek a magyar változatban is **tizedespontot** használnak
+  (`0.49 [0.33; 0.73]`), mert a motor `report.md`-je és SVG-i is így írják: a képernyő, az export és a riport
+  ugyanazt a karaktersort mutatja (6.7). A két nyelv csak a mínuszjelben tér el (hu: `-`, en: U+2212). A
+  táblacellába írandó szám nem kijelzési szöveg: az átváltó `cell_text`-je a cél tábla tizedesjelével készül (4.7).
 - **Bővítés.** A fogyasztó az ismeretlen mezőt figyelmen kívül hagyja. Kötelező mező törlése vagy
   jelentésváltozása új főverziót jelent. A fogyasztó legalább az aktuális és az előző főverziót olvassa, de
   csak az aktuálisat termeli.
@@ -976,12 +998,16 @@ oda-vissza ellenőriz, és a spec meg a kapcsolók ugyanazt a `results.json`-t a
   "equivalent_argv": ["ma.py","analyze","--spec","05_elemzes/specs/o1_primary.json","--out","05_elemzes/o1/20261004T211200Z-a1f3c2","--project","."],
   "engine_version": "0.2.0", "data": {"path": "03_adatok/o1.csv", "sha256": "9f3a…", "rows": 13},
   "files": {"results": {"path": "…/results.json", "sha256": "…"}, "plot": {"path": "…/plot_data.json", "sha256": "…"}},
-  "k": 13, "primary": {"model": "random", "display_text": {"hu": "0,49 [0,33; 0,73]", "en": "0.49 [0.33; 0.73]"}},
+  "k": 13, "primary": {"model": "random", "display_text": {"hu": "0.49 [0.33; 0.73]", "en": "0.49 [0.33; 0.73]"}},
+  "participants_text": {"hu": "357347", "en": "357347"}, "rob_high": 4,
   "validation_summary": {"error": 0, "warning": 0, "info": 0}, "client_seq": 57, "elapsed_ms": 84,
   "started": "2026-10-04T21:12:00Z", "finished": "2026-10-04T21:12:00Z" }
 ```
 
-Explore-futásnál `run_id: null`, és nincs `files`.
+Explore-futásnál `run_id: null`, és nincs `files`. A `participants_text` (kész szöveg, mint a `report.md`-ben) és a
+`rob_high` (a magas vagy kritikus RoB-ú elemzett sorok száma) az áttekintő táblázatát szolgálja; az I², a PI és a
+többi kész szöveg a futás `plot_data.json`-jából jön (4.6), így a felület semmit nem formáz. Az opcionális
+`expanded_argv` a spec kapcsolós alakja (`ma.py analyze --data … --measure …`) a parancs-előnézethez.
 
 ### 4.6 `szk.ma.plot/v2` — a kulcsszerződés (`plot_data.json`; E4)
 
@@ -991,6 +1017,19 @@ parancsát. Így a képernyő, az export és a kézirat garantáltan ugyanazt a 
 ```json
 { "$id": "urn:szk:contract:ma.plot:2", "type": "object",
   "required": ["schema","meta","measure","scale","level","axis","studies","summaries"],
+  "$defs": {
+    "text": {"oneOf": [{"type": "null"}, {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}],
+             "description": "a motor kész szövege {hu, en}, vagy null, ha nincs mit kiírni"},
+    "axis": {"type": "object", "required": ["domain","ticks"],
+             "description": "kiegészítő tengely (funnel, Doi, LOO, kumulatív, befolyás): tartomány, kész tickek, cím, referenciavonalak",
+             "properties": {
+      "domain": {"type": "array", "minItems": 2, "maxItems": 2},
+      "ticks": {"type": "array", "items": {"type": "object", "required": ["at","text"], "properties": {
+                "at": {"type": "number"}, "text": {"type": "string"}, "text_i18n": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}}},
+      "title": {"$ref": "#/$defs/text"},
+      "refs": {"type": "array", "items": {"type": "object", "required": ["at"], "properties": {
+               "at": {"type": "number"}, "text": {"$ref": "#/$defs/text"}}}}}}
+  },
   "properties": {
     "schema": {"const": "szk.ma.plot/v2"},
     "meta": {"type": "object", "required": ["engine_version","data_sha256"], "properties": {
@@ -1000,12 +1039,16 @@ parancsát. Így a képernyő, az export és a kézirat garantáltan ugyanazt a 
       "analysis": {"enum": ["identity","log","logit","atanh","asin_sqrt","pft"]}, "ratio": {"type": "boolean"},
       "null_analysis": {"$ref": "urn:szk:contract:common:1#/$defs/num"}, "null_display": {"$ref": "urn:szk:contract:common:1#/$defs/num"}}},
     "level": {"type": "number"},
+    "k": {"type": "integer"},
+    "display_locale": {"enum": ["hu","en"], "description": "az axis.ticks[].text nyelve (mindkét nyelv: text_i18n)"},
     "axis": {"type": "object", "required": ["domain","ticks","title"], "properties": {
       "domain": {"type": "array", "minItems": 2, "maxItems": 2},
       "ticks": {"type": "array", "items": {"type": "object", "required": ["at","text"],
-                "properties": {"at": {"type": "number", "description": "elemzési skálán"}, "text": {"type": "string"}}}},
+                "properties": {"at": {"type": "number", "description": "elemzési skálán"}, "text": {"type": "string"},
+                               "text_i18n": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}}},
       "title": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}},
-    "labels": {"type": "object", "properties": {"left": {}, "right": {}, "title": {}}},
+    "labels": {"type": "object", "properties": {"left": {}, "right": {}, "title": {},
+      "study": {"$ref": "#/$defs/text"}, "effect": {"$ref": "#/$defs/text"}, "weight": {"$ref": "#/$defs/text"}}},
     "columns": {"type": "array", "items": {"type": "object", "required": ["id","title"]}},
     "studies": {"type": "array", "items": {"type": "object",
       "required": ["row_uid","row_index","label","y","lo","hi","weight_pct","display","display_text"],
@@ -1013,10 +1056,13 @@ parancsát. Így a képernyő, az export és a kézirat garantáltan ugyanazt a 
         "row_uid": {"$ref": "urn:szk:contract:common:1#/$defs/row_uid"}, "row_index": {"type": "integer"},
         "study_id": {"type": ["string","null"]}, "label": {"type": "string"}, "section": {"type": ["string","null"]},
         "y": {"type": "number"}, "lo": {"type": "number"}, "hi": {"type": "number"},
+        "se": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
         "weight_pct": {"type": "number"}, "weight_fixed_pct": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+        "weight_text": {"$ref": "#/$defs/text"},
         "cells": {"type": "object", "additionalProperties": {"type": "string"}, "description": "kész szövegek: 4/123, 12.4 (3.1)"},
         "display": {"$ref": "urn:szk:contract:common:1#/$defs/display"},
         "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+        "analysis": {"type": "object", "description": "PFT: az eredeti Freeman–Tukey-értékek (y, lo, hi)"},
         "clip": {"type": "object", "properties": {"left": {"type": "boolean"}, "right": {"type": "boolean"}}},
         "flags": {"type": "object", "properties": {"estimated": {"type": "boolean"},
                   "rob": {"enum": ["low","some","high","critical",null]}, "zero_cell_corrected": {"type": "boolean"},
@@ -1027,22 +1073,43 @@ parancsát. Így a képernyő, az export és a kézirat garantáltan ugyanazt a 
       "required": ["id","kind","label","estimate","ci_lower","ci_upper","display","display_text"],
       "properties": {"kind": {"enum": ["overall","subgroup","sensitivity"]}, "model": {"enum": ["random","fixed","ivhet","mh","peto"]},
         "label": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}, "pi_lower": {}, "pi_upper": {},
-        "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}, "pi_text": {}, "het_text": {}}}},
+        "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}, "pi_text": {}, "het_text": {},
+        "primary": {"type": "boolean", "description": "az elsődleges modell összesítése (ezt mutatja a felület kiemelve)"},
+        "k": {"type": ["integer","null"]}, "p_text": {"$ref": "#/$defs/text"}, "pi_label": {"$ref": "#/$defs/text"}}}},
     "subgroup_test": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["Q","df","p","text"]}]},
-    "heterogeneity": {"type": "object", "properties": {"Q": {}, "df": {}, "p": {}, "I2": {}, "tau2": {}, "text": {}}},
+    "heterogeneity": {"type": "object", "properties": {"Q": {}, "df": {}, "p": {}, "I2": {}, "tau2": {}, "text": {},
+      "i2_text": {"$ref": "#/$defs/text"}, "tau2_text": {"$ref": "#/$defs/text"}, "q_text": {"$ref": "#/$defs/text"},
+      "p_text": {"$ref": "#/$defs/text"}}},
     "funnel": {"type": "object", "properties": {
       "points": {"type": "array", "items": {"type": "object", "required": ["row_uid","x","se"]}},
       "filled": {"type": "array"}, "center": {"type": "number"}, "se_max": {"type": "number"},
       "pseudo_ci": {"type": "array", "description": "[[x, se], …] töréspontok"},
       "contours": {"type": "array", "items": {"type": "object", "required": ["p","polygon"],
-                   "description": "p = 0.10 / 0.05 / 0.01 sávok kész poligonként — a JS nem számol x = c ± z·se-t"}},
-      "tests_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}},
-    "doi": {"type": "object", "properties": {"points": {}, "lfk": {}, "category": {}, "lfk_text": {}}},
-    "loo": {"type": "array", "items": {"type": "object", "required": ["omitted_row_uid","estimate","ci_lower","ci_upper","display_text"]}},
+                   "description": "p = 0.10 / 0.05 / 0.01 sávok kész poligonként — a JS nem számol x = c ± z·se-t",
+                   "properties": {"band_text": {"$ref": "#/$defs/text"}}}},
+      "tests_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+      "axis": {"$ref": "#/$defs/axis"}, "y_axis": {"$ref": "#/$defs/axis"},
+      "center_label": {"$ref": "#/$defs/text"}, "contour_center": {"$ref": "urn:szk:contract:common:1#/$defs/num"},
+      "outside_text": {"$ref": "#/$defs/text"}, "trimfill_text": {"$ref": "#/$defs/text"}}},
+    "doi": {"type": "object", "properties": {"points": {}, "lfk": {}, "category": {}, "lfk_text": {},
+      "note": {"$ref": "#/$defs/text"}, "axis": {"$ref": "#/$defs/axis"}, "y_axis": {"$ref": "#/$defs/axis"}}},
+    "loo": {"type": "array", "items": {"type": "object", "required": ["omitted_row_uid","estimate","ci_lower","ci_upper","display_text"],
+      "properties": {"label": {"type": "string"}, "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+        "p_text": {"$ref": "#/$defs/text"}, "i2_text": {"$ref": "#/$defs/text"}, "tau2_text": {"$ref": "#/$defs/text"}}}},
+    "loo_axis": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/axis"}]},
     "influence": {"type": "array", "items": {"type": "object", "required": ["row_uid"], "properties": {
       "rstudent": {}, "dffits": {}, "cook_d": {}, "cov_ratio": {}, "hat": {}, "dfbetas": {},
-      "influential": {"type": "boolean"}, "decimals": {"type": "integer"}}}},
-    "cumulative": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["key_label","entries"]}]},
+      "influential": {"type": "boolean"}, "decimals": {"type": "integer"},
+      "label": {"type": "string"}, "outlier": {"type": "boolean"},
+      "rstudent_text": {"$ref": "#/$defs/text"}, "dffits_text": {"$ref": "#/$defs/text"}, "cook_d_text": {"$ref": "#/$defs/text"},
+      "cov_ratio_text": {"$ref": "#/$defs/text"}, "hat_text": {"$ref": "#/$defs/text"}, "dfbetas_text": {"$ref": "#/$defs/text"}}}},
+    "influence_axes": {"oneOf": [{"type": "null"}, {"type": "object", "additionalProperties": {"$ref": "#/$defs/axis"}}]},
+    "influence_text": {"$ref": "#/$defs/text"}, "influence_note": {"$ref": "#/$defs/text"},
+    "cumulative": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["key_label","entries"], "properties": {
+      "key_label": {"$ref": "#/$defs/text"}, "axis": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/axis"}]},
+      "entries": {"type": "array", "items": {"type": "object", "properties": {
+        "label": {"type": "string"}, "key_text": {"type": "string"}, "display_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"},
+        "i2_text": {"$ref": "#/$defs/text"}, "tau2_text": {"$ref": "#/$defs/text"}}}}}}]},
     "bubble": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["moderator","points","line","band"],
       "properties": {"band": {"description": "[[x, alsó, felső], …] — a motor számolja a koefficiens-kovarianciából"},
                      "coef_text": {"$ref": "urn:szk:contract:common:1#/$defs/i18n"}}}]},
@@ -1055,6 +1122,13 @@ változatot olvassa; v1-nél nincs lefúrás `row_uid`-ra, és nincs kontúr-pol
 oszlopából jön (`r` + 6 base32 karakter). Ha a CSV-ben nincs ilyen oszlop, determinisztikus hash készül:
 `sha1(label|row_index)[:6]`.
 
+**Additív kiegészítések a v2-n belül (2026-10-05, 4.0 „Bővítés”).** A séma leírja mindazt, amit a felület ábra- és
+eredmény-képernyői olvasnak: a vizsgálatok súly-szövegét, az összesítések p-, PI- és heterogenitás-szövegét, a
+funnel/Doi/LOO/kumulatív/befolyás tengelyeit (`$defs/axis`) és kész szövegeit (`$defs/text`), valamint a tick-szövegek
+kétnyelvű alakját (`text_i18n`). A `studies[].source` (dokumentum, oldal, hely) a tábla forrás-oszlopaiból, ennek
+hiányában az eredet-oldalfájlból (4.8) jön — így a lefúrás a PDF-oldalig a kinyerésben rögzített eredetből működik.
+Kötelező mező nem változott; a régebbi v2-olvasók az új mezőket figyelmen kívül hagyják.
+
 ### 4.7 Átváltás — `szk.ma.convert-request/v1` → `szk.ma.convert-result/v1`
 
 ```json
@@ -1062,10 +1136,18 @@ oszlopából jön (`r` + 6 base32 karakter). Ha a CSV-ben nincs ilyen oszlop, de
   "inputs": {"n": "40", "median": "12,5", "q1": "10", "q3": "15"}, "method": "luo",
   "target": {"dataset": "03_adatok/o1.csv", "row_uid": "r7f3a2", "fields": {"mean": "m1", "sd": "sd1"}} }
 { "schema": "szk.ma.convert-result/v1", "kind": "median_to_mean_sd", "engine_version": "0.2.0",
-  "outputs": {"mean": 12.43, "sd": 3.71}, "estimated": true,
-  "method": {"id": "luo2018+wan2014", "citation": "Cochrane Handbook 6.5.2.5", "function": "conversions.mean_from_median / sd_from_median", "kb_refs": ["K-…"]},
-  "assumptions": ["közel normális eloszlás"], "warnings": ["a medián Q1-hez közelebb: ferde eloszlás gyanúja (V013)"] }
+  "outputs": {"mean": 12.5, "sd": 3.8446495073971056},
+  "outputs_text": {"mean": {"hu": "12.5", "en": "12.5"}, "sd": {"hu": "3.845", "en": "3.845"}},
+  "cell_text": {"mean": "12,5", "sd": "3,845"}, "estimated": true,
+  "method": {"id": "luo2018+wan2014", "citation": "Cochrane Handbook 6.5.2.5; Luo 2018; Wan 2014", "function": "conversions.mean_from_median / sd_from_median", "kb_refs": ["D-S05-010", "D-S05-011", "F-MOR20-010", "D-S05-023"]},
+  "assumptions": [{"hu": "közel normális eloszlás", "en": "approximately normal distribution"}],
+  "warnings": [{"hu": "Becsült érték: jelöld az adattáblában (estimated=igen) és végezz nélküle érzékenységi elemzést (D-S05-023).",
+                "en": "Estimated value: mark it in the data table (estimated=yes) and run a sensitivity analysis without it (D-S05-023)."}] }
 ```
+
+A kijelzési szöveg (`outputs_text`) a 4.0 számkonvencióját követi; a cellába a `cell_text` kerül, a cél tábla
+tizedesjelével (`target.decimal_mark`, ennek hiányában a tagoló szerint; alapból `,`). A feltevések és a
+figyelmeztetések kétnyelvűek (`{hu, en}`), mert a felület nyelve menet közben váltható.
 
 A `kind` értékkészlete a motor `convert` alparancsaiból generálódik. Jelenleg ezek tartoznak bele:
 
@@ -1365,6 +1447,11 @@ Az `estimated` **mindig a motor döntése**: becslés `true`, algebrai átalakí
 3. **A motor repójának CI-jében:** opcionális job, amely kicheckoutolja a `szk-plugins`-t, és a
    `metaelemzes/contracts/` közös sémáit bájtra összeveti.
 4. **Termelői oldalon:** minden termelő a saját selftestjében validálja a kimenetét a saját másolatával.
+5. **A felület fixture-jei a motorból készülnek** (állapot, 2026-10-05): a `tests/gui/ui/gen_fixtures_from_engine.py`
+   a BCG- és a Normand-példán a valódi motorral (`api.analyze`, `api.validate_table`, `api.convert`,
+   `api.engine_info`) írja a validálási, elemzési, ábra- és futás-fixture-öket; a `--check` (és a
+   `tests/test_mvp_align.py`) eltérésnél elbukik, és a fixture-öket a sémákkal is validálja. Kézzel írt szám a
+   fixture-ökbe nem kerülhet.
 
 ---
 ## 5. Plugin-integráció és önálló mód
@@ -1917,6 +2004,12 @@ A `tests/gui/test_chain_replay.py` a `source_cases` 192 aktív esetét a munkapa
      Ezek a közvetlen motor-tesztben maradnak, és motor-PR-jelöltek.
    - **Cél:** a leképezhető ellenőrzések **100%-a** zöld. A leképezhetőség **mért szám**, nem ígéret; a felső
      korlát ma 96,8%.
+   - **Mért állapot (2026-10-05, `tests/gui/chain_replay_coverage.md`):** 3283 ellenőrzésből 3024 leképezett
+     (92,1%), ebből 3024 zöld (100%). A becsültnél több a nem leképezhető (259): a `tau2_fixed` (8 eset / 73) és a
+     `trimfill side` (2 / 42) mellett a **validálási kapu** (17 / 136: a Khan-féle MetaXL-esetek tört
+     eseményszámát a V006 hibának veszi, a pipeline kizárja a sort) és a moderátor nélküli meta-regresszió (1 / 8).
+     A `float32` tárolású eset leképezhető (a CSV a tárolt értékeket kapja). Az út: a munkapad táblaírója →
+     `api.analyze` (explore) → nézetmodell; a commit-út HTTP-n a `test_routes_analysis` és az E2E-teszt része.
 
 A **megjelenítési réteg** visszajátszása (2. réteg) a `meta_analysis`-esetek futásaira három dolgot ellenőriz:
 
@@ -2078,6 +2171,21 @@ dokumentációt, tartalékot nem; +15% javasolt. A plugin-PR-ek kicsik, visszafe
 - **Lánc-visszajátszás:** a leképezhető ellenőrzések 100%-a zöld; a lefedettségi jelentés kész.
 - **Tesztek:** a biztonsági és az adatvédelmi tesztek zöldek, a pillanatkép nulla hálózati kérést indít.
 - **Platformok:** kézi próba Windows/Edge (OneDrive-os Documents-szel) és macOS/Safari alatt.
+
+> **Állapot (2026-10-05):** az első három pont automatizálva. `node tests/gui/ui/e2e.spec.js` a valódi szerverrel
+> (ideiglenes projekt, termék-build, Chromium) a BCG- és a Normand-példán végigviszi a teljes kört — beillesztés,
+> élő validálás (hiba → jelölés → javítás), átváltás (becsült + eredet), „Nem hiba — indoklás”, spec → explore →
+> commit, forest/funnel/Doi/LOO/befolyás, lefúrás a sorig és a PDF-oldalig (aláírt URL), megállapítás + kapu
+> (előzetes tiltás, GATE_BLOCKED, lezárás, PASS), X001 adatmódosítás után, audit-ZIP kétszer azonos sha256-tal,
+> pillanatkép nulla hálózati kéréssel —, és ellenőrzi, hogy a felületen látott számok a futás `plot_data.json`
+> szövegei, azok pedig a `results.json` számai a motor formázóival (6.7). A lánc-visszajátszás jelentése:
+> `tests/gui/chain_replay_coverage.md` (8.2). A `ma.py gui` CLI-útját a `tests/gui/test_cli_gui.py` próbálja végig.
+> A TELEPITES útja (csak `project init`, ma-projekt.json nélkül) is végigjárható: a kimenetet a felület „Kimenet
+> felvétele” gombja vagy a `ma.py project outcome` veszi fel (`tests/gui/ui/outcome.spec.js`, valódi szerverrel). A
+> `ma-munkapad.cmd` / `ma-munkapad.command` indító megvan (Python-keresés: `py -3` → `python` → `python3` →
+> `.claude/.venv`, verziószondával, ami a Store-csonkot kiszűri); a `.command` útját a `tests/gui/test_launchers.py`
+> Linuxon próbálja végig, a `.cmd`-ét csak statikusan ellenőrzi. Hátravan: a kézi Windows/Edge (a `.cmd` indítóval
+> együtt) és macOS/Safari próba.
 
 ### 9.3 v1 — „teljes SR/MA munkafolyamat pluginokkal” (7 hét)
 

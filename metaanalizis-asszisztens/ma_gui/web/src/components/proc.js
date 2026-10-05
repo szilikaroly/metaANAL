@@ -9,6 +9,7 @@
  *   select(attrs, options[{value,label}], value) → <select>
  *   field(labelText, control, hint?) → <div class="pf-field"> (a <label for> a vezérlő id-jére mutat)
  *   pend(node, on)              aria-busy be/ki
+ *   stageName(s), stageLabel(s) a szakasz neve a motorból ('S05 · Adatkinyerés'); FINAL: záró kapu
  * A szerver üzeneteit és a motor szövegeit mindig szó szerint (textContent) jelenítjük meg.
  */
 (function () {
@@ -69,6 +70,20 @@
     if (on) { node.setAttribute('aria-busy', 'true'); } else { node.removeAttribute('aria-busy'); }
   }
 
+  /** A szakasz neve a motorból (GET /api/engine → stages: a tudásbázis 'stage' táblája), FINAL: záró kapu (UX-08). */
+  function stageName(s) {
+    if (s === 'FINAL') { return MA.i18n.t('stage.final'); }
+    var eng = MA.store.get('engine') || {};
+    var hit = (Array.isArray(eng.stages) ? eng.stages : []).filter(function (x) { return x && x.id === s; })[0];
+    return hit ? MA.i18n.pick(hit.name, '') : '';
+  }
+
+  /** 'S05 · Adatkinyerés' (név nélkül a kód). */
+  function stageLabel(s) {
+    var n = stageName(s);
+    return n ? s + ' · ' + n : String(s);
+  }
+
   MA.proc = {
     STAGES: STAGES,
     SEVERITIES: ['blocker', 'major', 'minor', 'info'],
@@ -80,6 +95,8 @@
     load: load,
     select: select,
     field: field,
-    pend: pend
+    pend: pend,
+    stageName: stageName,
+    stageLabel: stageLabel
   };
 })();

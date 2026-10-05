@@ -68,6 +68,13 @@
             "string",
             "null"
           ]
+        },
+        "purpose": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "a futás célja (primary | sensitivity | subgroup | metaregression | exploratory) a futás idejében"
         }
       }
     },
@@ -80,6 +87,13 @@
         "type": "string"
       },
       "description": "egyenértékű parancssor (ma.py analyze --spec … --out …)"
+    },
+    "expanded_argv": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "a spec kapcsolós alakja (ma.py analyze --data … minden nem alapértékű opcióval) — a parancs-előnézethez; hiányzik, ha a spec csak specben megadható opciót használ"
     },
     "engine_version": {
       "type": "string"
@@ -140,6 +154,13 @@
       ],
       "minimum": 0
     },
+    "measure": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "a ténylegesen használt hatásméret (pl. RR, OR, MD); a felület ezzel címkézi a futás számait"
+    },
     "primary": {
       "type": [
         "object",
@@ -160,6 +181,23 @@
           "$ref": "urn:szk:contract:common:1#/$defs/i18n"
         }
       }
+    },
+    "participants_text": {
+      "$ref": "urn:szk:contract:common:1#/$defs/i18n",
+      "description": "az elemzett vizsgálatok résztvevőinek száma kész szövegként (mint a report.md; az áttekintő N oszlopa); hiányzik, ha nem minden vizsgálatnál ismert"
+    },
+    "rob_high": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "a magas vagy kritikus torzítási kockázatú elemzett sorok száma (a plot/v2 flags.rob szerint); null, ha egyetlen elemzett sornak sincs RoB-értékelése"
+    },
+    "rob_missing": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "az elemzett sorok közül a RoB-értékelés nélküliek száma"
     },
     "validation_summary": {
       "type": "object",

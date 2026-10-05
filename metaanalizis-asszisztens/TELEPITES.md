@@ -68,7 +68,9 @@ python ma.py kb stats
 ```
 
 - `python ma.py selftest` lefuttatja a motor tesztjeit (kb. 1 perc). A végén `OK` (esetleg `OK (skipped=…)`)
-  kell álljon. **Ha `FAILED`-et ír, ne elemezz vele**: küldd el a kimenetet a tulajdonosnak.
+  kell álljon. **Ha `FAILED`-et ír, ne elemezz vele**: küldd el a kimenetet a tulajdonosnak. A munkapad
+  ([7. pont](#7-a-munkapad-grafikus-felület)) tesztjeit ez **nem** futtatja; azokat (a motoréval együtt) a
+  `python tests/run_parallel.py --gui` ellenőrzi (néhány perc, a végén szintén `OK`).
 - `python ma.py kb build` felépíti a tudásbázist (SQLite-fájl) a repóban lévő szabályokból és tudásegységekből.
   (Az első kereséskor magától is felépül.)
 - `python ma.py kb stats` megmutatja, hány szabály, tudásegység és ellenőrzőlista-tétel van benne. A
@@ -188,17 +190,36 @@ vagy egy munkamenetben: `/metaanalizis <projektmappa> "<kutatási kérdés>"`.
 
 Az első üzenetben írd le a kutatási kérdést, és ha van, a projektmappa nevét. Az orkesztrátor a tervező
 alágenssel elkészítteti a protokollt, minden szakasz végén az ellenőrzővel átnézeti a munkát, a végén az értékelővel
-GRADE-et és AMSTAR 2-t készíttet. Új projektmappát kézzel is létrehozhatsz:
+GRADE-et és AMSTAR 2-t készíttet. Új projektmappát kézzel is létrehozhatsz — a `ma.py` parancsokat (itt és a 7.
+pontban) a `metaanalizis-asszisztens` mappában futtasd (lásd [3. pont](#3-első-futtatás)); a repó gyökeréből
+(`anamnezis-asszisztens`) írd elé a mappát: `python metaanalizis-asszisztens/ma.py …`.
 
 ```bash
 python ma.py project init <projektmappa> --title "<cím>" --question "<kutatási kérdés>"
 ```
 
+Az elemzés egy **kimenethez** kötődik (amit összesíteni akarsz, pl. „TBC-incidencia”): a nevéhez az adattábla és a
+hatásméret tartozik. A friss projektben még nincs ilyen; a munkapadon az **Áttekintés** vagy az **Elemzés** oldal
+„Kimenet felvétele” gombjával veheted fel, vagy parancssorból:
+
+```bash
+python ma.py project outcome <projektmappa> --id o1 --name "TBC-incidencia" --data 03_adatok/o1.csv --measure RR
+```
+
+(Ez létrehozza a projekt `ma-projekt.json` fájlját is; módosításhoz ugyanez `--replace`-szel.)
+
 ## 7. A munkapad (grafikus felület)
+
+A `metaanalizis-asszisztens` mappában (a repó gyökeréből: `python metaanalizis-asszisztens/ma.py gui …`):
 
 ```bash
 python ma.py gui --project <projektmappa>
 ```
+
+Parancssor nélkül: Windowson kattints duplán a `metaanalizis-asszisztens` mappa **`ma-munkapad.cmd`** fájljára
+(vagy húzd rá a projektmappát), macOS-en a **`ma-munkapad.command`** fájlra (az első megnyitásnál: jobb gomb →
+*Megnyitás*). Megkérdezi a projektmappát (a mappát az ablakba húzhatod), és maga keres hozzá Pythont
+(`py -3`, `python`, `python3`, `.claude/.venv`).
 
 - A böngésző magától megnyílik a `http://127.0.0.1:8790/…` címen. A felület **csak a saját gépedről** érhető el;
   a megnyitáshoz egyszer használható, 60 másodpercig érvényes kód tartozik — ha lejárt, futtasd újra ugyanezt a
@@ -209,6 +230,25 @@ python ma.py gui --project <projektmappa>
   `--no-browser` (csak kiírja a címet), `--lang en`.
 - A felületet és az abból készült pillanatképet **ne töltsd fel sehova, és ne kérd Claude-ot, hogy publikálja**
   (pl. Artifactként): projektadatot tartalmaz.
+- Ha az Elemzés oldal azt írja, hogy még nincs kimenet, a „Kimenet felvétele” gombbal add meg (név, adattábla,
+  hatásméret) — lásd [6. pont](#6-indítás).
+
+**Pillanatkép és audit-csomag** (a munkapad indítása nélkül is; szintén a `metaanalizis-asszisztens` mappában):
+
+```bash
+python ma.py gui snapshot --project <projektmappa>        # csak olvasható HTML a társszerzőknek
+python ma.py gui audit-export --project <projektmappa>    # ZIP a 07_ellenorzes/audit/<dátum>/ mappába
+```
+
+- A **pillanatkép** egyetlen HTML-fájl (alapból a `07_ellenorzes/pillanatkep/` mappában). Python és internet nélkül,
+  dupla kattintással megnyílik, és semmilyen hálózati kérést nem indít; szerkeszteni nem lehet benne, az író gombok
+  csak a megfelelő parancsot mutatják. Mit takar ki? **A** osztály: az adattáblák benne vannak; **B**: a táblák
+  kimaradnak (ha mégis kellenek: `--keep tables`), az értékelők neve monogram lesz; **C**: táblák soha. A `_privat/`
+  mappa, a PDF-ek és a tudásbázis teljes szövege sosem kerül bele. A pillanatképet sem szabad feltölteni vagy
+  publikálni (Claude Artifactként sem).
+- Az **audit-csomag** determinisztikus ZIP (ugyanabból a projektállapotból bájtra azonos): `manifest.json`
+  (fájlok sha256-jával), a tevékenységnapló hash-lánca, a futások fájljai és `rerun.cmd`/`rerun.sh` az
+  újrafuttatáshoz.
 
 ## 8. Saját PDF-ek a tudásbázisban
 

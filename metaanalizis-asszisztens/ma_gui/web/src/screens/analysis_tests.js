@@ -56,6 +56,23 @@
     });
   });
 
+  MA.selftest.register('elemzés: forest — az oszlopfejlécek nem fedik egymást (1280 px-en sem)', function (t) {
+    return firstPlot().then(function (plot) {
+      if (!plot || !(plot.columns || []).length) { t.ok(true, 'nincs szövegoszlop — kihagyva'); return; }
+      var el = host();
+      P.forest.render(el, plot, {});
+      var cells = MA.dom.$$('.fp-head .fp-hcell', el).slice(1, 1 + plot.columns.length);
+      t.eq(cells.length, plot.columns.length, 'oszloponként egy fejléc');
+      var boxes = cells.map(function (c) { return c.getBBox(); });
+      for (var j = 1; j < boxes.length; j++) {
+        t.ok(boxes[j - 1].x + boxes[j - 1].width <= boxes[j].x + 0.5, 'a(z) ' + (j + 1) + '. oszlopfejléc nem fedi az előzőt');
+      }
+      t.ok(cells.every(function (c, i) { return c.textContent.replace(/\s+$/, '').length > 0 && c.textContent.indexOf(MA.i18n.pick(plot.columns[i].title, '').split(' ')[0]) === 0; }),
+        'a fejléc szövege a motoré (tördelve is)');
+      el.parentNode.removeChild(el);
+    });
+  });
+
   MA.selftest.register('elemzés: funnel, Doi, LOO, befolyás — a motor poligonjai és pontjai', function (t) {
     return firstPlot().then(function (plot) {
       if (!plot) { t.ok(true, 'nincs futás — kihagyva'); return; }
@@ -111,9 +128,28 @@
     });
   });
 
-  MA.selftest.register('elemzés: parancs-előnézet idézőjelezése', function (t) {
-    t.eq(A.cmd(['ma.py', 'analyze', '--subgroup', 'allokáció', '--title', 'a "b"']), 'python ma.py analyze --subgroup allokáció --title "a \\"b\\""', 'argv → parancs');
+  MA.selftest.register('elemzés: parancs-előnézet idézőjelezése (szöveg nem változtathatja meg a parancsot, WS-2)', function (t) {
+    var S = MA.shell;
+    // macOS / Linux: egyszeres idézőjel — benne semmi nem különleges ($, `, ", &, !)
+    t.eq(S.posix(['ma.py', 'analyze', '--subgroup', 'allokáció', '--title', 'a "b"'], ['python']),
+      'python ma.py analyze --subgroup allokáció --title \'a "b"\'', 'argv → POSIX-parancs (ékezetes betű idézőjel nélkül)');
+    t.eq(S.posixQuote('it\'s $(rm -rf ~) `x` & y'), '\'it\'\\\'\'s $(rm -rf ~) `x` & y\'', 'POSIX: \' kiléptetve, $() és ` szó szerint');
+    // Windows: a cmd.exe-ben VAGY PowerShellben parancsot nyitó szöveg → nincs egysoros parancs, csak magyarázat
+    var dec = 'V020 nem hiba (Smith "pilot & echo PWNED & rem" 2019)';
+    var w = S.windows(['ma.py', 'project', 'log', '<projektmappa>', '--agent', 'user', '--decision', dec, '--rationale', 'ok']);
+    t.eq(w.line, null, 'idézőjeles + & → nem másolható Windows-sor');
+    t.deepEq(w.unsafe, ['--decision'], 'a hibás mező neve');
+    t.eq(S.windows(['ma.py', '--title', 'a $(Start-Process calc) b']).line, null, 'PowerShell $( ) → nem másolható');
+    t.eq(S.windows(['ma.py', '--title', 'a `n b']).line, null, 'PowerShell ` → nem másolható');
+    t.eq(S.windows(['ma.py', '--title', '%PATH%']).line, null, 'cmd %…% → nem másolható');
+    t.eq(S.windows(['ma.py', '--title', '„pilot” vizsgálat']).line, null, 'tipográfiai idézőjel (PowerShell) → nem másolható');
+    t.eq(S.windows(['ma.py', '--title', 'BCG & TBC (2019); ^x | <y>']).line, 'py -3 ma.py --title "BCG & TBC (2019); ^x | <y>"',
+      'idézőjelen belül a & | < > ^ ( ) ; szó szerint (cmd és PowerShell)');
+    t.eq(S.windows(['ma.py', 'project', 'checkpoint', '<projektmappa>', '--summary', 'Rendben, átnézve']).line,
+      'py -3 ma.py project checkpoint "<projektmappa>" --summary "Rendben, átnézve"', 'egyszerű szöveg idézőjelben');
     t.eq(A.cmd([]), '', 'üres argv');
+    var info = A.cmdInfo(['ma.py', 'analyze', '--title', 'a "b"']);
+    t.ok(S.isWindows() ? info.line === null : info.line === 'python ma.py analyze --title \'a "b"\'', 'a platform szerinti sor');
   });
 
   MA.selftest.register('elemzés: az űrlap mezői a motor opció-metaadatából', function (t) {

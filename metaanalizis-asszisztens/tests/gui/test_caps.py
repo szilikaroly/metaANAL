@@ -320,6 +320,13 @@ class TestContractDrift(StubCase):
                      "SZK.Instrument/V1"):
             self.assertEqual(caps.contract_key(name), "szk.instrument/v1", name)
         self.assertEqual(caps.contract_key("urn:szk:contract:ma.plot:2"), "szk.ma.plot/v2")
+        # a motor contracts/ mappájának elnevezése (szk.-előtag nélkül)
+        self.assertEqual(caps.contract_key("ma.analysis-spec.v1.schema.json"), "szk.ma.analysis-spec/v1")
+        self.assertEqual(caps.contract_key("common.v1.schema.json"), "szk.common/v1")
+        eng = caps.local_contract_index([caps.ENGINE_CONTRACTS_DIR])
+        for key in ("szk.common/v1", "szk.ma.plot/v2", "szk.ma.validation/v1", "szk.capabilities/v1"):
+            self.assertIn(key, eng)
+        self.assertFalse([k for k in eng if not k.startswith("szk.")])
         index = caps.local_contract_index([STUBS / "validator" / "contracts"])
         self.assertIn("szk.instrument/v1", index)
         self.assertEqual(len(index["szk.instrument/v1"]), 1)
@@ -811,7 +818,9 @@ class TestMatrix(StubCase):
                 self.assertEqual({"code", "level", "hu", "en"}, set(prob))
         engine = rep["components"][0]
         self.assertEqual(engine["label"], {"hu": "motor", "en": "engine"})
-        self.assertEqual(set(engine["features"]), {"analyze", "validate", "convert", "prisma", "project", "kb"})
+        # a motor funkciói a homlokzat kézfogásának elérhető parancsai
+        self.assertLessEqual({"analyze", "validate", "convert", "prisma", "project", "project-audit", "kb"},
+                             set(engine["features"]))
         self.assertIn("matrix", rep)
 
 
@@ -830,12 +839,20 @@ class TestEngineCapabilities(unittest.TestCase):
         self.assertEqual(doc["plugin"], "metaelemzes")
         self.assertEqual(doc["version"], metaelemzes.__version__)
         self.assertIs(doc["ok"], True)
-        self.assertEqual([c["name"] for c in doc["commands"]],
-                         ["analyze", "validate", "convert", "prisma", "project", "kb"])
+        # a homlokzat kézfogása (ma.py --capabilities) szó szerint
+        from metaelemzes import api
+        self.assertEqual(doc, api.capabilities())
+        names = [c["name"] for c in doc["commands"]]
+        for want in ("analyze", "validate", "convert", "prisma", "project", "project-audit", "kb"):
+            self.assertIn(want, names)
         for cmd in doc["commands"]:
             self.assertEqual(cmd["argv"][0], "ma.py")
-            self.assertIs(cmd["available"], True)
-        self.assertEqual(doc["requires"]["missing"], [])
+            if not cmd.get("needs"):
+                self.assertIs(cmd["available"], True)
+        # a szerződés-irányok a motoréi (a validálási kérés bemenet, a futás-leíró kimenet)
+        self.assertEqual(doc["contracts"]["szk.ma.validate-request/v1"]["dir"], ["in"])
+        self.assertEqual(doc["contracts"]["szk.ma.run/v1"]["dir"], ["out"])
+        self.assertIn("missing", doc["requires"])
         self.assertEqual(comp["state"], "ok")
         self.assertIn(comp["mode"], ("api", "cli"))
         json.dumps(doc)

@@ -645,14 +645,16 @@ def _check_measure(measure):
 
 
 def validation_document(header, rows_text, measure, options=None, decimal_mark=None, delimiter=None,
-                        lines=None, raw_bytes=None):
+                        lines=None, raw_bytes=None, with_row_uids=False):
     """Nyers cellaszövegek ('12,3', '2,000', 'NR') → szk.ma.validation/v1 dokumentum (dict).
 
     Ugyanaz a tableio-értelmezés (tableio.parse_table) és ugyanaz a validálás + hatásméret-kizárás
     fut, mint a fájlnál (validate --json, analyze). A 'row' és a 'rows' a rows_text indexei (0-tól;
     a csupa üres sor nem elemzett, de a számozást nem tolja el); a 'line' a lines-ból jön (nélküle
     null). options: compute_options; decimal_mark / delimiter: a forrásfájl formátuma, ha ismert;
-    raw_bytes: ha a cellák egy fájl bájtjaiból jöttek, az input_sha256 ebből. Hibás bemenet: ValueError."""
+    raw_bytes: ha a cellák egy fájl bájtjaiból jöttek, az input_sha256 ebből. with_row_uids: a dokumentum belső
+    '_row_uids' kulcsa a rows_text helyeinek row_uid-ja (csupa üres sornál None) — a hívó (api) használja és
+    eltávolítja (az 'acknowledged' jelöléshez a többsoros szabályoknál). Hibás bemenet: ValueError."""
     measure = _check_measure(measure)
     opts = compute_options(options)
     if not isinstance(header, (list, tuple)) or not isinstance(rows_text, (list, tuple)) or \
@@ -661,10 +663,16 @@ def validation_document(header, rows_text, measure, options=None, decimal_mark=N
     rows, meta = tableio.parse_table(header, rows_text, decimal_mark, delimiter, lines)
     pos = meta["row_positions"]
     line_of = (lambda i: lines[pos[i]]) if lines is not None else (lambda i: None)
-    return _document(rows, meta, [tableio._cell_text(h) for h in header], measure, opts, pos, line_of, raw_bytes)
+    doc = _document(rows, meta, [tableio._cell_text(h) for h in header], measure, opts, pos, line_of, raw_bytes)
+    if with_row_uids:
+        grid = [None] * len(rows_text)
+        for i, uid in enumerate(tableio.row_uids(rows, meta)):
+            grid[pos[i]] = uid
+        doc["_row_uids"] = grid
+    return doc
 
 
-def validation_document_from_file(path, measure, options=None):
+def validation_document_from_file(path, measure, options=None, with_row_uids=False):
     """CSV/TSV-fájl → szk.ma.validation/v1 (input_sha256 = a fájl bájtjainak sha256-ja; line = fájlsor). A 'row' és
     a 'rows' az adatsorok indexei (az üres rekordok nélkül) — ugyanaz a rács, mint a tableio.read_raw /
     api.read_table sorai és a munkapad táblája, így a fájlból és a piszkozatból ugyanaz a szám adódik."""
@@ -673,7 +681,10 @@ def validation_document_from_file(path, measure, options=None):
     with open(path, "rb") as fh:
         raw = fh.read()
     rows, meta, orig_header = tableio._table_from_bytes(raw, path)
-    return _document(rows, meta, orig_header, measure, opts, None, lambda i: rows[i].get("_line"), raw)
+    doc = _document(rows, meta, orig_header, measure, opts, None, lambda i: rows[i].get("_line"), raw)
+    if with_row_uids:
+        doc["_row_uids"] = tableio.row_uids(rows, meta)
+    return doc
 
 
 def validation_from_request(req):
@@ -754,12 +765,7 @@ def _document(rows, meta, header, measure, opts, positions, line_of, raw):
                     "source": f["source"], "blocking": bool(blocking), "kb_id": f["code"]})
     excluded = [{"study": lab, "row": None if i is None else pos(i), "row_uid": None if i is None else uids[i],
                  "line": None if i is None else line_of(i), "reason": why} for (lab, why), i in zip(es.excluded, excl)]
-    column_map, column_index = {}, {}
-    for p, col in enumerate(meta["columns"]):
-        key = meta["mapping"][col]
-        if key and key not in column_map:
-            column_map[key] = header[p] if p < len(header) else col
-            column_index[key] = p
+    column_map, column_index = tableio.column_map_from(meta["columns"], meta["mapping"], header)
     doc = {"schema": SCHEMA, "engine_version": __version__, "measure": measure}
     if raw is not None:
         doc["input_sha256"] = hashlib.sha256(raw).hexdigest()

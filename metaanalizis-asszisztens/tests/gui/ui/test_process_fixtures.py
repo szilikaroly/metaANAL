@@ -116,6 +116,20 @@ class SourceTests(unittest.TestCase):
         self.assertIn("Artifact", hu["export.snap.warn"])
         self.assertIn("Artifact", en["export.snap.warn"])
 
+    def test_generator_check_passes(self):
+        """DOC-4: a generátor és a lemezen lévő fixture-ök egyeznek (--check 0) — kézi szerkesztés nem sodródhat el,
+        és az export-fixture letöltési mezői (kind, name, url, expires_at) a generátorból jönnek."""
+        import contextlib
+        import io
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            self.assertEqual(gen.main(["--check"]), 0, err.getvalue())
+        for r in load("export.json")["routes"]:
+            d = r["envelope"]["data"]
+            for k in ("kind", "name", "url", "expires_at"):
+                self.assertIn(k, d, (r["path"], k))
+            self.assertTrue(d["url"].startswith("/f/x/"))
+
     def test_sources_clean(self):
         bad = re.compile(r"innerHTML|outerHTML|insertAdjacentHTML|document\.write|toFixed|toPrecision|Intl\.NumberFormat|"
                          r"toLocaleString|\bMath\.|localStorage|sessionStorage|indexedDB|\bfetch\s*\(|(?i:fixture)")

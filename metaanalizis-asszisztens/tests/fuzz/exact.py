@@ -8,10 +8,13 @@ fractions.Fraction from the very same double inputs, so run_fuzz.py can tag a mi
 defect) or "exact=neither".
 
 Covered (closed forms only): the weighted least squares fit of a meta-regression at a given
-tau2 (coefficients, Q_E), tr(P), the DerSimonian-Laird tau2 with moderators, and the
-common-effect I2 = (Q_E - df)/Q_E. Iterative estimators (REML, ML, PM) are not covered.
+tau2 (coefficients, Q_E, model-based z or Knapp-Hartung SEs, t/z statistics and the omnibus QM),
+tr(P), the DerSimonian-Laird, Hedges and Sidik-Jonkman tau2 with moderators, the Paule-Mandel
+estimating equation Q_E(tau2) = k - p (to check a candidate PM tau2), and the common-effect
+I2 = (Q_E - df)/Q_E. REML / ML are not covered (run_fuzz.py compares their likelihoods instead).
 Stdlib only.
 """
+import math
 from fractions import Fraction as F
 
 
@@ -87,6 +90,90 @@ def i2_res(X, y, v, tau2):
     s2 = F(k - p) / tr_p(X, v, 0.0)
     t = F(tau2)
     return float(100 * t / (t + s2))
+
+
+def fit_stats(X, y, v, tau2=0.0, test="z"):
+    """Exact WLS inference at the given tau2, as meta_regression() / rma.uni report it:
+    {'b': [...], 'se': [...], 'stat': [...], 'QM': float or None} (floats). test 'knha' scales the
+    covariance by s2 = Q_E(tau2)/(k - p) and reports QM as F = QM/m; the omnibus test excludes the
+    intercept when the first column is all ones. With s2 = 0 (exact perfect fit) se = 0 and stat/QM
+    are None."""
+    b, Mi, e, w, Xf = wls(X, y, v, tau2)
+    k, p = len(y), len(Xf[0])
+    q = F(1)
+    if test == "knha":
+        q = sum(wi * ei * ei for wi, ei in zip(w, e)) / (k - p)
+        if q == 0:         # exact perfect fit: s2 = 0, se = 0, t = b/0 undefined
+            return {"b": [float(a) for a in b], "se": [0.0] * p, "stat": None, "QM": None}
+    var = [q * Mi[j][j] for j in range(p)]
+    se = [_sqrt(a) for a in var]
+    stat = [float(b[j]) / se[j] if se[j] > 0 else None for j in range(p)]
+    idx = list(range(1, p)) if all(row[0] == 1 for row in Xf) else list(range(p))
+    qm = None
+    if idx:
+        sub = _inverse([[Mi[a][c] for c in idx] for a in idx])
+        qm = sum(b[a] * sum(sub[i][j] * b[c] for j, c in enumerate(idx)) for i, a in enumerate(idx)) / q
+        if test == "knha":
+            qm = qm / len(idx)
+        qm = float(qm)
+    return {"b": [float(a) for a in b], "se": se, "stat": stat, "QM": qm}
+
+
+def _sqrt(x):
+    """float(sqrt(x)) of a non-negative Fraction, from an exact integer square root (>= 80 bits)."""
+    if x <= 0:
+        return 0.0
+    n, d = x.numerator, x.denominator
+    shift = max(0, (d.bit_length() - n.bit_length()) // 2 + 80)
+    return math.isqrt((n << (2 * shift)) // d) / (1 << shift)
+
+
+def pm_equation(X, y, v, tau2):
+    """Q_E(tau2) / (k - p) for a candidate Paule-Mandel tau2 (exactly 1 at the PM root; at the
+    boundary tau2 = 0 the PM estimate is 0 iff this ratio is <= 1)."""
+    k, p = len(y), len(X[0])
+    b, _, e, w, _ = wls(X, y, v, tau2)
+    return float(sum(wi * ei * ei for wi, ei in zip(w, e)) / (k - p))
+
+
+def tau2_he(X, y, v):
+    """Hedges (HE) tau2 with moderators: max(0, (RSS_OLS - tr(P_OLS V)) / (k - p))."""
+    k, p = len(y), len(X[0])
+    b, Mi, e, w, Xf = wls(X, y, [1.0] * k, 0.0)
+    rss = sum(ei * ei for ei in e)
+    h = [sum(Xf[i][a] * Mi[a][c] * Xf[i][c] for a in range(p) for c in range(p)) for i in range(k)]
+    tr_pv = sum(F(vi) * (1 - hi) for vi, hi in zip(v, h))
+    return float(max(F(0), (rss - tr_pv) / (k - p)))
+
+
+def tau2_sj(X, y, v):
+    """Sidik-Jonkman tau2 with moderators (metafor): t0 = sum (y - ybar)^2 / k, tau2 = t0 Q_E(t0)/(k - p).
+    t0 is rounded to a double first, as both programs evaluate Q_E at the double t0."""
+    k, p = len(y), len(X[0])
+    yf = [F(a) for a in y]
+    ybar = sum(yf) / k
+    t0 = float(sum((a - ybar) ** 2 for a in yf) / k)
+    if t0 <= 0:
+        return 0.0
+    b, _, e, w, _ = wls(X, y, v, t0)
+    return float(F(t0) * sum(wi * ei * ei for wi, ei in zip(w, e)) / (k - p))
+
+
+def is_perfect_fit(X, y, v, tau2=0.0, rtol=1e-26, floor=1e-28):
+    """The engine's Knapp-Hartung perfect-fit criterion (metaelemzes.moderators.is_perfect_fit:
+    rss <= rtol * centred weighted SS of y, or rss <= floor * sum w y^2) on the EXACT weighted rss
+    at tau2. True: the residuals of the actual double inputs are rounding-level, so the engine's
+    se = 0 convention is backed by exact arithmetic."""
+    b, _, e, w, Xf = wls(X, y, v, tau2)
+    yf = [F(a) for a in y]
+    rss = sum(wi * ei * ei for wi, ei in zip(w, e))
+    swy2 = sum(wi * a * a for wi, a in zip(w, yf))
+    if all(row[0] == 1 for row in Xf):
+        m = sum(wi * a for wi, a in zip(w, yf)) / sum(w)
+        tss = sum(wi * (a - m) ** 2 for wi, a in zip(w, yf))
+    else:
+        tss = swy2
+    return rss <= F(rtol) * tss or rss <= F(floor) * swy2
 
 
 def verdict(engine, metafor, exact_value, rtol=1e-6):

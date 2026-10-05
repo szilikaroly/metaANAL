@@ -19,7 +19,7 @@ A cellák szövegek; számot itt senki nem értelmez (a motoré)."""
 import csv
 import io
 
-from metaelemzes import projekt
+from metaelemzes import api
 
 from .. import privacy, security, store
 from ..router import ApiError, Result
@@ -100,6 +100,7 @@ def get_table(req):
     rel = dataset_rel(req, raw)
     table = app.store.load_table(rel)
     data = table.to_json()
+    data["column_map"] = store.column_map(table.header)
     return Result(data, SCHEMA, etag=table.etag)
 
 
@@ -184,6 +185,7 @@ def put_table(req):
     if app.log_activity("table.save", outputs=outputs, details=details) is None:
         warnings.append(app.ACTIVITY_WARNING)
     data = table.to_json()
+    data["column_map"] = store.column_map(table.header)
     if prov is not None:
         data["provenance_etag"] = table.provenance_etag
     return Result(data, SCHEMA, warnings=warnings, etag=table.etag)
@@ -195,8 +197,8 @@ def _log_phi_override(app, rel, reason, warnings):
         warnings.append("Nincs projektnapló (projekt.sqlite): a PHI-felülbírálás csak az activity-naplóba került.")
         return None
     try:
-        return projekt.log_decision(str(app.project_root), "user", "PHI-gyanú felülbírálva: %s" % rel,
-                                    rationale=reason, stage=None, kb_db=app.kb_db, check_kb=False)
+        return api.project_log(str(app.project_root), "user", "PHI-gyanú felülbírálva: %s" % rel,
+                               rationale=reason, stage=None, kb_db=app.kb_db, actor=app.actor)["id"]
     except Exception:                                      # noqa: BLE001 — a mentés már megtörtént
         warnings.append("A PHI-felülbírálás döntését nem sikerült a projektnaplóba írni.")
         return None

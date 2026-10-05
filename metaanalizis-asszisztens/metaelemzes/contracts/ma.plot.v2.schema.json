@@ -13,6 +13,75 @@
     "studies",
     "summaries"
   ],
+  "$defs": {
+    "text": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      ],
+      "description": "a motor kész szövege {hu, en}, vagy null, ha nincs mit kiírni"
+    },
+    "axis": {
+      "type": "object",
+      "required": [
+        "domain",
+        "ticks"
+      ],
+      "description": "kiegészítő tengely (funnel, Doi, LOO, kumulatív, befolyás): tartomány, kész tickek, cím, referenciavonalak",
+      "properties": {
+        "domain": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "ticks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "at",
+              "text"
+            ],
+            "properties": {
+              "at": {
+                "type": "number"
+              },
+              "text": {
+                "type": "string"
+              },
+              "text_i18n": {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            }
+          }
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "at"
+            ],
+            "properties": {
+              "at": {
+                "type": "number"
+              },
+              "text": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "properties": {
     "schema": {
       "const": "szk.ma.plot/v2"
@@ -70,6 +139,16 @@
     "level": {
       "type": "number"
     },
+    "k": {
+      "type": "integer"
+    },
+    "display_locale": {
+      "enum": [
+        "hu",
+        "en"
+      ],
+      "description": "az axis.ticks[].text nyelve (mindkét nyelv: text_i18n)"
+    },
     "axis": {
       "type": "object",
       "required": [
@@ -98,6 +177,9 @@
               },
               "text": {
                 "type": "string"
+              },
+              "text_i18n": {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
               }
             }
           }
@@ -112,7 +194,16 @@
       "properties": {
         "left": {},
         "right": {},
-        "title": {}
+        "title": {},
+        "study": {
+          "$ref": "#/$defs/text"
+        },
+        "effect": {
+          "$ref": "#/$defs/text"
+        },
+        "weight": {
+          "$ref": "#/$defs/text"
+        }
       }
     },
     "columns": {
@@ -171,11 +262,17 @@
           "hi": {
             "type": "number"
           },
+          "se": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
           "weight_pct": {
             "type": "number"
           },
           "weight_fixed_pct": {
             "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "weight_text": {
+            "$ref": "#/$defs/text"
           },
           "cells": {
             "type": "object",
@@ -189,6 +286,10 @@
           },
           "display_text": {
             "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "analysis": {
+            "type": "object",
+            "description": "PFT: az eredeti Freeman–Tukey-értékek (y, lo, hi)"
           },
           "clip": {
             "type": "object",
@@ -290,7 +391,23 @@
             "$ref": "urn:szk:contract:common:1#/$defs/i18n"
           },
           "pi_text": {},
-          "het_text": {}
+          "het_text": {},
+          "primary": {
+            "type": "boolean",
+            "description": "az elsődleges modell összesítése (ezt mutatja a felület kiemelve)"
+          },
+          "k": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "p_text": {
+            "$ref": "#/$defs/text"
+          },
+          "pi_label": {
+            "$ref": "#/$defs/text"
+          }
         }
       }
     },
@@ -318,7 +435,19 @@
         "p": {},
         "I2": {},
         "tau2": {},
-        "text": {}
+        "text": {},
+        "i2_text": {
+          "$ref": "#/$defs/text"
+        },
+        "tau2_text": {
+          "$ref": "#/$defs/text"
+        },
+        "q_text": {
+          "$ref": "#/$defs/text"
+        },
+        "p_text": {
+          "$ref": "#/$defs/text"
+        }
       }
     },
     "funnel": {
@@ -356,11 +485,34 @@
               "p",
               "polygon"
             ],
-            "description": "p = 0.10 / 0.05 / 0.01 sávok kész poligonként — a JS nem számol x = c ± z·se-t"
+            "description": "p = 0.10 / 0.05 / 0.01 sávok kész poligonként — a JS nem számol x = c ± z·se-t",
+            "properties": {
+              "band_text": {
+                "$ref": "#/$defs/text"
+              }
+            }
           }
         },
         "tests_text": {
           "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "axis": {
+          "$ref": "#/$defs/axis"
+        },
+        "y_axis": {
+          "$ref": "#/$defs/axis"
+        },
+        "center_label": {
+          "$ref": "#/$defs/text"
+        },
+        "contour_center": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "outside_text": {
+          "$ref": "#/$defs/text"
+        },
+        "trimfill_text": {
+          "$ref": "#/$defs/text"
         }
       }
     },
@@ -370,7 +522,16 @@
         "points": {},
         "lfk": {},
         "category": {},
-        "lfk_text": {}
+        "lfk_text": {},
+        "note": {
+          "$ref": "#/$defs/text"
+        },
+        "axis": {
+          "$ref": "#/$defs/axis"
+        },
+        "y_axis": {
+          "$ref": "#/$defs/axis"
+        }
       }
     },
     "loo": {
@@ -383,8 +544,35 @@
           "ci_lower",
           "ci_upper",
           "display_text"
-        ]
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "display_text": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "p_text": {
+            "$ref": "#/$defs/text"
+          },
+          "i2_text": {
+            "$ref": "#/$defs/text"
+          },
+          "tau2_text": {
+            "$ref": "#/$defs/text"
+          }
+        }
       }
+    },
+    "loo_axis": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/axis"
+        }
+      ]
     },
     "influence": {
       "type": "array",
@@ -405,9 +593,52 @@
           },
           "decimals": {
             "type": "integer"
+          },
+          "label": {
+            "type": "string"
+          },
+          "outlier": {
+            "type": "boolean"
+          },
+          "rstudent_text": {
+            "$ref": "#/$defs/text"
+          },
+          "dffits_text": {
+            "$ref": "#/$defs/text"
+          },
+          "cook_d_text": {
+            "$ref": "#/$defs/text"
+          },
+          "cov_ratio_text": {
+            "$ref": "#/$defs/text"
+          },
+          "hat_text": {
+            "$ref": "#/$defs/text"
+          },
+          "dfbetas_text": {
+            "$ref": "#/$defs/text"
           }
         }
       }
+    },
+    "influence_axes": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/axis"
+          }
+        }
+      ]
+    },
+    "influence_text": {
+      "$ref": "#/$defs/text"
+    },
+    "influence_note": {
+      "$ref": "#/$defs/text"
     },
     "cumulative": {
       "oneOf": [
@@ -419,7 +650,45 @@
           "required": [
             "key_label",
             "entries"
-          ]
+          ],
+          "properties": {
+            "key_label": {
+              "$ref": "#/$defs/text"
+            },
+            "axis": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/axis"
+                }
+              ]
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "key_text": {
+                    "type": "string"
+                  },
+                  "display_text": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  },
+                  "i2_text": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "tau2_text": {
+                    "$ref": "#/$defs/text"
+                  }
+                }
+              }
+            }
+          }
         }
       ]
     },

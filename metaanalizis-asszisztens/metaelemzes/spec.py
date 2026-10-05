@@ -917,13 +917,33 @@ def _primary(out):
     return {"model": out.get("primary_model"), "display_text": display_text(*bt[:3])}
 
 
+def _expanded_argv(spec, mode, files, project_root):
+    """A spec kapcsolós alakja (a parancs-előnézethez: minden nem alapértékű opció kiírva) — ['ma.py', 'analyze',
+    '--data', …]; commit-futásnál a kimeneti mappával (és projektnél '--project .'-tal). Ha a spec nem teljes vagy
+    csak specben megadható opciót használ: None."""
+    if not isinstance(spec, dict) or "options" not in spec or "data" not in spec:
+        return None
+    outdir = None
+    if mode == "commit" and files and files.get("results.json"):
+        outdir = os.path.dirname(files["results.json"])
+    try:
+        return ["ma.py"] + argv_from_spec(spec, project_root, out_dir=outdir,
+                                          log_to_project=mode == "commit" and project_root is not None)
+    except (SpecError, ValueError, KeyError, TypeError):
+        return None
+
+
 def run_descriptor(out, mode="explore", run_id=None, spec=None, spec_path=None, spec_hash=None,
                    equivalent_argv=None, data_file=None, data_sha256=None, data_rows=None, files=None,
-                   project_root=None, started=None, finished=None, elapsed_ms=None, client_seq=None):
+                   project_root=None, started=None, finished=None, elapsed_ms=None, client_seq=None, es=None):
     """szk.ma.run/v1 a pipeline.run kimenetéből. mode: 'commit' (run_id kötelező) vagy 'explore' (run_id null).
     files: a write_outputs {fájlnév: út} dict-je (szerep + relatív út + sha256). Az utak a projektgyökérhez
     relatívak, ha azon belül vannak, különben abszolútak. A spec-hash (spec_hash hiányában): spec_path esetén a
-    fájlé, különben a spec kanonikus bájtjaié (spec_sha256()). data_file: a ténylegesen olvasott adatfájl."""
+    fájlé, különben a spec kanonikus bájtjaié (spec_sha256()). data_file: a ténylegesen olvasott adatfájl.
+    A felület áttekintőjének: participants_text (kész szöveg) és — es (a pipeline.run hatásméretei) megadásakor —
+    rob_high (a magas/kritikus RoB-ú elemzett sorok száma; None, ha egy elemzett sornak sincs RoB-értékelése) és
+    rob_missing (az értékelés nélküli elemzett sorok száma); measure (a ténylegesen használt hatásméret); expanded_argv (a spec kapcsolós alakja). Az I², a PI
+    és a többi kész szöveg a futás plot_data.json-jában van (szk.ma.plot/v2)."""
     if mode not in MODES:
         raise ValueError("mode: %r (lehetséges: %s)" % (mode, ", ".join(MODES)))
     if mode == "commit" and not _match("run_id", run_id):
@@ -944,8 +964,14 @@ def run_descriptor(out, mode="explore", run_id=None, spec=None, spec_path=None, 
     sp["sha256"] = spec_hash
     sp["name"] = (spec or {}).get("name")
     sp["parent"] = (spec or {}).get("parent")
+    if (spec or {}).get("purpose") is not None:
+        # a futás célja a futás idejében (a munkapad ebből olvassa, nem a később módosítható specfájlból)
+        sp["purpose"] = spec.get("purpose")
     d["spec"] = sp
     d["equivalent_argv"] = list(equivalent_argv) if equivalent_argv is not None else None
+    exp = _expanded_argv(spec, mode, files, project_root)
+    if exp is not None:
+        d["expanded_argv"] = exp
     d["engine_version"] = __version__
     dd = collections.OrderedDict()
     dd["path"] = _disp_path(data_file, project_root) if data_file else ((spec or {}).get("data") or {}).get("path")
@@ -963,7 +989,18 @@ def run_descriptor(out, mode="explore", run_id=None, spec=None, spec_path=None, 
                                                 ("sha256", sha256_file(files[n]))))
         d["files"] = fs
     d["k"] = (out.get("effect_sizes") or {}).get("k")
+    # a ténylegesen használt hatásméret (a felület ezzel címkézi a futás számait, nem a mostani spec-fájllal)
+    d["measure"] = (out.get("effect_sizes") or {}).get("measure")
     d["primary"] = _primary(out)
+    from .pipeline import participants_text, rob_high_count, rob_missing_count
+    if out.get("primary") is not None:
+        pt = participants_text(out)
+        if pt is not None:
+            d["participants_text"] = pt
+        if es is not None:
+            # értékelés nélkül None (nem 0): a „0 magas kockázatú” nem értelmezhető, ha senki nem értékelt
+            d["rob_high"] = rob_high_count(es)
+            d["rob_missing"] = rob_missing_count(es)
     d["validation_summary"] = dict((out.get("validation") or {}).get("summary") or {})
     if client_seq is not None:
         d["client_seq"] = client_seq
@@ -1012,7 +1049,7 @@ def cli_equivalent_argv(a, outdir, prog="ma.py"):
     return argv + (["--project", os.path.abspath(root)] if root else [])
 
 
-def describe_cli_run(a, out, paths, outdir, started, finished, rid=None):
+def describe_cli_run(a, out, paths, outdir, started, finished, rid=None, es=None):
     """A cmd_analyze futás-leírója (run.json / --json-summary). commit, ha van run_id (--run-id vagy --project),
     különben explore; a files a ténylegesen kiírt kimenetek — csak commit-futásnál (4.5: explore-futásnak nincs
     files mezője; a kimenetek helyét a --out és a parancs kimenete adja)."""
@@ -1032,7 +1069,7 @@ def describe_cli_run(a, out, paths, outdir, started, finished, rid=None):
                           spec_path=getattr(a, "spec", None), spec_hash=digest,
                           equivalent_argv=cli_equivalent_argv(a, outdir), data_file=a.data,
                           files=paths if rid else None,
-                          project_root=root, started=started, finished=finished, elapsed_ms=elapsed)
+                          project_root=root, started=started, finished=finished, elapsed_ms=elapsed, es=es)
 
 
 def run_json_bytes(desc):

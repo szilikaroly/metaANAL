@@ -131,6 +131,13 @@ A munkapad böngészős felület ugyanahhoz a projektmappához és naplóhoz: a 
   `python "${CLAUDE_PLUGIN_ROOT}/ma.py" gui --project <mappa>`. A böngésző magától megnyílik; ha nem, a kiírt helyi
   címet (`http://127.0.0.1:<port>/#launch=…`) add át a felhasználónak. Az indítókód egyszer használható és 60 s-ig
   érvényes; ha lejárt, ugyanez a parancs újat kér a már futó példánytól. A felület csak ezen a gépen érhető el.
+  Parancssor nélkül a felhasználó a `${CLAUDE_PLUGIN_ROOT}/ma-munkapad.cmd` (Windows) vagy `ma-munkapad.command`
+  (macOS) fájlra duplán kattintva is indíthatja.
+- **Kimenet felvétele:** az elemzés és az eredmények kimenethez kötődnek (név + adattábla + hatásméret, a projekt
+  `ma-projekt.json` fájljában). Csak `project init` után még nincs kimenet: a felhasználó az Áttekintés vagy az
+  Elemzés oldal „Kimenet felvétele” gombjával veheti fel, vagy te:
+  `python "${CLAUDE_PLUGIN_ROOT}/ma.py" project outcome <mappa> --id o1 --name "<név>" --data 03_adatok/<tábla>.csv --measure RR`
+  (létrehozza a `ma-projekt.json`-t is; módosítás: `--replace`).
 - **Soha ne publikáld Artifactként** a munkapadot, egyetlen képernyőjét vagy a pillanatképét (egyfájlos HTML), és ne
   töltsd fel sehova (claude.ai, Drive, e-mail): projektadatot és jogvédett szöveget tartalmazhat. A pillanatképet a
   felhasználó maga adja tovább a társszerzőknek.

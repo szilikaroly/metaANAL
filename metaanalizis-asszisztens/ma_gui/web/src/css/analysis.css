@@ -12,6 +12,14 @@
 .kb-fields dt { font-weight: 650; margin-top: var(--sp-2); }
 .kb-fields dd { margin: 0 0 var(--sp-1); white-space: pre-wrap; }
 .kb-meta { margin-bottom: var(--sp-1); }
+.kb-badge .kb-short { display: inline-block; max-width: 16em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  vertical-align: bottom; font-weight: 400; }
+.kb-more { display: inline; }
+.kb-more > summary { display: inline; cursor: pointer; font-size: var(--fs-xs); color: var(--info); }
+.kb-more[open] > .kb-more-list { display: inline; }
+.kb-sources { margin: 0 0 var(--sp-2); padding-left: 1.2em; }
+.kb-adv-box > summary { cursor: pointer; color: var(--muted); font-size: var(--fs-sm); }
+.cmd-unsafe { flex: 1 1 420px; color: var(--warn); }
 
 /* ---- terv: fejléc, űrlap ---- */
 .plan-spec-meta { display: inline-flex; gap: var(--sp-1); flex-wrap: wrap; align-items: center; }

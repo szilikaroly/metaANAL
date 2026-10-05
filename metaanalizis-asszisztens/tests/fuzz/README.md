@@ -79,7 +79,15 @@ python3 tests/fuzz/run_fuzz.py --n 1000 --minimize 5
   illesztések mezői 1e-5) a `TOLERANCES` tábla indokolja a `run_fuzz.py`-ban.
 - Döntőbírák: (RE)ML-eltérésnél mindkét τ²-nél kiszámoljuk a (korlátozott) log-likelihoodot
   (`eng_ll_higher` / `mf_ll_higher` / `ll_equal` címke); moderátoros zárt képleteknél az `exact.py`
-  pontos értéke dönt (`exact=engine` / `exact=metafor` / `exact=neither:<közelebbi>`).
+  pontos értéke dönt (`exact=engine` / `exact=metafor` / `exact=neither:<közelebbi>`): Q_E, a DL / HE /
+  SJ τ², a PM τ² becslőegyenlete (Q_E(τ²) = k − p), azonos τ² mellett pedig az együtthatók, a z- vagy
+  Knapp–Hartung-SE-k, a t/z és a QM a két program saját τ²-énél számolt pontos értékhez mérve.
+  Knapp–Hartung tökéletes illeszkedésnél (`eng_perfect_fit`: a motor se = 0 konvenciója) az
+  `exact_perfect_fit` / `exact_not_perfect` címke mutatja, hogy a pontos rss is kerekítési szintű-e
+  (ugyanazzal a kritériummal: moderators.is_perfect_fit). `mf_R2_refit_NA`: a metafor R² = NA, mert a
+  belső, tengelymetszetes újraillesztése nem konvergált, de a script saját (újrapróbált) τ²_0-jából
+  visszaszámolt R² egyezik a motoréval; `mf_beta~0`: MH-becslés, amely a metaforban is csak kerekítési
+  szintű (≤ 1e-12).
 - A dokumentált konvenció-eltéréseket (pl. a motor Higgins–Thompson-féle I²-t jelent a leave-one-out
   és a kumulatív elemzésben; RD-nél nincs folytonossági korrekció; t(k−2) PI k = 2-nél nincs) a
   `KNOWN_DIFFERENCES` tábla sorolja fel forráshivatkozással; ezek nem számítanak hibának, de a

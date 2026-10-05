@@ -34,7 +34,11 @@
     var o = list.map(function (v) { return { value: v, label: prefix ? t(prefix + v) : v }; });
     return allKey ? [{ value: '', label: t(allKey) }].concat(o) : o;
   }
-  function stageOpts(allKey) { return opts(P.STAGES, allKey); }
+  // a szakaszok a kódjuk mellett a nevükkel (UX-08: 'S05 · Adatkinyerés')
+  function stageOpts(allKey) {
+    var o = P.STAGES.map(function (v) { return { value: v, label: P.stageLabel(v) }; });
+    return allKey ? [{ value: '', label: t(allKey) }].concat(o) : o;
+  }
   function kbCell(refsText) {
     var ids = P.refs(refsText);
     return ids.length ? h('span', { 'class': 'kb-cell' }, ids.map(function (id) { return MA.why.kbButton(id); })) : '—';
@@ -337,16 +341,24 @@
     var stage = L.els.gStage.value, verdict = L.els.gVerdict.value;
     var btn = L.els.gSubmit;
     MA.dom.clear(L.els.gPre);
-    btn.disabled = false;
+    // az ellenőrzőpont emberi döntés: nincs előre kiválasztott ítélet (UX-09)
+    btn.disabled = !verdict;
     btn.removeAttribute('aria-describedby');
-    if (verdict === 'FAIL') { return; }
+    if (!verdict || verdict === 'FAIL') { return; }
     var q = { status: 'open', severity: 'blocker' };
     if (stage !== 'FINAL') { q.stage = stage; }
-    MA.api.get('/api/log/finding', { query: q, signal: L.ctx.signal, toast: false }).then(function (env) {
+    // a FINAL audit-kapu a motorban FINAL szakasz-kontextusban ítél (pl. az X001 S08 előtt csak figyelmeztetés, a
+    // FINAL-nál hiba) — az előzetes ellenőrzés ugyanígy kérdez, különben a gomb nyitva maradna és a szerver tiltana
+    var pAudit = stage === 'FINAL'
+      ? MA.api.get('/api/audit/project', { query: { stage: 'FINAL' }, signal: L.ctx.signal, toast: false }).then(null, function () { return null; })
+      : Promise.resolve(null);
+    Promise.all([MA.api.get('/api/log/finding', { query: q, signal: L.ctx.signal, toast: false }), pAudit]).then(function (res) {
       if (L !== my || L.els.gStage.value !== stage || L.els.gVerdict.value !== verdict) { return; }
+      var env = res[0];
+      var aud = res[1];
       var bl = MA.api.list(env, 'items');
-      var xerr = stage === 'FINAL' && L.audit && L.audit.data && Array.isArray(L.audit.data.findings)
-        ? L.audit.data.findings.filter(function (f) { return f.severity === 'error'; }) : [];
+      var xerr = aud && aud.data && Array.isArray(aud.data.findings)
+        ? aud.data.findings.filter(function (f) { return f.severity === 'error'; }) : [];
       if (!bl.length && !xerr.length) {
         MA.dom.mount(L.els.gPre, MA.ui.badge('ok', t('log.gate.clear', { stage: stage })));
         return;
@@ -363,6 +375,16 @@
   function gateSubmit() {
     var my = L;
     var body = { agent: 'user', stage: L.els.gStage.value, verdict: L.els.gVerdict.value, summary: L.els.gSummary.value.trim() || null };
+    if (!body.verdict) { L.els.gVerdict.focus(); return Promise.resolve(null); }
+    // PASS-hoz rövid összefoglaló kell: mit néztél át (a jóváhagyás ember döntése, nyoma maradjon) — UX-09
+    if ((body.verdict === 'PASS' || body.verdict === 'PASS_WITH_FIXES') && !body.summary) {
+      L.els.gSummary.setAttribute('aria-invalid', 'true');
+      L.els.gSummaryErr.textContent = t('log.gate.needSummary');
+      L.els.gSummary.focus();
+      return Promise.resolve(null);
+    }
+    L.els.gSummary.setAttribute('aria-invalid', 'false');
+    L.els.gSummaryErr.textContent = '';
     MA.dom.clear(L.els.gResult);
     L.els.gSubmit.disabled = true;
     return MA.api.post('/api/log/checkpoint', body, { quiet: ['GATE_BLOCKED'] }).then(function (env) {
@@ -392,15 +414,19 @@
   function gateSection() {
     var stage0 = L.params.stage && P.STAGES.indexOf(L.params.stage) >= 0 ? L.params.stage : 'S00';
     L.els.gStage = P.select({ id: 'log-gate-stage', onchange: gateCheck }, stageOpts(null), stage0);
-    L.els.gVerdict = P.select({ id: 'log-gate-verdict', onchange: gateCheck }, opts(VERDICTS, null, 'overview.verdict.'), 'PASS');
-    L.els.gSummary = h('input', { type: 'text', id: 'log-gate-summary' });
+    L.els.gVerdict = P.select({ id: 'log-gate-verdict', onchange: gateCheck },
+      [{ value: '', label: t('log.gate.choose') }].concat(opts(VERDICTS, null, 'overview.verdict.')), '');
+    L.els.gSummary = h('input', { type: 'text', id: 'log-gate-summary', 'aria-describedby': 'log-gate-summary-err',
+      oninput: function () { L.els.gSummary.setAttribute('aria-invalid', 'false'); L.els.gSummaryErr.textContent = ''; } });
+    L.els.gSummaryErr = h('span', { 'class': 'opt-err', id: 'log-gate-summary-err', role: 'alert' });
     L.els.gSubmit = h('button', { type: 'submit', 'class': 'btn btn-primary', id: 'log-gate-submit' }, t('log.gate.submit'));
     L.els.gPre = h('div', { id: 'log-gate-pre', 'class': 'log-gate-pre', 'aria-live': 'polite' });
     L.els.gResult = h('div', { id: 'log-gate-result' });
     return h('section', { 'class': 'panel', id: 'log-gate', 'aria-labelledby': 'log-gate-h' },
       h('h2', { 'class': 'panel-title', id: 'log-gate-h', i18n: 'log.gate.title' }),
       h('form', { 'class': 'pf-row', onsubmit: function (ev) { ev.preventDefault(); gateSubmit(); } },
-        P.field(t('log.f.stage'), L.els.gStage), P.field(t('log.f.verdict'), L.els.gVerdict), P.field(t('log.f.summary'), L.els.gSummary),
+        P.field(t('log.f.stage'), L.els.gStage), P.field(t('log.f.verdict'), L.els.gVerdict),
+        h('div', { 'class': 'pf-field' }, h('label', { htmlFor: 'log-gate-summary' }, t('log.f.summaryPass')), L.els.gSummary, L.els.gSummaryErr),
         h('div', { 'class': 'pf-field' }, L.els.gSubmit)),
       L.els.gPre, L.els.gResult, h('p', { 'class': 'muted pf-note', i18n: 'log.gate.note' }));
   }

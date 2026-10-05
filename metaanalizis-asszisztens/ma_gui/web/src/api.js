@@ -90,6 +90,14 @@
   MA.__devSetTransport = function (t) { transport = t; };
   /*</dev>*/
 
+  /*<snapshot>*/
+  // Csak a pillanatkép-buildben (terv 2.5, 7.6): a beágyazott adatból válaszoló réteg (src/snapshot/provider.js)
+  // cseréli le a hálózatot; a READ_ONLY hibát a pillanatkép maga jelzi (párbeszédablak), ezért nincs róla toast.
+  MA.__snapSetTransport = function (t) { transport = t; };
+  SILENT_CODES.READ_ONLY = 1;
+  ERROR_CODES.push('READ_ONLY');
+  /*</snapshot>*/
+
   // ---------------------------------------------------------------- client_seq
   var seqCounter = 0;
   function nextSeq() { seqCounter += 1; return seqCounter; }

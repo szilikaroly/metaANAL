@@ -66,6 +66,21 @@ def _http(port, method, path, body=None, headers=(), timeout=40):
         conn.close()
 
 
+def _real_tags(html, names):
+    """[(tag, {attr: érték})] a dokumentum valódi elemeire (html.parser: a script/style tartalma szöveg)."""
+    from html.parser import HTMLParser
+
+    found = []
+
+    class P(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+            if tag in names:
+                found.append((tag, dict(attrs)))
+
+    P(convert_charrefs=True).feed(html)
+    return found
+
+
 def _hdict(headers):
     out = {}
     for k, v in headers:
@@ -326,10 +341,15 @@ class ServerHttpTests(unittest.TestCase):
         self.assertNotEqual(n1, n2)
         html = body1.decode("utf-8")
         self.assertNotIn("{{CSP_NONCE}}", html)
-        tags = re.findall(r"<(script|style)\b([^>]*)>", html)
+        # a valódi <script>/<style> elemek (HTML-elemzővel: a szkriptek szövegében álló '<script>' nem tag)
+        tags = _real_tags(html, ("script", "style"))
         self.assertTrue(tags)
         for _tag, attrs in tags:
-            self.assertIn('nonce="%s"' % n1, attrs)
+            self.assertEqual(attrs.get("nonce"), n1, _tag)
+        # a kiszolgált oldal a build_gui.py termék-buildje (ha van), nem a helyőrző
+        if server.WEB_DIST_HTML.is_file():
+            want = server.WEB_DIST_HTML.read_bytes().replace(b"{{CSP_NONCE}}", n1.encode("ascii"))
+            self.assertEqual(body1, want)
         for secret in (self.token, "Aronson", self.proj, "Teszt-projekt"):
             self.assertNotIn(secret, html)
             self.assertNotIn(secret, body2.decode("utf-8"))
@@ -646,8 +666,8 @@ class ServerHttpTests(unittest.TestCase):
         self.assertNotIn("Aronson", text)
         self.assertNotIn("lánc-teszt", text)
         recs = activity.read_records(log_path)
-        saves = [r for r in recs if r["action"] == "table.save" and r["outputs"][0]["path"] == ds]
-        self.assertEqual(saves[-1]["outputs"][0]["sha256"], store.sha256_file(Path(self.proj, ds)))
+        saves = [r for r in recs if r["action"] == "table.save" and ds in r["outputs"]]
+        self.assertEqual(saves[-1]["outputs"][ds], store.sha256_file(Path(self.proj, ds)))
         self.assertEqual(saves[-1]["actor"], "user")
         env = self.assertOk(self.req("GET", "/api/log/activity?limit=5"))
         self.assertTrue(env["data"]["verify"]["ok"])
@@ -683,7 +703,7 @@ class ServerHttpTests(unittest.TestCase):
         log_path = Path(self.proj, activity.LOG_RELPATH)
         found = self.wait_for(lambda: [r for r in activity.read_records(log_path)
                                        if r["action"] == "file.external_edit"
-                                       and r["outputs"][0]["path"] == "03_adatok/t_watch.csv"])
+                                       and "03_adatok/t_watch.csv" in r["outputs"]])
         self.assertTrue(found)
         self.assertEqual(found[-1]["actor"], "external")
         started = time.monotonic()
@@ -699,7 +719,10 @@ class ServerHttpTests(unittest.TestCase):
     def test_engine_route(self):
         env = self.assertOk(self.req("GET", "/api/engine"))
         d = env["data"]
-        self.assertIs(d["facade"], False)
+        self.assertIs(d["facade"], True)            # a motor-homlokzat (metaelemzes.api.engine_info) él
+        self.assertTrue(d["options"] and "measure" in d["options"] and "model" in d["options"])
+        self.assertTrue([r for r in d["rules"] if r["id"] == "V001"])
+        self.assertNotIn("db", d["kb"])               # helyi abszolút út nem kerül a válaszba
         rr = [m for m in d["measures"] if m["id"] == "RR"]
         self.assertTrue(rr and rr[0]["ratio"] and rr[0]["required_columns"] == ["e1", "n1", "e2", "n2"])
         st = self.wait_for(lambda: self.app.selftest_info()["state"] not in ("running", "pending"), timeout=60)
@@ -968,7 +991,7 @@ class ModuleHygieneTests(unittest.TestCase):
     FORBIDDEN = {"math", "cmath", "statistics", "random", "decimal"}
     ALLOWED = {"argparse", "contextlib", "csv", "datetime", "hashlib", "hmac", "http", "io", "json", "os", "platform", "re",
                "secrets", "signal", "socket", "socketserver", "sqlite3", "sys", "threading", "time", "urllib",
-               "webbrowser", "pathlib", "fcntl", "msvcrt", "metaelemzes", "ma_gui"}
+               "webbrowser", "pathlib", "fcntl", "msvcrt", "metaelemzes", "ma_gui", "inspect"}
 
     def _files(self):
         base = Path(ROOT) / "ma_gui"

@@ -43,7 +43,7 @@
       var v = c ? VERDICT[c.verdict] : null;
       var sym = v ? v[0] : (s === 'FINAL' ? '–' : '·');
       var label = c ? t('overview.verdict.' + c.verdict) : t('overview.verdict.none');
-      var full = s + ': ' + label + (blocked[s] ? ', ' + t('overview.openBlocker') : '');
+      var full = P.stageLabel(s) + ': ' + label + (blocked[s] ? ', ' + t('overview.openBlocker') : '');
       return h('li', { 'class': ['stage', v && 'is-' + v[1], blocked[s] && 'is-blocked'], dataset: { stage: s } },
         h('a', { 'class': 'stage-link', href: MA.app.href('log', { tab: 'checkpoint', stage: s }), title: full, 'aria-label': full },
           h('span', { 'class': 'stage-id' }, s),
@@ -65,18 +65,65 @@
     }));
   }
 
+  function outcomeName(id) {
+    var project = MA.store.get('project') || {};
+    var o = (Array.isArray(project.outcomes) ? project.outcomes : []).filter(function (x) { return x.id === id; })[0];
+    return o ? MA.i18n.pick(o.name, id) : id;
+  }
+
+  /** Teendő-gomb a cél-képernyőre — helyőrző képernyőre (az MVP-ben még nincs mögötte funkció) nem (UX-15). */
+  function actionLink(code, outcome, labelKey) {
+    var act = ACTIONS[code];
+    if (!act || MA.app.isPlaceholder(act[1])) { return null; }
+    return h('a', { 'class': 'btn btn-sm ov-act', href: MA.app.href(act[1], outcome ? { outcome: outcome } : null) },
+      t(labelKey || ('ov.act.' + act[0])));
+  }
+
+  /** A még nem ellenőrizhető szabályok (audit not_checked) — a kezdő itt látja, mi hiányzik (UX-01): szabályonként
+   * csoportosítva, a kimenetek nevével, egyszerű nyelvű teendővel és a motor pontos okával. */
+  function renderNotChecked(list) {
+    var groups = [];
+    var byCode = {};
+    list.forEach(function (n) {
+      if (!n || !n.code) { return; }
+      if (!byCode[n.code]) { byCode[n.code] = { code: n.code, outcomes: [], reasons: [] }; groups.push(byCode[n.code]); }
+      var g = byCode[n.code];
+      if (n.outcome && g.outcomes.indexOf(n.outcome) < 0) { g.outcomes.push(n.outcome); }
+      if (n.reason && g.reasons.indexOf(n.reason) < 0) { g.reasons.push(n.reason); }
+    });
+    return h('ul', { 'class': 'item-list ov-todo', id: 'ov-not-checked' }, groups.map(function (g) {
+      var hint = MA.i18n.has('ov.todo.' + g.code) ? t('ov.todo.' + g.code) : null;
+      return h('li', { 'class': 'item ov-nc', dataset: { code: g.code } },
+        MA.ui.badge('neutral', g.code),
+        h('span', { 'class': 'item-stage' }, g.outcomes.map(outcomeName).join(', ')),
+        h('span', { 'class': 'item-title' }, hint || g.reasons[0] || ''),
+        hint && g.reasons.length ? h('span', { 'class': 'item-detail muted' }, g.reasons.join(' · ')) : null,
+        h('span', { 'class': 'item-actions' },
+          g.outcomes.length <= 1 ? actionLink(g.code, g.outcomes[0], 'ov.act.open') : null,
+          MA.why.button({ kb: [g.code], code: g.code }, { compact: true })));
+    }));
+  }
+
   function renderNextSteps(env) {
     var d = env.data || {};
     var items = Array.isArray(d.findings) ? d.findings : [];
+    var notChecked = Array.isArray(d.not_checked) ? d.not_checked : [];
     var sum = d.summary || {};
-    if (!items.length) { return MA.ui.emptyState('overview.noNextSteps'); }
+    var nRules = {};
+    notChecked.forEach(function (n) { if (n && n.code) { nRules[n.code] = true; } });
+    var nc = notChecked.length ? [
+      h('p', { 'class': 'ov-nc-head', id: 'ov-nc-head' }, t(items.length ? 'overview.notCheckedAlso' : 'overview.notCheckedOnly',
+        { n: String(Object.keys(nRules).length) })),
+      renderNotChecked(notChecked)] : null;
+    // „nincs teendő” csak akkor, ha hiba sincs és minden szabály ellenőrizhető volt
+    if (!items.length && !notChecked.length) { return MA.ui.emptyState('overview.noNextSteps'); }
+    if (!items.length) { return nc; }
     return [
       h('p', { 'class': 'ov-sum' }, ['error', 'warning', 'info'].map(function (k) {
         return typeof sum[k] === 'number' ? MA.ui.badge(k, String(sum[k]), { srLabel: t('ov.sev.' + k) }) : null;
       })),
       h('ul', { 'class': 'item-list' }, items.map(function (f) {
-        var cmd = Array.isArray(f.suggested_command) ? 'python ' + f.suggested_command.join(' ') : null;
-        var act = ACTIONS[f.code];
+        var cmd = Array.isArray(f.suggested_command) ? MA.analysis.cmd(f.suggested_command) || null : null;
         return h('li', { 'class': 'item ov-x', dataset: { code: f.code } },
           MA.ui.badge(P.sevKind(f.severity), f.code),
           h('span', { 'class': 'item-stage' }, [f.stage, f.outcome].filter(function (x) { return !!x; }).join(' · ')),
@@ -85,9 +132,27 @@
           cmd ? h('code', { 'class': 'cmd-inline' }, cmd) : null,
           h('span', { 'class': 'item-actions' },
             cmd ? MA.ui.copyButton(function () { return cmd; }) : null,
-            act ? h('a', { 'class': 'btn btn-sm ov-act', href: MA.app.href(act[1], f.outcome ? { outcome: f.outcome } : null) }, t('ov.act.' + act[0])) : null,
+            actionLink(f.code, f.outcome),
             MA.why.button({ kb: [f.code].concat(P.refs(f.kb_refs)), code: f.code, title: f.title, detail: f.detail }, { compact: true })));
-      }))];
+      })), nc];
+  }
+
+  /** A „RoB magas” cella: értékelés nélkül „nincs értékelés” (a 0 emberi ítéletet sugallna — UX-02); részleges
+   * értékelésnél a hiányzók száma is. */
+  function robCell(r) {
+    if (!r) { return '—'; }
+    if (typeof r.rob_high !== 'number') {
+      return h('span', { 'class': 'muted ov-rob-none' }, t('overview.rob.none'));
+    }
+    return [String(r.rob_high), typeof r.rob_missing === 'number' && r.rob_missing > 0
+      ? h('span', { 'class': 'muted ov-rob-missing' }, ' · ' + t('overview.rob.missing', { n: String(r.rob_missing) })) : null];
+  }
+
+  function runStateBadge(r) {
+    var k = MA.analysis.staleKey(r);
+    if (k === 'stale') { return MA.ui.badge('stale', t('overview.run.stale')); }
+    if (k === 'unknown') { return MA.ui.badge('neutral', t('analysis.run.unknown'), { title: t('analysis.run.unknownTitle') }); }
+    return MA.ui.badge('ok', t('overview.run.current'));
   }
 
   function renderOutcomes(env) {
@@ -95,7 +160,10 @@
     var outcomes = Array.isArray(project.outcomes) ? project.outcomes : [];
     var byOutcome = {};
     MA.api.list(env, 'runs').forEach(function (r) { if (r.outcome_id && !byOutcome[r.outcome_id]) { byOutcome[r.outcome_id] = r; } });
-    if (!outcomes.length) { return MA.ui.emptyState('overview.noOutcomes'); }
+    // csak `project init` után: ugyanaz a kezdőknek szóló panel és gomb, mint az Elemzésnél (DOC-1)
+    if (!outcomes.length) {
+      return MA.analysis.noOutcomesPanel(function (id) { MA.app.navigate('analysis', { outcome: id }); });
+    }
     var head = ['outcome', 'k', 'participants', 'effect', 'i2', 'robHigh', 'grade', 'run'];
     var numCol = { k: 1, participants: 1, i2: 1, robHigh: 1 };
     var dash = '—';
@@ -108,11 +176,12 @@
           h('th', { scope: 'row' }, h('a', { href: MA.app.href('results', { outcome: o.id }) }, MA.i18n.pick(o.name, o.id))),
           h('td', { 'class': 'num' }, r && typeof r.k === 'number' ? String(r.k) : dash),
           h('td', { 'class': 'num' }, r ? MA.ui.numText(r.participants_text) : dash),
-          h('td', null, p ? h('span', null, o.measure ? o.measure + ' ' : '', MA.ui.num(p.display_text)) : h('span', { 'class': 'muted', i18n: 'overview.noCommit' })),
+          // a hatásméret a FUTÁSÉ (run.json / plot_data.json), nem a projekt alapértelmezése (FID-1)
+          h('td', null, p ? h('span', null, (r.measure || dash) + ' ', MA.ui.num(p.display_text)) : h('span', { 'class': 'muted', i18n: 'overview.noCommit' })),
           h('td', { 'class': 'num' }, p ? MA.ui.numText(p.i2_text) : dash),
-          h('td', { 'class': 'num' }, r && typeof r.rob_high === 'number' ? String(r.rob_high) : dash),
+          h('td', { 'class': 'num' }, robCell(r)),
           h('td', null, r && r.grade && CERTAINTY[r.grade.certainty] ? t(CERTAINTY[r.grade.certainty]) : dash),
-          h('td', null, r ? (r.stale ? MA.ui.badge('stale', t('overview.run.stale')) : MA.ui.badge('ok', t('overview.run.current'))) : dash));
+          h('td', null, r ? runStateBadge(r) : dash));
       }))));
   }
 

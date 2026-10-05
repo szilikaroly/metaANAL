@@ -26,6 +26,8 @@
   var FILTER_RE = /^[^=]+=.*$/;
   var NUM_RE = /^\s*-?\d+(?:[.,]\d+)?\s*$/;
   var SPEC_SCHEMA = 'szk.ma.analysis-spec/v1';
+  // az űrlap csoportjainak sorrendje (a motor option_metadata 'group'-ja); a haladók összecsukva
+  var GROUP_ORDER = ['basic', 'binary', 'plot', 'cli', 'advanced', 'output', 'spec'];
 
   // Gyermek-futások (2.6; D-S12-002/003/005/009). Ha a motor ad 'sensitivity_presets'-et, az nyer.
   var CHILD_PRESETS = [
@@ -35,6 +37,15 @@
     { id: 'dl', suffix: '_dl', label_key: 'plan.child.dl', kb: 'D-S12-005', options: { tau2: 'DL' } },
     { id: 'no_outliers', suffix: '_no_outliers', label_key: 'plan.child.noOutliers', kb: 'D-S12-009', options: { outliers: true } }
   ];
+
+  // a motor opció-metaadatának típusnevei (api.option_metadata: JSON-séma-típusok) → az űrlap vezérlői;
+  // a null alapértékű logikai opció (pl. drop00) háromállású: alapérték / igen / nem
+  var TYPE_ALIAS = { boolean: 'bool', array: 'list', integer: 'number' };
+  function typeOf(m) {
+    var ty = (m && m.type) || 'string';
+    ty = TYPE_ALIAS[ty] || ty;
+    return ty === 'bool' && m && m.nullable ? 'tristate' : ty;
+  }
 
   function clone(o) { return o === undefined ? undefined : JSON.parse(JSON.stringify(o)); }
   function same(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
@@ -49,6 +60,14 @@
   }
 
   /** A hiányzó (a motor által ismert) opciókulcsokat alapértékkel tölti — a spec kulcsai = DEFAULTS. */
+  /** A kimenet elsődleges specjének NEVE: a ma-projekt.json primary_spec-je név ('o1_primary') vagy a motor
+   * projekt-auditjának megfelelő út ('05_elemzes/specs/o1_primary.json') is lehet. */
+  function primarySpecName(outcome) {
+    var p = outcome && outcome.primary_spec ? String(outcome.primary_spec) : '';
+    var base = p.split('/').pop().replace(/\.json$/i, '');
+    return NAME_RE.test(base) ? base : outcome.id + '_primary';
+  }
+
   function normalize(spec, meta) {
     var s = clone(spec);
     s.options = s.options || {};
@@ -109,8 +128,8 @@
         var m = meta[k];
         var v = p.options[k];
         if (!m) { okay = false; return; }
-        if (m.type === 'enum' && Array.isArray(m.choices) && m.choices.indexOf(v) < 0) { okay = false; }
-        if (m.type === 'bool' && typeof v !== 'boolean') { okay = false; }
+        if (typeOf(m) === 'enum' && Array.isArray(m.choices) && m.choices.indexOf(v) < 0) { okay = false; }
+        if ((typeOf(m) === 'bool' || typeOf(m) === 'tristate') && typeof v !== 'boolean') { okay = false; }
       });
       return Object.assign({}, p, { available: okay });
     });
@@ -131,11 +150,12 @@
   function render(root, ctx) {
     var outcome = A.pickOutcome(ctx.params.outcome);
     if (!outcome) {
-      root.appendChild(h('div', { 'class': 'panel' }, MA.ui.emptyState('analysis.noOutcomes')));
+      // nincs kimenet: a felvétele itt, a munkapadon (DOC-1) — utána a képernyő újraépül
+      root.appendChild(A.noOutcomesPanel(function (id) { ctx.navigate('analysis', { outcome: id }); }));
       return null;
     }
     var meta = A.engineOptions();
-    var specName = ctx.params.spec && NAME_RE.test(ctx.params.spec) ? ctx.params.spec : (outcome.primary_spec || outcome.id + '_primary');
+    var specName = ctx.params.spec && NAME_RE.test(ctx.params.spec) ? ctx.params.spec : primarySpecName(outcome);
     ctx.setTitle(pick(outcome.name, outcome.id) + ' · ' + specName);
     var stKey = 'analysis.plan.' + outcome.id + '.' + specName;
     var st = MA.store.get(stKey);
@@ -158,10 +178,13 @@
       if (err.code === 'ABORTED') { throw err; }
       return [];
     });
-    return Promise.all([specP, runsP]).then(function (res) {
+    // az adattábla mostani hash-e: a feltárás eredménye csak addig friss, amíg a tábla nem változott (FID-5)
+    var dataP = A.currentDataSha(outcome.data || ('03_adatok/' + outcome.id + '.csv'), ctx.signal);
+    return Promise.all([specP, runsP, dataP]).then(function (res) {
       if (!ctx.alive()) { return; }
       var server = res[0];
       st.runs = res[1];
+      st.dataSha = res[2];
       st.saved = server.spec ? normalize(server.spec, meta) : null;
       st.etag = server.etag;
       if (!st.draft) { st.draft = st.saved ? clone(st.saved) : newSpec(outcome, specName, meta); }
@@ -189,13 +212,21 @@
       var k = knownK();
       return autoPref() && (k === null || k <= AUTO_MAX_K);
     }
-    function fresh() { return !!(st.lastRun && st.lastRun.specJson === JSON.stringify(st.draft)); }
+    function dataPath() { return (st.draft && st.draft.data && st.draft.data.path) || outcome.data || ''; }
+    /** A feltárás adata egyezik-e a tábla mostani állapotával (a futás data.sha256-ja = a fájl mostani hash-e). */
+    function dataFresh() {
+      var r = st.lastRun && st.lastRun.run;
+      var used = r && r.data ? r.data.sha256 : null;
+      return !used || !st.dataSha || used === st.dataSha;
+    }
+    function specFresh() { return !!(st.lastRun && st.lastRun.specJson === JSON.stringify(st.draft)); }
+    function fresh() { return specFresh() && dataFresh(); }
 
     // ------------------------------------------------ fejléc
     var outcomeSel = h('select', { id: 'plan-outcome', onchange: function () { ctx.navigate('analysis', { outcome: outcomeSel.value }); } },
       A.outcomes().map(function (o) { return h('option', { value: o.id }, o.id + ' — ' + pick(o.name, o.id)); }));
     outcomeSel.value = outcome.id;
-    var primaryName = outcome.primary_spec || outcome.id + '_primary';
+    var primaryName = primarySpecName(outcome);
     var names = [primaryName];
     (st.runs || []).forEach(function (r) {
       var n = r.spec && r.spec.name;
@@ -262,6 +293,22 @@
     renderAll();
     if (autoAllowed() && !fresh() && !hasInvalid()) { explore(); }
 
+    // ha az adattábla megváltozik (a rácsban, Excelben vagy egy ágens által), a feltárás eredménye elavul: jelöljük,
+    // és ha az automatikus feltárás engedett, újrafuttatjuk (FID-5)
+    var offChanges = MA.bus.on('changes', function (c) {
+      var path = dataPath();
+      var hit = !!(c && (c.reset || (c.changes || []).some(function (x) { return x && x.path === path; })));
+      if (!hit || !ctx.alive()) { return; }
+      A.currentDataSha(path, ctx.signal).then(function (sha) {
+        if (!ctx.alive() || sha === st.dataSha) { return; }
+        st.dataSha = sha;
+        renderCmd();
+        renderResultFreshness();
+        if (autoAllowed() && !fresh() && !hasInvalid()) { exploreDebounced(); }
+      }, function () { /* a hibát a toast jelezte */ });
+    });
+    ctx.onCleanup(offChanges);
+
     // ================================================ részek
     function renderAll() {
       renderSpecMeta();
@@ -287,11 +334,13 @@
 
     function fieldFor(name) {
       var m = meta[name] || {};
+      var ty = typeOf(m);
       var id = 'opt-' + name;
       var helpId = id + '-help';
       var errId = id + '-err';
       var v = st.draft.options[name];
-      var help = m.help ? pick(m.help, '') : '';
+      // a felület súgója (a motor gui_help-je), ha a parancssori súgó kapcsolóra hivatkozik (UX-11)
+      var help = m.gui_help ? pick(m.gui_help, '') : (m.help ? pick(m.help, '') : '');
       var control;
       var describedBy = [help ? helpId : null, errId].filter(Boolean).join(' ');
       function changed(val) { onOption(name, val); }
@@ -302,9 +351,9 @@
         renderActions();
       }
       var errEl = h('span', { 'class': 'opt-err', id: errId, role: 'alert' });
-      if (m.type === 'enum' && Array.isArray(m.choices)) {
+      if (ty === 'enum' && Array.isArray(m.choices)) {
         var opts = [];
-        if (m['default'] === null || m['default'] === undefined) { opts.push(h('option', { value: '' }, t('plan.value.defaultOption'))); }
+        if ((m['default'] === null || m['default'] === undefined) && !m.required) { opts.push(h('option', { value: '' }, t('plan.value.defaultOption'))); }
         m.choices.forEach(function (c) {
           opts.push(h('option', { value: String(c) }, name === 'measure' ? String(c) + ' — ' + A.measureLabel(c) : String(c)));
         });
@@ -316,10 +365,16 @@
           var val = raw === '' ? null : (m.choices.filter(function (c) { return String(c) === raw; })[0]);
           changed(val === undefined ? raw : val);
         });
-      } else if (m.type === 'bool') {
+      } else if (ty === 'tristate') {
+        control = h('select', { id: id, 'data-opt': name, 'aria-describedby': describedBy },
+          h('option', { value: '' }, t('plan.value.defaultOption')), h('option', { value: 'true' }, t('plan.value.yes')),
+          h('option', { value: 'false' }, t('plan.value.no')));
+        control.value = v === true ? 'true' : (v === false ? 'false' : '');
+        control.addEventListener('change', function () { changed(control.value === '' ? null : control.value === 'true'); });
+      } else if (ty === 'bool') {
         control = h('input', { type: 'checkbox', id: id, 'data-opt': name, checked: v === true, 'aria-describedby': describedBy });
         control.addEventListener('change', function () { changed(control.checked); });
-      } else if (m.type === 'number') {
+      } else if (ty === 'number') {
         control = h('input', { type: 'text', id: id, 'data-opt': name, inputmode: 'decimal', autocomplete: 'off', spellcheck: 'false',
           value: v === null || v === undefined ? '' : String(v), 'aria-describedby': describedBy });
         control.addEventListener('input', function () {
@@ -328,11 +383,11 @@
           invalid(null);
           changed(r.value);
         });
-      } else if (m.type === 'list') {
+      } else if (ty === 'list') {
         control = h('input', { type: 'text', id: id, 'data-opt': name, autocomplete: 'off', value: Array.isArray(v) ? v.join(', ') : '',
           'aria-describedby': describedBy });
         control.addEventListener('input', function () { changed(splitList(control.value)); });
-      } else if (m.type === 'object') {
+      } else if (ty === 'object') {
         control = h('textarea', { id: id, 'data-opt': name, rows: '2', spellcheck: 'false', value: v === null || v === undefined ? '' : JSON.stringify(v),
           'aria-describedby': describedBy });
         control.addEventListener('input', function () {
@@ -354,8 +409,8 @@
         h('span', { 'class': 'opt-changed', 'aria-hidden': 'true' }, ' •'),
         h('span', { 'class': 'sr-only opt-changed-sr' }, ' ' + t('plan.changedSr')));
       var cli = m.cli ? h('code', { 'class': 'opt-cli' }, m.cli) : h('span', { 'class': 'opt-cli muted' }, t('plan.specOnly'));
-      var wrap = h('div', { 'class': ['opt-field', 'opt-' + (m.type || 'string')], 'data-field': name, 'data-search': (name + ' ' + optLabel(name, m) + ' ' + (m.cli || '') + ' ' + help).toLowerCase() },
-        m.type === 'bool' ? h('div', { 'class': 'opt-row' }, control, ' ', label) : [label, control],
+      var wrap = h('div', { 'class': ['opt-field', 'opt-' + ty], 'data-field': name, 'data-search': (name + ' ' + optLabel(name, m) + ' ' + (m.cli || '') + ' ' + help).toLowerCase() },
+        ty === 'bool' ? h('div', { 'class': 'opt-row' }, control, ' ', label) : [label, control],
         h('div', { 'class': 'opt-sub' }, cli, help ? h('small', { 'class': 'opt-help', id: helpId, title: help }, help) : null),
         errEl);
       return wrap;
@@ -397,16 +452,21 @@
     function buildForm() {
       var groups = {};
       var order = [];
+      var advanced = {};
       Object.keys(meta).forEach(function (name) {
         var m = meta[name] || {};
+        // a motor csoportja (alap, bináris, ábra, haladó, kimenet — UX-11); régi motornál CLI / csak-spec
         var g = m.group ? String(m.group) : (m.cli ? 'cli' : 'spec');
         if (!groups[g]) { groups[g] = []; order.push(g); }
         groups[g].push(name);
+        if (m.advanced || g === 'spec') { advanced[g] = true; }
       });
+      var rank = function (g) { var i = GROUP_ORDER.indexOf(g); return i < 0 ? GROUP_ORDER.length : i; };
+      order.sort(function (a, b) { return rank(a) - rank(b); });
       var nodes = order.map(function (g) {
         var title = MA.i18n.has('plan.group.' + g) ? t('plan.group.' + g) : g;
         var fields = groups[g].map(fieldFor);
-        if (g === 'spec' || (meta[groups[g][0]] && meta[groups[g][0]].advanced)) {
+        if (advanced[g]) {
           return h('details', { 'class': 'opt-group is-advanced', 'data-group': g },
             h('summary', null, title + ' (' + String(fields.length) + ')'),
             h('div', { 'class': 'opt-grid' }, fields));
@@ -472,7 +532,10 @@
         els.banner.className = 'panel plan-banner is-ok';
         kids.push(h('p', null, saved.prespecified
           ? [MA.ui.badge('ok', t('plan.banner.matchTitle')), ' ', t('plan.banner.match', { ref: saved.protocol_ref || '—' })]
-          : [MA.ui.badge('warning', 'X016'), ' ', t('plan.banner.notPrespecified')]));
+          : [MA.ui.badge('warning', 'X016'), ' ', t('plan.banner.notPrespecified'), ' ',
+            // a teendő gombja (UX-13): a döntés a projektnaplóba, X016 + D-S12-006 hivatkozással
+            h('button', { type: 'button', 'class': 'btn btn-sm', id: 'plan-x016-decide', onclick: decideNotPrespecified },
+              t('plan.banner.decide')), ' ', A.kbButton('D-S12-006')]));
       } else {
         var protocol = saved.prespecified && saved.purpose === 'primary';
         els.banner.className = 'panel plan-banner ' + (protocol ? 'is-warning' : 'is-info');
@@ -498,14 +561,25 @@
         var r = specRuns()[0];
         if (r) { src = r; note = t('plan.cmd.fromCommit', { run: r.run_id }); }
       }
-      var main = src ? A.cmd(src.equivalent_argv) : '';
-      var exp = src && src.expanded_argv ? A.cmd(src.expanded_argv) : '';
+      var mainI = src ? A.cmdInfo(src.equivalent_argv) : null;
+      var expI = src && src.expanded_argv ? A.cmdInfo(src.expanded_argv) : null;
+      // Windowson a szabad szöveges opció (pl. ábracím) idézőjele/%/$ jele a parancssorban parancsként értelmeződne:
+      // ilyenkor nincs másolható sor, csak a magyarázat (WS-2)
+      function cmdRow(info, id, label) {
+        if (!info) { return null; }
+        if (info.line === null) {
+          return h('div', { 'class': 'cmd-row' }, label ? h('span', { 'class': 'muted' }, label + ' ') : null,
+            h('span', { 'class': 'cmd-unsafe', id: id, role: 'note' }, t('shell.unsafeWin', { opt: info.unsafe.join(', ') })));
+        }
+        var line = info.line;
+        return h('div', { 'class': 'cmd-row' }, label ? h('span', { 'class': 'muted' }, label + ' ') : null,
+          h('code', { 'class': 'cmd-inline', id: id }, line), MA.ui.copyButton(function () { return line; }));
+      }
       MA.dom.mount(els.cmd,
         h('h2', { 'class': 'panel-title', id: 'plan-cmd-h' }, t('plan.cmd.title')),
-        main
-          ? [h('div', { 'class': 'cmd-row' }, h('code', { 'class': 'cmd-inline', id: 'plan-cmd-main' }, main), MA.ui.copyButton(function () { return main; })),
-            exp ? h('div', { 'class': 'cmd-row' }, h('span', { 'class': 'muted' }, t('plan.cmd.equivalent') + ' '),
-              h('code', { 'class': 'cmd-inline', id: 'plan-cmd-expanded' }, exp), MA.ui.copyButton(function () { return exp; })) : null,
+        mainI && (mainI.line || mainI.unsafe.length)
+          ? [cmdRow(mainI, 'plan-cmd-main', null),
+            expI ? cmdRow(expI, 'plan-cmd-expanded', t('plan.cmd.equivalent')) : null,
             h('p', { 'class': ['muted', 'plan-cmd-note', src && !fresh() && st.lastRun ? 'is-stale' : ''] }, note)]
           : MA.ui.emptyState('plan.cmd.none'));
     }
@@ -545,6 +619,7 @@
         st.exploreError = null;
         MA.store.set('analysis.explore.' + outcome.id, { run: res.run || null, plot: res.plot || null, spec: spec, specName: specName });
         setStatus('ok', t('plan.status.explored', { seq: String(job.client_seq) }));
+        els.status.setAttribute('data-seq', String(job.client_seq));     // a legutolsó nyert kérés (teszt, hibakeresés)
         renderCmd();
         renderActions();
         renderResult();
@@ -561,7 +636,11 @@
 
     function renderResultFreshness() {
       var badge = MA.dom.$('#plan-result-fresh');
-      if (badge) { MA.dom.mount(badge, st.lastRun && !fresh() ? MA.ui.badge('stale', t('plan.result.outdated')) : null); }
+      if (badge) {
+        MA.dom.mount(badge, st.lastRun && !fresh()
+          ? MA.ui.badge('stale', t(dataFresh() ? 'plan.result.outdated' : 'plan.result.dataChanged'))
+          : null);
+      }
     }
 
     function renderResult() {
@@ -631,7 +710,7 @@
         }))),
         h('tbody', null, runs.map(function (r) {
           var sp = r.spec || {};
-          return h('tr', { 'data-run': r.run_id, 'class': { 'is-stale': !!r.stale, 'is-selected': sp.name === specName } },
+          return h('tr', { 'data-run': r.run_id, 'class': { 'is-stale': r.stale === true, 'is-selected': sp.name === specName } },
             h('th', { scope: 'row' }, h('a', { href: ctx.href('results', { outcome: outcome.id, run: r.run_id }) }, MA.i18n.ts(r.started || r.finished))),
             h('td', null, sp.parent ? '└ ' + (sp.name || '—') : (sp.name || '—')),
             h('td', { 'class': 'num' }, typeof r.k === 'number' ? String(r.k) : '—'),
@@ -775,7 +854,9 @@
         st.committing = true;
         renderActions();
         setStatus('progress', t('plan.status.committing'));
-        var chain = Promise.resolve();
+        // előbb a spec mentése (a szerver PHI-őre itt állít meg egy azonosítót tartalmazó címet), és csak utána a
+        // protokoll-eltérés döntése — különben az eltérés szövege a naplóban maradna egy el nem mentett specről (PRIV-4)
+        var chain = saveSpec(spec);
         if (ans.reason) {
           chain = chain.then(function () {
             return MA.api.post('/api/log/decision', {
@@ -785,7 +866,7 @@
             });
           });
         }
-        return chain.then(function () { return saveSpec(spec); }).then(function () {
+        return chain.then(function () {
           var body = { mode: 'commit', spec: clone(spec) };
           if (fresh() && st.lastRun.run && st.lastRun.run.data && st.lastRun.run.data.sha256) {
             body.spec.data = Object.assign({}, body.spec.data, { sha256: st.lastRun.run.data.sha256 });
@@ -805,6 +886,24 @@
         st.committing = false;
         if (ctx.alive()) { renderAll(); reloadRuns(); }
       });
+    }
+
+    // ------------------------------------------------ X016: nem előre rögzített elsődleges spec → döntés (UX-13)
+    function decideNotPrespecified() {
+      var reasonId = MA.dom.uid('x016');
+      var reason = h('textarea', { id: reasonId, rows: '3', 'class': 'plan-reason' });
+      MA.ui.modal({ title: t('plan.x016.title'), size: 'md',
+        body: [h('p', null, t('plan.x016.body')), h('label', { 'for': reasonId }, t('plan.x016.reason')), reason,
+          h('p', { 'class': 'muted' }, t('plan.x016.help'))],
+        actions: [{ label: t('common.cancel'), kind: 'ghost' }, { label: t('plan.x016.save'), kind: 'primary', onClick: function () {
+          var txt = reason.value.trim();
+          if (!txt) { reason.setAttribute('aria-invalid', 'true'); reason.focus(); return false; }
+          MA.api.post('/api/log/decision', { agent: 'user', stage: 'S12', decision: t('plan.x016.decision', { spec: specName }),
+            rationale: txt, kb_refs: ['X016', 'D-S12-006'], context: { kind: 'analysis', spec: specName, outcome: outcome.id } }).then(function (env) {
+            MA.ui.toast({ kind: 'success', title: t('plan.x016.saved', { id: String((env.data || {}).id || '') }) });
+          }, function () { /* a hibát a toast jelezte */ });
+          return undefined;
+        } }] });
     }
 
     // ------------------------------------------------ JSON, visszaállítás

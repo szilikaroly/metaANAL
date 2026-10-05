@@ -334,7 +334,7 @@ class TestR2NF01MainBranchJStillChecked(unittest.TestCase):
         for j in (4, 14):                                     # G − H = 8; az egyéb ág legfeljebb 5-öt adhat
             d = self.p005(j)
             self.assertEqual(len(d), 2, d)
-            self.assertIn("included_reports (J) = %d, de G − H = 28 − 20 = 8" % j, d[1])
+            self.assertIn("Bevont jelentések (J) = %d, de G − H = 28 − 20 = 8" % j, d[1])
         for j in (8, 10, 13):
             self.assertEqual(len(self.p005(j)), 1, j)          # csak az egyéb ág hibája
 

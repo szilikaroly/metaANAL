@@ -14,7 +14,8 @@ Parancsok (magyar álnévvel):
                           audit (X-szabályok), activity (tevékenységnapló-lánc ellenőrzése)
   rules    / szabalyok    a motor V/P/X-szabályai (rules export --json)
   contracts / szerzodesek az adatszerződések (JSON Schema) jegyzéke és ellenőrzése
-  gui      / munkapad     MA-munkapad: helyi, böngészős felület (ma_gui)
+  gui      / munkapad     MA-munkapad: helyi, böngészős felület (ma_gui); gui snapshot: csak olvasható
+                          HTML-pillanatkép; gui audit-export: determinisztikus audit-ZIP
   selftest / onteszt      a beépített tesztek futtatása
   --capabilities          a motor képesség-leírása (szk.capabilities/v1 JSON)
 """
@@ -204,13 +205,15 @@ def _analyze_into(a, started, outdir, actor):
         except S.SpecError:
             spec_sha = None
     paths = pipeline.write_outputs(out, es, outdir, md, plots=not a.no_plots,
-                                   run_info={"run_id": rid, "spec_sha256": spec_sha, "data_sha256": data_sha})
+                                   run_info={"run_id": rid, "spec_sha256": spec_sha, "data_sha256": data_sha},
+                                   provenance=pipeline.load_provenance(a.data))
     summ = None
     if a.project:
         summ = pipeline.to_jsonable(_run_summary(out))
         projekt.log_run(a.project, _replay_command(a, outdir), os.path.abspath(a.data), os.path.abspath(outdir),
                         __version__, summ, actor=actor)
-    desc = S.describe_cli_run(a, out, paths, outdir, started, datetime.datetime.now(datetime.timezone.utc), rid)
+    desc = S.describe_cli_run(a, out, paths, outdir, started, datetime.datetime.now(datetime.timezone.utc), rid,
+                              es=es)
     run_json = S.write_run_json(outdir, desc)
     v = out["validation"]["summary"]
     print("Kész: %s" % outdir)
@@ -592,6 +595,15 @@ def cmd_project(a):
         for w in warns:
             print("FIGYELEM: %s" % w, file=sys.stderr)
         _project_activity(a, d, done)
+    elif a.p_cmd == "outcome":
+        res = api.project_outcome_add(d, a.id, name=a.name, data=a.data, measure=a.measure,
+                                      critical=True if a.critical else None, data_class=a.data_class, replace=a.replace)
+        o = res["outcome"]
+        done = "kimenet %s: %s (%s, %s)" % ("módosítva" if a.replace else "felvéve", o["id"], o.get("data") or "—",
+                                             o.get("measure") or "—")
+        print(done)
+        print("  ma-projekt.json: %s · kimenetek: %s" % (res["path"], ", ".join(res["outcomes"])))
+        _project_activity(a, d, done, [res["path"]])
     elif a.p_cmd == "resolve":
         projekt.resolve_finding(d, a.id, a.status, a.resolution, actor=_cli_actor(a))
         done = "megállapítás #%d → %s" % (a.id, a.status)
@@ -653,6 +665,31 @@ def cmd_contracts(a):
 
 
 # ----------------------------------------------------------------------- gui
+# `ma.py gui snapshot …` / `ma.py gui audit-export …`: a ma_gui saját belépési pontjai (saját argparse-szal);
+# az argparse előtt ágazunk el, így a `gui` indító kapcsolói (--port, --no-browser …) nem keverednek beléjük
+GUI_SUBCOMMANDS = (
+    (("snapshot", "pillanatkep"), "ma_gui.snapshot"),
+    (("audit-export", "audit-csomag"), "ma_gui.audit_export"),
+)
+
+
+def _gui_subcommand(argv):
+    """argv[0] = gui|munkapad és argv[1] = snapshot|pillanatkep|audit-export|audit-csomag → a ma_gui moduljának
+    main(argv[2:]) kilépési kódja (0 kész, 2 hibás kérés, 1 egyéb hiba); más parancsnál None."""
+    if len(argv) < 2 or argv[0] not in ("gui", "munkapad"):
+        return None
+    for names, module in GUI_SUBCOMMANDS:
+        if argv[1] in names:
+            try:
+                import importlib
+                mod = importlib.import_module(module)
+            except Exception as exc:   # noqa: BLE001 — hiányzó vagy hibás ma_gui: érthető üzenet, nem traceback
+                print("HIBA: a munkapad (ma_gui) nem érhető el: %s: %s" % (type(exc).__name__, exc), file=sys.stderr)
+                return 2
+            return mod.main(list(argv[2:]))
+    return None
+
+
 def cmd_gui(a):
     """MA-munkapad (ma_gui) indítása: a kapcsolók továbbítása a ma_gui belépési pontjának (lusta import)."""
     try:
@@ -769,9 +806,7 @@ def _prisma_mismatches(sources, template):
     for field in prisma.COUNT_FIELDS:
         vals = [(name, ch.counts[field]) for name, ch in checks if ch.counts.get(field) is not None]
         if len(set(v for _, v in vals)) > 1:
-            letter = prisma.LETTERS.get(field)
-            add(field, "%s: %s" % ("%s (%s)" % (field, letter) if letter else field,
-                                   ", ".join("%s = %d" % (n, v) for n, v in vals)))
+            add(field, "%s: %s" % (prisma.box_label(field), ", ".join("%s = %d" % (n, v) for n, v in vals)))
     for field in prisma.REASON_FIELDS:
         vals = [(name, ch.reasons[field]) for name, ch in checks if ch.reasons.get(field)]
         if len(set(_reason_key(r) for _, r in vals)) > 1:
@@ -1197,6 +1232,19 @@ def build_parser():
     pf.add_argument("--stage", help=_STAGE_HELP)
     pf.add_argument("--evidence")
     pf.add_argument("--kb", help=_KB_HELP)
+    po = pjs.add_parser("outcome", help="kimenet felvétele a ma-projekt.json-ba (az elemzés ehhez kötődik)",
+                        description="Kimenet (pl. 'TBC-incidencia') felvétele: azonosító, név, az adattábla útja és a "
+                                    "hatásméret. Ha a ma-projekt.json még nincs, létrejön. Példa: project outcome "
+                                    "<mappa> --id o1 --name \"TBC-incidencia\" --data 03_adatok/o1.csv --measure RR")
+    po.add_argument("dir")
+    po.add_argument("--id", required=True, help="rövid azonosító (pl. o1)")
+    po.add_argument("--name", help="a kimenet neve (pl. TBC-incidencia)")
+    po.add_argument("--data", help="az adattábla projekt-relatív útja (pl. 03_adatok/o1.csv)")
+    po.add_argument("--measure", help="hatásméret (pl. RR, OR, MD, SMD)")
+    po.add_argument("--critical", action="store_true", help="kritikus kimenet (GRADE)")
+    po.add_argument("--data-class", choices=["A", "B", "C"],
+                    help="csak ha a ma-projekt.json még nincs: a projekt adatosztálya (alap: A)")
+    po.add_argument("--replace", action="store_true", help="a meglévő kimenet módosítása")
     pr = pjs.add_parser("resolve")
     pr.add_argument("dir")
     pr.add_argument("id", type=int)
@@ -1221,7 +1269,7 @@ def build_parser():
         pg.add_argument("--" + name.replace("_", "-"), dest=name, help=_KB_HELP if name == "kb" else None)
     pg.add_argument("--k", type=_nonneg_int, help="vizsgálatok száma (>= 0)")
     pg.add_argument("--participants", type=_nonneg_int, help="résztvevők száma (>= 0)")
-    for sp in (pl, pf, pr, pc, pg):
+    for sp in (pl, pf, pr, pc, pg, po):
         sp.add_argument("--actor", help="szereplő a naplóban, pl. user:SzK (alap: MA_ACTOR környezeti változó)")
     for sp in (pf, pc):
         sp.legacy_abbrev = {"--a": "--agent"}       # az --actor / --audit-gate előtt egyértelmű volt
@@ -1337,7 +1385,15 @@ def build_parser():
 
     gu = sub.add_parser("gui", aliases=["munkapad"], help="MA-munkapad (helyi böngészős felület)",
                         description="A MA-munkapad indítása a projektmappára (csak 127.0.0.1-en figyel). Az "
-                                    "indítókód egyszer használható és 60 másodpercig érvényes.")
+                                    "indítókód egyszer használható és 60 másodpercig érvényes.",
+                        epilog="További alparancsok (saját súgóval, pl. `ma.py gui snapshot -h`): "
+                               "`ma.py gui snapshot --project <mappa> [--out x.html] [--redact …] [--keep …]` "
+                               "(álnév: pillanatkep) — egyetlen, csak olvasható HTML-fájl a társszerzőknek, Python "
+                               "és hálózat nélkül nyitható; a kitakarás alapértéke az adatosztályból jön. "
+                               "`ma.py gui audit-export --project <mappa>` (álnév: audit-csomag) — determinisztikus "
+                               "audit-ZIP a 07_ellenorzes/audit/<dátum>/ mappába (manifest.json, tevékenységnapló, "
+                               "rerun.cmd/.sh). FIGYELEM: a pillanatképet soha ne töltsd fel és ne publikáld, "
+                               "Claude Artifactként sem.")
     gu.add_argument("--project", help="a projektmappa (alap: az aktuális mappa)")
     gu.add_argument("--port", type=int, help="port (alap: 8790; ha foglalt, 8791–8799, majd az OS választ)")
     gu.add_argument("--no-browser", action="store_true", help="ne nyissa meg a böngészőt, csak írja ki a címet")
@@ -1352,6 +1408,9 @@ def build_parser():
 
 def main(argv=None):
     _utf8_stdout()
+    sub_rc = _gui_subcommand(list(argv) if argv is not None else sys.argv[1:])
+    if sub_rc is not None:
+        return sub_rc
     parser = build_parser()
     a = parser.parse_args(argv)
     a._argv = list(argv) if argv is not None else sys.argv[1:]   # a projektnapló parancssorához

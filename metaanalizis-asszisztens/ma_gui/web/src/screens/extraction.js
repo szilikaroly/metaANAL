@@ -30,6 +30,8 @@
   var DOCS_SCHEMA = 'szk.ma.documents/v1';
 
   var G = null;     // a látható rács (MA.grid)
+  /** A pillanatkép (csak olvasható HTML) módja: a rács nem szerkeszthető, az író eszközök tiltva (UX-16). */
+  function readOnly() { return document.documentElement.getAttribute('data-mode') === 'snapshot'; }
   var V = null;     // a képernyőpéldány: {ctx, run, els, timer}
 
   function st() { return MA.store.get('extraction.draft') || null; }
@@ -731,7 +733,9 @@
   // ---------------------------------------------------------------- „Nem hiba — indoklás” (naplózott döntés)
   function acknowledge(f) {
     var d = st();
-    var ta = h('textarea', { id: 'ex-ack-rationale', rows: '4', 'aria-required': 'true', 'aria-describedby': 'ex-ack-help' });
+    var blocking = !!(f.blocking || f.severity === 'error');
+    var ta = h('textarea', { id: 'ex-ack-rationale', rows: '4', 'aria-required': 'true',
+      'aria-describedby': blocking ? 'ex-ack-blocking ex-ack-help' : 'ex-ack-help' });
     var errLine = h('p', { 'class': 'ex-cf-err', role: 'alert', hidden: true }, t('extraction.ack.required'));
     MA.ui.modal({
       title: t('extraction.ack.title', { code: f.code }),
@@ -739,6 +743,11 @@
         h('p', null, MA.ui.badge(f.severity === 'error' ? 'error' : (f.severity === 'warning' ? 'warning' : 'info'), f.code), ' ',
           h('strong', null, findingTitle(f)), f.study ? ' — ' + f.study : ''),
         f.detail ? h('p', { 'class': 'muted' }, MA.i18n.pick(f.detail, '')) : null,
+        f.advice ? h('p', { 'class': 'ex-ack-advice' }, h('strong', null, t('extraction.ack.advice') + ' '), MA.i18n.pick(f.advice, '')) : null,
+        // a sort kizáró hibánál az indoklás nem változtat az elemzésen — ezt ki kell mondani (UX-10)
+        blocking ? h('p', { 'class': 'ex-ack-blocking', id: 'ex-ack-blocking', role: 'note' },
+          MA.ui.badge('blocker', t('extraction.f.blocking')), ' ', t('extraction.ack.blocking')) : null,
+        h('p', null, MA.why.button({ kb: [f.kb_id || f.code], code: f.code, title: findingTitle(f), detail: f.detail, advice: f.advice })),
         h('label', { htmlFor: 'ex-ack-rationale' }, t('extraction.ack.rationale')),
         ta,
         h('p', { id: 'ex-ack-help', 'class': 'muted' }, t('extraction.ack.help')),
@@ -815,6 +824,10 @@
     var d = st();
     if (!V || !V.els.alerts || !d) { return; }
     var out = [];
+    // a pillanatképben mindig látszik, hogy a tábla nem szerkeszthető (UX-16); a többi riasztás nem írja felül
+    if (readOnly()) {
+      out.push(h('p', { 'class': 'ex-readonly muted', id: 'ex-readonly', role: 'note' }, MA.ui.badge('info', t('extraction.readOnlyTitle')), ' ', t('extraction.readOnly')));
+    }
     if (d.locked) {
       out.push(h('div', { 'class': 'ex-alert is-error', id: 'ex-locked', role: 'alert' },
         MA.ui.badge('error', t('extraction.locked.title')),
@@ -873,10 +886,12 @@
         f.acknowledged ? MA.ui.badge('ok', t('extraction.f.acknowledged', { id: typeof f.acknowledged === 'number' ? String(f.acknowledged) : '' })) : null),
       h('div', { 'class': 'ex-f-title' }, findingTitle(f)),
       f.detail ? h('div', { 'class': 'ex-f-detail' }, MA.i18n.pick(f.detail, '')) : null,
-      f.advice ? h('div', { 'class': 'ex-f-advice muted' }, MA.i18n.pick(f.advice, '') + (f.source ? ' (' + f.source + ')' : '')) : null,
+      f.advice ? h('div', { 'class': 'ex-f-advice muted' }, MA.i18n.pick(f.advice, '') + (f.source && f.source !== 'engine' ? ' (' + f.source + ')' : '')) : null,
       h('div', { 'class': 'ex-f-actions' },
         uids.length ? h('button', { type: 'button', 'class': 'btn btn-sm ex-f-jump', onclick: function () { jumpTo(f); } }, t('extraction.f.jump')) : null,
-        f.acknowledged ? null : h('button', { type: 'button', 'class': 'btn btn-sm ex-f-ack', onclick: function () { acknowledge(f); } }, t('extraction.f.ack')),
+        f.acknowledged || readOnly() ? null : h('button', { type: 'button', 'class': 'btn btn-sm ex-f-ack', onclick: function () { acknowledge(f); },
+          title: f.blocking || f.severity === 'error' ? t('extraction.ack.blockingTitle') : null }, t('extraction.f.ack')),
+        MA.why.button({ kb: [f.kb_id || f.code], code: f.code, title: findingTitle(f), detail: f.detail, advice: f.advice }, { compact: true }),
         f.code === 'V018' ? h('a', { 'class': 'btn btn-sm', href: MA.app.href('analysis', { outcome: d.outcome, exclude: 'estimated=igen' }) }, t('extraction.f.sensitivity')) : null,
         h('a', { 'class': 'btn btn-sm btn-ghost', href: MA.app.href('log', { kb: f.kb_id || f.code }) }, t('extraction.f.kb', { code: f.kb_id || f.code }))));
   }
@@ -994,7 +1009,8 @@
       } }, t('extraction.prov.remove')) : null,
       h('button', { type: 'submit', 'class': 'btn btn-sm btn-primary', id: 'ex-prov-save' }, t('extraction.prov.save'))),
     err);
-    MA.dom.mount(body, info, form);
+    // a pillanatképben az eredet csak olvasható: az űrlap nem jelenik meg (UX-16)
+    MA.dom.mount(body, info, readOnly() ? null : form);
   }
 
   function setProv(d, uid, field, entry) {
@@ -1157,6 +1173,7 @@
 
   function guardLeave(reason) {
     var d = st();
+    if (readOnly()) { if (d) { setDraft(null); } return Promise.resolve(true); }
     if (!dirty(d)) { if (d) { setDraft(null); } return Promise.resolve(true); }
     return new Promise(function (resolve) {
       var answered = false;
@@ -1267,6 +1284,7 @@
 
     G = MA.grid.create({
       label: t('extraction.grid.label', { dataset: d.dataset }),
+      readOnly: readOnly(),
       columns: columnsFor(d),
       rows: d.rows.map(function (r) { var c = Object.assign({}, r.cells); c[SRC_COL] = sourceSummary(d, r.uid); return { uid: r.uid, cells: c }; }),
       newRow: newRow,
@@ -1284,6 +1302,14 @@
         h('p', { 'class': 'muted ex-keys' }, t('extraction.keys'))), els.prov),
       h('section', { 'class': 'panel ex-findings', id: 'ex-findings', 'aria-labelledby': 'ex-findings-h' },
         h('h2', { 'class': 'panel-title', id: 'ex-findings-h' }, t('extraction.f.title')), els.findings));
+    if (readOnly()) {
+      // a pillanatképben semmi sem menthető: az író eszközök tiltva, a rács csak olvasható (UX-16)
+      ['#ex-add-row', '#ex-del-row', '#ex-paste', '#ex-convert', '#ex-docs-btn'].forEach(function (sel) {
+        var b = MA.dom.$(sel, head);
+        if (b) { b.disabled = true; b.title = t('extraction.readOnly'); }
+      });
+      [els.undo, els.redo, els.save].forEach(function (b) { b.disabled = true; });
+    }
     MA.dom.mount(root, head, els.alerts, els.summary, work);
     var provOn = MA.prefs.get('extraction.prov', '1') === '1';
     els.prov.hidden = !provOn;

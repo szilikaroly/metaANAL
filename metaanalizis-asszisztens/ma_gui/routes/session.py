@@ -16,8 +16,8 @@ REQUEST_SCHEMA = {
     },
     "additionalProperties": False,
 }
-MSG_CODE = ("Az indítókód lejárt vagy már felhasználták. Új kódot a munkapad indító parancsának újbóli "
-            "futtatása ad (python -m ma_gui --project <mappa>).")
+MSG_CODE = ("Az indítókód lejárt vagy már felhasználták. Futtasd újra az indító parancsot: %s — ha a munkapad "
+            "már fut, új linket ad." % runtime.LAUNCH_HINT)
 MSG_KEY = "Érvénytelen újraindító kulcs."
 
 

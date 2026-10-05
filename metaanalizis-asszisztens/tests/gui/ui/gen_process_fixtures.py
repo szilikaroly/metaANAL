@@ -18,6 +18,7 @@ import json
 import sys
 import tempfile
 from pathlib import Path
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
@@ -343,6 +344,12 @@ def export_fixture():
                           "rerun_scripts": ["rerun.cmd", "rerun.sh"], "kb_snapshot": {"ids": ["D-S08-001", "P007"], "db_sha256": "f0" * 32}}}
     snap = {"path": "07_ellenorzes/pillanatkep/bcg-oltas-2026-10-05.snapshot.html", "sha256": "9c1d" + "e" * 60, "bytes": 512330,
             "redactions": red, "excluded": exc[:2], "network": False}
+    # a szerver routes/export.py mezői: kind, name és az aláírt, 10 perces letöltési cím (export.js letöltés-linkje; DOC-4)
+    exp_at = 1791190000
+    sig = "A" * 43
+    for d, kind, name in ((audit, "audit", "bcg-oltas-audit.zip"), (snap, "snapshot", "bcg-oltas-2026-10-05.snapshot.html")):
+        d.update({"kind": kind, "name": name,
+                  "url": "/f/x/%s/%d/%s" % (quote("_export:" + d["path"], safe=""), exp_at, sig), "expires_at": exp_at})
     return {"description": "POST /api/export/audit és /api/export/snapshot — audit-ZIP (4.17) és kitakaró pillanatkép (7.6).",
             "routes": [{"method": "POST", "path": "/api/export/audit", "envelope": env("szk.ma.export-result/v1", audit)},
                        {"method": "POST", "path": "/api/export/snapshot", "envelope": env("szk.ma.export-result/v1", snap)}]}

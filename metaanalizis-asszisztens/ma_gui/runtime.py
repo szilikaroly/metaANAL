@@ -39,6 +39,11 @@ DEFAULT_PORT = 8790
 PORT_RANGE = tuple(range(8790, 8800))
 SELFTEST_TIMEOUT = 120.0
 RELAUNCH_TIMEOUT = 5.0
+# a munkapad dokumentált indító parancsa (TELEPITES 7., README, skill) — minden felhasználói üzenet ezt mondja
+# (DOC-3, UX-17); a metaanalizis-asszisztens mappában futtatandó
+LAUNCH_CMD = "python ma.py gui --project <mappa>"
+LAUNCH_CMD_WIN = "py -3 ma.py gui --project <mappa>"
+LAUNCH_HINT = "%s (Windowson: %s)" % (LAUNCH_CMD, LAUNCH_CMD_WIN)
 _MAX_INFO_BYTES = 64 * 1024
 
 # egy sorban (Windows-on is biztonságos argv); a forrás-esetek összesítését írja ki JSON-ban

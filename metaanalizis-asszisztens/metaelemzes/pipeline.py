@@ -686,7 +686,9 @@ _PLOT_TEXTS = {
             "en": "Heterogeneity: Q = %s (df = %d, p %s); I² (Q-based) = %s%%; τ² = %s"},
     "sg_diff": {"hu": "Alcsoport-különbség: Q_b = %s (df = %d, p %s)",
                 "en": "Test for subgroup differences: Q_b = %s (df = %d, p %s)"},
-    "pi_line": {"hu": "Piros vonal: %d%%-os predikciós intervallum (%s).", "en": "Red line: %d%% prediction interval (%s)."},
+    # színsemleges (a motor SVG-je és a munkapad interaktív ábrája más színnel rajzolja a PI-t; UX-03)
+    "pi_line": {"hu": "Külön sor a forest alján: %d%%-os predikciós intervallum, %s.",
+                "en": "Separate row at the bottom of the forest plot: %d%% prediction interval, %s."},
     "pi_label": {"hu": "%d%%-os predikciós intervallum (%s)", "en": "%d%% prediction interval (%s)"},
     "prop_axis": {"hu": "Egycsoportos arány: nincs nullhatás-vonal; a tengelyfeliratok arányok (az elemzési "
                         "skálán elhelyezve).",
@@ -740,10 +742,22 @@ def _sg_diff_line(sg, lang="hu", minus="-"):
     return _ptext("sg_diff", lang) % (P.num_text("%.2f" % sg.Q_between, minus), sg.df_between, _p(sg.p_between))
 
 
+_PI_METHOD_TEXT = {"t_k-2": "t(k%s2)", "t_k-1": "t(k%s1)", "z": "z"}
+
+
+def pi_method_text(method, lang="hu"):
+    """A PI-módszer olvasható alakja a feliratokban ('t_k-2' → 't(k-2)'; angolul U+2212 mínusszal, a motor
+    nyelvi konvenciója szerint); ismeretlen érték változatlan."""
+    tpl = _PI_METHOD_TEXT.get(method)
+    if tpl is None:
+        return method
+    return tpl % (P.MINUS if lang == "en" else "-") if "%s" in tpl else tpl
+
+
 def _footer_notes(primary, measure, lv, lang="hu"):
     notes = []
     if primary.pi_lower is not None:
-        notes.append(_ptext("pi_line", lang) % (lv, primary.pi_method))
+        notes.append(_ptext("pi_line", lang) % (lv, pi_method_text(primary.pi_method, lang)))
     if measure in E.PROPORTION:
         notes.append(_ptext("prop_axis", lang))
     elif measure == "ZCOR":
@@ -1036,6 +1050,60 @@ def _source_columns(rows):
     return found
 
 
+PROVENANCE_SCHEMA = "szk.ma.provenance/v1"
+_PROV_MAX_BYTES = 16 * 1024 * 1024
+
+
+def provenance_path(data_path):
+    """03_adatok/<kimenet>.csv → 03_adatok/<kimenet>.prov.json (terv 4.8)."""
+    if not data_path:
+        return None
+    base, ext = os.path.splitext(str(data_path))
+    return (base if ext.lower() in (".csv", ".tsv", ".txt") else str(data_path)) + ".prov.json"
+
+
+def load_provenance(data_path):
+    """Az adattábla eredet-oldalfájlja (szk.ma.provenance/v1) dict-ként, vagy None (nincs, olvashatatlan, nem
+    ez a séma). A plot/v2 csak a forrás-lokátorokat (doc, page, locator) veszi át belőle — cellaértéket nem."""
+    p = provenance_path(data_path)
+    if not p or not os.path.isfile(p):
+        return None
+    try:
+        if os.path.getsize(p) > _PROV_MAX_BYTES:
+            return None
+        with open(p, "rb") as fh:
+            doc = json.loads(fh.read().decode("utf-8-sig"))
+    except (OSError, ValueError, UnicodeDecodeError):
+        return None
+    if not isinstance(doc, dict) or doc.get("schema") != PROVENANCE_SCHEMA or not isinstance(doc.get("cells"), list):
+        return None
+    return doc
+
+
+def provenance_sources(prov, measure=None):
+    """{row_uid: {doc, page, locator}} az eredet-oldalfájlból: soronként az első olyan cella forrása, amelynek van
+    dokumentuma vagy oldala — előbb a mérték kötelező oszlopai (pl. e1, n1, e2, n2) sorrendjében, majd a többi."""
+    if not isinstance(prov, dict):
+        return {}
+    order = list(E.REQUIRED_COLUMNS.get(measure, ())) if measure else []
+    best = {}
+    for c in prov.get("cells") or ():
+        if not isinstance(c, dict) or not isinstance(c.get("row_uid"), str):
+            continue
+        src = c.get("source") if isinstance(c.get("source"), dict) else {}
+        doc = src.get("doc") if isinstance(src.get("doc"), str) and src.get("doc").strip() else None
+        page = src.get("page") if isinstance(src.get("page"), int) and not isinstance(src.get("page"), bool) else None
+        if doc is None and page is None:
+            continue
+        loc = src.get("locator") if isinstance(src.get("locator"), str) and src.get("locator").strip() else None
+        field = c.get("field")
+        rank = order.index(field) if field in order else len(order)
+        uid = c["row_uid"]
+        if uid not in best or rank < best[uid][0]:
+            best[uid] = (rank, {"doc": doc, "page": page, "locator": loc})
+    return {uid: v[1] for uid, v in best.items()}
+
+
 def _source_value(v, key):
     if v is None or (isinstance(v, str) and not v.strip()):
         return None
@@ -1164,6 +1232,32 @@ def _mirror_uids(tf, es, uids):
     return out
 
 
+def participants_text(out):
+    """Az elemzett vizsgálatok résztvevőinek száma kész szövegként {hu, en} (mint a report.md: tagolás nélkül),
+    vagy None, ha nem minden elemzett vizsgálatnál ismert."""
+    n = (out.get("totals") or {}).get("participants")
+    if n is None or isinstance(n, bool) or not isinstance(n, (int, float)) or not math.isfinite(n):
+        return None
+    return _same("%d" % n if float(n).is_integer() else "%g" % n)
+
+
+_ROB_ASSESSED = ("low", "some", "high", "critical")
+
+
+def rob_high_count(es):
+    """Az elemzett sorok közül a magas (vagy kritikus) torzítási kockázatúak száma (a plot/v2 flags.rob szerint);
+    None, ha egyetlen elemzett sornak sincs RoB-értékelése (a 0 ilyenkor emberi ítéletet sugallna)."""
+    flags = [_rob_flag(r.get("rob")) for r in es.rows]
+    if not any(f in _ROB_ASSESSED for f in flags):
+        return None
+    return sum(1 for f in flags if f in ("high", "critical"))
+
+
+def rob_missing_count(es):
+    """Az elemzett sorok közül azok száma, amelyeknek nincs (értelmezhető) RoB-értékelése."""
+    return sum(1 for r in es.rows if _rob_flag(r.get("rob")) not in _ROB_ASSESSED)
+
+
 def _infl_text(v, minus):
     if isinstance(v, (list, tuple)):
         return "; ".join(_infl_text(x, minus) for x in v)
@@ -1172,12 +1266,15 @@ def _infl_text(v, minus):
     return P.num_text(P._fmt(v, _INFL_DECIMALS), minus)
 
 
-def plot_document(out, es, opt=None, run_info=None, data=None):
+def plot_document(out, es, opt=None, run_info=None, data=None, provenance=None):
     """szk.ma.plot/v2 (terv 4.6) — a felület, a figure-forge és a motor-SVG közös nézetmodellje. Minden szám
     és szöveg a motoré: y/lo/hi és estimate/ci_* az elemzési skálán (PFT-nél a forest-tengely n-jével
     elhelyezve, az eredeti FT-értékek az 'analysis' mezőben), display/display_text a megjelenítési skálán,
     a tengelyosztás és a kontúr-poligonok kész. run_info: {'run_id', 'spec_sha256', 'data_sha256'} (a futás-
-    leíróból; hiányzó data_sha256 → az input fájl hash-e). data: a make_plots v1 adatai (újraszámolás nélkül)."""
+    leíróból; hiányzó data_sha256 → az input fájl hash-e). data: a make_plots v1 adatai (újraszámolás nélkül).
+    provenance: az adattábla eredet-oldalfájlja (szk.ma.provenance/v1; load_provenance) — ebből a studies[].source
+    (doc, page, locator; a PDF-oldalig tartó lefúráshoz), ha a táblában nincs forrás-oszlop (az oszlop elsőbbséget
+    élvez)."""
     opt = _plot_opt(out, opt)
     pref = P.check_lang(opt.get("plot_locale") or "hu")
     measure = out["effect_sizes"]["measure"]
@@ -1231,6 +1328,7 @@ def plot_document(out, es, opt=None, run_info=None, data=None):
         for i in sec["indices"]:
             section_of[i] = sec["title"]
     src_cols = _source_columns(es.rows)
+    prov_src = provenance_sources(provenance, measure) if provenance else {}
     studies = []
     for i, s in enumerate(data["studies"]):
         row = es.rows[i] if i < len(es.rows) else {}
@@ -1251,9 +1349,13 @@ def plot_document(out, es, opt=None, run_info=None, data=None):
         st["flags"]["outlier"] = st["flags"]["outlier"] or i in ol_idx
         if s.get("analysis"):
             st["analysis"] = dict(zip(("y", "lo", "hi"), s["analysis"]))
-        if src_cols:
+        if src_cols or provenance:
+            ps = prov_src.get(uids[i]) or {}
             st["source"] = {key: _source_value(row.get(src_cols[key]), key) if key in src_cols else None
                             for key in ("doc", "page", "locator")}
+            for key in ("doc", "page", "locator"):
+                if st["source"][key] is None:
+                    st["source"][key] = ps.get(key)
         studies.append(st)
     doc["studies"] = studies
 
@@ -1283,7 +1385,7 @@ def plot_document(out, es, opt=None, run_info=None, data=None):
                           {lg: _summary_label(key, r, lg) for lg in P.LANGS}, r.p, het)
         res["primary"] = key == out["primary_model"]
         if r.pi_lower is not None:
-            res["pi_label"] = {lg: _ptext("pi_label", lg) % (lv, r.pi_method) for lg in P.LANGS}
+            res["pi_label"] = {lg: _ptext("pi_label", lg) % (lv, pi_method_text(r.pi_method, lg)) for lg in P.LANGS}
         summaries.append(res)
     sections = []
     sg = out.get("subgroups")
@@ -1447,21 +1549,27 @@ def plot_document(out, es, opt=None, run_info=None, data=None):
     return doc
 
 
-def plot_data(out, es, opt=None, run_info=None, data=None):
+def plot_data(out, es, opt=None, run_info=None, data=None, provenance=None):
     """A plot_data.json tartalma a plot_schema opció szerint: 'v2' (alapértelmezés) vagy 'v1'."""
     o = _plot_opt(out, opt)
     if o.get("plot_schema") == "v1":
         return data if data is not None else make_plots(out, es, o)[2]
-    return plot_document(out, es, o, run_info, data)
+    return plot_document(out, es, o, run_info, data, provenance)
 
 
 PLOT_FILES = ("forest.svg", "funnel.svg", "doi.svg", "plot_data.json")
 
 
-def write_outputs(out, es, outdir, report_md=None, plots=True, run_info=None):
+_AUTO = object()
+
+
+def write_outputs(out, es, outdir, report_md=None, plots=True, run_info=None, provenance=_AUTO):
     """A kimenetek írása. Egy korábbi futás ábrafájljai (PLOT_FILES), amelyeket ez a futás nem ír újra
     (--no-plots, k = 0, k < 3 → nincs doi.svg), törlődnek, hogy a mappa ne keverjen két elemzést.
-    A plot_data.json a plot_schema opció szerint v2 (alapértelmezés) vagy v1; run_info: lásd plot_document."""
+    A plot_data.json a plot_schema opció szerint v2 (alapértelmezés) vagy v1; run_info: lásd plot_document.
+    provenance: az eredet-oldalfájl (dict vagy None); alapból a beolvasott adatfájl mellől (load_provenance)."""
+    if provenance is _AUTO:
+        provenance = load_provenance((out.get("input") or {}).get("path"))
     os.makedirs(outdir, exist_ok=True)
     paths = {}
     if plots and out.get("primary") is not None:
@@ -1477,7 +1585,8 @@ def write_outputs(out, es, outdir, report_md=None, plots=True, run_info=None):
             paths[name] = p
         p = os.path.join(outdir, "plot_data.json")
         with open(p, "w", encoding="utf-8") as fh:
-            json.dump(to_jsonable(plot_data(out, es, run_info=run_info, data=data)), fh, ensure_ascii=False, indent=1)
+            json.dump(to_jsonable(plot_data(out, es, run_info=run_info, data=data, provenance=provenance)), fh,
+                      ensure_ascii=False, indent=1)
         paths["plot_data.json"] = p
     for name in PLOT_FILES:
         p = os.path.join(outdir, name)

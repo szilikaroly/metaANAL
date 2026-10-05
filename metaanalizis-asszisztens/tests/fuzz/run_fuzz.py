@@ -108,6 +108,8 @@ def _idx0(rec):
     return rec.get("idx") == 0
 
 
+
+
 # Each entry: id, func (regex on the function key), field (regex), optional cond (callable on
 # the mismatch record), reason, source (where the engine documents / implements the convention).
 KNOWN_DIFFERENCES = [
@@ -157,6 +159,64 @@ KNOWN_DIFFERENCES = [
          reason="identical yi give an exact fit z_i = c*prec_i; the engine treats the rounding-noise residual "
                 "variance as 0 and returns t = NaN, metafor's lm() returns a finite t from the noise.",
          source="metaelemzes/bias.py egger_test(): 'tökéletes illeszkedés' (perfect fit) branch"),
+    # ---- R2b CONFIRM triage (fuzz runs seed 20261006 / 20261007, 2 x 3000 datasets; evidence by exact
+    # rational arithmetic on the same doubles, tests/fuzz/exact.py) -- families F1, F2, F4, F5 and the MH cases;
+    # F3 (ill-conditioned designs where only metafor departs from exact) is adjudicated per record by
+    # cmp_mods() ex_tag() and falls under 'oracle_inexact' / 'illconditioned_engine_closer' below.
+    dict(id="knha_perfect_fit_t", kind="noise", func=r"^mods:\w+_knha$", field=r"^(stat|p|QM|QM_p)$",
+         cond=lambda rec: ("eng_perfect_fit" in rec["tags"] and "exact_perfect_fit" in rec["tags"]
+                           and (rec["field"] in ("stat", "p") or "engine_NA" in rec["tags"])),
+         reason="F1: Knapp-Hartung meta-regression on an exact fit (identical yi, or y = a + b*x rounded to "
+                "doubles). Exact arithmetic on the same inputs confirms that the weighted rss is rounding-level "
+                "(tag exact_perfect_fit; exact rss/sum(w y^2) <= 5.1e-33 on every dataset of the triage), so "
+                "s2 and every t / F built from it are rounding noise. The engine's convention: se = 0, "
+                "t = +-Inf (p = 0) for a coefficient, t = p = NaN (0/0) for a coefficient that is 0 up to "
+                "rounding (|exact b| <= 2e-16; exactly 0 for identical yi), QM = None; metafor reports +-Inf "
+                "/ p = 0 or a finite noise t (20261004-00102 b2: -0.84; 20261005-02627 b1: -2e-6 where the "
+                "exact t is -8.9e11). 78 classes / 37 datasets in the two triage runs.",
+         source="metaelemzes/moderators.py meta_regression(): is_perfect_fit() and rounding_rss() "
+                "(KH perfect-fit guard); tests/test_fixes_R2b_numerics.py TestD3KnhaPerfectFit, "
+                "tests/test_fixes_R2c_numerics.py TestR2cShiftInvariantPerfectFit"),
+    dict(id="knha_perfect_fit_se0", kind="oracle", func=r"^mods:\w+_knha$", field=r"^(b|se|ci_lower|ci_upper)$",
+         cond=lambda rec: ("eng_perfect_fit" in rec["tags"] and "exact_perfect_fit" in rec["tags"]
+                           and any(t in rec["tags"] for t in ("exact=engine", "exact=neither:engine"))),
+         reason="F2: on an exact fit (confirmed by exact arithmetic, see knha_perfect_fit_t) the engine "
+                "reports se = 0 (so CI = b) and sets a coefficient that is 0 up to rounding (|b_j| <= "
+                "sqrt(M_jj * rounding rss)) to exactly 0; metafor reports a finite noise se / b. The exact "
+                "se is <= 2.7e-16 (exactly 0 for 20261006-01238 and 20261007-01623); 20261006-01251 b3: "
+                "exact -2.1e-16, engine 2.8e-17, metafor -9.7e-9. Only matched when the per-field exact "
+                "verdict (b, se; CI: the worse of both) favours the engine. 123 classes / 8 datasets in the "
+                "two triage runs.",
+         source="metaelemzes/moderators.py meta_regression(): KH perfect-fit guard (q = 0; b_j = 0 below "
+                "sqrt(M_jj * rounding_rss()))"),
+    dict(id="oracle_R2_refit_nonconvergence", kind="oracle", func=r"^mods:(REML|ML|PM|HE|SJ|DL)_", field=r"^R2$",
+         cond=_tag("mf_R2_refit_NA"),
+         reason="F4: metafor's R2 needs an internal intercept-only refit with the same control and no retry; "
+                "when it does not converge metafor reports R2 = NA. run_metafor.R's own retried refit "
+                "(tau2_0) converged, and the engine's R2 equals max(0, 100 (tau2_0 - tau2)/tau2_0) built "
+                "from metafor's two tau2 (tag mf_R2_refit_NA). Example 20261006-02595: with stepadj = 0.5 "
+                "metafor's tau2_0 = 0.00843165468292 (engine 0.00843165468289749), both moderator fits "
+                "tau2 = 0, so R2 = 100.",
+         source="metaelemzes/moderators.py meta_regression(): R2 block; run_fuzz.py cmp_mods() R2 tag"),
+    dict(id="begg_identical_effects", kind="noise", func=r"^ranktest:", field=r"^!engine_error$",
+         cond=_tag("identical_yi"),
+         reason="F5: identical yi: the standardized deviations from the pooled estimate are 0 up to "
+                "rounding (20261006-01636: -8.9e-16 for every study), so Kendall's tau is undefined (exact "
+                "0/0); the engine refuses (ModelError), metafor ranks the noise (tau = 1, p = 0.333). 5 "
+                "classes / 27 datasets in the two runs.",
+         source="metaelemzes/bias.py begg_test(): 'a hatásméretek azonosak' guard; "
+                "tests/test_fixes_R2b_numerics.py TestD4BeggIdenticalEffects"),
+    dict(id="mh_estimate_rounding_zero", kind="noise", func=r"^mh:", field=r"^(se|ci_lower|ci_upper|stat|p)$",
+         cond=lambda rec: ("mf_beta~0" in rec["tags"]
+                           and ("has_double_zero" in rec["tags"] or "has_double_full" in rec["tags"])
+                           and ("engine_NA" in rec["tags"] or rec["engine"] == 0.0)),
+         reason="MH with only degenerate (double-zero / double-full) tables: the pooled estimate and its "
+                "variance are exactly 0 (e.g. 20261008-01220, tables 0/5 vs 0/1 and 10/10 vs 1/1: RR = 1, "
+                "RD = 0, Greenland-Robins P_i = (n1 n2 (e1 + e2) - e1 e2 N)/N^2 = 0), or the estimate is 0 up "
+                "to rounding (777-00289: RR = R/S with R and S one ulp apart). metafor reports noise: b ~ "
+                "1e-16, se 1.2e-8 (RR) / 1.4e-9 (RD) or 0, z = 1e-8 or Inf; the engine reports b = 0, se = 0 "
+                "(CI = 0) and z = p = NaN (0/0) with a warning.",
+         source="metaelemzes/models.py mantel_haenszel(): 'az összesített variancia 0' warning branch"),
     dict(id="trimfill_degenerate", func=r"^trimfill:", field=r"^!engine_error$",
          cond=lambda rec: "identical_yi" in rec["tags"] or "equal_vi" in rec["tags"],
          reason="identical yi (no asymmetry, L0/R0 react only to rounding noise) or equal vi (the side "
@@ -188,9 +248,16 @@ KNOWN_DIFFERENCES = [
                 "65 %); the engine snaps tau2_RE to 0 and reports R2 = 0.",
          source="metaelemzes/moderators.py meta_regression(): R2 block; models.optimize_tau2(): tau2 < 1e-10*scale -> 0"),
     dict(id="oracle_inexact", kind="oracle", func=r"^(mods|subgroup):", field=r".*", cond=_tag("exact=engine"),
-         reason="ORACLE limitation: on ill-conditioned data (variance ratio >= 1e7) metafor's value differs from "
-                "the exact rational-arithmetic result (tests/fuzz/exact.py) while the engine's agrees with it.",
-         source="tests/fuzz/exact.py (exact WLS / Q_E / tr(P) / DL)"),
+         reason="ORACLE limitation: on ill-conditioned data (near-collinear moderators, variance ratio >= 1e7) "
+                "metafor's value differs from the exact rational-arithmetic result (tests/fuzz/exact.py) while "
+                "the engine's agrees with it (F3 of the R2b triage). E.g. 20261006-00879 FE knha: exact se "
+                "2.97961, t 3.5541974374750 (engine equal), metafor 2.98022; PM on the same data: metafor "
+                "QE = 0 and tau2 = 0, but exact Q_E(0) = 98.5477448030623 > k - p, and at the engine's "
+                "tau2 = 26.39636 exact Q_E = 11.99999999999938 = k - p; 20261006-01359: exact QM "
+                "4.696889557041, engine 4.696889557042, metafor 4.69872; 777-00200 FE knha: exact se "
+                "1.951948997112179, engine 1.951948997112131, metafor 1.95617.",
+         source="tests/fuzz/exact.py (exact WLS + z / KH inference + QM, Q_E, tr(P), DL / HE / SJ tau2, PM "
+                "equation); run_fuzz.py cmp_mods() ex_tag(), tau2_verdict()"),
     dict(id="illconditioned_engine_closer", kind="noise", func=r"^(mods|subgroup):", field=r".*",
          cond=_tag("exact=neither:engine"),
          reason="ill-conditioned data: neither program reproduces the exact rational-arithmetic value to 1e-6, "
@@ -221,7 +288,7 @@ KNOWN_DIFFERENCES = [
     dict(id="rank_deficient_design", func=r"^mods:", field=r"^!engine_error$", cond=_tag("mf_dropped_predictors"),
          reason="rank-deficient moderator matrix: metafor silently drops the redundant predictors (warning), the "
                 "engine refuses with SingularMatrixError.",
-         source="metaelemzes/moderators.py meta_regression() -> linalg.inverse(): SingularMatrixError"),
+         source="metaelemzes/moderators.py meta_regression() -> linalg.WeightedQR: SingularMatrixError"),
     dict(id="oracle_nonconvergence", kind="oracle", func=r".*", field=r"^!metafor_error$",
          cond=lambda rec: any("did not converge" in t for t in rec["tags"]),
          reason="ORACLE limitation: metafor's Fisher scoring did not converge even after the run_metafor.R "
@@ -284,9 +351,28 @@ FIXED_DEFECTS = [
     dict(id="D3_knha_perfect_fit",
          reason="Knapp-Hartung meta-regression on an exact fit raised SingularMatrixError ('kollineáris "
                 "moderátorok?') or reported noise-driven t/F/p.",
-         fix="moderators.meta_regression(): perfect-fit guard (weighted RSS <= 1e-20 sum(w y^2)): se = 0, "
-             "t = +-Inf (0/0 = NaN for coefficients that are 0 up to rounding), QM = None, warning",
+         fix="moderators.meta_regression(): perfect-fit guard (weighted RSS <= 1e-20 sum(w y^2); criterion "
+             "replaced in D6 by is_perfect_fit()): se = 0, t = +-Inf (0/0 = NaN for coefficients that are 0 up "
+             "to rounding), QM = None, warning",
          test="tests/test_fixes_R2b_numerics.py TestD3KnhaPerfectFit"),
+    dict(id="D5_unit_dependent_rank",
+         reason="linalg.WeightedQR compared every pivot with the largest weighted column norm: a moderator in "
+                "large units (GDP in dollars) next to one in small units (a proportion) was refused as collinear.",
+         fix="WeightedQR: columns scaled by their own weighted norms (pivoting and rank test on the scaled "
+             "matrix, rtol 1e-7 relative to each column's own norm, as R's dqrdc2)",
+         test="tests/test_fixes_R2c_numerics.py TestR2cScaleInvariantRank"),
+    dict(id="D6_perfect_fit_shift",
+         reason="perfect-fit test rss <= 1e-20 sum(w y^2) (KH guard, egger_test) treated effects that agree to ~10 "
+                "digits (1000 + 1e-8 steps) as an exact fit (t = NaN).",
+         fix="moderators.is_perfect_fit(): rss of the shifted effects (y - y_ref) <= 1e-26 x centred SS, or <= 1e-28 "
+             "sum(w y^2) (input rounding floor); egger_test() and meta_regression() fit y - y_ref",
+         test="tests/test_fixes_R2c_numerics.py TestR2cShiftInvariantPerfectFit"),
+    dict(id="D7_reml_stopping_rule",
+         reason="(RE)ML Fisher scoring stopped at |step| <= 1e-10 max(tau2, median vi) while converging linearly: "
+                "~3e-7 relative error in tau2, visible in an ML PI bound near 0 (20261007-02954) and in R2 "
+                "(777-00604).",
+         fix="models.polish_tau2(): secant (Aitken) refinement of the converged tau2 (also moderators._fs_mr)",
+         test="tests/test_fixes_R2c_numerics.py TestR2cStoppingRule"),
     dict(id="D4_begg_identical",
          reason="Begg test on identical yi gave noise-driven tau = +-1.",
          fix="bias.begg_test(): relative-tolerance 'identical effects' guard (round 2, DT-2) -> ModelError",
@@ -910,6 +996,66 @@ def cmp_influence(c, ds, R):
             c.cmpv(func, ek, [row[ek] for row in e], r.get(rk), kind, tags=full_tags + mf_tags(r), tagger=tagger)
 
 
+_VERDICT_RANK = ("metafor", "neither:metafor", "neither:engine", "engine", "both")
+
+
+def _cap_inf(x, big):
+    """|x| >= big counts as +-Inf (TOLERANCES['stat']['inf_above']: a statistic over an SE that is 0
+    up to rounding)."""
+    return math.copysign(math.inf, x) if (big and finite(x) and abs(x) >= big) else x
+
+
+def verdict_own(eng, mf, x_eng, x_mf, rtol=1e-6, big=None):
+    """exact.verdict() when each program is checked against the exact value at its OWN tau2 (or the
+    same exact value twice). None if an exact value is undefined (e.g. the t of a coefficient over a
+    zero SE) or a program reported NaN. big: statistics beyond it compare as +-Inf."""
+    if x_eng is None or x_mf is None:
+        return None
+    eng, mf, x_eng, x_mf = (_cap_inf(float(a), big) for a in (eng, mf, x_eng, x_mf))
+    if any(math.isnan(a) for a in (eng, mf, x_eng, x_mf)):
+        return None
+
+    def err(a, ref):
+        if math.isinf(a) or math.isinf(ref):
+            return 0.0 if a == ref else math.inf
+        return abs(a - ref)
+    ee, em = err(eng, x_eng), err(mf, x_mf)
+    oke = ee <= rtol * abs(x_eng) if math.isfinite(x_eng) else ee == 0.0
+    okm = em <= rtol * abs(x_mf) if math.isfinite(x_mf) else em == 0.0
+    if oke and okm:
+        return "both"
+    if oke or okm:
+        return "engine" if oke else "metafor"
+    return "neither:engine" if ee < em else "neither:metafor"
+
+
+def worst_verdict(vs):
+    """The verdict of a quantity built from several parts (CI = b +- crit*se): the least favourable
+    to the engine; None if any part could not be adjudicated."""
+    if not vs or any(v is None for v in vs):
+        return None
+    return min(vs, key=_VERDICT_RANK.index)
+
+
+def tau2_verdict(m, x, yi, vi, t_eng, t_mf, scales, rtol=1e-6):
+    """Which program's moderator tau2 is exact: DL / HE / SJ against their closed forms, PM against
+    its estimating equation Q_E(tau2) = k - p (tau2 = 0 is correct iff Q_E(0) <= k - p). None for
+    REML / ML / FE and when metafor gave no tau2."""
+    if t_mf is None:
+        return None
+    if m in ("DL", "HE", "SJ"):
+        ref = {"DL": exact.tau2_dl, "HE": exact.tau2_he, "SJ": exact.tau2_sj}[m](x, yi, vi)
+        return exact.verdict(t_eng, t_mf, ref, rtol)
+    if m == "PM":
+        def ok(t):
+            if t <= 1e-10 * scales.get("vmed", 1.0):
+                return exact.pm_equation(x, yi, vi, 0.0) <= 1.0 + rtol
+            return abs(exact.pm_equation(x, yi, vi, t) - 1.0) <= rtol
+        a, b = ok(t_eng), ok(t_mf)
+        return "both" if a and b else "engine" if a else "metafor" if b else "neither"
+    return None
+
+
 def cmp_mods(c, ds, R):
     MO, M = engine()["MO"], engine()["M"]
     yi, vi = ds["yi"], ds["vi"]
@@ -940,41 +1086,66 @@ def cmp_mods(c, ds, R):
             cf = e.coefficients
             cache = {}
 
-            def ex_tag(field, idx=None, e=e, r=r, m=m, cache=cache):
-                """Lazily adjudicate closed-form quantities with exact arithmetic."""
+            def ex_tag(field, idx=None, e=e, r=r, m=m, tst=tst, cache=cache):
+                """Lazily adjudicate a mismatch with exact rational arithmetic on the same double inputs
+                (tests/fuzz/exact.py): 'exact=engine' / 'metafor' / 'both' / 'neither:<closer side>'.
+
+                Q_E and the common-effect I2: closed forms. tau2 (and, when the two tau2 differ, every
+                field derived from it): DL / HE / SJ closed forms, PM via its estimating equation
+                Q_E(tau2) = k - p; REML / ML are left to the likelihood tags (ll_tags). With equal tau2,
+                b / se / stat / p / CI / QM are compared with the exact WLS inference at each program's
+                own tau2 (z or Knapp-Hartung), so an ill-conditioned design is attributed to the side
+                that actually lost the digits."""
                 try:
                     if field in ("QE", "QE_p"):
                         if "QE" not in cache:
                             cache["QE"] = exact.verdict(e.QE, scalar(r.get("QE")), exact.qe(x, yi, vi))
                         return ["exact=" + cache["QE"]]
-                    if field == "tau2" and m == "DL":
+                    t_mf = max(0.0, scalar(r.get("tau2"))) if finite(scalar(r.get("tau2"))) else None
+                    same_tau2 = m == "FE" or (t_mf is not None and match(e.tau2, t_mf, "var", c.scales)[0])
+                    derived = ("b", "se", "stat", "p", "ci_lower", "ci_upper", "QM", "QM_p", "I2_res", "R2")
+                    if field == "tau2" or (not same_tau2 and field in derived):
                         if "tau2" not in cache:
-                            cache["tau2"] = exact.verdict(e.tau2, scalar(r.get("tau2")), exact.tau2_dl(x, yi, vi))
-                        return ["exact=" + cache["tau2"]]
+                            cache["tau2"] = tau2_verdict(m, x, yi, vi, e.tau2, t_mf, c.scales)
+                        return ["exact=" + cache["tau2"]] if cache["tau2"] else []
                     if field == "I2_res":
                         if m == "FE":
                             v = exact.verdict(e.I2_res, scalar(r.get("I2")), exact.i2_fe(x, yi, vi))
                         else:
                             # each side against the exact I2 at its own tau2 (s2 = (k-p)/tr(P) is the
                             # ill-conditioned part)
-                            xe = exact.i2_res(x, yi, vi, e.tau2)
-                            xm = exact.i2_res(x, yi, vi, max(0.0, scalar(r.get("tau2"))))
-                            ee = abs(e.I2_res - xe)
-                            em = abs(scalar(r.get("I2")) - xm)
-                            oke, okm = ee <= 1e-6 * abs(xe), em <= 1e-6 * abs(xm)
-                            v = ("both" if oke and okm else "engine" if oke else "metafor" if okm else
-                                 ("neither:engine" if ee < em else "neither:metafor"))
+                            v = verdict_own(e.I2_res, scalar(r.get("I2")), exact.i2_res(x, yi, vi, e.tau2),
+                                            exact.i2_res(x, yi, vi, t_mf))
                         return ["exact=" + v]
-                    if m == "DL" and field in ("b", "se", "stat", "p", "ci_lower", "ci_upper", "QM", "QM_p", "R2"):
-                        return ex_tag("tau2")
-                    if m == "FE" and field in ("b", "se", "stat", "p", "ci_lower", "ci_upper", "QM", "QM_p"):
-                        if "b" not in cache:
-                            eb = exact.coefficients(x, yi, vi, 0.0)
-                            vs = [exact.verdict(q["estimate"], bm, xb) for q, bm, xb in
-                                  zip(cf, as_list(rnum(r.get("b"))), eb)]
-                            cache["b"] = ("metafor" if "metafor" in vs else ("engine" if "engine" in vs else
-                                          ("both" if all(v == "both" for v in vs) else "neither")))
-                        return ["exact=" + cache["b"]]
+                    if field == "R2":
+                        # closed-form estimators: R2 from the exact moderator and intercept-only tau2
+                        if m not in ("DL", "HE", "SJ"):
+                            return []
+                        if "R2" not in cache:
+                            fn = {"DL": exact.tau2_dl, "HE": exact.tau2_he, "SJ": exact.tau2_sj}[m]
+                            t_x, t0_x = fn(x, yi, vi), fn([[1.0] for _ in yi], yi, vi)
+                            cache["R2"] = (exact.verdict(e.R2, scalar(r.get("R2")),
+                                                         max(0.0, 100.0 * (t0_x - t_x) / t0_x)) if t0_x > 0 else None)
+                        return ["exact=" + cache["R2"]] if cache["R2"] else []
+                    if field in derived[:8]:
+                        if "fit" not in cache:
+                            fe = exact.fit_stats(x, yi, vi, 0.0 if m == "FE" else e.tau2, tst)
+                            fm = fe if m == "FE" or t_mf == e.tau2 else exact.fit_stats(x, yi, vi, t_mf, tst)
+                            cache["fit"] = (fe, fm)
+                        fe, fm = cache["fit"]
+                        if field in ("QM", "QM_p"):
+                            v = verdict_own(e.QM, scalar(r.get("QM")), fe["QM"], fm["QM"])
+                        else:
+                            parts = {"b": ("b",), "se": ("se",), "stat": ("stat",), "p": ("stat",),
+                                     "ci_lower": ("b", "se"), "ci_upper": ("b", "se")}[field]
+                            ekey = {"b": "estimate", "se": "se", "stat": "stat"}
+                            rkey = {"b": "b", "se": "se", "stat": "zval"}
+                            big = TOLERANCES["stat"]["inf_above"]
+                            v = worst_verdict([verdict_own(cf[idx][ekey[q]], as_list(rnum(r.get(rkey[q])))[idx],
+                                                           fe[q][idx] if fe[q] else None,
+                                                           fm[q][idx] if fm[q] else None,
+                                                           big=big if q == "stat" else None) for q in parts])
+                        return ["exact=" + v] if v else []
                 except Exception:
                     return ["exact=error"]
                 return []
@@ -992,15 +1163,38 @@ def cmp_mods(c, ds, R):
                     pass
             if finite(e.QE) and e.QE < 1e-10:
                 tags.append("perfect_fit")      # residuals are 0 up to rounding (y = X b exactly)
+            if tst == "knha" and cf and all(q["se"] == 0.0 for q in cf):
+                tags.append("eng_perfect_fit")  # the engine's KH perfect-fit convention (se = 0, QM = None)
+
+            def pf_tag(e=e, cache=cache, tags=tags):
+                """For the engine's KH perfect-fit verdict: does exact arithmetic on the same doubles
+                agree (moderators.is_perfect_fit criteria on the exact rss)?"""
+                if "eng_perfect_fit" not in tags:
+                    return []
+                if "pf" not in cache:
+                    try:
+                        cache["pf"] = exact.is_perfect_fit(x, yi, vi, e.tau2)
+                    except Exception:
+                        cache["pf"] = None
+                return [{True: "exact_perfect_fit", False: "exact_not_perfect", None: "exact=error"}[cache["pf"]]]
             for fld, key, rk, kind in (("b", "estimate", "b", "loc"), ("se", "se", "se", "loc"),
                                        ("stat", "stat", "zval", "stat"), ("p", "p", "pval", "p"),
                                        ("ci_lower", "ci_lower", "ci.lb", "loc"), ("ci_upper", "ci_upper", "ci.ub", "loc")):
                 c.cmpv(func, fld, [q[key] for q in cf], r.get(rk), kind, tags=tags,
-                       tagger=lambda i, fld=fld: ex_tag(fld, i))
+                       tagger=lambda i, fld=fld: ex_tag(fld, i) + pf_tag())
             for fld, val, rk, kind in (("QM", e.QM, "QM", "stat"), ("QM_p", e.QM_p, "QMp", "p"),
                                        ("QE", e.QE, "QE", "stat"), ("QE_p", e.QE_p, "QEp", "p"),
                                        ("tau2", e.tau2, "tau2", "var"), ("I2_res", e.I2_res, "I2", "pct")):
-                c.cmp(func, fld, val, r.get(rk), kind, tags=tags, tagger=lambda i, fld=fld: ex_tag(fld, i))
+                c.cmp(func, fld, val, r.get(rk), kind, tags=tags, tagger=lambda i, fld=fld: ex_tag(fld, i) + pf_tag())
+            # metafor's R2 needs its own intercept-only refit (same control, no retry): when that refit
+            # fails (R2 = NA) but run_metafor.R's retried refit (tau2_0) converged, rebuild metafor's R2
+            # = max(0, 100 (tau2_0 - tau2) / tau2_0) from its two tau2 and check the engine against it
+            t0_mf, t_mf = scalar(r.get("tau2_0")), scalar(r.get("tau2"))
+            if is_missing(scalar(r.get("R2"))) and m != "FE" and finite(t0_mf) and t0_mf > 0 and finite(t_mf) \
+                    and finite(e.R2):
+                ref = max(0.0, 100.0 * (t0_mf - max(0.0, t_mf)) / t0_mf)
+                if match(e.R2, ref, "pct", c.scales, True)[0]:
+                    r2_tags.append("mf_R2_refit_NA")
             c.cmp(func, "R2", e.R2, r.get("R2"), "pct", tags=tags + r2_tags, tagger=lambda i: ex_tag("R2", i))
 
 
@@ -1216,10 +1410,14 @@ def cmp_es_dataset(acc, ds, R, only):
             e = c.call(func, lambda: M.mantel_haenszel(e1, n1, e2, n2, measure=m), r, na_keys=("beta",))
             if e is None:
                 continue
+            # pooled estimate 0 up to rounding (e.g. RR = R/S with R and S one ulp apart): metafor's
+            # beta is ~1e-16 with se = 0 (z = Inf), the engine's exactly 0 (z = 0/0)
+            mh_tags = ["mf_beta~0"] if (e.estimate == 0.0 and finite(scalar(r.get("beta")))
+                                         and abs(scalar(r.get("beta"))) <= 1e-12) else []
             for ek, rk, kind in (("estimate", "beta", "loc"), ("se", "se", "loc"), ("stat", "zval", "stat"),
                                  ("p", "pval", "p"), ("ci_lower", "ci.lb", "loc"), ("ci_upper", "ci.ub", "loc"),
                                  ("Q", "QE", "stat"), ("p_Q", "QEp", "p"), ("I2", "I2", "pct"), ("H2", "H2", "ratio")):
-                c.cmp(func, ek, getattr(e, ek), r.get(rk), kind)
+                c.cmp(func, ek, getattr(e, ek), r.get(rk), kind, tags=mh_tags)
     if not only or "peto" in only:
         func = "peto:OR"
         r = (R.get("peto") or {}).get("OR")

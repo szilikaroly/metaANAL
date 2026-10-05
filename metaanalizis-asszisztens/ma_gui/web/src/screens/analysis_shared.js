@@ -37,6 +37,65 @@
     return withSpec || list[0] || null;
   }
 
+  // ---------------------------------------------------------------- kimenet felvétele (DOC-1)
+  /** outcomeDialog(onDone) — a kimenet felvétele (név, adattábla, hatásméret) a munkapadon: POST /api/project
+   * {action: 'outcome'}; a ma-projekt.json-t a szerver írja (ha még nincs, létrehozza). onDone(id) a mentés után. */
+  function outcomeDialog(onDone) {
+    var project = MA.store.get('project') || {};
+    var list = outcomes();
+    var n = list.length + 1;
+    var taken = {};
+    list.forEach(function (o) { taken[o.id] = true; });
+    while (taken['o' + String(n)]) { n += 1; }
+    var name = h('input', { type: 'text', id: 'oc-name', autocomplete: 'off', 'aria-required': 'true' });
+    var oid = h('input', { type: 'text', id: 'oc-id', autocomplete: 'off', value: 'o' + String(n), 'aria-describedby': 'oc-id-help' });
+    var tables = (Array.isArray(project.tables) ? project.tables : []).map(function (x) { return x.dataset; }).filter(Boolean);
+    var data = tables.length
+      ? h('select', { id: 'oc-data' }, tables.map(function (ds) { return h('option', { value: ds }, ds); }))
+      : h('input', { type: 'text', id: 'oc-data', value: '03_adatok/adatkinyeres.csv' });
+    var eng = MA.store.get('engine') || {};
+    var measure = h('select', { id: 'oc-measure' }, [h('option', { value: '' }, t('outcome.chooseMeasure'))].concat(
+      (eng.measures || []).map(function (m) { return h('option', { value: m.id }, m.id + ' — ' + pick(m.label, m.id)); })));
+    var err = h('p', { 'class': 'opt-err', id: 'oc-err', role: 'alert' });
+    function fld(id, key, ctl, help) {
+      return h('div', { 'class': 'pf-field' }, h('label', { htmlFor: id }, t(key)), ctl,
+        help ? h('span', { 'class': 'muted pf-hint', id: id + '-help' }, t(help)) : null);
+    }
+    MA.ui.modal({
+      title: t('outcome.title'), size: 'md',
+      body: [h('p', null, t('outcome.body')),
+        fld('oc-name', 'outcome.name', name, 'outcome.nameHelp'),
+        fld('oc-data', 'outcome.data', data, 'outcome.dataHelp'),
+        fld('oc-measure', 'outcome.measure', measure, 'outcome.measureHelp'),
+        fld('oc-id', 'outcome.id', oid, 'outcome.idHelp'),
+        err],
+      actions: [{ label: t('common.cancel'), kind: 'ghost' }, { label: t('outcome.save'), kind: 'primary', onClick: function () {
+        var nm = name.value.trim();
+        if (!nm || !measure.value || !oid.value.trim() || !data.value.trim()) {
+          err.textContent = t('outcome.required');
+          (!nm ? name : (!measure.value ? measure : (!data.value.trim() ? data : oid))).focus();
+          return false;
+        }
+        MA.api.post('/api/project', { action: 'outcome', outcome: { id: oid.value.trim(), name: nm, data: data.value.trim(), measure: measure.value } })
+          .then(function (env) {
+            MA.store.set('project', env.data || project);
+            MA.ui.toast({ kind: 'success', title: t('outcome.saved', { name: nm }) });
+            if (onDone) { onDone(oid.value.trim()); }
+          }, function () { /* a hibát a toast jelezte */ });
+        return undefined;
+      } }]
+    });
+  }
+
+  /** noOutcomesPanel(onDone) — üres állapot kezdőknek: mi a kimenet, és egy gomb a felvételéhez (DOC-1). */
+  function noOutcomesPanel(onDone) {
+    return h('div', { 'class': 'panel', id: 'no-outcomes' },
+      MA.ui.emptyState('analysis.noOutcomes'),
+      h('p', null, h('button', { type: 'button', 'class': 'btn btn-primary', id: 'outcome-add', onclick: function () { outcomeDialog(onDone); } },
+        t('outcome.add'))),
+      h('p', { 'class': 'muted' }, t('outcome.cliHint')));
+  }
+
   function engineOptions() {
     var e = MA.store.get('engine') || {};
     return e.options && typeof e.options === 'object' ? e.options : {};
@@ -49,15 +108,14 @@
   }
 
   // ---------------------------------------------------------------- parancs
-  var SAFE_ARG = /^[\w./:=,+@%\u00C0-\u024F-]+$/;
-  function quoteArg(a) {
-    var s = String(a);
-    return SAFE_ARG.test(s) ? s : '"' + s.replace(/(["\\$\x60])/g, '\\$1') + '"';
+  /** cmdInfo(argv) → {line, unsafe, windows}: a mostani platform bemásolható sora (MA.shell; macOS/Linux:
+   * egyszeres idézőjelek; Windows: kettős idézőjel, és ha a szöveg (pl. egy szabad szöveges cím) a cmd.exe-ben
+   * vagy a PowerShellben parancsként értelmeződne, line = null — WS-2). */
+  function cmdInfo(argv) {
+    if (!Array.isArray(argv) || !argv.length) { return { line: '', unsafe: [], windows: MA.shell.isWindows() }; }
+    return MA.shell.preferred(argv, ['python']);
   }
-  function cmd(argv) {
-    if (!Array.isArray(argv) || !argv.length) { return ''; }
-    return 'python ' + argv.map(quoteArg).join(' ');
-  }
+  function cmd(argv) { return cmdInfo(argv).line || ''; }
 
   // ---------------------------------------------------------------- jelek
   function linkSignals(a, b) {
@@ -164,10 +222,23 @@
 
   function shortSha(s) { return typeof s === 'string' && s.length > 4 ? s.slice(0, 4) + '…' : (s || '—'); }
 
+  /** A futás frissességének kulcsa: stale (X001: az adat megváltozott) · unknown (a szerver nem tudta ellenőrizni:
+   * stale === null, pl. zárolt adatfájl — FID-6) · current. */
+  function staleKey(run) {
+    if (run.stale === true) { return 'stale'; }
+    if (run.stale === null) { return 'unknown'; }
+    return 'current';
+  }
+
   function runBadge(run) {
     if (!run) { return null; }
-    if (!run.run_id) { return MA.ui.badge('info', t('analysis.run.explore'), { title: t('analysis.run.exploreTitle') }); }
-    if (run.stale) { return MA.ui.badge('stale', t('analysis.run.stale'), { title: t('analysis.run.staleTitle') }); }
+    if (!run.run_id) {
+      if (run._dataStale) { return MA.ui.badge('stale', t('analysis.run.explore'), { title: t('results.exploreStale') }); }
+      return MA.ui.badge('info', t('analysis.run.explore'), { title: t('analysis.run.exploreTitle') });
+    }
+    var k = staleKey(run);
+    if (k === 'stale') { return MA.ui.badge('stale', t('analysis.run.stale'), { title: t('analysis.run.staleTitle') }); }
+    if (k === 'unknown') { return MA.ui.badge('neutral', t('analysis.run.unknown'), { title: t('analysis.run.unknownTitle') }); }
     return MA.ui.badge('ok', t('analysis.run.current'), { title: t('analysis.run.currentTitle') });
   }
 
@@ -175,40 +246,80 @@
     if (!run.run_id) { return t('analysis.run.exploreLabel'); }
     var sp = run.spec || {};
     return MA.i18n.ts(runTime(run)) + ' · ' + (sp.parent ? '└ ' : '') + (sp.name || '—') + ' · ' +
-      t(run.stale ? 'analysis.run.stale' : 'analysis.run.current');
+      t('analysis.run.' + staleKey(run));
+  }
+
+  /** currentDataSha(dataset, signal) → Promise<sha256 | null>: az adattábla MOSTANI hash-e (GET /api/project
+   * tables[].etag) — a feltárás (explore) eredménye ezzel vethető össze (FID-5). */
+  function currentDataSha(dataset, signal) {
+    if (!dataset) { return Promise.resolve(null); }
+    return MA.api.get('/api/project', { signal: signal, toast: false }).then(function (env) {
+      var hit = MA.api.list(env, 'tables').filter(function (x) { return x && x.dataset === dataset; })[0];
+      return hit && hit.etag ? hit.etag : null;
+    }, function (err) {
+      if (err.code === 'ABORTED') { throw err; }
+      return null;
+    });
   }
 
   // ---------------------------------------------------------------- KB
   var kbCache = {};
-  function kbRules(field) {
-    if (kbCache[field]) { return kbCache[field]; }
+  /** kbContext(run, plot) → {model, k, measure}: a futás kontextusa a KB-szabályok szűréséhez (UX-06). */
+  function kbContext(run, plot) {
+    var ctx = {};
+    var prim = plot && Array.isArray(plot.summaries) ? plot.summaries.filter(function (x) { return x.primary === true; })[0] : null;
+    var model = (prim && prim.model) || (run && run.primary && run.primary.model) || null;
+    if (model) { ctx.model = String(model); }
+    var k = run && typeof run.k === 'number' ? run.k : (plot && typeof plot.k === 'number' ? plot.k : null);
+    if (k !== null) { ctx.k = String(k); }
+    var measure = (plot && plot.measure) || (run && run.measure) || null;
+    if (measure) { ctx.measure = String(measure); }
+    return ctx;
+  }
+
+  function kbRules(field, context) {
+    var query = Object.assign({ field: field }, context || {});
+    var ck = JSON.stringify(Object.keys(query).sort().map(function (k) { return [k, query[k]]; }));
+    if (kbCache[ck]) { return kbCache[ck]; }
     // a gyorsítótárazott kérés nem kötődik egy képernyő élettartamához (signal nélkül)
-    var p = MA.api.get('/api/kb/rules', { query: { field: field }, toast: false }).then(function (env) {
+    var p = MA.api.get('/api/kb/rules', { query: query, toast: false }).then(function (env) {
       return MA.api.list(env, 'items');
     }, function (err) {
-      delete kbCache[field];
+      delete kbCache[ck];
       if (err.code === 'ABORTED') { throw err; }
       return [];
     });
-    kbCache[field] = p;
+    kbCache[ck] = p;
     return p;
   }
 
   /** openKb(id) — a KB-tétel modális ablaka: a közös „Miért?” komponensé (components/why.js, MA.why.openItem). */
   function openKb(id) { return MA.why.openItem(id); }
 
-  function kbButton(id, title) {
-    return h('button', { type: 'button', 'class': 'kb-badge', 'data-kb': id, title: title || t('analysis.kb.open', { id: id }),
-      'aria-label': t('analysis.kb.open', { id: id }), onclick: function () { openKb(id); } },
-    h('span', { 'aria-hidden': 'true' }, 'ⓚ'), id);
+  /** kbButton(id, title, withTitle) — ⓚ-jelvény; withTitle: a szabály rövid címe is látszik (CSS vágja le). */
+  function kbButton(id, title, withTitle) {
+    return h('button', { type: 'button', 'class': ['kb-badge', withTitle && title ? 'has-title' : null], 'data-kb': id,
+      title: title || t('analysis.kb.open', { id: id }),
+      'aria-label': t('analysis.kb.open', { id: id }) + (title ? ': ' + title : ''), onclick: function () { openKb(id); } },
+    h('span', { 'aria-hidden': 'true' }, 'ⓚ'), id,
+    withTitle && title ? h('span', { 'class': 'kb-short', 'aria-hidden': 'true' }, ' ' + title) : null);
   }
 
-  /** kbRow(labelText, field, signal) → <span> címke + a mezőhöz kötött KB-szabályok ⓚ-jelvényei. */
-  function kbRow(labelNode, field, signal) {
+  var KB_VISIBLE = 3;
+  /** kbRow(labelText, field, signal, context) → <span> címke + a mezőhöz kötött KB-szabályok ⓚ-jelvényei. A futás
+   * kontextusával (kbContext) csak a futásra illő szabályok; legfeljebb KB_VISIBLE látszik rövid címmel, a többi
+   * összecsukva („KB (n) ▸”) — UX-06. */
+  function kbRow(labelNode, field, signal, context) {
     var host = h('span', { 'class': 'kb-list', 'data-field': field });
-    kbRules(field).then(function (items) {
+    kbRules(field, context).then(function (items) {
       if (signal && signal.aborted) { return; }
-      MA.dom.mount(host, items.map(function (it) { return kbButton(it.id || it.rule_id, pick(it.title, '')); }));
+      var badge = function (it) { return kbButton(it.id || it.rule_id, pick(it.title, ''), true); };
+      var shown = items.slice(0, KB_VISIBLE).map(badge);
+      var rest = items.slice(KB_VISIBLE);
+      MA.dom.mount(host, shown, rest.length
+        ? h('details', { 'class': 'kb-more' }, h('summary', null, t('analysis.kb.more', { n: String(rest.length) })),
+          h('span', { 'class': 'kb-more-list' }, rest.map(badge)))
+        : null);
     }, function () { /* megszakítva */ });
     return h('span', { 'class': 'kb-row' }, labelNode, ' ', host);
   }
@@ -300,7 +411,9 @@
       ' ',
       o.outcome ? h('a', { 'class': 'btn btn-sm drill-jump', href: MA.app.href('extraction', { outcome: o.outcome.id, row: s.row_uid }) }, t('analysis.drill.jump')) : null,
       ' ',
-      h('a', { 'class': 'btn btn-sm btn-ghost', href: MA.app.href('appraisal', { study: s.study_id || s.row_uid }) }, t('analysis.drill.appraise'))),
+      // az értékelés-képernyő az MVP-ben még helyőrző: oda nem viszünk (UX-15)
+      MA.app.isPlaceholder('appraisal') ? null
+        : h('a', { 'class': 'btn btn-sm btn-ghost', href: MA.app.href('appraisal', { study: s.study_id || s.row_uid }) }, t('analysis.drill.appraise'))),
     h('ul', { 'class': 'drill-facts' },
       loo ? h('li', { 'data-fact': 'loo' }, t('analysis.drill.loo'), ' ', MA.ui.num(loo.display_text),
         loo.i2_text ? h('span', { 'class': 'muted' }, ', I² ' + pick(loo.i2_text)) : null) : null,
@@ -359,9 +472,12 @@
   MA.analysis = {
     outcomes: outcomes,
     pickOutcome: pickOutcome,
+    outcomeDialog: outcomeDialog,
+    noOutcomesPanel: noOutcomesPanel,
     engineOptions: engineOptions,
     measureLabel: measureLabel,
     cmd: cmd,
+    cmdInfo: cmdInfo,
     linkSignals: linkSignals,
     analyze: analyze,
     addRun: addRun,
@@ -370,6 +486,9 @@
     shortSha: shortSha,
     runBadge: runBadge,
     runLabel: runLabel,
+    staleKey: staleKey,
+    currentDataSha: currentDataSha,
+    kbContext: kbContext,
     kbRules: kbRules,
     kbButton: kbButton,
     kbRow: kbRow,

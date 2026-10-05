@@ -13,6 +13,10 @@ Szereplő (E7): minden író függvény opcionális actor kulcsszót kap (pl. 'u
 az 'actor' oszlopba kerül (alapból NULL), a megállapítás lezárójáé/újranyitójáé a 'resolved_actor'-ba.
 A lekérdezők (status, get_item, list_items, export_json) JSON-képes értékeket adnak (NaN/végtelen → None).
 A ma-projekt.json (szk.ma.project/v1) a load_project_meta / save_project_meta párral olvasható és írható.
+
+Döntés-kontextus: a döntés gépi kontextusa (context) JSON-objektumként a 'context' oszlopba kerül (pl. a „Nem
+hiba — indoklás” döntésnél {kind: 'validation', dataset, row_uid, code, fields}); csak azonosítók, kódok és
+mezőnevek — cellaérték soha (check_context). A lekérdezők objektumként adják vissza.
 """
 import datetime
 import hashlib
@@ -61,7 +65,7 @@ CREATE TABLE IF NOT EXISTS run (
 """
 
 # régebbi projektnaplók bővítése (ALTER TABLE ADD COLUMN); az új napló is így kapja meg
-_ADDED_COLUMNS = {"decision": ["kb_unverified TEXT", "actor TEXT"],
+_ADDED_COLUMNS = {"decision": ["kb_unverified TEXT", "actor TEXT", "context TEXT"],
                   "finding": ["kb_unverified TEXT", "actor TEXT", "resolved_actor TEXT"],
                   "checkpoint": ["actor TEXT"],
                   "grade": ["kb_unverified TEXT", "actor TEXT"],
@@ -214,6 +218,95 @@ def check_actor(actor):
     return actor.strip()
 
 
+# a döntés gépi kontextusa (a munkapad POST /api/log/decision context-sémájával azonos kulcsok)
+CONTEXT_KINDS = ("validation", "analysis", "prisma", "other")
+_CONTEXT_KEYS = ("kind", "dataset", "row_uid", "code", "fields", "run_id", "spec", "outcome", "changes")
+# cellaérték nem kerülhet a naplóba (terv 7.4; ugyanaz a tiltólista, mint az activity-láncé)
+_CONTEXT_FORBIDDEN = frozenset({"value", "values", "cell", "cells", "rows", "value_as_entered"})
+_CONTEXT_MAX = 8192
+_CONTEXT_ROW_UID = re.compile(r"^r[0-9a-z]{4,12}$")
+_CONTEXT_CODE = re.compile(r"^[VPX][0-9]{3}$")
+
+
+def _context_forbidden(obj, path="context"):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if str(k).strip().lower() in _CONTEXT_FORBIDDEN:
+                return "%s.%s" % (path, k)
+            hit = _context_forbidden(v, "%s.%s" % (path, k))
+            if hit:
+                return hit
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            hit = _context_forbidden(v, "%s[%d]" % (path, i))
+            if hit:
+                return hit
+    return None
+
+
+def _short_text(v, where, limit=1024):
+    if v is None:
+        return None
+    if not isinstance(v, str) or len(v) > limit or any(ord(c) < 32 or ord(c) == 127 for c in v):
+        raise ValueError("Érvénytelen döntés-kontextus: a(z) %s legfeljebb %d karakteres, vezérlőkarakter nélküli "
+                         "szöveg legyen." % (where, limit))
+    return v
+
+
+def check_context(context):
+    """A döntés gépi kontextusának ellenőrzése → kanonikus JSON-szöveg (rendezett kulcsok) vagy None.
+
+    Elfogadott kulcsok: kind (validation | analysis | prisma | other), dataset, row_uid, code (V/P/X + 3 jegy),
+    fields (mezőnevek), run_id, spec, outcome, changes ([{key, before, after}] — elemzési opcióértékek). A null
+    értékű kulcs kimarad. Cellaérték (value, values, cell, cells, rows, value_as_entered) sehol nem lehet benne
+    (adatvédelem, terv 7.4); legfeljebb 8 KB. Hibás kontextus: ValueError (magyar üzenettel)."""
+    if context is None:
+        return None
+    if not isinstance(context, dict):
+        raise ValueError("Érvénytelen döntés-kontextus: JSON-objektum kell (pl. {\"kind\": \"validation\", "
+                         "\"code\": \"V013\", \"row_uid\": \"r7f3a2\", \"fields\": [\"m1\"]}).")
+    hit = _context_forbidden(context)
+    if hit:
+        raise ValueError("A döntés-kontextusba nem kerülhet cellaérték (%s): csak azonosítók, kódok és mezőnevek "
+                         "(adatvédelem)." % hit)
+    ctx = {k: v for k, v in context.items() if v is not None}
+    unknown = sorted(set(ctx) - set(_CONTEXT_KEYS))
+    if unknown:
+        raise ValueError("Ismeretlen kulcs a döntés-kontextusban: %s (elfogadott: %s)."
+                         % (", ".join(map(str, unknown)), ", ".join(_CONTEXT_KEYS)))
+    if "kind" in ctx and ctx["kind"] not in CONTEXT_KINDS:
+        raise ValueError("Érvénytelen döntés-kontextus: kind = %r (lehetséges: %s)."
+                         % (ctx["kind"], ", ".join(CONTEXT_KINDS)))
+    if "row_uid" in ctx and not (isinstance(ctx["row_uid"], str) and _CONTEXT_ROW_UID.match(ctx["row_uid"])):
+        raise ValueError("Érvénytelen döntés-kontextus: a row_uid alakja 'r' + 4–12 kisbetű/számjegy "
+                         "(pl. r7f3a2), kapott: %r." % (ctx["row_uid"],))
+    if "code" in ctx and not (isinstance(ctx["code"], str) and _CONTEXT_CODE.match(ctx["code"])):
+        raise ValueError("Érvénytelen döntés-kontextus: a code egy szabálykód (pl. V013, X001), kapott: %r."
+                         % (ctx["code"],))
+    for key in ("dataset", "run_id", "spec", "outcome"):
+        if key in ctx:
+            _short_text(ctx[key], key)
+    if "fields" in ctx:
+        f = ctx["fields"]
+        if not isinstance(f, list) or len(f) > 50 or not all(isinstance(x, str) and 0 < len(x) <= 100 for x in f):
+            raise ValueError("Érvénytelen döntés-kontextus: a fields mezőnevek listája (legfeljebb 50, egyenként "
+                             "legfeljebb 100 karakter).")
+    if "changes" in ctx:
+        ch = ctx["changes"]
+        if not isinstance(ch, list) or len(ch) > 100 or not all(
+                isinstance(c, dict) and set(c) <= {"key", "before", "after"} and isinstance(c.get("key"), str)
+                for c in ch):
+            raise ValueError("Érvénytelen döntés-kontextus: a changes [{key, before, after}] lista (legfeljebb 100).")
+    try:
+        text = json.dumps(ctx, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    except (TypeError, ValueError):
+        raise ValueError("Érvénytelen döntés-kontextus: csak JSON-értékek (szöveg, véges szám, logikai, lista, "
+                         "objektum) lehetnek benne.")
+    if len(text.encode("utf-8")) > _CONTEXT_MAX:
+        raise ValueError("A döntés-kontextus túl nagy (legfeljebb %d bájt)." % _CONTEXT_MAX)
+    return text
+
+
 def _check_agent(agent, warnings):
     if agent not in KNOWN_AGENTS and warnings is not None:
         warnings.append("Ismeretlen ágensnév: %r (ismert: %s) — a napló így rögzíti." % (agent, ", ".join(KNOWN_AGENTS)))
@@ -268,17 +361,19 @@ def _prepare(agent, stage, kb_refs, kb_db, strict, warnings, check_kb=True):
 
 def log_decision(project_dir, agent, decision, rationale=None, stage=None, kb_refs=None,
                  alternatives=None, supersedes=None, kb_db=None, strict=False, warnings=None, check_kb=True,
-                 actor=None):
+                 actor=None, context=None):
     """Döntés naplózása. strict=True: ismeretlen KB-azonosító → ValueError; különben figyelmeztetés
-    (warnings listába) és a kb_unverified oszlopban jelölve."""
+    (warnings listába) és a kb_unverified oszlopban jelölve. context: a döntés gépi kontextusa (dict; lásd
+    check_context) — a 'context' oszlopba JSON-szövegként kerül."""
     actor = check_actor(actor)
+    ctx_text = check_context(context)
     con = connect(project_dir)
     try:
         stage_value, refs, unverified = _prepare(agent, stage, kb_refs, kb_db, strict, warnings, check_kb)
         cur = con.execute("INSERT INTO decision (ts, agent, stage_id, decision, rationale, alternatives, kb_refs, "
-                          "supersedes, kb_unverified, actor) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                          "supersedes, kb_unverified, actor, context) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                           (_now(), agent, stage_value, decision, rationale, alternatives, refs, supersedes, unverified,
-                           actor))
+                           actor, ctx_text))
         if supersedes:
             con.execute("UPDATE decision SET status='superseded' WHERE id=?", (supersedes,))
         con.commit()
@@ -510,8 +605,19 @@ def _json_value(v):
     return v
 
 
+def _json_context(v):
+    """A 'context' oszlop JSON-szövege → objektum (érvénytelen / nem objektum → None)."""
+    if v is None:
+        return None
+    try:
+        obj = json.loads(v)
+    except (TypeError, ValueError):
+        return None
+    return obj if isinstance(obj, dict) else None
+
+
 def _json_row(row):
-    return {k: _json_value(row[k]) for k in row.keys()}
+    return {k: (_json_context(_json_value(row[k])) if k == "context" else _json_value(row[k])) for k in row.keys()}
 
 
 _ITEM_TABLES = {"finding": "finding", "decision": "decision", "checkpoint": "checkpoint", "grade": "grade",
@@ -1033,6 +1139,61 @@ def load_project_meta(project_dir):
     if errors:
         raise _meta_error(errors)
     return norm
+
+
+def _journal_title(project_dir):
+    """A projektnapló (projekt.sqlite) címe, ha van; különben None."""
+    if not os.path.isfile(db_path(project_dir)):
+        return None
+    try:
+        con = connect(project_dir)
+        try:
+            row = con.execute("SELECT value FROM project WHERE key='title'").fetchone()
+        finally:
+            con.close()
+    except Exception:                                   # noqa: BLE001 — a cím hiánya nem hiba
+        return None
+    return row[0] if row and isinstance(row[0], str) and row[0].strip() else None
+
+
+def outcome_meta_doc(project_dir, meta, outcome, data_class=None, replace=False):
+    """A ma-projekt.json új tartalma egy kimenet felvételével (vagy cseréjével, replace=True) — írás nélkül.
+    meta: a mostani (load_project_meta) tartalom vagy None (még nincs fájl: létrejön; cím a projektnapló címe vagy
+    a mappa neve, adatosztály data_class, alapból A). Az outcome alapértelmezett primary_spec-je
+    05_elemzes/specs/<id>_primary.json. → (normalizált dokumentum, a felvett kimenet). Hibánál ValueError."""
+    if not isinstance(outcome, dict):
+        raise ValueError("a kimenet objektum legyen ({id, name, data, measure})")
+    o = {k: v for k, v in outcome.items() if v is not None}
+    oid = o.get("id")
+    if not isinstance(oid, str) or not _OUTCOME_ID.match(oid):
+        raise ValueError("a kimenet azonosítója kötelező: betű, szám, '_', '.', '-' (legfeljebb 64 karakter)")
+    o.setdefault("primary_spec", "05_elemzes/specs/%s_primary.json" % oid)
+    if meta is None:
+        title = _journal_title(project_dir) or os.path.basename(os.path.abspath(project_dir)) or "projekt"
+        doc = {"schema": PROJECT_SCHEMA, "title": title, "data_class": data_class or "A", "outcomes": []}
+    else:
+        doc = dict(meta)
+    outs = [dict(x) for x in doc.get("outcomes") or [] if isinstance(x, dict)]
+    idx = next((i for i, x in enumerate(outs) if x.get("id") == oid), None)
+    if idx is not None and not replace:
+        raise ValueError("már van %s azonosítójú kimenet (módosításhoz: replace / --replace)" % oid)
+    if idx is None:
+        outs.append(o)
+    else:
+        merged = dict(outs[idx])
+        merged.update(o)
+        outs[idx] = merged
+    doc["outcomes"] = outs
+    norm, errors = validate_project_meta(doc)
+    if errors:
+        raise _meta_error(errors)
+    return norm, next(x for x in norm["outcomes"] if x.get("id") == oid)
+
+
+def add_outcome(project_dir, outcome, data_class=None, replace=False):
+    """Kimenet felvétele a ma-projekt.json-ba (ha nincs, létrehozza) → (normalizált dokumentum, kimenet)."""
+    doc, o = outcome_meta_doc(project_dir, load_project_meta(project_dir), outcome, data_class, replace)
+    return save_project_meta(project_dir, doc), o
 
 
 def save_project_meta(project_dir, meta):

@@ -263,7 +263,9 @@ _ENGINE_CONTRACT_IN = ("szk.ma.analysis-spec/v1", "szk.ma.convert-request/v1", "
 _VERSION_RE = re.compile(r"^\d+\.\d+\.\d+")
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _URN_RE = re.compile(r"^urn:szk:contract:([a-z0-9][a-z0-9.\-]*):(\d+)$")
-_FILE_KEY_RE = re.compile(r"^(szk\.[a-z0-9.\-]+?)\.v(\d+)$")
+# a fájlnév szk.-előtaggal (pluginok: szk.instrument.v1.schema.json) vagy anélkül (a motor
+# contracts/ mappája: ma.analysis-spec.v1.schema.json, common.v1.schema.json)
+_FILE_KEY_RE = re.compile(r"^(?:szk\.)?([a-z0-9][a-z0-9.\-]*?)\.v(\d+)$")
 _MAJOR_RE = re.compile(r"/v(\d+)$")
 _MISSING_RE = re.compile(r"(?:ModuleNotFoundError|ImportError): No module named '([A-Za-z0-9_.]+)'")
 _DLL_RE = re.compile(r"DLL load failed while importing ([A-Za-z0-9_]+)")
@@ -340,8 +342,9 @@ def default_runtime_dir(env=None, home=None):
 
 
 def contract_key(name):
-    """Szerződésnév normalizálása: ``szk.instrument/v1``, ``urn:szk:contract:instrument:1`` és
-    ``szk.instrument.v1.schema.json`` → ``szk.instrument/v1``."""
+    """Szerződésnév normalizálása: ``szk.instrument/v1``, ``urn:szk:contract:instrument:1``,
+    ``szk.instrument.v1.schema.json`` és a motor elnevezése (``instrument.v1.schema.json``) →
+    ``szk.instrument/v1``."""
     low = str(name).strip().lower()
     m = _URN_RE.match(low)
     if m:
@@ -351,8 +354,8 @@ def contract_key(name):
             low = low[:-len(suffix)]
             break
     m = _FILE_KEY_RE.match(low)
-    if m:
-        return "%s/v%s" % m.groups()
+    if m and "/" not in low:
+        return "szk.%s/v%s" % m.groups()
     return low
 
 
@@ -551,30 +554,29 @@ def _installed_plugin_paths(path, name):
 # ---------------------------------------------------------------- motor
 
 def engine_capabilities():
-    """A motor (metaelemzes) ``szk.capabilities/v1`` leírása — tiszta függvény, alfolyamat nélkül."""
+    """A motor (metaelemzes) ``szk.capabilities/v1`` leírása a homlokzatból (``api.capabilities()``,
+    ugyanaz, mint a ``ma.py --capabilities``: parancsok, szerződés-irányok és -hash-ek) — alfolyamat
+    nélkül. Ha a motor nem importálható, minimális ``ok: false`` leírás (a hiba oka a known_issues-ban)."""
     try:
-        import metaelemzes
-        version = str(getattr(metaelemzes, "__version__", "") or "")
-        ok = True
-    except Exception:                                        # noqa: BLE001 — a leírás akkor is készüljön el
-        version, ok = "", False
-    if not _VERSION_RE.match(version):
-        version = "0.0.0"
-    contracts = {}
-    for key, digest, _aliases in contract_files([ENGINE_CONTRACTS_DIR]):
-        contracts[key] = {"dir": ["in"] if key in _ENGINE_CONTRACT_IN else ["out"], "sha256": digest}
-    return {
-        "schema": CAPS_SCHEMA,
-        "plugin": "metaelemzes",
-        "version": version,
-        "python": platform.python_version(),
-        "ok": ok,
-        "contracts": contracts,
-        "commands": [{"name": name, "argv": list(argv), "needs": [], "available": ok}
-                     for name, argv in ENGINE_COMMANDS],
-        "requires": {"modules": [], "missing": []},
-        "known_issues": [],
-    }
+        from metaelemzes import api
+        doc = api.capabilities()
+    except Exception as exc:                                 # noqa: BLE001 — a leírás akkor is készüljön el
+        contracts = {}
+        for key, digest, _aliases in contract_files([ENGINE_CONTRACTS_DIR]):
+            contracts[key] = {"dir": ["in"] if key in _ENGINE_CONTRACT_IN else ["out"], "sha256": digest}
+        return {
+            "schema": CAPS_SCHEMA, "plugin": "metaelemzes", "version": "0.0.0",
+            "python": platform.python_version(), "ok": False, "contracts": contracts,
+            "commands": [{"name": name, "argv": list(argv), "needs": [], "available": False}
+                         for name, argv in ENGINE_COMMANDS],
+            "requires": {"modules": [], "missing": []},
+            "known_issues": [{"id": "engine-import", "summary": "A motor (metaelemzes.api) nem importálható "
+                                                                "(%s)." % type(exc).__name__}],
+        }
+    doc = dict(doc)
+    if not _VERSION_RE.match(str(doc.get("version") or "")):
+        doc["version"] = "0.0.0"
+    return doc
 
 
 def engine_component():

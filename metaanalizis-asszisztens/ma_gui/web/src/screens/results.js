@@ -45,18 +45,25 @@
   function render(root, ctx) {
     var outcome = A.pickOutcome(ctx.params.outcome);
     if (!outcome) {
-      root.appendChild(h('div', { 'class': 'panel' }, MA.ui.emptyState('analysis.noOutcomes')));
+      // nincs kimenet: a felvétele itt, a munkapadon (DOC-1) — utána a képernyő újraépül
+      root.appendChild(A.noOutcomesPanel(function (id) { ctx.navigate('results', { outcome: id }); }));
       return null;
     }
     ctx.setTitle(pick(outcome.name, outcome.id));
     var busy = h('div', { 'class': 'panel', 'aria-busy': 'true' }, MA.ui.spinner('results.loading'));
     root.appendChild(busy);
-    return A.loadRuns(outcome.id, ctx.signal).then(function (runs) {
+    var explore = MA.store.get('analysis.explore.' + outcome.id);
+    var exploreData = explore && explore.run && explore.run.data ? explore.run.data : null;
+    // a feltárás (explore) eredménye a tábla akkori állapotát írja le: ha a tábla azóta változott, elavult (FID-5)
+    var shaP = exploreData && exploreData.sha256
+      ? A.currentDataSha(exploreData.path || outcome.data, ctx.signal) : Promise.resolve(null);
+    return Promise.all([A.loadRuns(outcome.id, ctx.signal), shaP]).then(function (res) {
       if (!ctx.alive()) { return null; }
-      var explore = MA.store.get('analysis.explore.' + outcome.id);
+      var runs = res[0];
       var choices = runs.slice();
       if (explore && explore.run && explore.plot) {
-        choices.unshift(Object.assign({}, explore.run, { run_id: null, _explore: true }));
+        choices.unshift(Object.assign({}, explore.run, { run_id: null, _explore: true,
+          _dataStale: !!(res[1] && exploreData.sha256 !== res[1]) }));
       }
       if (!choices.length) {
         MA.dom.mount(busy, MA.ui.emptyState('results.noRuns'), ' ',
@@ -68,7 +75,7 @@
       var sel = null;
       if (want === 'explore') { sel = choices.filter(function (r) { return r._explore; })[0] || null; } else if (want) { sel = choices.filter(function (r) { return r.run_id === want; })[0] || null; }
       if (!sel) {
-        sel = runs.filter(function (r) { return !r.stale && r.spec && !r.spec.parent; })[0] || runs[0] || choices[0];
+        sel = runs.filter(function (r) { return r.stale !== true && r.spec && !r.spec.parent; })[0] || runs[0] || choices[0];
       }
       var plotP = sel._explore ? Promise.resolve(explore.plot) : A.loadPlot(sel.run_id, ctx.signal);
       return plotP.then(function (plot) {
@@ -116,7 +123,10 @@
           run.data && run.data.sha256 ? [' · ' + t('results.data') + ' ', h('code', { title: run.data.sha256 }, A.shortSha(run.data.sha256))] : null),
         h('span', { 'class': 'hdr-spacer' }),
         h('a', { 'class': 'btn btn-sm btn-ghost', href: ctx.href('analysis', { outcome: outcome.id, spec: sp.name || null }) }, t('results.toPlan'))),
-      run.stale ? h('p', { 'class': 'res-stale', role: 'note' }, MA.ui.badge('stale', 'X001'), ' ', t('results.staleNote')) : null,
+      run.stale === true ? h('p', { 'class': 'res-stale', role: 'note' }, MA.ui.badge('stale', 'X001'), ' ', t('results.staleNote')) : null,
+      run.stale === null && run.run_id ? h('p', { 'class': 'muted', role: 'note' }, MA.ui.badge('neutral', t('analysis.run.unknown')), ' ', t('analysis.run.unknownTitle')) : null,
+      run._dataStale ? h('p', { 'class': 'res-stale', id: 'results-explore-stale', role: 'note' }, MA.ui.badge('stale', t('plan.result.dataChanged')), ' ',
+        t('results.exploreStale'), ' ', h('a', { href: ctx.href('analysis', { outcome: outcome.id }) }, t('results.toPlan'))) : null,
       run._explore ? h('p', { 'class': 'muted', role: 'note' }, t('results.exploreNote')) : null,
       h('div', { 'class': 'res-downloads', id: 'results-downloads' },
         h('span', { 'class': 'muted' }, t('results.downloads') + ' '),
@@ -132,6 +142,7 @@
     // ------------------------------------------------ összegző sáv + ⓚ
     var prim = primaryOf(plot) || {};
     var het = plot.heterogeneity || {};
+    var kbCtx = A.kbContext(run, plot);
     var bits = [
       h('span', { 'class': 'res-effect' }, h('strong', null, (plot.measure || '') + ' '), MA.ui.num(prim.display_text, { id: 'results-effect' }))
     ];
@@ -147,7 +158,7 @@
       h('p', { 'class': 'res-line' }, line),
       h('p', { 'class': 'res-kb' }, KB_FIELDS.map(function (f, i) {
         var label = f.field === 'model' ? h('span', null, pick(prim.label, t(f.key))) : h('span', null, t(f.key));
-        return [i ? h('span', { 'class': 'res-sep', 'aria-hidden': 'true' }, ' · ') : null, A.kbRow(label, f.field, ctx.signal)];
+        return [i ? h('span', { 'class': 'res-sep', 'aria-hidden': 'true' }, ' · ') : null, A.kbRow(label, f.field, ctx.signal, kbCtx)];
       })),
       het.text ? h('p', { 'class': 'muted res-het' }, pick(het.text, '')) : null,
       Array.isArray(plot.notes) && plot.notes.length ? h('ul', { 'class': 'res-notes' }, plot.notes.map(function (n) { return h('li', null, pick(n, '')); })) : null);

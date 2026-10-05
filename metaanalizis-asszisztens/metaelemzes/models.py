@@ -214,41 +214,91 @@ def _reml_traces(w):
     return tr_p / sw, tr_pp / (sw * sw)
 
 
+def _fs_adj(yi, vi, kind, tau2):
+    """A Fisher-scoring lépés (pontszám / várt információ) τ²-nél, vagy None (nem véges vagy nem
+    pozitív információ)."""
+    w = [1.0 / (v + tau2) for v in vi]
+    mu, sw = _wmean(yi, w)
+    r2w2 = sum((wi * (y - mu)) ** 2 for wi, y in zip(w, yi))
+    if kind == "REML":
+        tr_p, tr_pp = _reml_traces(w)
+        if not (tr_pp > 0) or not math.isfinite(tr_pp):
+            return None
+        adj = (r2w2 - tr_p) / tr_pp
+    else:  # ML
+        sw2 = sum(x * x for x in w)
+        adj = (r2w2 - sw) / sw2
+    return adj if math.isfinite(adj) else None
+
+
+def polish_tau2(adj_at, t_prev, a_prev, tau2, scale, tol=1e-14, maxsteps=8):
+    """A konvergált Fisher-scoring τ² finomítása szelő-lépésekkel a lépésfüggvény (pontszám/info)
+    gyökére.
+
+    Miért: a Fisher-scoring a (RE)ML-nél csak lineárisan konvergál (lépésarány ρ, pl. 0.9 egy
+    lapos likelihoodnál), ezért a |Δτ²| <= 1e-10·max(τ², skála) leállás után még kb.
+    |Δτ²|·ρ/(1 − ρ) hiba marad — 1e-7 relatív nagyságrend, ami a 0 körüli származtatott
+    értékekben (pl. predikciós intervallum alsó határa ≈ 0, R² két közeli τ² arányából) láthatóvá
+    válik. A szelő-lépés (a két utolsó pontból; lineáris konvergenciánál ez az Aitken-féle Δ²
+    extrapoláció) szuperlineárisan konvergál, így néhány kiértékeléssel a kerekítési szintig jut.
+    Biztonsági korlátok: csak csökkenő lépésfüggvénynél (lokális maximum), nemnegatív τ²-re,
+    legfeljebb 1e-6·max(τ², skála) elmozdulással, és csak akkor fogadunk el pontot, ha ott a lépés
+    abszolút értéke kisebb; különben a Fisher-scoring eredménye marad.
+    adj_at: τ² -> lépés vagy None; (t_prev, a_prev): az utolsó előtti kiértékelt pont."""
+    f_b = adj_at(tau2)
+    if f_b is None:
+        return tau2
+    t_a, f_a, t_b = t_prev, a_prev, tau2
+    best_t, best_f = t_b, f_b
+    for _ in range(maxsteps):
+        if abs(f_b) <= tol * max(t_b, scale) or t_b == t_a:
+            break
+        slope = (f_b - f_a) / (t_b - t_a)
+        if not (slope < 0) or not math.isfinite(slope):
+            break
+        t_n = t_b - f_b / slope
+        if not math.isfinite(t_n) or t_n < 0 or abs(t_n - tau2) > 1e-6 * max(tau2, scale):
+            break
+        f_n = adj_at(t_n)
+        if f_n is None:
+            break
+        t_a, f_a, t_b, f_b = t_b, f_b, t_n, f_n
+        if abs(f_b) >= abs(best_f):
+            break
+        best_t, best_f = t_b, f_b
+    return best_t
+
+
 def _fisher_scoring(yi, vi, kind, start, tol=1e-10, maxiter=1000, scale=None, step=1.0):
     """REML/ML Fisher-scoring lépésfelezéssel (Viechtbauer 2005).
 
     Konvergencia: |Δτ²| <= tol · max(τ², skála), ahol a skála a v_i mediánja (mértékegység-
-    független). Nem véges vagy nem pozitív információ esetén converged=False-szal kilép,
-    és a hívó a profil-likelihood kereséssel folytatja. step < 1: csillapított lépések
-    (a metafor control = list(stepadj = ...) megfelelője)."""
+    független); utána szelő-lépéses finomítás (polish_tau2), mert a lineáris konvergencia miatt
+    a leállási feltétel önmagában ~1e-7 relatív hibát hagyhat. Nem véges vagy nem pozitív
+    információ esetén converged=False-szal kilép, és a hívó a profil-likelihood kereséssel
+    folytatja. step < 1: csillapított lépések (a metafor control = list(stepadj = ...)
+    megfelelője)."""
     if scale is None:
         scale = variance_scale(vi)
     tau2 = max(0.0, start)
     converged = False
     it = -1
     for it in range(maxiter):
-        w = [1.0 / (v + tau2) for v in vi]
-        mu, sw = _wmean(yi, w)
-        r2w2 = sum((wi * (y - mu)) ** 2 for wi, y in zip(w, yi))
-        if kind == "REML":
-            tr_p, tr_pp = _reml_traces(w)
-            if not (tr_pp > 0) or not math.isfinite(tr_pp):
-                break
-            adj = (r2w2 - tr_p) / tr_pp
-        else:  # ML
-            sw2 = sum(x * x for x in w)
-            adj = (r2w2 - sw) / sw2
-        if not math.isfinite(adj):
+        raw = _fs_adj(yi, vi, kind, tau2)
+        if raw is None:
             break
-        adj *= step
+        adj = raw * step
         while tau2 + adj < 0:
             adj /= 2.0
             if abs(adj) < 1e-300:
                 adj = -tau2
                 break
+        t_old = tau2
         tau2 += adj
         if abs(adj) <= tol * max(tau2, scale):
             converged = True
+            if tau2 > 0 and adj != 0:
+                tau2 = polish_tau2(lambda t: _fs_adj(yi, vi, kind, t), t_old, raw, tau2, scale)
             break
     return tau2, converged, it + 1
 

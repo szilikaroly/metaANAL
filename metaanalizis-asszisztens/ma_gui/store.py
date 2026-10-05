@@ -37,6 +37,7 @@ import threading
 import time
 from pathlib import Path
 
+from metaelemzes import api as engine_api
 from metaelemzes import tableio
 
 from . import security
@@ -80,6 +81,7 @@ _REPLACE_RETRY_DELAYS = (0.05, 0.15, 0.4)
 _VERSION_CACHE = 32                 # (tábla, etag) → tartalom, a háromutas diffhez
 _DIFF_LIMIT = 5000
 _EXPECT_TTL = 120.0                 # saját írás várt hash-e ennyi ideig érvényes (s)
+_OWN_GRACE = 5.0                    # a saját (worker-) írások előtag-jelölése ennyivel túléli a feladatot (s)
 MAX_COLUMNS = security.MAX_COLUMNS  # T11: a fejléc legfeljebb ennyi oszlopos (a kanonizálás előtt)
 TMP_PREFIX = security.TMP_PREFIX
 TMP_SWEEP_AGE = 300.0               # s; ennél régebbi árva ideiglenes fájl indításkor törölhető
@@ -261,17 +263,19 @@ def _b32(data):
 
 
 def derive_row_uid(label, row_index, taken=()):
-    """Determinisztikus uid row_uid oszlop nélküli táblához (4.6): 'r' + a sha1('<címke>|<sorindex>')
-    base32 alakjának első 6 karaktere (kisbetűvel). A sorindex 0-tól számol, az üres sorok
-    kihagyásával (ahogy a tableio.read_table sorai). Ütközésnél '|1', '|2'… utótag."""
-    base = "%s|%d" % ("" if label is None else str(label).strip(), int(row_index))
-    n = 0
-    while True:
-        key = base if n == 0 else "%s|%d" % (base, n)
-        uid = "r" + _b32(hashlib.sha1(key.encode("utf-8")).digest())[:6]
-        if uid not in taken:
-            return uid
-        n += 1
+    """Determinisztikus uid row_uid oszlop nélküli táblához (4.6) — a motor EGYETLEN uid-függvénye
+    (``tableio.row_uid_for``): 'r' + a sha1('<címke>|<sorindex>') base32 alakjának első 6 karaktere,
+    a címke a beolvasással azonos tisztításával (NA-jelölő → ''). A sorindex 0-tól számol, az üres
+    sorok kihagyásával; ütközésnél '|1', '|2'… utótag. Így a felület, a validálás és a plot/v2
+    ugyanazt a row_uid-ot látja."""
+    return tableio.row_uid_for(label, row_index, taken)
+
+
+def column_map(header):
+    """Kanonikus oszlopnév → eredeti fejléc a motor felismerésével (``api.column_map`` = ``tableio.column_map``) —
+    bájtra ugyanaz, mint a validálási dokumentum ``column_map``-je (ismétlődő fejlécnél is); a felület ezzel
+    képezi a mezőket oszlopra a validálás előtt is."""
+    return dict(engine_api.column_map(list(header)))
 
 
 def new_row_uid(taken=()):
@@ -1122,6 +1126,40 @@ class ProjectStore(object):
             self._write_many([(rel, path, data)], expect={rel: cur_etag})
         return sha256_bytes(data)
 
+    def write_with(self, rel, writer, if_match=ANY):
+        """Atomikus írás egy KÜLSŐ író függvénnyel (pl. a motor kanonikus spec-mentése) If-Match-csel →
+        az új etag. writer(abszolút út) → a kiírt bájtok sha256-ja; neki kell atomikusan (tmp +
+        os.replace) írnia. Az írás alatt a változásfigyelő nem szkennel, és a saját írásként jegyzi
+        (nem 'external'). if_match: mint a write_bytes-nál."""
+        rel = self.rel(rel)
+        path = self.path(rel)
+        with self._lock:
+            cur = _read_bytes(path, rel)
+            cur_etag = None if cur is None else sha256_bytes(cur)
+            self._precondition(rel, if_match, cur_etag)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            watcher = self.watcher
+            lock = getattr(watcher, "_scan_lock", None) if watcher is not None else None
+            if lock is not None:
+                lock.acquire()
+            try:
+                try:
+                    sha = writer(str(path))
+                except PermissionError:
+                    raise Locked(rel)
+                if watcher is not None:
+                    watcher.watch(rel)
+                    watcher.note_write(rel, sha)
+            finally:
+                if lock is not None:
+                    lock.release()
+        if watcher is not None:
+            try:
+                watcher.scan()
+            except Exception:
+                pass
+        return sha
+
     def _precondition(self, rel, if_match, cur_etag, diff_fn=None):
         if if_match is ANY:
             return
@@ -1470,6 +1508,7 @@ class ChangeWatcher(object):
         self._history = collections.deque(maxlen=max(1, int(history)))
         self._files = {}
         self._expected = {}
+        self._own = {}                  # token → (előtag, lejárat | None): saját írások egy mappában
         self._db = None
         self._db_ident = None
         self._db_version = None
@@ -1631,6 +1670,8 @@ class ChangeWatcher(object):
                         continue
                     sha = self._files.get(key, (None, None))[1]
                     exp = self._expected.pop(key, None)
+                    if self._owned_locked(key, now):
+                        continue
                     if exp is None or exp[0] != sha or now - exp[1] > _EXPECT_TTL:
                         external.add(key)
                 self._rev += 1
@@ -1642,6 +1683,30 @@ class ChangeWatcher(object):
         """Saját (munkapad) írás várt hash-e: a megfelelő változás nem 'external'."""
         with self._cond:
             self._expected[rel] = (sha256, time.monotonic())
+
+    def own_prefix(self, prefix):
+        """Egy mappa (előtag) írásai saját írásnak számítanak, amíg a release_prefix nem jön (+ türelmi
+        idő): a meleg workerben futó commit a 05_elemzes/ alá ír, a hash-eket előre nem ismerjük. → token"""
+        tok = object()
+        with self._cond:
+            self._own[tok] = (str(prefix), None)
+        return tok
+
+    def release_prefix(self, token, grace=_OWN_GRACE):
+        with self._cond:
+            item = self._own.get(token)
+            if item is not None:
+                self._own[token] = (item[0], time.monotonic() + float(grace))
+
+    def _owned_locked(self, key, now):
+        hit = False
+        for tok, (prefix, until) in list(self._own.items()):
+            if until is not None and now > until:
+                del self._own[tok]
+                continue
+            if key.startswith(prefix):
+                hit = True
+        return hit
 
     def forget_write(self, rel):
         with self._cond:

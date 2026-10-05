@@ -72,6 +72,13 @@ python3 -m metaelemzes.contracts sync    # a generált rész újraírása; a sé
   csak a képesség-leírásban szerepel.
 - **Nyelvfüggő szöveg:** `{"hu": "…", "en": "…"}` (`common#/$defs/i18n`). A motor mindkettőt előállítja; a felület
   nem kerekít újra (a JS `toFixed` és a Python `%` a döntetlennél eltérően kerekít).
+- **Számok a szövegben:** a magyar szöveg is tizedespontot használ (`0.49 [0.33; 0.73]`), mint a `report.md` és az
+  SVG; a két nyelv csak a mínuszjelben tér el (hu: `-`, en: U+2212). A táblacellába írandó számot az átváltó
+  `cell_text`-je adja a cél tábla tizedesjelével. Az átváltás feltevései és figyelmeztetései (`assumptions`,
+  `warnings`) is `{hu, en}` objektumok.
+- **A plot/v2 kiegészítései (additív, a v2-n belül):** a felület által olvasott kész szövegek és tengelyek —
+  `studies[].weight_text`, `summaries[].p_text/pi_label/primary`, `heterogeneity.*_text`, a funnel/Doi/LOO/kumulatív/
+  befolyás tengelyei (`$defs/axis`), `influence[].*_text`, `influence_axes/_text/_note`, `axis.ticks[].text_i18n`.
 - **Bővítés:** a fogyasztó az ismeretlen mezőt figyelmen kívül hagyja, ezért a sémák a gyökérben nem tiltják a
   további mezőket (kivétel: az elemzési spec `options`-e, amely pontosan a `DEFAULTS` kulcsait fogadja el).
   Kötelező mező törlése vagy jelentésváltozása **új főverzió** (új fájl: `<név>.v<N+1>.schema.json`, új `$id`).

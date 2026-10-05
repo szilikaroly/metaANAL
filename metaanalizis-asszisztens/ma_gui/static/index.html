@@ -29,7 +29,9 @@ pre { margin: 0; padding: 12px; background: var(--panel); border: 1px solid var(
 <body>
 <main>
 <h1>MA-munkapad</h1>
-<p class="note">Ideiglenes helyőrző oldal — a teljes felület a ma_gui/web buildjéből kerül ide.</p>
+<p class="note">Tartalék oldal: a teljes felület lefordított fájlja (ma_gui/web/dist/index.html) nem található,
+ezért most csak a motor és az adatvédelem állapotát látod. A teljes felülethez futtasd a munkapad mappájában:
+<code>python3 ma_gui/web/build_gui.py</code>, majd töltsd újra ezt a lapot (a munkapadot nem kell újraindítani).</p>
 <p id="status" role="status" aria-live="polite">Munkamenet indítása…</p>
 <section aria-labelledby="h-engine"><h2 id="h-engine">Motor — GET /api/engine</h2><pre id="engine"></pre></section>
 <section aria-labelledby="h-privacy"><h2 id="h-privacy">Adatvédelem — GET /api/privacy</h2><pre id="privacy"></pre></section>
@@ -99,7 +101,8 @@ pre { margin: 0; padding: 12px; background: var(--panel); border: 1px solid var(
     p.then(function (ok) {
       if (!ok) {
         setStatus('Nincs érvényes munkamenet: az indítókód lejárt vagy már felhasználták. Futtasd újra az indító ' +
-          'parancsot (python -m ma_gui --project <mappa>), és nyisd meg az általa kiírt címet.', 'err');
+          'parancsot (python ma.py gui --project <mappa>; Windowson: py -3 ma.py gui --project <mappa>), és nyisd meg ' +
+          'az általa kiírt címet.', 'err');
         return null;
       }
       setStatus('Munkamenet aktív.', 'ok');

@@ -179,13 +179,43 @@ class PrismaError(ValueError):
 
 def _finding(code, detail="", fields=()):
     sev, title, advice, source = RULES[code]
-    return {"code": code, "severity": sev, "title": title, "study": None, "detail": detail,
+    return {"code": code, "severity": sev, "title": title, "study": None, "detail": humanize_boxes(detail),
             "advice": advice, "source": source, "fields": list(fields)}
+
+
+# a dobozok neve úgy, ahogy az űrlapon és a folyamatábrán áll (UX-18: az üzenet a felhasználó szavaival nevezi meg a
+# hiányzó/hibás dobozt, nem a belső JSON-kulccsal; a gépi kulcs a megállapítás 'fields' listájában marad)
+BOX_NAMES = {"A1": "Azonosított rekordok — adatbázisok", "A2": "Azonosított rekordok — regiszterek",
+             "D1": "Eltávolított duplikátumok", "D2": "Automatizált eszközzel eltávolítva",
+             "D3": "Egyéb okból eltávolítva", "B": "Szűrt rekordok", "C": "Kizárt rekordok",
+             "E": "Keresett jelentések", "F": "Nem elérhető jelentések", "G": "Értékelt jelentések",
+             "H": "Kizárt jelentések", "J": "Bevont jelentések", "I": "Bevont vizsgálatok"}
 
 
 def _label(field):
     letter = LETTERS.get(field)
-    return "%s (%s)" % (field, letter) if letter else field
+    return "%s (%s)" % (BOX_NAMES.get(letter, field), letter) if letter else field
+
+
+box_label = _label
+
+# „<belső kulcs> (<betű>)” → „<doboz neve> (<betű>)” a megállapítások szövegében (a régi, kulcsos alakok is)
+_BOX_ALIASES = dict(LETTERS, **{"included studies": "I", "fulltext assessed": "G"})
+_BOX_RE = re.compile(r"(?<![A-Za-z_])(%s) \((%s)\)" % (
+    "|".join(re.escape(k) for k in sorted(_BOX_ALIASES, key=len, reverse=True)),
+    "|".join(re.escape(v) for v in sorted(set(LETTERS.values()), key=len, reverse=True))))
+
+
+def humanize_boxes(text):
+    """A belső mezőnevek helyett a dobozok űrlapon látható neve (UX-18); a betű marad."""
+    if not isinstance(text, str) or not text:
+        return text
+
+    def sub(m):
+        if _BOX_ALIASES.get(m.group(1)) != m.group(2):
+            return m.group(0)
+        return "%s (%s)" % (BOX_NAMES.get(m.group(2), m.group(1)), m.group(2))
+    return _BOX_RE.sub(sub, text)
 
 
 class FlowCheck(object):

@@ -31,7 +31,8 @@
 
   function axisTicks(axis, scale) {
     var list = (axis && axis.ticks ? axis.ticks : []).map(function (tk) {
-      return { at: tk.at, text: txt(tk.text, '') };
+      // a motor kétnyelvű tick-szövege (text_i18n: en-ben U+2212 mínusz); a 'text' csak a megjelenítési nyelvé (FID-4)
+      return { at: tk.at, text: txt(tk.text_i18n || tk.text, '') };
     });
     return G.ticks(list, scale);
   }

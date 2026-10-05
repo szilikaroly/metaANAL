@@ -125,7 +125,7 @@ async function storageReport(page) {
 }
 function checkStorage(rep, where) {
   check(rep.ls.every((k) => k.startsWith('mag.pref.')), where + ': localStorage csak mag.pref.* (' + rep.ls.join(',') + ')');
-  check(rep.lsValues.every((v) => v.length <= 256 && !/Ferguson|Aronson|Montreal|12,85|<img/.test(v)), where + ': a preferenciákban nincs projektadat (' + rep.lsValues.join('|') + ')');
+  check(rep.lsValues.every((v) => v.length <= 256 && !/Ferguson|Aronson|Montreal|12,87|12\.87|<img/.test(v)), where + ': a preferenciákban nincs projektadat (' + rep.lsValues.join('|') + ')');
   check(rep.ss.every((k) => k === 'mag.token'), where + ': sessionStorage csak mag.token (' + rep.ss.join(',') + ')');
   check(rep.cookie === '', where + ': nincs süti');
 }
@@ -245,8 +245,25 @@ async function finish(o, label) {
     await p.click('#ex-findings li.ex-f[data-code="V023"] .ex-f-jump');
     const a = await activeCell(p);
     check(a && a.uid === 'rbcg04' && a.col === 'c2', 'Ugrás → a hivatkozott cella (Hart n1) kap fókuszt');
+    // UX-10: hibánál a párbeszéd kimondja, hogy az indoklás nem hozza vissza a sort; van „Miért?”; nincs „(engine)”
+    check((await text(p, '#ex-findings')).indexOf('(engine)') < 0, 'a tanácsok mellett nincs belső „(engine)” forrásjelölés');
+    await p.click('#ex-findings li.ex-f[data-code="V006"] .ex-f-ack');
+    await p.waitForSelector('[role="dialog"] #ex-ack-rationale');
+    const blk = await p.$eval('[role="dialog"]', (d) => {
+      const n = d.querySelector('#ex-ack-blocking');
+      return { note: n ? n.textContent : '', role: n ? n.getAttribute('role') : null, why: !!d.querySelector('.why-btn'),
+        advice: (d.querySelector('.ex-ack-advice') || {}).textContent || '', ta: d.querySelector('#ex-ack-rationale').getAttribute('aria-describedby') || '' };
+    });
+    check(/kimarad az elemzésből/.test(blk.note) && /amíg az értéket ki nem javítod/.test(blk.note) && blk.role === 'note',
+      'V006 (hiba): a párbeszéd kimondja, hogy a sor kimarad, amíg nem javítod (' + blk.note + ')');
+    check(blk.why, 'a párbeszédben van „Miért?” gomb');
+    check(blk.ta.split(' ').indexOf('ex-ack-blocking') >= 0, 'az indoklás mező aria-describedby-ja a „kimarad” megjegyzésre is mutat');
+    check(/negatív vagy nagyobb, mint n/.test(blk.advice) && blk.advice.indexOf('(engine)') < 0, 'a motor tanácsa „(engine)” nélkül: ' + blk.advice);
+    await p.click('[role="dialog"] .modal-actions .btn:not(.btn-primary)');
+    await p.waitForFunction(() => !document.querySelector('.modal-backdrop'));
     await p.click('#ex-findings li.ex-f[data-code="V023"] .ex-f-ack');
     await p.waitForSelector('[role="dialog"] #ex-ack-rationale');
+    check(!(await p.$('[role="dialog"] #ex-ack-blocking')), 'figyelmeztetésnél (V023) nincs „kimarad” megjegyzés');
     await p.click('[role="dialog"] .modal-actions .btn-primary');
     check(!(await p.$eval('[role="dialog"] .ex-cf-err', (x) => x.hidden)), 'indoklás nélkül nem küldhető (hibaüzenet)');
     check((await p.getAttribute('#ex-ack-rationale', 'aria-invalid')) === 'true', 'aria-invalid a mezőn');
@@ -455,10 +472,10 @@ async function finish(o, label) {
     await p.waitForSelector('#cv-error:not([hidden])', { timeout: 4000 });
     check((await text(p, '#cv-error')).indexOf('min+max vagy Q1+Q3 kell') >= 0, '422 VALIDATION a motor üzenetével, a modálisban');
     await p.fill('#cv-in-q3', '16');
-    await p.waitForFunction(() => /12,85/.test(document.getElementById('cv-result').textContent), null, { timeout: 4000 });
+    await p.waitForFunction(() => /12\.87/.test(document.getElementById('cv-result').textContent), null, { timeout: 4000 });
     const res = await text(p, '#cv-result');
-    check(res.indexOf('4,61') >= 0 && res.indexOf('BECSÜLT ÉRTÉK') >= 0 && res.indexOf('conversions.mean_from_median') >= 0, 'a motor szövegei (12,85; 4,61), módszer, becsült');
-    check(res.indexOf('közel normális') >= 0 && res.indexOf('V013') >= 0 && res.indexOf('Cochrane Handbook 6.5.2.5') >= 0, 'feltevés, figyelmeztetés, forrás');
+    check(res.indexOf('5.361') >= 0 && res.indexOf('BECSÜLT ÉRTÉK') >= 0 && res.indexOf('conversions.mean_from_median') >= 0, 'a motor kijelzési szövegei (12.87; 5.361 — tizedespont, 4.0), módszer, becsült');
+    check(res.indexOf('közel normális') >= 0 && res.indexOf('D-S05-023') >= 0 && res.indexOf('Cochrane Handbook 6.5.2.5') >= 0, 'feltevés, figyelmeztetés ({hu, en}), forrás');
     const cv = await calls(p, 'POST', '/api/convert');
     const req = cv[cv.length - 1].body;
     check(req.schema === 'szk.ma.convert-request/v1' && req.method === 'luo' && req.inputs.median === '12,5' && req.inputs.n === '8', 'convert-request: nyers szövegek, módszer');
@@ -467,7 +484,7 @@ async function finish(o, label) {
     await p.fill('#cv-locator', 'Table 2');
     await p.click('#cv-modal .modal-actions .btn-primary');
     await p.waitForFunction(() => !document.getElementById('cv-modal') && /mentve/.test(document.getElementById('ex-status').textContent), null, { timeout: 5000 });
-    check((await cellText(p, 'rnrm05', 'm1')) === '12,85' && (await cellText(p, 'rnrm05', 'sd1')) === '4,61', 'a cellákba a motor szövege került');
+    check((await cellText(p, 'rnrm05', 'm1')) === '12,87' && (await cellText(p, 'rnrm05', 'sd1')) === '5,361', 'a cellákba a motor cell_text-je került (a tábla tizedesvesszőjével)');
     check((await cellText(p, 'rnrm05', 'estimated')) === 'igen', 'a sor estimated = igen');
     const puts = await calls(p, 'PUT', '/api/table');
     const pv = puts[puts.length - 1].body.provenance;
@@ -482,7 +499,7 @@ async function finish(o, label) {
     check((await cellText(p, 'rnrm05', 'm1')) === '' && (await cellText(p, 'rnrm05', 'estimated')) === 'nem', 'Ctrl+Z: az átváltás egy lépésben visszavonva');
     check(await p.evaluate(() => !window.MA.extraction.current().prov.cells.some((c) => c.row_uid === 'rnrm05' && c.field === 'm1')), 'az eredet-bejegyzés is visszavonva');
     await p.keyboard.press('Control+y');
-    check((await cellText(p, 'rnrm05', 'm1')) === '12,85', 'Ctrl+Y');
+    check((await cellText(p, 'rnrm05', 'm1')) === '12,87', 'Ctrl+Y');
     // SE → SD: algebrai, nem becsült
     await p.click(await cell(p, 'rnrm02', 'sd1'));
     await p.click('#ex-convert');
@@ -491,11 +508,11 @@ async function finish(o, label) {
     check((await p.inputValue('#cv-in-n')) === '31', 'n a sorból (31)');
     await p.fill('#cv-in-n', '52');
     await p.fill('#cv-in-se', '0,42');
-    await p.waitForFunction(() => /3,03/.test(document.getElementById('cv-result').textContent), null, { timeout: 4000 });
+    await p.waitForFunction(() => /3\.029/.test(document.getElementById('cv-result').textContent), null, { timeout: 4000 });
     check((await text(p, '#cv-result')).indexOf('SZÁMÍTOTT') >= 0, 'algebrai átalakítás: SZÁMÍTOTT (nem becsült)');
     await p.click('#cv-modal .modal-actions .btn-primary');
     await p.waitForFunction(() => !document.getElementById('cv-modal'), null, { timeout: 4000 });
-    check((await cellText(p, 'rnrm02', 'sd1')) === '3,03' && (await cellText(p, 'rnrm02', 'estimated')) === 'nem', 'SD beírva, a sor nem lett becsült');
+    check((await cellText(p, 'rnrm02', 'sd1')) === '3,029' && (await cellText(p, 'rnrm02', 'estimated')) === 'nem', 'SD beírva (cell_text), a sor nem lett becsült');
     const calc = await p.evaluate(() => window.MA.extraction.current().prov.cells.find((c) => c.row_uid === 'rnrm02' && c.field === 'sd1'));
     check(calc && calc.method === 'calculated' && calc.estimated === false && calc.history.length === 1, 'eredet: calculated (+ előzmény a korábbi „reported”-ről)');
     await finish(o, 'átváltó');

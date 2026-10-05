@@ -7,10 +7,17 @@ A ``web/src/**`` forrásait rögzített sorrendben egyetlen önálló HTML-fájl
 (nincs időbélyeg, rendezett fájllista, LF sorvégek).
 
 Kimenet:
-  python3 ma_gui/web/build_gui.py            → ma_gui/web/dist/index.html      (termék; ≤ 450 KB)
+  python3 ma_gui/web/build_gui.py            → ma_gui/web/dist/index.html      (termék; ≤ 600 KB)
+                                               + ma_gui/web/dist/snapshot.html (pillanatkép-sablon, lásd lent)
   python3 ma_gui/web/build_gui.py --dev      → ma_gui/web/dist/index.dev.html  (+ fixture-ök és fixture-háttér)
-  python3 ma_gui/web/build_gui.py --check    → 1-es kilépés, ha a dist/index.html nem naprakész
+  python3 ma_gui/web/build_gui.py --snapshot → csak a dist/snapshot.html
+  python3 ma_gui/web/build_gui.py --check    → 1-es kilépés, ha a dist/index.html vagy a dist/snapshot.html nem naprakész
   python3 ma_gui/web/build_gui.py --list     → a modulok sorrendje
+
+Pillanatkép-változat (terv 2.5, 7.6; a ``ma_gui/snapshot.py`` tölti ki): a termék-build + a ``src/snapshot/*.js``
+modulok (az api.js után) + a ``/*<snapshot>*/ … /*</snapshot>*/`` blokkok (a termék- és a dev-buildből kimaradnak).
+Nonce helyett ``<meta http-equiv="Content-Security-Policy" content="{{SNAPSHOT_CSP}}">`` (a snapshot.py a
+kész tartalom sha256-hash-eivel tölti ki) és ``<script type="application/json" id="ma-snapshot">{{SNAPSHOT_DATA}}``.
 
 A sablon ``{{CSP_NONCE}}`` helyeit a szerver válaszonként cseréli a CSP-nonce-ra; a build ezeket
 érintetlenül hagyja. Minden ``<script>`` és ``<style>`` tag nonce-ot visz.
@@ -42,10 +49,19 @@ FIXTURES = WEB / "fixtures"
 DIST = WEB / "dist"
 PROD_OUT = DIST / "index.html"
 DEV_OUT = DIST / "index.dev.html"
+SNAP_OUT = DIST / "snapshot.html"
 TEMPLATE = "index.template.html"
 
-MAX_BYTES = 450 * 1024
+# terv 2.3: ≤ 600 KB (korábban 450 KB; az MVP-bírálat kezdőknek szóló magyarázatai — következő lépések, KB-modál,
+# X016-döntés, csak olvasható pillanatkép-rács, biztonságos Windows-parancsok — 450 KB fölé vitték; egy helyi,
+# egyszer betöltött lapnál a 600 KB is azonnali)
+MAX_BYTES = 600 * 1024
+# a pillanatkép-sablon a termék-build + a pillanatkép-kliens (src/snapshot/); a beágyazott adat nélkül
+SNAPSHOT_MAX_BYTES = 600 * 1024
 NONCE = "{{CSP_NONCE}}"
+SNAPSHOT_KEYS = ("SNAPSHOT_CSP", "SNAPSHOT_DATA")
+SNAPSHOT_DIR = "snapshot"
+VARIANTS = ("prod", "dev", "snapshot")
 SVG_NS = "http://www.w3.org/2000/svg"
 
 CORE_HEAD = ["dom.js", "geom.js", "i18n.js", "store.js", "api.js"]
@@ -58,6 +74,7 @@ LANGS = ("hu", "en")
 TEMPLATE_KEYS = ("CSP_NONCE", "CSS", "JS", "DATA", "BUILD_ID")
 
 DEV_BLOCK_RE = re.compile(r"/\*<dev>\*/.*?/\*</dev>\*/", re.S)
+SNAP_BLOCK_RE = re.compile(r"/\*<snapshot>\*/.*?/\*</snapshot>\*/", re.S)
 PLACEHOLDER_RE = re.compile(r"\{\{([A-Z_]+)\}\}")
 I18N_KEY_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]*$")
 I18N_PARAM_RE = re.compile(r"\{([a-zA-Z0-9_]+)\}")
@@ -146,12 +163,15 @@ def rel(path, base):
 
 
 # ---------------------------------------------------------------- sorrend
-def js_order(src=SRC, dev=False):
-    """A JS-modulok sorrendje (relatív utak). Minden src/**.js-nek benne kell lennie."""
+def js_order(src=SRC, dev=False, snapshot=False):
+    """A JS-modulok sorrendje (relatív utak). Minden src/**.js-nek benne kell lennie. A src/snapshot/*.js csak
+    a pillanatkép-változatba kerül (az api.js után)."""
     order = list(CORE_HEAD)
     if dev:
         order += DEV_FIRST
         order += sorted(rel(p, src) for p in (src / "dev").glob("*.js") if rel(p, src) not in DEV_FIRST)
+    if snapshot:
+        order += sorted(rel(p, src) for p in (src / SNAPSHOT_DIR).glob("*.js"))
     order += CORE_MID
     for d in GLOB_DIRS:
         order += sorted(rel(p, src) for p in (src / d).glob("*.js"))
@@ -159,11 +179,12 @@ def js_order(src=SRC, dev=False):
     for name in order:
         if not (src / name).is_file():
             raise BuildError("hiányzó modul: src/%s" % name)
-    known = set(order) | set(rel(p, src) for p in (src / "dev").glob("*.js"))
+    known = set(order) | set(rel(p, src) for p in (src / "dev").glob("*.js")) | \
+        set(rel(p, src) for p in (src / SNAPSHOT_DIR).glob("*.js"))
     stray = sorted(rel(p, src) for p in src.rglob("*.js") if rel(p, src) not in known)
     if stray:
         raise BuildError("ismeretlen helyen lévő JS (a build nem tudja besorolni): %s — tedd a "
-                         "components/, plots/, screens/ vagy dev/ mappába" % ", ".join(stray))
+                         "components/, plots/, screens/, dev/ vagy snapshot/ mappába" % ", ".join(stray))
     return order
 
 
@@ -184,6 +205,14 @@ def strip_dev(text, name):
     if opens != closes:
         raise BuildError("%s: kiegyensúlyozatlan /*<dev>*/ … /*</dev>*/ jelölők" % name)
     return DEV_BLOCK_RE.sub("", text)
+
+
+def strip_snapshot(text, name):
+    """A /*<snapshot>*/ … /*</snapshot>*/ blokkok (csak a pillanatkép-változatba kellenek) eltávolítása."""
+    opens, closes = text.count("/*<snapshot>*/"), text.count("/*</snapshot>*/")
+    if opens != closes:
+        raise BuildError("%s: kiegyensúlyozatlan /*<snapshot>*/ … /*</snapshot>*/ jelölők" % name)
+    return SNAP_BLOCK_RE.sub("", text)
 
 
 def lint_js(name, text):
@@ -294,15 +323,28 @@ def json_for_script(obj):
     return text.replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
 
 
-def _fill(template, values):
+def _fill(template, values, keep=("CSP_NONCE",)):
     def sub(m):
         key = m.group(1)
+        if key in keep:
+            return m.group(0)
         if key not in TEMPLATE_KEYS:
             raise BuildError("ismeretlen sablon-helyőrző: {{%s}}" % key)
-        if key == "CSP_NONCE":
-            return m.group(0)
         return values[key]
     return PLACEHOLDER_RE.sub(sub, template)
+
+
+def snapshot_template(template):
+    """A sablon pillanatkép-alakja: nonce nélkül, CSP-meta helyőrzővel (a hash-eket a snapshot.py számolja)."""
+    t = template.replace(' nonce="%s"' % NONCE, "")
+    if NONCE in t:
+        raise BuildError("a pillanatkép-sablonban nonce maradt (csak ' nonce=\"{{CSP_NONCE}}\"' alak engedett)")
+    head = '<meta charset="utf-8">\n'
+    if t.count(head) != 1:
+        raise BuildError("a sablonban pontosan egy '<meta charset=\"utf-8\">' sor kell")
+    t = t.replace(head, head + '<meta http-equiv="Content-Security-Policy" content="{{SNAPSHOT_CSP}}">\n', 1)
+    t = t.replace("<title>MA-munkapad</title>", "<title>MA-munkapad — pillanatkép</title>", 1)
+    return t
 
 
 def check_template(template):
@@ -320,13 +362,19 @@ def check_template(template):
         raise BuildError("külső szkript tiltott")
 
 
-def check_output(html, dev):
-    """Végső ellenőrzések a kész HTML-en (assert-ek)."""
+def check_output(html, dev, variant=None):
+    """Végső ellenőrzések a kész HTML-en (assert-ek). variant: 'prod' | 'dev' | 'snapshot' (alap: dev szerint)."""
+    variant = variant or ("dev" if dev else "prod")
+    snap = variant == "snapshot"
     problems = []
-    # a <script>/<style> elemek (a tartalmuk átugrásával): mindegyik nyitó tag nonce-ot visz
+    # a <script>/<style> elemek (a tartalmuk átugrásával): mindegyik nyitó tag nonce-ot visz — a pillanatkép
+    # egyik sem (ott a CSP hash-alapú)
     block_re = re.compile(r"<(script|style)\b([^>]*)>(.*?)</\1\s*>", re.S | re.I)
     for m in block_re.finditer(html):
-        if 'nonce="%s"' % NONCE not in m.group(2):
+        has = "nonce=" in m.group(2)
+        if snap and has:
+            problems.append("nonce a pillanatkép-sablonban: <%s%s>" % (m.group(1), m.group(2)[:60]))
+        elif not snap and 'nonce="%s"' % NONCE not in m.group(2):
             problems.append("nonce nélküli <%s%s>" % (m.group(1), m.group(2)[:60]))
     if re.search(r"<(?:script|style)\b", block_re.sub("", html), re.I):
         problems.append("lezáratlan vagy szabálytalan <script>/<style> elem")
@@ -336,26 +384,46 @@ def check_output(html, dev):
     for pat in (r"innerHTML|outerHTML|insertAdjacentHTML|document\.write", r"toFixed|toPrecision|Intl\.NumberFormat"):
         if re.search(pat, html):
             problems.append("tiltott API a kimenetben: %s" % pat)
-    left = sorted(set(PLACEHOLDER_RE.findall(html)) - {"CSP_NONCE"})
+    allowed = set(SNAPSHOT_KEYS) if snap else {"CSP_NONCE"}
+    left = sorted(set(PLACEHOLDER_RE.findall(html)) - allowed)
     if left:
         problems.append("kitöltetlen helyőrző: %s" % left)
+    if snap:
+        for key in SNAPSHOT_KEYS:
+            if html.count("{{%s}}" % key) != 1:
+                problems.append("a pillanatkép-sablonban pontosan egy {{%s}} kell" % key)
+        if not re.search(r'<meta http-equiv="Content-Security-Policy" content="\{\{SNAPSHOT_CSP\}\}">', html):
+            problems.append("a pillanatkép-sablonból hiányzik a CSP-meta")
     if not dev:
         low = html.lower()
         for bad in ("fixture", "ma.dev", "/*<dev>", "__devsettransport"):
             if bad in low:
                 problems.append("fejlesztői kód / fixture a termék-buildben: %r" % bad)
+        if not snap:
+            for bad in ("__snapsettransport", 'id="ma-snapshot"', "/*<snapshot>"):
+                if bad in low:
+                    problems.append("pillanatkép-kód a termék-buildben: %r" % bad)
         size = len(html.encode("utf-8"))
-        if size > MAX_BYTES:
-            problems.append("a termék-build túl nagy: %d bájt > %d" % (size, MAX_BYTES))
+        limit = SNAPSHOT_MAX_BYTES if snap else MAX_BYTES
+        if size > limit:
+            problems.append("a %s túl nagy: %d bájt > %d" % ("pillanatkép-sablon" if snap else "termék-build", size, limit))
     if problems:
         raise BuildError("a kimenet ellenőrzése sikertelen:\n  " + "\n  ".join(problems))
 
 
-def build(dev=False, src=SRC, fixtures=FIXTURES):
-    """A teljes HTML sztringként (determinisztikus). BuildError minden szabálysértésre."""
+def build(dev=False, src=SRC, fixtures=FIXTURES, variant=None):
+    """A teljes HTML sztringként (determinisztikus). BuildError minden szabálysértésre.
+    variant: 'prod' (alap), 'dev' (= dev=True) vagy 'snapshot' (a pillanatkép-sablon, lásd a modul leírását)."""
+    variant = variant or ("dev" if dev else "prod")
+    if variant not in VARIANTS:
+        raise BuildError("ismeretlen változat: %s" % variant)
+    dev = variant == "dev"
+    snap = variant == "snapshot"
     src = Path(src)
     template = read_text(src / TEMPLATE)
     check_template(template)
+    if snap:
+        template = snapshot_template(template)
     violations = []
     css_src = []
     for name in css_order(src):
@@ -363,11 +431,17 @@ def build(dev=False, src=SRC, fixtures=FIXTURES):
         violations += lint_css(name, text)
         css_src.append((name, text))
     js_src = []
-    for name in js_order(src, dev):
+    for name in js_order(src, dev, snapshot=snap):
         text = read_text(src / name)
         violations += lint_js(name, text)
-        stripped = strip_dev(text, name)       # a jelölők ellenőrzése mindkét módban
-        js_src.append((name, text if dev else stripped))
+        stripped = strip_dev(text, name)       # a jelölők ellenőrzése minden módban
+        no_snap = strip_snapshot(text, name)
+        if snap:
+            js_src.append((name, stripped))
+        elif dev:
+            js_src.append((name, no_snap))
+        else:
+            js_src.append((name, strip_snapshot(stripped, name)))
     if violations:
         raise BuildError("lint-hibák (%d):\n  %s" % (len(violations), "\n  ".join(violations)))
     # a termék-build tömörít (a lint UTÁN, a forráson futott); a --dev változatlan forrást ad
@@ -381,11 +455,16 @@ def build(dev=False, src=SRC, fixtures=FIXTURES):
                 raise BuildError("%s: a tömörítés sikertelen: %s" % (name, e))
         js_parts.append("/* --- %s --- */\n%s" % (name, text))
     i18n = load_i18n(src)
-    data_tags = ['<script type="text/plain" id="ma-i18n" data-enc="lz1" nonce="%s">%s</script>' % (NONCE, pack_i18n(i18n))]
+    if snap:
+        data_tags = ['<script type="text/plain" id="ma-i18n" data-enc="lz1">%s</script>' % pack_i18n(i18n),
+                     '<script type="application/json" id="ma-snapshot">{{SNAPSHOT_DATA}}</script>']
+    else:
+        data_tags = ['<script type="text/plain" id="ma-i18n" data-enc="lz1" nonce="%s">%s</script>'
+                     % (NONCE, pack_i18n(i18n))]
     if dev:
         data_tags.append('<script type="application/json" id="ma-fixtures" nonce="%s">%s</script>'
                          % (NONCE, json_for_script(load_fixtures(fixtures))))
-    mode = "dev" if dev else "prod"
+    mode = variant
     digest = hashlib.sha256()
     digest.update(mode.encode())
     for part in css_parts + js_parts + data_tags:
@@ -398,8 +477,8 @@ def build(dev=False, src=SRC, fixtures=FIXTURES):
         "JS": (prologue + "\n".join(js_parts)).rstrip("\n"),
         "DATA": "\n".join(data_tags),
         "BUILD_ID": build_id,
-    })
-    check_output(html, dev)
+    }, keep=SNAPSHOT_KEYS if snap else ("CSP_NONCE",))
+    check_output(html, dev, variant)
     return html
 
 
@@ -413,7 +492,9 @@ def write(html, out):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="MA-munkapad felület-build (egy önálló HTML).")
     ap.add_argument("--dev", action="store_true", help="fejlesztői build fixture-ökkel (?fixtures=1) → dist/index.dev.html")
-    ap.add_argument("--check", action="store_true", help="ellenőrzi, hogy a dist/index.html naprakész-e (nem ír)")
+    ap.add_argument("--snapshot", action="store_true", help="csak a pillanatkép-sablon → dist/snapshot.html")
+    ap.add_argument("--check", action="store_true",
+                    help="ellenőrzi, hogy a dist/index.html és a dist/snapshot.html naprakész-e (nem ír)")
     ap.add_argument("--out", help="kimeneti fájl (alap: dist/index.html vagy dist/index.dev.html)")
     ap.add_argument("--list", action="store_true", help="a modulok sorrendjének kiírása")
     args = ap.parse_args(argv)
@@ -422,24 +503,39 @@ def main(argv=None):
             print("\n".join(css_order() + js_order(dev=args.dev)))
             return 0
         if args.check:
-            html = build(dev=False)
-            target = Path(args.out) if args.out else PROD_OUT
-            if not target.is_file() or target.read_text(encoding="utf-8") != html:
-                print("ELAVULT: %s — futtasd: python3 ma_gui/web/build_gui.py" % target, file=sys.stderr)
-                return 1
-            print("naprakész: %s (%d bájt)" % (target, len(html.encode("utf-8"))))
+            pairs = [(build(variant="snapshot" if args.snapshot else "prod"),
+                      Path(args.out) if args.out else (SNAP_OUT if args.snapshot else PROD_OUT))]
+            if not args.out and not args.snapshot:
+                pairs.append((build(variant="snapshot"), SNAP_OUT))
+            stale = False
+            for html, target in pairs:
+                if not target.is_file() or target.read_text(encoding="utf-8") != html:
+                    print("ELAVULT: %s — futtasd: python3 ma_gui/web/build_gui.py" % target, file=sys.stderr)
+                    stale = True
+                else:
+                    print("naprakész: %s (%d bájt)" % (target, len(html.encode("utf-8"))))
+            return 1 if stale else 0
+        if args.snapshot:
+            html = build(variant="snapshot")
+            out = Path(args.out) if args.out else SNAP_OUT
+            write(html, out)
+            print("%s: %d bájt (pillanatkép-sablon)" % (out, len(html.encode("utf-8"))))
             return 0
         html = build(dev=args.dev)
         out = Path(args.out) if args.out else (DEV_OUT if args.dev else PROD_OUT)
         write(html, out)
         print("%s: %d bájt (%s)" % (out, len(html.encode("utf-8")), "dev" if args.dev else "termék"))
+        if not args.dev and not args.out:
+            snap = build(variant="snapshot")
+            write(snap, SNAP_OUT)
+            print("%s: %d bájt (pillanatkép-sablon)" % (SNAP_OUT, len(snap.encode("utf-8"))))
         return 0
     except BuildError as e:
         print("BUILD HIBA: %s" % e, file=sys.stderr)
         return 2
 
 
-# ================================================================ termék-tömörítés (≤ 450 KB, 2.3)
+# ================================================================ termék-tömörítés (≤ 600 KB, 2.3)
 # A termék-build a lint UTÁN tömörít; a --dev build az eredeti forrást adja (olvasható, hibakereséshez).
 # Mindhárom lépés determinisztikus, csak stdlib, és veszteségmentes:
 #   minify_js   — tokenszintű: megjegyzések és fölös szóközök/sortörések nélkül; a sortörés ott marad,

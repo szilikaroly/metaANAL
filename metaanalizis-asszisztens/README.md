@@ -88,6 +88,20 @@ python metaanalizis-asszisztens/ma.py gui --project <projektmappa>     # magyar 
 További kapcsolók: `--port N`, `--no-browser`, `--lang hu|en`, `--idle-hours H`. Ha a `ma_gui/` hiányzik vagy nem
 importálható, a parancs érthető hibával (2-es kóddal) áll le; a motor ettől függetlenül működik.
 
+Két alparancs a munkapad futtatása nélkül:
+
+```bash
+# csak olvasható pillanatkép a társszerzőknek: EGY HTML-fájl, Python és hálózat nélkül nyitható
+python metaanalizis-asszisztens/ma.py gui snapshot --project <mappa> [--out x.html] [--redact …] [--keep …]
+# determinisztikus audit-csomag: 07_ellenorzes/audit/<dátum>/…zip (manifest.json, activity.jsonl, rerun.cmd/.sh)
+python metaanalizis-asszisztens/ma.py gui audit-export --project <mappa>
+```
+
+A pillanatkép kitakarási alapértékei az adatosztályból jönnek: **A** — az adattáblák benne vannak; **B** — a táblák
+kimaradnak (kérésre `--keep tables`), az értékelők neve monogram; **C** — táblák soha. A `_privat/` mappa, a PDF-ek és
+a tudásbázis teljes szövege egyik osztályban sem kerül bele. Kilépési kód: 0 kész, 2 hibás kérés (pl. táblák C
+osztályú projektből), 1 egyéb hiba. **A pillanatképet soha ne töltsd fel és ne publikáld — Claude Artifactként sem.**
+
 ## A motor (`metaelemzes/`)
 
 | Terület | Tartalom |
@@ -118,7 +132,9 @@ importálható, a parancs érthető hibával (2-es kóddal) áll le; a motor ett
   forrásszoftver egyszeres pontosságú tárolását (`input_storage`) is. 27 eset marad `known_gap`: 18-nál a forrás
   hibás vagy nem használható orákulum (elírás, kettős kerekítés, nem közölt bemenet), 7 nem implementált módszer (metaSEM
   megfigyelt információs SE / −2LL / Wilson-féle Q-felbontás: 4; dózis–hatás REMR: 3), 2-nél mindkettő.
-- `python ma.py selftest` lefuttat mindent.
+- `python ma.py selftest` a motor tesztjeit futtatja (a `tests/` felső szintjét); a munkapad (`ma_gui/`) Python-tesztjeit
+  nem. Mindkettő: `python3 tests/run_parallel.py --gui`; a böngészős (Playwright) tesztek:
+  `node tests/gui/ui/run_all.js --python`; a forráspéldák: `python3 tests/source_cases.py`.
 
 ### Ismert korlátok (tervezett bővítések)
 Nem támogatott még: függő hatásméretek többszintű modellje (metafor `rma.mv`, klaszter-robusztus varianciabecslés),
@@ -138,12 +154,16 @@ Kisebb, ismert hiányok (a `known_gap` forrás-esetek is ezeket dokumentálják)
 ## Validáló és grafikus felület (MA-munkapad)
 
 A [`TERV_validalo_grafikus_felulet.md`](TERV_validalo_grafikus_felulet.md) a böngészős munkafelület terve; az MVP
-(`ma_gui/`) helyi, csak 127.0.0.1-en figyelő stdlib szerver: `python ma.py gui --project <mappa>`. A számok egyetlen
-forrása a motor; a `figure-forge` (ábra-export, audit) és a `validator` (RoB, PROBAST+AI, TRIPOD+AI, GRADE, AMSTAR 2)
-opcionális adapterként, verziózott `szk.*` JSON-szerződéssel csatlakozik, nélkülük is működik. A projektfájlok
-összhangját a `python ma.py project audit <mappa> --json` X-szabályai ellenőrzik (a felület és a `ma-ellenorzo` ugyanazt
-látja); a FINAL ellenőrzőpont `--audit-gate`-tel az error szintű X-találat mellett sem zárható. A felületet és a
-pillanatképét soha ne publikáld Artifactként, és ne töltsd fel. A terv 11. fejezete rögzíti a felhasználó döntéseit.
+(`ma_gui/`) helyi, csak 127.0.0.1-en figyelő stdlib szerver: `python ma.py gui --project <mappa>` (parancssor nélkül:
+`ma-munkapad.cmd` Windowson, `ma-munkapad.command` macOS-en). Csak `project init` után az elemzéshez előbb egy
+kimenetet kell felvenni: a felület „Kimenet felvétele” gombjával vagy `python ma.py project outcome <mappa> --id o1
+--name "…" --data 03_adatok/o1.csv --measure RR`. A számok egyetlen forrása a motor. A `figure-forge` (ábra-export,
+audit) és a `validator` (RoB, PROBAST+AI, TRIPOD+AI, GRADE, AMSTAR 2) a v1-ben csatlakozik majd opcionális
+adapterként, verziózott `szk.*` JSON-szerződéssel; az MVP csak felderíti őket (Képességek oldal), és nélkülük működik.
+A projektfájlok összhangját a `python ma.py project audit <mappa> --json` X-szabályai ellenőrzik (a felület és a
+`ma-ellenorzo` ugyanazt látja); a FINAL ellenőrzőpont `--audit-gate`-tel az error szintű X-találat mellett sem
+zárható. A felületet és a pillanatképét soha ne publikáld Artifactként, és ne töltsd fel. A terv 11. fejezete
+rögzíti a felhasználó döntéseit.
 
 ## Claude Code-plugin (`.claude-plugin/`, `agents/`, `skills/`)
 

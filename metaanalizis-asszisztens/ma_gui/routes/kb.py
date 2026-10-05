@@ -1,20 +1,33 @@
 # -*- coding: utf-8 -*-
-"""Tudásbázis-kereső (3.4, 3.5.15, 7.7) — csak olvas, a ``metaelemzes.kb`` függvényein át.
+"""Tudásbázis-kereső (3.4, 3.5.7, 3.5.15, 7.7) — csak olvas, a motor-homlokzaton át (``api.kb_*``).
 
-- ``GET /api/kb/search?q=&limit=&scope=rule,knowledge,chunk&source=``
-- ``GET /api/kb/item/<id>`` (a szövegrész-azonosító ``#``-ét ``%23``-ként kell küldeni)
+- ``GET /api/kb/search?q=&limit=&scope=rule,knowledge,chunk&source=`` (``api.kb_search``)
+- ``GET /api/kb/item/<id>`` (``api.kb_show``; a szövegrész-azonosító ``#``-ét ``%23``-ként kell küldeni)
+- ``GET /api/kb/rules?field=<mező>[&model=&k=&measure=]`` (``api.kb_rules_for_field``): a mezőre
+  (results.json-kulcs, elemzési opció vagy V/P/X-kód) hivatkozó döntési szabályok — a felület ⓚ-jelvényei; a
+  futás kontextusával (modell, k, hatásméret) csak a futásra illők (UX-06).
 
 A teljes szöveg (``chunk``) helyi forrás: a felület „helyi forrás — nem exportálható” címkével
 mutatja; pillanatképbe és auditba nem kerül. A keresőkifejezés nem kerül a naplóba."""
-from metaelemzes import kb
+import re
+
+from metaelemzes import api
 
 from ..router import ApiError, Result
 from ._common import int_arg
 
 SEARCH_SCHEMA = "szk.ma.kb-search/v1"
 ITEM_SCHEMA = "szk.ma.kb-item/v1"
+RULES_SCHEMA = "szk.ma.kb-rules/v1"
 SCOPES = ("rule", "knowledge", "chunk")
 LOCAL_NOTE = {"hu": "helyi forrás — nem exportálható", "en": "local source — not for export"}
+FIELD_RE = re.compile(r"^[A-Za-z0-9_.\-]{1,80}$")
+MODEL_RE = re.compile(r"^[A-Za-z0-9_]{1,20}$")
+RULES_RESPONSE = {
+    "type": "object", "required": ["field", "items"],
+    "properties": {"field": {"type": "string"},
+                   "items": {"type": "array", "items": {"type": "object", "required": ["id"]}}},
+}
 
 
 def get_search(req):
@@ -31,10 +44,7 @@ def get_search(req):
             raise ApiError("BAD_REQUEST", "Ismeretlen keresési kör (rule, knowledge, chunk).")
     source = req.arg("source", max_len=200) or None
     app.kb_ready()
-    res = kb.search(q, limit, app.kb_db, scopes, source)
-    if source and res.get("rule"):
-        res["rule"] = [r for r in res["rule"]
-                       if source in [x.strip() for x in (r.get("source_ids") or "").split(",")]]
+    res = api.kb_search(q, limit, scopes, source, db=app.kb_db)
     return Result({"query": q, "scopes": list(scopes), "results": res, "local_only": True, "note": LOCAL_NOTE},
                   SEARCH_SCHEMA)
 
@@ -45,7 +55,7 @@ def get_item(req):
     if len(item_id) > 300:
         raise ApiError("BAD_REQUEST", "Túl hosszú azonosító.")
     app.kb_ready()
-    item = kb.show(item_id, app.kb_db)
+    item = api.kb_show(item_id, db=app.kb_db)
     if item is None:
         raise ApiError("NOT_FOUND", "Nincs ilyen azonosító a tudásbázisban.")
     item = dict(item)
@@ -54,6 +64,31 @@ def get_item(req):
                   ITEM_SCHEMA)
 
 
+def get_rules(req):
+    app = req.app
+    field = req.arg("field", max_len=80)
+    if not field or not FIELD_RE.match(field):
+        raise ApiError("BAD_REQUEST", "Hiányzó vagy érvénytelen mezőnév (field: betű, szám, '_', '.', '-'; "
+                                      "legfeljebb 80 karakter).")
+    context = {}
+    model = req.arg("model", max_len=20)
+    if model:
+        if not MODEL_RE.match(model):
+            raise ApiError("BAD_REQUEST", "Érvénytelen modellnév (model).")
+        context["model"] = model
+    measure = req.arg("measure", max_len=20)
+    if measure:
+        if not MODEL_RE.match(measure):
+            raise ApiError("BAD_REQUEST", "Érvénytelen hatásméret-név (measure).")
+        context["measure"] = measure
+    if req.arg("k"):
+        context["k"] = int_arg(req, "k", 0, 0, 10 ** 6)
+    app.kb_ready()
+    res = api.kb_rules_for_field(field, db=app.kb_db, context=context or None)
+    return Result({"field": res.get("field", field), "items": list(res.get("items") or [])}, RULES_SCHEMA)
+
+
 def register(router):
     router.add("GET", "/api/kb/search", get_search, schema=SEARCH_SCHEMA)
     router.add("GET", "/api/kb/item/<item_id>", get_item, schema=ITEM_SCHEMA)
+    router.add("GET", "/api/kb/rules", get_rules, schema=RULES_SCHEMA, response_schema=RULES_RESPONSE)

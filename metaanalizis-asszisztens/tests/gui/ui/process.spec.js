@@ -31,6 +31,8 @@ const { chromium } = loadPlaywright();
 const ROOT = path.resolve(__dirname, '..', '..', '..');
 const WEB = path.join(ROOT, 'ma_gui', 'web');
 const DEV = process.env.MA_UI_DEV_HTML || path.join(WEB, 'dist', 'index.dev.html');
+// a motor-fixtúrákból (tests/gui/ui/gen_fixtures_from_engine.py)
+const ENGINE_FX = JSON.parse(fs.readFileSync(path.join(WEB, 'fixtures', 'engine.json'), 'utf-8')).routes[0].envelope.data;
 const CHROME_FALLBACK = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const XSS = '<img src=x onerror=alert(1)>';
 const CSP = (n) => "default-src 'none'; script-src 'nonce-" + n + "'; style-src 'nonce-" + n + "'; " +
@@ -161,8 +163,13 @@ async function waitCheck(page) {
     check(next.indexOf('X001') >= 0 && next.indexOf('python ma.py analyze --spec 05_elemzes/specs/o1_primary.json') >= 0, 'X001 + javasolt parancs');
     check((await p.getAttribute('#ov-next li[data-code="X001"] .ov-act', 'href')) === '#/analysis?outcome=o1', 'X001 → újrafuttatás az Elemzés képernyőn (o1)');
     check((await p.getAttribute('#ov-next li[data-code="X010"] .ov-act', 'href')) === '#/extraction?outcome=o1', 'X010 → szűrés a Kinyerésben');
+    // UX-01: a még nem ellenőrizhető szabályok is látszanak (kezdőknek szóló teendővel), csoportosítva
+    check((await p.$('#ov-not-checked')) !== null && (await txt(p, '#ov-nc-head')).indexOf('2 szabály') >= 0, 'a még nem ellenőrizhető szabályok (2) a következő lépések között');
+    const nc14 = await txt(p, '#ov-not-checked li[data-code="X014"]');
+    check(nc14.indexOf('PRISMA-folyamatábrát') >= 0 && nc14.indexOf('TBC') >= 0, 'X014: egyszerű nyelvű teendő, a kimenetek nevével (' + nc14.replace(/\s+/g, ' ').slice(0, 120) + ')');
+    check((await p.$$('#ov-not-checked li[data-code="X003"] a.ov-act')).length === 0, 'X003: nincs link a még helyőrző Értékelés-képernyőre (UX-15)');
     await p.waitForSelector('#overview-outcomes');
-    check((await txt(p, '#overview-outcomes')).indexOf('0,49 [0,33; 0,73]') >= 0, 'kimenet: a motor display_text-je szó szerint');
+    check((await txt(p, '#overview-outcomes')).indexOf('0.49 [0.33; 0.73]') >= 0, 'kimenet: a motor display_text-je szó szerint (tizedespont, mint a report.md)');
     // „Miért?” a #15 blockeren: billentyűzettel nyit, KB-tétel (V011) betöltődik, Esc zár és visszaadja a fókuszt
     await p.focus('#ov-blockers li[data-id="15"] .why-btn');
     await p.keyboard.press('Enter');
@@ -173,6 +180,9 @@ async function waitCheck(page) {
     await p.waitForFunction(() => /SD helyett SE gyanúja/.test(document.querySelector('.why-pop').textContent));
     const pop = await txt(p, '.why-pop');
     check(pop.indexOf('Mit tegyél?') >= 0 && pop.indexOf('Ellenőrizd a forrást') >= 0, 'KB-javaslat egyszerű nyelven (V011)');
+    // UX-04: a „Miért fontos?” egyszerű nyelvű indoklás (nem „Adatvalidálási szabály (warning)”), a forrás egyszer, olvashatóan
+    check(pop.indexOf('Miért fontos?') >= 0 && pop.indexOf('szabály (warning)') < 0 && pop.indexOf('adatkinyerési hibát') >= 0, 'Miért fontos?: egyszerű nyelvű indoklás');
+    check(pop.indexOf('engine') < 0 && (pop.match(/Forrás/g) || []).length === 1, 'a forrás egyszer, „engine” nyers token nélkül');
     check((await p.$$('.why-pop .kb-ref[data-kb="D-S07-004"]')).length === 1, 'kapcsolódó KB-tétel gomb (D-S07-004)');
     await p.keyboard.press('Escape');
     check((await p.$('.why-pop')) === null, 'Esc bezárja a buborékot');
@@ -201,6 +211,35 @@ async function waitCheck(page) {
     await finish(o, 'áttekintés');
   });
 
+  await test('Áttekintés: a futás saját hatásmérete (FID-1), RoB „nincs értékelés” (UX-02), ismeretlen frissesség (FID-6)', async () => {
+    const o = await openPage('#/log');
+    const p = o.page;
+    await screen(p, 'log');
+    // a futás OR-ral készült, a kimenet alapértéke RR; nincs RoB-értékelés; az adatfájl nem olvasható (stale: null)
+    await p.evaluate(() => {
+      const fx = window.MA.dev.fixtures;
+      const env = (runs) => ({ envelope: { ok: true, schema: 'szk.ma.runs/v1', data: { runs }, warnings: [], meta: {} } });
+      fx.route('GET', '/api/runs', (req) => {
+        if (req.query.primary !== '1') { return env([]); }
+        return env([{ schema: 'szk.ma.run/v1', run_id: '20261005T100000Z-abcdef', mode: 'commit', outcome_id: 'o1', measure: 'OR', k: 13,
+          spec: { path: '05_elemzes/specs/o1_primary.json', sha256: null, name: 'o1_primary', parent: null, purpose: 'primary' },
+          data: { path: '03_adatok/o1.csv', sha256: null, rows: 13 }, primary: { model: 'random', display_text: { hu: '0.47 [0.32; 0.71]', en: '0.47 [0.32; 0.71]' }, i2_text: { hu: '93%', en: '93%' } },
+          participants_text: { hu: '357347', en: '357347' }, rob_high: null, rob_missing: 13, stale: null, started: '2026-10-05T10:00:00Z' }]);
+      }, { first: true });
+    });
+    await p.evaluate(() => { window.location.hash = '#/overview'; });
+    await screen(p, 'overview');
+    await p.waitForSelector('#overview-outcomes tbody tr[data-outcome="o1"]');
+    const cells = await p.$$eval('#overview-outcomes tbody tr[data-outcome="o1"] > *', (cs) => cs.map((c) => c.textContent.trim()));
+    check(cells[3] === 'OR 0.47 [0.32; 0.71]', 'Elsődleges hatás: a futás mértéke (' + cells[3] + '), nem a kimenet RR-alapértéke');
+    check(cells[5] === 'nincs értékelés', 'RoB magas: „nincs értékelés” (' + cells[5] + ')');
+    const runBadge = await p.$eval('#overview-outcomes tbody tr[data-outcome="o1"] > td:last-child .badge', (b) => ({
+      cls: b.className, text: (b.querySelector('.badge-text') || {}).textContent }));
+    check(runBadge.text === 'ISMERETLEN' && /is-neutral/.test(runBadge.cls) && !/is-ok|is-stale/.test(runBadge.cls),
+      'Futás: semleges ISMERETLEN címke, ha a szerver nem tudta ellenőrizni (' + cells[7] + ', ' + runBadge.cls + ')');
+    await finish(o, 'áttekintés-futás');
+  });
+
   // ========== 2. PRISMA
   await test('PRISMA: élő P-ellenőrzés, aria-invalid, folyamatábra, levezetett érték, okok, mentés If-Match-csel', async () => {
     const o = await openPage('#/prisma');
@@ -213,6 +252,9 @@ async function waitCheck(page) {
     check(await p.evaluate(() => document.querySelector('.pf-box[data-box="H"]').classList.contains('is-error')), 'folyamatábra: a H doboz hibás (osztály)');
     check((await txt(p, '.pf-box[data-box="H"]')).indexOf('✖') === 0, 'folyamatábra: a hibát szimbólum is jelöli (nem csak szín)');
     check((await txt(p, '.pf-svg')).indexOf('Szűrt rekordok (B): 325') >= 0, 'folyamatábra: a beírt szám szövegként');
+    // UX-18: a motor üzenetei a dobozok űrlapon látható nevét használják, nem a belső kulcsot
+    const pfl = await txt(p, '#pf-list');
+    check(!/\b(screened|excluded_eligibility|assessed|sought|identified_databases) \(/.test(pfl), 'P-üzenetek: nincs belső mezőnév (pl. „screened (B)”)');
     check((await txt(p, '#pf-summary')).replace(/\s+/g, '').indexOf('✖hiba:1') >= 0, 'összesítő: ✖ 1');
     check((await p.$$('.pf-svg line.pf-arrow')).length >= 8, 'nyilak a dobozok között');
     // ugrás a dobozra
@@ -438,6 +480,10 @@ async function waitCheck(page) {
     await screen(p, 'log');
     await p.waitForSelector('#log-checkpoints');
     check((await p.$eval('#log-gate-stage', (s) => s.value)) === 'S05', 'a szakasz az URL-ből (stage=S05)');
+    // UX-09: az ítélet nincs előre kiválasztva — a jóváhagyás tudatos emberi döntés
+    check((await p.$eval('#log-gate-verdict', (s) => s.value)) === '' && (await p.$eval('#log-gate-submit', (b) => b.disabled)), 'nincs előre kiválasztott ítélet; a gomb addig tiltva');
+    check((await txt(p, '#log-gate-stage')).indexOf('S05 · Adatkinyerés') >= 0, 'a szakaszok a nevükkel (S05 · Adatkinyerés — UX-08)');
+    await p.selectOption('#log-gate-verdict', 'PASS');
     await p.waitForFunction(() => document.getElementById('log-gate-submit').disabled === true);
     check((await txt(p, '#log-gate-pre')).indexOf('#15') >= 0 && (await p.getAttribute('#log-gate-submit', 'aria-describedby')) === 'log-gate-pre', 'S05 PASS: tiltva, az ok (#15) megnevezve és a gombhoz kötve');
     await p.selectOption('#log-gate-verdict', 'FAIL');
@@ -452,6 +498,13 @@ async function waitCheck(page) {
     await p.selectOption('#log-gate-verdict', 'PASS');
     await p.waitForFunction(() => /nincs nyitott blocker/.test(document.getElementById('log-gate-pre').textContent));
     check(!(await p.$eval('#log-gate-submit', (b) => b.disabled)), 'S06 PASS: engedélyezett');
+    check((await txt(p, '#log-gate-pre')).indexOf('a döntés a tiéd') >= 0, 'a „nincs blocker” nem a motor jóváhagyása (UX-09)');
+    // PASS összefoglaló nélkül nem megy ki (UX-09)
+    const nCp = (await calls(p, 'POST', '/api/log/checkpoint')).length;
+    await p.click('#log-gate-submit');
+    await p.waitForFunction(() => document.getElementById('log-gate-summary').getAttribute('aria-invalid') === 'true');
+    check((await calls(p, 'POST', '/api/log/checkpoint')).length === nCp && (await txt(p, '#log-gate-summary-err')).indexOf('PASS-hoz') >= 0, 'PASS üres összefoglalóval: helyben hiba, nincs kérés');
+    await p.fill('#log-gate-summary', 'S06: a szintézis-beállítások átnézve');
     await p.evaluate(() => window.MA.dev.process.addFinding({ severity: 'blocker', stage_id: 'S06', title: 'Ágens: RoB 2 hiányzik (Coetzee 1968)', agent: 'reviewer' }));
     await p.click('#log-gate-submit');
     await p.waitForSelector('#log-gate-blocked[role="alert"]');
@@ -463,6 +516,8 @@ async function waitCheck(page) {
     await p.selectOption('#log-gate-stage', 'FINAL');
     await p.waitForFunction(() => /X001/.test(document.getElementById('log-gate-pre').textContent));
     check(await p.$eval('#log-gate-submit', (b) => b.disabled), 'FINAL: tiltva (blocker bármely szakaszban + X001)');
+    const aq = (await calls(p, 'GET', '/api/audit/project')).pop();
+    check(!!aq && aq.query && aq.query.stage === 'FINAL', 'FINAL: az előzetes audit FINAL szakasz-kontextusban (?stage=FINAL), mint a motor kapuja');
     // X-szabályok és tevékenység
     await p.click('#log-tab-audit');
     await p.waitForSelector('#log-audit li[data-code="X001"]');
@@ -530,7 +585,7 @@ async function waitCheck(page) {
     const tb = await txt(p, '#cap-table');
     check(tb.indexOf('◐') >= 0 && tb.indexOf('telepítve, de nem használható') >= 0 && tb.indexOf('○') >= 0 && tb.indexOf('nincs telepítve') >= 0, 'szimbólum ÉS szöveg (a szín nem egyedüli jelölés)');
     check(tb.indexOf('matplotlib hiányzik') >= 0 && tb.indexOf('FIGURE_FORGE_PYTHON') >= 0 && tb.indexOf('claude plugin install presubmit@szk-plugins') >= 0, 'problémák és teendők szó szerint');
-    check(tb.indexOf('önteszt 3268/3268') >= 0 && tb.indexOf('őrök: H1 H2 H3 H4') >= 0, 'motor-önteszt, validator-őrök');
+    check(tb.indexOf('önteszt ' + ENGINE_FX.selftest.passed + '/' + ENGINE_FX.selftest.checks) >= 0 && tb.indexOf('őrök: H1 H2 H3 H4') >= 0, 'motor-önteszt, validator-őrök');
     check((await p.$$('#cap-matrix tbody tr')).length >= 10, 'funkció-mátrix (5.2)');
     const pr = await txt(p, '#cap-privacy');
     check(pr.indexOf('A — publikált aggregált') >= 0 && pr.indexOf('onedrive') >= 0, 'adatvédelem: osztály, felhőszinkron');

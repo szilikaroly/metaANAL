@@ -1,5 +1,5 @@
 {
- "description": "POST /api/convert — szk.ma.convert-request/v1 → szk.ma.convert-result/v1 (4.7). Az értékek a motor metaelemzes.conversions függvényeiből (n=40, medián 12,5, Q1 10, Q3 16; SE 0,42 n=52; CI 10,1–14,3 n=48; …). Az estimated a motor döntése (becslés: true, algebrai: false).",
+ "description": "POST /api/convert — szk.ma.convert-request/v1 → szk.ma.convert-result/v1 (4.7): api.convert (a motor conversions-függvényei) a kinyerés-spec bemeneteivel (n = 8, medián 12,5, Q1 10, Q3 16; SE 0,42, n = 52; …), a cél tábla tizedesjelével (cell_text: ','). outputs_text: kijelzési szöveg (4.0: tizedespont); assumptions / warnings: {hu, en}. Az estimated a motor döntése. Generálta: tests/gui/ui/gen_fixtures_from_engine.py.",
  "routes": [
   {
    "method": "POST",
@@ -13,28 +13,35 @@
     "data": {
      "schema": "szk.ma.convert-result/v1",
      "kind": "median_to_mean_sd",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "outputs": {
-      "mean": 12.854875,
-      "sd": 4.613579408876527
+      "mean": 12.874375,
+      "sd": 5.361046136924908
      },
      "outputs_text": {
       "mean": {
-       "hu": "12,85",
-       "en": "12.85"
+       "hu": "12.87",
+       "en": "12.87"
       },
       "sd": {
-       "hu": "4,61",
-       "en": "4.61"
+       "hu": "5.361",
+       "en": "5.361"
       }
+     },
+     "cell_text": {
+      "mean": "12,87",
+      "sd": "5,361"
      },
      "estimated": true,
      "method": {
       "id": "luo2018+wan2014",
-      "citation": "Cochrane Handbook 6.5.2.5",
+      "citation": "Cochrane Handbook 6.5.2.5; Luo 2018; Wan 2014",
       "function": "conversions.mean_from_median / sd_from_median",
       "kb_refs": [
-       "KONV-MEDIAN-01"
+       "D-S05-010",
+       "D-S05-011",
+       "F-MOR20-010",
+       "D-S05-023"
       ]
      },
      "assumptions": [
@@ -45,17 +52,26 @@
      ],
      "warnings": [
       {
-       "hu": "a medián Q1-hez közelebb: ferde eloszlás gyanúja (V013)",
-       "en": "the median is closer to Q1: skewness suspected (V013)"
+       "hu": "Becsült érték: jelöld az adattáblában (estimated=igen) és végezz nélküle érzékenységi elemzést (D-S05-023).",
+       "en": "Estimated value: mark it in the data table (estimated=yes) and run a sensitivity analysis without it (D-S05-023)."
       }
-     ]
+     ],
+     "target": {
+      "dataset": "03_adatok/o3.csv",
+      "row_uid": "rnrm05",
+      "decimal_mark": ",",
+      "fields": {
+       "mean": "m1",
+       "sd": "sd1"
+      }
+     }
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex16"
+     "request_id": "q_ex33"
     }
    }
   },
@@ -72,28 +88,35 @@
     "data": {
      "schema": "szk.ma.convert-result/v1",
      "kind": "median_to_mean_sd",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "outputs": {
-      "mean": 13.5,
-      "sd": 4.869326509870006
+      "mean": 14.75,
+      "sd": 6.02868996460096
      },
      "outputs_text": {
       "mean": {
-       "hu": "13,50",
-       "en": "13.50"
+       "hu": "14.75",
+       "en": "14.75"
       },
       "sd": {
-       "hu": "4,87",
-       "en": "4.87"
+       "hu": "6.029",
+       "en": "6.029"
       }
+     },
+     "cell_text": {
+      "mean": "14,75",
+      "sd": "6,029"
      },
      "estimated": true,
      "method": {
       "id": "hozo2005+wan2014",
-      "citation": "Hozo 2005; Cochrane Handbook 6.5.2.5",
-      "function": "conversions.mean_from_median(method='hozo') / sd_from_median",
+      "citation": "Cochrane Handbook 6.5.2.5; Hozo 2005; Wan 2014",
+      "function": "conversions.mean_from_median / sd_from_median",
       "kb_refs": [
-       "KONV-MEDIAN-01"
+       "D-S05-010",
+       "D-S05-011",
+       "F-MOR20-010",
+       "D-S05-023"
       ]
      },
      "assumptions": [
@@ -102,14 +125,28 @@
        "en": "approximately normal distribution"
       }
      ],
-     "warnings": []
+     "warnings": [
+      {
+       "hu": "Becsült érték: jelöld az adattáblában (estimated=igen) és végezz nélküle érzékenységi elemzést (D-S05-023).",
+       "en": "Estimated value: mark it in the data table (estimated=yes) and run a sensitivity analysis without it (D-S05-023)."
+      }
+     ],
+     "target": {
+      "dataset": "03_adatok/o3.csv",
+      "row_uid": "rnrm05",
+      "decimal_mark": ",",
+      "fields": {
+       "mean": "m1",
+       "sd": "sd1"
+      }
+     }
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex17"
+     "request_id": "q_ex34"
     }
    }
   },
@@ -125,34 +162,51 @@
     "data": {
      "schema": "szk.ma.convert-result/v1",
      "kind": "se_to_sd",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "outputs": {
       "sd": 3.028663071389751
      },
      "outputs_text": {
       "sd": {
-       "hu": "3,03",
-       "en": "3.03"
+       "hu": "3.029",
+       "en": "3.029"
       }
+     },
+     "cell_text": {
+      "sd": "3,029"
      },
      "estimated": false,
      "method": {
-      "id": "se_to_sd",
+      "id": "sd_from_se",
       "citation": "Cochrane Handbook 6.5.2.2",
       "function": "conversions.sd_from_se",
       "kb_refs": [
-       "KONV-SE-01"
+       "D-S05-006",
+       "F-MOR20-002"
       ]
      },
-     "assumptions": [],
-     "warnings": []
+     "assumptions": [
+      {
+       "hu": "a közölt érték a karátlag standard hibája (nem SD)",
+       "en": "the reported value is the standard error of the arm mean (not the SD)"
+      }
+     ],
+     "warnings": [],
+     "target": {
+      "dataset": "03_adatok/o3.csv",
+      "row_uid": "rnrm05",
+      "decimal_mark": ",",
+      "fields": {
+       "sd": "sd1"
+      }
+     }
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex18"
+     "request_id": "q_ex35"
     }
    }
   },
@@ -168,39 +222,51 @@
     "data": {
      "schema": "szk.ma.convert-result/v1",
      "kind": "ci_to_sd",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "outputs": {
       "sd": 7.2321587621677486
      },
      "outputs_text": {
       "sd": {
-       "hu": "7,23",
-       "en": "7.23"
+       "hu": "7.232",
+       "en": "7.232"
       }
+     },
+     "cell_text": {
+      "sd": "7,232"
      },
      "estimated": false,
      "method": {
-      "id": "ci_to_sd_t",
-      "citation": "Cochrane Handbook 6.5.2.3",
+      "id": "sd_from_ci_t",
+      "citation": "Cochrane Handbook 6.5.2.2",
       "function": "conversions.sd_from_ci",
       "kb_refs": [
-       "KONV-CI-01"
+       "D-S05-007",
+       "F-MOR20-003"
       ]
      },
      "assumptions": [
       {
-       "hu": "t-eloszlás (n < 60)",
-       "en": "t distribution (n < 60)"
+       "hu": "a CI a karátlagé (nem a csoportközi különbségé); t-eloszlás n − 1 szabadsági fokkal",
+       "en": "the CI belongs to the arm mean (not to the between-group difference); t distribution with n − 1 degrees of freedom"
       }
      ],
-     "warnings": []
+     "warnings": [],
+     "target": {
+      "dataset": "03_adatok/o3.csv",
+      "row_uid": "rnrm05",
+      "decimal_mark": ",",
+      "fields": {
+       "sd": "sd1"
+      }
+     }
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex19"
+     "request_id": "q_ex36"
     }
    }
   },
@@ -216,11 +282,11 @@
     "data": {
      "schema": "szk.ma.convert-result/v1",
      "kind": "combine_groups",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "outputs": {
-      "n": 55,
-      "mean": 12.636363636363637,
-      "sd": 3.023296192125386
+      "n": 55.0,
+      "mean": 12.645454545454545,
+      "sd": 3.0023335480933384
      },
      "outputs_text": {
       "n": {
@@ -228,32 +294,47 @@
        "en": "55"
       },
       "mean": {
-       "hu": "12,64",
-       "en": "12.64"
+       "hu": "12.65",
+       "en": "12.65"
       },
       "sd": {
-       "hu": "3,02",
-       "en": "3.02"
+       "hu": "3.002",
+       "en": "3.002"
       }
+     },
+     "cell_text": {
+      "n": "55",
+      "mean": "12,65",
+      "sd": "3,002"
      },
      "estimated": false,
      "method": {
       "id": "combine_groups",
-      "citation": "Cochrane Handbook 6.5.2.10 (Table 6.5.a)",
+      "citation": "Cochrane Handbook 6.5.2.10 (6.5.a táblázat)",
       "function": "conversions.combine_groups",
       "kb_refs": [
-       "KONV-COMB-01"
+       "D-S05-015"
       ]
      },
      "assumptions": [],
-     "warnings": []
+     "warnings": [],
+     "target": {
+      "dataset": "03_adatok/o3.csv",
+      "row_uid": "rnrm05",
+      "decimal_mark": ",",
+      "fields": {
+       "n": "n1",
+       "mean": "m1",
+       "sd": "sd1"
+      }
+     }
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex20"
+     "request_id": "q_ex37"
     }
    }
   },
@@ -269,39 +350,57 @@
     "data": {
      "schema": "szk.ma.convert-result/v1",
      "kind": "change_sd",
-     "engine_version": "0.2.0",
+     "engine_version": "0.1.0",
      "outputs": {
-      "sd": 4.52990066116245
+      "sd_change": 4.58257569495584
      },
      "outputs_text": {
-      "sd": {
-       "hu": "4,53",
-       "en": "4.53"
+      "sd_change": {
+       "hu": "4.583",
+       "en": "4.583"
       }
+     },
+     "cell_text": {
+      "sd_change": "4,583"
      },
      "estimated": true,
      "method": {
-      "id": "change_sd_corr",
+      "id": "sd_change_from_corr",
       "citation": "Cochrane Handbook 6.5.2.8",
       "function": "conversions.sd_change",
       "kb_refs": [
-       "KONV-CHG-01"
+       "D-S05-013",
+       "F-MOR20-017",
+       "D-S05-023"
       ]
      },
      "assumptions": [
       {
-       "hu": "imputált korreláció (r = 0,5)",
-       "en": "imputed correlation (r = 0.5)"
+       "hu": "a kiindulási és a végponti érték korrelációja (corr) más vizsgálatból vagy feltevésből származik",
+       "en": "the baseline–final correlation (corr) comes from another study or an assumption"
       }
      ],
-     "warnings": []
+     "warnings": [
+      {
+       "hu": "Becsült érték: jelöld az adattáblában (estimated=igen) és végezz nélküle érzékenységi elemzést (D-S05-023).",
+       "en": "Estimated value: mark it in the data table (estimated=yes) and run a sensitivity analysis without it (D-S05-023)."
+      }
+     ],
+     "target": {
+      "dataset": "03_adatok/o3.csv",
+      "row_uid": "rnrm05",
+      "decimal_mark": ",",
+      "fields": {
+       "sd_change": "sd1"
+      }
+     }
     },
     "warnings": [],
     "meta": {
-     "engine": "0.2.0",
+     "engine": "0.1.0",
      "elapsed_ms": 1,
      "project_rev": 41,
-     "request_id": "q_ex21"
+     "request_id": "q_ex38"
     }
    }
   },
@@ -318,7 +417,7 @@
     "error": {
      "code": "VALIDATION",
      "http": 422,
-     "message": "a konfidencia-intervallum alsó határa nagyobb a felsőnél"
+     "message": "az alsó határ (14.3) nagyobb, mint a felső (10.1) — felcserélt határok?"
     }
    }
   }

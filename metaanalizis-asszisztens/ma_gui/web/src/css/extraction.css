@@ -88,6 +88,8 @@
 .ex-cf-opt { margin-right: 8px; white-space: nowrap; }
 #ex-conflict-table tr.is-conflict th::before { content: "⚠ "; color: var(--warn); }
 .ex-paste-area, #ex-ack-rationale { width: 100%; font-family: var(--mono); font-size: var(--fs-sm); }
+.ex-ack-blocking { padding: var(--sp-1) var(--sp-2); border-left: 3px solid var(--warn-mark); background: var(--warn-bg); }
+.ex-readonly { margin: var(--sp-1) 0; }
 
 /* ---- átváltó ---- */
 .cv-inputs { margin-top: var(--sp-2); }

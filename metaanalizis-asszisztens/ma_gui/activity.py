@@ -2,373 +2,112 @@
 """Hash-láncolt tevékenységnapló (szk.ma.activity/v1, 07_ellenorzes/activity.jsonl; terv: 3.1, 4.16)
 és újrafuttató szkriptek (rerun.sh, rerun.cmd).
 
-Soronként egy JSON-rekord: {schema, seq, ts, actor, action, argv?, inputs: [{path, sha256}],
-outputs: [{path, sha256}], result?, details?, prev_hash, hash}. A hash a rekord 'hash' nélküli
-kanonikus JSON-jának (sort_keys, (',', ':') elválasztók, ensure_ascii=False, UTF-8) sha256-ja; a
-prev_hash az előző rekord hash-e (az elsőnél null). A napló csak hozzáfűzhető.
+A napló EGYETLEN megvalósítása a motoré (``metaelemzes.activity``, a ``metaelemzes.api``-n át): a
+munkapad és a CLI (``MA_ACTIVITY_LOG=1 ma.py …``) ugyanazt a rekordformátumot, ugyanazt a zárfájlt
+(07_ellenorzes/.activity.jsonl.lock) és ugyanazt a hash-láncot használja, így a két író felváltva is
+ép láncot ad. Ez a modul vékony burok a motor köré (a régi ma_gui-hívások alakjával), plusz az
+újrafuttató szkriptek előállítása.
+
+Rekord (a motor kanonikus alakja): {schema, seq, ts, actor, action, argv | null,
+inputs: {út: sha256 | null}, outputs: {út: sha256 | null}, result | null, details?, prev}. A prev az
+előző sor kanonikus JSON-jának sha256-ja (record_hash), az elsőnél null; a fej {seq, hash}.
 
 Adatvédelem (T10): cellaérték nem kerülhet bele — a value/values/cell/cells/rows/value_as_entered
-nevű kulcsokat bármely mélységben visszautasítjuk; az explore-futások nem naplózódnak (a hívó dönt).
-Konkurencia: folyamaton belül threading.Lock, folyamatok között zárfájl (fcntl / msvcrt, ha
-elérhető) és egyetlen os.write O_APPEND-del.
+nevű kulcsokat bármely mélységben a motor visszautasítja; az explore-futások nem naplózódnak (a
+hívó dönt).
 """
-import datetime
 import hashlib
-import json
 import os
 import re
 import shlex
-import threading
-import time
 from pathlib import Path
+
+from metaelemzes import api as _api
 
 from . import store
 
-SCHEMA = "szk.ma.activity/v1"
-LOG_RELPATH = "07_ellenorzes/activity.jsonl"
-FORBIDDEN_KEYS = frozenset({"value", "values", "cell", "cells", "rows", "value_as_entered"})
-_ACTION_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_.:-]{0,99}$")
-_LOCK_TIMEOUT = 10.0
-
-_locks_guard = threading.Lock()
-_locks = {}
-
-
-class ActivityError(ValueError):
-    """Érvénytelen naplóbejegyzés vagy a napló nem írható."""
-
-
-def utc_now():
-    return datetime.datetime.now(datetime.timezone.utc)
-
-
-def _fmt_ts(value):
-    if isinstance(value, str):
-        return value
-    if value.tzinfo is not None:
-        value = value.astimezone(datetime.timezone.utc).replace(tzinfo=None)
-    return value.replace(microsecond=0).isoformat() + "Z"
-
-
-def canonical_json(obj):
-    """Kanonikus JSON-bájtsor (a hash alapja)."""
-    return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
-                      allow_nan=False).encode("utf-8")
+SCHEMA = _api.ACTIVITY_SCHEMA
+LOG_RELPATH = _api.LOG_RELPATH
+FORBIDDEN_KEYS = _api.FORBIDDEN_KEYS
+ActivityError = _api.ActivityError
+canonical_json = _api.canonical_json
+find_forbidden_key = _api.find_forbidden_key
 
 
 def record_hash(record):
-    """A rekord 'hash' mező nélküli kanonikus JSON-jának sha256-ja."""
-    return hashlib.sha256(canonical_json({k: v for k, v in record.items() if k != "hash"})).hexdigest()
+    """A rekord kanonikus JSON-jának sha256-ja — a következő sor ``prev``-je (a motoréval azonos)."""
+    return hashlib.sha256(canonical_json(record)).hexdigest()
 
 
-def find_forbidden_key(obj, path=""):
-    """Az első tiltott kulcs útja (pl. 'result.cells'), vagy None."""
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            here = "%s.%s" % (path, k) if path else str(k)
-            if str(k).strip().lower() in FORBIDDEN_KEYS:
-                return here
-            hit = find_forbidden_key(v, here)
-            if hit:
-                return hit
-    elif isinstance(obj, (list, tuple)):
-        for i, v in enumerate(obj):
-            hit = find_forbidden_key(v, "%s[%d]" % (path, i))
-            if hit:
-                return hit
-    return None
-
-
-def _thread_lock(path):
-    key = os.path.normcase(os.path.realpath(str(path)))
-    with _locks_guard:
-        return _locks.setdefault(key, threading.Lock())
-
-
-class _ProcessLock(object):
-    """Folyamatok közötti kizárás egy zárfájllal (POSIX: fcntl.flock, Windows: msvcrt.locking).
-    Ha a platform egyiket sem adja, csak a folyamaton belüli zár és az O_APPEND véd."""
-
-    def __init__(self, path, timeout=_LOCK_TIMEOUT):
-        self.path = str(path)
-        self.timeout = timeout
-        self.fd = None
-        self.kind = None
-
-    def __enter__(self):
-        self.fd = os.open(self.path, os.O_RDWR | os.O_CREAT | getattr(os, "O_BINARY", 0), 0o600)
-        deadline = time.monotonic() + self.timeout
-        try:
-            import fcntl
-        except ImportError:
-            fcntl = None
-        try:
-            import msvcrt
-        except ImportError:
-            msvcrt = None
-        while fcntl is not None:
-            try:
-                fcntl.flock(self.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                self.kind = "fcntl"
-                return self
-            except (BlockingIOError, PermissionError):
-                self._wait(deadline)
-            except OSError:
-                return self             # a fájlrendszer nem támogatja: szálzár + O_APPEND marad
-        while msvcrt is not None:
-            try:
-                os.lseek(self.fd, 0, os.SEEK_SET)
-                msvcrt.locking(self.fd, msvcrt.LK_NBLCK, 1)
-                self.kind = "msvcrt"
-                return self
-            except OSError:
-                self._wait(deadline)
-        return self
-
-    def _wait(self, deadline):
-        if time.monotonic() > deadline:
-            self._close()
-            raise ActivityError("A tevékenységnaplót egy másik folyamat zárolja; próbáld újra.")
-        time.sleep(0.01)
-
-    def __exit__(self, *exc):
-        try:
-            if self.kind == "fcntl":
-                import fcntl
-                fcntl.flock(self.fd, fcntl.LOCK_UN)
-            elif self.kind == "msvcrt":
-                import msvcrt
-                os.lseek(self.fd, 0, os.SEEK_SET)
-                msvcrt.locking(self.fd, msvcrt.LK_UNLCK, 1)
-        except OSError:
-            pass
-        finally:
-            self._close()
-        return False
-
-    def _close(self):
-        if self.fd is not None:
-            try:
-                os.close(self.fd)
-            except OSError:
-                pass
-            self.fd = None
-
-
-def _tail_record(path):
-    """Az utolsó érvényes (hash-sel bíró) rekord, és véget ér-e a fájl újsorral."""
-    try:
-        size = os.path.getsize(path)
-    except OSError:
-        return None, True
-    if size == 0:
-        return None, True
-    with open(path, "rb") as fh:
-        fh.seek(size - 1)
-        ends_nl = fh.read(1) == b"\n"
-        block = 1 << 16
-        pos, buf = size, b""
-        while True:
-            start = max(0, pos - block)
-            fh.seek(start)
-            buf = fh.read(pos - start) + buf
-            pos = start
-            lines = buf.split(b"\n")
-            # az első darab csonka lehet, ha nem a fájl elejéről olvastunk
-            candidates = lines if pos == 0 else lines[1:]
-            for ln in reversed(candidates):
-                if not ln.strip():
-                    continue
-                try:
-                    rec = json.loads(ln.decode("utf-8"))
-                except ValueError:
-                    continue
-                if isinstance(rec, dict) and isinstance(rec.get("hash"), str) and isinstance(rec.get("seq"), int):
-                    return rec, ends_nl
-            if pos == 0:
-                return None, ends_nl
-            buf = lines[0]
+def _project_of(path):
+    """A napló útja (``<projekt>/07_ellenorzes/activity.jsonl``) vagy maga a projektmappa →
+    projektmappa. A motor csak a kanonikus helyen vezeti a naplót."""
+    p = Path(os.fspath(path))
+    if p.is_dir():
+        return p
+    parts = LOG_RELPATH.split("/")
+    if len(p.parts) > len(parts) and list(p.parts[-len(parts):]) == parts:
+        return p.parents[len(parts) - 1]
+    raise ActivityError("A tevékenységnapló helye csak <projekt>/%s lehet." % LOG_RELPATH)
 
 
 class ActivityLog(object):
-    """Egy projekt tevékenységnaplója. clock: datetime-ot (vagy kész ISO-szöveget) adó függvény
-    (tesztekhez); alapból UTC most."""
+    """Egy projekt tevékenységnaplója a motor ``ActivityLog``-ja fölött. clock: datetime-ot (vagy kész
+    ISO-szöveget) adó függvény (tesztekhez); alapból UTC most. ``path``: a napló (Path)."""
 
     def __init__(self, project_root, clock=None, relpath=LOG_RELPATH):
+        if relpath != LOG_RELPATH:
+            raise ActivityError("A tevékenységnapló helye rögzített: %s." % LOG_RELPATH)
         self.root = Path(os.path.realpath(str(project_root)))
-        self.relpath = relpath
-        self.path = store.resolve_under(self.root, relpath)
-        self.clock = clock or utc_now
-
-    def _entry(self, item):
-        """inputs/outputs eleme (út, {path, sha256} vagy (út, sha256)) → {path, sha256}."""
-        sha = None
-        if isinstance(item, dict):
-            p, sha, given = item.get("path"), item.get("sha256"), "sha256" in item
-        elif isinstance(item, (tuple, list)) and len(item) == 2:
-            (p, sha), given = item, True
-        else:
-            p, given = item, False
-        if not isinstance(p, (str, os.PathLike)) or not str(p):
-            raise ActivityError("Érvénytelen fájlút a naplóbejegyzésben.")
-        s = str(p).replace("\\", "/")
-        if os.path.isabs(str(p)) or re.match(r"^[A-Za-z]:", s):
-            full = Path(os.path.realpath(str(p)))
-            if store.is_within(full, self.root):
-                rel = Path(os.path.relpath(str(full), str(self.root))).as_posix()
-            else:
-                rel = full.as_posix()
-        else:
-            rel, full = s, None
-            try:
-                full = store.resolve_under(self.root, s)
-            except store.StoreError:
-                full = None
-        if not given:
-            sha = store.sha256_file(full) if full is not None else None
-        if sha is not None and not (isinstance(sha, str) and store.SHA256_RE.match(sha)):
-            raise ActivityError("Érvénytelen sha256 a naplóbejegyzésben.")
-        return {"path": rel, "sha256": sha}
+        self.relpath = LOG_RELPATH
+        self._log = _api.ActivityLog(str(self.root), clock=clock)
+        self.path = Path(self._log.path)
+        self.clock = self._log.clock
 
     def build(self, action, actor, argv=None, inputs=(), outputs=(), result=None, details=None):
-        """A rekord a lánc-mezők (seq, prev_hash, hash) nélkül; minden ellenőrzéssel."""
-        if not isinstance(action, str) or not _ACTION_RE.match(action):
-            raise ActivityError("Érvénytelen művelet-azonosító (betű, szám, '_', '.', ':', '-').")
-        if not isinstance(actor, str) or not actor.strip() or len(actor) > 200 or any(ord(c) < 32 for c in actor):
-            raise ActivityError("Érvénytelen szereplő (actor).")
-        rec = {"schema": SCHEMA, "seq": None, "ts": _fmt_ts(self.clock()), "actor": actor, "action": action}
-        if argv is not None:
-            if not isinstance(argv, (list, tuple)) or not all(isinstance(a, str) for a in argv):
-                raise ActivityError("Az argv szövegek listája legyen.")
-            if any("\x00" in a for a in argv):
-                raise ActivityError("Az argv nem tartalmazhat NUL karaktert.")
-            rec["argv"] = list(argv)
-        rec["inputs"] = [self._entry(x) for x in inputs or ()]
-        rec["outputs"] = [self._entry(x) for x in outputs or ()]
-        for key, val in (("result", result), ("details", details)):
-            if val is not None:
-                if not isinstance(val, dict):
-                    raise ActivityError("A(z) %s mező objektum legyen." % key)
-                rec[key] = val
-        hit = find_forbidden_key(rec)
-        if hit:
-            raise ActivityError("A naplóba nem kerülhet cellaérték: tiltott kulcs (%s)." % hit)
-        try:
-            canonical_json(rec)
-        except (TypeError, ValueError):
-            raise ActivityError("A naplóbejegyzés nem JSON-képes (vagy NaN/végtelen számot tartalmaz).")
-        return rec
+        """A rekord a lánc-mezők (seq, prev) nélkül; minden ellenőrzéssel, írás nélkül."""
+        return self._log.build(action, actor, argv, inputs, outputs, result, details)
+
+    def _guard(self):
+        """A napló útja a projekten belül maradjon (T7: a 07_ellenorzes/ nem lehet kivezető symlink)."""
+        store.resolve_under(self.root, LOG_RELPATH)
 
     def append(self, action, actor, argv=None, inputs=(), outputs=(), result=None, details=None):
-        """Új bejegyzés a lánc végére → a teljes rekord (seq, prev_hash, hash kitöltve)."""
-        rec = self.build(action, actor, argv, inputs, outputs, result, details)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        lock_path = self.path.with_name("." + self.path.name + ".lock")
-        with _thread_lock(self.path), _ProcessLock(lock_path):
-            last, ends_nl = _tail_record(str(self.path))
-            rec["seq"] = (last["seq"] + 1) if last else 1
-            rec["prev_hash"] = last["hash"] if last else None
-            rec["hash"] = record_hash(rec)
-            line = json.dumps(rec, ensure_ascii=False, separators=(",", ":"), allow_nan=False) + "\n"
-            # csonka (félbeszakadt) utolsó sor után új sorban folytatjuk; a verify jelzi a csonkát
-            data = (b"" if ends_nl else b"\n") + line.encode("utf-8")
-            fd = os.open(str(self.path), os.O_WRONLY | os.O_APPEND | os.O_CREAT | getattr(os, "O_BINARY", 0), 0o644)
-            try:
-                view = memoryview(data)
-                while view:
-                    n = os.write(fd, view)
-                    view = view[n:]
-                os.fsync(fd)
-            finally:
-                os.close(fd)
-        return rec
+        """Új bejegyzés a lánc végére → a teljes, kiírt rekord (seq, prev kitöltve)."""
+        self._guard()
+        return self._log.append(action, actor, argv=argv, inputs=inputs, outputs=outputs, result=result,
+                                details=details)
 
     def external_edit(self, rel, sha256, actor="external"):
         """A változásfigyelő által észlelt külső írás (4.16): actor 'external', a fájl új hash-ével."""
-        return self.append("file.external_edit", actor, outputs=[{"path": rel, "sha256": sha256}])
+        self._guard()
+        return self._log.external_edit(rel, sha256, actor=actor)
 
     def read(self):
-        return read_records(self.path)
+        return self._log.read()
 
     def head(self):
-        """{seq, hash} — az utolsó érvényes rekord (az audit-csomag activity_head-je); üresnél None."""
-        last, _ = _tail_record(str(self.path))
-        return None if last is None else {"seq": last["seq"], "hash": last["hash"]}
+        """{seq, hash} — az utolsó rekord (az audit-csomag activity_head-je); üresnél None."""
+        return self._log.head()
 
     def verify(self, anchor=None):
-        return verify_chain(self.path, anchor)
+        return self._log.verify(anchor)
 
 
 def read_records(path):
-    """A napló rekordjai (ellenőrzés nélkül; a nem értelmezhető sorokat kihagyja)."""
-    out = []
-    try:
-        with open(str(path), "rb") as fh:
-            for ln in fh:
-                if not ln.strip():
-                    continue
-                try:
-                    rec = json.loads(ln.decode("utf-8"))
-                except ValueError:
-                    continue
-                if isinstance(rec, dict):
-                    out.append(rec)
-    except FileNotFoundError:
-        pass
-    return out
+    """A napló rekordjai (ellenőrzés nélkül). path: a napló útja vagy a projektmappa."""
+    return _api.activity_read(str(_project_of(path)))
 
 
 def verify_chain(path, anchor=None):
-    """(ok, első hibás seq, üzenet). Ellenőrzi: JSON, schema, folytonos seq (1-től), prev_hash,
-    hash, tiltott kulcsok, csonka sor. anchor = {seq, hash} (pl. az audit-csomagból): a lánc
-    tartalmazza-e ezt a rekordot — így a záró bejegyzések törlése is kiderül."""
-    try:
-        with open(str(path), "rb") as fh:
-            data = fh.read()
-    except FileNotFoundError:
-        if anchor:
-            return (False, int(anchor.get("seq") or 1),
-                    "A tevékenységnapló hiányzik, pedig rögzített fej tartozik hozzá.")
-        return True, None, "Nincs tevékenységnapló (üres lánc)."
-    lines = data.split(b"\n")
-    partial = lines[-1] != b""
-    if not partial:
-        lines = lines[:-1]
-    prev, expected = None, 1
-    by_seq = {}
-    for i, ln in enumerate(lines):
-        lineno = i + 1
-        if partial and i == len(lines) - 1:
-            return False, expected, "A(z) %d. sor csonka (félbeszakadt írás)." % lineno
-        try:
-            rec = json.loads(ln.decode("utf-8"))
-        except ValueError:
-            return False, expected, "A(z) %d. sor nem érvényes JSON." % lineno
-        if not isinstance(rec, dict) or rec.get("schema") != SCHEMA:
-            return False, expected, "A(z) %d. sor nem %s rekord." % (lineno, SCHEMA)
-        seq = rec.get("seq")
-        if not isinstance(seq, int) or isinstance(seq, bool) or seq != expected:
-            return False, expected, ("A(z) %d. sorban a sorszám %r, de %d várható (törölt, beszúrt vagy "
-                                     "átrendezett bejegyzés)." % (lineno, seq, expected))
-        if rec.get("prev_hash") != prev:
-            return False, expected, "A(z) %d. sor (seq %d) nem az előző bejegyzés hash-ére hivatkozik." % (lineno, seq)
-        try:
-            h = record_hash(rec)
-        except (TypeError, ValueError):
-            return False, expected, "A(z) %d. sor (seq %d) nem kanonizálható." % (lineno, seq)
-        if rec.get("hash") != h:
-            return False, expected, "A(z) %d. sor (seq %d) tartalma utólag megváltozott (hash-eltérés)." % (lineno, seq)
-        if find_forbidden_key(rec):
-            return False, expected, "A(z) %d. sor (seq %d) tiltott (cellaérték-) kulcsot tartalmaz." % (lineno, seq)
-        by_seq[seq] = h
-        prev, expected = h, expected + 1
-    n = expected - 1
-    if anchor:
-        aseq, ahash = anchor.get("seq"), anchor.get("hash")
-        if by_seq.get(aseq) != ahash:
-            bad = aseq if isinstance(aseq, int) and aseq <= n else n + 1
-            return False, bad, "A rögzített fej (seq %s) nem található a láncban: törölt vagy átírt bejegyzések." % aseq
-    return True, None, "A lánc ép: %d bejegyzés." % n
+    """(ok, első hibás seq, üzenet) — a motor lánc-ellenőrzése. path: a napló útja vagy a projektmappa;
+    anchor = {seq, hash}: a lánc tartalmazza-e ezt a rekordot (a záró bejegyzések törlése ellen)."""
+    return _api.activity_verify(str(_project_of(path)), anchor)
+
+
+def head(path):
+    """{seq, hash} vagy None. path: a napló útja vagy a projektmappa."""
+    return _api.activity_head(str(_project_of(path)))
 
 
 # ------------------------------------------------------------------ újrafuttató szkriptek

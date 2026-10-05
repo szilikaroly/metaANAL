@@ -24,6 +24,23 @@
   };
   var state = { specs: {}, jobs: {}, n: 0, committed: {}, overrideK: null, exploreDelay: 120, reqId: 0 };
 
+  // A fixture-futások az o1-tábla adatára DATA_SHA-val hivatkoznak; a kinyerési fixture-tábla ETag-je ettől független.
+  // A két fixture-világ összekötése: a tábla első látott ETag-je = DATA_SHA; ha a tábla azóta változott (rács vagy
+  // MA.dev.extraction.externalEdit), az új ETag — így a feltárás frissessége (FID-5) a fejlesztői buildben is
+  // ugyanúgy viselkedik, mint a valódi szerveren.
+  var O1 = '03_adatok/o1.csv';
+  var baseEtag = {};
+  MA.dev.mapTableSha = function (ds, etag) {
+    if (ds !== O1 || !etag) { return etag; }
+    if (!Object.prototype.hasOwnProperty.call(baseEtag, ds)) { baseEtag[ds] = etag; }
+    return etag === baseEtag[ds] ? DATA_SHA : etag;
+  };
+  function liveSha(ds) {
+    var ex = MA.dev.extraction && MA.dev.extraction.state ? MA.dev.extraction.state() : null;
+    var tb = ex && ex.tables ? ex.tables[ds] : null;
+    return tb ? MA.dev.mapTableSha(ds, tb.data.etag) : DATA_SHA;
+  }
+
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
 
   function meta(ms) {
@@ -157,6 +174,7 @@
     run.client_seq = clientSeq;
     run.expanded_argv = expandedArgv(sp);
     run.stale = false;
+    if (run.data && sp.data && sp.data.path === O1) { run.data = Object.assign({}, run.data, { sha256: liveSha(O1) }); }
     if (mode === 'explore') {
       run.run_id = null;
       run.mode = 'explore';
@@ -205,8 +223,9 @@
     var meta_ = engineOptions();
     var bad = Object.keys(sp.options || {}).filter(function (k) { return !Object.prototype.hasOwnProperty.call(meta_, k); });
     if (bad.length) { return fail('VALIDATION', 422, 'Ismeretlen opció(k) a specben: ' + bad.join(', ')); }
-    if (mode === 'commit' && sp.data && sp.data.sha256 && sp.data.sha256 !== DATA_SHA) {
-      return fail('CONFLICT', 409, 'Az adattábla a legutóbbi explore óta megváltozott (data.sha256 eltér) — futtasd újra az explore-t.', { data_sha256: DATA_SHA });
+    var cur = sp.data && sp.data.path === O1 ? liveSha(O1) : DATA_SHA;
+    if (mode === 'commit' && sp.data && sp.data.sha256 && sp.data.sha256 !== cur) {
+      return fail('CONFLICT', 409, 'Az adattábla a legutóbbi explore óta megváltozott (data.sha256 eltér) — futtasd újra az explore-t.', { data_sha256: cur });
     }
     var id = 'j' + String(1000 + Object.keys(state.jobs).length + 1);
     var seq = typeof b.client_seq === 'number' ? b.client_seq : 0;

@@ -1,5 +1,5 @@
 {
- "description": "GET /api/audit/project — szk.ma.project-audit/v1 (4.15): X-szabályok = „következő lépések” (3.5.1).",
+ "description": "GET /api/audit/project — szk.ma.project-audit/v1 (4.15): X-szabályok = „következő lépések” (3.5.1); not_checked: a még nem ellenőrizhető szabályok (a motor oka szó szerint).",
  "routes": [
   {
    "method": "GET",
@@ -74,7 +74,24 @@
         "PRISMA-S: 4 adatbázis, regiszter 0"
        ]
       }
-     }
+     },
+     "not_checked": [
+      {
+       "code": "X003",
+       "outcome": null,
+       "reason": "nincs értékelés-mappa (04_torzitas_kockazat/appraisals)"
+      },
+      {
+       "code": "X014",
+       "outcome": "o1",
+       "reason": "a bevont vizsgálatok száma (I) ismeretlen (03_adatok/studies.json, 02_szures/prisma_flow.json vagy 02_szures/prisma_folyamat.md)"
+      },
+      {
+       "code": "X014",
+       "outcome": "o3",
+       "reason": "a bevont vizsgálatok száma (I) ismeretlen (03_adatok/studies.json, 02_szures/prisma_flow.json vagy 02_szures/prisma_folyamat.md)"
+      }
+     ]
     },
     "warnings": [],
     "meta": {

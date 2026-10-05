@@ -652,6 +652,35 @@ def is_private_path(rel_path, platform=None):
     return parts[0] == PRIVATE_DIR
 
 
+def _first_part_private(rel):
+    parts = [p for p in str(rel).replace("\\", "/").split("/") if p not in ("", ".")]
+    return bool(parts) and parts[0].casefold() == PRIVATE_DIR.casefold()
+
+
+def is_private_location(project_dir, path):
+    """Az út (projekt-relatív vagy abszolút) a _privat/ alatt van-e — az írt alakja szerint ÉS a szimbolikus
+    linkek feloldása után is (7.4: a „_privat/** — soha” a fájl VALÓDI helyére vonatkozik; egy
+    ``03_adatok/x.csv → ../_privat/titkos.csv`` link is privát). Kis/nagybetű-független (óvatos irány).
+    Projekten kívüli valódi hely → False (azt a hívó külön kezeli)."""
+    if not isinstance(path, str) or not path.strip() or "\0" in path:
+        return False
+    if not os.path.isabs(path) and _first_part_private(path):
+        return True
+    try:
+        root = os.path.realpath(str(project_dir))
+        if os.path.isabs(path):
+            full = path
+        else:
+            full = os.path.join(root, *[p for p in path.replace("\\", "/").split("/") if p])
+        real = os.path.realpath(full)
+    except (OSError, ValueError):
+        return False
+    rc, fc = os.path.normcase(root), os.path.normcase(real)
+    if fc == rc or not fc.startswith(rc.rstrip("\\/") + os.sep):
+        return False
+    return _first_part_private(os.path.relpath(real, root))
+
+
 def _project(project_dir):
     p = Path(project_dir)
     if not p.is_dir():

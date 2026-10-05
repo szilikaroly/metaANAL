@@ -7,7 +7,8 @@
  *
  * opts: {label, columns: [{id, label, hint?, frozen?, width? (em), readonly?, numeric?}],
  *        rows: [{uid, cells: {colId: szöveg}}], newRow() → {uid, cells}, maxRows?,
- *        onChange(batch), onActive(pos), onKey(ev, pos) → true = kezelve, onActivate(pos)}
+ *        onChange(batch), onActive(pos), onKey(ev, pos) → true = kezelve, onActivate(pos),
+ *        readOnly? — csak olvasható rács (pl. a pillanatképben): minden oszlop readonly, beillesztés/kivágás nincs}
  *   batch: {source: 'edit'|'paste'|'clear'|'cut', cells: [{uid, col, before, after}],
  *           inserted: null | {index, rows: [{uid, cells}]}} — a rács a változást MÁR alkalmazta.
  * Billentyűk: nyilak, Home/End (+Ctrl), PageUp/PageDown, Shift+nyíl = tartomány, Enter/F2 = szerkesztés,
@@ -96,7 +97,8 @@
 
     var thead = h('thead');
     var tbody = h('tbody');
-    var table = h('table', { 'class': 'mg-table', role: 'grid', id: gid, 'aria-label': opts.label || null, 'aria-multiselectable': 'true' }, thead, tbody);
+    var table = h('table', { 'class': 'mg-table', role: 'grid', id: gid, 'aria-label': opts.label || null, 'aria-multiselectable': 'true',
+      'aria-readonly': opts.readOnly ? 'true' : null }, thead, tbody);
     var descBox = h('div', { 'class': 'mg-desc', hidden: true });
     var el = h('div', { 'class': 'mg' }, table, descBox);
 
@@ -372,6 +374,7 @@
 
     /** paste(text) — TSV beillesztése az aktív cellától (a hiányzó sorok a tábla végére kerülnek). */
     function paste(text) {
+      if (opts.readOnly) { return null; }
       var m = parseTSV(text);
       if (!m.length || !act) { return null; }
       var top = rangeCells()[0] ? rangeCells()[0][0] : act;
@@ -463,7 +466,7 @@
       ev.clipboardData.setData('text/plain', toTSV(selectionMatrix()));
     });
     table.addEventListener('cut', function (ev) {
-      if (edit || !act) { return; }
+      if (edit || !act || opts.readOnly) { return; }
       ev.preventDefault();
       ev.clipboardData.setData('text/plain', toTSV(selectionMatrix()));
       clearSelection('cut');
@@ -540,7 +543,7 @@
 
     // ---------------------------------------------------------------- nyilvános felület
     function setColumns(list) {
-      cols = list.map(function (c) { return Object.assign({}, c); });
+      cols = list.map(function (c) { return Object.assign({}, c, opts.readOnly ? { readonly: true } : null); });
       colIdx = {};
       cols.forEach(function (c, i) { colIdx[c.id] = i; });
     }

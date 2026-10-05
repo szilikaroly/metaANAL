@@ -405,7 +405,7 @@ class HttpHardeningTests(unittest.TestCase):
         self.assertIn(rel, external)
         log_path = Path(self.proj, activity.LOG_RELPATH)
         found = _wait_for(lambda: [r for r in activity.read_records(log_path) if r["action"] == "file.external_edit"
-                                   and r["outputs"][0]["path"] == rel])
+                                   and rel in r["outputs"]])
         self.assertTrue(found, rel)
         self.assertEqual(found[-1]["actor"], "external")
 
@@ -446,7 +446,7 @@ class HttpHardeningTests(unittest.TestCase):
         recs = activity.read_records(log_path)[before:]
         saves = [r for r in recs if r["action"] == "table.save"]
         self.assertTrue(saves, "a részleges írás nem került az activity-láncba")
-        self.assertEqual(saves[-1]["outputs"][0]["sha256"], disk)
+        self.assertEqual(saves[-1]["outputs"][ds], disk)
         self.assertTrue(saves[-1]["details"]["partial"])
         self.assertTrue(activity.verify_chain(log_path)[0])
         # a kapott etaggel az újramentés sikerül (most már az oldalfájllal együtt)
@@ -607,9 +607,9 @@ class PrivacyClassTests(unittest.TestCase):
             self.assertIn(ds, external)
             log_path = Path(proj, activity.LOG_RELPATH)
             found = _wait_for(lambda: [r for r in activity.read_records(log_path)
-                                       if r["action"] == "file.external_edit" and r["outputs"][0]["path"] == ds])
+                                       if r["action"] == "file.external_edit" and ds in r["outputs"]])
             self.assertTrue(found)
-            self.assertEqual(found[-1]["outputs"][0]["sha256"], store.sha256_file(p))
+            self.assertEqual(found[-1]["outputs"][ds], store.sha256_file(p))
         finally:
             srv.stop()
 

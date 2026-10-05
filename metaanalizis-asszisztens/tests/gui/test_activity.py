@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-"""ma_gui.activity: hash-lánc (szk.ma.activity/v1), manipuláció felismerése, cellaérték-tilalom,
-konkurens hozzáfűzés (szálak, folyamatok), újrafuttató szkriptek idézése."""
+"""ma_gui.activity: hash-lánc (szk.ma.activity/v1, a motor kanonikus formátumában), manipuláció
+felismerése, cellaérték-tilalom, konkurens hozzáfűzés (szálak, folyamatok, a munkapad és a CLI
+felváltva), újrafuttató szkriptek idézése."""
 import datetime
 import hashlib
 import json
@@ -69,18 +70,17 @@ class ChainTests(_LogCase):
         self.assertEqual(list(r1)[:5], ["schema", "seq", "ts", "actor", "action"])
         self.assertEqual(r1["schema"], "szk.ma.activity/v1")
         self.assertEqual(r1["ts"], "2026-10-04T21:12:01Z")
-        self.assertIsNone(r1["prev_hash"])
-        self.assertEqual(r1["inputs"], [{"path": "03_adatok/o1.csv",
-                                         "sha256": hashlib.sha256(self.csv.read_bytes()).hexdigest()}])
-        self.assertEqual(r1["outputs"], [{"path": "05_elemzes/o1/run0/results.json", "sha256": "a" * 64}])
+        self.assertIsNone(r1["prev"])
+        self.assertNotIn("hash", r1)
+        self.assertEqual(r1["inputs"], {"03_adatok/o1.csv": hashlib.sha256(self.csv.read_bytes()).hexdigest()})
+        self.assertEqual(r1["outputs"], {"05_elemzes/o1/run0/results.json": "a" * 64})
         for prev, rec in zip(recs, recs[1:]):
-            self.assertEqual(rec["prev_hash"], prev["hash"])
-        body = {k: v for k, v in recs[1].items() if k != "hash"}
-        want = hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"),
+            self.assertEqual(rec["prev"], activity.record_hash(prev))
+        want = hashlib.sha256(json.dumps(recs[1], sort_keys=True, separators=(",", ":"),
                                          ensure_ascii=False).encode("utf-8")).hexdigest()
-        self.assertEqual(recs[1]["hash"], want)
+        self.assertEqual(activity.record_hash(recs[1]), want)
         self.assertEqual(self.log.verify(), (True, None, "A lánc ép: 3 bejegyzés."))
-        self.assertEqual(self.log.head(), {"seq": 3, "hash": recs[2]["hash"]})
+        self.assertEqual(self.log.head(), {"seq": 3, "hash": activity.record_hash(recs[2])})
         self.assertEqual(os.path.realpath(str(self.log.path)),
                          os.path.realpath(str(self.root / "07_ellenorzes" / "activity.jsonl")))
 
@@ -92,9 +92,9 @@ class ChainTests(_LogCase):
 
     def test_absolute_paths_relativized(self):
         rec = self.log.append("table.save", "user:SzK", outputs=[str(self.csv)], inputs=[{"path": "nincs.csv"}])
-        self.assertEqual(rec["outputs"][0]["path"], "03_adatok/o1.csv")
-        self.assertIsNotNone(rec["outputs"][0]["sha256"])
-        self.assertEqual(rec["inputs"], [{"path": "nincs.csv", "sha256": None}])
+        self.assertEqual(list(rec["outputs"]), ["03_adatok/o1.csv"])
+        self.assertIsNotNone(rec["outputs"]["03_adatok/o1.csv"])
+        self.assertEqual(rec["inputs"], {"nincs.csv": None})
 
     def test_tamper_edit(self):
         self.fill(4)
@@ -104,18 +104,22 @@ class ChainTests(_LogCase):
         lines[1] = json.dumps(rec, ensure_ascii=False).encode("utf-8")
         self.write_lines(lines)
         ok, bad, msg = self.log.verify()
-        self.assertEqual((ok, bad), (False, 2))
+        # a 2. sor tartalma változott: a 3. sor prev-je már nem egyezik vele
+        self.assertEqual((ok, bad), (False, 3))
         self.assertIn("hash", msg)
 
     def test_tamper_edit_with_rehash(self):
+        # a módosított sor utáni prev „javítása” csak továbbtolja a törést a következő sorra
         self.fill(4)
         lines = self.lines()
         rec = json.loads(lines[1])
         rec["result"]["summary"] = "k=12"
-        rec["hash"] = activity.record_hash(rec)
+        nxt = json.loads(lines[2])
+        nxt["prev"] = activity.record_hash(rec)
         lines[1] = json.dumps(rec, ensure_ascii=False).encode("utf-8")
+        lines[2] = json.dumps(nxt, ensure_ascii=False).encode("utf-8")
         self.write_lines(lines)
-        self.assertEqual(self.log.verify()[:2], (False, 3))
+        self.assertEqual(self.log.verify()[:2], (False, 4))
 
     def test_tamper_delete_middle_and_first(self):
         self.fill(4)
@@ -150,15 +154,28 @@ class ChainTests(_LogCase):
         self.assertIn("csonka", msg)
         rec = self.log.append("table.save", "user:SzK")
         self.assertEqual(rec["seq"], 3)
-        self.assertEqual(rec["prev_hash"], self.log.read()[1]["hash"])
+        self.assertEqual(rec["prev"], activity.record_hash(self.log.read()[1]))
         self.assertEqual(len(self.lines()), 4)
         self.assertEqual(self.log.verify()[:2], (False, 3))     # a csonka sor nyoma megmarad
         self.assertEqual([r["seq"] for r in self.log.read()], [1, 2, 3])
 
+    def test_log_dir_symlink_out_of_project_refused(self):
+        if not hasattr(os, "symlink"):
+            self.skipTest("nincs symlink")
+        outside = Path(self.tmp) / "kint"
+        outside.mkdir()
+        try:
+            os.symlink(str(outside), str(self.root / "07_ellenorzes"))
+        except (OSError, NotImplementedError):
+            self.skipTest("symlink nem hozható létre")
+        with self.assertRaises(store.Forbidden):
+            self.log.append("table.save", "user:SzK")
+        self.assertEqual(list(outside.iterdir()), [])
+
     def test_external_edit_record(self):
         rec = self.log.external_edit("03_adatok/o1.csv", "b" * 64)
         self.assertEqual((rec["actor"], rec["action"]), ("external", "file.external_edit"))
-        self.assertEqual(rec["outputs"], [{"path": "03_adatok/o1.csv", "sha256": "b" * 64}])
+        self.assertEqual(rec["outputs"], {"03_adatok/o1.csv": "b" * 64})
 
 
 class PrivacyTests(_LogCase):
@@ -194,7 +211,6 @@ class PrivacyTests(_LogCase):
         lines = self.lines()
         rec = json.loads(lines[1])
         rec["details"] = {"cells": ["4242"]}
-        rec["hash"] = activity.record_hash(rec)
         lines[1] = json.dumps(rec).encode("utf-8")
         self.write_lines(lines)
         ok, bad, msg = self.log.verify()
@@ -240,6 +256,87 @@ class ConcurrencyTests(_LogCase):
         ok, bad, msg = activity.verify_chain(self.root / "07_ellenorzes" / "activity.jsonl")
         self.assertTrue(ok, msg)
         self.assertEqual(msg, "A lánc ép: 45 bejegyzés.")
+
+
+MA_PY = os.path.join(ROOT, "ma.py")
+
+
+class MixedWriterTests(_LogCase):
+    """A munkapad (ma_gui.activity) és a motor CLI-je (MA_ACTIVITY_LOG=1) ugyanabba a láncba ír:
+    egy formátum, egy zárfájl, ép lánc felváltott és egyidejű írás után is (a motor ellenőrzőjével is)."""
+
+    def cli(self, *args, **kw):
+        env = dict(os.environ, MA_ACTIVITY_LOG="1", PYTHONIOENCODING="utf-8")
+        env.pop("MA_ACTOR", None)
+        return subprocess.Popen([sys.executable, MA_PY] + list(args), env=env, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, **kw)
+
+    def run_cli(self, *args):
+        p = self.cli(*args)
+        out, err = p.communicate(timeout=120)
+        self.assertEqual(p.returncode, 0, err.decode("utf-8", "replace"))
+        self.assertNotIn(b"FIGYELEM", err)          # a CLI-horog nem jelzett íráshibát
+        return out
+
+    def test_interleaved_gui_and_cli(self):
+        log = activity.ActivityLog(self.root)
+        log.append("table.save", "user", outputs=["03_adatok/o1.csv"], details={"n_rows": 1})
+        self.run_cli("project", "init", str(self.root), "--title", "Vegyes írók")
+        log.append("documents.save", "user", details={"n_docs": 0})
+        self.run_cli("project", "log", str(self.root), "--agent", "user", "--decision", "CLI-döntés",
+                     "--actor", "user:SzK")
+        log.append("log.decision", "user", details={"kind": "decision", "id": 2})
+        self.run_cli("project", "finding", str(self.root), "--agent", "reviewer", "--severity", "minor",
+                     "--title", "CLI-megállapítás")
+        recs = log.read()
+        actions = [r["action"] for r in recs]
+        self.assertEqual(actions, ["table.save", "project.init", "documents.save", "project.log", "log.decision",
+                                   "project.finding"])
+        self.assertEqual([r["seq"] for r in recs], list(range(1, 7)))
+        self.assertEqual(recs[3]["actor"], "user:SzK")
+        for prev, rec in zip(recs, recs[1:]):
+            self.assertEqual(rec["prev"], activity.record_hash(prev))
+
+        fields = {"schema", "seq", "ts", "actor", "action", "argv", "inputs", "outputs", "result", "prev"}
+        for rec in recs:                    # egyetlen rekordformátum mindkét írótól
+            self.assertEqual(set(rec) - {"details"}, fields)
+            self.assertIsInstance(rec["inputs"], dict)
+            self.assertIsInstance(rec["outputs"], dict)
+        self.assertEqual(log.verify(), (True, None, "A lánc ép: 6 bejegyzés."))
+        # a motor saját ellenőrzője (ma.py project activity --json) ugyanezt mondja
+        rep = json.loads(self.run_cli("project", "activity", str(self.root), "--json").decode("utf-8"))
+        self.assertTrue(rep["ok"], rep)
+        self.assertEqual(rep["records"], 6)
+        self.assertEqual(rep["head"], log.head())
+
+    def test_concurrent_gui_threads_and_cli_processes(self):
+        self.run_cli("project", "init", str(self.root), "--title", "Egyidejű írók")
+        log = activity.ActivityLog(self.root)
+        errors = []
+
+        def gui():
+            try:
+                for i in range(15):
+                    log.append("table.save", "user", details={"i": i})
+            except Exception as exc:          # pragma: no cover
+                errors.append(exc)
+
+        threads = [threading.Thread(target=gui) for _ in range(2)]
+        procs = [self.cli("project", "log", str(self.root), "--agent", "user", "--decision", "D%d" % k)
+                 for k in range(3)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        for p in procs:
+            _out, err = p.communicate(timeout=120)
+            self.assertEqual(p.returncode, 0, err.decode("utf-8", "replace"))
+        self.assertEqual(errors, [])
+        ok, bad, msg = activity.verify_chain(self.root)
+        self.assertTrue(ok, msg)
+        recs = log.read()
+        self.assertEqual(len(recs), 1 + 30 + 3)
+        self.assertEqual(sum(1 for r in recs if r["action"] == "project.log"), 3)
 
 
 def _cmd_unescape(line):

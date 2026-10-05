@@ -26,15 +26,10 @@
 
   function kindById(id) { for (var i = 0; i < KINDS.length; i++) { if (KINDS[i].id === id) { return KINDS[i]; } } return KINDS[0]; }
 
-  /** A cellába írandó szöveg: a motor cell_text-je, különben outputs_text a tábla tizedesjele szerint. Nincs → null. */
-  function cellText(result, out, decimalMark) {
-    if (result.cell_text && typeof result.cell_text[out] === 'string') { return result.cell_text[out]; }
-    var o = result.outputs_text ? result.outputs_text[out] : null;
-    if (typeof o === 'string') { return o; }
-    if (o && typeof o === 'object') {
-      var v = decimalMark === '.' ? o.en : o.hu;
-      return typeof v === 'string' ? v : null;
-    }
+  /** A cellába írandó szöveg: csak a motor cell_text-je (a cél tábla tizedesjelével, 4.7). Az outputs_text
+   * kijelzési szöveg (4.0: tizedespont mindkét nyelven), cellába nem kerül; nincs cell_text → null (nincs beírás). */
+  function cellText(result, out) {
+    if (result && result.cell_text && typeof result.cell_text[out] === 'string') { return result.cell_text[out]; }
     return null;
   }
 
@@ -226,10 +221,9 @@
   MA.convertDialog = { open: open, KINDS: KINDS, cellText: cellText };
 
   MA.selftest.register('átváltó: cellaszöveg csak a motortól', function (tt) {
-    var r = { outputs: { mean: 12.854875 }, outputs_text: { mean: { hu: '12,85', en: '12.85' } } };
-    tt.eq(cellText(r, 'mean', ','), '12,85', 'tizedesvessző → hu szöveg');
-    tt.eq(cellText(r, 'mean', '.'), '12.85', 'tizedespont → en szöveg');
-    tt.eq(cellText({ outputs: { sd: 3.1 } }, 'sd', ','), null, 'nyers szám nem kerül cellába (nincs JS-formázás)');
-    tt.eq(cellText({ cell_text: { sd: '3,0287' } }, 'sd', '.'), '3,0287', 'cell_text elsőbbsége');
+    var r = { outputs: { mean: 12.854875 }, outputs_text: { mean: { hu: '12.85', en: '12.85' } } };
+    tt.eq(cellText(r, 'mean'), null, 'a kijelzési szöveg (outputs_text) nem kerül cellába');
+    tt.eq(cellText({ outputs: { sd: 3.1 } }, 'sd'), null, 'nyers szám nem kerül cellába (nincs JS-formázás)');
+    tt.eq(cellText({ cell_text: { sd: '3,029' }, outputs_text: { sd: { hu: '3.029', en: '3.029' } } }, 'sd'), '3,029', 'a cellába a motor cell_text-je');
   });
 })();

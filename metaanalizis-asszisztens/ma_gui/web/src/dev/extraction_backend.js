@@ -512,6 +512,15 @@
     init();
     var d = clone(S.project);
     if (req.query.include === 'recent') { d.recent = clone(S.recent); }
+    // a táblák ETag-je élő (mint a szerver list_tables-e): a rácsban vagy „külső” szerkesztés után változik;
+    // a MA.dev.mapTableSha horog (dev/analysis_fixtures.js) a saját fixture-világához igazíthatja
+    if (Array.isArray(d.tables)) {
+      d.tables = d.tables.map(function (tb) {
+        var cur = S.tables[tb.dataset] ? S.tables[tb.dataset].data.etag : tb.etag;
+        if (MA.dev.mapTableSha) { cur = MA.dev.mapTableSha(tb.dataset, cur); }
+        return Object.assign({}, tb, { etag: cur });
+      });
+    }
     return ok('szk.ma.project/v1', d);
   });
 
@@ -519,7 +528,7 @@
     init();
     var b = req.body || {};
     var same = !b.path || b.path === S.project.path || b.path === S.project.name;
-    var other = fail('BAD_REQUEST', 400, 'Ez a munkapad a(z) „' + S.project.name + '” projekthez indult; másik projektmappához indíts új példányt: python -m ma_gui --project <mappa>.',
+    var other = fail('BAD_REQUEST', 400, 'Ez a munkapad a(z) „' + S.project.name + '” projekthez indult; másik projektmappához indíts új példányt: python ma.py gui --project <mappa> (Windowson: py -3 ma.py gui --project <mappa>).',
       { project: S.project.path });
     if (b.action === 'open') {
       if (!same) { return other; }

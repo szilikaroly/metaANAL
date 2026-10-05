@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A MA-munkapad helyi HTTP-szervere (terv 2.2, 3.1, 3.4, 7.1–7.3).
 
-Indítás (2.2), sorrendben: motor-önteszt (háttérben, alfolyamatban) → ``kb.ensure_built``
+Indítás (2.2), sorrendben: motor-önteszt (háttérben, alfolyamatban) → ``api.kb_ensure_built``
 (háttérszálon) → képesség-felderítés (háttérszálon) → adatvédelmi ellenőrzés → egyszer használható,
 60 s-os indítókód; a böngésző a ``http://127.0.0.1:<port>/#launch=<kód>`` címet nyitja.
 
@@ -37,14 +37,22 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-import metaelemzes
+from metaelemzes import api as engine_api
 
 from . import __version__, activity, privacy, runtime, security, store
 from . import router as _router
 from .router import ApiError
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+# a kiszolgált felület: a build_gui.py termék-buildje (ma_gui/web/dist/index.html, verziókövetett — a
+# felhasználónak nincs build-lépése); ha hiányzik, a static/index.html tartalék oldala (útmutatással)
+WEB_DIST_HTML = Path(__file__).resolve().parent / "web" / "dist" / "index.html"
 INDEX_HTML = STATIC_DIR / "index.html"
+INDEX_CANDIDATES = (WEB_DIST_HTML, INDEX_HTML)
+# a meleg worker hívható célpontjai (6.8: a motor csak a homlokzaton át) és előre betöltött moduljai
+JOB_ALLOWED_MODULES = ("metaelemzes.api", "ma_gui.routes._worker")
+JOB_PRELOAD = ("metaelemzes.api", "metaelemzes.pipeline", "ma_gui.routes._worker")
+MAX_JOB_META = 256
 PROJECT_JSON = "ma-projekt.json"
 ACTOR = "user"
 DEFAULT_IDLE_HOURS = 4.0
@@ -424,7 +432,9 @@ class App(object):
         self.watcher = store.ChangeWatcher(root, interval=watch_interval)
         self.store = store.ProjectStore(root, watcher=self.watcher)
         self.activity = activity.ActivityLog(root)
-        self.router = _router.Router(meta_fn=self._meta, log_fn=self.log, validate_responses=validate_responses)
+        from .routes import _contracts
+        self.router = _router.Router(meta_fn=self._meta, log_fn=self.log, validate_responses=validate_responses,
+                                     registry=_contracts.registry())
         from .routes import register_all
         register_all(self.router)
         self._caps = caps
@@ -451,8 +461,11 @@ class App(object):
         self._stopping = threading.Event()
         self._last_activity = time.monotonic()
         self._threads = []
-        self._index_cache = (None, None)
+        self._index_cache = (None, None, None)
         self._caps_registered = False
+        self._engine_info = None
+        self.job_meta = {}                  # job_id → {mode, outcome, spec, …} (a végpontok kiegészítéseihez)
+        self._job_meta_lock = threading.Lock()
 
     # -- napló
     def log(self, line):
@@ -471,7 +484,7 @@ class App(object):
         self._last_activity = time.monotonic()
 
     def _meta(self):
-        return {"engine": str(getattr(metaelemzes, "__version__", "")) or None, "project_rev": self.project_rev()}
+        return {"engine": str(getattr(engine_api, "__version__", "")) or None, "project_rev": self.project_rev()}
 
     def project_rev(self):
         try:
@@ -508,11 +521,10 @@ class App(object):
                                            if res.get("checks") else ""))
 
     def _build_kb(self):
-        from metaelemzes import kb
         self.kb_state = {"state": "building", "ok": None}
         started = self._kb_attempt_at = time.monotonic()
         try:
-            rebuilt = kb.ensure_built(self.kb_db)
+            rebuilt = engine_api.kb_ensure_built(self.kb_db)
             self.kb_state = {"state": "ok", "ok": True, "rebuilt": bool(rebuilt),
                              "elapsed_ms": int((time.monotonic() - started) * 1000)}
         except Exception as exc:                           # noqa: BLE001
@@ -540,12 +552,40 @@ class App(object):
             raise ApiError("CAPABILITY_MISSING", self.kb_state.get("reason") or "A tudásbázis nem érhető el.")
 
     def get_jobs(self):
-        """A meleg worker-folyamat kezelője — lustán, első használatkor indul (elemzésekhez)."""
+        """A meleg worker-folyamat kezelője — lustán, első használatkor indul (elemzésekhez). Hívható
+        cél csak a motor-homlokzat (metaelemzes.api) és a commit-burok (ma_gui.routes._worker) lehet."""
         with self._lock:
+            if self._closed:
+                raise ApiError("INTERNAL", "A szerver leáll; új elemzés nem indítható.")
             if self._jobs is None:
                 from . import jobs
-                self._jobs = jobs.JobManager()
+                self._jobs = jobs.JobManager(preload=JOB_PRELOAD, allowed_modules=JOB_ALLOWED_MODULES)
             return self._jobs
+
+    def jobs_if_started(self):
+        """A feladatkezelő, ha már elindult (lekérdezés ne indítson worker-folyamatot); különben None."""
+        with self._lock:
+            return self._jobs
+
+    def remember_job(self, job_id, meta):
+        """A feladathoz tartozó szerveroldali adatok (kimenet, spec-név, mód) — korlátos számban."""
+        with self._job_meta_lock:
+            self.job_meta[job_id] = dict(meta)
+            while len(self.job_meta) > MAX_JOB_META:
+                self.job_meta.pop(next(iter(self.job_meta)))
+
+    def job_info(self, job_id):
+        with self._job_meta_lock:
+            m = self.job_meta.get(job_id)
+            return dict(m) if m is not None else None
+
+    def engine_info(self):
+        """A motor leírása (api.engine_info: mértékek, opció- és szabály-metaadat) — folyamatonként egyszer
+        épül; az önteszt- és KB-állapot a szerveré (selftest_info, kb_info)."""
+        with self._lock:
+            if self._engine_info is None:
+                self._engine_info = engine_api.engine_info(selftest=False, db=self.kb_db)
+            return self._engine_info
 
     # -- projekt-metaadat és adatvédelem
     def project_meta(self):
@@ -639,6 +679,16 @@ class App(object):
         return privacy.can_write(str(self.project_root), rel, dc, consent=consent,
                                  phi_detected=phi_detected, **self.privacy_kw)
 
+    def can_write_meta(self, rel, phi_detected=False):
+        """Projekt-metaadat (elemzési spec, PRISMA-folyamat, vizsgálat↔jelentés térkép, futás-kimenet)
+        írása → (ok, indoklás). Ez nem betegszintű adat, ezért C osztályban sem kell a _privat/ alá
+        kerülnie; a PHI-gyanú (szabad szöveg TAJ-számmal, születési dátummal) viszont ugyanúgy tiltja,
+        és B/C osztálynál a vault-írástartás (nem .gitignore-olt cél egy követett projektben) is él."""
+        dc, _source = self.data_class_with_source()
+        effective = "B" if dc == "C" else dc
+        return privacy.can_write(str(self.project_root), rel, effective, phi_detected=phi_detected,
+                                 **self.privacy_kw)
+
     def log_activity(self, action, argv=None, inputs=(), outputs=(), result=None, details=None):
         """Activity-sor (cellaérték nélkül); hibánál None és szervernapló-sor, a kérés nem bukik el."""
         try:
@@ -657,20 +707,23 @@ class App(object):
             return False
 
     def index_html(self):
-        """A statikus felület bájtjai (mtime szerint gyorsítótárazva) vagy None."""
-        try:
-            st = INDEX_HTML.stat()
-        except OSError:
-            return None
-        key = (st.st_mtime_ns, st.st_size)
-        cached_key, data = self._index_cache
-        if cached_key != key:
+        """A kiszolgált felület bájtjai (mtime szerint gyorsítótárazva) vagy None: a build_gui.py
+        termék-buildje (web/dist/index.html), ennek hiányában a static/index.html tartalék oldala."""
+        for path in INDEX_CANDIDATES:
             try:
-                data = INDEX_HTML.read_bytes()
+                st = path.stat()
             except OSError:
-                return None
-            self._index_cache = (key, data)
-        return data
+                continue
+            key = (str(path), st.st_mtime_ns, st.st_size)
+            cached_path, cached_key, data = self._index_cache
+            if (cached_path, cached_key) != (str(path), key):
+                try:
+                    data = path.read_bytes()
+                except OSError:
+                    continue
+                self._index_cache = (str(path), key, data)
+            return data
+        return None
 
     # -- változások
     @contextlib.contextmanager
@@ -870,9 +923,9 @@ class App(object):
 
 
 # ---------------------------------------------------------------------------- parancssor
-def build_parser():
+def build_parser(prog="python ma.py gui"):
     p = argparse.ArgumentParser(
-        prog="python -m ma_gui",
+        prog=prog,
         description="MA-munkapad — helyi, böngészős validáló és grafikus felület a metaanalízis-motorhoz.")
     p.add_argument("--project", default=".", help="a projektmappa (alap: az aktuális mappa)")
     p.add_argument("--port", type=int, default=None,

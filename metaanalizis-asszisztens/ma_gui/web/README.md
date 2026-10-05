@@ -27,7 +27,7 @@ web/
   src/i18n/hu.json, en.json            alap-szótárak (lapos, pontozott kulcsok)
   src/i18n/hu/<név>.json, en/<név>.json képernyőnkénti töredékek (azonos kulcskészlettel!)
   fixtures/*.json          fejlesztői API-borítékok (csak a --dev buildbe kerülnek)
-  dist/index.html          termék-build (az integrátor másolja a ma_gui/static/index.html-be)
+  dist/index.html          termék-build; a szerver közvetlenül ezt szolgálja ki (ma_gui/static/index.html csak tartalék)
   dist/index.dev.html      fejlesztői build (gitignore-olt)
   eslint.config.js         minimális ESLint (flat config): böngésző-globálisok, no-undef, no-unused-vars, eqeqeq
 ```
@@ -35,9 +35,10 @@ web/
 ## Build és tesztek
 
 ```
-python3 ma_gui/web/build_gui.py           # dist/index.html  (termék, ≤ 450 KB, determinisztikus)
+python3 ma_gui/web/build_gui.py           # dist/index.html  (termék, ≤ 600 KB, determinisztikus) + dist/snapshot.html
 python3 ma_gui/web/build_gui.py --dev     # dist/index.dev.html (+ fixture-ök; megnyitás: ?fixtures=1)
-python3 ma_gui/web/build_gui.py --check   # 1-es kód, ha a dist/index.html nem naprakész
+python3 ma_gui/web/build_gui.py --snapshot  # csak a dist/snapshot.html (a pillanatkép-sablon, lásd lent)
+python3 ma_gui/web/build_gui.py --check   # 1-es kód, ha a dist/index.html vagy a dist/snapshot.html nem naprakész
 python3 ma_gui/web/build_gui.py --list    # modulsorrend
 python3 tests/gui/test_ui_static.py       # a termék-dist és a források statikus ellenőrzése (böngésző nélkül)
 python3 tests/gui/ui/test_build_gui.py    # build-, lint- és szabálysértés-tesztek
@@ -45,9 +46,10 @@ python3 tests/gui/ui/test_minify.py       # a tömörítés veszteségmentes (es
 node /opt/node22/lib/node_modules/eslint/bin/eslint.js -c ma_gui/web/eslint.config.js ma_gui/web/src
 node tests/gui/ui/run_all.js [--python]   # az összes *.spec.js egymás után (+ a Python-tesztek); 1-es kód hibánál
 node tests/gui/ui/a11y.spec.js            # akadálymentesség: csak billentyűzettel minden MVP-képernyőn, kontraszt két témában
+node tests/gui/ui/snapshot.spec.js        # pillanatkép: nulla hálózati kérés, nulla CSP-sértés, író gomb → parancs
 ```
 
-**Termék-tömörítés (≤ 450 KB, terv 2.3).** A termék-build a lint UTÁN veszteségmentesen tömörít
+**Termék-tömörítés (≤ 600 KB, terv 2.3; korábban 450 KB).** A termék-build a lint UTÁN veszteségmentesen tömörít
 (`build_gui.py` vége): `minify_js` tokenszinten elhagyja a megjegyzéseket és a fölös szóközöket (a
 sortörés ott marad, ahol az ASI számít), az idézőjeles azonosító-kulcsot idézőjel nélkül írja, és a
 névtelen függvénykifejezést nyílfüggvényre cseréli, ahol a jelentés biztosan azonos (nincs `this` /
@@ -250,35 +252,48 @@ Fixture-fájl: `{"description": "…", "routes": [{"method": "GET", "path": "/ap
 `"sequence": [{status, envelope, delay_ms}, …]` (sorban, az utolsó ismétlődik). A legspecifikusabb
 (több query/body-feltétel) útvonal nyer. A build ellenőrzi a boríték alakját (4.2).
 
-## Feltevések a szerver felé (egyeztetendő)
+## Szerver-alakok (megerősítve és megvalósítva, 2026-10-05)
+
+A `dist/index.html`-t a szerver közvetlenül szolgálja ki (`GET /`, a `{{CSP_NONCE}}` helyeket válaszonként cseréli);
+a `ma_gui/static/index.html` csak tartalék oldal újraépítési útmutatással, ha a `dist/` hiányzik. CSP-sértés és
+JS-kivétel nincs, az oldalon belüli önteszt (`?selftest=1`) zöld. A végponttól végpontig tartó elfogadási teszt
+(`node tests/gui/ui/e2e.spec.js`) a valódi szerverrel fut.
 
 - `POST /api/session` törzse `{"launch_code": "<kód>"}`, válasza `data.token` (api.js `SESSION_BODY_KEY`).
 - `GET /api/project` `data`: `szk.ma.project/v1` + opcionális `badges: {fül: [{kind, text}]}`, `user.initials`.
 - `GET /api/privacy` `data`: `privacy.status()` kimenete (opcionálisan `status`).
 - `GET /api/capabilities` `data.components[]`: `{id, label, version, state: ok|unusable|legacy|absent, mode, problems[i18n], …}`.
-- `GET /api/engine` `data`: `engine_version`, `selftest {ok, checks, passed}`, `measures[]`, `options{}`, `rules[]`.
-- `GET /api/log/<kind>` `data.items[]`; `GET /api/runs?primary=1` `data.runs[]` (`szk.ma.run/v1` + `outcome_id`,
-  `stale`, `participants_text`, `rob_high`, `grade.certainty`, `primary.i2_text`).
-- A HTML-ben a `{{CSP_NONCE}}` helyeket válaszonként a szerver cseréli.
-
-### Integrációs állapot (2026-10-05, a termék-build a valódi `ma_gui` szerverrel, szigorú CSP mellett)
-
-A `dist/index.html`-t a szerver `ma_gui/routes/static.py` útvonala szolgálja ki (a `{{CSP_NONCE}}` csere
-egyezik); CSP-sértés és JS-kivétel nincs, az oldalon belüli önteszt (`?selftest=1`) zöld.
-
-- **Egyezik a szerverrel:** `POST /api/session` (`launch_code` → `data.token`), `GET /api/project`,
-  `GET /api/privacy`, `POST /api/privacy/apply`, `GET /api/capabilities` (+ `/refresh`), `GET /api/engine`,
-  `GET /api/changes`, `GET/PUT /api/table`, `GET/PUT /api/provenance`, `GET/PUT /api/documents`,
-  `POST /api/fileurl` (`{doc}` vagy `{doc: null, path}`), `GET /api/log/<kind>`, `POST /api/log/*`,
-  `GET /api/kb/search`, `GET /api/kb/item/<id>`.
-- **A szerveren még nincs (a felület helyben, szövegként jelzi a 404-et, a többi rész működik):**
-  `POST /api/validate`, `POST /api/convert`, `GET/PUT /api/specs/<név>`, `POST /api/analyze`,
-  `GET /api/jobs/<id>`, `GET /api/runs` (+ `/<id>/plot`), `GET /api/kb/rules?field=`, `GET /api/prisma`,
-  `PUT /api/prisma/manual`, `GET/PUT /api/studies`, `GET /api/audit/project`, `POST /api/export/{audit,snapshot}`.
-  A várt kérés-/válaszalakokat a képernyőmodulok fejléce és a fixture-ök (`fixtures/*.json`) rögzítik.
-- **Motor-oldali egyeztetés:** a `szk.ma.plot/v2`-n túli szövegmezők (tanulmányonkénti `weight_text`,
-  az összesítő `p_text`/`pi_text`/`pi_label`/`het_text`, a funnel/Doi/LOO/kumulatív tengelyek és szövegek,
-  a befolyás `<mező>_text`-jei) — a felület ezekből ír ki számot; hiányzó mező → „—”.
+- `GET /api/engine` `data`: `engine_version`, `selftest {ok, checks, passed}`, `measures[]`, `options{}` (JSON-séma
+  típusnevek: `boolean`, `array`, `integer`, `number`, `enum`, `string`, `object`; `nullable`, `required`), `rules[]`.
+- `GET /api/table` — a `column_map` (kanonikus név → eredeti fejléc, = `api.column_map`) is benne van.
+- `POST /api/validate` → `szk.ma.validation/v1`; minden megállapítás `acknowledged` mezőt kap (az aktív „Nem hiba —
+  indoklás” döntés azonosítója vagy null; illeszkedés: code + row_uid + fields + dataset).
+- `POST /api/convert` → `szk.ma.convert-result/v1`; az `assumptions` / `warnings` `{hu, en}` objektumok, a cellába
+  csak a `cell_text` kerül (a cél tábla tizedesjelével).
+- `POST /api/analyze` `{mode, spec, table?, client_seq, lane?}` → a `jobs.py` feladat-pillanatképe; `result = {schema,
+  run, plot, results, validation_summary, findings, excluded, filter_report, warnings, command}`, commitnál a
+  `run.outcome_id`-vel. A commit 409 (`stale_data`: az adat sha256-ja eltér; `spec_differs`: a mentett spec más),
+  403 (`_privat/` alatti adattábla), 400 (piszkozat-tábla). `GET /api/jobs/<id>` a feladat-pillanatkép.
+- `GET/PUT /api/specs/<név>` (és `GET /api/specs` lista): a törzs és a `data` maga a spec, ETag/If-Match; azonos
+  tartalmú ismételt PUT If-Match nélkül no-op, eltérő 409.
+- `GET /api/runs?outcome=&primary=1` → `{runs: [szk.ma.run/v1 + outcome_id, stale, measure, spec.purpose, dir,
+  data_current_sha256]}`; `primary=1` mellett a `primary.i2_text` / `primary.pi_text` (a motor szövegei) és a
+  projektnapló legutóbbi GRADE-ítélete (`grade: {certainty, id}`). `GET /api/runs/<id>` → `downloads: {szerep:
+  {path, url, expires_at}}` (a szerepek a `run.json` `files` kulcsai: `forest`, `funnel`, `doi`, `plot`, `results`,
+  `effect_sizes`, `report`); `/results`, `/plot`, `/report` a futás fájljai.
+- `GET /api/prisma` → `{mode, path, source, override{reason, decision_id}, flow, check, studies{path, studies?,
+  reports?}, meta[{outcome_id, name, k, run_id, stale}], cross[X014/X015/X020/X021], composer_status[]}`;
+  `PUT /api/prisma/manual` `{flow, dry_run?, override_reason?, client_seq?}`.
+- `GET/PUT /api/studies` → `{schema, path, studies, summary{studies?, reports?}, problems}`.
+- `GET /api/log/<kind>` `data.items[]`; a `POST /api/log/decision` `context`-je csak ezeket a kulcsokat engedi:
+  `{kind, dataset, row_uid, code, fields, run_id, spec, outcome, changes[{key, before, after}]}`.
+- `GATE_BLOCKED` (409) részletei `audit_errors`-t is tartalmazhatnak (a FINAL PASS alapból az audit-kapuval fut).
+- `GET /api/audit/project` → `szk.ma.project-audit/v1`; `GET /api/kb/rules?field=` → `api.kb_rules_for_field`.
+- `POST /api/export/audit|snapshot` → `{path, sha256, manifest, url}` (aláírt, 10 perces letöltés; a pillanatképhez
+  `ack: true` kell).
+- **Számok:** minden kiírt szám a motor kész szövege (`display_text`, `*_text`, `ticks[].text`); a 4.0 konvenció
+  szerint a kijelzési szövegek tizedesponttal készülnek mindkét nyelven (a report.md-vel és a motor-SVG-vel azonos);
+  tizedesvessző csak a táblacellába írt `cell_text`-ben van.
 
 ## KIEGÉSZÍTÉS (folyamat-ágens, 2026-10-05) — Folyamat és audit képernyők, „Miért?” komponens
 
@@ -305,7 +320,7 @@ title: f.title, detail: f.detail, advice: f.advice}, {compact: true})`.
 
 `MA.proc`: `STAGES` (S00–S14, FINAL), `SEVERITIES`, `AGENTS`, `sevKind`, `refs`, `section/fill/load`, `select`, `field`, `pend`.
 
-### Feltevések a szerver felé (egyeztetendő; a fixture-ök ezt az alakot követik)
+### Szerver-alakok (megerősítve; a fixture-ök ezt az alakot követik)
 
 - `GET /api/prisma[?refresh=1]` → `{mode: manual|composer, path, source{…}, override, flow (szk.prisma-flow/v1), check (motor
   prisma_check: template, ok, summary, findings[], derived{}), studies{path, studies, reports}, meta[{outcome_id, k, run_id}],
@@ -317,3 +332,44 @@ title: f.title, detail: f.detail, advice: f.advice}, {compact: true})`.
 - `POST /api/export/audit|snapshot` `{include{decisions, specs_runs, provenance, appraisals, prisma, figures, activity, rerun,
   data_tables?}, redact{assessors, quotes, abs_paths}}` → `{path, sha256, bytes, manifest{files[], redactions[], excluded[], activity_head}}`.
 - `GET /api/capabilities` a `ma_gui.caps.Caps.report()` valódi alakja (components[] + matrix + problems).
+
+## KIEGÉSZÍTÉS (pillanatkép, 2026-10-05) — csak olvasható, kitakaró HTML-pillanatkép (terv 2.5, 3.5.17, 7.6)
+
+**Mi ez.** `python ma.py gui snapshot --project <mappa> --out x.html [--redact …] [--keep …]` (belépési pont:
+`ma_gui.snapshot.main`; a felületről: Export → Pillanatkép) egyetlen HTML-fájlt ad a társszerzőknek: a termék-felület
++ a projekt állapota beágyazott JSON-ként. Python, szerver és hálózat nélkül nyitható (`file://`); minden képernyő
+ugyanúgy fut, mint élőben, csak semmi sem menthető.
+
+**Build-változat.** A `build_gui.py` a termék-build mellé `dist/snapshot.html`-t is ír (a `snapshot.py` ezt tölti ki):
+- a `src/snapshot/*.js` modulok (az `api.js` után) és a `/*<snapshot>*/ … /*</snapshot>*/` blokkok **csak** ebbe kerülnek
+  (a termék- és a dev-buildből kimaradnak; a build ellenőrzi);
+- nonce helyett `<meta http-equiv="Content-Security-Policy" content="{{SNAPSHOT_CSP}}">` — a `snapshot.py` a kész tartalom
+  sha256-hash-eivel tölti ki (`script-src 'sha256-…'; style-src 'sha256-…'; connect-src 'none'` …);
+- `<script type="application/json" id="ma-snapshot">{{SNAPSHOT_DATA}}</script>` a futó szkript előtt;
+- mérete legfeljebb `SNAPSHOT_MAX_BYTES` (600 KB, adat nélkül); a termék-build kerete 600 KB (`MAX_BYTES`), így a
+  termék nem nőhet a pillanatkép-kliens (≈ 11 KB) helye fölé.
+
+**`src/snapshot/provider.js`** — a hálózati réteg helyett (`MA.__snapSetTransport`, csak a pillanatkép-buildben) a
+beágyazott borítékokból válaszol:
+- GET: pontos kulcs (`'GET /api/runs?outcome=o1'`; a lekérdezés rendezett, RFC 3986 szerint kódolt — a Python
+  `snapshot.query_string` párja), különben a lekérdezés nélküli kulcs + egyszerű szűrés a `data.items`-en (`status`,
+  `severity`, `stage`/`stage_id`, `agent`; `limit`); `/api/kb/search` csak a beágyazott KB-tételekben keres; ami nincs
+  benne: `NOT_FOUND` „Ez az adat nincs a pillanatképben.”;
+- író kérés: párbeszédablak a **pontos paranccsal** (Windows: `py -3 ma.py …`, macOS/Linux: `python3 ma.py …`; a
+  platformé rögtön a vágólapra kerül), a kérés `READ_ONLY` hibával zárul (toast nélkül). A parancs-sablonokat a
+  `snapshot.command_templates()` adja (`"{mező|alap}"`, lista = opcionális csoport); a teszt a motor argparse-ával
+  ellenőrzi őket;
+- olvasó POST (élő validálás, explore, átváltó, fájl-URL): beágyazott eredmény vagy csendes `READ_ONLY`;
+- munkamenet, token, long-poll nincs; `MA.api.openFile` → tájékoztató toast (PDF/fájl nincs benne);
+- `html[data-mode=snapshot]`, sáv a fejléc alatt (`#snapshot-banner`: projektállapot ideje, állapot-azonosító,
+  adatosztály, „Mi van benne?” → `MA.snapshot.showInfo()`: kitakarások, kizárt minták, futások, validálás-összegzés).
+
+**Kitakarás** (alapérték az adatosztályból, `snapshot.policy_defaults`): C — adattábla soha (kérésre sem: 403 / 2-es
+kilépési kód); B — adattábla alapból ki, értékelők monogrammal; mindig: `_privat/`, PDF (csak doc-id + oldal + sha256), a
+KB teljes szövege soha; az eredet-idézetek és az abszolút utak alapból ki. Adattábla nélkül az ábra-adat nyers
+cellaoszlopai (`studies[].cells`), az eredet bevitt értékei és a validálás soronkénti üzenetei is kimaradnak. A
+beágyazott `manifest` rögzíti mindezt. Ugyanaz a projektállapot ugyanazt a bájtsort adja.
+
+**Export-végpontok** (`ma_gui/routes/export.py`): `POST /api/export/audit` és `POST /api/export/snapshot` (`ack: true`
+kötelező) → `{kind, path, name, sha256, bytes, …, url, expires_at}`; az `url` aláírt, 10 perces letöltési cím
+(`/f/x/…`, mindig csatolmányként, sandbox CSP-vel). A felület az eredmény alatt „Letöltés” gombot mutat.

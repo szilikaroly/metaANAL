@@ -538,11 +538,15 @@
   function sessionPanel(state) {
     var keyBase = 'session.' + state;
     var errInfo = MA.store.get('session') || {};
+    // egy mondat és egy parancs (Windowson a py -3 változat); a szerver 'failed' üzenete ugyanezt mondaná — nem
+    // ismételjük (UX-17)
+    var win = MA.shell && MA.shell.isWindows();
     MA.dom.mount(els.screenHost, h('div', { 'class': 'panel session-panel', role: 'alert', id: 'session-panel', dataset: { state: state } },
       h('h2', { i18n: keyBase + '.title' }),
       h('p', { i18n: keyBase + '.body' }),
-      errInfo.message ? h('p', { 'class': 'muted' }, errInfo.message) : null,
-      h('pre', { 'class': 'cmd' }, 'python ma.py gui --project <mappa>')));
+      errInfo.message && state !== 'failed' ? h('p', { 'class': 'muted' }, errInfo.message) : null,
+      h('pre', { 'class': 'cmd', id: 'session-cmd' }, win ? 'py -3 ma.py gui --project <mappa>' : 'python ma.py gui --project <mappa>'),
+      h('p', { 'class': 'muted', i18n: win ? 'session.cmdHintWin' : 'session.cmdHint' })));
     els.title.textContent = t('session.heading');
   }
 
@@ -699,6 +703,8 @@
     href: href,
     parseHash: parseHash,
     current: function () { return current ? { id: current.screen.id, tab: current.screen.tab, params: current.ctx.params } : null; },
+    /** isPlaceholder(id) — a képernyő még csak helyőrző (az MVP-ben nincs mögötte funkció; oda nem linkelünk). */
+    isPlaceholder: function (id) { return !screens[id] || !!screens[id].placeholder; },
     refresh: refresh,
     loadBase: loadBase,
     setTabBadges: setTabBadges,

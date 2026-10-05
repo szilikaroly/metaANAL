@@ -83,14 +83,16 @@
     "assumptions": {
       "type": "array",
       "items": {
-        "type": "string"
-      }
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      },
+      "description": "a módszer feltevései kétnyelvű szövegként ({hu, en}, terv 4.0) — a felület a választott nyelvet mutatja"
     },
     "warnings": {
       "type": "array",
       "items": {
-        "type": "string"
-      }
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      },
+      "description": "figyelmeztetések kétnyelvű szövegként ({hu, en}); pl. ferde eloszlás gyanúja (V013), becsült érték"
     }
   }
 }

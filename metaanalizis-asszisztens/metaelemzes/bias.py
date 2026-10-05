@@ -18,7 +18,7 @@ import math
 
 from . import distributions as dist
 from .models import meta_analysis, ModelError, MetaResult, ratio_stat
-from .moderators import meta_regression, MR_TAU2_METHODS
+from .moderators import meta_regression, MR_TAU2_METHODS, is_perfect_fit, rounding_rss
 
 
 EGGER_CI_DISTS = ("t", "norm")
@@ -37,8 +37,13 @@ def egger_test(yi, vi, ci_dist="t", level=0.95):
     if k < 3:
         raise ModelError("Egger-teszt: k >= 3 szükséges")
     se = [math.sqrt(v) for v in vi]
-    zs = [y / s for y, s in zip(yi, se)]
     prec = [1.0 / s for s in se]
+    # Eltolás-független számolás: y_i + c esetén z_i = y_i/se_i-hez c·prec_i adódik, amit a
+    # meredekség teljesen elnyel (a tengelymetszet, a reziduumok és a t változatlan). Ezért a
+    # középső adatértékkel (y_ref) eltolt hatásokkal illesztünk, és a meredekséghez a végén
+    # visszaadjuk y_ref-et: a kerekítési hiba így a hatások szórásához mérten kicsi.
+    y_ref = sorted(yi)[k // 2]
+    zs = [(y - y_ref) / s for y, s in zip(yi, se)]
     xm = sum(prec) / k
     ym = sum(zs) / k
     sxx = sum((x - xm) ** 2 for x in prec)
@@ -54,15 +59,21 @@ def egger_test(yi, vi, ci_dist="t", level=0.95):
     rss = sum(r * r for r in resid)
     warn = []
     # tökéletes illeszkedés (pl. minden y_i azonos → z_i = c·prec_i): a reziduális variancia
-    # csak kerekítési zaj, a t = 0/0 nem értelmezhető (metafor regtest: NA)
-    perfect = rss <= 1e-20 * max(sum(z * z for z in zs), 1e-300)
+    # csak kerekítési zaj, a t = 0/0 nem értelmezhető (metafor regtest: NA). Feltétel és
+    # küszöbök: moderators.is_perfect_fit (centrált variációhoz mért 1e-26, ill. a bemenetek
+    # ábrázolási pontosságához mért 1e-28 padló) — a régi 1e-20·Σz² feltétel a ~10 jegyig
+    # egyező hatásokat (pl. 1000 + 1e-8-os különbségek) is tökéletes illeszkedésnek vette.
+    tss = sum((z - ym) ** 2 for z in zs)
+    swz2 = sum((y / s) ** 2 for y, s in zip(yi, se))
+    perfect = is_perfect_fit(rss, tss, swz2)
     if perfect:
         rss = 0.0
     s2 = rss / df if df > 0 else float("nan")
     se_int = math.sqrt(s2 * (1.0 / k + xm * xm / sxx))
     se_slope = math.sqrt(s2 / sxx)
-    if perfect and abs(intercept) <= 1e-10 * (abs(ym) + abs(slope * xm) + 1e-300):
-        intercept = 0.0
+    if perfect and abs(intercept) <= math.sqrt((1.0 / k + xm * xm / sxx) * rounding_rss(tss, swz2)):
+        intercept = 0.0     # a kerekítési szintű reziduum ennyit mozdíthat rajta (moderators.rounding_rss)
+    slope += y_ref
     t = ratio_stat(intercept, se_int)
     if math.isnan(t):
         warn.append("Egger-teszt: nulla reziduális variancia (azonos hatásméretek / tökéletes "

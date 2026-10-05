@@ -20,6 +20,7 @@
   var t = function (k, a) { return MA.i18n.t(k, a); };
 
   var W = 980;
+  var EST_SYM = '≈';      // a becsült érték jele (a ◆ az összesített becslésé, UX-07)
   var ROW = 22;
   var TOP = 26;
   var LABEL_X = 8;
@@ -91,6 +92,27 @@
     };
   }
 
+  // oszlopfejléc tördelése (pl. „Esemény/N (1. kar)” 82 px-en): szóhatáron legfeljebb két sorra, hogy a szomszédos
+  // jobbra igazított fejlécek ne fedjék egymást; a sorok a fejléc-alapvonal fölé nőnek (a táblázat nem tolódik)
+  var HEAD_CHARS = 12;
+  function headLines(text) {
+    var words = String(text || '').split(' ');
+    if (String(text || '').length <= HEAD_CHARS || words.length < 2) { return [String(text || '')]; }
+    var first = words[0];
+    var i = 1;
+    while (i < words.length - 1 && (first + ' ' + words[i]).length <= HEAD_CHARS) { first += ' ' + words[i]; i += 1; }
+    return [first, words.slice(i).join(' ')];
+  }
+
+  function headCell(x, y, text, anchor) {
+    var lines = headLines(text);
+    var attrs = { 'class': 'fp-hcell', x: G.px(x), y: G.px(y - (lines.length - 1) * 12) };
+    if (anchor) { attrs['text-anchor'] = anchor; }
+    if (lines.length === 1) { return S('text', attrs, lines[0]); }
+    // a sorvégi szóköz a szöveg-tartalomban megmarad (képernyőolvasó, keresés), a rajzon nem látszik
+    return S('text', attrs, S('tspan', { x: G.px(x) }, lines[0] + ' '), S('tspan', { x: G.px(x), dy: '12' }, lines[1]));
+  }
+
   function robLabel(rob) {
     return rob && MA.i18n.has('plots.rob.' + rob) ? t('plots.rob.' + rob) : t('plots.rob.none');
   }
@@ -146,7 +168,7 @@
     var gHead = S('g', { 'class': 'fp-head' });
     gHead.appendChild(S('text', { 'class': 'fp-hcell', x: G.px(LABEL_X), y: G.px(hy) }, C.txt(labels.study, t('plots.forest.study'))));
     cols.forEach(function (c, j) {
-      gHead.appendChild(S('text', { 'class': 'fp-hcell', x: G.px(L.colX[j] + COL_W - 6), y: G.px(hy), 'text-anchor': 'end' }, C.txt(c.title, c.id)));
+      gHead.appendChild(headCell(L.colX[j] + COL_W - 6, hy, C.txt(c.title, c.id), 'end'));
     });
     gHead.appendChild(S('text', { 'class': 'fp-hcell', x: G.px(L.effX), y: G.px(hy) }, C.txt(labels.effect, plot.measure || '')));
     gHead.appendChild(S('text', { 'class': 'fp-hcell', x: G.px(L.weightX), y: G.px(hy), 'text-anchor': 'end' }, C.txt(labels.weight, t('plots.forest.weight'))));
@@ -191,7 +213,8 @@
         var labTxt = C.clip(s.label, maxChars);
         g.appendChild(S('text', { 'class': 'fp-label', x: G.px(lx), y: G.px(ty) }, labTxt));
         var marks = [];
-        if (lay.estimated && fl.estimated) { marks.push({ sym: '◆', cls: 'fp-flag is-estimated' }); }
+        // a becsült érték jele nem ◆ (az az összesített becslésé): ≈ — a két jelölés nem csak színben tér el (UX-07)
+        if (lay.estimated && fl.estimated) { marks.push({ sym: EST_SYM, cls: 'fp-flag is-estimated' }); }
         if (fl.outlier) { marks.push({ sym: '⚑', cls: 'fp-flag is-outlier' }); }
         if (fl.influential) { marks.push({ sym: '▲', cls: 'fp-flag is-influential' }); }
         marks.forEach(function (m, mi) {
@@ -271,7 +294,9 @@
       if (!s) { return; }
       var lines = [s.label, C.txt(s.display_text) + (s.weight_text ? ' · ' + t('plots.forest.weightAria', { w: C.txt(s.weight_text) }) : '')];
       if (s.flags && s.flags.rob) { lines.push(t('plots.forest.robAria', { rob: robLabel(s.flags.rob) })); }
-      if (s.flags && s.flags.estimated) { lines.push(t('plots.flag.estimated')); }
+      if (s.flags && s.flags.estimated) { lines.push(EST_SYM + ' ' + t('plots.flag.estimated')); }
+      if (s.flags && s.flags.outlier) { lines.push('⚑ ' + t('plots.flag.outlierLong')); }
+      if (s.flags && s.flags.influential) { lines.push('▲ ' + t('plots.flag.influentialLong')); }
       var sq = el.querySelector('.fp-square');
       var x = sq ? Number(sq.getAttribute('x')) : L.px0;
       var y = Number(el.querySelector('.fp-rowbg').getAttribute('y'));
@@ -289,6 +314,7 @@
       el.addEventListener('mouseleave', function () { C.highlight(null, 'forest'); tip.hide(); });
     });
 
+    function anyFlag(k) { return (plot.studies || []).some(function (x) { return !!(x.flags && x.flags[k]); }); }
     // jelmagyarázat (HTML, a szín sosem egyedüli jelölés)
     var legend = h('p', { 'class': 'pl-legend fp-legend' },
       h('span', { 'class': 'pl-key' }, h('span', { 'class': 'pl-sym is-square', 'aria-hidden': 'true' }, '■'), ' ', t('plots.forest.legendStudy')),
@@ -296,7 +322,10 @@
       lay.pi ? h('span', { 'class': 'pl-key' }, h('span', { 'class': 'pl-sym is-pi', 'aria-hidden': 'true' }, '▬'), ' ', t('plots.forest.legendPi')) : null,
       h('span', { 'class': 'pl-key' }, h('span', { 'aria-hidden': 'true' }, '◀ ▶'), ' ', t('plots.forest.legendClip')),
       h('span', { 'class': 'pl-key' }, t('plots.forest.legendRob')),
-      lay.estimated ? h('span', { 'class': 'pl-key' }, h('span', { 'class': 'pl-sym is-estimated', 'aria-hidden': 'true' }, '◆'), ' ', t('plots.flag.estimated')) : null);
+      lay.estimated ? h('span', { 'class': 'pl-key' }, h('span', { 'class': 'pl-sym is-estimated', 'aria-hidden': 'true' }, EST_SYM), ' ', t('plots.flag.estimated')) : null,
+      // minden jel, ami az ábrán megjelenhet, a jelmagyarázatban is (UX-07)
+      anyFlag('outlier') ? h('span', { 'class': 'pl-key', 'data-key': 'outlier' }, h('span', { 'class': 'pl-sym is-outlier', 'aria-hidden': 'true' }, '⚑'), ' ', t('plots.flag.outlierLong')) : null,
+      anyFlag('influential') ? h('span', { 'class': 'pl-key', 'data-key': 'influential' }, h('span', { 'class': 'pl-sym is-influential', 'aria-hidden': 'true' }, '▲'), ' ', t('plots.flag.influentialLong')) : null);
 
     svgEl.setAttribute('role', 'list');
     var list = h('div', { 'class': 'plot-scroll' }, svgEl);

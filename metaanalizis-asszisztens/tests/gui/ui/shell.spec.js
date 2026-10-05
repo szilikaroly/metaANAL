@@ -38,6 +38,9 @@ const BUILD = path.join(WEB, 'build_gui.py');
 const PROD = path.join(WEB, 'dist', 'index.html');
 const DEV = path.join(WEB, 'dist', 'index.dev.html');
 const FIXTURES = path.join(WEB, 'fixtures');
+// a motor-fixtúrákból (tests/gui/ui/gen_fixtures_from_engine.py) — a várt szövegek a motor kész szövegei
+const ENGINE_FX = JSON.parse(fs.readFileSync(path.join(FIXTURES, 'engine.json'), 'utf-8')).routes[0].envelope.data;
+const PRIMARY_RUN_FX = JSON.parse(fs.readFileSync(path.join(FIXTURES, 'runs.json'), 'utf-8')).routes[0].envelope.data.runs[0];
 const CHROME_FALLBACK = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
 // ma_gui/security.py HTML_CSP_TEMPLATE (szó szerint)
@@ -231,12 +234,12 @@ async function tabUntil(page, id, max) {
     check(apiReqs.length >= 4 && apiReqs.every((r) => r.token === tok), 'minden /api/* kérés X-MA-Token fejlécet visz');
     check(apiReqs.every((r) => /^\d+$/.test(r.seq || '')), 'minden kérés client_seq-et visz (X-MA-Client-Seq)');
     const header = await p1.textContent('.app-header');
-    check(header.indexOf('motor 0.2.0') >= 0 && header.indexOf('3268/3268') >= 0, 'fejléc: motor-verzió és önteszt');
+    check(header.indexOf('motor ' + ENGINE_FX.engine_version) >= 0 && header.indexOf(ENGINE_FX.selftest.passed + '/' + ENGINE_FX.selftest.checks) >= 0, 'fejléc: motor-verzió és önteszt');
     check(header.indexOf('validator') >= 0 && header.indexOf('figure-forge') >= 0, 'fejléc: plugin-állapotok');
     check(header.indexOf('VÉDVE') >= 0, 'fejléc: adatvédelmi állapot');
     await p1.waitForSelector('#overview-outcomes', { timeout: 5000 });
     const table = await p1.textContent('#overview-outcomes');
-    check(table.indexOf('0,49 [0,33; 0,73]') >= 0, 'áttekintés: a motor display_text-je (HU) szó szerint');
+    check(table.indexOf(PRIMARY_RUN_FX.primary.display_text.hu) >= 0 && PRIMARY_RUN_FX.primary.display_text.hu === '0.49 [0.33; 0.73]', 'áttekintés: a motor display_text-je (HU) szó szerint');
     check(table.indexOf('AKTUÁLIS') >= 0, 'áttekintés: futás-állapot');
     await p1.waitForFunction(() => /Külső: 2/.test(document.getElementById('external-changes').textContent), null, { timeout: 5000 });
     check(true, 'long-poll: a „Külső: 2” számláló megjelent');
@@ -295,7 +298,20 @@ async function tabUntil(page, id, max) {
     await p.waitForSelector('#session-panel[data-state="failed"]', { timeout: 5000 });
     check((await p.evaluate(() => location.hash)).indexOf('launch') < 0, 'a kód akkor is törlődik a címsorból');
     checkStorage(await storageReport(p), 'sikertelen indítás');
+    // UX-17: egy mondat, egy parancs — a szerver üzenete nem ismétlődik, nincs „python -m ma_gui”
+    const panel = await p.$eval('#session-panel', (e) => ({ text: e.textContent, cmds: e.querySelectorAll('pre, code.cmd, #session-cmd').length,
+      cmd: (e.querySelector('#session-cmd') || {}).textContent }));
+    check(panel.text.split('lejárt vagy már felhasználták').length === 2, 'az ok egyszer szerepel (nem ismétli a szerver üzenetét): ' + panel.text);
+    check(panel.cmds === 1 && panel.cmd === 'python ma.py gui --project <mappa>', 'egyetlen indító parancs: ' + panel.cmd);
+    check(panel.text.indexOf('-m ma_gui') < 0, 'nincs belső „python -m ma_gui” parancs');
     await ctx.close();
+    const wctx = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' });
+    const wp = await wctx.newPage();
+    await wp.goto(srv.base + '/#launch=USEDCODE9');
+    await wp.waitForSelector('#session-panel[data-state="failed"]', { timeout: 5000 });
+    const wpanel = await wp.$eval('#session-panel', (e) => ({ text: e.textContent, cmd: (e.querySelector('#session-cmd') || {}).textContent }));
+    check(wpanel.cmd === 'py -3 ma.py gui --project <mappa>' && wpanel.text.indexOf('ha a py nem működik') >= 0, 'Windowson a py -3 parancs és a tartalék: ' + wpanel.cmd);
+    await wctx.close();
   });
   await ctx1.close();
 

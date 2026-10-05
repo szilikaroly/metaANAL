@@ -69,6 +69,16 @@ const ENGINE = fixture('engine.json').routes[0].envelope.data;
 const PLOTS = {};
 fixture('analysis_plots.json').routes.forEach((r) => { PLOTS[r.path.split('/')[3]] = r.envelope.data; });
 const PLOT = PLOTS[PRIMARY];
+// a motor kész szövegei (a fixture-ök a valódi motorból: tests/gui/ui/gen_fixtures_from_engine.py; 4.0: tizedespont)
+const primOf = (pl) => pl.summaries.filter((s) => s.primary === true)[0];
+const PRIM = primOf(PLOT);
+const RUNS_FX = {};
+fixture('analysis_runs.json').routes.forEach((r) => { if (/^\/api\/runs\/[^/]+$/.test(r.path)) { RUNS_FX[r.path.split('/')[3]] = r.envelope.data; } });
+const FIXED = '20261005T091500Z-f1e2d3';
+const NO_ROB = '20261005T091600Z-a7b8c9';
+const HART = PLOT.studies.filter((s) => s.row_uid === 'rbcg04')[0];
+const INF = {};
+PLOT.influence.forEach((e) => { INF[e.row_uid] = e; });
 
 // ---------------------------------------------------------------- teszt-szerver
 function loadRoutes() {
@@ -231,9 +241,16 @@ async function storageReport(page) {
     check((await txt(p, '#opt-tau2-help')) === ENGINE.options.tau2.help, 'súgó: a motor argparse-help szövege szó szerint');
     check((await txt(p, '[data-field="tau2"] .opt-cli')) === '--tau2', 'CLI-kapcsoló a metaadatból');
     check(await p.$eval('#opt-tau2', (e) => e.getAttribute('aria-describedby').indexOf('opt-tau2-help') >= 0), 'aria-describedby a súgóra');
-    check((await count(p, 'details.opt-group[data-group="spec"] [data-opt]')) === optionNames.filter((k) => !ENGINE.options[k].cli).length, 'csak-spec opciók külön (haladó) csoportban');
-    await waitText(p, '#plan-summary', '0,49 [0,33; 0,73]', 8000);
-    check(true, 'automatikus explore (k ≤ 40): a motor display_text-je');
+    // UX-11: a motor csoportjai; a haladó (replikáció, varianciaváltozat, kimenet) opciók összecsukva, az alapok elöl
+    const advNames = optionNames.filter((k) => ENGINE.options[k].advanced);
+    check(advNames.length >= 10 && (await count(p, 'details.opt-group.is-advanced [data-opt]')) === advNames.length, 'haladó opciók összecsukott csoportban (' + advNames.length + ')');
+    check(!(await p.$eval('details.opt-group.is-advanced', (d) => d.open)), 'a haladó csoport alapból zárva');
+    const firstGroup = await p.$eval('#plan-form .opt-group', (e) => e.getAttribute('data-group'));
+    check(firstGroup === 'basic' && (await p.$('fieldset.opt-group[data-group="basic"] #opt-measure')) !== null, 'elöl az alapbeállítások (mérték, modell …)');
+    check((await txt(p, 'label[for="opt-plot_schema"]')).indexOf('--plot-schema') < 0 && (await txt(p, 'label[for="opt-svg_annotate"]')).indexOf('--svg-annotate') < 0, 'minden mezőnek magyar címkéje van (nem a CLI-kapcsoló)');
+    check((await txt(p, '#opt-measure-help')).indexOf('--spec') < 0 && (await txt(p, '#opt-measure-help')).indexOf('lásd lent') < 0, 'a mérték súgója a felületnek szól (nincs --spec / „lásd lent”)');
+    await waitText(p, '#plan-summary', PRIM.display_text.hu, 8000);
+    check(PRIM.display_text.hu === '0.49 [0.33; 0.73]', 'automatikus explore (k ≤ 40): a motor display_text-je');
     const an = await calls(p, '/api/analyze', 'POST');
     check(an.length >= 1 && an[0].body.mode === 'explore' && typeof an[0].body.client_seq === 'number', 'POST /api/analyze {mode: explore, client_seq}');
     check(an.length >= 1 && JSON.stringify(Object.keys(an[0].body.spec.options).sort()) === JSON.stringify(optionNames.slice().sort()), 'a spec options-kulcsai = DEFAULTS-kulcsok');
@@ -243,6 +260,8 @@ async function storageReport(page) {
     check((await txt(p, '#plan-banner')).indexOf('Nincs eltérés') >= 0, 'sáv: nincs eltérés a mentett, előre rögzített spec-től');
     check((await count(p, '#plan-runs-table tbody tr')) === 3, 'futások: 3 commit-futás');
     check((await txt(p, '#plan-runs-table tr[data-run="' + STALE + '"]')).indexOf('ELAVULT') >= 0, 'elavult futás ELAVULT jelvénnyel (X001)');
+    const i2cell = await p.$eval('#plan-runs-table tr[data-run="' + PRIMARY + '"]', (tr) => tr.children[4].textContent.trim());
+    check(i2cell === PLOT.heterogeneity.i2_text.hu, 'futás-tábla I²: a motor i2_text-je (FID-3 / UX-14: ' + i2cell + ')');
     check((await count(p, '#plan-kb-refs .kb-badge')) === 3, 'KB ehhez: a spec kb_refs-e');
     check((await count(p, '.plan-child-buttons button[id^="child-"]')) === 5, 'öt gyermek-gomb');
     check((await txt(p, '[data-child="no_estim"]')).indexOf('1 futás') >= 0, 'meglévő gyermek-futás jelölve');
@@ -272,8 +291,8 @@ async function storageReport(page) {
     const an = (await calls(p, '/api/analyze', 'POST')).slice(n1);
     check(an.length === 2 && an[0].body.spec.options.model === 'fixed' && an[1].body.spec.options.model === 'random', 'két explore-kérés (fixed, majd random)');
     check(an.length === 2 && an[1].body.client_seq > an[0].body.client_seq, 'client_seq monoton nő');
-    check((await txt(p, '#plan-summary')).indexOf('0,49 [0,33; 0,73]') >= 0 && (await txt(p, '#plan-summary')).indexOf('0,65') < 0, 'a legutolsó nyer (a fix hatású válasz eldobva)');
-    check((await txt(p, '#plan-status')).indexOf(String(an[1].body.client_seq)) >= 0, 'státusz: a legutolsó client_seq');
+    check((await txt(p, '#plan-summary')).indexOf(PRIM.display_text.hu) >= 0 && (await txt(p, '#plan-summary')).indexOf(primOf(PLOTS[FIXED]).display_text.hu) < 0, 'a legutolsó nyer (a fix hatású válasz eldobva)');
+    check((await p.getAttribute('#plan-status', 'data-seq')) === String(an[1].body.client_seq) && (await txt(p, '#plan-status')).indexOf('client_seq') < 0, 'státusz: a legutolsó client_seq (data-seq; a szövegben nincs belső azonosító — UX-12)');
     await p.evaluate(() => window.MA.dev.analysis.setDelay(120));
     // k > 40: nincs automatikus futás
     await p.evaluate(() => window.MA.dev.analysis.setK(55));
@@ -345,8 +364,9 @@ async function storageReport(page) {
     const iPut = all.findIndex((c) => c.m === 'PUT' && c.p === '/api/specs/o1_primary');
     const iAn = all.findIndex((c) => c.p === '/api/analyze' && c.b && c.b.mode === 'commit');
     check(iDec >= 0 && all[iDec].b.rationale.indexOf('protokoll 9.2') >= 0 && all[iDec].b.kb_refs.indexOf('D-S12-006') >= 0 && !!all[iDec].b.decision, 'döntés a naplóba (D-S12-006)');
-    check(iPut > iDec && all[iPut].h['If-Match'] === '"spec-o1_primary-1"' && all[iPut].b.options.tau2 === 'DL', 'PUT /api/specs/o1_primary If-Match-csel');
-    check(iAn > iPut && all[iAn].b.spec.data.sha256 === '9f3a' + 'b'.repeat(60), 'commit a spec-kel és az adat sha256-jával');
+    // PRIV-4: előbb a spec mentése (a szerver PHI-őre itt állít meg), csak utána a döntés
+    check(iPut >= 0 && iPut < iDec && all[iPut].h['If-Match'] === '"spec-o1_primary-1"' && all[iPut].b.options.tau2 === 'DL', 'PUT /api/specs/o1_primary If-Match-csel, a döntés ELŐTT');
+    check(iAn > iDec && all[iAn].b.spec.data.sha256 === '9f3a' + 'b'.repeat(60), 'commit a spec-kel és az adat sha256-jával');
     check(all.filter((c) => c.p.indexOf('/api/jobs/') === 0).length >= 2, 'a feladat lekérdezése (queued → running → done)');
     await p.waitForFunction(() => document.querySelectorAll('#plan-runs-table tbody tr').length === 4);
     check(true, 'az új commit-futás a listában');
@@ -363,7 +383,7 @@ async function storageReport(page) {
       put.body.kb_refs[0] === 'D-S12-002', 'gyermek-spec: purpose sensitivity, parent, exclude rob=high, D-S12-002');
     await p.waitForFunction(() => Array.from(document.querySelectorAll('#plan-runs-table tbody tr')).some((r) => r.textContent.indexOf('└ o1_primary_no_rob_high') >= 0));
     const row = await p.$$eval('#plan-runs-table tbody tr', (rs) => rs.map((r) => r.textContent).filter((t) => t.indexOf('o1_primary_no_rob_high') >= 0)[0]);
-    check(row.indexOf('0,43 [0,27; 0,70]') >= 0 && row.indexOf('AKTUÁLIS') >= 0, 'a gyermek-futás a motor szövegével (k = 9): ' + row);
+    check(row.indexOf(RUNS_FX[NO_ROB].primary.display_text.hu) >= 0 && row.indexOf('AKTUÁLIS') >= 0, 'a gyermek-futás a motor szövegével (k = 9): ' + row);
     await p.click('.toast.is-success .toast-close');
     await p.click('#child-fixed');
     await p.waitForSelector('.toast.is-success', { timeout: 8000 });
@@ -382,13 +402,26 @@ async function storageReport(page) {
     check(opts.length >= 6 && opts.some((o) => o.indexOf('ELAVULT') >= 0) && opts.some((o) => o.indexOf('Explore') >= 0), 'futás-választó: commit-futások + explore (' + opts.length + ')');
     check((await txt(p, '#results-run-badge')).indexOf('AKTUÁLIS') >= 0, 'AKTUÁLIS jelvény');
     const line = await txt(p, '.res-line');
-    ['RR 0,49 [0,33; 0,73]', 'p = 0,002', 'PI [0,13; 1,79]', 'I² 92% [88; 95]', 'τ² 0,313', 'k 13', 'N 357 347'].forEach((part) => check(line.indexOf(part) >= 0, 'összegző sáv: ' + part));
+    ['RR ' + PRIM.display_text.hu, PRIM.p_text.hu, 'PI ' + PRIM.pi_text.hu, 'I² ' + PLOT.heterogeneity.i2_text.hu, 'τ² ' + PLOT.heterogeneity.tau2_text.hu, 'k 13',
+      'N ' + RUNS_FX[PRIMARY].participants_text.hu].forEach((part) => check(line.indexOf(part) >= 0, 'összegző sáv: ' + part));
+    check(line.indexOf('RR 0.49 [0.33; 0.73]') >= 0 && line.indexOf('p = 0.002') >= 0, 'összegző sáv: tizedespont (4.0), mint a report.md');
     check((await txt(p, '.res-het')) === PLOT.heterogeneity.text.hu, 'heterogenitás-szöveg szó szerint');
+    // UX-03: a PI-megjegyzés színsemleges (az interaktív forest nem piros vonallal rajzolja), nyers token nélkül
+    const notes = await txt(p, '.res-notes');
+    check(notes.indexOf('Piros') < 0 && notes.indexOf('t_k-2') < 0 && notes.indexOf('predikciós intervallum, t(k-2)') >= 0, 'PI-megjegyzés: színsemleges, olvasható módszer');
+    const kbq = (await calls(p, '/api/kb/rules', 'GET')).filter((c) => c.query.field === 'model').pop();
+    check(!!kbq && kbq.query.model === 'random' && kbq.query.k === '13' && kbq.query.measure === 'RR', 'ⓚ-jelvények a futás kontextusával (UX-06)');
     await p.waitForSelector('.res-kb .kb-badge[data-kb="D-S08-001"]');
     check((await count(p, '.res-kb .kb-badge')) === 9, 'ⓚ-jelvények a modell / PI / heterogenitás / torzítás mezőkhöz');
     await p.click('.res-kb .kb-badge[data-kb="D-S08-001"]');
     await waitText(p, '[role="dialog"] .kb-fields', 'kimenetenként rögzíted');
     check((await txt(p, '[role="dialog"] .modal-title')) === 'KB-tétel: D-S08-001', 'KB-tétel modális ablak');
+    // UX-05: olvasható szabálykártya — a táblázat neve, a gépi mezők és az angol kulcsszavak nem a fő szövegben
+    const dlgMain = await p.$eval('[role="dialog"] .kb-item', (el) => Array.from(el.children).filter((c) => !c.matches('details')).map((c) => c.textContent).join(' '));
+    check(dlgMain.indexOf('decision_rule') < 0 && dlgMain.indexOf('[EN:') < 0 && dlgMain.indexOf('Gépi ellenőrzés') < 0 && dlgMain.indexOf('Kinek szól') < 0,
+      'a fő szövegben nincs táblanév, gépi ellenőrzés, „Kinek szól” és [EN: …]');
+    check((await p.$('[role="dialog"] details.kb-adv-box')) !== null && !(await p.$eval('[role="dialog"] details.kb-adv-box', (d) => d.open)), 'a gépi adatok egy összecsukott „Haladó” blokkban');
+    check((await txt(p, '[role="dialog"] .kb-fields')).indexOf('S08 · Szintézis') >= 0, 'a szakasz a nevével (S08 · Szintézis …)');
     await p.keyboard.press('Escape');
     check((await p.evaluate(() => document.activeElement.getAttribute('data-kb'))) === 'D-S08-001', 'Esc után a fókusz a jelvényen');
   });
@@ -416,8 +449,10 @@ async function storageReport(page) {
     PLOT.studies.forEach((s) => { byUid[s.row_uid] = s; });
     check(geo.studies.every((s) => byUid[s.uid] && Math.abs(byUid[s.uid].y - s.y) < 1e-9 && Math.abs(byUid[s.uid].lo - s.lo) < 1e-9 && Math.abs(byUid[s.uid].hi - s.hi) < 1e-9), 'data-y/lo/hi = a nézetmodell (elemzési skála)');
     check((await count(p, '#results-plot-panel .fp-section')) === 3 && (await count(p, '#results-plot-panel .fp-diamond.is-subtotal')) === 3, '3 alcsoport-szakasz és -összesítés');
-    check((await count(p, '#results-plot-panel .fp-sum[data-summary="sub_alternate"] .fp-arrow')) === 2, 'a tengelyen túlnyúló alcsoport-gyémánt mindkét végén nyíl');
-    check((await txt(p, '#results-plot-panel .fp-sgtest')) === 'Alcsoport-különbség: Q = 1,86; df = 2; p = 0,394', 'alcsoport-különbség szövege');
+    const clipped = PLOT.summaries.filter((s) => s.kind === 'subgroup' && (s.ci_lower < PLOT.axis.domain[0] || s.ci_upper > PLOT.axis.domain[1]));
+    const arrows = await count(p, '#results-plot-panel .fp-sum.is-subtotal .fp-arrow');
+    check(arrows === clipped.reduce((n, s) => n + (s.ci_lower < PLOT.axis.domain[0] ? 1 : 0) + (s.ci_upper > PLOT.axis.domain[1] ? 1 : 0), 0), 'a tengelyen túlnyúló alcsoport-gyémánt végén nyíl (a motor tengelye szerint: ' + arrows + ')');
+    check((await txt(p, '#results-plot-panel .fp-sgtest')) === PLOT.subgroup_test.text.hu && PLOT.subgroup_test.text.hu.indexOf('1.86') >= 0, 'alcsoport-különbség szövege');
     const pi = await p.$eval('#results-plot-panel .fp-pi', (r) => [Number(r.getAttribute('data-lo')), Number(r.getAttribute('data-hi'))]);
     check(Math.abs(pi[0] - PLOT.summaries[0].pi_lower) < 1e-9 && Math.abs(pi[1] - PLOT.summaries[0].pi_upper) < 1e-9, 'PI-sáv a motor pi_lower/pi_upper-éből');
     check((await count(p, '#results-plot-panel .fp-rob.is-high')) === 4 && (await count(p, '#results-plot-panel .fp-flag.is-estimated')) === 2, 'RoB-szimbólumok és becsült-jelölés (alak + szín)');
@@ -441,7 +476,7 @@ async function storageReport(page) {
     await p.hover('#results-plot-panel g.fp-study[data-uid="rbcg04"] .fp-label');
     await p.waitForSelector('#results-side-plot .fn-pt[data-uid="rbcg04"].is-highlight', { timeout: 3000 });
     check(true, 'rámutatás a forestben → a funnel-pont kiemelve');
-    check((await txt(p, '#results-plot-panel .pl-tip')).indexOf('0,24 [0,18; 0,31]') >= 0, 'súgó: a motor display_text-je');
+    check((await txt(p, '#results-plot-panel .pl-tip')).indexOf(HART.display_text.hu) >= 0, 'súgó: a motor display_text-je');
     await p.mouse.move(5, 5);
     await p.waitForFunction(() => !document.querySelector('.is-highlight[data-uid="rbcg04"]'));
     check(true, 'az egér elhagyásakor a kiemelés megszűnik');
@@ -464,7 +499,7 @@ async function storageReport(page) {
     const prov = await txt(p, '#drilldown .drill-prov');
     check(!(await p.$('#drilldown .drill-prov .error-box')) && (prov.indexOf('közölt') >= 0 || prov.indexOf('nincs eredet') >= 0), 'cellaszintű eredet (GET /api/provenance): ' + prov.slice(0, 80));
     check((await txt(p, '#drilldown [data-fact="loo"]')).indexOf(PLOT.loo[0].display_text.hu) >= 0, 'LOO nélküle: a motor szövege');
-    check((await txt(p, '#drilldown [data-fact="influence"]')).indexOf('rstudent −0,22') >= 0, 'befolyás: a motor szövege');
+    check((await txt(p, '#drilldown [data-fact="influence"]')).indexOf('rstudent ' + INF.rbcg01.rstudent_text.hu) >= 0, 'befolyás: a motor szövege');
     check((await p.getAttribute('#drilldown .drill-jump', 'href')) === '#/extraction?outcome=o1&row=rbcg01', 'Ugrás a sorhoz');
     check((await txt(p, '#drilldown .drill-page-text')).indexOf('3. oldal') >= 0, 'az oldalszám szövegként is (Safari)');
     const [popup] = await Promise.all([ctx.waitForEvent('page'), p.click('#drilldown .drill-pdf')]);
@@ -493,7 +528,7 @@ async function storageReport(page) {
     check((await p.evaluate(() => document.activeElement.getAttribute('data-tab'))) === 'doi', '→ a következő fülre');
     await p.keyboard.press('Enter');
     await p.waitForSelector('#results-plot-panel .doi-svg');
-    check((await txt(p, '#results-plot-panel .doi-lfk')) === 'LFK-index: −4,10 (jelentős aszimmetria)', 'Doi: LFK a motor szövegével (U+2212)');
+    check((await txt(p, '#results-plot-panel .doi-lfk')) === PLOT.doi.lfk_text.hu && PLOT.doi.lfk_text.hu === 'LFK-index: -4.10 (jelentős aszimmetria)', 'Doi: LFK a motor szövegével');
     check((await count(p, '#results-plot-panel .doi-pt')) === 13, 'Doi: 13 pont');
     await p.click('[role="tab"][data-tab="loo"]');
     await p.waitForSelector('#results-plot-panel .sr-row');
@@ -502,11 +537,13 @@ async function storageReport(page) {
     await p.click('[role="tab"][data-tab="influence"]');
     await p.waitForSelector('#results-plot-panel .inf-table');
     check((await count(p, '#results-plot-panel .inf-table tbody tr')) === 13 && (await count(p, '#results-plot-panel .inf-panel')) === 3, 'befolyás: táblázat + 3 kis ábra');
-    check((await txt(p, '#results-plot-panel .inf-summary')) === 'Befolyásos vizsgálat (metafor-kritériumok): nincs.', 'befolyás: a motor összegzése');
-    check((await txt(p, '#results-plot-panel tr[data-uid="rbcg04"]')).indexOf('−1,45') >= 0, 'rstudent a motor szövegével');
+    check((await txt(p, '#results-plot-panel .inf-summary')) === PLOT.influence_text.hu, 'befolyás: a motor összegzése');
+    check((await txt(p, '#results-plot-panel tr[data-uid="rbcg04"]')).indexOf(INF.rbcg04.rstudent_text.hu) >= 0, 'rstudent a motor szövegével');
     await p.click('[role="tab"][data-tab="cumulative"]');
     await p.waitForSelector('#results-plot-panel .sr-row');
-    check((await count(p, '#results-plot-panel .sr-row')) === 13 && (await count(p, '#results-plot-panel .fp-arrow')) >= 1, 'kumulatív: 13 lépés, levágott CI nyíllal');
+    const cax = PLOT.cumulative.axis.domain;
+    const cclip = PLOT.cumulative.entries.reduce((n, e) => n + (e.ci_lower < cax[0] ? 1 : 0) + (e.ci_upper > cax[1] ? 1 : 0), 0);
+    check((await count(p, '#results-plot-panel .sr-row')) === 13 && (await count(p, '#results-plot-panel .fp-arrow')) === cclip, 'kumulatív: 13 lépés, a tengelyen túlnyúló CI nyíllal (a motor tengelye szerint: ' + cclip + ')');
     check((await p.evaluate(() => localStorage.getItem('mag.pref.results.view'))) === 'cumulative', 'mag.pref.results.view');
     await p.click('[role="tab"][data-tab="forest"]');
   });
@@ -515,8 +552,18 @@ async function storageReport(page) {
     const val = await p.$$eval('#results-run option', (os) => (os.filter((o) => o.textContent.indexOf('o1_primary_fixed') >= 0)[0] || {}).value);
     check(!!val, 'a fix hatású futás a választóban');
     await p.selectOption('#results-run', val);
-    await waitText(p, '.res-line', 'RR 0,65 [0,60; 0,70]');
-    check((await count(p, '#results-plot-panel .fp-flag.is-influential')) === 3, 'forest: 3 befolyásos vizsgálat jelölve');
+    await waitText(p, '.res-line', 'RR ' + primOf(PLOTS[FIXED]).display_text.hu);
+    const nInf = PLOTS[FIXED].studies.filter((s) => s.flags.influential).length;
+    check(nInf === 3 && (await count(p, '#results-plot-panel .fp-flag.is-influential')) === nInf, 'forest: 3 befolyásos vizsgálat jelölve');
+    // UX-07: minden jel, ami az ábrán van, a jelmagyarázatban és a buboréksúgóban is
+    const leg = await txt(p, '#results-plot-panel .fp-legend');
+    check((await p.$('#results-plot-panel .fp-legend [data-key="influential"]')) !== null && leg.indexOf('▲') >= 0 && leg.indexOf('befolyásos') >= 0, 'jelmagyarázat: ▲ befolyásos');
+    check(leg.indexOf('≈') >= 0 && (await count(p, '#results-plot-panel .fp-flag.is-estimated')) > 0 &&
+      (await p.$$eval('#results-plot-panel .fp-flag.is-estimated', (fs) => fs.every((f) => f.textContent === '≈'))), 'becsült jele ≈ (nem a ◆, ami az összesített becslésé)');
+    const infUid = PLOTS[FIXED].studies.filter((s) => s.flags.influential)[0].row_uid;
+    await p.hover('#results-plot-panel g.fp-study[data-uid="' + infUid + '"]');
+    await p.waitForTimeout(200);
+    check((await txt(p, '#results-plot-panel')).indexOf('befolyásos vizsgálat') >= 0, 'buboréksúgó: befolyásos (szöveggel)');
     await p.click('[role="tab"][data-tab="influence"]');
     await p.waitForSelector('#results-plot-panel .inf-table');
     check((await count(p, '#results-plot-panel .inf-table .badge.is-warning')) === 3 && (await count(p, '#results-plot-panel .inf-mark.is-flag')) === 9, 'befolyás: jelvény + háromszög a 3 kis ábrán');
@@ -527,7 +574,7 @@ async function storageReport(page) {
     await goto(p, srv.base, '#/results?outcome=o1&run=' + STALE + '&view=forest');
     await waitText(p, '#results-run-badge', 'ELAVULT');
     check((await txt(p, '.res-stale')).indexOf('X001') >= 0, 'ELAVULT + X001 megjegyzés');
-    check((await txt(p, '.res-line')).indexOf('RR 0,50 [0,34; 0,74]') >= 0, 'a régi futás a saját számával');
+    check((await txt(p, '.res-line')).indexOf('RR ' + primOf(PLOTS[STALE]).display_text.hu) >= 0 && primOf(PLOTS[STALE]).display_text.hu !== PRIM.display_text.hu, 'a régi futás a saját számával');
     const label = await p.getAttribute('#results-plot-panel g.fp-study[data-uid="rbcg13"]', 'aria-label');
     check(label.indexOf('Comstock et al 1976 <img src=x onerror=alert(1)>') === 0, 'a címke szövegként (aria-label)');
     check((await txt(p, '#results-plot-panel g.fp-study[data-uid="rbcg13"] .fp-label')).indexOf('<img') >= 0, 'a címke szövegként a DOM-ban');
@@ -546,11 +593,11 @@ async function storageReport(page) {
     await goto(p, srv.base, '#/results?outcome=o1&run=' + PRIMARY + '&view=forest');
     await p.waitForSelector('#results-plot-panel .fp-sgtest');
     await p.click('#lang-switch [data-lang="en"]');
-    await waitText(p, '.res-line', 'RR 0.49 [0.33; 0.73]');
-    check((await txt(p, '#results-plot-panel .fp-sgtest')) === 'Test for subgroup differences: Q = 1.86, df = 2, p = 0.394', 'EN: a motor angol szövege');
+    await waitText(p, '.res-line', 'RR ' + PRIM.display_text.en);
+    check((await txt(p, '#results-plot-panel .fp-sgtest')) === PLOT.subgroup_test.text.en && PLOT.subgroup_test.text.en.indexOf('Test for subgroup differences') === 0, 'EN: a motor angol szövege');
     check((await txt(p, '[role="tab"][data-tab="influence"]')) === 'Influence' && (await txt(p, '#screen-title')).indexOf('Results') >= 0, 'EN felület');
     await p.click('#lang-switch [data-lang="hu"]');
-    await waitText(p, '.res-line', 'RR 0,49 [0,33; 0,73]');
+    await waitText(p, '.res-line', 'RR ' + PRIM.display_text.hu);
     const before = await p.$eval('#results-plot-panel .fp-square', (e) => getComputedStyle(e).fill);
     await p.click('#theme-toggle');
     const after = await p.$eval('#results-plot-panel .fp-square', (e) => getComputedStyle(e).fill);
@@ -561,7 +608,7 @@ async function storageReport(page) {
   await test('böngészőtároló: csak mag.pref.* (rövid UI-preferencia) és a token; projektadat soha', async () => {
     const rep = await storageReport(p);
     check(rep.ls.every((k) => k.startsWith('mag.pref.')), 'localStorage csak mag.pref.* (' + rep.ls.join(',') + ')');
-    check(rep.lsValues.every((v) => v.length <= 256 && !/Aronson|0,49|rbcg|o1_primary/.test(v)), 'a preferenciákban nincs projektadat');
+    check(rep.lsValues.every((v) => v.length <= 256 && !/Aronson|0,49|0\.49|rbcg|o1_primary/.test(v)), 'a preferenciákban nincs projektadat');
     check(rep.ss.every((k) => k === 'mag.token'), 'sessionStorage csak a token');
     check(rep.idb.length === 0 && rep.cacheKeys.length === 0 && rep.cookie === '', 'nincs IndexedDB, Cache, süti');
     check(errs.length === 0, 'nincs konzolhiba a dev-tesztek alatt: ' + errs.join(' || '));
@@ -577,7 +624,7 @@ async function storageReport(page) {
     await ready(q);
     await goto(q, srv.base, '#/results?outcome=o1');
     await q.waitForSelector('#results-summary');
-    check((await txt(q, '.res-line')).indexOf('RR 0,49 [0,33; 0,73]') >= 0, 'összegző sáv a szerver fixture-éből');
+    check((await txt(q, '.res-line')).indexOf('RR ' + PRIM.display_text.hu) >= 0, 'összegző sáv a szerver fixture-éből');
     check((await count(q, '#results-plot-panel g.fp-study')) === 13, 'forest a termék-buildben');
     const [dl] = await Promise.all([q.waitForEvent('download'), q.click('#results-downloads [data-file="report"]')]);
     check(dl.suggestedFilename() === 'report.md', 'report.md letöltése');
@@ -585,7 +632,7 @@ async function storageReport(page) {
     check(!!fu && fu.body.path === '05_elemzes/o1/' + PRIMARY + '/report.md' && fu.body.doc === null, 'POST /api/fileurl {doc: null, path}');
     check(srv.state.requests.some((r) => r.path === '/f/run/1791200000/report.md'), 'a fájl az aláírt /f/… URL-ről');
     await goto(q, srv.base, '#/analysis');
-    await waitText(q, '#plan-summary', '0,49 [0,33; 0,73]', 8000);
+    await waitText(q, '#plan-summary', PRIM.display_text.hu, 8000);
     check(true, 'explore a termék-buildben (POST /api/analyze)');
     const api = srv.state.requests.filter((r) => r.path && r.path.indexOf('/api/') === 0 && r.path !== '/api/session');
     check(api.every((r) => !!r.token), 'minden /api/* kérés tokennel');

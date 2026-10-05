@@ -92,12 +92,15 @@ class FixtureTests(unittest.TestCase):
 
     def test_primary_numbers(self):
         p = self.plots["/api/runs/20261004T211200Z-a1f3c2/plot"]
-        prim = p["summaries"][0]
-        self.assertEqual(prim["display_text"], {"hu": "0,49 [0,33; 0,73]", "en": "0.49 [0.33; 0.73]"})
-        self.assertEqual(prim["pi_text"]["hu"], "[0,13; 1,79]")
+        prim = [s for s in p["summaries"] if s.get("primary")][0]
+        # a motor kész szövegei (4.0: tizedespont mindkét nyelven, mint a report.md és az SVG; en: U+2212)
+        self.assertEqual(prim["display_text"], {"hu": "0.49 [0.33; 0.73]", "en": "0.49 [0.33; 0.73]"})
+        self.assertEqual(prim["pi_text"]["hu"], "[0.13; 1.79]")
         self.assertEqual(len(p["studies"]), 13)
-        self.assertEqual(p["subgroup_test"]["text"]["hu"], "Alcsoport-különbség: Q = 1,86; df = 2; p = 0,394")
-        self.assertIn("−", p["doi"]["lfk_text"]["hu"])
+        self.assertEqual(p["subgroup_test"]["text"]["hu"], "Alcsoport-különbség: Q_b = 1.86 (df = 2, p = 0.394)")
+        self.assertIn("−", p["doi"]["lfk_text"]["en"])
+        self.assertEqual(p["doi"]["lfk_text"]["hu"], p["doi"]["lfk_text"]["en"].replace("−", "-").replace(
+            "LFK index", "LFK-index").replace("major asymmetry", "jelentős aszimmetria"))
 
     def test_runs_reference_existing_plots_and_specs(self):
         runs = [r for r in envelopes("analysis_runs.json") if r.get("query") == {"outcome": "o1"}][0]["envelope"]["data"]["runs"]

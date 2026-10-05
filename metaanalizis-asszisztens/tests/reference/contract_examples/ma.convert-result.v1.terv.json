@@ -3,22 +3,45 @@
   "kind": "median_to_mean_sd",
   "engine_version": "0.2.0",
   "outputs": {
-    "mean": 12.43,
-    "sd": 3.71
+    "mean": 12.5,
+    "sd": 3.8446495073971056
+  },
+  "outputs_text": {
+    "mean": {
+      "hu": "12.5",
+      "en": "12.5"
+    },
+    "sd": {
+      "hu": "3.845",
+      "en": "3.845"
+    }
+  },
+  "cell_text": {
+    "mean": "12,5",
+    "sd": "3,845"
   },
   "estimated": true,
   "method": {
     "id": "luo2018+wan2014",
-    "citation": "Cochrane Handbook 6.5.2.5",
+    "citation": "Cochrane Handbook 6.5.2.5; Luo 2018; Wan 2014",
     "function": "conversions.mean_from_median / sd_from_median",
     "kb_refs": [
-      "K-…"
+      "D-S05-010",
+      "D-S05-011",
+      "F-MOR20-010",
+      "D-S05-023"
     ]
   },
   "assumptions": [
-    "közel normális eloszlás"
+    {
+      "hu": "közel normális eloszlás",
+      "en": "approximately normal distribution"
+    }
   ],
   "warnings": [
-    "a medián Q1-hez közelebb: ferde eloszlás gyanúja (V013)"
+    {
+      "hu": "Becsült érték: jelöld az adattáblában (estimated=igen) és végezz nélküle érzékenységi elemzést (D-S05-023).",
+      "en": "Estimated value: mark it in the data table (estimated=yes) and run a sensitivity analysis without it (D-S05-023)."
+    }
   ]
 }

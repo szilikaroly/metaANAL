@@ -210,7 +210,7 @@ def parse_number(text):
     elif _num_comma.match(t):
         v = float(t.replace(",", "."))
     else:
-        raise ValueError("nem szám: %r" % text)
+        raise ValueError("nem értelmezhető szám")          # az értéket nem idézzük (T10: cellaérték hibában soha)
     if not math.isfinite(v):
         # '1e400' → inf: ugyanúgy hiba, mint a szó szerinti 'inf'
         raise _NotFinite("nem véges szám (túlcsordul)")
@@ -367,6 +367,28 @@ def _table_from_bytes(raw, path):
         raise ValueError("üres fájl: %s" % path)
     rows, meta = _parse_records(records[0][1], records[1:], delim, None, path, enc)
     return rows, meta, records[0][1]
+
+
+def column_map_from(columns, mapping, header):
+    """(column_map, column_index) a beolvasás oszlopaiból: kanonikus név → eredeti fejléc, illetve → oszlophely
+    (azonos kanonikus névnél az első oszlop). columns: az egyedivé tett fejléc (meta['columns']), mapping:
+    meta['mapping'], header: az eredeti fejléc."""
+    cmap, cindex = {}, {}
+    for p, col in enumerate(columns):
+        key = mapping[col]
+        if key and key not in cmap:
+            cmap[key] = header[p] if p < len(header) else col
+            cindex[key] = p
+    return cmap, cindex
+
+
+def column_map(header):
+    """Kanonikus oszlopnév → eredeti fejléc a beolvasás oszlopfelismerésével — ugyanaz, mint a validálási
+    dokumentum (szk.ma.validation/v1) column_map-je, cellák nélkül is (a munkapad táblája a validálás előtt
+    is ezzel képezi a mezőket oszlopra). Az ismeretlen oszlop önmagára képződik."""
+    hdr = [_cell_text(h) for h in header]
+    cols = _unique_header(hdr)
+    return column_map_from(cols, canonical_columns(cols), hdr)[0]
 
 
 def parse_table(header, rows_text, decimal_mark=None, delimiter=None, lines=None):

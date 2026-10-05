@@ -95,9 +95,19 @@ class WeightedQR(object):
     A normálegyenletek (XᵀWX explicit inverze) helyett: a kondíciószám cond(A), nem cond(A)², és
     a projekcióból adódó mennyiségek (reziduumok, 1 − h_ii, tr(P)) kiejtés nélkül számolhatók.
     Oszlopcsere (pivoting) és a sorok |A_i| szerint csökkenő rendezése: soronként stabil erősen
-    eltérő súlyoknál is (Cox & Higham 1998). Rangdefektus: |R_jj| < rtol · |R_00|, ekkor
-    SingularMatrixError; rtol = 1e-7 (mint az R qr() / lm tol-ja; a pontosan kollineáris
-    tervek aránya ~1e-16, a még megbízhatóan számolható közel-kollineárisaké >= ~1e-7).
+    eltérő súlyoknál is (Cox & Higham 1998).
+
+    Mértékegység-független rangvizsgálat: minden oszlopot a saját eredeti súlyozott normájával
+    (s_j = ‖W^½ x_j‖) skálázunk, és a faktorizáció a skálázott mátrixon fut (a b, a kovariancia és
+    a log det a végén visszaskálázódik; a reziduumok, 1 − h_ii, tr(P) a skálától függetlenek).
+    Egy oszlop akkor kollineáris, ha a többire vetítés utáni maradéka kisebb, mint rtol-szor a
+    SAJÁT eredeti normája (relatív maradék = sin(az oszlop és a többi által kifeszített tér
+    szöge)); így pl. egy dollárban mért GDP és egy arányként mért moderátor együtt nem tűnik
+    kollineárisnak csak azért, mert a normáik 1e7-szer eltérnek (az R lm() dqrdc2-tesztje is az
+    oszlop saját normájához mér). A főelem-választás is a skálázott maradéknormák szerint
+    történik, így a döntés nem függ a moderátorok mértékegységétől. rtol = 1e-7 (mint az R
+    qr() / lm tol-ja; a pontosan kollineáris tervek relatív maradéka ~1e-16, a még megbízhatóan
+    számolható közel-kollineárisaké >= ~1e-7). Csupa-nulla oszlop: SingularMatrixError.
     """
 
     def __init__(self, x, w, rtol=1e-7):
@@ -105,13 +115,17 @@ class WeightedQR(object):
         self.k, self.p = k, p
         self.sw = sw = [math.sqrt(a) for a in w]
         self.w = list(w)
-        order = sorted(range(k), key=lambda i: (-max(abs(c) for c in x[i]) * sw[i], i))
+        # oszlopskálák: az eredeti súlyozott oszlopnormák (a rangvizsgálat viszonyítási alapja)
+        scale = [math.hypot(*[sw[i] * x[i][j] for i in range(k)]) for j in range(p)]
+        if not all(math.isfinite(s) and s > 0 for s in scale):
+            raise SingularMatrixError("szinguláris mátrix (kollineáris moderátorok?)")
+        self.scale = scale
+        order = sorted(range(k), key=lambda i: (-max(abs(x[i][j]) / scale[j] for j in range(p)) * sw[i], i))
         self.order = order
-        cols = [[sw[i] * x[i][j] for i in order] for j in range(p)]
+        cols = [[sw[i] * x[i][j] / scale[j] for i in order] for j in range(p)]
         perm = list(range(p))
         vs, betas = [], []
         r = [[0.0] * p for _ in range(p)]
-        r00 = None
         for j in range(p):
             norms = [math.hypot(*cols[c][j:]) if j < k else 0.0 for c in range(j, p)]
             jj = j + max(range(len(norms)), key=lambda t: norms[t])
@@ -121,9 +135,8 @@ class WeightedQR(object):
                 for row in r[:j]:
                     row[j], row[jj] = row[jj], row[j]
             nrm = norms[jj - j]
-            if r00 is None:
-                r00 = nrm
-            if not (nrm > rtol * r00) or not math.isfinite(nrm):
+            # a skálázott oszlop eredeti normája 1: a maradék a saját eredeti norma rtol-szorosa alatt
+            if not (nrm > rtol) or not math.isfinite(nrm):
                 raise SingularMatrixError("szinguláris mátrix (kollineáris moderátorok?)")
             col = cols[j]
             alpha = -math.copysign(nrm, col[j])
@@ -177,7 +190,7 @@ class WeightedQR(object):
         z = self._rsolve(c[:p])
         b = [0.0] * p
         for j, pj in enumerate(self.perm):
-            b[pj] = z[j]
+            b[pj] = z[j] / self.scale[pj]
         rr = [0.0] * p + c[p:]
         rss = sum(a * a for a in c[p:])
         self._q(rr)
@@ -187,7 +200,7 @@ class WeightedQR(object):
         return b, e, rss
 
     def cov(self):
-        """(XᵀWX)⁻¹ = Π R⁻¹ R⁻ᵀ Πᵀ."""
+        """(XᵀWX)⁻¹ = S⁻¹ Π R⁻¹ R⁻ᵀ Πᵀ S⁻¹ (S = diag(oszlopskálák))."""
         p, r = self.p, self.r
         rinv = [[0.0] * p for _ in range(p)]
         for j in range(p):
@@ -197,13 +210,15 @@ class WeightedQR(object):
         m = [[0.0] * p for _ in range(p)]
         for a in range(p):
             for b in range(a, p):
-                s = sum(rinv[a][t] * rinv[b][t] for t in range(b, p))
-                m[self.perm[a]][self.perm[b]] = m[self.perm[b]][self.perm[a]] = s
+                pa, pb = self.perm[a], self.perm[b]
+                s = sum(rinv[a][t] * rinv[b][t] for t in range(b, p)) / (self.scale[pa] * self.scale[pb])
+                m[pa][pb] = m[pb][pa] = s
         return m
 
     def logdet(self):
-        """log det(XᵀWX) = 2 Σ log|R_jj|."""
-        return 2.0 * sum(math.log(abs(self.r[j][j])) for j in range(self.p))
+        """log det(XᵀWX) = 2 Σ log|R_jj| + 2 Σ log s_j."""
+        return 2.0 * (sum(math.log(abs(self.r[j][j])) for j in range(self.p))
+                      + sum(math.log(s) for s in self.scale))
 
     def leverages(self):
         """(h, 1 − h) az eredeti sorrendben, h_ii = (W^½ X M Xᵀ W^½)_ii. A nagy hatású (h > ½)

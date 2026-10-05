@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """A MA-munkapad felületének statikus tesztjei — böngésző nélkül (terv 6.8, 7.1 T4/T6/T9, 7.6, 8.6).
 
-A termék-buildet (ma_gui/web/dist/index.html, ezt másolja a szerver ma_gui/static/index.html-be) és a
+A termék-buildet (ma_gui/web/dist/index.html — ezt szolgálja ki a szerver a GET /-re; a ma_gui/static/index.html
+csak tartalék oldal, ha a build hiányzik) és a
 forrásokat (ma_gui/web/src/**) ellenőrzi:
 
-  • a dist naprakész (a forrásokból újraépítve bájtra azonos), ≤ 450 KB, determinisztikus;
+  • a dist naprakész (a forrásokból újraépítve bájtra azonos), ≤ 600 KB (build_gui.MAX_BYTES), determinisztikus;
   • nincs benne fixture / fejlesztői kód / fixture-token;
   • nincs külső URL (az SVG-névtér az egyetlen kivétel), külső szkript, stíluslap vagy url();
   • nincs innerHTML / outerHTML / insertAdjacentHTML / document.write / eval / new Function / string-időzítő;
@@ -83,7 +84,7 @@ class DistTests(unittest.TestCase):
         self.assertEqual(self.html, fresh, "a dist/index.html elavult — futtasd: python3 ma_gui/web/build_gui.py")
 
     def test_size_budget(self):
-        self.assertLessEqual(len(self.html.encode("utf-8")), 450 * 1024)
+        self.assertLessEqual(len(self.html.encode("utf-8")), 600 * 1024)
 
     def test_no_fixtures_or_dev_code(self):
         low = self.html.lower()

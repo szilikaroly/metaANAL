@@ -2,7 +2,8 @@
  *
  * HTTP API (3.4; az alakok a szerverrel egyeztetendők):
  *   POST /api/export/audit    ← {include{…}, redact{…}} → {path, sha256, bytes, deterministic, manifest{files[], redactions[], excluded[{pattern, reason}], activity_head, data_class}}
- *   POST /api/export/snapshot ← {include{…}, redact{…}} → {path, sha256, bytes, redactions[], excluded[], network: false}
+ *   POST /api/export/snapshot ← {include{…}, redact{…}, ack: true} → {path, sha256, bytes, redactions[], excluded[], network: false}
+ *   (mindkettő: url — aláírt, 10 perces letöltési cím: /f/x/…, csatolmányként)
  *   GET  /api/log/activity?limit=1 → a hash-lánc állapota (verify, total)
  * A kapcsolók alapértéke az adatosztályból jön (7.4): B-nél az adattáblák alapból ki, C-nél tiltva; a _privat/ (C)
  * soha, a PDF-ek (D) csak doc-id + oldal + sha256. A felületet és a pillanatképet SOHA nem szabad feltölteni vagy
@@ -62,6 +63,10 @@
         exc.length ? [h('dt', { i18n: 'export.r.excluded' }), h('dd', null, h('ul', { 'class': 'cap-notes' }, exc.map(function (x) {
           return h('li', null, h('code', null, String(x.pattern || x.path || '')), x.reason ? ' — ' + pick(x.reason) : '');
         })))] : null),
+      // aláírt, rövid életű letöltési cím (/f/x/…); a szerver csatolmányként adja (nem nyílik meg a munkapad originjén)
+      typeof d.url === 'string' && /^\/f\//.test(d.url) ? h('p', { 'class': 'exp-download' },
+        h('a', { 'class': 'btn', id: 'exp-' + kind + '-download', href: d.url, download: d.name || '' }, t('export.download')),
+        ' ', h('span', { 'class': 'muted', i18n: 'export.downloadNote' })) : null,
       kind === 'snapshot' ? h('p', { 'class': 'exp-warn', role: 'note' }, MA.ui.badge('warning', null), ' ', t('export.snap.warn')) : null);
   }
 
@@ -69,6 +74,8 @@
     btn.disabled = true;
     MA.dom.mount(host, MA.ui.spinner('export.working'));
     var body = { include: values('include'), redact: values('redact') };
+    // a pillanatkép csak tudomásulvétellel készül (a szerver is megköveteli: ack)
+    if (kind === 'snapshot') { body.ack = !!E.ack.checked; }
     return MA.api.post('/api/export/' + kind, body, { signal: ctx.signal, timeoutMs: 120000 }).then(function (env) {
       if (!ctx.alive()) { return; }
       MA.dom.mount(host, result(env.data || {}, kind));
