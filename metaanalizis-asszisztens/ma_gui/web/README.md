@@ -243,3 +243,41 @@ Fixture-fájl: `{"description": "…", "routes": [{"method": "GET", "path": "/ap
 - `GET /api/log/<kind>` `data.items[]`; `GET /api/runs?primary=1` `data.runs[]` (`szk.ma.run/v1` + `outcome_id`,
   `stale`, `participants_text`, `rob_high`, `grade.certainty`, `primary.i2_text`).
 - A HTML-ben a `{{CSP_NONCE}}` helyeket válaszonként a szerver cseréli.
+
+## KIEGÉSZÍTÉS (folyamat-ágens, 2026-10-05) — Folyamat és audit képernyők, „Miért?” komponens
+
+Fájlok: `src/components/{proc,why}.js`, `src/screens/{overview,prisma,studies,log,capabilities,export}.js`,
+`src/css/process.css`, `src/i18n/{hu,en}/process.json`, `src/dev/process_backend.js` (csak dev),
+`fixtures/{prisma,studies,kb_process,export,capabilities,log_*}.json` (generálja: `python3 tests/gui/ui/gen_process_fixtures.py`,
+a valódi motorból/KB-ból), tesztek: `node tests/gui/ui/process.spec.js`, `python3 tests/gui/ui/test_process_fixtures.py`.
+
+### `MA.why` — „Miért?” magyarázó (11. fejezet 6. döntés; más képernyők is használják)
+
+| Függvény | Leírás |
+|---|---|
+| `button(spec, {label?, compact?, id?}) → <button>` | „? Miért?” gomb (`aria-haspopup=dialog`, `aria-expanded`); kattintásra/Enterre buborék |
+| `open(spec, anchor?) → {el, close}` | nem modális buborék (`role=dialog`, `aria-modal=false`); Esc / kattintás kívül / fókusz elhagyása zárja, a fókusz visszakerül |
+| `panel(spec) → <div>` | ugyanez beágyazva (a KB-rész aszinkron töltődik) |
+| `item(id) → Promise<item\|null>` | `GET /api/kb/item/<id>` gyorsítótárral (404 → `null`) |
+| `openItem(id)`, `kbButton(id)` | a KB-tétel minden mezője modálisban („helyi forrás — nem exportálható” a szövegrésznél); „ⓚ ID” gomb |
+
+`spec = {kb?: id | [id…] | "V011 D-S07-004", code?, title?, detail?, advice?, source?, plain?: {asks, because, change,
+uncertain}, evidence?: {quote, page, locator}}` — a motor megállapításának mezői (`title/detail/advice/source`) és a
+KB-tétel (`condition/recommendation/rationale/source_ids/locator`) egyszerű nyelvű szakaszokba kerülnek; az AI-vázlat
+indoklása (`plain`) és bizonyítéka (`evidence`) is megjeleníthető. Példa: `MA.why.button({kb: f.code, code: f.code,
+title: f.title, detail: f.detail, advice: f.advice}, {compact: true})`.
+
+`MA.proc`: `STAGES` (S00–S14, FINAL), `SEVERITIES`, `AGENTS`, `sevKind`, `refs`, `section/fill/load`, `select`, `field`, `pend`.
+
+### Feltevések a szerver felé (egyeztetendő; a fixture-ök ezt az alakot követik)
+
+- `GET /api/prisma[?refresh=1]` → `{mode: manual|composer, path, source{…}, override, flow (szk.prisma-flow/v1), check (motor
+  prisma_check: template, ok, summary, findings[], derived{}), studies{path, studies, reports}, meta[{outcome_id, k, run_id}],
+  cross[X014/X015], composer_status[]}` + ETag. `PUT /api/prisma/manual` `{dry_run: true, flow}` → előnézet (mentés nélkül,
+  250 ms-os élő ellenőrzés); `{flow, override_reason?}` + If-Match → mentés. A dobozértékek **nyers szövegként** mennek
+  (üres → null), az okok `{ok: nyers szám}` alakban — a motor parszol (P001); a felület dobozértéket nem számol.
+- `GET/PUT /api/studies` → `szk.ma.studies/v1` + `summary{studies, reports}` (I és J a szervertől) + `problems[]`, If-Match, 409/422.
+- `GET /api/log/activity?limit=` (ma_gui/routes/log.py), `GET /api/audit/project` (`szk.ma.project-audit/v1`).
+- `POST /api/export/audit|snapshot` `{include{decisions, specs_runs, provenance, appraisals, prisma, figures, activity, rerun,
+  data_tables?}, redact{assessors, quotes, abs_paths}}` → `{path, sha256, bytes, manifest{files[], redactions[], excluded[], activity_head}}`.
+- `GET /api/capabilities` a `ma_gui.caps.Caps.report()` valódi alakja (components[] + matrix + problems).
