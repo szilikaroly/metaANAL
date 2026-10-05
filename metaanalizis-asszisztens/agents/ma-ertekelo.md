@@ -38,9 +38,11 @@ a Summary of Findings táblázatot és a kéziratba szánt mondatokat angolul is
 - Napló (ajánlott, v1): a `grade advice` kimenetét töltsd ki doménenként (`rating`, `step`, `rationale`; felminősítésnél
   `upgrade_details`), mentsd: `ma.py grade save <mappa> --doc <grade.json>` (a bizonyosságot a motor számolja a
   lépésekből; üres marad, amíg bármely domén nyitott vagy a publikációs torzítás „gyanított” ítélete feloldatlan), majd
-  rögzítsd: `ma.py grade record <mappa> --outcome <id> --strict` (a projektnapló GRADE-sora előjeles lépés-szövegekkel;
-  elutasítja a feloldatlan „gyanított” publikációs torzítást — X019 —, a nyitott domént és a jóvá nem hagyott
-  AI-vázlatot). Régi út: `project grade <mappa> --outcome "…" --certainty high|moderate|low|"very low" --k …
+  rögzítsd: `ma.py grade record <mappa> --outcome <id> --certainty "<szint>" --strict` (a projektnapló GRADE-sora
+  előjeles lépés-szövegekkel; elutasítja a feloldatlan „gyanított” publikációs torzítást — X019 —, a nyitott domént, a
+  jóvá nem hagyott AI-vázlatot és a csak számolt bizonyosságot). **A számolt bizonyosság csak előtöltés (GRADE-09):**
+  mutasd meg a kutatónak, és a `--certainty` értékét csak az ő kifejezett megerősítése (vagy átírása) után add meg —
+  magadtól soha ne erősítsd meg. Felminősítés leminősítés mellett nem számít (egy szabály a motor minden útján). Régi út: `project grade <mappa> --outcome "…" --certainty high|moderate|low|"very low" --k …
   --participants … --effect "…" --rob "…" --inconsistency "…" --indirectness "…" --imprecision "…" --publication-bias "…"
   --upgrades "…" --rationale "…" --kb <ID-k> --strict` — a doménszöveget előjeles lépéssel kezdd („−1 súlyos …”, „0 …”,
   „+1 nagy hatás …”; felminősítés nélkül „0” vagy „nincs”): a motor ebből ellenőrzi a bizonyosság összhangját; a puszta
@@ -114,6 +116,11 @@ Ha az orkesztrátor egy vizsgálat értékelésének előkészítését kéri, *
      megkérdezni. Idézet nélkül csak ezzel a jelöléssel fogadható el a tétel.
 - Ellenőrzés és mentés: `ma.py appraisal validate <vázlat.json> --project <mappa>` (magyar hibaüzenetek; minden hibát
   javíts), majd `ma.py appraisal save <vázlat.json> --project <mappa>` → `04_torzitas_kockazat/appraisals/<vizsgálat>.<eszköz>[.<cél>].ai.json`.
+  A `<cél>` a `target.key`; ha nincs megadva, a motor eredmény-szintű eszköznél (RoB 2, ROBINS-I/E, QUIPS, GRADE) a
+  `target.outcome`-ból képzi — kimenetenként külön értékelés, külön fájl; más értékelés fájlját a motor nem írja
+  felül. A tételszámozás a publikált eszközé: ROBINS-I a 2016-os Table A szerint (34 tétel; besorolás 30, betartás
+  32), QUIPS 1a–6d; az AMSTAR 2 9. és 11. tételét RCT-re és NRSI-re külön add meg (`parts: {RCT, NRSI}`; „csak NRSI /
+  csak RCT” = `not_applicable`; bármelyik rész „Nem” → a tétel „Nem”).
   A jóváhagyást az ember végzi (munkapad, vagy `ma.py appraisal approve <fájl> --approver <monogram> --project <mappa>`);
   a motor csak akkor engedi, ha minden tételnél megvan az indoklás és az idézet (vagy a bizonytalanság-jelölés).
 - A vázlat végén (az orkesztrátornak adott válaszban): összesített javaslat — a `ma.py appraisal check` implikált

@@ -2423,6 +2423,7 @@ AMSTAR2_ITEMS = tuple(str(i) for i in range(1, 17))
 AMSTAR2_CRITICAL = ("2", "4", "7", "9", "11", "13", "15")
 AMSTAR2_PARTIAL_YES = ("2", "4", "7", "8", "9")
 AMSTAR2_NO_MA = ("11", "12", "15")
+AMSTAR2_PARTS_ITEMS = ("9", "11")       # RCT / NRSI részek (Shea 2017; instruments/amstar2.json "parts")
 AMSTAR2_ANSWERS = ("yes", "partial_yes", "no", "not_applicable")     # = metaelemzes/instruments/amstar2.json
 AMSTAR2_RATINGS = ("high", "moderate", "low", "critically_low")
 AMSTAR2_CONVENTIONS = P.CONVENTIONS["amstar2_partial_yes_critical"]
@@ -2460,6 +2461,24 @@ def _amstar_item(key):
     return s if s in AMSTAR2_ITEMS else None
 
 
+def _amstar_parts(item, val):
+    """AMSTAR 2 9. és 11. tétel (methodology:M11): a hivatalos űrlap RCT-re és NRSI-re KÜLÖN ítél. Egy
+    {value?, parts: {RCT, NRSI}} válasz → (a részekből adódó érték, ellentmondás / hiba | None, van-e 'parts'). A
+    szabály az értékelés-motoré (appraisal._raw_answer, Instrument.combine_parts): bármelyik rész „Nem” → „Nem”;
+    „csak NRSI / csak RCT” (illetve „nem volt metaanalízis”) = Nem alkalmazható; félkész részeknél az explicit érték
+    számít. 'parts' nélkül → (a nyers érték, None, False)."""
+    raw = val.get("value") if isinstance(val, dict) else val
+    if not isinstance(val, dict) or val.get("parts") is None:
+        return raw, None, False
+    from . import appraisal as _A                       # késői import: az appraisal modul nem függ a grade_help-től
+    inst = _A.instrument_for("amstar2")
+    it = inst.item(item)
+    if it is None or not inst.parts(it):
+        return raw, None, False
+    value, conflict = _A._raw_answer(inst, it, val)
+    return value, conflict, True
+
+
 def _amstar_rating(answers_by_item, convention):
     crit, weak = [], []
     for item in AMSTAR2_ITEMS:
@@ -2490,12 +2509,13 @@ def amstar2_consistency(answers, convention=None, claimed=None):
     hiba; kritikusan alacsony: egynél több.
 
     answers: {tétel ('1'–'16', 'AMSTAR2-02', 2 …): válasz ('yes' | 'partial_yes' | 'no' | 'not_applicable' — a
-    metaelemzes/instruments/amstar2.json szókincse —, vagy magyar / rövid alak; {value: …} is)}, vagy egy
-    szk.appraisal/v1 dokumentum (answers mezővel). claimed: egy
+    metaelemzes/instruments/amstar2.json szókincse —, vagy magyar / rövid alak; {value: …} is; a 9. és 11. tételnél
+    {parts: {RCT, NRSI}} is — bármelyik rész „Nem” → „Nem”, ellentmondó value → érvénytelen; methodology:M11)}, vagy
+    egy szk.appraisal/v1 dokumentum (answers mezővel). claimed: egy
     máshonnan (validator, ember) kapott besorolás — eltérésnél consistency_warning.
     → {instrument, algorithm, convention, rating, critical_flaws, weaknesses, by_convention {meets, weakness},
-    convention_sensitive, partial_yes_critical, not_applicable, answered, expected, missing, invalid, complete,
-    provisional, claimed, consistency_warning, label, text, sensitivity_text, notes, kb_refs}"""
+    convention_sensitive, partial_yes_critical, not_applicable, answered, expected, missing, invalid, parts_missing,
+    complete, provisional, claimed, consistency_warning, label, text, sensitivity_text, notes, kb_refs}"""
     convention = convention or P.DEFAULT_CONVENTIONS["amstar2_partial_yes_critical"]
     if convention not in AMSTAR2_CONVENTIONS:
         raise ValueError("convention: %s lehet (kapott: %r)" % (" | ".join(AMSTAR2_CONVENTIONS), convention))
@@ -2504,6 +2524,7 @@ def amstar2_consistency(answers, convention=None, claimed=None):
     if not isinstance(answers, dict):
         raise ValueError("answers: {tétel: válasz} objektum legyen")
     by_item, invalid, notes = {}, [], []
+    parts_missing = []
     for key, val in answers.items():
         item = _amstar_item(key)
         raw = val.get("value") if isinstance(val, dict) else val
@@ -2511,8 +2532,17 @@ def amstar2_consistency(answers, convention=None, claimed=None):
             invalid.append({"item": str(key), "value": raw, "reason": _tr("ismeretlen tétel (1–16)",
                                                                           "unknown item (1–16)")})
             continue
+        raw, conflict, has_parts = _amstar_parts(item, val)
+        if conflict:
+            invalid.append({"item": item, "value": raw if isinstance(raw, str) else None, "reason": _tr(
+                "a részek (RCT / NRSI) hibásak vagy ellentmondanak a tétel értékének: %s" % conflict,
+                "the parts (RCT / NRSI) are invalid or contradict the item value: %s" % conflict)})
+            continue
         if raw is None or (isinstance(raw, str) and not raw.strip()):
             continue
+        if item in AMSTAR2_PARTS_ITEMS and not (has_parts and isinstance(val.get("parts"), dict) and all(
+                val["parts"].get(p) not in (None, "") for p in ("RCT", "NRSI"))):
+            parts_missing.append(item)
         a = _amstar_answer(raw) if isinstance(raw, str) else None
         if a is None:
             invalid.append({"item": item, "value": raw, "reason": _tr("ismeretlen válasz (igen / részben igen / nem / "
@@ -2566,6 +2596,13 @@ def amstar2_consistency(answers, convention=None, claimed=None):
                     AMSTAR2_RATING_LABELS[claimed_n][0], AMSTAR2_RATING_LABELS[sel["rating"]][0], convention,
                     ("; a '%s' konvencióval (validator 1.0.0) viszont egyezik" % other)
                     if by_conv[other]["rating"] == claimed_n else "")
+    if parts_missing:
+        notes.append(_tr("A(z) %s tételt a hivatalos AMSTAR 2-űrlap RCT-re és NRSI-re KÜLÖN ítélteti — add meg a részeket "
+                         "({parts: {RCT, NRSI}}; „csak NRSI / csak RCT” = not_applicable); bármelyik rész „Nem” → a "
+                         "tétel „Nem” (kritikus hiba)." % ", ".join(parts_missing),
+                         "Item(s) %s are rated SEPARATELY for RCTs and NRSI on the official AMSTAR 2 form — give the "
+                         "parts ({parts: {RCT, NRSI}}; 'only NRSI / only RCTs' = not_applicable); 'No' on either part "
+                         "makes the item 'No' (critical flaw)." % ", ".join(parts_missing)))
     if sel["rating"] == "moderate":
         notes.append(_tr("Több nem kritikus gyengeség együtt az „alacsony” besorolást is indokolhatja (emberi döntés, "
                          "indoklással).", "Several non-critical weaknesses together may justify 'low' (human "
@@ -2592,6 +2629,7 @@ def amstar2_consistency(answers, convention=None, claimed=None):
             "by_convention": by_conv, "convention_sensitive": sensitive, "partial_yes_critical": py_crit,
             "not_applicable": [i for i in AMSTAR2_ITEMS if by_item.get(i) == "not_applicable"],
             "answered": len(by_item), "expected": len(AMSTAR2_ITEMS), "missing": missing, "invalid": invalid,
+            "parts_missing": parts_missing,
             "complete": not provisional, "provisional": provisional, "claimed": claimed_n,
             "consistency_warning": warning, "label": {"hu": lab[0], "en": lab[1]}, "text": text,
             "sensitivity_text": sens, "notes": notes, "kb_refs": list(KB["amstar2"])}

@@ -1253,7 +1253,16 @@ def cmd_grade(a):
                      [os.path.join(a.dir, "06_kezirat", "grade", "%s.grade.json" % oid)])
         return 0
     if c == "record":
-        res = api.grade_record(a.dir, a.outcome, actor=_cli_actor(a), kb_db=a.kb_db, strict=a.strict)
+        try:
+            res = api.grade_record(a.dir, a.outcome, actor=_cli_actor(a), kb_db=a.kb_db, strict=a.strict,
+                                   certainty=a.certainty)
+        except ValueError as exc:
+            if getattr(exc, "needs_certainty", False):
+                # methodology:M5 — a számolt szint csak előtöltés: az ember erősíti meg (vagy írja át)
+                print("TIPP: a lépésekből számolt bizonyosság: %s. Ha a kutató egyetért, rögzítsd így: ma.py grade "
+                      "record %s --outcome %s --certainty \"%s\" (vagy add meg a saját ítéletét)." % (
+                          exc.computed_certainty, a.dir, a.outcome, exc.computed_certainty), file=sys.stderr)
+            raise
         if a.json:
             _print_json(res)
         else:
@@ -1971,6 +1980,9 @@ def build_parser():
                        "publikációs torzítás, nyitott domén vagy jóvá nem hagyott AI-vázlat mellett elutasítja)")
     x.add_argument("dir")
     x.add_argument("--outcome", required=True)
+    x.add_argument("--certainty", choices=["high", "moderate", "low", "very low"],
+                   help="az EMBER által megerősített / átírt bizonyosság: a lépésekből számolt szint csak előtöltés, "
+                        "megerősítés nélkül a rögzítés elutasítva (GRADE-09)")
     x.add_argument("--actor", help="szereplő (alap: MA_ACTOR)")
     x.add_argument("--kb-db", help="a KB-hivatkozások ellenőrzéséhez használt tudásbázis")
     x.add_argument("--strict", action="store_true", help="ismeretlen KB-azonosító: hiba")

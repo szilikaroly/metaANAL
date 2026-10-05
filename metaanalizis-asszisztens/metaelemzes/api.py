@@ -1537,11 +1537,14 @@ def grade_put(project_dir, outcome_id, doc, actor=None):
     return _jsonable(_projekt.save_grade_doc(project_dir, dict(doc, outcome_id=outcome_id), actor=actor))
 
 
-def grade_record(project_dir, outcome_id, doc=None, actor=None, kb_db=None, strict=False):
-    """`ma.py grade record <projekt> --outcome o1 --json`: a GRADE-ítélet rögzítése a projektnaplóba (add_grade
-    előjeles lépés-szövegekkel) és a fájlba (status 'recorded') → {id, doc, warnings, path}. doc: alapból a mentett
-    ítélet. Elutasítja (ValueError, minden okkal): commit-futás nélkül, nyitott domén, feloldatlan „suspected”
-    publikációs torzítás (X019), bizonyosság nélkül, jóvá nem hagyott AI-vázlat (6. döntés)."""
+def grade_record(project_dir, outcome_id, doc=None, actor=None, kb_db=None, strict=False, certainty=None):
+    """`ma.py grade record <projekt> --outcome o1 [--certainty <szint>] --json`: a GRADE-ítélet rögzítése a
+    projektnaplóba (add_grade előjeles lépés-szövegekkel) és a fájlba (status 'recorded') → {id, doc, warnings,
+    path}. doc: alapból a mentett ítélet. certainty: az EMBER által megerősített vagy átírt bizonyosság (high |
+    moderate | low | very low; methodology:M5 — a lépésekből számolt szint csak előtöltés, azt a motor egymagában
+    nem rögzíti). Elutasítja (GradeRecordError ⊂ ValueError, minden okkal; needs_certainty / computed_certainty a
+    megerősítő kérdéshez): commit-futás nélkül, nyitott domén, feloldatlan „suspected” publikációs torzítás (X019),
+    bizonyosság nélkül, csak számolt (meg nem erősített) bizonyosság, jóvá nem hagyott AI-vázlat (6. döntés)."""
     if doc is None:
         doc = _projekt.load_grade_doc(project_dir, outcome_id)
         if doc is None:
@@ -1549,7 +1552,7 @@ def grade_record(project_dir, outcome_id, doc=None, actor=None, kb_db=None, stri
     elif doc.get("outcome_id") not in (None, outcome_id):
         raise ValueError("a dokumentum kimenete (%s) nem a megadott (%s)" % (doc.get("outcome_id"), outcome_id))
     return _jsonable(_projekt.record_grade_doc(project_dir, dict(doc, outcome_id=outcome_id), actor=actor,
-                                               kb_db=kb_db, strict=strict))
+                                               kb_db=kb_db, strict=strict, certainty=certainty))
 
 
 def grade_list(project_dir):

@@ -2089,6 +2089,21 @@ def _amstar2_ratings(answers, convention):
     return None
 
 
+def _amstar2_part_value(item, answer):
+    """AMSTAR 2 9. / 11. tétel {value?, parts: {RCT, NRSI}} → (a részekből adódó érték | az explicit érték,
+    ellentmondás | None) az értékelés-motor szabályával (appraisal._raw_answer); motor nélkül az explicit érték."""
+    AP = _module("appraisal")
+    raw = answer.get("value")
+    if AP is None:
+        return raw, None
+    try:
+        inst = AP.instrument_for("amstar2")
+        it = inst.item(item)
+        return AP._raw_answer(inst, it, answer)
+    except Exception:           # noqa: BLE001
+        return raw, None
+
+
 def _x012(ctx, meta, entries, stage):
     meta = meta if isinstance(meta, dict) else {}
     docs = [e for e in entries or () if e["tool"] == "amstar2"]
@@ -2119,14 +2134,24 @@ def _x012(ctx, meta, entries, stage):
     pick = sorted(docs, key=lambda e: (rank.get(e["status"], 1 if e["final"] else 0), e["updated"], e["rel"]))[-1]
     doc = pick["doc"]
     answers = doc.get("answers") if isinstance(doc.get("answers"), dict) else {}
-    vals = {}
+    vals, part_conflicts = {}, []
     for i in range(1, 17):
         a = answers.get(str(i))
         v = a.get("value") if isinstance(a, dict) else a
+        if isinstance(a, dict) and isinstance(a.get("parts"), dict):
+            # 9. / 11. tétel RCT / NRSI részekkel (methodology:M11): az érték a részekből adódik (bármelyik „Nem” →
+            # „Nem”), az ellentmondó érték hiba — ugyanaz a szabály, mint az értékelés-motorban
+            v, conflict = _amstar2_part_value(str(i), a)
+            if conflict:
+                part_conflicts.append("%d: %s" % (i, conflict))
+                continue
         if _nonempty(v):
             vals[str(i)] = v
     missing = [str(i) for i in range(1, 17) if str(i) not in vals]
     problems = []
+    if part_conflicts:
+        problems.append("a 9. / 11. tétel RCT / NRSI részei hibásak vagy ellentmondanak a tétel értékének (%s)" %
+                        "; ".join(part_conflicts))
     if missing:
         if late:
             problems.append("hiányos: %d/16 tétel megválaszolva (hiányzik: %s)" % (16 - len(missing),

@@ -294,6 +294,41 @@ def _require_shape(doc):
                              errs)
 
 
+def numbering_note(inst, doc):
+    """Régi számozással készült értékelés gyanúja (ROBINS-I 2016-os számozás; v1 javítás A): a definíció
+    'numbering_changed' tételei a validator 1.0.0-ban (és a korábbi motor-definícióban) UGYANAZZAL az azonosítóval MÁS
+    kérdést jelöltek. Jelzés, ha a dokumentum más definícióval készült (instrument_sha256 ≠ a mostani — pl. a validator
+    referencia-hash-e, amelyet a munkapad és a validator plugin ír, vagy egy korábbi motor-definícióé), megválaszolt
+    benne legalább egy érintett tétel, és egyetlen csak-új azonosító sem (ami a validatorban nem létezett, pl. 5.4,
+    5.5, 6.4 — az ilyen dokumentum már az új számozású). A motor NEM számoz át automatikusan: a hash a számozást nem
+    dönti el egyértelműen. → {hu, en} vagy None."""
+    if not isinstance(doc, dict) or not isinstance(inst.doc, dict):
+        return None
+    nc = inst.doc.get("numbering_changed")
+    if not isinstance(nc, dict):
+        return None
+    sha = doc.get("instrument_sha256")
+    if not isinstance(sha, str) or not sha or sha == inst.sha256:
+        return None
+    answers = doc.get("answers") if isinstance(doc.get("answers"), dict) else {}
+    answered = {k for k, a in answers.items() if isinstance(k, str) and (
+        (isinstance(a, dict) and (a.get("value") is not None or a.get("parts"))) or isinstance(a, str))}
+    changed = [k for k in nc.get("items") or () if isinstance(k, str) and k in answered]
+    vids = set(inst.doc.get("validator_ids") or ())
+    new_only = {it["key"] for it in inst.items if it["id"] not in vids}
+    if not changed or answered & new_only:
+        return None
+    note = nc.get("note") if isinstance(nc.get("note"), dict) else {}
+    return _t("%s: az értékelés más definícióval készült (instrument_sha256 %s…), és a(z) %s tétel a régi (validator "
+              "1.0.0) számozásban más kérdés volt — ha a régi számozással töltötték ki, a válaszok jelentése eltér. "
+              "Lezárás előtt ellenőrizd őket (a motor nem számoz át automatikusan). %s" % (
+                  inst.name, sha[:12], ", ".join(changed), note.get("hu") or ""),
+              "%s: this appraisal was made with another definition (instrument_sha256 %s…), and item(s) %s were a "
+              "different question in the old (validator 1.0.0) numbering — if it was filled in with the old "
+              "numbering, the answers mean something else. Check them before finalising (the engine does not "
+              "renumber automatically). %s" % (inst.name, sha[:12], ", ".join(changed), note.get("en") or ""))
+
+
 def problems(doc, instrument=None, project_dir=None):
     """→ {'errors': [...], 'warnings': [...]} — séma (szk.appraisal/v1) + tartalom: ismert tétel, kanonikus és
     megengedett válasz, ismert domén és ítélet, eredet/státusz-szabályok (AI-vázlat: jóváhagyás, 6. döntés szerinti
@@ -317,6 +352,9 @@ def problems(doc, instrument=None, project_dir=None):
     sha = doc.get("instrument_sha256")
     if isinstance(sha, str) and inst.sha256 and sha not in (inst.sha256, inst.doc.get("reference_sha256")):
         warnings.append("instrument_sha256: az eszköz-definíció a mentés óta változott (most: %s…)" % inst.sha256[:12])
+    renum = numbering_note(inst, doc)
+    if renum:
+        warnings.append("instrument_sha256: %s" % renum["hu"])
     answers = doc.get("answers") if isinstance(doc.get("answers"), dict) else {}
     ai = doc.get("origin") == "ai_draft"
     for key, a in answers.items():
@@ -1126,6 +1164,9 @@ def check(doc, instrument=None, conventions=None, project_dir=None):
     if outside:
         warnings.append(_t("A hatókörön kívüli válaszok nem számítanak: %s" % ", ".join(outside),
                            "Answers outside the scope are ignored: %s" % ", ".join(outside)))
+    renum = numbering_note(inst, doc)
+    if renum:
+        warnings.append(renum)
     alg = inst.algorithm
     domains, overall_implied, lines, provisional = [], None, [], False
     blocks = {"amstar2": None, "grade": None, "nos": None, "tripod": None}
