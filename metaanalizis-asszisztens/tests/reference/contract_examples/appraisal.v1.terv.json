@@ -1,0 +1,59 @@
+{
+ "schema": "szk.appraisal/v1",
+ "tool": "probast-ai",
+ "scope": "both",
+ "instrument_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+ "target": {
+  "study_id": "LEE2023",
+  "model": "XGB-PE",
+  "outcome": null,
+  "result": null,
+  "index_test": null
+ },
+ "assessor": "SzK",
+ "second_assessor": null,
+ "status": "draft",
+ "origin": "human",
+ "answers": {
+  "development/1.1": {
+   "value": "probably_yes",
+   "evidence": {
+    "text": "registry",
+    "doc": "pmid:…",
+    "page": 4
+   }
+  },
+  "evaluation/1.1": {
+   "value": "yes",
+   "evidence": {
+    "page": 9
+   }
+  }
+ },
+ "domain_judgements": [
+  {
+   "domain": "1",
+   "pass": "evaluation",
+   "judgement": "high",
+   "implied": null,
+   "rationale": "…",
+   "override_reason": null,
+   "decision_id": null
+  }
+ ],
+ "applicability": [
+  {
+   "domain": "1",
+   "judgement": "low",
+   "rationale": "…"
+  }
+ ],
+ "overall": {
+  "judgement": "high",
+  "rationale": "…",
+  "implied": null,
+  "override_reason": null
+ },
+ "created": "…",
+ "updated": "…"
+}

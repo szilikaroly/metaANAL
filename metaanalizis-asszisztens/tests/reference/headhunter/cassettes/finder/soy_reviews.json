@@ -1,0 +1,2457 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "finder-soy_reviews",
+  "recorded_at": "2026-10-05T14:10:54Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "find_reviews(szója/izoflavon + gyulladás, max_per_source=4, pubmed,europepmc); slim",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=4&retmode=json&retstart=0&term=%28%28inflammation%5Btiab%5D+OR+%22C-reactive+protein%22%5Btiab%5D+OR+%22inflammatory+markers%22%5Btiab%5D%29+AND+%28soy%5Btiab%5D+OR+isoflavones%5Btiab%5D+OR+%22soy+isoflavone%22%5Btiab%5D%29%29+AND+%28systematic%5Bsb%5D+OR+meta-analysis%5Bpt%5D+OR+%22meta-analysis%22%5Bti%5D+OR+%22systematic+review%22%5Bti%5D%29",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "2"
+        },
+        "body_json": {
+          "header": {
+            "type": "esearch",
+            "version": "0.3"
+          },
+          "esearchresult": {
+            "count": "45",
+            "retmax": "4",
+            "retstart": "0",
+            "idlist": [
+              "42518376",
+              "41865277",
+              "41097615",
+              "40611279"
+            ],
+            "translationset": [],
+            "querytranslation": "(\"inflammation\"[Title/Abstract] OR \"C-reactive protein\"[Title/Abstract] OR \"inflammatory markers\"[Title/Abstract]) AND (\"soy\"[Title/Abstract] OR \"isoflavones\"[Title/Abstract] OR \"soy isoflavone\"[Title/Abstract]) AND (\"systematic\"[Filter] OR \"meta-analysis\"[Publication Type] OR \"meta-analysis\"[Title] OR \"systematic review\"[Title])"
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=42518376%2C41865277%2C41097615%2C40611279&retmode=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "2"
+        },
+        "body_json": {
+          "header": {
+            "type": "esummary",
+            "version": "0.3"
+          },
+          "result": {
+            "uids": [
+              "42518376",
+              "41865277",
+              "41097615",
+              "40611279"
+            ],
+            "42518376": {
+              "uid": "42518376",
+              "pubdate": "2026 Aug",
+              "epubdate": "2026 Jul 13",
+              "source": "World Allergy Organ J",
+              "authors": [
+                {
+                  "name": "Azzolino D",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Baldassari I",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Perna S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Immacolata Spolidoro GC",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Moroni A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Coelho-Junior HJ",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Cesari M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Lucchi T",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Lucchi T",
+              "title": "Prevalence of food allergies in older adults: A systematic review and meta-analysis.",
+              "sorttitle": "prevalence of food allergies in older adults a systematic review and meta analysis",
+              "volume": "19",
+              "issue": "8",
+              "pages": "101428",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101481283",
+              "issn": "1939-4551",
+              "essn": "1939-4551",
+              "pubtype": [
+                "Journal Article",
+                "Review"
+              ],
+              "recordstatus": "PubMed",
+              "pubstatus": "258",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42518376"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC13382085"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC13382085;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1016/j.waojou.2026.101428"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "S1939-4551(26)00261-9"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/02/24 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2026/04/13 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/06/25 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/07/28 18:36"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/07/28 18:35"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/07/28 12:47"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2026/07/13 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 60,
+              "fulljournalname": "The World Allergy Organization journal",
+              "elocationid": "doi: 10.1016/j.waojou.2026.101428",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/07/13 00:00",
+              "sortfirstauthor": "Azzolino D",
+              "vernaculartitle": ""
+            },
+            "41865277": {
+              "uid": "41865277",
+              "pubdate": "2026 Mar 22",
+              "epubdate": "2026 Mar 22",
+              "source": "Nutr Rev",
+              "authors": [
+                {
+                  "name": "Fortini TVL",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Ribeiro MGC",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Cândido FG",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Rocha DMUP",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Hermsdorff HHM",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Hermsdorff HHM",
+              "title": "Effects of Avocado (Persea americana) Fruit and Byproducts on Molecular Pathways Related to Oxi-inflammation: A Systematic Review of Randomized Clinical Trials.",
+              "sorttitle": "effects of avocado persea americana fruit and byproducts on molecular pathways related to oxi inflammation a systematic review of randomized clinical trials",
+              "volume": "",
+              "issue": "",
+              "pages": "",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "0376405",
+              "issn": "0029-6643",
+              "essn": "1753-4887",
+              "pubtype": [
+                "Journal Article"
+              ],
+              "recordstatus": "PubMed - as supplied by publisher",
+              "pubstatus": "10",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "41865277"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1093/nutrit/nuag021"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "8537093"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/03/22 12:47"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/03/22 12:47"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/03/22 08:23"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "Nutrition reviews",
+              "elocationid": "pii: nuag021. doi: 10.1093/nutrit/nuag021",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/03/22 00:00",
+              "sortfirstauthor": "Fortini TVL",
+              "vernaculartitle": ""
+            },
+            "41097615": {
+              "uid": "41097615",
+              "pubdate": "2025 Oct 9",
+              "epubdate": "2025 Oct 9",
+              "source": "Foods",
+              "authors": [
+                {
+                  "name": "Fatima Z",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Itrat N",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Israr B",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Ahmad AMR",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Ahmad AMR",
+              "title": "Therapeutic Efficacy of Soy-Derived Bioactives: A Systematic Review of Nutritional Potency, Bioactive Therapeutics, and Clinical Biomarker Modulation.",
+              "sorttitle": "therapeutic efficacy of soy derived bioactives a systematic review of nutritional potency bioactive therapeutics and clinical biomarker modulation",
+              "volume": "14",
+              "issue": "19",
+              "pages": "",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101670569",
+              "issn": "2304-8158",
+              "essn": "2304-8158",
+              "pubtype": [
+                "Journal Article",
+                "Review"
+              ],
+              "recordstatus": "PubMed",
+              "pubstatus": "3",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "41097615"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC12523725"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC12523725;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.3390/foods14193447"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "foods14193447"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2025/08/18 00:00"
+                },
+                {
+                  "pubstatus": "revised",
+                  "date": "2025/09/16 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2025/09/17 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2025/10/16 06:30"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2025/10/16 06:29"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2025/10/16 01:17"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2025/10/09 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 150,
+              "fulljournalname": "Foods (Basel, Switzerland)",
+              "elocationid": "doi: 10.3390/foods14193447",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2025/10/09 00:00",
+              "sortfirstauthor": "Fatima Z",
+              "vernaculartitle": ""
+            },
+            "40611279": {
+              "uid": "40611279",
+              "pubdate": "2025 Jul 3",
+              "epubdate": "2025 Jul 3",
+              "source": "Reprod Biol Endocrinol",
+              "authors": [
+                {
+                  "name": "Zhao G",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Fan Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Li R",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Huang Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Li W",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Zhao Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Zhou M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "He J",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "He J",
+              "title": "The effectiveness of nutritional supplements in improving polycystic ovary syndrome in women: a systematic review and network meta-analysis.",
+              "sorttitle": "effectiveness of nutritional supplements in improving polycystic ovary syndrome in women a systematic review and network meta analysis",
+              "volume": "23",
+              "issue": "1",
+              "pages": "94",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101153627",
+              "issn": "",
+              "essn": "1477-7827",
+              "pubtype": [
+                "Journal Article",
+                "Network Meta-Analysis",
+                "Systematic Review"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "3",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "40611279"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC12224500"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC12224500;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1186/s12958-025-01409-9"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "10.1186/s12958-025-01409-9"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2024/07/03 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2025/05/05 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2025/07/04 06:27"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2025/07/04 00:27"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2025/07/03 23:57"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2025/07/03 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 125,
+              "fulljournalname": "Reproductive biology and endocrinology : RB&E",
+              "elocationid": "doi: 10.1186/s12958-025-01409-9",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2025/07/03 00:00",
+              "sortfirstauthor": "Zhao G",
+              "vernaculartitle": ""
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=42518376%2C41865277%2C41097615%2C40611279&retmode=xml",
+        "headers": {
+          "accept": "application/xml, text/xml;q=0.9, */*;q=0.1"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/xml; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_text": "<?xml version=\"1.0\" ?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2025//EN\" \"https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_250101.dtd\">\n<PubmedArticleSet>\n<PubmedArticle><MedlineCitation Status=\"PubMed-not-MEDLINE\" Owner=\"NLM\"><PMID Version=\"1\">42518376</PMID><DateCompleted><Year>2026</Year><Month>07</Month><Day>29</Day></DateCompleted><DateRevised><Year>2026</Year><Month>08</Month><Day>13</Day></DateRevised><Article PubModel=\"Electronic-eCollection\"><Journal><ISSN IssnType=\"Print\">1939-4551</ISSN><JournalIssue CitedMedium=\"Print\"><Volume>19</Volume><Issue>8</Issue><PubDate><Year>2026</Year><Month>Aug</Month></PubDate></JournalIssue><Title>The World Allergy Organization journal</Title><ISOAbbreviation>World Allergy Organ J</ISOAbbreviation></Journal><ArticleTitle>Prevalence of food allergies in older adults: A systematic review and meta-analysis.</ArticleTitle><Pagination><StartPage>101428</StartPage><MedlinePgn>101428</MedlinePgn></Pagination><ELocationID EIdType=\"pii\" ValidYN=\"Y\">101428</ELocationID><ELocationID EIdType=\"doi\" ValidYN=\"Y\">10.1016/j.waojou.2026.101428</ELocationID><Abstract><AbstractText Label=\"INTRODUCTION\" NlmCategory=\"UNASSIGNED\">«redacted»</AbstractText><AbstractText Label=\"METHODS\" NlmCategory=\"UNASSIGNED\">«redacted»</AbstractText><AbstractText Label=\"RESULTS\" NlmCategory=\"UNASSIGNED\">«redacted»</AbstractText><AbstractText Label=\"CONCLUSION\" NlmCategory=\"UNASSIGNED\">«redacted»</AbstractText><AbstractText Label=\"PROTOCOL REGISTRATION\" NlmCategory=\"UNASSIGNED\">«redacted»</AbstractText><CopyrightInformation>&#xa9; 2026 The Authors.</CopyrightInformation></Abstract><AuthorList CompleteYN=\"Y\"><Author ValidYN=\"Y\"><LastName>Azzolino</LastName><ForeName>Domenico</ForeName><Initials>D</Initials></Author><Author ValidYN=\"Y\"><LastName>Baldassari</LastName><ForeName>Ivan</ForeName><Initials>I</Initials></Author><Author ValidYN=\"Y\"><LastName>Perna</LastName><ForeName>Simone</ForeName><Initials>S</Initials></Author><Author ValidYN=\"Y\"><LastName>Immacolata Spolidoro</LastName><ForeName>Giulia Carla</ForeName><Initials>GC</Initials></Author><Author ValidYN=\"Y\"><LastName>Moroni</LastName><ForeName>Alessia</ForeName><Initials>A</Initials></Author><Author ValidYN=\"Y\"><LastName>Coelho-Junior</LastName><ForeName>H&#xe9;lio Jos&#xe9;</ForeName><Initials>HJ</Initials></Author><Author ValidYN=\"Y\"><LastName>Cesari</LastName><ForeName>Matteo</ForeName><Initials>M</Initials></Author><Author ValidYN=\"Y\"><LastName>Lucchi</LastName><ForeName>Tiziano</ForeName><Initials>T</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType UI=\"D016428\">Journal Article</PublicationType><PublicationType UI=\"D016454\">Review</PublicationType></PublicationTypeList><ArticleDate DateType=\"Electronic\"><Year>2026</Year><Month>07</Month><Day>13</Day></ArticleDate></Article><MedlineJournalInfo><Country>United States</Country><MedlineTA>World Allergy Organ J</MedlineTA><NlmUniqueID>101481283</NlmUniqueID><ISSNLinking>1939-4551</ISSNLinking></MedlineJournalInfo><KeywordList Owner=\"NOTNLM\"><Keyword MajorTopicYN=\"N\">Aging</Keyword><Keyword MajorTopicYN=\"N\">Allergy</Keyword><Keyword MajorTopicYN=\"N\">Food hypersensitivity</Keyword><Keyword MajorTopicYN=\"N\">Frailty</Keyword><Keyword MajorTopicYN=\"N\">Malnutrition</Keyword></KeywordList><CoiStatement>The authors declare no conflict of interests.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate PubStatus=\"received\"><Year>2026</Year><Month>2</Month><Day>24</Day></PubMedPubDate><PubMedPubDate PubStatus=\"revised\"><Year>2026</Year><Month>4</Month><Day>13</Day></PubMedPubDate><PubMedPubDate PubStatus=\"accepted\"><Year>2026</Year><Month>6</Month><Day>25</Day></PubMedPubDate><PubMedPubDate PubStatus=\"medline\"><Year>2026</Year><Month>7</Month><Day>28</Day><Hour>18</Hour><Minute>36</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pubmed\"><Year>2026</Year><Month>7</Month><Day>28</Day><Hour>18</Hour><Minute>35</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"entrez\"><Year>2026</Year><Month>7</Month><Day>28</Day><Hour>12</Hour><Minute>47</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pmc-release\"><Year>2026</Year><Month>7</Month><Day>13</Day></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId IdType=\"pubmed\">42518376</ArticleId><ArticleId IdType=\"pmc\">PMC13382085</ArticleId><ArticleId IdType=\"doi\">10.1016/j.waojou.2026.101428</ArticleId><ArticleId IdType=\"pii\">S1939-4551(26)00261-9</ArticleId></ArticleIdList><ReferenceList/></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation Status=\"Publisher\" Owner=\"NLM\"><PMID Version=\"1\">41865277</PMID><DateRevised><Year>2026</Year><Month>03</Month><Day>22</Day></DateRevised><Article PubModel=\"Print-Electronic\"><Journal><ISSN IssnType=\"Electronic\">1753-4887</ISSN><JournalIssue CitedMedium=\"Internet\"><PubDate><Year>2026</Year><Month>Mar</Month><Day>22</Day></PubDate></JournalIssue><Title>Nutrition reviews</Title><ISOAbbreviation>Nutr Rev</ISOAbbreviation></Journal><ArticleTitle>Effects of Avocado (Persea americana) Fruit and Byproducts on Molecular Pathways Related to Oxi-inflammation: A Systematic Review of Randomized Clinical Trials.</ArticleTitle><ELocationID EIdType=\"pii\" ValidYN=\"Y\">nuag021</ELocationID><ELocationID EIdType=\"doi\" ValidYN=\"Y\">10.1093/nutrit/nuag021</ELocationID><Abstract><AbstractText Label=\"CONTEXT\" NlmCategory=\"BACKGROUND\">«redacted»</AbstractText><AbstractText Label=\"OBJECTIVE\" NlmCategory=\"OBJECTIVE\">«redacted»</AbstractText><AbstractText Label=\"DATA SOURCES\" NlmCategory=\"METHODS\">«redacted»</AbstractText><AbstractText Label=\"DATA EXTRACTION\" NlmCategory=\"METHODS\">«redacted»</AbstractText><AbstractText Label=\"DATA ANALYSIS\" NlmCategory=\"METHODS\">«redacted»</AbstractText><AbstractText Label=\"CONCLUSION\" NlmCategory=\"CONCLUSIONS\">«redacted»</AbstractText><AbstractText Label=\"SYSTEMATIC REVIEW REGISTRATION\" NlmCategory=\"BACKGROUND\">«redacted»</AbstractText><CopyrightInformation>&#xa9; The Author(s) 2026. Published by Oxford University Press on behalf of the International Life Sciences Institute. All rights reserved. For commercial re-use, please contact reprints@oup.com for reprints and translation rights for reprints. All other permissions can be obtained through our RightsLink service via the Permissions link on the article page on our site&#x2014;for further information please contact journals.permissions@oup.com.</CopyrightInformation></Abstract><AuthorList CompleteYN=\"Y\"><Author ValidYN=\"Y\"><LastName>Fortini</LastName><ForeName>Tha&#xed;s Vict&#xf3;ria Lopes</ForeName><Initials>TVL</Initials></Author><Author ValidYN=\"Y\"><LastName>Ribeiro</LastName><ForeName>Madalena Geralda Cupertino</ForeName><Initials>MGC</Initials><Identifier Source=\"ORCID\">0000-0002-2658-6519</Identifier></Author><Author ValidYN=\"Y\"><LastName>C&#xe2;ndido</LastName><ForeName>Fl&#xe1;via Galv&#xe3;o</ForeName><Initials>FG</Initials></Author><Author ValidYN=\"Y\"><LastName>Rocha</LastName><ForeName>Daniela Mayumi Usuda Prado</ForeName><Initials>DMUP</Initials></Author><Author ValidYN=\"Y\"><LastName>Hermsdorff</LastName><ForeName>Helen Hermana Miranda</ForeName><Initials>HHM</Initials><Identifier Source=\"ORCID\">0000-0002-4441-6572</Identifier></Author></AuthorList><Language>eng</Language><GrantList CompleteYN=\"Y\"><Grant><Agency>Coordination for the Improvement of Higher Education</Agency><Country/></Grant><Grant><GrantID>code 001</GrantID><Agency>CAPES, Ministry of Education, Brazil</Agency><Country/></Grant><Grant><Agency>CNPq Research Productivity Fellow (Ministry of Science, Technology and Innovation, Brazil)</Agency><Country/></Grant></GrantList><PublicationTypeList><PublicationType UI=\"D016428\">Journal Article</PublicationType></PublicationTypeList><ArticleDate DateType=\"Electronic\"><Year>2026</Year><Month>03</Month><Day>22</Day></ArticleDate></Article><MedlineJournalInfo><Country>United States</Country><MedlineTA>Nutr Rev</MedlineTA><NlmUniqueID>0376405</NlmUniqueID><ISSNLinking>0029-6643</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset><KeywordList Owner=\"NOTNLM\"><Keyword MajorTopicYN=\"N\">avocado</Keyword><Keyword MajorTopicYN=\"N\">chronic disease</Keyword><Keyword MajorTopicYN=\"N\">diet therapy</Keyword><Keyword MajorTopicYN=\"N\">inflammation</Keyword><Keyword MajorTopicYN=\"N\">nutritional genomics</Keyword><Keyword MajorTopicYN=\"N\">oxidative stress</Keyword></KeywordList></MedlineCitation><PubmedData><History><PubMedPubDate PubStatus=\"medline\"><Year>2026</Year><Month>3</Month><Day>22</Day><Hour>12</Hour><Minute>47</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pubmed\"><Year>2026</Year><Month>3</Month><Day>22</Day><Hour>12</Hour><Minute>47</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"entrez\"><Year>2026</Year><Month>3</Month><Day>22</Day><Hour>8</Hour><Minute>23</Minute></PubMedPubDate></History><PublicationStatus>aheadofprint</PublicationStatus><ArticleIdList><ArticleId IdType=\"pubmed\">41865277</ArticleId><ArticleId IdType=\"doi\">10.1093/nutrit/nuag021</ArticleId><ArticleId IdType=\"pii\">8537093</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation Status=\"PubMed-not-MEDLINE\" Owner=\"NLM\"><PMID Version=\"1\">41097615</PMID><DateCompleted><Year>2025</Year><Month>10</Month><Day>16</Day></DateCompleted><DateRevised><Year>2025</Year><Month>10</Month><Day>19</Day></DateRevised><Article PubModel=\"Electronic\"><Journal><ISSN IssnType=\"Print\">2304-8158</ISSN><JournalIssue CitedMedium=\"Print\"><Volume>14</Volume><Issue>19</Issue><PubDate><Year>2025</Year><Month>Oct</Month><Day>09</Day></PubDate></JournalIssue><Title>Foods (Basel, Switzerland)</Title><ISOAbbreviation>Foods</ISOAbbreviation></Journal><ArticleTitle>Therapeutic Efficacy of Soy-Derived Bioactives: A Systematic Review of Nutritional Potency, Bioactive Therapeutics, and Clinical Biomarker Modulation.</ArticleTitle><ELocationID EIdType=\"pii\" ValidYN=\"Y\">3447</ELocationID><ELocationID EIdType=\"doi\" ValidYN=\"Y\">10.3390/foods14193447</ELocationID><Abstract><AbstractText>«redacted»</AbstractText></Abstract><AuthorList CompleteYN=\"Y\"><Author ValidYN=\"Y\"><LastName>Fatima</LastName><ForeName>Zara</ForeName><Initials>Z</Initials></Author><Author ValidYN=\"Y\"><LastName>Itrat</LastName><ForeName>Nizwa</ForeName><Initials>N</Initials></Author><Author ValidYN=\"Y\"><LastName>Israr</LastName><ForeName>Beenish</ForeName><Initials>B</Initials><Identifier Source=\"ORCID\">0000-0002-1251-5357</Identifier></Author><Author ValidYN=\"Y\"><LastName>Ahmad</LastName><ForeName>Abdul Momin Rizwan</ForeName><Initials>AMR</Initials><Identifier Source=\"ORCID\">0000-0003-3499-902X</Identifier></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType UI=\"D016428\">Journal Article</PublicationType><PublicationType UI=\"D016454\">Review</PublicationType></PublicationTypeList><ArticleDate DateType=\"Electronic\"><Year>2025</Year><Month>10</Month><Day>09</Day></ArticleDate></Article><MedlineJournalInfo><Country>Switzerland</Country><MedlineTA>Foods</MedlineTA><NlmUniqueID>101670569</NlmUniqueID><ISSNLinking>2304-8158</ISSNLinking></MedlineJournalInfo><KeywordList Owner=\"NOTNLM\"><Keyword MajorTopicYN=\"N\">anti-inflammatory</Keyword><Keyword MajorTopicYN=\"N\">bioactive compounds</Keyword><Keyword MajorTopicYN=\"N\">chronic diseases</Keyword><Keyword MajorTopicYN=\"N\">fermentation</Keyword><Keyword MajorTopicYN=\"N\">fortification</Keyword><Keyword MajorTopicYN=\"N\">protein energy malnutrition</Keyword><Keyword MajorTopicYN=\"N\">soybean</Keyword><Keyword MajorTopicYN=\"N\">sustainable</Keyword><Keyword MajorTopicYN=\"N\">therapeutic role</Keyword></KeywordList><CoiStatement>The authors declare no conflicts of interest.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate PubStatus=\"received\"><Year>2025</Year><Month>8</Month><Day>18</Day></PubMedPubDate><PubMedPubDate PubStatus=\"revised\"><Year>2025</Year><Month>9</Month><Day>16</Day></PubMedPubDate><PubMedPubDate PubStatus=\"accepted\"><Year>2025</Year><Month>9</Month><Day>17</Day></PubMedPubDate><PubMedPubDate PubStatus=\"medline\"><Year>2025</Year><Month>10</Month><Day>16</Day><Hour>6</Hour><Minute>30</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pubmed\"><Year>2025</Year><Month>10</Month><Day>16</Day><Hour>6</Hour><Minute>29</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"entrez\"><Year>2025</Year><Month>10</Month><Day>16</Day><Hour>1</Hour><Minute>17</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pmc-release\"><Year>2025</Year><Month>10</Month><Day>9</Day></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId IdType=\"pubmed\">41097615</ArticleId><ArticleId IdType=\"pmc\">PMC12523725</ArticleId><ArticleId IdType=\"doi\">10.3390/foods14193447</ArticleId><ArticleId IdType=\"pii\">foods14193447</ArticleId></ArticleIdList><ReferenceList/></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation Status=\"MEDLINE\" Owner=\"NLM\" IndexingMethod=\"Curated\"><PMID Version=\"1\">40611279</PMID><DateCompleted><Year>2025</Year><Month>07</Month><Day>04</Day></DateCompleted><DateRevised><Year>2025</Year><Month>07</Month><Day>08</Day></DateRevised><Article PubModel=\"Electronic\"><Journal><ISSN IssnType=\"Electronic\">1477-7827</ISSN><JournalIssue CitedMedium=\"Internet\"><Volume>23</Volume><Issue>1</Issue><PubDate><Year>2025</Year><Month>Jul</Month><Day>03</Day></PubDate></JournalIssue><Title>Reproductive biology and endocrinology : RB&amp;E</Title><ISOAbbreviation>Reprod Biol Endocrinol</ISOAbbreviation></Journal><ArticleTitle>The effectiveness of nutritional supplements in improving polycystic ovary syndrome in women: a systematic review and network meta-analysis.</ArticleTitle><Pagination><StartPage>94</StartPage><MedlinePgn>94</MedlinePgn></Pagination><ELocationID EIdType=\"pii\" ValidYN=\"Y\">94</ELocationID><ELocationID EIdType=\"doi\" ValidYN=\"Y\">10.1186/s12958-025-01409-9</ELocationID><Abstract><AbstractText Label=\"BACKGROUND\" NlmCategory=\"BACKGROUND\">«redacted»</AbstractText><AbstractText Label=\"OBJECTIVES\" NlmCategory=\"OBJECTIVE\">«redacted»</AbstractText><AbstractText Label=\"METHODS\" NlmCategory=\"METHODS\">«redacted»</AbstractText><AbstractText Label=\"RESULTS\" NlmCategory=\"RESULTS\">«redacted»</AbstractText><AbstractText Label=\"CONCLUSIONS\" NlmCategory=\"CONCLUSIONS\">«redacted»</AbstractText><AbstractText Label=\"TRIAL REGISTRATION\" NlmCategory=\"BACKGROUND\">«redacted»</AbstractText><CopyrightInformation>&#xa9; 2025. The Author(s).</CopyrightInformation></Abstract><AuthorList CompleteYN=\"Y\"><Author ValidYN=\"Y\" EqualContrib=\"Y\"><LastName>Zhao</LastName><ForeName>Guanhua</ForeName><Initials>G</Initials></Author><Author ValidYN=\"Y\" EqualContrib=\"Y\"><LastName>Fan</LastName><ForeName>Yuxin</ForeName><Initials>Y</Initials></Author><Author ValidYN=\"Y\" EqualContrib=\"Y\"><LastName>Li</LastName><ForeName>Ruixia</ForeName><Initials>R</Initials></Author><Author ValidYN=\"Y\"><LastName>Huang</LastName><ForeName>Yu</ForeName><Initials>Y</Initials></Author><Author ValidYN=\"Y\"><LastName>Li</LastName><ForeName>Wenjuan</ForeName><Initials>W</Initials></Author><Author ValidYN=\"Y\"><LastName>Zhao</LastName><ForeName>Yanhong</ForeName><Initials>Y</Initials></Author><Author ValidYN=\"Y\"><LastName>Zhou</LastName><ForeName>Mengdi</ForeName><Initials>M</Initials></Author><Author ValidYN=\"Y\"><LastName>He</LastName><ForeName>Jianchang</ForeName><Initials>J</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType UI=\"D016428\">Journal Article</PublicationType><PublicationType UI=\"D000099094\">Network Meta-Analysis</PublicationType><PublicationType UI=\"D000078182\">Systematic Review</PublicationType></PublicationTypeList><ArticleDate DateType=\"Electronic\"><Year>2025</Year><Month>07</Month><Day>03</Day></ArticleDate></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Reprod Biol Endocrinol</MedlineTA><NlmUniqueID>101153627</NlmUniqueID><ISSNLinking>1477-7827</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName UI=\"D005260\" MajorTopicYN=\"N\">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D006801\" MajorTopicYN=\"N\">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D019587\" MajorTopicYN=\"Y\">Dietary Supplements</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D007333\" MajorTopicYN=\"N\">Insulin Resistance</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D018384\" MajorTopicYN=\"N\">Oxidative Stress</DescriptorName><QualifierName UI=\"Q000187\" MajorTopicYN=\"N\">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D011085\" MajorTopicYN=\"Y\">Polycystic Ovary Syndrome</DescriptorName><QualifierName UI=\"Q000178\" MajorTopicYN=\"N\">diet therapy</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D016032\" MajorTopicYN=\"N\">Randomized Controlled Trials as Topic</DescriptorName><QualifierName UI=\"Q000379\" MajorTopicYN=\"N\">methods</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D016896\" MajorTopicYN=\"N\">Treatment Outcome</DescriptorName></MeshHeading></MeshHeadingList><KeywordList Owner=\"NOTNLM\"><Keyword MajorTopicYN=\"N\">Network meta-analysis</Keyword><Keyword MajorTopicYN=\"N\">Nutritional supplements</Keyword><Keyword MajorTopicYN=\"N\">Polycystic ovary syndrome</Keyword></KeywordList><CoiStatement>Declarations. Ethics approval and consent to participate: All outcomes and analyses were based on previous ethically approved studies. Therefore, no further ethical approval and patient consent were required. Consent for publication: Not applicable. Competing interests: The authors declare no competing interests.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate PubStatus=\"received\"><Year>2024</Year><Month>7</Month><Day>3</Day></PubMedPubDate><PubMedPubDate PubStatus=\"accepted\"><Year>2025</Year><Month>5</Month><Day>5</Day></PubMedPubDate><PubMedPubDate PubStatus=\"medline\"><Year>2025</Year><Month>7</Month><Day>4</Day><Hour>6</Hour><Minute>27</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pubmed\"><Year>2025</Year><Month>7</Month><Day>4</Day><Hour>0</Hour><Minute>27</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"entrez\"><Year>2025</Year><Month>7</Month><Day>3</Day><Hour>23</Hour><Minute>57</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pmc-release\"><Year>2025</Year><Month>7</Month><Day>3</Day></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId IdType=\"pubmed\">40611279</ArticleId><ArticleId IdType=\"pmc\">PMC12224500</ArticleId><ArticleId IdType=\"doi\">10.1186/s12958-025-01409-9</ArticleId><ArticleId IdType=\"pii\">10.1186/s12958-025-01409-9</ArticleId></ArticleIdList><ReferenceList/></PubmedData></PubmedArticle></PubmedArticleSet>",
+        "redactions": [
+          "AbstractText",
+          "slim:ReferenceList",
+          "slim:AffiliationInfo"
+        ]
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=4&query=%28%28TITLE_ABS%3Ainflammation+OR+TITLE_ABS%3A%22C-reactive+protein%22+OR+TITLE_ABS%3A%22inflammatory+markers%22+OR+KW%3Ainflammation+OR+KW%3A%22C-reactive+protein%22+OR+KW%3A%22inflammatory+markers%22%29+AND+%28TITLE_ABS%3Asoy+OR+TITLE_ABS%3Aisoflavones+OR+TITLE_ABS%3A%22soy+isoflavone%22+OR+KW%3Asoy+OR+KW%3Aisoflavones+OR+KW%3A%22soy+isoflavone%22%29%29+AND+%28PUB_TYPE%3A%22systematic-review%22+OR+PUB_TYPE%3A%22meta-analysis%22+OR+TITLE%3A%22meta-analysis%22+OR+TITLE%3A%22systematic+review%22%29&resultType=core",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 53,
+          "nextCursorMark": "AoIIQOYkcSg1MzMxNjg1OA==",
+          "nextPageUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%28%28TITLE_ABS%3Ainflammation+OR+TITLE_ABS%3A%22C-reactive+protein%22+OR+TITLE_ABS%3A%22inflammatory+markers%22+OR+KW%3Ainflammation+OR+KW%3A%22C-reactive+protein%22+OR+KW%3A%22inflammatory+markers%22%29+AND+%28TITLE_ABS%3Asoy+OR+TITLE_ABS%3Aisoflavones+OR+TITLE_ABS%3A%22soy+isoflavone%22+OR+KW%3Asoy+OR+KW%3Aisoflavones+OR+KW%3A%22soy+isoflavone%22%29%29+AND+%28PUB_TYPE%3A%22systematic-review%22+OR+PUB_TYPE%3A%22meta-analysis%22+OR+TITLE%3A%22meta-analysis%22+OR+TITLE%3A%22systematic+review%22%29&cursorMark=AoIIQOYkcSg1MzMxNjg1OA%3D%3D&resultType=core&pageSize=4&format=json",
+          "request": {
+            "queryString": "((TITLE_ABS:inflammation OR TITLE_ABS:\"C-reactive protein\" OR TITLE_ABS:\"inflammatory markers\" OR KW:inflammation OR KW:\"C-reactive protein\" OR KW:\"inflammatory markers\") AND (TITLE_ABS:soy OR TITLE_ABS:isoflavones OR TITLE_ABS:\"soy isoflavone\" OR KW:soy OR KW:isoflavones OR KW:\"soy isoflavone\")) AND (PUB_TYPE:\"systematic-review\" OR PUB_TYPE:\"meta-analysis\" OR TITLE:\"meta-analysis\" OR TITLE:\"systematic review\")",
+            "resultType": "core",
+            "cursorMark": "*",
+            "pageSize": 4,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "40355968",
+                "source": "MED",
+                "pmid": "40355968",
+                "pmcid": "PMC12070792",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC12070792"
+                  ]
+                },
+                "doi": "10.1186/s41043-025-00902-6",
+                "title": "Can soy isoflavones in combination with soy protein change serum levels of C-reactive protein among patients with chronic inflammatory diseases? A systematic review and meta-analysis on randomized controlled trials.",
+                "authorString": "Gholami A, Amirkalali B, Hariri M.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Gholami A",
+                      "lastName": "Gholami",
+                      "firstName": "Ali",
+                      "initials": "A"
+                    },
+                    {
+                      "fullName": "Amirkalali B",
+                      "lastName": "Amirkalali",
+                      "firstName": "Bahareh",
+                      "initials": "B"
+                    },
+                    {
+                      "fullName": "Hariri M",
+                      "lastName": "Hariri",
+                      "firstName": "Mitra",
+                      "initials": "M"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "1",
+                  "volume": "44",
+                  "journalIssueId": 3936643,
+                  "dateOfPublication": "2025 May",
+                  "monthOfPublication": 5,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "J Health Popul Nutr",
+                    "title": "Journal of health, population, and nutrition",
+                    "essn": "2072-1315",
+                    "issn": "1606-0997",
+                    "nlmid": "100959228",
+                    "isoabbreviation": "J Health Popul Nutr"
+                  },
+                  "printPublicationDate": "2025-05-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "154",
+                "abstractText": "«redacted»",
+                "publicationStatus": "epublish",
+                "language": "eng",
+                "pubModel": "Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "review-article",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Chronic Disease"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Inflammation",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "BL",
+                            "qualifierName": "blood"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "DT",
+                            "qualifierName": "drug therapy"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Isoflavones",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PD",
+                            "qualifierName": "pharmacology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "C-Reactive Protein",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AN",
+                            "qualifierName": "analysis"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "ME",
+                            "qualifierName": "metabolism"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Soybean Proteins",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PD",
+                            "qualifierName": "pharmacology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Adult"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Female"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Male"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Randomized Controlled Trials as Topic"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Biomarkers",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "BL",
+                            "qualifierName": "blood"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Meta-analysis",
+                    "Systematic review",
+                    "Soy isoflavones",
+                    "soy protein",
+                    "C-reactive Protein"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "C-Reactive Protein",
+                      "registryNumber": "9007-41-4"
+                    },
+                    {
+                      "name": "Isoflavones",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Soybean Proteins",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Biomarkers",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "Y",
+                "hasData": "Y",
+                "license": "cc by-nc-nd",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2025-05-13",
+                "dateOfCreation": "2025-05-12",
+                "dateOfRevision": "2026-03-28",
+                "electronicPublicationDate": "2025-05-12",
+                "firstPublicationDate": "2025-05-12",
+                "firstIndexDate": "2025-05-20",
+                "fullTextReceivedDate": "2025-11-28",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "39611889",
+                "source": "MED",
+                "pmid": "39611889",
+                "doi": "10.1007/s11255-024-04301-4",
+                "title": "The effects of soy protein and soy isoflavones intake on chronic kidney disease: a systematic review and meta-analysis.",
+                "authorString": "Zhixiang Y, Yongxing X, Juan L, Qing Y, Yangyang L, Zhangrui Z, Yuehua G.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Zhixiang Y",
+                      "lastName": "Zhixiang",
+                      "firstName": "Yu",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Yongxing X",
+                      "lastName": "Yongxing",
+                      "firstName": "Xu",
+                      "initials": "X"
+                    },
+                    {
+                      "fullName": "Juan L",
+                      "lastName": "Juan",
+                      "firstName": "Liu",
+                      "initials": "L"
+                    },
+                    {
+                      "fullName": "Qing Y",
+                      "lastName": "Qing",
+                      "firstName": "Yang",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Yangyang L",
+                      "lastName": "Yangyang",
+                      "firstName": "Lu",
+                      "initials": "L"
+                    },
+                    {
+                      "fullName": "Zhangrui Z",
+                      "lastName": "Zhangrui",
+                      "firstName": "Zhen",
+                      "initials": "Z"
+                    },
+                    {
+                      "fullName": "Yuehua G",
+                      "lastName": "Yuehua",
+                      "firstName": "Gao",
+                      "initials": "G"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "5",
+                  "volume": "57",
+                  "journalIssueId": 3930412,
+                  "dateOfPublication": "2025 May",
+                  "monthOfPublication": 5,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "Int Urol Nephrol",
+                    "title": "International urology and nephrology",
+                    "essn": "1573-2584",
+                    "issn": "0301-1623",
+                    "nlmid": "0262521",
+                    "isoabbreviation": "Int Urol Nephrol"
+                  },
+                  "printPublicationDate": "2025-05-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "1533-1553",
+                "abstractText": "«redacted»",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Isoflavones",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "TU",
+                            "qualifierName": "therapeutic use"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Soybean Proteins",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "TU",
+                            "qualifierName": "therapeutic use"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Renal Insufficiency, Chronic",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "DH",
+                            "qualifierName": "diet therapy"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Randomized controlled trials",
+                    "Systematic review",
+                    "Chronic Kidney Disease",
+                    "Soy Protein Intake"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "Isoflavones",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Soybean Proteins",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 2,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasData": "N",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2025-04-16",
+                "dateOfCreation": "2024-11-29",
+                "dateOfRevision": "2025-07-11",
+                "electronicPublicationDate": "2024-11-29",
+                "firstPublicationDate": "2024-11-29",
+                "firstIndexDate": "2024-11-29",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "42617803",
+                "source": "MED",
+                "pmid": "42617803",
+                "doi": "10.1016/j.clnesp.2026.105027",
+                "title": "Plant-versus animal-derived protein and nutritional, cardiometabolic, and inflammatory outcomes in middle-aged and older adults: A systematic review and meta-analysis of randomized controlled trials.",
+                "authorString": "Foscolou A, Nikolopoulos S, Kleftaki SA, Gourni I, Neroutsou E, Nikolaou G, Panoutsopoulos GI, Kaliora AC, Gioxari A.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Foscolou A",
+                      "lastName": "Foscolou",
+                      "firstName": "Alexandra",
+                      "initials": "A"
+                    },
+                    {
+                      "fullName": "Nikolopoulos S",
+                      "lastName": "Nikolopoulos",
+                      "firstName": "Stavros",
+                      "initials": "S"
+                    },
+                    {
+                      "fullName": "Kleftaki SA",
+                      "lastName": "Kleftaki",
+                      "firstName": "Stamatia-Angeliki",
+                      "initials": "SA"
+                    },
+                    {
+                      "fullName": "Gourni I",
+                      "lastName": "Gourni",
+                      "firstName": "Ioanna",
+                      "initials": "I"
+                    },
+                    {
+                      "fullName": "Neroutsou E",
+                      "lastName": "Neroutsou",
+                      "firstName": "Eugenia",
+                      "initials": "E"
+                    },
+                    {
+                      "fullName": "Nikolaou G",
+                      "lastName": "Nikolaou",
+                      "firstName": "Giannoula",
+                      "initials": "G"
+                    },
+                    {
+                      "fullName": "Panoutsopoulos GI",
+                      "lastName": "Panoutsopoulos",
+                      "firstName": "Georgios I",
+                      "initials": "GI"
+                    },
+                    {
+                      "fullName": "Kaliora AC",
+                      "lastName": "Kaliora",
+                      "firstName": "Andriana C",
+                      "initials": "AC"
+                    },
+                    {
+                      "fullName": "Gioxari A",
+                      "lastName": "Gioxari",
+                      "firstName": "Aristea",
+                      "initials": "A",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-4869-6815"
+                      }
+                    }
+                  ]
+                },
+                "journalInfo": {
+                  "volume": "75",
+                  "journalIssueId": 4269817,
+                  "dateOfPublication": "2026 Oct",
+                  "monthOfPublication": 10,
+                  "yearOfPublication": 2026,
+                  "journal": {
+                    "medlineAbbreviation": "Clin Nutr ESPEN",
+                    "title": "Clinical nutrition ESPEN",
+                    "essn": "2405-4577",
+                    "issn": "2405-4577",
+                    "nlmid": "101654592",
+                    "isoabbreviation": "Clin Nutr ESPEN"
+                  },
+                  "printPublicationDate": "2026-10-01"
+                },
+                "pubYear": "2026",
+                "pageInfo": "105027",
+                "abstractText": "«redacted»",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Animals"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Cardiovascular Diseases",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Inflammation"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Dietary Proteins"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Plant Proteins",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Nutritional Status"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Aged"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Middle Aged"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Female"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Male"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Randomized Controlled Trials as Topic"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Plant Proteins, Dietary",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Animal Proteins, Dietary",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Diet, Plant-Based"
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Plant protein",
+                    "Body composition",
+                    "nutritional status",
+                    "Older Adults",
+                    "Cardiometabolic Health",
+                    "Animal Protein",
+                    "Late Adulthood"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "Plant Proteins",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Dietary Proteins",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Plant Proteins, Dietary",
+                      "registryNumber": "0"
+                    },
+                    {
+                      "name": "Animal Proteins, Dietary",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasData": "N",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2026-09-23",
+                "dateOfCreation": "2026-08-19",
+                "dateOfRevision": "2026-09-28",
+                "electronicPublicationDate": "2026-08-19",
+                "firstPublicationDate": "2026-08-19",
+                "firstIndexDate": "2026-08-22",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "40611279",
+                "source": "MED",
+                "pmid": "40611279",
+                "pmcid": "PMC12224500",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC12224500"
+                  ]
+                },
+                "doi": "10.1186/s12958-025-01409-9",
+                "title": "The effectiveness of nutritional supplements in improving polycystic ovary syndrome in women: a systematic review and network meta-analysis.",
+                "authorString": "Zhao G, Fan Y, Li R, Huang Y, Li W, Zhao Y, Zhou M, He J.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Zhao G",
+                      "lastName": "Zhao",
+                      "firstName": "Guanhua",
+                      "initials": "G"
+                    },
+                    {
+                      "fullName": "Fan Y",
+                      "lastName": "Fan",
+                      "firstName": "Yuxin",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Li R",
+                      "lastName": "Li",
+                      "firstName": "Ruixia",
+                      "initials": "R"
+                    },
+                    {
+                      "fullName": "Huang Y",
+                      "lastName": "Huang",
+                      "firstName": "Yu",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Li W",
+                      "lastName": "Li",
+                      "firstName": "Wenjuan",
+                      "initials": "W"
+                    },
+                    {
+                      "fullName": "Zhao Y",
+                      "lastName": "Zhao",
+                      "firstName": "Yanhong",
+                      "initials": "Y"
+                    },
+                    {
+                      "fullName": "Zhou M",
+                      "lastName": "Zhou",
+                      "firstName": "Mengdi",
+                      "initials": "M"
+                    },
+                    {
+                      "fullName": "He J",
+                      "lastName": "He",
+                      "firstName": "Jianchang",
+                      "initials": "J"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "supporting_data"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "1",
+                  "volume": "23",
+                  "journalIssueId": 3970848,
+                  "dateOfPublication": "2025 Jul",
+                  "monthOfPublication": 7,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "Reprod Biol Endocrinol",
+                    "title": "Reproductive biology and endocrinology : RB&E",
+                    "essn": "1477-7827",
+                    "issn": "1477-7827",
+                    "nlmid": "101153627",
+                    "isoabbreviation": "Reprod Biol Endocrinol"
+                  },
+                  "printPublicationDate": "2025-07-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "94",
+                "abstractText": "«redacted»",
+                "publicationStatus": "epublish",
+                "language": "eng",
+                "pubModel": "Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Systematic Review",
+                    "review-article",
+                    "Network Meta-Analysis",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Polycystic Ovary Syndrome",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "DH",
+                            "qualifierName": "diet therapy"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Insulin Resistance"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Treatment Outcome"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Oxidative Stress",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "DE",
+                            "qualifierName": "drug effects"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Dietary Supplements"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Female"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Randomized Controlled Trials as Topic",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "MT",
+                            "qualifierName": "methods"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Polycystic ovary syndrome",
+                    "Nutritional Supplements",
+                    "Network Meta-analysis"
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 4,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "Y",
+                "hasData": "Y",
+                "license": "cc by-nc-nd",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "dateOfCompletion": "2025-07-04",
+                "dateOfCreation": "2025-07-03",
+                "dateOfRevision": "2025-07-08",
+                "electronicPublicationDate": "2025-07-03",
+                "firstPublicationDate": "2025-07-03",
+                "firstIndexDate": "2025-07-09",
+                "fullTextReceivedDate": "2025-07-07",
+                "hasEvaluations": "N"
+              }
+            ]
+          }
+        },
+        "redactions": [
+          "abstractText",
+          "slim:authorAffiliationDetailsList",
+          "slim:affiliation",
+          "slim:fullTextUrlList",
+          "slim:authorIdList"
+        ]
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=39611889%2C42617803%2C40355968&retmode=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_json": {
+          "header": {
+            "type": "esummary",
+            "version": "0.3"
+          },
+          "result": {
+            "uids": [
+              "39611889",
+              "42617803",
+              "40355968"
+            ],
+            "39611889": {
+              "uid": "39611889",
+              "pubdate": "2025 May",
+              "epubdate": "2024 Nov 29",
+              "source": "Int Urol Nephrol",
+              "authors": [
+                {
+                  "name": "Zhixiang Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Yongxing X",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Juan L",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Qing Y",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Yangyang L",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Zhangrui Z",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Yuehua G",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Yuehua G",
+              "title": "The effects of soy protein and soy isoflavones intake on chronic kidney disease: a systematic review and meta-analysis.",
+              "sorttitle": "effects of soy protein and soy isoflavones intake on chronic kidney disease a systematic review and meta analysis",
+              "volume": "57",
+              "issue": "5",
+              "pages": "1533-1553",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "0262521",
+              "issn": "0301-1623",
+              "essn": "1573-2584",
+              "pubtype": [
+                "Journal Article",
+                "Systematic Review",
+                "Meta-Analysis"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "256",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "39611889"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1007/s11255-024-04301-4"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "10.1007/s11255-024-04301-4"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2024/03/19 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2024/11/20 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2025/04/16 14:35"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2024/11/29 12:22"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2024/11/29 11:04"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "International urology and nephrology",
+              "elocationid": "doi: 10.1007/s11255-024-04301-4",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2025/05/01 00:00",
+              "sortfirstauthor": "Zhixiang Y",
+              "vernaculartitle": ""
+            },
+            "42617803": {
+              "uid": "42617803",
+              "pubdate": "2026 Oct",
+              "epubdate": "2026 Aug 19",
+              "source": "Clin Nutr ESPEN",
+              "authors": [
+                {
+                  "name": "Foscolou A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Nikolopoulos S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Kleftaki SA",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Gourni I",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Neroutsou E",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Nikolaou G",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Panoutsopoulos GI",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Kaliora AC",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Gioxari A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Gioxari A",
+              "title": "Plant-versus animal-derived protein and nutritional, cardiometabolic, and inflammatory outcomes in middle-aged and older adults: A systematic review and meta-analysis of randomized controlled trials.",
+              "sorttitle": "plant versus animal derived protein and nutritional cardiometabolic and inflammatory outcomes in middle aged and older adults a systematic review and meta analysis of randomized controlled trials",
+              "volume": "75",
+              "issue": "",
+              "pages": "105027",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "101654592",
+              "issn": "",
+              "essn": "2405-4577",
+              "pubtype": [
+                "Journal Article",
+                "Systematic Review",
+                "Meta-Analysis"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "256",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "42617803"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1016/j.clnesp.2026.105027"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "S2405-4577(26)02124-8"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2026/07/23 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2026/08/10 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2026/09/23 05:34"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2026/08/20 03:59"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2026/08/19 19:12"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": "",
+              "fulljournalname": "Clinical nutrition ESPEN",
+              "elocationid": "doi: 10.1016/j.clnesp.2026.105027",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2026/10/01 00:00",
+              "sortfirstauthor": "Foscolou A",
+              "vernaculartitle": ""
+            },
+            "40355968": {
+              "uid": "40355968",
+              "pubdate": "2025 May 12",
+              "epubdate": "2025 May 12",
+              "source": "J Health Popul Nutr",
+              "authors": [
+                {
+                  "name": "Gholami A",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Amirkalali B",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Hariri M",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Hariri M",
+              "title": "Can soy isoflavones in combination with soy protein change serum levels of C-reactive protein among patients with chronic inflammatory diseases? A systematic review and meta-analysis on randomized controlled trials.",
+              "sorttitle": "can soy isoflavones in combination with soy protein change serum levels of c reactive protein among patients with chronic inflammatory diseases a systematic review and meta analysis on randomized controlled trials",
+              "volume": "44",
+              "issue": "1",
+              "pages": "154",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "100959228",
+              "issn": "1606-0997",
+              "essn": "2072-1315",
+              "pubtype": [
+                "Systematic Review",
+                "Journal Article",
+                "Meta-Analysis"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "3",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "40355968"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC12070792"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC12070792;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1186/s41043-025-00902-6"
+                },
+                {
+                  "idtype": "pii",
+                  "idtypen": 4,
+                  "value": "10.1186/s41043-025-00902-6"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "received",
+                  "date": "2024/09/08 00:00"
+                },
+                {
+                  "pubstatus": "accepted",
+                  "date": "2025/04/24 00:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2025/05/13 06:33"
+                },
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2025/05/13 00:33"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2025/05/12 23:39"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2025/05/12 00:00"
+                }
+              ],
+              "references": [],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 64,
+              "fulljournalname": "Journal of health, population, and nutrition",
+              "elocationid": "doi: 10.1186/s41043-025-00902-6",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2025/05/12 00:00",
+              "sortfirstauthor": "Gholami A",
+              "vernaculartitle": ""
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=39611889%2C42617803%2C40355968&retmode=xml",
+        "headers": {
+          "accept": "application/xml, text/xml;q=0.9, */*;q=0.1"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/xml; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_text": "<?xml version=\"1.0\" ?>\n<!DOCTYPE PubmedArticleSet PUBLIC \"-//NLM//DTD PubMedArticle, 1st January 2025//EN\" \"https://dtd.nlm.nih.gov/ncbi/pubmed/out/pubmed_250101.dtd\">\n<PubmedArticleSet>\n<PubmedArticle><MedlineCitation Status=\"MEDLINE\" Owner=\"NLM\" IndexingMethod=\"Curated\"><PMID Version=\"1\">39611889</PMID><DateCompleted><Year>2025</Year><Month>04</Month><Day>16</Day></DateCompleted><DateRevised><Year>2025</Year><Month>07</Month><Day>11</Day></DateRevised><Article PubModel=\"Print-Electronic\"><Journal><ISSN IssnType=\"Electronic\">1573-2584</ISSN><JournalIssue CitedMedium=\"Internet\"><Volume>57</Volume><Issue>5</Issue><PubDate><Year>2025</Year><Month>May</Month></PubDate></JournalIssue><Title>International urology and nephrology</Title><ISOAbbreviation>Int Urol Nephrol</ISOAbbreviation></Journal><ArticleTitle>The effects of soy protein and soy isoflavones intake on chronic kidney disease: a systematic review and meta-analysis.</ArticleTitle><Pagination><StartPage>1533</StartPage><EndPage>1553</EndPage><MedlinePgn>1533-1553</MedlinePgn></Pagination><ELocationID EIdType=\"doi\" ValidYN=\"Y\">10.1007/s11255-024-04301-4</ELocationID><Abstract><AbstractText Label=\"PURPOSE\" NlmCategory=\"OBJECTIVE\">«redacted»</AbstractText><AbstractText Label=\"METHODS\" NlmCategory=\"METHODS\">«redacted»</AbstractText><AbstractText Label=\"RESULTS\" NlmCategory=\"RESULTS\">«redacted»</AbstractText><AbstractText Label=\"CONCLUSION\" NlmCategory=\"CONCLUSIONS\">«redacted»</AbstractText><CopyrightInformation>&#xa9; 2024. The Author(s), under exclusive licence to Springer Nature B.V.</CopyrightInformation></Abstract><AuthorList CompleteYN=\"Y\"><Author ValidYN=\"Y\" EqualContrib=\"Y\"><LastName>Zhixiang</LastName><ForeName>Yu</ForeName><Initials>Y</Initials></Author><Author ValidYN=\"Y\" EqualContrib=\"Y\"><LastName>Yongxing</LastName><ForeName>Xu</ForeName><Initials>X</Initials></Author><Author ValidYN=\"Y\"><LastName>Juan</LastName><ForeName>Liu</ForeName><Initials>L</Initials></Author><Author ValidYN=\"Y\"><LastName>Qing</LastName><ForeName>Yang</ForeName><Initials>Y</Initials></Author><Author ValidYN=\"Y\"><LastName>Yangyang</LastName><ForeName>Lu</ForeName><Initials>L</Initials></Author><Author ValidYN=\"Y\"><LastName>Zhangrui</LastName><ForeName>Zhen</ForeName><Initials>Z</Initials></Author><Author ValidYN=\"Y\"><LastName>Yuehua</LastName><ForeName>Gao</ForeName><Initials>G</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType UI=\"D016428\">Journal Article</PublicationType><PublicationType UI=\"D000078182\">Systematic Review</PublicationType><PublicationType UI=\"D017418\">Meta-Analysis</PublicationType></PublicationTypeList><ArticleDate DateType=\"Electronic\"><Year>2024</Year><Month>11</Month><Day>29</Day></ArticleDate></Article><MedlineJournalInfo><Country>Netherlands</Country><MedlineTA>Int Urol Nephrol</MedlineTA><NlmUniqueID>0262521</NlmUniqueID><ISSNLinking>0301-1623</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D030262\">Soybean Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D007529\">Isoflavones</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName UI=\"D006801\" MajorTopicYN=\"N\">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D030262\" MajorTopicYN=\"Y\">Soybean Proteins</DescriptorName><QualifierName UI=\"Q000008\" MajorTopicYN=\"N\">administration &amp; dosage</QualifierName><QualifierName UI=\"Q000627\" MajorTopicYN=\"N\">therapeutic use</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D051436\" MajorTopicYN=\"Y\">Renal Insufficiency, Chronic</DescriptorName><QualifierName UI=\"Q000178\" MajorTopicYN=\"N\">diet therapy</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D007529\" MajorTopicYN=\"Y\">Isoflavones</DescriptorName><QualifierName UI=\"Q000008\" MajorTopicYN=\"N\">administration &amp; dosage</QualifierName><QualifierName UI=\"Q000627\" MajorTopicYN=\"N\">therapeutic use</QualifierName></MeshHeading></MeshHeadingList><KeywordList Owner=\"NOTNLM\"><Keyword MajorTopicYN=\"N\">Chronic kidney disease</Keyword><Keyword MajorTopicYN=\"N\">Randomized controlled trials</Keyword><Keyword MajorTopicYN=\"N\">Soy protein intake</Keyword><Keyword MajorTopicYN=\"N\">Systematic review</Keyword></KeywordList><CoiStatement>Declarations. Competing interests: The authors declare no competing interests. Registration and protocol: The review protocol can be accessed on INPLASY website ( https://inplasy.com/ ) and INPLASY registration number is INPLASY202430028.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate PubStatus=\"received\"><Year>2024</Year><Month>3</Month><Day>19</Day></PubMedPubDate><PubMedPubDate PubStatus=\"accepted\"><Year>2024</Year><Month>11</Month><Day>20</Day></PubMedPubDate><PubMedPubDate PubStatus=\"medline\"><Year>2025</Year><Month>4</Month><Day>16</Day><Hour>14</Hour><Minute>35</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pubmed\"><Year>2024</Year><Month>11</Month><Day>29</Day><Hour>12</Hour><Minute>22</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"entrez\"><Year>2024</Year><Month>11</Month><Day>29</Day><Hour>11</Hour><Minute>4</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId IdType=\"pubmed\">39611889</ArticleId><ArticleId IdType=\"doi\">10.1007/s11255-024-04301-4</ArticleId><ArticleId IdType=\"pii\">10.1007/s11255-024-04301-4</ArticleId></ArticleIdList><ReferenceList/></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation Status=\"MEDLINE\" Owner=\"NLM\" IndexingMethod=\"Curated\"><PMID Version=\"1\">42617803</PMID><DateCompleted><Year>2026</Year><Month>09</Month><Day>23</Day></DateCompleted><DateRevised><Year>2026</Year><Month>09</Month><Day>28</Day></DateRevised><Article PubModel=\"Print-Electronic\"><Journal><ISSN IssnType=\"Electronic\">2405-4577</ISSN><JournalIssue CitedMedium=\"Internet\"><Volume>75</Volume><PubDate><Year>2026</Year><Month>Oct</Month></PubDate></JournalIssue><Title>Clinical nutrition ESPEN</Title><ISOAbbreviation>Clin Nutr ESPEN</ISOAbbreviation></Journal><ArticleTitle>Plant-versus animal-derived protein and nutritional, cardiometabolic, and inflammatory outcomes in middle-aged and older adults: A systematic review and meta-analysis of randomized controlled trials.</ArticleTitle><Pagination><StartPage>105027</StartPage><MedlinePgn>105027</MedlinePgn></Pagination><ELocationID EIdType=\"doi\" ValidYN=\"Y\">10.1016/j.clnesp.2026.105027</ELocationID><ELocationID EIdType=\"pii\" ValidYN=\"Y\">S2405-4577(26)02124-8</ELocationID><Abstract><AbstractText Label=\"BACKGROUND\" NlmCategory=\"BACKGROUND\">«redacted»</AbstractText><AbstractText Label=\"AIMS\" NlmCategory=\"OBJECTIVE\">«redacted»</AbstractText><AbstractText Label=\"METHODS\" NlmCategory=\"METHODS\">«redacted»</AbstractText><AbstractText Label=\"RESULTS\" NlmCategory=\"RESULTS\">«redacted»</AbstractText><AbstractText Label=\"CONCLUSIONS\" NlmCategory=\"CONCLUSIONS\">«redacted»</AbstractText><AbstractText Label=\"PROSPERO REGISTRATION ID\" NlmCategory=\"UNASSIGNED\">«redacted»</AbstractText><CopyrightInformation>Copyright &#xa9; 2026 The Author(s). Published by Elsevier Ltd.. All rights reserved.</CopyrightInformation></Abstract><AuthorList CompleteYN=\"Y\"><Author ValidYN=\"Y\"><LastName>Foscolou</LastName><ForeName>Alexandra</ForeName><Initials>A</Initials></Author><Author ValidYN=\"Y\"><LastName>Nikolopoulos</LastName><ForeName>Stavros</ForeName><Initials>S</Initials></Author><Author ValidYN=\"Y\"><LastName>Kleftaki</LastName><ForeName>Stamatia-Angeliki</ForeName><Initials>SA</Initials></Author><Author ValidYN=\"Y\"><LastName>Gourni</LastName><ForeName>Ioanna</ForeName><Initials>I</Initials></Author><Author ValidYN=\"Y\"><LastName>Neroutsou</LastName><ForeName>Eugenia</ForeName><Initials>E</Initials></Author><Author ValidYN=\"Y\"><LastName>Nikolaou</LastName><ForeName>Giannoula</ForeName><Initials>G</Initials></Author><Author ValidYN=\"Y\"><LastName>Panoutsopoulos</LastName><ForeName>Georgios I</ForeName><Initials>GI</Initials></Author><Author ValidYN=\"Y\"><LastName>Kaliora</LastName><ForeName>Andriana C</ForeName><Initials>AC</Initials></Author><Author ValidYN=\"Y\"><LastName>Gioxari</LastName><ForeName>Aristea</ForeName><Initials>A</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType UI=\"D016428\">Journal Article</PublicationType><PublicationType UI=\"D000078182\">Systematic Review</PublicationType><PublicationType UI=\"D017418\">Meta-Analysis</PublicationType></PublicationTypeList><ArticleDate DateType=\"Electronic\"><Year>2026</Year><Month>08</Month><Day>19</Day></ArticleDate></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Clin Nutr ESPEN</MedlineTA><NlmUniqueID>101654592</NlmUniqueID><ISSNLinking>2405-4577</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D000080224\">Animal Proteins, Dietary</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D014674\">Plant Proteins, Dietary</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D010940\">Plant Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D004044\">Dietary Proteins</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName UI=\"D006801\" MajorTopicYN=\"N\">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D016032\" MajorTopicYN=\"N\">Randomized Controlled Trials as Topic</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D008875\" MajorTopicYN=\"N\">Middle Aged</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D000080224\" MajorTopicYN=\"Y\">Animal Proteins, Dietary</DescriptorName><QualifierName UI=\"Q000008\" MajorTopicYN=\"N\">administration &amp; dosage</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D009752\" MajorTopicYN=\"Y\">Nutritional Status</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D005260\" MajorTopicYN=\"N\">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D014674\" MajorTopicYN=\"Y\">Plant Proteins, Dietary</DescriptorName><QualifierName UI=\"Q000008\" MajorTopicYN=\"N\">administration &amp; dosage</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D007249\" MajorTopicYN=\"Y\">Inflammation</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D000818\" MajorTopicYN=\"N\">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D008297\" MajorTopicYN=\"N\">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D000368\" MajorTopicYN=\"N\">Aged</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D010940\" MajorTopicYN=\"Y\">Plant Proteins</DescriptorName><QualifierName UI=\"Q000008\" MajorTopicYN=\"N\">administration &amp; dosage</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D004044\" MajorTopicYN=\"Y\">Dietary Proteins</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D002318\" MajorTopicYN=\"Y\">Cardiovascular Diseases</DescriptorName><QualifierName UI=\"Q000517\" MajorTopicYN=\"N\">prevention &amp; control</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D000095500\" MajorTopicYN=\"N\">Diet, Plant-Based</DescriptorName></MeshHeading></MeshHeadingList><KeywordList Owner=\"NOTNLM\"><Keyword MajorTopicYN=\"N\">Animal protein</Keyword><Keyword MajorTopicYN=\"N\">Body composition</Keyword><Keyword MajorTopicYN=\"N\">Cardiometabolic health</Keyword><Keyword MajorTopicYN=\"N\">Late adulthood</Keyword><Keyword MajorTopicYN=\"N\">Nutritional status</Keyword><Keyword MajorTopicYN=\"N\">Older adults</Keyword><Keyword MajorTopicYN=\"N\">Plant protein</Keyword></KeywordList><CoiStatement>Conflicts of interest The authors declare no conflict of interest.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate PubStatus=\"received\"><Year>2026</Year><Month>7</Month><Day>23</Day></PubMedPubDate><PubMedPubDate PubStatus=\"accepted\"><Year>2026</Year><Month>8</Month><Day>10</Day></PubMedPubDate><PubMedPubDate PubStatus=\"medline\"><Year>2026</Year><Month>9</Month><Day>23</Day><Hour>5</Hour><Minute>34</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pubmed\"><Year>2026</Year><Month>8</Month><Day>20</Day><Hour>3</Hour><Minute>59</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"entrez\"><Year>2026</Year><Month>8</Month><Day>19</Day><Hour>19</Hour><Minute>12</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId IdType=\"pubmed\">42617803</ArticleId><ArticleId IdType=\"doi\">10.1016/j.clnesp.2026.105027</ArticleId><ArticleId IdType=\"pii\">S2405-4577(26)02124-8</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation Status=\"MEDLINE\" Owner=\"NLM\" IndexingMethod=\"Curated\"><PMID Version=\"1\">40355968</PMID><DateCompleted><Year>2025</Year><Month>05</Month><Day>13</Day></DateCompleted><DateRevised><Year>2026</Year><Month>03</Month><Day>28</Day></DateRevised><Article PubModel=\"Electronic\"><Journal><ISSN IssnType=\"Electronic\">2072-1315</ISSN><JournalIssue CitedMedium=\"Internet\"><Volume>44</Volume><Issue>1</Issue><PubDate><Year>2025</Year><Month>May</Month><Day>12</Day></PubDate></JournalIssue><Title>Journal of health, population, and nutrition</Title><ISOAbbreviation>J Health Popul Nutr</ISOAbbreviation></Journal><ArticleTitle>Can soy isoflavones in combination with soy protein change serum levels of C-reactive protein among patients with chronic inflammatory diseases? A systematic review and meta-analysis on randomized controlled trials.</ArticleTitle><Pagination><StartPage>154</StartPage><MedlinePgn>154</MedlinePgn></Pagination><ELocationID EIdType=\"pii\" ValidYN=\"Y\">154</ELocationID><ELocationID EIdType=\"doi\" ValidYN=\"Y\">10.1186/s41043-025-00902-6</ELocationID><Abstract><AbstractText Label=\"BACKGROUND\">«redacted»</AbstractText><AbstractText Label=\"MATERIALS AND METHODS\">«redacted»</AbstractText><AbstractText Label=\"RESULTS\">«redacted»</AbstractText><AbstractText Label=\"CONCLUSION\">«redacted»</AbstractText><CopyrightInformation>&#xa9; 2025. The Author(s).</CopyrightInformation></Abstract><AuthorList CompleteYN=\"Y\"><Author ValidYN=\"Y\"><LastName>Gholami</LastName><ForeName>Ali</ForeName><Initials>A</Initials></Author><Author ValidYN=\"Y\"><LastName>Amirkalali</LastName><ForeName>Bahareh</ForeName><Initials>B</Initials></Author><Author ValidYN=\"Y\"><LastName>Hariri</LastName><ForeName>Mitra</ForeName><Initials>M</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType UI=\"D000078182\">Systematic Review</PublicationType><PublicationType UI=\"D016428\">Journal Article</PublicationType><PublicationType UI=\"D017418\">Meta-Analysis</PublicationType></PublicationTypeList><ArticleDate DateType=\"Electronic\"><Year>2025</Year><Month>05</Month><Day>12</Day></ArticleDate></Article><MedlineJournalInfo><Country>Bangladesh</Country><MedlineTA>J Health Popul Nutr</MedlineTA><NlmUniqueID>100959228</NlmUniqueID><ISSNLinking>1606-0997</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D007529\">Isoflavones</NameOfSubstance></Chemical><Chemical><RegistryNumber>9007-41-4</RegistryNumber><NameOfSubstance UI=\"D002097\">C-Reactive Protein</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D030262\">Soybean Proteins</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance UI=\"D015415\">Biomarkers</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName UI=\"D006801\" MajorTopicYN=\"N\">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D007529\" MajorTopicYN=\"Y\">Isoflavones</DescriptorName><QualifierName UI=\"Q000494\" MajorTopicYN=\"N\">pharmacology</QualifierName><QualifierName UI=\"Q000008\" MajorTopicYN=\"N\">administration &amp; dosage</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D002097\" MajorTopicYN=\"Y\">C-Reactive Protein</DescriptorName><QualifierName UI=\"Q000032\" MajorTopicYN=\"N\">analysis</QualifierName><QualifierName UI=\"Q000378\" MajorTopicYN=\"N\">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D030262\" MajorTopicYN=\"Y\">Soybean Proteins</DescriptorName><QualifierName UI=\"Q000494\" MajorTopicYN=\"N\">pharmacology</QualifierName><QualifierName UI=\"Q000008\" MajorTopicYN=\"N\">administration &amp; dosage</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D016032\" MajorTopicYN=\"N\">Randomized Controlled Trials as Topic</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D007249\" MajorTopicYN=\"Y\">Inflammation</DescriptorName><QualifierName UI=\"Q000097\" MajorTopicYN=\"N\">blood</QualifierName><QualifierName UI=\"Q000188\" MajorTopicYN=\"N\">drug therapy</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D002908\" MajorTopicYN=\"N\">Chronic Disease</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D015415\" MajorTopicYN=\"N\">Biomarkers</DescriptorName><QualifierName UI=\"Q000097\" MajorTopicYN=\"N\">blood</QualifierName></MeshHeading><MeshHeading><DescriptorName UI=\"D000328\" MajorTopicYN=\"N\">Adult</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D005260\" MajorTopicYN=\"N\">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName UI=\"D008297\" MajorTopicYN=\"N\">Male</DescriptorName></MeshHeading></MeshHeadingList><KeywordList Owner=\"NOTNLM\"><Keyword MajorTopicYN=\"N\">C-reactive protein</Keyword><Keyword MajorTopicYN=\"N\">Meta-analysis</Keyword><Keyword MajorTopicYN=\"N\">Soy isoflavones</Keyword><Keyword MajorTopicYN=\"N\">Soy protein</Keyword><Keyword MajorTopicYN=\"N\">Systematic review</Keyword></KeywordList><CoiStatement>Declarations. Ethics approval and consent to participate: Not applicable. Consent for publication: Not applicable. Competing interests: The authors declare no competing interests.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate PubStatus=\"received\"><Year>2024</Year><Month>9</Month><Day>8</Day></PubMedPubDate><PubMedPubDate PubStatus=\"accepted\"><Year>2025</Year><Month>4</Month><Day>24</Day></PubMedPubDate><PubMedPubDate PubStatus=\"medline\"><Year>2025</Year><Month>5</Month><Day>13</Day><Hour>6</Hour><Minute>33</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pubmed\"><Year>2025</Year><Month>5</Month><Day>13</Day><Hour>0</Hour><Minute>33</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"entrez\"><Year>2025</Year><Month>5</Month><Day>12</Day><Hour>23</Hour><Minute>39</Minute></PubMedPubDate><PubMedPubDate PubStatus=\"pmc-release\"><Year>2025</Year><Month>5</Month><Day>12</Day></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId IdType=\"pubmed\">40355968</ArticleId><ArticleId IdType=\"pmc\">PMC12070792</ArticleId><ArticleId IdType=\"doi\">10.1186/s41043-025-00902-6</ArticleId><ArticleId IdType=\"pii\">10.1186/s41043-025-00902-6</ArticleId></ArticleIdList><ReferenceList/></PubmedData></PubmedArticle></PubmedArticleSet>",
+        "redactions": [
+          "AbstractText",
+          "slim:ReferenceList",
+          "slim:AffiliationInfo"
+        ]
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=8&query=%28EXT_ID%3A42518376+OR+EXT_ID%3A41865277+OR+EXT_ID%3A41097615%29+AND+SRC%3AMED&resultType=core",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 3,
+          "request": {
+            "queryString": "(EXT_ID:42518376 OR EXT_ID:41865277 OR EXT_ID:41097615) AND SRC:MED",
+            "resultType": "core",
+            "cursorMark": "*",
+            "pageSize": 8,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "42518376",
+                "source": "MED",
+                "pmid": "42518376",
+                "pmcid": "PMC13382085",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC13382085"
+                  ]
+                },
+                "doi": "10.1016/j.waojou.2026.101428",
+                "title": "Prevalence of food allergies in older adults: A systematic review and meta-analysis.",
+                "authorString": "Azzolino D, Baldassari I, Perna S, Immacolata Spolidoro GC, Moroni A, Coelho-Junior HJ, Cesari M, Lucchi T.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Azzolino D",
+                      "lastName": "Azzolino",
+                      "firstName": "Domenico",
+                      "initials": "D",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-4910-7373"
+                      }
+                    },
+                    {
+                      "fullName": "Baldassari I",
+                      "lastName": "Baldassari",
+                      "firstName": "Ivan",
+                      "initials": "I"
+                    },
+                    {
+                      "fullName": "Perna S",
+                      "lastName": "Perna",
+                      "firstName": "Simone",
+                      "initials": "S"
+                    },
+                    {
+                      "fullName": "Immacolata Spolidoro GC",
+                      "lastName": "Immacolata Spolidoro",
+                      "firstName": "Giulia Carla",
+                      "initials": "GC"
+                    },
+                    {
+                      "fullName": "Moroni A",
+                      "lastName": "Moroni",
+                      "firstName": "Alessia",
+                      "initials": "A"
+                    },
+                    {
+                      "fullName": "Coelho-Junior HJ",
+                      "lastName": "Coelho-Junior",
+                      "firstName": "Hélio José",
+                      "initials": "HJ"
+                    },
+                    {
+                      "fullName": "Cesari M",
+                      "lastName": "Cesari",
+                      "firstName": "Matteo",
+                      "initials": "M"
+                    },
+                    {
+                      "fullName": "Lucchi T",
+                      "lastName": "Lucchi",
+                      "firstName": "Tiziano",
+                      "initials": "T"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "supporting_data"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "8",
+                  "volume": "19",
+                  "journalIssueId": 4225948,
+                  "dateOfPublication": "2026 Aug",
+                  "monthOfPublication": 8,
+                  "yearOfPublication": 2026,
+                  "journal": {
+                    "medlineAbbreviation": "World Allergy Organ J",
+                    "title": "The World Allergy Organization journal",
+                    "essn": "1939-4551",
+                    "issn": "1939-4551",
+                    "nlmid": "101481283",
+                    "isoabbreviation": "World Allergy Organ J"
+                  },
+                  "printPublicationDate": "2026-08-01"
+                },
+                "pubYear": "2026",
+                "pageInfo": "101428",
+                "abstractText": "«redacted»",
+                "publicationStatus": "epublish",
+                "language": "eng",
+                "pubModel": "Electronic-eCollection",
+                "pubTypeList": {
+                  "pubType": [
+                    "review-article",
+                    "Review",
+                    "Journal Article"
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Aging",
+                    "Allergy",
+                    "Malnutrition",
+                    "Frailty",
+                    "Food Hypersensitivity"
+                  ]
+                },
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "N",
+                "hasData": "Y",
+                "license": "cc by-nc-nd",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "dateOfCompletion": "2026-07-29",
+                "dateOfCreation": "2026-07-28",
+                "dateOfRevision": "2026-08-13",
+                "electronicPublicationDate": "2026-07-13",
+                "firstPublicationDate": "2026-07-13",
+                "firstIndexDate": "2026-07-30",
+                "fullTextReceivedDate": "2026-09-03",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "41865277",
+                "source": "MED",
+                "pmid": "41865277",
+                "doi": "10.1093/nutrit/nuag021",
+                "title": "Effects of Avocado (Persea americana) Fruit and Byproducts on Molecular Pathways Related to Oxi-inflammation: A Systematic Review of Randomized Clinical Trials.",
+                "authorString": "Fortini TVL, Ribeiro MGC, Cândido FG, Rocha DMUP, Hermsdorff HHM.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Fortini TVL",
+                      "lastName": "Fortini",
+                      "firstName": "Thaís Victória Lopes",
+                      "initials": "TVL"
+                    },
+                    {
+                      "fullName": "Ribeiro MGC",
+                      "lastName": "Ribeiro",
+                      "firstName": "Madalena Geralda Cupertino",
+                      "initials": "MGC",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-2658-6519"
+                      }
+                    },
+                    {
+                      "fullName": "Cândido FG",
+                      "lastName": "Cândido",
+                      "firstName": "Flávia Galvão",
+                      "initials": "FG"
+                    },
+                    {
+                      "fullName": "Rocha DMUP",
+                      "lastName": "Rocha",
+                      "firstName": "Daniela Mayumi Usuda Prado",
+                      "initials": "DMUP"
+                    },
+                    {
+                      "fullName": "Hermsdorff HHM",
+                      "lastName": "Hermsdorff",
+                      "firstName": "Helen Hermana Miranda",
+                      "initials": "HHM",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-4441-6572"
+                      }
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics"
+                  ]
+                },
+                "journalInfo": {
+                  "journalIssueId": 4140038,
+                  "dateOfPublication": "2026 Mar",
+                  "monthOfPublication": 3,
+                  "yearOfPublication": 2026,
+                  "journal": {
+                    "medlineAbbreviation": "Nutr Rev",
+                    "title": "Nutrition reviews",
+                    "essn": "1753-4887",
+                    "issn": "0029-6643",
+                    "nlmid": "0376405",
+                    "isoabbreviation": "Nutr Rev"
+                  },
+                  "printPublicationDate": "2026-03-01"
+                },
+                "pubYear": "2026",
+                "pageInfo": "nuag021",
+                "abstractText": "«redacted»",
+                "publicationStatus": "aheadofprint",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Journal Article"
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Diet therapy",
+                    "Oxidative stress",
+                    "Inflammation",
+                    "Chronic disease",
+                    "Avocado",
+                    "Nutritional Genomics"
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "N",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasData": "N",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCreation": "2026-03-22",
+                "dateOfRevision": "2026-03-22",
+                "electronicPublicationDate": "2026-03-22",
+                "firstPublicationDate": "2026-03-22",
+                "firstIndexDate": "2026-03-23",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "41097615",
+                "source": "MED",
+                "pmid": "41097615",
+                "pmcid": "PMC12523725",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC12523725"
+                  ]
+                },
+                "doi": "10.3390/foods14193447",
+                "title": "Therapeutic Efficacy of Soy-Derived Bioactives: A Systematic Review of Nutritional Potency, Bioactive Therapeutics, and Clinical Biomarker Modulation.",
+                "authorString": "Fatima Z, Itrat N, Israr B, Ahmad AMR.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Fatima Z",
+                      "lastName": "Fatima",
+                      "firstName": "Zara",
+                      "initials": "Z"
+                    },
+                    {
+                      "fullName": "Itrat N",
+                      "lastName": "Itrat",
+                      "firstName": "Nizwa",
+                      "initials": "N"
+                    },
+                    {
+                      "fullName": "Israr B",
+                      "lastName": "Israr",
+                      "firstName": "Beenish",
+                      "initials": "B",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0002-1251-5357"
+                      }
+                    },
+                    {
+                      "fullName": "Ahmad AMR",
+                      "lastName": "Ahmad",
+                      "firstName": "Abdul Momin Rizwan",
+                      "initials": "AMR",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0000-0003-3499-902X"
+                      }
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "supporting_data"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "19",
+                  "volume": "14",
+                  "journalIssueId": 4033660,
+                  "dateOfPublication": "2025 Oct",
+                  "monthOfPublication": 10,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "Foods",
+                    "title": "Foods (Basel, Switzerland)",
+                    "essn": "2304-8158",
+                    "issn": "2304-8158",
+                    "nlmid": "101670569",
+                    "isoabbreviation": "Foods"
+                  },
+                  "printPublicationDate": "2025-10-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "3447",
+                "abstractText": "«redacted»",
+                "publicationStatus": "epublish",
+                "language": "eng",
+                "pubModel": "Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "review-article",
+                    "Review",
+                    "Journal Article"
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Fermentation",
+                    "Soybean",
+                    "Anti-inflammatory",
+                    "Sustainable",
+                    "chronic diseases",
+                    "Bioactive compounds",
+                    "Fortification",
+                    "Protein Energy Malnutrition",
+                    "Therapeutic Role"
+                  ]
+                },
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 2,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasData": "Y",
+                "license": "cc by",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "dateOfCompletion": "2025-10-16",
+                "dateOfCreation": "2025-10-16",
+                "dateOfRevision": "2025-10-19",
+                "electronicPublicationDate": "2025-10-09",
+                "firstPublicationDate": "2025-10-09",
+                "firstIndexDate": "2025-10-16",
+                "fullTextReceivedDate": "2025-11-24",
+                "hasEvaluations": "N"
+              }
+            ]
+          }
+        },
+        "redactions": [
+          "abstractText",
+          "slim:authorAffiliationDetailsList",
+          "slim:authorIdList",
+          "slim:affiliation",
+          "slim:fullTextUrlList",
+          "slim:grantsList"
+        ]
+      },
+      "delay_ms": null
+    }
+  ]
+}

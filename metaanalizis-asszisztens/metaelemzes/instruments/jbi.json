@@ -1,0 +1,1574 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "jbi",
+  "name": "JBI",
+  "label": {
+    "hu": "JBI kritikai értékelő ellenőrzőlisták",
+    "en": "JBI critical appraisal checklists"
+  },
+  "full_name": "JBI critical appraisal checklists (Joanna Briggs Institute)",
+  "family": "quality",
+  "tool_version": "JBI Manual",
+  "definition_version": 1,
+  "validator_version": "1.0.0",
+  "reference_sha256": "27463afc03000248d3168bcd35cab1000c81018538e964f0fdcb8d22f4f2f46b",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/jbi.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Aromataris E, Munn Z (eds). JBI Manual for Evidence Synthesis. JBI; and the individual JBI critical appraisal checklists (jbi.global).",
+  "licence": {
+    "instrument_licence": "© JBI — szabadon letölthető, de a szöveg a JBI tulajdona",
+    "verbatim_allowed": null,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "A JBI-listák ingyenesen elérhetők, de nyílt licenc nincs megjelölve; a fájl rövid parafrázist tartalmaz a hivatalos számozással. Kéziratban a publikált szöveget használd.",
+      "en": "The JBI checklists are freely available but carry no open licence; this file holds short paraphrases with the official numbering."
+    }
+  },
+  "intro": {
+    "hu": "A JBI-listák azokra az elrendezésekre valók, amelyeket a torzításikockázat-eszközök nem fednek le (esetismertetés, esetsorozat, keresztmetszeti, prevalencia, kvalitatív). Ahol van torzításikockázat-eszköz (RCT → RoB 2, nem randomizált → ROBINS-I, expozíció → ROBINS-E, diagnosztika → QUADAS-2), azt részesítsd előnyben. A JBI-nak nincs pontszáma és küszöbe: a kimenet döntés (bevonható / kizárandó / további információ kell) a tételválaszokkal.",
+    "en": "JBI checklists cover designs the risk-of-bias tools do not. Prefer the risk-of-bias tool where one exists. JBI has no score and no threshold: the output is a decision (include / exclude / seek further info) plus the item answers."
+  },
+  "unit": "study",
+  "unit_label": {
+    "hu": "vizsgálatonként",
+    "en": "per study"
+  },
+  "scopes": [
+    {
+      "id": "cohort",
+      "label": {
+        "hu": "Kohorszvizsgálat",
+        "en": "Cohort study"
+      },
+      "default": true
+    },
+    {
+      "id": "case-control",
+      "label": {
+        "hu": "Eset-kontroll vizsgálat",
+        "en": "Case-control study"
+      },
+      "default": false
+    },
+    {
+      "id": "cross-sectional",
+      "label": {
+        "hu": "Analitikus keresztmetszeti vizsgálat",
+        "en": "Analytical cross-sectional study"
+      },
+      "default": false
+    },
+    {
+      "id": "case-series",
+      "label": {
+        "hu": "Esetsorozat",
+        "en": "Case series"
+      },
+      "default": false
+    },
+    {
+      "id": "case-report",
+      "label": {
+        "hu": "Esetismertetés",
+        "en": "Case report"
+      },
+      "default": false
+    },
+    {
+      "id": "prevalence",
+      "label": {
+        "hu": "Prevalenciavizsgálat",
+        "en": "Prevalence study"
+      },
+      "default": false
+    },
+    {
+      "id": "qualitative",
+      "label": {
+        "hu": "Kvalitatív kutatás",
+        "en": "Qualitative research"
+      },
+      "default": false
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "unclear",
+      "label": "U",
+      "text": {
+        "hu": "Nem egyértelmű",
+        "en": "Unclear"
+      },
+      "kind": "unknown",
+      "aliases": [
+        "u",
+        "unclear",
+        "unclear risk",
+        "nem egyertelmu",
+        "bizonytalan",
+        "?"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "no",
+    "unclear",
+    "not_applicable"
+  ],
+  "verdicts": [
+    {
+      "value": "include",
+      "label": {
+        "hu": "Bevonható",
+        "en": "Include"
+      },
+      "level": "low"
+    },
+    {
+      "value": "seek_further_info",
+      "label": {
+        "hu": "További információ kell",
+        "en": "Seek further info"
+      },
+      "level": "some"
+    },
+    {
+      "value": "exclude",
+      "label": {
+        "hu": "Kizárandó",
+        "en": "Exclude"
+      },
+      "level": "high"
+    }
+  ],
+  "domains": [
+    {
+      "id": "1",
+      "title": {
+        "hu": "Kohorszvizsgálatok",
+        "en": "Cohort studies"
+      },
+      "short": "D1",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "2",
+      "title": {
+        "hu": "Eset-kontroll vizsgálatok",
+        "en": "Case-control studies"
+      },
+      "short": "D2",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "3",
+      "title": {
+        "hu": "Analitikus keresztmetszeti vizsgálatok",
+        "en": "Analytical cross-sectional studies"
+      },
+      "short": "D3",
+      "passes": null,
+      "applicability": false,
+      "help": {
+        "hu": "A keresztmetszeti elrendezés nem igazolja az időbeliséget; ezt az értékelésnek ki kell mondania, akkor is, ha nem tétel a listán.",
+        "en": ""
+      }
+    },
+    {
+      "id": "4",
+      "title": {
+        "hu": "Esetsorozatok",
+        "en": "Case series"
+      },
+      "short": "D4",
+      "passes": null,
+      "applicability": false,
+      "help": {
+        "hu": "A 4.4 és 4.5 választja el az esetsorozatot az emlékezetes esetek gyűjteményétől, és ezekre a leggyakoribb a „Nem egyértelmű” válasz.",
+        "en": ""
+      }
+    },
+    {
+      "id": "5",
+      "title": {
+        "hu": "Esetismertetések",
+        "en": "Case reports"
+      },
+      "short": "D5",
+      "passes": null,
+      "applicability": false,
+      "help": {
+        "hu": "Saját esetismertetésnél a CARE közlési irányelvvel párosítsd: a JBI azt kérdezi, megbízható-e, a CARE azt, hogy teljes-e a közlés.",
+        "en": ""
+      }
+    },
+    {
+      "id": "6",
+      "title": {
+        "hu": "Prevalenciavizsgálatok",
+        "en": "Prevalence studies"
+      },
+      "short": "D6",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "7",
+      "title": {
+        "hu": "Kvalitatív kutatás",
+        "en": "Qualitative research"
+      },
+      "short": "D7",
+      "passes": null,
+      "applicability": false,
+      "help": {
+        "hu": "Itt ne alkalmazz kvantitatív logikát: a mintanagyság, a vakítás és a zavaró tényezők nem kvalitatív fogalmak. A kvalitatív bizonyíték bizonyosságához a GRADE-CERQual való, nem a GRADE.",
+        "en": ""
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "1.1",
+      "key": "1.1",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Hasonló volt-e a két csoport, és ugyanabból a populációból toborozták-e őket?",
+        "en": "Were the two groups similar and recruited from the same population?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.2",
+      "key": "1.2",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Hasonló módon mérték-e az expozíciót a kitett és a nem kitett csoportba soroláshoz?",
+        "en": "Were the exposures measured similarly to assign people to both exposed and unexposed groups?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.3",
+      "key": "1.3",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Érvényes és megbízható módon mérték-e az expozíciót?",
+        "en": "Was the exposure measured in a valid and reliable way?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.4",
+      "key": "1.4",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Azonosították-e a zavaró tényezőket?",
+        "en": "Were confounding factors identified?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.5",
+      "key": "1.5",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Megfogalmaztak-e stratégiát a zavaró tényezők kezelésére?",
+        "en": "Were strategies to deal with confounding factors stated?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.6",
+      "key": "1.6",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Mentesek voltak-e a csoportok/résztvevők a kimenettől a vizsgálat kezdetén?",
+        "en": "Were the groups/participants free of the outcome at the start of the study?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.7",
+      "key": "1.7",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Érvényes és megbízható módon mérték-e a kimeneteket?",
+        "en": "Were the outcomes measured in a valid and reliable way?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.8",
+      "key": "1.8",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Közölték-e a követési időt, és elég hosszú volt-e a kimenetek bekövetkezéséhez?",
+        "en": "Was the follow-up time reported and sufficient to be long enough for outcomes to occur?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.9",
+      "key": "1.9",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Teljes volt-e a követés, és ha nem, leírták és elemezték-e a kiesés okait?",
+        "en": "Was follow-up complete, and if not, were the reasons for loss to follow-up described and explored?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.10",
+      "key": "1.10",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Alkalmaztak-e stratégiát a hiányos követés kezelésére?",
+        "en": "Were strategies to address incomplete follow-up utilised?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "1.11",
+      "key": "1.11",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő statisztikai elemzést alkalmaztak-e?",
+        "en": "Was appropriate statistical analysis used?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.1",
+      "key": "2.1",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Összehasonlíthatók voltak-e a csoportok azon kívül, hogy az eseteknél fennáll a betegség, a kontrolloknál nem?",
+        "en": "Were the groups comparable other than the presence of disease in cases or absence in controls?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.2",
+      "key": "2.2",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelően illesztették-e az eseteket és a kontrollokat?",
+        "en": "Were cases and controls matched appropriately?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.3",
+      "key": "2.3",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ugyanazokat a kritériumokat használták-e az esetek és a kontrollok azonosítására?",
+        "en": "Were the same criteria used for identification of cases and controls?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.4",
+      "key": "2.4",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Standard, érvényes és megbízható módon mérték-e az expozíciót?",
+        "en": "Was exposure measured in a standard, valid and reliable way?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.5",
+      "key": "2.5",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ugyanúgy mérték-e az expozíciót az eseteknél és a kontrolloknál?",
+        "en": "Was exposure measured in the same way for cases and controls?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.6",
+      "key": "2.6",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Azonosították-e a zavaró tényezőket?",
+        "en": "Were confounding factors identified?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.7",
+      "key": "2.7",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Megfogalmaztak-e stratégiát a zavaró tényezők kezelésére?",
+        "en": "Were strategies to deal with confounding factors stated?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.8",
+      "key": "2.8",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Standard, érvényes és megbízható módon értékelték-e a kimeneteket az eseteknél és a kontrolloknál?",
+        "en": "Were outcomes assessed in a standard, valid and reliable way for cases and controls?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.9",
+      "key": "2.9",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Elég hosszú volt-e a vizsgált expozíciós időszak ahhoz, hogy érdemi legyen?",
+        "en": "Was the exposure period of interest long enough to be meaningful?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "2.10",
+      "key": "2.10",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő statisztikai elemzést alkalmaztak-e?",
+        "en": "Was appropriate statistical analysis used?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.1",
+      "key": "3.1",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen definiálták-e a mintába kerülés kritériumait?",
+        "en": "Were the criteria for inclusion in the sample clearly defined?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.2",
+      "key": "3.2",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Részletesen leírták-e a vizsgálati alanyokat és a környezetet?",
+        "en": "Were the study subjects and the setting described in detail?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.3",
+      "key": "3.3",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Érvényes és megbízható módon mérték-e az expozíciót?",
+        "en": "Was the exposure measured in a valid and reliable way?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.4",
+      "key": "3.4",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Objektív, standard kritériumokkal mérték-e az állapotot?",
+        "en": "Were objective, standard criteria used for measurement of the condition?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.5",
+      "key": "3.5",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Azonosították-e a zavaró tényezőket?",
+        "en": "Were confounding factors identified?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.6",
+      "key": "3.6",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Megfogalmaztak-e stratégiát a zavaró tényezők kezelésére?",
+        "en": "Were strategies to deal with confounding factors stated?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.7",
+      "key": "3.7",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Érvényes és megbízható módon mérték-e a kimeneteket?",
+        "en": "Were the outcomes measured in a valid and reliable way?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.8",
+      "key": "3.8",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő statisztikai elemzést alkalmaztak-e?",
+        "en": "Was appropriate statistical analysis used?"
+      },
+      "tags": [
+        "cross-sectional"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cross-sectional"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.1",
+      "key": "4.1",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműek voltak-e az esetsorozatba kerülés kritériumai?",
+        "en": "Were there clear criteria for inclusion in the case series?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.2",
+      "key": "4.2",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Standard, megbízható módon mérték-e az állapotot minden résztvevőnél?",
+        "en": "Was the condition measured in a standard, reliable way for all participants?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.3",
+      "key": "4.3",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Érvényes módszerekkel azonosították-e az állapotot minden résztvevőnél?",
+        "en": "Were valid methods used for identification of the condition for all participants?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.4",
+      "key": "4.4",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Egymást követő (konszekutív) módon vonták-e be a résztvevőket?",
+        "en": "Did the case series have consecutive inclusion of participants?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.5",
+      "key": "4.5",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Teljes volt-e a résztvevők bevonása?",
+        "en": "Did the case series have complete inclusion of participants?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.6",
+      "key": "4.6",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen közölték-e a résztvevők demográfiai adatait?",
+        "en": "Was there clear reporting of the demographics of the participants?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.7",
+      "key": "4.7",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen közölték-e a résztvevők klinikai adatait?",
+        "en": "Was there clear reporting of clinical information of the participants?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.8",
+      "key": "4.8",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen közölték-e az esetek kimeneteit vagy követési eredményeit?",
+        "en": "Were the outcomes or follow-up results of cases clearly reported?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.9",
+      "key": "4.9",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen közölték-e a vizsgálati hely (klinika) demográfiai jellemzőit?",
+        "en": "Was there clear reporting of the presenting site's/clinic's demographic information?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.10",
+      "key": "4.10",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő volt-e a statisztikai elemzés?",
+        "en": "Was statistical analysis appropriate?"
+      },
+      "tags": [
+        "case-series"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-series"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.1",
+      "key": "5.1",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen leírták-e a beteg demográfiai jellemzőit?",
+        "en": "Were the patient's demographic characteristics clearly described?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.2",
+      "key": "5.2",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen, idővonalként leírták-e a beteg előzményeit?",
+        "en": "Was the patient's history clearly described and presented as a timeline?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.3",
+      "key": "5.3",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen leírták-e a beteg jelentkezéskori klinikai állapotát?",
+        "en": "Was the current clinical condition of the patient on presentation clearly described?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.4",
+      "key": "5.4",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen leírták-e a diagnosztikus teszteket vagy értékelési módszereket és az eredményeiket?",
+        "en": "Were diagnostic tests or assessment methods and the results clearly described?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.5",
+      "key": "5.5",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen leírták-e a beavatkozást vagy a kezelési eljárást?",
+        "en": "Was the intervention or treatment procedure clearly described?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.6",
+      "key": "5.6",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen leírták-e a beavatkozás utáni klinikai állapotot?",
+        "en": "Was the post-intervention clinical condition clearly described?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.7",
+      "key": "5.7",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Azonosították és leírták-e a nemkívánatos (ártalmas) vagy váratlan eseményeket?",
+        "en": "Were adverse events (harms) or unanticipated events identified and described?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.8",
+      "key": "5.8",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Megfogalmaz-e tanulságokat az esetismertetés?",
+        "en": "Does the case report provide takeaway lessons?"
+      },
+      "tags": [
+        "case-report"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-report"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.1",
+      "key": "6.1",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő volt-e a mintavételi keret a célpopuláció vizsgálatához?",
+        "en": "Was the sample frame appropriate to address the target population?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.2",
+      "key": "6.2",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő módon választották-e ki a résztvevőket?",
+        "en": "Were study participants sampled in an appropriate way?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.3",
+      "key": "6.3",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő volt-e a mintanagyság?",
+        "en": "Was the sample size adequate?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.4",
+      "key": "6.4",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Részletesen leírták-e a vizsgálati alanyokat és a környezetet?",
+        "en": "Were the study subjects and the setting described in detail?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.5",
+      "key": "6.5",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Kellő lefedettséggel elemezték-e az azonosított mintát?",
+        "en": "Was the data analysis conducted with sufficient coverage of the identified sample?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.6",
+      "key": "6.6",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Érvényes módszerekkel azonosították-e az állapotot?",
+        "en": "Were valid methods used for the identification of the condition?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.7",
+      "key": "6.7",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Standard, megbízható módon mérték-e az állapotot minden résztvevőnél?",
+        "en": "Was the condition measured in a standard, reliable way for all participants?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.8",
+      "key": "6.8",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő statisztikai elemzést alkalmaztak-e?",
+        "en": "Was there appropriate statistical analysis?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "6.9",
+      "key": "6.9",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő volt-e a válaszadási arány, és ha nem, megfelelően kezelték-e az alacsony válaszadást?",
+        "en": "Was the response rate adequate, and if not, was the low response rate managed appropriately?"
+      },
+      "tags": [
+        "prevalence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "prevalence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.1",
+      "key": "7.1",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Összhangban van-e a kimondott filozófiai nézőpont a kutatási módszertannal?",
+        "en": "Is there congruity between the stated philosophical perspective and the research methodology?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.2",
+      "key": "7.2",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Összhangban van-e a kutatási módszertan a kutatási kérdéssel vagy célokkal?",
+        "en": "Is there congruity between the research methodology and the research question or objectives?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.3",
+      "key": "7.3",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Összhangban van-e a kutatási módszertan az adatgyűjtés módszereivel?",
+        "en": "Is there congruity between the research methodology and the methods used to collect data?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.4",
+      "key": "7.4",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Összhangban van-e a kutatási módszertan az adatok bemutatásával és elemzésével?",
+        "en": "Is there congruity between the research methodology and the representation and analysis of data?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.5",
+      "key": "7.5",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Összhangban van-e a kutatási módszertan az eredmények értelmezésével?",
+        "en": "Is there congruity between the research methodology and the interpretation of results?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.6",
+      "key": "7.6",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Van-e a kutatót kulturálisan vagy elméletileg elhelyező kijelentés?",
+        "en": "Is there a statement locating the researcher culturally or theoretically?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.7",
+      "key": "7.7",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Foglalkoznak-e a kutatónak a kutatásra gyakorolt hatásával, és fordítva?",
+        "en": "Is the influence of the researcher on the research, and vice-versa, addressed?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.8",
+      "key": "7.8",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelően megjelennek-e a résztvevők és a hangjuk?",
+        "en": "Are participants, and their voices, adequately represented?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.9",
+      "key": "7.9",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Etikus-e a kutatás a jelenlegi kritériumok szerint, igazolt etikai engedéllyel?",
+        "en": "Is the research ethical according to current criteria, with evidence of ethical approval?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.10",
+      "key": "7.10",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Az elemzésből vagy az adatok értelmezéséből következnek-e a következtetések?",
+        "en": "Do the conclusions drawn in the research report flow from the analysis or interpretation of the data?"
+      },
+      "tags": [
+        "qualitative"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "qualitative"
+      ],
+      "applies_to": null
+    }
+  ],
+  "rollup": {
+    "algorithm": "none",
+    "official": false,
+    "label": {
+      "hu": "Nincs algoritmus — emberi döntés",
+      "en": "No algorithm — human decision"
+    },
+    "note": {
+      "hu": "A JBI-nak nincs pontszáma és nincs küszöbe; a „JBI-pontszám 7/8” kitalált mérőszám. A munkapad csak a „Nem” és „Nem egyértelmű” válaszokat listázza segítségként.",
+      "en": "JBI has no score and no threshold; a 'JBI score 7/8' is an invented metric. The workbench only lists the 'No' and 'Unclear' answers as an aid."
+    }
+  },
+  "rob_column": null,
+  "counts": {
+    "parsed": 66,
+    "published": null,
+    "per_scope": {
+      "cohort": 11,
+      "case-control": 10,
+      "cross-sectional": 8,
+      "case-series": 10,
+      "case-report": 8,
+      "prevalence": 9,
+      "qualitative": 10
+    },
+    "per_pass": null
+  },
+  "notes": [],
+  "validator_differences": []
+}

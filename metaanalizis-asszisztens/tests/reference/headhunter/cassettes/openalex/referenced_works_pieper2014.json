@@ -1,0 +1,58 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "openalex-referenced_works_pieper2014",
+  "recorded_at": "2026-10-05T11:08:26Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "/works/doi:10.1016/j.jclinepi.2013.11.007?select=id,referenced_works",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/doi:10.1016/j.jclinepi.2013.11.007?select=id%2Creferenced_works",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "46294"
+        },
+        "body_json": {
+          "id": "https://openalex.org/W2090590132",
+          "referenced_works": [
+            "https://openalex.org/W100934611",
+            "https://openalex.org/W1598602811",
+            "https://openalex.org/W1846385019",
+            "https://openalex.org/W2003178123",
+            "https://openalex.org/W2030654240",
+            "https://openalex.org/W2031770160",
+            "https://openalex.org/W2035046761",
+            "https://openalex.org/W2043360969",
+            "https://openalex.org/W2046133119",
+            "https://openalex.org/W2082170040",
+            "https://openalex.org/W2097110957",
+            "https://openalex.org/W2110900998",
+            "https://openalex.org/W2111011000",
+            "https://openalex.org/W2141714716",
+            "https://openalex.org/W2165535847",
+            "https://openalex.org/W3134140708",
+            "https://openalex.org/W4362504902"
+          ]
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

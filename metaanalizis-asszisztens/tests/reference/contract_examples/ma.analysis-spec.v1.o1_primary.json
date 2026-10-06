@@ -1,0 +1,34 @@
+{
+  "schema": "szk.ma.analysis-spec/v1",
+  "name": "o1_primary",
+  "outcome": "o1",
+  "purpose": "primary",
+  "prespecified": true,
+  "protocol_ref": "PROSPERO CRD42026000001",
+  "parent": null,
+  "data": {
+    "path": "03_adatok/o1.csv",
+    "sha256": "9f3a000000000000000000000000000000000000000000000000000000000000"
+  },
+  "options": {
+    "measure": "RR",
+    "model": "random",
+    "tau2": "REML",
+    "ci": "hksj",
+    "level": 0.95,
+    "subgroup": "allokáció",
+    "moderators": [
+      "szélesség"
+    ],
+    "h_centre": "truncated",
+    "metareg_robust": false,
+    "plot_locale": "hu"
+  },
+  "filters": {
+    "include": [],
+    "exclude": []
+  },
+  "kb_refs": [
+    "D-S12-002"
+  ]
+}

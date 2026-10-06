@@ -1,0 +1,87 @@
+{
+ "schema": "szk.instrument/v1",
+ "key": "probast-ai",
+ "name": "PROBAST+AI",
+ "validator_version": "1.1.0",
+ "reference_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+ "unit": "model",
+ "passes": [
+  {
+   "id": "development",
+   "label": "Quality (development)"
+  },
+  {
+   "id": "evaluation",
+   "label": "Risk of bias (evaluation)"
+  }
+ ],
+ "answers": [
+  {
+   "value": "yes",
+   "label": "Y",
+   "aliases": [
+    "y"
+   ]
+  },
+  {
+   "value": "probably_yes",
+   "label": "PY",
+   "aliases": [
+    "py"
+   ]
+  },
+  {
+   "value": "probably_no",
+   "label": "PN"
+  },
+  {
+   "value": "no",
+   "label": "N"
+  },
+  {
+   "value": "no_information",
+   "label": "NI"
+  }
+ ],
+ "verdicts": [
+  "low",
+  "high",
+  "unclear"
+ ],
+ "domains": [
+  {
+   "id": "1",
+   "title": "Participants and data sources",
+   "passes": [
+    "development",
+    "evaluation"
+   ],
+   "applicability": true
+  }
+ ],
+ "items": [
+  {
+   "id": "1.1",
+   "domain": "1",
+   "pass": "development",
+   "key": "development/1.1",
+   "text": "…",
+   "tags": [
+    "router"
+   ],
+   "applies_to": null
+  }
+ ],
+ "rollup": {
+  "algorithm": "none",
+  "note": "PROBAST+AI: holistic overall judgement"
+ },
+ "counts": {
+  "parsed": 34,
+  "published": 34,
+  "per_pass": {
+   "development": 16,
+   "evaluation": 18
+  }
+ }
+}

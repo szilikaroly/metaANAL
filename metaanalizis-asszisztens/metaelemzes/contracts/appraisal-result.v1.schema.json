@@ -1,0 +1,596 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:appraisal-result:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.appraisal-result/v1 — teljesség, implikált ítélet és összesítés egy értékelésre (motor appraisal_check; validator --verify / --rollup --json; terv 4.11, 6.5)",
+  "type": "object",
+  "required": [
+    "schema",
+    "tool",
+    "complete",
+    "expected",
+    "answered",
+    "missing",
+    "invalid",
+    "domains",
+    "overall"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.appraisal-result/v1"
+    },
+    "tool": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "validator_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "engine_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "legacy": {
+      "type": "boolean"
+    },
+    "instrument_sha256": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+        }
+      ]
+    },
+    "scope": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target": {
+      "type": "object"
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "expected": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "answered": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "completeness_text": {
+      "type": "string"
+    },
+    "per_pass": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "expected",
+              "answered",
+              "complete"
+            ],
+            "properties": {
+              "expected": {
+                "type": "integer"
+              },
+              "answered": {
+                "type": "integer"
+              },
+              "complete": {
+                "type": "boolean"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "missing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "item"
+        ],
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "pass": {
+            "enum": [
+              "development",
+              "evaluation",
+              null
+            ]
+          },
+          "key": {
+            "type": "string"
+          },
+          "official_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "invalid": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "pass": {
+            "enum": [
+              "development",
+              "evaluation",
+              null
+            ]
+          },
+          "implied": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "algorithm": {
+            "enum": [
+              "published",
+              "count",
+              "conservative",
+              "none"
+            ]
+          },
+          "forced_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unknown_at": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "partial_at": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "routers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "judgement": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "level": {
+            "enum": [
+              "low",
+              "some",
+              "high",
+              "critical",
+              "ni",
+              null
+            ]
+          },
+          "text": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            ]
+          },
+          "not_asked": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "routing_conflicts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rule_path": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "label": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "overall": {
+      "type": "object",
+      "required": [
+        "algorithm"
+      ],
+      "properties": {
+        "implied": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "algorithm": {
+          "enum": [
+            "published",
+            "count",
+            "conservative",
+            "none"
+          ]
+        },
+        "official": {
+          "type": "boolean"
+        },
+        "basis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "text": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            ]
+          }
+        },
+        "provisional": {
+          "type": "boolean"
+        },
+        "judgement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "level": {
+          "enum": [
+            "low",
+            "some",
+            "high",
+            "critical",
+            "ni",
+            null
+          ]
+        }
+      }
+    },
+    "amstar2": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "convention",
+            "rating"
+          ],
+          "properties": {
+            "convention": {
+              "enum": [
+                "meets",
+                "weakness"
+              ]
+            },
+            "rating": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "parts": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
+              }
+            },
+            "parts_missing": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "grade": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "certainty",
+            "unresolved"
+          ],
+          "properties": {
+            "certainty": {
+              "enum": [
+                "high",
+                "moderate",
+                "low",
+                "very low",
+                null
+              ],
+              "description": "szk.ma.grade/v1 kanonikus token (javaslat; végleges csak emberi döntéssel)"
+            },
+            "unresolved": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "certainty_value": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ugyanez az eszköz ítélet-tokenjével (very_low)"
+            },
+            "vocabulary": {
+              "const": "szk.ma.grade/v1"
+            },
+            "computed": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "nos": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "total",
+            "max"
+          ],
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "max": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "tripod": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "scope",
+            "counts"
+          ],
+          "properties": {
+            "scope": {
+              "type": "string"
+            },
+            "counts": {
+              "type": "object"
+            },
+            "reported_pct": {
+              "$ref": "urn:szk:contract:common:1#/$defs/num"
+            }
+          }
+        }
+      ]
+    },
+    "conventions": {
+      "type": "object"
+    },
+    "overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "domain",
+          "reason_missing"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "pass": {
+            "enum": [
+              "development",
+              "evaluation",
+              null
+            ]
+          },
+          "judgement": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "implied": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "algorithm": {
+            "enum": [
+              "published",
+              "count",
+              "conservative",
+              "none"
+            ]
+          },
+          "reason_missing": {
+            "type": "boolean"
+          },
+          "decision_missing": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "guards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            ]
+          },
+          "effect": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        ]
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        ]
+      }
+    }
+  }
+}

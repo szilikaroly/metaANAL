@@ -1,0 +1,45 @@
+{
+ "description": "GET /api/log/run — projekt.list_items('runs') (3.5.15).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/log/run",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log/v1",
+    "data": {
+     "kind": "run",
+     "items": [
+      {
+       "id": 2,
+       "ts": "2026-10-04T21:12:00Z",
+       "command": "ma.py analyze --spec 05_elemzes/specs/o1_primary.json --out 05_elemzes/o1/20261004T211200Z-a1f3c2 --project .",
+       "data_path": "03_adatok/o1.csv",
+       "data_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "outdir": "05_elemzes/o1/20261004T211200Z-a1f3c2",
+       "engine_version": "0.2.0",
+       "summary": "k=13, RR 0.49 [0.33; 0.73]"
+      },
+      {
+       "id": 1,
+       "ts": "2026-10-03T18:02:00Z",
+       "command": "ma.py analyze --spec 05_elemzes/specs/o1_primary.json --out 05_elemzes/o1/20261003T180200Z-4c0d1e --project .",
+       "data_path": "03_adatok/o1.csv",
+       "data_sha256": "4c0dcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+       "outdir": "05_elemzes/o1/20261003T180200Z-4c0d1e",
+       "engine_version": "0.2.0",
+       "summary": "k=13, RR 0.50 [0.34; 0.74]"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr35"
+    }
+   }
+  }
+ ]
+}

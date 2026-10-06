@@ -1,0 +1,4004 @@
+[
+ {
+  "case_id": "khan_ch06_07__single_proportion_es",
+  "example_id": "khan_ch06_07__single_proportion_hartung",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.1, p. 120",
+  "description": "Single-sample raw proportion 48/80: p, Var(p) = p(1-p)/n and SE (Ex 6.1).",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Single sample (Hartung, Knapp & Sinha 2008, p. 18)",
+    "x": 48,
+    "n": 80
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 48/80 = 0.60 (2 dp), Ex 6.1 p. 120"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.6,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "exact fraction 48/80"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.003,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed Var(p) = 0.6 x 0.4 / 80 = 0.003 (3 dp), Ex 6.1 p. 120"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.003,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "exact value 0.24/80 (verifier: exact)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.054772,
+    "tol": 5e-07,
+    "transform": "sqrt",
+    "note": "printed SE = sqrt(0.003) = 0.054772 (6 dp), Ex 6.1 p. 120"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__single_proportion_wald_ci_ztest",
+  "example_id": "khan_ch06_07__single_proportion_hartung",
+  "source_id": "khan2020",
+  "location": "Ch6 Examples 6.2-6.3, pp. 120-122",
+  "description": "Single-sample proportion 48/80: Wald 95% CI and z-test of H0: pi = 0 (k = 1 'pooling', z-based).",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Single sample (Hartung, Knapp & Sinha 2008, p. 18)",
+    "x": 48,
+    "n": 80
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.60, Ex 6.1-6.2"
+   },
+   {
+    "path": "se",
+    "value": 0.054772,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed SE (6 dp), Ex 6.1 p. 120"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.49,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 95% CI lower 0.49 (2 dp), Ex 6.2 p. 121"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.71,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 95% CI upper 0.71 (2 dp), Ex 6.2 p. 121"
+   },
+   {
+    "path": "stat",
+    "value": 10.949,
+    "tol": 0.00605,
+    "transform": null,
+    "note": "printed z = 0.6/0.0548 = 10.949 (3 dp), Ex 6.3 p. 121; the book divides by the SE rounded to 0.0548, so tol = half unit (5e-4) + |0.6/0.0547723 - 0.6/0.0548| (0.00555)"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed P = 0 (Ex 6.3 p. 122); exact 6.3e-28; tol = half unit of the 3 dp the book uses for p elsewhere"
+   },
+   {
+    "path": "estimate",
+    "value": 0.6,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check: exact 48/80"
+   },
+   {
+    "path": "se",
+    "value": 0.05477225575051661,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full-precision SE"
+   },
+   {
+    "path": "stat",
+    "value": 10.954451150103322,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier unrounded z (z_unrounded_se)"
+   }
+  ],
+  "note": "The test of H0: pi = 0 is uninformative for a prevalence; kept only because the book reports it.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_per_study_var",
+  "example_id": "khan_ch06_07__schizophrenia_raw_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.4, Table 6.2 p. 124",
+  "description": "Acute schizophrenia prevalence (6 studies): per-study raw-proportion variance p(1-p)/N and SE of Table 6.2.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "vi.0",
+    "value": 0.024,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Bondestam et al. (1990) printed Var 0.024 (Table 6.2)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.0008,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Shen et al. (1981) printed Var 0.0008 (Table 6.2)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0002,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Zharikov (1968) printed Var 0.0002 (Table 6.2)"
+   },
+   {
+    "path": "vi.3",
+    "value": 7e-05,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Babigian (1980) printed Var 7e-05 (Table 6.2)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.0268,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Fichter et al. (1996) printed Var 0.0268 (Table 6.2)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.0007,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Keith et al. (1991) printed Var 0.0007 (Table 6.2)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.1549,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Bondestam et al. (1990) printed SE 0.1549 (4 dp, Table 6.2)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.0289,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Shen et al. (1981) printed SE 0.0289 (4 dp, Table 6.2)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0132,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Zharikov (1968) printed SE 0.0132 (4 dp, Table 6.2)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.0084,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Babigian (1980) printed SE 0.0084 (4 dp, Table 6.2)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.1637,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Fichter et al. (1996) printed SE 0.1637 (4 dp, Table 6.2)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.0265,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Keith et al. (1991) printed SE 0.0265 (4 dp, Table 6.2)"
+   }
+  ],
+  "note": "Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443). The W, Wp, Wp^2 columns and their sums have no engine path (sum W = 1/se_wald^2 is covered indirectly by the pooled SE).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_fixed",
+  "example_id": "khan_ch06_07__schizophrenia_raw_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.4, Table 6.2 p. 124; results pp. 123-125",
+  "description": "Acute schizophrenia prevalence: fixed-effect inverse-variance pooling of raw proportions, z-test, Q and I^2 (hand calculation).",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5884,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed FE = 13244/22509 = 0.5884 (4 dp), p. 123"
+   },
+   {
+    "path": "se",
+    "value": 0.006665,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed SE = sqrt(1/22509) = 0.006665 (6 dp), p. 124"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 95% CI upper 0.60 (2 dp), p. 124"
+   },
+   {
+    "path": "stat",
+    "value": 88.27,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed z = 88.27 (2 dp), p. 124 (matches the unrounded FE/SE 88.2745)"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed P(|Z| > 88.27) = 0, p. 124"
+   },
+   {
+    "path": "Q",
+    "value": 81.443,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Q = 81.4430 (4 dp), p. 125 (from unrounded sums)"
+   },
+   {
+    "path": "Q_df",
+    "value": 5,
+    "tol": 0.0,
+    "transform": null,
+    "note": "df = k - 1 = 5, p. 125"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.001,
+    "transform": null,
+    "note": "printed P = 0, 'smaller than 0.001' (chi2(5) table value 20.515), p. 125"
+   },
+   {
+    "path": "I2",
+    "value": 93.86,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed I^2 = 93.86% (2 dp), p. 125"
+   },
+   {
+    "path": "I2",
+    "value": 94,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 ~ 94%, p. 125"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5883788345035764,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision (statsmodels/pymare identical)"
+   },
+   {
+    "path": "se",
+    "value": 0.006665329604662405,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "stat",
+    "value": 88.2745294534279,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "Q",
+    "value": 81.44304219427158,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "I2",
+    "value": 93.86074013778469,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs verifier full precision (pct)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 12086.254385902594,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision C = sum W - sum W^2/sum W"
+   }
+  ],
+  "note": "Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443). The CI lower limit printed 0.57 is a truncation (exact 0.5753 -> 0.58); see schizophrenia_raw_fixed_ci_lower_truncated.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_fixed_ci_lower_truncated",
+  "example_id": "khan_ch06_07__schizophrenia_raw_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.4, p. 124",
+  "description": "Raw-proportion FE 95% CI lower limit printed as 0.57 although 0.5884 - 1.96 x 0.006665 = 0.5753.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "ci_lower",
+    "value": 0.57,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed FE CI lower 0.57 (2 dp), p. 124"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (truncation): the book's own formula gives 0.5884 - 1.96 x 0.006665 = 0.57534 (exact 0.575315), which rounds to 0.58, not the printed 0.57 (difference 0.0053 > half unit). The book truncates CI limits elsewhere too (0.6653 -> 0.66, 0.6953 -> 0.69); the printed 0.57 may also have been copied from the MetaXL double-arcsine output (Fig. 6.1). Engine value 0.57532."
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_random_dl",
+  "example_id": "khan_ch06_07__schizophrenia_raw_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.5, pp. 127-128",
+  "description": "Acute schizophrenia prevalence, raw proportions: DerSimonian-Laird tau^2 = (Q - df)/C and the DL random-effects pooled estimate.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 81.443,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Q = 81.4430, p. 127"
+   },
+   {
+    "path": "Q",
+    "value": 81.44304,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed Q used for tau^2 = 81.44304 (5 dp), p. 128"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 12086.25,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed C = 12086.25 (2 dp), p. 128"
+   },
+   {
+    "path": "tau2",
+    "value": 0.006325,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed DL tau^2 = (81.44304 - 5)/12086.25 = 0.006325 (6 dp), p. 128"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.006325,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed DL tau^2 (heterogeneity block), p. 128"
+   },
+   {
+    "path": "estimate",
+    "value": 0.58899,
+    "tol": 5.3e-06,
+    "transform": null,
+    "note": "printed RE = 386.0286/655.4021 = 0.58899 (5 dp), p. 128; tol = half unit + effect of the book's tau^2 rounding to 0.006325 (|0.5889950 - 0.5889948| = 2.1e-7)"
+   },
+   {
+    "path": "se",
+    "value": 0.039061244,
+    "tol": 5.605e-07,
+    "transform": null,
+    "note": "printed RE SE = 0.039061244 (9 dp), p. 128, computed with tau^2 rounded to 0.006325; tol = half unit + |SE(0.006325) - SE(unrounded tau^2)| = 5.58e-7 (verifier)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.006324791763727458,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier unrounded DL tau^2 (statsmodels identical)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5889947733294234,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier/statsmodels DL RE (unrounded tau^2)"
+   },
+   {
+    "path": "se",
+    "value": 0.039060686226753454,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier/statsmodels DL RE SE (unrounded tau^2)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 12086.254385902594,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision C"
+   }
+  ],
+  "note": "Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443). The book's hand path then FIXES tau^2 at the rounded 0.006325; those numbers are tested in schizophrenia_raw_random_tau2_rounded.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_random_tau2_rounded",
+  "example_id": "khan_ch06_07__schizophrenia_raw_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.5, Table 6.3 p. 128; pp. 128-129",
+  "description": "Raw-proportion RE hand calculation of Table 6.3 with tau^2 fixed at the rounded 0.006325: estimate, SE, CI and z.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_fixed": 0.006325,
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.58899,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed RE = 0.58899 (5 dp), p. 128"
+   },
+   {
+    "path": "se",
+    "value": 0.039061244,
+    "tol": 5e-10,
+    "transform": null,
+    "note": "printed RE SE = 0.039061244 (9 dp), p. 128"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.5124,
+    "tol": 7.37e-05,
+    "transform": null,
+    "note": "printed CI lower 0.5124 (4 dp), p. 129; the book computes 0.5889 - 1.96 x 0.0390 from ROUNDED estimate and SE (= 0.51246), so tol = half unit + |0.51246 - exact 0.512436| (2.37e-05)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6653,
+    "tol": 0.000264,
+    "transform": null,
+    "note": "printed CI upper 0.6653 (4 dp), p. 129; book path 0.5889 + 1.96 x 0.0390 = 0.66534 from rounded estimate/SE, so tol = half unit + |0.66534 - exact 0.665554| (0.000214)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.51,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI lower '~ 0.51' (2 dp), p. 129"
+   },
+   {
+    "path": "stat",
+    "value": 15.079,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed z = 15.079 (3 dp), p. 129"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed P = 0, p. 129"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5889949787569092,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision with tau^2 = 0.006325"
+   },
+   {
+    "path": "se",
+    "value": 0.03906124400911813,
+    "tol": 1e-11,
+    "transform": null,
+    "note": "tight check vs verifier full precision with tau^2 = 0.006325"
+   },
+   {
+    "path": "stat",
+    "value": 15.078756288955342,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "tight check vs verifier full precision with tau^2 = 0.006325"
+   }
+  ],
+  "note": "Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443). Per-study W* and W*p (Table 6.3) and their sums (655.4021, 386.0286) have no engine path; they are implied by the estimate and SE (SE = 1/sqrt(sum W*)).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_random_ci_upper_truncated",
+  "example_id": "khan_ch06_07__schizophrenia_raw_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.5, p. 129",
+  "description": "Raw-proportion RE 95% CI upper limit printed '0.6653 ~ 0.66' (2 dp), a truncation of 0.6653/0.6656.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_fixed": 0.006325,
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "ci_upper",
+    "value": 0.66,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI upper '~ 0.66' (2 dp), p. 129"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (truncation): the book's own 4-dp value 0.6653 (exact 0.66555) rounds to 0.67, not 0.66; |0.66555 - 0.66| = 0.0056 exceeds the half-unit tolerance. (MetaXL's double-arcsine RE upper limit 0.6632 does round to 0.66 - a different method.) The 4-dp value is tested in schizophrenia_raw_random_tau2_rounded."
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_ivhet",
+  "example_id": "khan_ch06_07__schizophrenia_raw_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.6, Table 6.4 p. 131; pp. 131-132",
+  "description": "Acute schizophrenia prevalence, raw proportions: IVhet model (FE estimate, Var = sum (w_i/W)^2 (v_i + tau^2_DL)).",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5884,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "IVhet estimate = FE = 13243.84/22509 = 0.5884 (used in the CI and z, p. 132)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.006325,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "DL tau^2 used, printed 0.006325 (6 dp), p. 131"
+   },
+   {
+    "path": "se",
+    "value": 0.002973,
+    "tol": 5e-07,
+    "transform": "square",
+    "note": "printed IVhet variance = sum of last column of Table 6.4 = 0.002973 (6 dp), p. 132 (computed with tau^2 rounded to 0.006325; the unrounded DL tau^2 also gives 0.002973 at this precision, see khan_ch06_07__schizophrenia_raw_ivhet_tau2_rounded)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.48,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI lower '~ 0.48' (2 dp), p. 132"
+   },
+   {
+    "path": "stat",
+    "value": 10.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed z = 10.79 (2 dp), p. 132"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed P = 0, p. 132"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5883788345035764,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision (IVhet = FE)"
+   },
+   {
+    "path": "se",
+    "value": 0.05452625506733591,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision SE with unrounded DL tau^2 (se_ivhet_unrounded_tau2)"
+   },
+   {
+    "path": "se",
+    "value": 0.002973112491668175,
+    "tol": 1e-11,
+    "transform": "square",
+    "note": "tight check vs verifier full-precision variance with unrounded DL tau^2"
+   }
+  ],
+  "note": "Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443). Table 6.4 displays Shen's p as 0.51 but its W and Wp imply 0.512 (input used here). Per-study Var* and IVhet variance components have no engine path. The book's IVhet SE and CI (p. 132) were computed with tau^2 rounded to 0.006325 and z = 1.96; they are checked at half-unit precision in khan_ch06_07__schizophrenia_raw_ivhet_tau2_rounded (tau2_fixed).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_ivhet_tau2_rounded",
+  "example_id": "khan_ch06_07__schizophrenia_raw_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.6, Table 6.4 p. 131; p. 132",
+  "description": "Raw-proportion IVhet hand calculation of Table 6.4 with tau^2 fixed at the rounded 0.006325 and z = 1.96: Var, SE, CI and z at the printed precision.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet",
+   "tau2_fixed": 0.006325,
+   "level": 0.950004209703559
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5884,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "IVhet estimate = FE = 13243.84/22509 = 0.5884 (4 dp; used in the CI and z), p. 132"
+   },
+   {
+    "path": "se",
+    "value": 0.002973,
+    "tol": 5e-07,
+    "transform": "square",
+    "note": "printed IVhet variance = sum of last column of Table 6.4 = 0.002973 (6 dp), p. 132; tol = half unit"
+   },
+   {
+    "path": "se",
+    "value": 0.054527,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed IVhet SE = 0.054527 (6 dp), p. 132; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4815,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed CI lower 0.4815 (4 dp), p. 132; book path 0.5884 - 1.96 x 0.054527 = 0.481527 from the rounded estimate; the exact 0.481506 (level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96) rounds to the same 4 dp, so tol = half unit"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6953,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed CI upper 0.6953 (4 dp), p. 132; book path 0.5884 + 1.96 x 0.054527 = 0.695273; the exact 0.695252 rounds to the same 4 dp, so tol = half unit"
+   },
+   {
+    "path": "stat",
+    "value": 10.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed z = 10.79 (2 dp), p. 132"
+   },
+   {
+    "path": "tau2",
+    "value": 0.006325,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "the fixed tau^2 (printed DL tau^2, 6 dp, p. 131) is used as given"
+   }
+  ],
+  "note": "Same data as khan_ch06_07__schizophrenia_raw_ivhet (input x = printed p x N). The book's IVhet chain uses the DL tau^2 rounded to 0.006325 and z = 1.96; with tau2_fixed and level = 2*Phi(1.96) - 1 = 0.950004209703559 (the book's z = 1.96), the printed SE, variance and CI are reproduced at half-unit precision (no tau^2-rounding allowance).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_raw_ivhet_source_slips",
+  "example_id": "khan_ch06_07__schizophrenia_raw_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch6 Example 6.6, pp. 131-132",
+  "description": "IVhet raw-proportion values misprinted by the book: estimate '13243.84/22509 = 0.5889' and the 2-dp upper limit '0.6953 ~ 0.69'.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5889,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed '13243.84/22509 = 0.5889', p. 131 (typo)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.69,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed CI upper '0.6953 ~ 0.69' (2 dp), p. 132 (truncation)"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source errors: (1) 13243.84/22509 = 0.58838, not 0.5889 (typo; the book itself uses 0.5884 in the CI and z on p. 132); (2) 0.6953 rounds to 0.70, the printed '~ 0.69' is a truncation (|0.69525 - 0.69| = 0.0052 > half unit). The correct 0.5884 and 0.6953 are tested in schizophrenia_raw_ivhet."
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126 (also Fig. 6.5a p. 135)",
+  "description": "MetaXL fixed-effect (IV) prevalence analysis on the double-arcsine scale: Q, p, I^2 and study % weights.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 80.18,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q = 80.18 (2 dp), Fig. 6.1 p. 126"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00 (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "I2",
+    "value": 94,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I2 = 94%, Fig. 6.1"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bondestam et al. (1990) FE % weight (1 dp), Fig. 6.1"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 5.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Shen et al. (1981) FE % weight (1 dp), Fig. 6.1"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 26.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zharikov (1968) FE % weight (1 dp), Fig. 6.1"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 61.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Babigian (1980) FE % weight (1 dp), Fig. 6.1"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 0.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fichter et al. (1996) FE % weight (1 dp), Fig. 6.1"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Keith et al. (1991) FE % weight (1 dp), Fig. 6.1"
+   },
+   {
+    "path": "Q",
+    "value": 80.1836072474307,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs verifier full-precision double-arcsine Q"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8724546320169881,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check: verifier pooled t = 1.744909264 / 2 (engine half-sum scale)"
+   },
+   {
+    "path": "se",
+    "value": 0.006821212575583817,
+    "tol": 1e-11,
+    "transform": null,
+    "note": "tight check: verifier SE(t) = 0.013642425 / 2 (engine half-sum scale)"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_random",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_random",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.2 p. 130 (also Fig. 6.5b p. 135)",
+  "description": "MetaXL random-effects (DL) prevalence analysis on the double-arcsine scale: Q, p, I^2 and study % RE weights.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 80.18,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q = 80.18 (2 dp), Fig. 6.2 p. 130"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00 (2 dp), Fig. 6.2"
+   },
+   {
+    "path": "I2",
+    "value": 94,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I2 = 94%, Fig. 6.2"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 5.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bondestam et al. (1990) RE % weight (1 dp), Fig. 6.2"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 21.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Shen et al. (1981) RE % weight (1 dp), Fig. 6.2"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 23.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zharikov (1968) RE % weight (1 dp), Fig. 6.2"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 24.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Babigian (1980) RE % weight (1 dp), Fig. 6.2"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 4.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fichter et al. (1996) RE % weight (1 dp), Fig. 6.2"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 21.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Keith et al. (1991) RE % weight (1 dp), Fig. 6.2"
+   },
+   {
+    "path": "tau2",
+    "value": 0.006464302175327185,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check: verifier DL tau^2 on the t scale 0.0258572 / 4 (engine half-sum scale)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8728366662412856,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check: verifier pooled RE t = 1.745673 / 2"
+   },
+   {
+    "path": "se",
+    "value": 0.039650594130653645,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check: verifier RE SE(t) = 0.0793012 / 2"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_ivhet",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.3 p. 133 (also Fig. 6.5c p. 135)",
+  "description": "MetaXL IVhet prevalence analysis on the double-arcsine scale: Q, p, I^2 and study % weights (= FE weights).",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 80.18,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q = 80.18 (2 dp), Fig. 6.3 p. 133"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.00 (2 dp), Fig. 6.3"
+   },
+   {
+    "path": "I2",
+    "value": 94,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I2 = 94%, Fig. 6.3"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bondestam et al. (1990) IVhet % weight (1 dp), Fig. 6.3"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 5.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Shen et al. (1981) IVhet % weight (1 dp), Fig. 6.3"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 26.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zharikov (1968) IVhet % weight (1 dp), Fig. 6.3"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 61.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Babigian (1980) IVhet % weight (1 dp), Fig. 6.3"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 0.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fichter et al. (1996) IVhet % weight (1 dp), Fig. 6.3"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Keith et al. (1991) IVhet % weight (1 dp), Fig. 6.3"
+   },
+   {
+    "path": "tau2",
+    "value": 0.006464302175327185,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check: verifier DL tau^2 on the t scale / 4"
+   },
+   {
+    "path": "estimate",
+    "value": 0.8724546320169881,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check: verifier pooled t (= FE) / 2"
+   },
+   {
+    "path": "se",
+    "value": 0.05488731629846427,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check: verifier IVhet SE(t) = 0.1097746 / 2"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_fixed_backtransformed",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126",
+  "description": "MetaXL pooled prevalence and 95% CI back-transformed from the double-arcsine scale (fixed).",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.59,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.1 p. 126",
+    "pft_n": "variance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.57,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed CI lower (2 dp), Ch6 Fig. 6.1 p. 126",
+    "pft_n": "variance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed CI upper (2 dp), Ch6 Fig. 6.1 p. 126",
+    "pft_n": "variance"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.back_transform(pft_n='variance') implements the MetaXL/Barendregt 2013 inversion with m = 1/Var(pooled t) (= 1/(4 se^2) on the engine's half-sum scale); the runner's Freeman-Tukey transform applies it (transform 'pft_hm' with \"pft_n\": \"variance\") with the se of the same result."
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_random_backtransformed",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_random",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.2 p. 130",
+  "description": "MetaXL pooled prevalence and 95% CI back-transformed from the double-arcsine scale (random).",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.59,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.2 p. 130",
+    "pft_n": "variance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.51,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed CI lower (2 dp), Ch6 Fig. 6.2 p. 130",
+    "pft_n": "variance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.66,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed CI upper (2 dp), Ch6 Fig. 6.2 p. 130",
+    "pft_n": "variance"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.back_transform(pft_n='variance') implements the MetaXL/Barendregt 2013 inversion with m = 1/Var(pooled t) (= 1/(4 se^2) on the engine's half-sum scale); the runner's Freeman-Tukey transform applies it (transform 'pft_hm' with \"pft_n\": \"variance\") with the se of the same result."
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_ivhet_backtransformed",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.3 p. 133",
+  "description": "MetaXL pooled prevalence and 95% CI back-transformed from the double-arcsine scale (ivhet).",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.59,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed pooled prevalence (2 dp), Ch6 Fig. 6.3 p. 133",
+    "pft_n": "variance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.48,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed CI lower (2 dp), Ch6 Fig. 6.3 p. 133",
+    "pft_n": "variance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.69,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed CI upper (2 dp), Ch6 Fig. 6.3 p. 133",
+    "pft_n": "variance"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active",
+  "activation_note": "Activated: effect_sizes.back_transform(pft_n='variance') implements the MetaXL/Barendregt 2013 inversion with m = 1/Var(pooled t) (= 1/(4 se^2) on the engine's half-sum scale); the runner's Freeman-Tukey transform applies it (transform 'pft_hm' with \"pft_n\": \"variance\") with the IVhet se."
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_study_row_bondestam",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126 (same rows in Figs. 6.2-6.4)",
+  "description": "MetaXL forest-plot row for Bondestam et al. (1990): double-arcsine prevalence and 95% CI back-transformed with the study's own n.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study prevalence (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.28,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI lower (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.89,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI upper (2 dp), Fig. 6.1"
+   }
+  ],
+  "note": "Single-study case so that the runner's 'pft_hm' back-transform uses m = n_i (the engine's forest-plot convention, plots.forest_data per-study n); MetaXL uses m = n_i + 0.5 - both give the printed 2-dp values (verifier: identical at 2 dp). MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_study_row_shen",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126 (same rows in Figs. 6.2-6.4)",
+  "description": "MetaXL forest-plot row for Shen et al. (1981): double-arcsine prevalence and 95% CI back-transformed with the study's own n.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.51,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study prevalence (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.46,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI lower (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.57,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI upper (2 dp), Fig. 6.1"
+   }
+  ],
+  "note": "Single-study case so that the runner's 'pft_hm' back-transform uses m = n_i (the engine's forest-plot convention, plots.forest_data per-study n); MetaXL uses m = n_i + 0.5 - both give the printed 2-dp values (verifier: identical at 2 dp). MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_study_row_zharikov",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126 (same rows in Figs. 6.2-6.4)",
+  "description": "MetaXL forest-plot row for Zharikov (1968): double-arcsine prevalence and 95% CI back-transformed with the study's own n.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study prevalence (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.47,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI lower (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.53,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI upper (2 dp), Fig. 6.1"
+   }
+  ],
+  "note": "Single-study case so that the runner's 'pft_hm' back-transform uses m = n_i (the engine's forest-plot convention, plots.forest_data per-study n); MetaXL uses m = n_i + 0.5 - both give the printed 2-dp values (verifier: identical at 2 dp). MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_study_row_babigian",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126 (same rows in Figs. 6.2-6.4)",
+  "description": "MetaXL forest-plot row for Babigian (1980): double-arcsine prevalence and 95% CI back-transformed with the study's own n.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.62,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study prevalence (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI lower (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.64,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI upper (2 dp), Fig. 6.1"
+   }
+  ],
+  "note": "Single-study case so that the runner's 'pft_hm' back-transform uses m = n_i (the engine's forest-plot convention, plots.forest_data per-study n); MetaXL uses m = n_i + 0.5 - both give the printed 2-dp values (verifier: identical at 2 dp). MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_study_row_fichter",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126 (same rows in Figs. 6.2-6.4)",
+  "description": "MetaXL forest-plot row for Fichter et al. (1996): double-arcsine prevalence and 95% CI back-transformed with the study's own n.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.75,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study prevalence (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.36,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI lower (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.0,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI upper (2 dp), Fig. 6.1"
+   }
+  ],
+  "note": "Single-study case so that the runner's 'pft_hm' back-transform uses m = n_i (the engine's forest-plot convention, plots.forest_data per-study n); MetaXL uses m = n_i + 0.5 - both give the printed 2-dp values (verifier: Fichter 0.748 (0.356, 0.998)). MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_study_row_keith",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Fig. 6.1 p. 126 (same rows in Figs. 6.2-6.4)",
+  "description": "MetaXL forest-plot row for Keith et al. (1991): double-arcsine prevalence and 95% CI back-transformed with the study's own n.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.69,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study prevalence (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.64,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI lower (2 dp), Fig. 6.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.74,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed study CI upper (2 dp), Fig. 6.1"
+   }
+  ],
+  "note": "Single-study case so that the runner's 'pft_hm' back-transform uses m = n_i (the engine's forest-plot convention, plots.forest_data per-study n); MetaXL uses m = n_i + 0.5 - both give the printed 2-dp values (verifier: identical at 2 dp). MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_subgroup_income_fixed",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_subgroup_income_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Sec. 6.7, Fig. 6.4 p. 134",
+  "description": "MetaXL fixed-effect subgroup analysis by country income (double-arcsine scale): within-subgroup Q, p, I^2 and the overall line.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10,
+    "income": "Low/middle income"
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300,
+    "income": "Low/middle income"
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429,
+    "income": "Low/middle income"
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319,
+    "income": "High income"
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7,
+    "income": "High income"
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305,
+    "income": "High income"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "income",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.High income.Q",
+    "value": 6.29,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed High-income Q = 6.29, Fig. 6.4"
+   },
+   {
+    "path": "groups.High income.p_Q",
+    "value": 0.04,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed High-income p = 0.04, Fig. 6.4"
+   },
+   {
+    "path": "groups.High income.I2",
+    "value": 68,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed High-income I2 = 68%, Fig. 6.4"
+   },
+   {
+    "path": "groups.High income.k",
+    "value": 3,
+    "tol": 0.0,
+    "transform": null,
+    "note": "High income = Babigian, Fichter, Keith (Sec. 6.7)"
+   },
+   {
+    "path": "groups.Low/middle income.Q",
+    "value": 0.48,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Low/middle-income Q = 0.48, Fig. 6.4"
+   },
+   {
+    "path": "groups.Low/middle income.p_Q",
+    "value": 0.79,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Low/middle-income p = 0.79, Fig. 6.4"
+   },
+   {
+    "path": "groups.Low/middle income.I2",
+    "value": 0,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed Low/middle-income I2 = 0%, Fig. 6.4"
+   },
+   {
+    "path": "groups.Low/middle income.k",
+    "value": 3,
+    "tol": 0.0,
+    "transform": null,
+    "note": "Low/middle income = Bondestam, Shen, Zharikov (Sec. 6.7)"
+   },
+   {
+    "path": "overall.Q",
+    "value": 80.18,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall Q = 80.18, Fig. 6.4"
+   },
+   {
+    "path": "overall.p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall p = 0.00, Fig. 6.4"
+   },
+   {
+    "path": "overall.I2",
+    "value": 94,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed overall I2 = 94%, Fig. 6.4"
+   },
+   {
+    "path": "groups.High income.Q",
+    "value": 6.285185451824873,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "groups.High income.p_Q",
+    "value": 0.043170722823046195,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "groups.High income.I2",
+    "value": 68.17914100817329,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "groups.Low/middle income.Q",
+    "value": 0.47828196511090937,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "groups.Low/middle income.p_Q",
+    "value": 0.7873038784353612,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "Q_between",
+    "value": 73.42013983049492,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "tight check vs verifier-derived FE Q_between = Q_total - sum Q_within (NOT printed in the source; under FE this equals the Wald Q_between on the subgroup estimates)"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__schizophrenia_metaxl_subgroup_backtransformed_and_share",
+  "example_id": "khan_ch06_07__schizophrenia_metaxl_subgroup_income_fixed",
+  "source_id": "khan2020",
+  "location": "Ch6 Sec. 6.7, Fig. 6.4 p. 134",
+  "description": "MetaXL subgroup pooled prevalences/CIs (back-transformed) and subgroup % weight shares by income.",
+  "measure": "PFT",
+  "options": {},
+  "rows": [
+   {
+    "study": "Bondestam et al. (1990)",
+    "x": 6.0,
+    "n": 10,
+    "income": "Low/middle income"
+   },
+   {
+    "study": "Shen et al. (1981)",
+    "x": 153.6,
+    "n": 300,
+    "income": "Low/middle income"
+   },
+   {
+    "study": "Zharikov (1968)",
+    "x": 714.5,
+    "n": 1429,
+    "income": "Low/middle income"
+   },
+   {
+    "study": "Babigian (1980)",
+    "x": 2057.78,
+    "n": 3319,
+    "income": "High income"
+   },
+   {
+    "study": "Fichter et al. (1996)",
+    "x": 5.25,
+    "n": 7,
+    "income": "High income"
+   },
+   {
+    "study": "Keith et al. (1991)",
+    "x": 210.45,
+    "n": 305,
+    "income": "High income"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "income",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.High income.estimate",
+    "value": 0.63,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed High-income prevalence, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "groups.High income.ci_lower",
+    "value": 0.61,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed High-income CI lower, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "groups.High income.ci_upper",
+    "value": 0.64,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed High-income CI upper, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "groups.Low/middle income.estimate",
+    "value": 0.5,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed Low/middle prevalence, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "groups.Low/middle income.ci_lower",
+    "value": 0.48,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed Low/middle CI lower, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "groups.Low/middle income.ci_upper",
+    "value": 0.53,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed Low/middle CI upper, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "overall.estimate",
+    "value": 0.59,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed overall prevalence, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "overall.ci_lower",
+    "value": 0.57,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed overall CI lower, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "overall.ci_upper",
+    "value": 0.6,
+    "tol": 0.005,
+    "transform": "pft_hm",
+    "note": "printed overall CI upper, Fig. 6.4",
+    "pft_n": "variance"
+   },
+   {
+    "path": "groups.High income.weight_share_pct",
+    "value": 67.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "printed High-income subgroup weight 67.6%, Fig. 6.4"
+   },
+   {
+    "path": "groups.Low/middle income.weight_share_pct",
+    "value": 32.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "printed Low/middle subgroup weight 32.4%, Fig. 6.4"
+   }
+  ],
+  "note": "MetaXL 'Prev' analyses a Freeman-Tukey double arcsine t = asin(sqrt(x/(n+1))) + asin(sqrt((x+1)/(n+1))) with v = 1/(n+0.5) (inferred by the verifier, not stated in the source; Barendregt et al. 2013). The engine's PFT is the metafor half-sum y = t/2 with v = 1/(4n+2) = (1/(n+0.5))/4, an exact rescaling, so Q, I^2, p_Q and % weights are identical and estimates/SEs are exactly half of MetaXL's t-scale values. Input x = printed p x N (6, 153.6, 714.5, 2057.78, 5.25, 210.45), i.e. the rounded p column of Table 6.2 / Appendix A6.1 that the book (and MetaXL) actually used; the integer counts of Table 6.1 (154/300 = 0.5133, 5/7 = 0.7143 ...) do NOT reproduce the book (raw Q would be 80.016 instead of 81.443).",
+  "status": "active",
+  "activation_note": "Activated: (1) MetaXL double-arcsine back-transformation via the runner transform 'pft_hm' with \"pft_n\": \"variance\" (m = 1/(4 se^2) with each subgroup's / the overall result's own se; effect_sizes.back_transform(pft_n='variance')); (2) subgroup share of the overall weight via weight_share_pct (placeholder path weight_pct renamed)."
+ },
+ {
+  "case_id": "khan_ch06_07__rd_single_study_wald",
+  "example_id": "khan_ch06_07__rd_single_study_hartung",
+  "source_id": "khan2020",
+  "location": "Ch7 Examples 7.1-7.3, pp. 140-141",
+  "description": "Single two-group risk difference 0.60 vs 0.80: RD, SE, Wald 95% CI, z and two-sided p (k = 1, z-based).",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "Single trial (Hartung, Knapp & Sinha 2008, p. 18)",
+    "e1": 48,
+    "n1": 80,
+    "e2": 56,
+    "n2": 70
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.2,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed RD = -0.20 (2 dp), Ex 7.1 p. 140"
+   },
+   {
+    "path": "se",
+    "value": 0.0727,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed SE = 0.0727 (4 dp), Ex 7.1 p. 141"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 95% CI lower -0.34, Ex 7.2 p. 141"
+   },
+   {
+    "path": "ci_upper",
+    "value": -0.06,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 95% CI upper -0.06, Ex 7.2 p. 141"
+   },
+   {
+    "path": "stat",
+    "value": -2.75,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed z = -2.75, Ex 7.3 p. 141"
+   },
+   {
+    "path": "p",
+    "value": 0.006,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed two-sided P = 0.006, Ex 7.3 p. 141"
+   },
+   {
+    "path": "estimate",
+    "value": -0.2,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check: exact 0.6 - 0.8"
+   },
+   {
+    "path": "se",
+    "value": 0.072702917999997,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "se",
+    "value": 0.005285714285714286,
+    "tol": 1e-14,
+    "transform": "square",
+    "note": "tight check vs verifier full-precision Var(RD) (printed value is a typo)"
+   },
+   {
+    "path": "stat",
+    "value": -2.750921221621508,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "p",
+    "value": 0.005942793304202759,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   }
+  ],
+  "note": "Inputs are printed as proportions only (p1 = 0.60, n1 = 80; p2 = 0.80, n2 = 70); the counts 48/80 and 56/70 reproduce them exactly. Group 1 = treatment; negative RD = lower risk with treatment.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__rd_single_study_var_typo",
+  "example_id": "khan_ch06_07__rd_single_study_hartung",
+  "source_id": "khan2020",
+  "location": "Ch7 Example 7.1, p. 141",
+  "description": "Variance of the single-study RD printed as 0.5285 (typo for 0.005285).",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "Single trial (Hartung, Knapp & Sinha 2008, p. 18)",
+    "e1": 48,
+    "n1": 80,
+    "e2": 56,
+    "n2": 70
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "se",
+    "value": 0.5285,
+    "tol": 5e-05,
+    "transform": "square",
+    "note": "printed Var(RD) = 0.5285, Ex 7.1 p. 141"
+   }
+  ],
+  "note": "Inputs are printed as proportions only (p1 = 0.60, n1 = 80; p2 = 0.80, n2 = 70); the counts 48/80 and 56/70 reproduce them exactly.",
+  "status": "known_gap",
+  "gap_reason": "Source error (typo): 0.6 x 0.4/80 + 0.8 x 0.2/70 = 0.0052857, printed as 0.5285; the book's own SE 0.0727 = sqrt(0.0052857) is correct and is tested in rd_single_study_wald."
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_arm_risks",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_fixed",
+  "source_id": "khan2020",
+  "location": "Ch7 Table 7.2 p. 144",
+  "description": "Aspirin vs placebo after MI: per-arm death proportions p1 (aspirin) and p2 (placebo) of Table 7.2.",
+  "measure": "PR",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1 aspirin",
+    "x": 49,
+    "n": 615
+   },
+   {
+    "study": "CDP aspirin",
+    "x": 44,
+    "n": 758
+   },
+   {
+    "study": "MRC-2 aspirin",
+    "x": 102,
+    "n": 832
+   },
+   {
+    "study": "GASP aspirin",
+    "x": 32,
+    "n": 317
+   },
+   {
+    "study": "PARIS aspirin",
+    "x": 85,
+    "n": 810
+   },
+   {
+    "study": "AMIS aspirin",
+    "x": 246,
+    "n": 2267
+   },
+   {
+    "study": "ISIS-2 aspirin",
+    "x": 1570,
+    "n": 8587
+   },
+   {
+    "study": "MRC-1 placebo",
+    "x": 67,
+    "n": 624
+   },
+   {
+    "study": "CDP placebo",
+    "x": 64,
+    "n": 771
+   },
+   {
+    "study": "MRC-2 placebo",
+    "x": 126,
+    "n": 850
+   },
+   {
+    "study": "GASP placebo",
+    "x": 38,
+    "n": 309
+   },
+   {
+    "study": "PARIS placebo",
+    "x": 52,
+    "n": 406
+   },
+   {
+    "study": "AMIS placebo",
+    "x": 219,
+    "n": 2257
+   },
+   {
+    "study": "ISIS-2 placebo",
+    "x": 1720,
+    "n": 8600
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.0797,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-1 aspirin p1 printed 0.0797 (Table 7.2)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.058,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "CDP aspirin p1 printed 0.058 (Table 7.2)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.1226,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-2 aspirin p1 printed 0.1226 (Table 7.2)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.1009,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "GASP aspirin p1 printed 0.1009 (Table 7.2)"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.1049,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "PARIS aspirin p1 printed 0.1049 (Table 7.2)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.1085,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "AMIS aspirin p1 printed 0.1085 (Table 7.2)"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.1828,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "ISIS-2 aspirin p1 printed 0.1828 (Table 7.2)"
+   },
+   {
+    "path": "yi.7",
+    "value": 0.1074,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-1 placebo p2 printed 0.1074 (Table 7.2)"
+   },
+   {
+    "path": "yi.8",
+    "value": 0.083,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "CDP placebo p2 printed 0.083 (Table 7.2)"
+   },
+   {
+    "path": "yi.9",
+    "value": 0.1482,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-2 placebo p2 printed 0.1482 (Table 7.2)"
+   },
+   {
+    "path": "yi.10",
+    "value": 0.123,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "GASP placebo p2 printed 0.123 (Table 7.2)"
+   },
+   {
+    "path": "yi.11",
+    "value": 0.1281,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "PARIS placebo p2 printed 0.1281 (Table 7.2)"
+   },
+   {
+    "path": "yi.12",
+    "value": 0.097,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "AMIS placebo p2 printed 0.097 (Table 7.2)"
+   },
+   {
+    "path": "yi.13",
+    "value": 0.2,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "ISIS-2 placebo p2 printed 0.2 (Table 7.2)"
+   }
+  ],
+  "note": "Printed to 4 dp (trailing zeros dropped in the transcription: 0.058 = 0.0580, 0.083 = 0.0830, 0.123 = 0.1230, 0.097 = 0.0970, 0.2 = 0.2000).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_rd_per_study",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_fixed",
+  "source_id": "khan2020",
+  "location": "Ch7 Table 7.2 p. 144",
+  "description": "Aspirin vs placebo after MI (7 RCTs): per-study risk difference and Var = p1(1-p1)/n1 + p2(1-p2)/n2 of Table 7.2.",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": -0.0277,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-1 RD printed -0.0277 (4 dp; Table 7.2)"
+   },
+   {
+    "path": "yi.1",
+    "value": -0.025,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "CDP RD printed -0.025 (4 dp; Table 7.2)"
+   },
+   {
+    "path": "yi.2",
+    "value": -0.0256,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-2 RD printed -0.0256 (4 dp; Table 7.2)"
+   },
+   {
+    "path": "yi.3",
+    "value": -0.022,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "GASP RD printed -0.022 (4 dp; Table 7.2)"
+   },
+   {
+    "path": "yi.4",
+    "value": -0.0231,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "PARIS RD printed -0.0231 (4 dp; Table 7.2)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.0115,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "AMIS RD printed 0.0115 (4 dp; Table 7.2)"
+   },
+   {
+    "path": "yi.6",
+    "value": -0.0172,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "ISIS-2 RD printed -0.0172 (4 dp; Table 7.2)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.0003,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-1 Var printed 0.0003 (Table 7.2)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.0002,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "CDP Var printed 0.0002 (Table 7.2)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0003,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "MRC-2 Var printed 0.0003 (Table 7.2)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.0006,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "GASP Var printed 0.0006 (Table 7.2)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.0004,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "PARIS Var printed 0.0004 (Table 7.2)"
+   },
+   {
+    "path": "vi.5",
+    "value": 8e-05,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "AMIS Var printed 8e-05 (Table 7.2)"
+   },
+   {
+    "path": "vi.6",
+    "value": 4e-05,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "ISIS-2 Var printed 4e-05 (Table 7.2)"
+   }
+  ],
+  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). Printed W, W*RD, W*RD^2, W^2 columns have no engine path. CDP RD -0.025 and GASP -0.022 are printed 0.0250/0.0220 with trailing zeros dropped (4 dp).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_metaxl_study_wald_ci",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_fixed",
+  "source_id": "khan2020",
+  "location": "Ch7 Fig. 7.1 p. 146 (same rows in Figs. 7.2-7.3)",
+  "description": "MetaXL forest-plot rows: per-study RD with Wald 95% CI (each study its own 'subgroup' to expose the single-study CI).",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624,
+    "key": "MRC-1"
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771,
+    "key": "CDP"
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850,
+    "key": "MRC-2"
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309,
+    "key": "GASP"
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406,
+    "key": "PARIS"
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257,
+    "key": "AMIS"
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600,
+    "key": "ISIS-2"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.MRC-1.estimate",
+    "value": -0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MRC-1 RD (2 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "groups.MRC-1.ci_lower",
+    "value": -0.06,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MRC-1 95% CI lower (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.MRC-1.ci_upper",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MRC-1 95% CI upper (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.CDP.estimate",
+    "value": -0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CDP RD (2 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "groups.CDP.ci_lower",
+    "value": -0.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CDP 95% CI lower (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.CDP.ci_upper",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CDP 95% CI upper (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.MRC-2.estimate",
+    "value": -0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MRC-2 RD (2 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "groups.MRC-2.ci_lower",
+    "value": -0.06,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MRC-2 95% CI lower (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.MRC-2.ci_upper",
+    "value": 0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MRC-2 95% CI upper (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.GASP.estimate",
+    "value": -0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "GASP RD (2 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "groups.GASP.ci_lower",
+    "value": -0.07,
+    "tol": 0.005,
+    "transform": null,
+    "note": "GASP 95% CI lower (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.GASP.ci_upper",
+    "value": 0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "GASP 95% CI upper (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.PARIS.estimate",
+    "value": -0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "PARIS RD (2 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "groups.PARIS.ci_lower",
+    "value": -0.06,
+    "tol": 0.005,
+    "transform": null,
+    "note": "PARIS 95% CI lower (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.PARIS.ci_upper",
+    "value": 0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "PARIS 95% CI upper (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.AMIS.estimate",
+    "value": 0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "AMIS RD (2 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "groups.AMIS.ci_lower",
+    "value": -0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "AMIS 95% CI lower (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.AMIS.ci_upper",
+    "value": 0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "AMIS 95% CI upper (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.ISIS-2.estimate",
+    "value": -0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "ISIS-2 RD (2 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "groups.ISIS-2.ci_lower",
+    "value": -0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "ISIS-2 95% CI lower (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "groups.ISIS-2.ci_upper",
+    "value": -0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "ISIS-2 95% CI upper (2 dp), Fig. 7.1"
+   }
+  ],
+  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). MetaXL 'NumRD' uses the untransformed RD with the Wald variance (verifier: rows reproduce exactly).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_mi_rd_fixed",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_fixed",
+  "source_id": "khan2020",
+  "location": "Ch7 Examples 7.4-7.5, Table 7.2 p. 144; pp. 143-145; MetaXL Fig. 7.1 p. 146",
+  "description": "Aspirin vs placebo after MI: fixed-effect (IV) pooled risk difference, CI, z-test, Q and I^2 (hand calculation and MetaXL).",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.01343,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed FE = -769.624/57295 = -0.01343 (5 dp), p. 143"
+   },
+   {
+    "path": "se",
+    "value": 1.74536e-05,
+    "tol": 5e-11,
+    "transform": "square",
+    "note": "printed Var = 1/57295 = 0.0000174536 (10 dp), p. 144"
+   },
+   {
+    "path": "se",
+    "value": 0.00418,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE = 0.00418 (5 dp), p. 144"
+   },
+   {
+    "path": "se",
+    "value": 0.00417775,
+    "tol": 5e-09,
+    "transform": null,
+    "note": "printed SE used in z = 0.00417775 (8 dp), p. 144 (Ex 7.5)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.021621,
+    "tol": 6.51e-07,
+    "transform": null,
+    "note": "printed CI lower -0.021621 (6 dp), p. 144; tol = half unit + |1.96 - 1.959964| x SE (1.5e-07)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -0.005244,
+    "tol": 6.51e-07,
+    "transform": null,
+    "note": "printed CI upper -0.005244 (6 dp), p. 144; tol = half unit + |1.96 - 1.959964| x SE (1.5e-07)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.02,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed '-0.021621 = -0.02' (2 dp), p. 144; also MetaXL Fig. 7.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": -0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed '-0.005244 = -0.01' (2 dp), p. 144; also MetaXL Fig. 7.1"
+   },
+   {
+    "path": "stat",
+    "value": -3.2153,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed z = -3.2153 (4 dp), p. 144"
+   },
+   {
+    "path": "Q",
+    "value": 10.4216,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Q = 10.4216 (4 dp), p. 145"
+   },
+   {
+    "path": "Q_df",
+    "value": 6,
+    "tol": 0.0,
+    "transform": null,
+    "note": "df = 6, p. 145"
+   },
+   {
+    "path": "I2",
+    "value": 42.4271,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed I^2 = 0.424271 x 100% (fraction to 6 dp = 42.4271%), p. 145"
+   },
+   {
+    "path": "I2",
+    "value": 42,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 = 42%, p. 145 and MetaXL Fig. 7.1"
+   },
+   {
+    "path": "estimate",
+    "value": -0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL pooled RD -0.01 (2 dp), Fig. 7.1"
+   },
+   {
+    "path": "Q",
+    "value": 10.42,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL Q = 10.42, Fig. 7.1"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL p = 0.11, Fig. 7.1 (the book's hand calculation: '> 0.10')"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 6.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "MRC-1 FE % weight (1 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 10.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "CDP FE % weight (1 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 6.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "MRC-2 FE % weight (1 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "GASP FE % weight (1 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 4.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "PARIS FE % weight (1 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 21.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "AMIS FE % weight (1 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 48.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "ISIS-2 FE % weight (1 dp), MetaXL Fig. 7.1"
+   },
+   {
+    "path": "estimate",
+    "value": -0.013432711432875666,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full precision (statsmodels identical)"
+   },
+   {
+    "path": "se",
+    "value": 0.00417775128761075,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "stat",
+    "value": -3.215297060098045,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "p",
+    "value": 0.0013030959666094082,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check vs verifier full precision (book prints the truncated '= 0.')"
+   },
+   {
+    "path": "Q",
+    "value": 10.421573471855677,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.10798479843215184,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision"
+   },
+   {
+    "path": "I2",
+    "value": 42.42711989505714,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs verifier full precision (pct)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 39986.25215565722,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision C"
+   }
+  ],
+  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). The FE p printed '= 0.' (true 0.0013) is not tested at printed precision (verifier: truncated).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_mi_rd_random_dl",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch7 Examples 7.5-7.6, p. 148; MetaXL Fig. 7.2 p. 150",
+  "description": "Aspirin vs placebo after MI: DerSimonian-Laird tau^2 and random-effects RD (MetaXL output uses the unrounded tau^2).",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 10.4216,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Q = 10.4216, p. 148"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 39986.25,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed C = 39986.25 (2 dp), p. 148"
+   },
+   {
+    "path": "tau2",
+    "value": 0.000111,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed DL tau^2 = 0.000111 (6 dp), p. 148"
+   },
+   {
+    "path": "estimate",
+    "value": -0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL pooled RD -0.01 (2 dp), Fig. 7.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL CI lower -0.03 (2 dp), Fig. 7.2"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL CI upper 0.00 (2 dp; actually -0.0023), Fig. 7.2"
+   },
+   {
+    "path": "Q",
+    "value": 10.42,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL Q = 10.42, Fig. 7.2"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL p = 0.11, Fig. 7.2"
+   },
+   {
+    "path": "I2",
+    "value": 42,
+    "tol": 0.5,
+    "transform": null,
+    "note": "MetaXL I2 = 42%, Fig. 7.2"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 10.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "MRC-1 RE % weight (1 dp), MetaXL Fig. 7.2"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 14.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "CDP RE % weight (1 dp), MetaXL Fig. 7.2"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 10.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "MRC-2 RE % weight (1 dp), MetaXL Fig. 7.2"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 5.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "GASP RE % weight (1 dp), MetaXL Fig. 7.2"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 8.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "PARIS RE % weight (1 dp), MetaXL Fig. 7.2"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 21.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "AMIS RE % weight (1 dp), MetaXL Fig. 7.2"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 28.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "ISIS-2 RE % weight (1 dp), MetaXL Fig. 7.2"
+   },
+   {
+    "path": "tau2",
+    "value": 0.00011057734179846401,
+    "tol": 1e-14,
+    "transform": null,
+    "note": "tight check vs verifier/statsmodels unrounded DL tau^2"
+   },
+   {
+    "path": "estimate",
+    "value": -0.014935887179053186,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier/statsmodels DL RE (unrounded tau^2)"
+   },
+   {
+    "path": "se",
+    "value": 0.006441714469852303,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier/statsmodels DL RE SE"
+   },
+   {
+    "path": "stat",
+    "value": -2.318619871922954,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs verifier (unrounded tau^2)"
+   },
+   {
+    "path": "p",
+    "value": 0.020415656650897326,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier (unrounded tau^2)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 39986.25215565722,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision C"
+   }
+  ],
+  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). The book's hand path fixes tau^2 at the rounded 0.000111: tested in aspirin_mi_rd_random_tau2_rounded. Source interpretation error (not testable): the hand CI (-0.02758, -0.0023) excludes 0 (p = 0.02), yet p. 150 and Sec. 7.8 call the RE result non-significant from MetaXL's rounded '(-0.03, 0.00)'.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_mi_rd_random_tau2_rounded",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_random_dl",
+  "source_id": "khan2020",
+  "location": "Ch7 Example 7.6, Table 7.3 p. 148; p. 149",
+  "description": "Aspirin RE hand calculation of Table 7.3 with tau^2 fixed at the rounded 0.000111: estimate, SE, CI, z and p.",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_fixed": 0.000111,
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.0149,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed RE = -359.393/24054 = -0.0149 (4 dp), p. 149"
+   },
+   {
+    "path": "se",
+    "value": 0.006448,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed RE SE = sqrt(1/24054) = 0.006448 (6 dp), p. 149"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.02758,
+    "tol": 5.24e-06,
+    "transform": null,
+    "note": "printed CI lower -0.02758 (5 dp), p. 149; tol = half unit + |1.96 - 1.959964| x SE (2.3e-07)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -0.0023,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed CI upper -0.0023 (4 dp), p. 149"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed '-0.02758 ~ -0.03' (2 dp), p. 149"
+   },
+   {
+    "path": "stat",
+    "value": -2.31725,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed z = -2.31725 (5 dp), p. 149"
+   },
+   {
+    "path": "p",
+    "value": 0.0204,
+    "tol": 0.00025,
+    "transform": null,
+    "note": "printed P = 2 x 0.0102 = 0.0204, p. 149, read from a normal table at |z| = 2.32: tol = 2 x half unit of the 4-dp table value (1e-4) + |2*Phi(-2.32) - 2*Phi(-2.31725)| (0.000149)"
+   },
+   {
+    "path": "estimate",
+    "value": -0.014940838120540062,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full precision with tau^2 = 0.000111"
+   },
+   {
+    "path": "se",
+    "value": 0.006447667955175703,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full precision with tau^2 = 0.000111"
+   },
+   {
+    "path": "stat",
+    "value": -2.317246828529171,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full precision with tau^2 = 0.000111"
+   },
+   {
+    "path": "p",
+    "value": 0.020490289928869247,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check vs verifier full precision with tau^2 = 0.000111"
+   }
+  ],
+  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). Per-study Var*, W*, W*RD (Table 7.3) and the sums 24054 / -359.393 have no engine path; they are implied by estimate and SE.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_mi_rd_ivhet",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch7 Example 7.7, Table 7.4 p. 152; pp. 152-153; MetaXL Fig. 7.3 p. 153",
+  "description": "Aspirin vs placebo after MI: IVhet risk difference (FE estimate, Var = sum (w_i/W)^2 (v_i + tau^2_DL)), hand calculation and MetaXL.",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.01343,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed IVhet = -769.624/57294.75 = -0.01343 (5 dp), p. 152"
+   },
+   {
+    "path": "estimate",
+    "value": -0.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL pooled RD -0.01 (2 dp), Fig. 7.3"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL CI lower -0.03 (2 dp), Fig. 7.3; book '-0.02743 ~ -0.03'"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL CI upper 0.00 (2 dp), Fig. 7.3; book '0.000563 ~ 0.00'"
+   },
+   {
+    "path": "Q",
+    "value": 10.42,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL Q = 10.42, Fig. 7.3"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "MetaXL p = 0.11, Fig. 7.3"
+   },
+   {
+    "path": "I2",
+    "value": 42,
+    "tol": 0.5,
+    "transform": null,
+    "note": "MetaXL I2 = 42%, Fig. 7.3"
+   },
+   {
+    "path": "tau2",
+    "value": 0.000111,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "DL tau^2 used = 0.000111 (Table 7.4 / Ex 7.6)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 6.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "MRC-1 IVhet % weight (= FE weight, 1 dp), MetaXL Fig. 7.3"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 10.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "CDP IVhet % weight (= FE weight, 1 dp), MetaXL Fig. 7.3"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 6.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "MRC-2 IVhet % weight (= FE weight, 1 dp), MetaXL Fig. 7.3"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "GASP IVhet % weight (= FE weight, 1 dp), MetaXL Fig. 7.3"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 4.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "PARIS IVhet % weight (= FE weight, 1 dp), MetaXL Fig. 7.3"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 21.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "AMIS IVhet % weight (= FE weight, 1 dp), MetaXL Fig. 7.3"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 48.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "ISIS-2 IVhet % weight (= FE weight, 1 dp), MetaXL Fig. 7.3"
+   },
+   {
+    "path": "estimate",
+    "value": -0.013432711432875666,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full precision (IVhet = FE)"
+   },
+   {
+    "path": "se",
+    "value": 0.007131517870176627,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full precision with unrounded DL tau^2"
+   },
+   {
+    "path": "se",
+    "value": 5.0858547132648574e-05,
+    "tol": 1e-15,
+    "transform": "square",
+    "note": "tight check vs verifier full-precision Var with unrounded DL tau^2"
+   },
+   {
+    "path": "stat",
+    "value": -1.8835697641662048,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier (unrounded tau^2)"
+   },
+   {
+    "path": "p",
+    "value": 0.05962319491591783,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check vs verifier (unrounded tau^2)"
+   }
+  ],
+  "note": "Group 1 = aspirin, group 2 = placebo; e = deaths; RD = p1 - p2 (negative = fewer deaths on aspirin). The 'W*' column of Table 7.4 is the IVhet variance component (w_i/W)^2 (v_i + tau^2), not a weight; it has no engine path. Typo on p. 153: the upper-limit formula prints '-1.96' for '+1.96' (the result 0.000563 is correct). The book's IVhet Var, SE, CI, z and p (Table 7.4, pp. 152-153) were computed with tau^2 rounded to 0.000111 and z = 1.96; they are checked at half-unit precision in khan_ch06_07__aspirin_mi_rd_ivhet_tau2_rounded (tau2_fixed). This case keeps the tau^2-independent printed values and the tight checks of the unrounded DL tau^2 chain.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch06_07__aspirin_mi_rd_ivhet_tau2_rounded",
+  "example_id": "khan_ch06_07__aspirin_mi_rd_ivhet",
+  "source_id": "khan2020",
+  "location": "Ch7 Example 7.7, Table 7.4 p. 152; pp. 152-153",
+  "description": "Aspirin IVhet hand calculation of Table 7.4 with tau^2 fixed at the rounded 0.000111 and z = 1.96: Var, SE, CI, z and p at the printed precision.",
+  "measure": "RD",
+  "options": {},
+  "rows": [
+   {
+    "study": "MRC-1",
+    "e1": 49,
+    "n1": 615,
+    "e2": 67,
+    "n2": 624
+   },
+   {
+    "study": "CDP",
+    "e1": 44,
+    "n1": 758,
+    "e2": 64,
+    "n2": 771
+   },
+   {
+    "study": "MRC-2",
+    "e1": 102,
+    "n1": 832,
+    "e2": 126,
+    "n2": 850
+   },
+   {
+    "study": "GASP",
+    "e1": 32,
+    "n1": 317,
+    "e2": 38,
+    "n2": 309
+   },
+   {
+    "study": "PARIS",
+    "e1": 85,
+    "n1": 810,
+    "e2": 52,
+    "n2": 406
+   },
+   {
+    "study": "AMIS",
+    "e1": 246,
+    "n1": 2267,
+    "e2": 219,
+    "n2": 2257
+   },
+   {
+    "study": "ISIS-2",
+    "e1": 1570,
+    "n1": 8587,
+    "e2": 1720,
+    "n2": 8600
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet",
+   "tau2_fixed": 0.000111,
+   "level": 0.950004209703559
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -0.01343,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed IVhet = -769.624/57294.75 = -0.01343 (5 dp), p. 152 (FE estimate, tau^2-independent)"
+   },
+   {
+    "path": "se",
+    "value": 5.099e-05,
+    "tol": 5e-09,
+    "transform": "square",
+    "note": "printed IVhet Var = 5.099E-05 (4 significant digits), Table 7.4 / p. 152; tol = half unit"
+   },
+   {
+    "path": "se",
+    "value": 0.00714,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed IVhet SE = 0.00714 (5 dp), p. 152; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.02743,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed CI lower -0.02743 (5 dp), p. 153; level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96; tol = half unit"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.000563,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed CI upper 0.000563 (6 dp), p. 153 (the upper-limit formula's '-1.96' is a typo for '+1.96'); level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96; tol = half unit"
+   },
+   {
+    "path": "stat",
+    "value": -1.88121,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed z = -1.88121 (5 dp), p. 153; tol = half unit"
+   },
+   {
+    "path": "p",
+    "value": 0.0602,
+    "tol": 0.000265,
+    "transform": null,
+    "note": "printed P = 2 x 0.0301 = 0.0602, p. 153, read from a normal table at |z| = 1.88: tol = 2 x half unit of the 4-dp table value (1e-4) + |2*Phi(-1.88) - 2*Phi(-1.88121)| (1.647e-4)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.000111,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "the fixed tau^2 (Table 7.4 / Ex 7.6) is used as given"
+   }
+  ],
+  "note": "Same data as khan_ch06_07__aspirin_mi_rd_ivhet. The book's IVhet chain uses the DL tau^2 rounded to 0.000111 (Ex 7.6) and z = 1.96; with tau2_fixed and level = 2*Phi(1.96) - 1 = 0.950004209703559 (the book's z = 1.96), every printed tau^2-dependent value is reproduced at half-unit precision (no tau^2-rounding allowance).",
+  "status": "active"
+ }
+]

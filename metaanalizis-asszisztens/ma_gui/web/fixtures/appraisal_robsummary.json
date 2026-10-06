@@ -1,0 +1,494 @@
+{
+ "description": "Forgalmi lámpa (szk.rob-summary/v1, motor; súly: BCG-fixtúra)",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/appraisals/rob-summary",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.rob-summary/v1",
+    "data": {
+     "schema": "szk.rob-summary/v1",
+     "tool": "rob2",
+     "outcome": "o1",
+     "name": "RoB 2",
+     "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+     "algorithm": "conservative",
+     "engine_version": "0.1.0",
+     "domains": [
+      {
+       "id": "1",
+       "pass": null,
+       "title": {
+        "hu": "Randomizációs folyamat",
+        "en": "Randomisation process"
+       },
+       "short": "D1"
+      },
+      {
+       "id": "2",
+       "pass": null,
+       "title": {
+        "hu": "Eltérés a tervezett beavatkozástól",
+        "en": "Deviations from intended interventions"
+       },
+       "short": "D2"
+      },
+      {
+       "id": "3",
+       "pass": null,
+       "title": {
+        "hu": "Hiányzó kimeneti adatok",
+        "en": "Missing outcome data"
+       },
+       "short": "D3"
+      },
+      {
+       "id": "4",
+       "pass": null,
+       "title": {
+        "hu": "A kimenet mérése",
+        "en": "Measurement of the outcome"
+       },
+       "short": "D4"
+      },
+      {
+       "id": "5",
+       "pass": null,
+       "title": {
+        "hu": "A közölt eredmény kiválasztása",
+        "en": "Selection of the reported result"
+       },
+       "short": "D5"
+      }
+     ],
+     "scale": [
+      {
+       "value": "low",
+       "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+       },
+       "level": "low"
+      },
+      {
+       "value": "some_concerns",
+       "label": {
+        "hu": "Némi aggály",
+        "en": "Some concerns"
+       },
+       "level": "some"
+      },
+      {
+       "value": "high",
+       "label": {
+        "hu": "Magas",
+        "en": "High"
+       },
+       "level": "high"
+      }
+     ],
+     "studies": [
+      {
+       "study_id": "ARONSON1948",
+       "label": "Aronson 1948",
+       "weight_pct": 5.059482734366633,
+       "weight_text": "5.1%",
+       "rows": [
+        "rbcg01"
+       ],
+       "judgements": {
+        "1": "some_concerns",
+        "2": "low",
+        "3": "low",
+        "4": "low",
+        "5": "low"
+       },
+       "domains": [
+        {
+         "domain": "1",
+         "pass": null,
+         "judgement": "some_concerns",
+         "implied": "some_concerns",
+         "level": "some",
+         "from": "judgement"
+        },
+        {
+         "domain": "2",
+         "pass": null,
+         "judgement": "low",
+         "implied": "some_concerns",
+         "level": "low",
+         "from": "judgement"
+        },
+        {
+         "domain": "3",
+         "pass": null,
+         "judgement": "low",
+         "implied": "low",
+         "level": "low",
+         "from": "judgement"
+        },
+        {
+         "domain": "4",
+         "pass": null,
+         "judgement": "low",
+         "implied": "some_concerns",
+         "level": "low",
+         "from": "judgement"
+        },
+        {
+         "domain": "5",
+         "pass": null,
+         "judgement": "low",
+         "implied": "low",
+         "level": "low",
+         "from": "judgement"
+        }
+       ],
+       "overall": "some_concerns",
+       "overall_implied": "some_concerns",
+       "level": "some",
+       "overall_from": "judgement",
+       "source": "conflict",
+       "status": "complete",
+       "origin": "human",
+       "assessors": [
+        "KP",
+        "SzK"
+       ],
+       "files": [],
+       "complete": true,
+       "rob_value": null
+      },
+      {
+       "study_id": "FERGUSON1949",
+       "label": "Ferguson & Simes 1949",
+       "weight_pct": 6.36467937256301,
+       "weight_text": "6.4%",
+       "rows": [
+        "rbcg02"
+       ],
+       "judgements": {
+        "1": "low",
+        "2": "high",
+        "3": "low",
+        "4": null,
+        "5": null
+       },
+       "domains": [
+        {
+         "domain": "1",
+         "pass": null,
+         "judgement": null,
+         "implied": "low",
+         "level": "low",
+         "from": "implied"
+        },
+        {
+         "domain": "2",
+         "pass": null,
+         "judgement": "high",
+         "implied": null,
+         "level": "high",
+         "from": "judgement"
+        },
+        {
+         "domain": "3",
+         "pass": null,
+         "judgement": null,
+         "implied": "low",
+         "level": "low",
+         "from": "implied"
+        },
+        {
+         "domain": "4",
+         "pass": null,
+         "judgement": null,
+         "implied": null,
+         "level": null,
+         "from": null
+        },
+        {
+         "domain": "5",
+         "pass": null,
+         "judgement": null,
+         "implied": null,
+         "level": null,
+         "from": null
+        }
+       ],
+       "overall": null,
+       "overall_implied": null,
+       "level": null,
+       "overall_from": null,
+       "source": "draft",
+       "status": "draft",
+       "origin": "human",
+       "assessors": [
+        "SzK"
+       ],
+       "files": [],
+       "complete": false,
+       "rob_value": null
+      },
+      {
+       "study_id": "ROSENTHAL1960",
+       "label": "Rosenthal et al 1960",
+       "weight_pct": 4.436027402601371,
+       "weight_text": "4.4%",
+       "rows": [
+        "rbcg03"
+       ],
+       "judgements": {
+        "1": "some_concerns",
+        "2": "some_concerns",
+        "3": "low",
+        "4": "some_concerns",
+        "5": "low"
+       },
+       "domains": [
+        {
+         "domain": "1",
+         "pass": null,
+         "judgement": null,
+         "implied": "some_concerns",
+         "level": "some",
+         "from": "implied"
+        },
+        {
+         "domain": "2",
+         "pass": null,
+         "judgement": null,
+         "implied": "some_concerns",
+         "level": "some",
+         "from": "implied"
+        },
+        {
+         "domain": "3",
+         "pass": null,
+         "judgement": null,
+         "implied": "low",
+         "level": "low",
+         "from": "implied"
+        },
+        {
+         "domain": "4",
+         "pass": null,
+         "judgement": null,
+         "implied": "some_concerns",
+         "level": "some",
+         "from": "implied"
+        },
+        {
+         "domain": "5",
+         "pass": null,
+         "judgement": null,
+         "implied": "low",
+         "level": "low",
+         "from": "implied"
+        }
+       ],
+       "overall": null,
+       "overall_implied": "some_concerns",
+       "level": "some",
+       "overall_from": "implied",
+       "source": "draft",
+       "status": "draft",
+       "origin": "ai_draft",
+       "assessors": [
+        "ai"
+       ],
+       "files": [],
+       "complete": true,
+       "rob_value": null
+      },
+      {
+       "study_id": "HART1977",
+       "label": "Hart & Sutherland 1977",
+       "weight_pct": 9.698747018920706,
+       "weight_text": "9.7%",
+       "rows": [
+        "rbcg04"
+       ],
+       "judgements": {
+        "1": "some_concerns",
+        "2": "low",
+        "3": "low",
+        "4": "low",
+        "5": "low"
+       },
+       "domains": [
+        {
+         "domain": "1",
+         "pass": null,
+         "judgement": "some_concerns",
+         "implied": "low",
+         "level": "some",
+         "from": "judgement"
+        },
+        {
+         "domain": "2",
+         "pass": null,
+         "judgement": "low",
+         "implied": "some_concerns",
+         "level": "low",
+         "from": "judgement"
+        },
+        {
+         "domain": "3",
+         "pass": null,
+         "judgement": "low",
+         "implied": "low",
+         "level": "low",
+         "from": "judgement"
+        },
+        {
+         "domain": "4",
+         "pass": null,
+         "judgement": "low",
+         "implied": "some_concerns",
+         "level": "low",
+         "from": "judgement"
+        },
+        {
+         "domain": "5",
+         "pass": null,
+         "judgement": "low",
+         "implied": "low",
+         "level": "low",
+         "from": "judgement"
+        }
+       ],
+       "overall": "some_concerns",
+       "overall_implied": "some_concerns",
+       "level": "some",
+       "overall_from": "judgement",
+       "source": "single",
+       "status": "complete",
+       "origin": "human",
+       "assessors": [
+        "SzK"
+       ],
+       "files": [],
+       "complete": true,
+       "rob_value": "some"
+      }
+     ],
+     "weighted": [
+      {
+       "level": "low",
+       "n": 0,
+       "n_implied": 0,
+       "pct": 0.0,
+       "text": "0.0%"
+      },
+      {
+       "level": "some",
+       "n": 1,
+       "n_implied": 0,
+       "pct": 9.698747018920706,
+       "text": "9.7%"
+      },
+      {
+       "level": "high",
+       "n": 0,
+       "n_implied": 0,
+       "pct": 0.0,
+       "text": "0.0%"
+      },
+      {
+       "level": "unassessed",
+       "n": 9,
+       "n_implied": 0,
+       "pct": 74.44106347154828,
+       "text": "74.4%"
+      }
+     ],
+     "high_weight_pct": 0.0,
+     "weights_source": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "total_weight_pct": 100.0
+     },
+     "unmatched_plot_rows": [
+      {
+       "row_uid": "rbcg05",
+       "study_id": null,
+       "label": "Frimodt-Moller et al 1973",
+       "weight_pct": 8.868456391242898
+      },
+      {
+       "row_uid": "rbcg06",
+       "study_id": null,
+       "label": "Stein & Aronson 1953",
+       "weight_pct": 10.0957385442391
+      },
+      {
+       "row_uid": "rbcg07",
+       "study_id": null,
+       "label": "Vandiviere et al 1973",
+       "weight_pct": 6.027181414444447
+      },
+      {
+       "row_uid": "rbcg08",
+       "study_id": null,
+       "label": "TPT Madras 1980",
+       "weight_pct": 10.189439037095692
+      },
+      {
+       "row_uid": "rbcg09",
+       "study_id": null,
+       "label": "Coetzee & Berjak 1968",
+       "weight_pct": 8.743133211638199
+      },
+      {
+       "row_uid": "rbcg10",
+       "study_id": null,
+       "label": "Rosenthal et al 1961",
+       "weight_pct": 8.367607257885874
+      },
+      {
+       "row_uid": "rbcg11",
+       "study_id": null,
+       "label": "Comstock et al 1974",
+       "weight_pct": 9.925026999811411
+      },
+      {
+       "row_uid": "rbcg12",
+       "study_id": null,
+       "label": "Comstock & Webster 1969",
+       "weight_pct": 3.8216290629895555
+      },
+      {
+       "row_uid": "rbcg13",
+       "study_id": null,
+       "label": "Comstock et al 1976",
+       "weight_pct": 8.402851552201103
+      }
+     ],
+     "notes": [
+      {
+       "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
+       "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+      },
+      {
+       "hu": "Eltérő lezárt értékelések konszenzus nélkül: ezeknél előbb egyeztess.",
+       "en": "Conflicting final appraisals without consensus: reconcile first."
+      }
+     ],
+     "source_run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "stale": false
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_aps"
+    }
+   }
+  }
+ ]
+}

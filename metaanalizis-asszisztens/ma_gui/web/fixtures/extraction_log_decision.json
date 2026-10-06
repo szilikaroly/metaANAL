@@ -1,0 +1,25 @@
+{
+ "description": "POST /api/log/decision — „Nem hiba — indoklás” (3.5.3): projekt.log_decision(agent='user', kb_refs=[V0xx]).",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/log/decision",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log-write/v1",
+    "data": {
+     "kind": "decision",
+     "id": 101,
+     "warnings": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex15"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,202 @@
+{
+ "description": "POST /api/export/audit és /api/export/snapshot — audit-ZIP (4.17) és kitakaró pillanatkép (7.6).",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/export/audit",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.export-result/v1",
+    "data": {
+     "path": "07_ellenorzes/audit/2026-10-05/bcg-oltas-audit.zip",
+     "sha256": "e3b4777777777777777777777777777777777777777777777777777777777777",
+     "bytes": 48213,
+     "deterministic": true,
+     "manifest": {
+      "schema": "szk.ma.audit-bundle/v1",
+      "project": "bcg-oltas",
+      "created": "2026-10-05T09:00:00Z",
+      "data_class": "A",
+      "redactions": [
+       {
+        "hu": "értékelők → monogram",
+        "en": "assessors → initials"
+       },
+       {
+        "hu": "eredet-idézetek ki",
+        "en": "provenance quotes removed"
+       },
+       {
+        "hu": "abszolút utak ki",
+        "en": "absolute paths removed"
+       }
+      ],
+      "files": [
+       {
+        "path": "manifest.json",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "bytes": 2310,
+        "role": "manifest"
+       },
+       {
+        "path": "07_ellenorzes/activity.jsonl",
+        "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+        "bytes": 88412,
+        "role": "activity"
+       },
+       {
+        "path": "projekt/naplo.md",
+        "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "bytes": 14022,
+        "role": "log"
+       },
+       {
+        "path": "projekt/naplo.json",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "bytes": 30110,
+        "role": "log"
+       },
+       {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "bytes": 1204,
+        "role": "spec"
+       },
+       {
+        "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+        "bytes": 1730,
+        "role": "run"
+       },
+       {
+        "path": "02_szures/prisma_flow.json",
+        "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+        "bytes": 612,
+        "role": "prisma"
+       },
+       {
+        "path": "03_adatok/studies.json",
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+        "bytes": 3301,
+        "role": "studies"
+       },
+       {
+        "path": "rerun.cmd",
+        "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+        "bytes": 640,
+        "role": "rerun"
+       },
+       {
+        "path": "rerun.sh",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 702,
+        "role": "rerun"
+       }
+      ],
+      "excluded": [
+       {
+        "pattern": "_privat/**",
+        "reason": {
+         "hu": "C osztály — soha",
+         "en": "class C — never"
+        }
+       },
+       {
+        "pattern": "**/*.pdf",
+        "reason": {
+         "hu": "D osztály — csak doc-id + oldal + sha256",
+         "en": "class D — doc id + page + sha256 only"
+        }
+       },
+       {
+        "pattern": "03_adatok/*.csv",
+        "reason": {
+         "hu": "adattábla kikapcsolva",
+         "en": "data tables switched off"
+        }
+       }
+      ],
+      "activity_head": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "rerun_scripts": [
+       "rerun.cmd",
+       "rerun.sh"
+      ],
+      "kb_snapshot": {
+       "ids": [
+        "D-S08-001",
+        "P007"
+       ],
+       "db_sha256": "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0"
+      }
+     },
+     "kind": "audit",
+     "name": "bcg-oltas-audit.zip",
+     "url": "/f/x/_export%3A07_ellenorzes%2Faudit%2F2026-10-05%2Fbcg-oltas-audit.zip/1791190000/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+     "expires_at": 1791190000
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr27"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/export/snapshot",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.export-result/v1",
+    "data": {
+     "path": "07_ellenorzes/pillanatkep/bcg-oltas-2026-10-05.snapshot.html",
+     "sha256": "9c1deeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+     "bytes": 512330,
+     "redactions": [
+      {
+       "hu": "értékelők → monogram",
+       "en": "assessors → initials"
+      },
+      {
+       "hu": "eredet-idézetek ki",
+       "en": "provenance quotes removed"
+      },
+      {
+       "hu": "abszolút utak ki",
+       "en": "absolute paths removed"
+      }
+     ],
+     "excluded": [
+      {
+       "pattern": "_privat/**",
+       "reason": {
+        "hu": "C osztály — soha",
+        "en": "class C — never"
+       }
+      },
+      {
+       "pattern": "**/*.pdf",
+       "reason": {
+        "hu": "D osztály — csak doc-id + oldal + sha256",
+        "en": "class D — doc id + page + sha256 only"
+       }
+      }
+     ],
+     "network": false,
+     "kind": "snapshot",
+     "name": "bcg-oltas-2026-10-05.snapshot.html",
+     "url": "/f/x/_export%3A07_ellenorzes%2Fpillanatkep%2Fbcg-oltas-2026-10-05.snapshot.html/1791190000/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+     "expires_at": 1791190000
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr28"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "openalex-list_429",
+  "recorded_at": "2026-10-05T11:08:26Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "VALÓS 429: listás lekérdezés kulcs nélkül, a közös napi keret elfogyott (Retry-After)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works?cursor=%2A&filter=type%3Areview%2Ccites%3AW2075477269&per_page=5&select=id%2Cdoi%2Cids%2Cdisplay_name%2Cpublication_year%2Cpublication_date%2Ctype%2Cprimary_location%2Cauthorships%2Cbiblio%2Ccited_by_count%2Cis_retracted%2Copen_access%2Creferenced_works_count",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 429,
+        "headers": {
+          "content-type": "application/json",
+          "retry-after": "46294",
+          "x-ratelimit-cost-required-usd": "0.0001",
+          "x-ratelimit-credits-required": "1",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "46294"
+        },
+        "body_json": {
+          "error": "Rate limit exceeded",
+          "message": "Insufficient budget. This request has no API key, so it counts against the free daily budget shared by everyone on your network's IP address, and that budget is used up ($0 remaining; resets at midnight UTC). Use your own key instead: add ?api_key=«redacted» to the URL, or send it as an \"Authorization: «redacted»\" header. Keys are free and have their own budget: https://help.openalex.org/api/authentication/",
+          "retryAfter": 46294,
+          "costUsd": 0.0001,
+          "dailyRemainingUsd": 0,
+          "prepaidRemainingUsd": 0,
+          "creditsRequired": 1,
+          "creditsRemaining": 0,
+          "onetimeCreditsRemaining": 0
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

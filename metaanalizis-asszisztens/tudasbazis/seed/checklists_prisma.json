@@ -1,0 +1,582 @@
+[
+ {
+  "item_id": "PRISMA2020-01",
+  "checklist": "PRISMA2020",
+  "section": "Cím",
+  "ord": 1,
+  "text": "A címből egyértelműen derüljön ki, hogy a közlemény szisztematikus áttekintés (metaanalízis esetén ez is szerepeljen).",
+  "how_to_verify": "A kézirat (06_kezirat/) címében szerepel a „systematic review” (metaanalízisnél a „meta-analysis” is); a cím összhangban van a protokoll.md 1. pont angol címével és a PROSPERO/OSF-rekorddal (az esetleges eltérés a protokoll.md 11. pontjában indokolt).",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-02",
+  "checklist": "PRISMA2020",
+  "section": "Összefoglaló",
+  "ord": 2,
+  "text": "Az absztrakt kövesse a PRISMA 2020 for Abstracts ellenőrzőlistát: a cím azonosítsa szisztematikus áttekintésként; cél; beválasztási kritériumok; információforrások (fő adatbázisok, regiszterek) az utolsó keresés dátumával; a torzítási kockázat értékelésének módja; a szintézis módszere; a bevont vizsgálatok és résztvevők száma és fő jellemzői; kimenetenként a fő eredmény (lehetőleg a vizsgálatok és résztvevők számával; metaanalízisnél összesített becslés és 95% CI; csoportok összehasonlításakor a hatás iránya); a bizonyítékok korlátai; értelmezés; finanszírozás; regisztráció (a regiszter neve és az azonosító).",
+  "how_to_verify": "Vesd össze az absztraktot (06_kezirat/) a felsorolt elemekkel: minden előre rögzített elsődleges kimenet szerepel-e becsléssel és CI-vel, a nem szignifikáns is (KB: K-MOR20-078); a számok egyeznek a 05_elemzes/*/results.json primary.estimate, primary.ci_lower, primary.ci_upper (arány-mértéknél back_transformed.estimate_ci), totals.k és totals.participants mezőivel; a regiszter neve és azonosítója = protokoll.md 1. pont; az utolsó keresés dátuma = 01_kereses/kereses_naplo.md „Keresés dátuma” oszlopának legkésőbbi értéke.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-03",
+  "checklist": "PRISMA2020",
+  "section": "Bevezetés – Indoklás",
+  "ord": 3,
+  "text": "Indokold az áttekintés szükségességét a meglévő tudás fényében: mi ismert, mi hiányzik, milyen korábbi áttekintések léteznek, és miért kell új vagy frissített szintézis.",
+  "how_to_verify": "protokoll.md 2. pont (háttér, a duplikáció-ellenőrzés eredménye: PROSPERO, Cochrane Library, PubMed felderítő keresés) → a kézirat Introduction része; a korábbi áttekintések hivatkozásai PubMed/DOI alapján ellenőrzöttek.",
+  "stage_id": "S01",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-04",
+  "checklist": "PRISMA2020",
+  "section": "Bevezetés – Célkitűzések",
+  "ord": 4,
+  "text": "Fogalmazd meg kifejezetten az áttekintés célját vagy kérdéseit, lehetőleg a PICO elemeivel (populáció, beavatkozás/expozíció, összehasonlítás, kimenetek).",
+  "how_to_verify": "protokoll.md 3. pont (PICO-táblázat) ↔ a kézirat Introduction-jének célkitűzése ↔ a projektnaplóban rögzített kérdés (`ma.py project status <mappa>`) ↔ a regisztrációs rekord; eltérés csak a protokoll.md 11. pontjában dokumentálva.",
+  "stage_id": "S01",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-05",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Beválasztási kritériumok",
+  "ord": 5,
+  "text": "Add meg a be- és kizárási kritériumokat (vizsgálattípus, populáció, beavatkozás és összehasonlítás, kimenet, nyelv, időszak, közlési forma), és azt is, hogyan soroltad csoportokba a vizsgálatokat az egyes szintézisekhez.",
+  "how_to_verify": "protokoll.md 4. pont (kritériumok) és 9. pont (tervezett összehasonlítások, csoportosítás) ↔ a kézirat Methods része; nyelvi vagy közlési státusz szerinti korlátozás csak indoklással (KB: K-SIM24-011); utólagos változtatás a protokoll.md 11. pontjában.",
+  "stage_id": "S02",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-06",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Információforrások",
+  "ord": 6,
+  "text": "Sorold fel az összes átkutatott vagy megkeresett forrást (bibliográfiai adatbázisok, vizsgálati regiszterek, weboldalak, szervezetek, hivatkozáslisták, szakértők stb.), és mindegyiknél add meg, mikor kerested vagy konzultáltad utoljára.",
+  "how_to_verify": "01_kereses/kereses_naplo.md táblázata: minden forrás (a regiszterek és a hivatkozás-követés is) külön sorban, kitöltött „Forrás”, „Felület / platform” és „Keresés dátuma” oszloppal; a protokoll.md 5. pontjához képesti eltérés dokumentált. Részletes keresési jelentés: `ma.py kb checklist PRISMA_S`. KB: K-SIM24-013, K-KHA26-014.",
+  "stage_id": "S03",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-07",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Keresési stratégia",
+  "ord": 7,
+  "text": "Közöld az összes adatbázis, regiszter és weboldal teljes keresési stratégiáját pontosan úgy, ahogyan lefuttattad, az alkalmazott szűrőkkel és korlátozásokkal együtt.",
+  "how_to_verify": "01_kereses/kereses_naplo.md „Stratégia (fájl vagy sor)” oszlopa minden forrásnál létező fájlra mutat (pl. 01_kereses/strategia_pubmed.txt), a „Szűrők / korlátozások” oszlop kitöltött; a stratégiák szó szerint a kiegészítő anyagban; a szintaxis (zárójelek, csonkolás, mezőkódok) ellenőrzése a ma-ellenorzo S03 checkpointjában (`ma.py project list <mappa> checkpoints --stage S03`). KB: K-SIM24-021, K-KHA26-012.",
+  "stage_id": "S03",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-08",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Kiválasztási folyamat",
+  "ord": 8,
+  "text": "Írd le, hogyan döntöttétek el, hogy egy vizsgálat megfelel-e a kritériumoknak: hány bíráló szűrt minden rekordot (cím/absztrakt) és minden beszerzett teljes szöveget, egymástól függetlenül dolgoztak-e, hogyan oldották fel az eltéréseket, és ha automatizálási vagy MI-eszközt használtatok, annak részleteit (melyik eszköz, mire, hogyan ellenőriztétek).",
+  "how_to_verify": "protokoll.md 6. pont (szoftver, két független szűrő, egyeztetés) és a szűrőszoftver (Rayyan/Covidence) exportja; az automatizálás/MI használata a 00_protokoll/eszkozok_hozzaferesek.md-ben és a projektnaplóban (`ma.py project list <mappa> decisions --stage S04`); a végső be-/kizárásról minden rekordnál ember döntött. KB: K-SIM24-023, K-KHA26-037, K-KHA26-039, K-KHA26-077.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-09",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Adatgyűjtési folyamat",
+  "ord": 9,
+  "text": "Írd le az adatkinyerés módját: hány kinyerő dolgozott közleményenként, egymástól függetlenül-e, hogyan egyeztettek, hogyan kértetek vagy erősítettetek meg adatot a vizsgálatok szerzőitől, és ha automatizálási vagy MI-eszközt használtatok, annak részleteit.",
+  "how_to_verify": "protokoll.md 7. pont; a 03_adatok/adatkinyeres.csv „forras_oldal” oszlopa minden sorban kitöltött (oldal/táblázat); a kettős kinyerés és az egyeztetés naplózva (`ma.py project list <mappa> decisions --stage S05`); a szerzői megkeresések a „megjegyzes” oszlopban; MI-javaslat esetén minden értéket ember ellenőrzött a forrásban. KB: K-SIM24-029, K-KHA26-048.",
+  "stage_id": "S05",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-10a",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Adattételek",
+  "ord": 10,
+  "text": "Sorold fel és definiáld az összes kimenetet, amelyre adatot gyűjtöttetek. Add meg, hogy egy vizsgálatból minden, a kimeneti doménbe illő eredményt (minden mérőeszközt, időpontot, elemzést) összegyűjtöttetek-e, és ha nem, milyen szabály szerint választottatok közülük.",
+  "how_to_verify": "protokoll.md 3. pont (kimenet-definíció: mérőeszköz, skála, időpont) és 9. pont (irány-konvenció); a 00_protokoll/elemzesi_terv.md előre rögzített kiválasztási szabálya több időpont/mérőeszköz esetére; a 03_adatok/adatkinyeres.csv csak e szabály szerint választott eredményt tartalmaz, az eltérés a protokoll.md 11. pontjában.",
+  "stage_id": "S05",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-10b",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Adattételek",
+  "ord": 11,
+  "text": "Sorold fel és definiáld a többi gyűjtött változót (pl. a résztvevők és a beavatkozás jellemzői, környezet, finanszírozási forrás), és írd le, milyen feltételezésekkel kezelted a hiányzó vagy tisztázatlan információt.",
+  "how_to_verify": "A 03_adatok/adatkinyeres.csv oszlopai és a kinyerő űrlap leírása (protokoll.md 7. pont); a becsült/imputált érték „estimated=igen” jelöléssel és a módszerrel a „megjegyzes” oszlopban; `ma.py validate --data 03_adatok/adatkinyeres.csv --measure <M>` V018 tétele (becsült értékek) kezelve. KB: K-MOR20-077 (finanszírozás mint adattétel).",
+  "stage_id": "S05",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-11",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Torzítási kockázat értékelése",
+  "ord": 12,
+  "text": "Írd le, hogyan értékelted a bevont vizsgálatok torzítási kockázatát: melyik eszközzel (pl. RoB 2, ROBINS-I) és miért, hány értékelő vizsgált minden vizsgálatot, függetlenül dolgoztak-e, hogyan egyeztettek, és ha volt, az automatizálási eszköz részleteit.",
+  "how_to_verify": "protokoll.md 8. pont (eszköz és indoklás a vizsgálattípus szerint); a 04_torzitas_kockazat/rob.csv „eszkoz”, doménoszlopai, „ertekelo1”, „ertekelo2” és „egyeztetes” oszlopa minden sorban kitöltött; a 03_adatok/adatkinyeres.csv „rob” oszlopa egyezik a rob.csv „osszesitett” oszlopával.",
+  "stage_id": "S06",
+  "source_ids": "prisma2020,rob2,robins_i"
+ },
+ {
+  "item_id": "PRISMA2020-12",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Hatásmértékek",
+  "ord": 13,
+  "text": "Kimenetenként add meg, milyen hatásmértéket használtál a szintézisben vagy az eredmények bemutatásában (pl. kockázati arány, esélyhányados, átlagkülönbség, standardizált átlagkülönbség a változat megnevezésével), és milyen irány-konvencióval.",
+  "how_to_verify": "protokoll.md 9. pont (hatásméret, irány-konvenció) ↔ 05_elemzes/*/results.json options.measure és effect_sizes.label (SMD-nél options.smd_vtype is); a report.md „Methods (angol, kéziratba)” bekezdése a mértéket megnevezi. KB: K-MOR20-077.",
+  "stage_id": "S07",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-13a",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Szintézis módszerei",
+  "ord": 14,
+  "text": "Írd le, hogyan döntötted el, mely vizsgálatok kerülnek az egyes szintézisekbe (pl. a vizsgálatok beavatkozás- és egyéb jellemzőinek táblázatba rendezése és összevetése az 5. tételben tervezett csoportosítással).",
+  "how_to_verify": "A 00_protokoll/elemzesi_terv.md tervezett összehasonlításai ↔ a vizsgálati jellemzők táblázata; kimenetenként külön 05_elemzes/<kimenet>/ futás: a results.json effect_sizes.labels a bevont, effect_sizes.excluded a kihagyott vizsgálatokat (okkal) mutatja, az input.filters a sorszűrőket (--include/--exclude).",
+  "stage_id": "S08",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-13b",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Szintézis módszerei",
+  "ord": 15,
+  "text": "Írd le az adatok szintézishez vagy bemutatáshoz szükséges előkészítését: a hiányzó összesítő statisztikák kezelését (pl. szerzői megkeresés), a konverziókat (pl. medián/IQR → átlag/SD Luo 2018 és Wan 2014 szerint, SE/CI → SD, csoportok összevonása, változás-SD imputált korrelációval), a többkarú vizsgálatok és a közös kontrollkar kezelését, valamint a nulla cellák folytonossági korrekcióját.",
+  "how_to_verify": "protokoll.md 7. pont; minden konverzió `ma.py convert median|se|ci|se-from-ci|combine|change …` paranccsal készült, és a 03_adatok/adatkinyeres.csv „estimated=igen” + „megjegyzes” oszlopa jelöli a módszerrel; a `ma.py validate` V011 (SD helyett SE gyanúja), V013 (ferde eloszlás — a medián/IQR-konverzió közel normális eloszlást feltételez), V017 (közös kontrollkar) és V018 (becsült érték) tételei kezelve; folytonossági korrekció: results.json options.cc, options.cc_to, effect_sizes.corrected. KB: K-MOR20-077.",
+  "stage_id": "S05",
+  "source_ids": "prisma2020,luo2018,wan2014"
+ },
+ {
+  "item_id": "PRISMA2020-13c",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Szintézis módszerei",
+  "ord": 16,
+  "text": "Írd le, hogyan jelenítetted meg táblázatban vagy ábrán az egyes vizsgálatok és a szintézisek eredményeit (pl. forest plot és annak rendezési szempontja, a vizsgálati jellemzők táblázata).",
+  "how_to_verify": "05_elemzes/*/forest.svg (vizsgálatonkénti becslés és CI, összesített becslés, predikciós intervallum) és effect_sizes.csv; a rendezés és a tengelyfeliratok (--left-label / --right-label) a Methods-ban leírva; a vizsgálati jellemzők táblázata a kéziratban (06_kezirat/).",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-13d",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Szintézis módszerei",
+  "ord": 17,
+  "text": "Írd le és indokold a szintézis módszerét. Metaanalízisnél add meg a modellt (közös vagy véletlen hatású) és választásának előre rögzített, fogalmi (nem heterogenitás-teszten alapuló) indoklását, a τ²-becslőt, a CI-módszert (pl. HKSJ), a predikciós intervallum számítását, ritka eseményeknél a módszert (pl. Mantel–Haenszel, Peto), a statisztikai heterogenitás kimutatásának és számszerűsítésének módszereit (Q, I² a CI-jével, τ²), valamint a szoftvert és verzióját. Ha metaanalízis nem volt végezhető, az alkalmazott egyéb szintézismódszert (a SWiM-irányelv szerint; statisztikai szignifikancia szerinti szavazatszámlálás nem elfogadható).",
+  "how_to_verify": "protokoll.md 9. pont és 00_protokoll/elemzesi_terv.md (előre rögzített modell) ↔ results.json options.model, primary.tau2_method, primary.ci_method, primary.pi_method, options.mh / options.peto, engine.version, valamint a report.md „Methods (angol, kéziratba)” bekezdése; a ténylegesen használt beállítások (a motor alapértékei is: REML, random → HKSJ, PI t_k-2) név szerint szerepelnek a kéziratban. A modellválasztás indoka nem lehet a Q-teszt szignifikanciája vagy egy I²-küszöb (jelenlegi konszenzus, Cochrane Handbook v6.5; KB: K-CHE16-039, K-KHN0304-030, K-BOR07-044); összesítés nélküli szintézisnél a SWiM-elemek (KB: K-KHN0102-084).",
+  "stage_id": "S08",
+  "source_ids": "prisma2020,cochrane_handbook,swim2020"
+ },
+ {
+  "item_id": "PRISMA2020-13e",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Szintézis módszerei",
+  "ord": 18,
+  "text": "Írd le, milyen módszerekkel kerested a vizsgálati eredmények közötti heterogenitás lehetséges okait (pl. alcsoport-elemzés, meta-regresszió), mely moderátorok voltak előre tervezettek (indoklással) és melyek utólagosak.",
+  "how_to_verify": "protokoll.md 9. pont (előre tervezett alcsoportok/moderátorok) ↔ results.json options.subgroup, options.moderators, options.common_tau2, options.metareg_test; az utólagos (post hoc) elemzés a protokoll.md 11. pontjában jelölve. KB: K-ZHA22-055.",
+  "stage_id": "S10",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-13f",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Szintézis módszerei",
+  "ord": 19,
+  "text": "Írd le az összesített eredmények robusztusságát vizsgáló érzékenységi elemzéseket (pl. a magas torzítási kockázatú vagy becsült adatú vizsgálatok kizárása, közös vs véletlen hatású modell, másik τ²-becslő, leave-one-out).",
+  "how_to_verify": "A protokoll.md 9. pontjában felsorolt érzékenységi elemzések ↔ külön futások (pl. `ma.py analyze … --exclude rob=high`, `--exclude estimated=igen`, `--model fixed`, `--tau2 PM`) külön 05_elemzes/<kimenet>_<érzékenység>/ mappában, a results.json input.filters és options mezőivel; az elsődleges futás sensitivity.leave_one_out és sensitivity.influence blokkja; a `ma.py validate` V018/V019 által jelzett (becsült adatú, magas RoB-ú) vizsgálatokra van érzékenységi futás. KB: K-MOR20-062.",
+  "stage_id": "S12",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-14",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – Közlési torzítás értékelése",
+  "ord": 20,
+  "text": "Írd le, hogyan értékelted a szintézisből hiányzó (közlési torzítás miatt el nem érhető) eredmények okozta torzítás kockázatát: pl. strukturált értékelés (Cochrane Handbook 13. fejezet, ROB-ME), a regiszterekben talált, nem közölt vizsgálatok és kimenetek összevetése, kontúr-javított funnel plot, és csak elegendő vizsgálatszámnál (jellemzően k ≥ 10, nem túl hasonló méretű vizsgálatok mellett, arányok metaanalízisénél nem) a kimenethez illő aszimmetria-teszt (folytonos kimenet: Egger; bináris kimenet/esélyhányados: Harbord vagy Peters).",
+  "how_to_verify": "protokoll.md 9. pont („Kis-vizsgálat hatások”) ↔ results.json bias.performed, bias.k, bias.min_k_recommended és a megnevezett teszt (bias.egger / bias.harbord / bias.peters), 05_elemzes/*/funnel.svg. A fail-safe N nem elfogadható módszer, a trim-and-fill csak érzékenységi jelzés, a Doi-plot/LFK-index (bias.lfk) legfeljebb kiegészítő, nem helyettesíti a fentieket; SMD-nél az Egger-teszt álpozitív lehet (jelenlegi konszenzus; KB: K-SIM24-064, K-BOR09-059, K-BOR09-058, K-KHN1113-055, K-KHN1113-059, K-MOR20-057).",
+  "stage_id": "S11",
+  "source_ids": "prisma2020,cochrane_handbook,sterne2011"
+ },
+ {
+  "item_id": "PRISMA2020-15",
+  "checklist": "PRISMA2020",
+  "section": "Módszerek – A bizonyosság értékelése",
+  "ord": 21,
+  "text": "Írd le, milyen módszerrel értékelted kimenetenként a bizonyítékok bizonyosságát (pl. GRADE: kiindulási szint, a leminősítés öt szempontja — torzítási kockázat, inkonzisztencia, indirektség, pontatlanság, publikációs torzítás — és a felminősítés szempontjai).",
+  "how_to_verify": "protokoll.md 10. pont ↔ a kézirat Methods része; a ma-ertekelo a `ma.py kb checklist GRADE` szerint dolgozott; a `ma.py project list <mappa> grades` minden Summary of Findings-kimenetre tartalmaz ítéletet. KB: K-MOR20-062.",
+  "stage_id": "S13",
+  "source_ids": "prisma2020,grade_handbook"
+ },
+ {
+  "item_id": "PRISMA2020-16a",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Vizsgálatok kiválasztása",
+  "ord": 22,
+  "text": "Mutasd be a keresés és a kiválasztás eredményét az azonosított rekordok számától a bevont vizsgálatok számáig, lehetőleg PRISMA 2020 folyamatábrával, a jelentéseket (közleményeket) és a vizsgálatokat külön számolva.",
+  "how_to_verify": "`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` hibakód nélkül fut (P-kódú hiba nincs); 02_szures/prisma_folyamat.md: B = A1 + A2 − D1 − D2 − D3; E = B − C; G = E − F; J = G − H (+ egyéb módszerek ága); I ≤ J; a kizárási okok összege = H; A1 és A2 = a 01_kereses/kereses_naplo.md „Találatok” oszlopának adatbázis-, illetve regiszter-sorainak összege; a PRISMA 2020 (nem a 2009-es) sablon. KB: K-MOR20-076, K-SIM24-026, K-KHA26-036.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-16b",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Vizsgálatok kiválasztása",
+  "ord": 23,
+  "text": "Hivatkozz azokra a vizsgálatokra, amelyek látszólag megfeleltek a beválasztási kritériumoknak, mégis kizártad őket, és mindegyiknél add meg a kizárás okát.",
+  "how_to_verify": "Kiegészítő táblázat a teljes szövegben kizárt, „majdnem bevont” vizsgálatokról: hivatkozás + konkrét kizárási ok (a szűrőszoftver exportjából); az okonkénti számok összege = 02_szures/prisma_folyamat.md H (`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md --reasons 'ok A: n; ok B: n'`, P007/P008 nélkül). KB: K-KHA26-041, K-KHA26-042, K-KHA26-075.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-17",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Vizsgálatok jellemzői",
+  "ord": 24,
+  "text": "Hivatkozz minden bevont vizsgálatra, és mutasd be a főbb jellemzőit (pl. elrendezés, ország, populáció, mintanagyság, beavatkozás és kontroll, követési idő, kimenetek, finanszírozás).",
+  "how_to_verify": "A kézirat (06_kezirat/) vizsgálati jellemzők táblázata: a 02_szures/prisma_folyamat.md szerinti minden bevont vizsgálat (I) szerepel hivatkozással; az adatok a 03_adatok/adatkinyeres.csv-ből; a szövegben közölt résztvevő-összeg egyezik a táblázattal (ellenpélda: KB: K-MOR20-082).",
+  "stage_id": "S05",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-18",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Torzítási kockázat a vizsgálatokban",
+  "ord": 25,
+  "text": "Mutasd be minden bevont vizsgálat torzítási kockázatának értékelését (doménenként és összesítve, lehetőleg indoklással).",
+  "how_to_verify": "A 04_torzitas_kockazat/rob.csv minden bevont vizsgálatra (doménenként + „osszesitett”) → kiegészítő táblázat vagy doménenkénti ábra a kéziratban; a vizsgálatok listája egyezik a bevontakéval (02_szures/prisma_folyamat.md I).",
+  "stage_id": "S06",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-19",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Egyes vizsgálatok eredményei",
+  "ord": 26,
+  "text": "Minden kimenetre és minden vizsgálatra add meg (a) csoportonként az összesítő statisztikákat, ahol értelmezhető (pl. eseményszám és létszám, vagy átlag, SD és n), és (b) a hatásbecslést a pontosságával (pl. 95% CI), lehetőleg strukturált táblázatban vagy ábrán.",
+  "how_to_verify": "05_elemzes/*/effect_sizes.csv és forest.svg minden kimenetre; a csoportstatisztikák a 03_adatok/adatkinyeres.csv-ből (m1, sd1, n1, m2, sd2, n2 vagy e1, n1, e2, n2) a kiegészítő anyagban; a forest plot a fő szövegben vagy a kiegészítésben. KB: K-MOR20-077.",
+  "stage_id": "S07",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-20a",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Szintézisek eredményei",
+  "ord": 27,
+  "text": "Minden szintézisnél foglald össze röviden a hozzájáruló vizsgálatok jellemzőit és torzítási kockázatát.",
+  "how_to_verify": "Kimenetenként results.json totals.k és totals.participants; a magas torzítási kockázatú vizsgálatok aránya (04_torzitas_kockazat/rob.csv „osszesitett”; `ma.py validate` V019) → az Eredmények szövegében vagy a 06_kezirat/grade_sof.md lábjegyzetében.",
+  "stage_id": "S08",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-20b",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Szintézisek eredményei",
+  "ord": 28,
+  "text": "Mutasd be az összes elvégzett statisztikai szintézis eredményét: metaanalízisnél az összesített becslést a pontosságával (95% CI) és a statisztikai heterogenitás mérőszámait (τ², I² a CI-jével, Q, df, p); véletlen hatású modellnél a predikciós intervallumot is (Cochrane-ajánlás, a PRISMA nem írja elő); csoportok összehasonlításakor nevezd meg a hatás irányát.",
+  "how_to_verify": "05_elemzes/*/report.md „Fő eredmény” táblázata ↔ results.json primary.estimate, primary.ci_lower, primary.ci_upper (arány-mértéknél back_transformed.estimate_ci), primary.pi_lower / primary.pi_upper (back_transformed.pi), primary.tau2, primary.Q, primary.Q_df, primary.p_Q, primary.heterogeneity.I2_ci_QP, totals.k; a kézirat minden száma egyezik ezekkel. Az I²-t ne merev küszöbök alapján minősítsd: a Cochrane átfedő sávjait τ²-tel és a predikciós intervallummal együtt értelmezd, kis k mellett az I² nagyon bizonytalan. KB: K-MOR20-043, K-MOR20-047, K-ZHA22-052, K-CHE16-049, K-KHN0102-056.",
+  "stage_id": "S08",
+  "source_ids": "prisma2020,cochrane_handbook,inthout2016"
+ },
+ {
+  "item_id": "PRISMA2020-20c",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Szintézisek eredményei",
+  "ord": 29,
+  "text": "Mutasd be a heterogenitás lehetséges okait vizsgáló összes elemzés (alcsoport-elemzés, meta-regresszió) eredményét — a nem szignifikánsakat is —, az alcsoportonkénti becslésekkel és a csoportkülönbség tesztjével, illetve a meta-regressziós együtthatókkal; az alcsoportok közötti különbségről csak a különbség tesztje alapján nyilatkozz, ne az alcsoportonkénti p-értékek összevetéséből.",
+  "how_to_verify": "report.md „Alcsoport-elemzés” / „Meta-regresszió” szakasza ↔ results.json subgroups.groups, subgroups.Q_between, subgroups.df_between, subgroups.p_between, illetve metaregression.coefficients, metaregression.QM_p, metaregression.R2; a protokoll.md 9. pontjában tervezett minden moderátor eredménye szerepel, az utólagosak post hoc jelöléssel. KB: K-MOR20-050, K-SIM24-062.",
+  "stage_id": "S10",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-20d",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Szintézisek eredményei",
+  "ord": 30,
+  "text": "Mutasd be az összes érzékenységi elemzés eredményét, és jelezd, változott-e a következtetés.",
+  "how_to_verify": "A protokoll szerinti minden érzékenységi futás 05_elemzes/<kimenet>_<érzékenység>/results.json primary.estimate és CI-je táblázatban az elsődleges eredmény mellett; leave-one-out és befolyásos vizsgálatok: report.md „Érzékenységi elemzés”, results.json sensitivity.leave_one_out, sensitivity.influence; a közös hatású modell: results.json fixed.",
+  "stage_id": "S12",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-21",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – Közlési torzítások",
+  "ord": 31,
+  "text": "Minden értékelt szintézisre mutasd be a hiányzó eredmények (közlési torzítás) miatti torzítási kockázat értékelését; tesztnél a statisztikát és a p-értéket is. Kevés vizsgálatnál mondd ki, hogy a kis-vizsgálat hatások megbízhatóan nem értékelhetők.",
+  "how_to_verify": "report.md „Kis-vizsgálat hatások / publikációs torzítás” szakasza és funnel.svg ↔ results.json bias.* (ha bias.k < bias.min_k_recommended, a tesztet nem értelmezzük; `ma.py validate` V016); a megfogalmazás „nem találtunk bizonyítékot kis-vizsgálat hatásra”, nem „nincs publikációs torzítás”; az aszimmetria nem azonos a publikációs torzítással (heterogenitás, véletlen is okozhatja); a bias.lfk és a trim-and-fill legfeljebb érzékenységi kiegészítés; az ítélet bekerül a GRADE publikációs torzítás doménjébe. KB: K-MOR20-056, K-KHN1113-088, K-ZHA22-065, K-ZHA22-069.",
+  "stage_id": "S11",
+  "source_ids": "prisma2020,sterne2011,cochrane_handbook"
+ },
+ {
+  "item_id": "PRISMA2020-22",
+  "checklist": "PRISMA2020",
+  "section": "Eredmények – A bizonyítékok bizonyossága",
+  "ord": 32,
+  "text": "Kimenetenként mutasd be a bizonyítékok bizonyosságának értékelését (pl. GRADE: magas, mérsékelt, alacsony, nagyon alacsony) a leminősítések indoklásával, lehetőleg Summary of Findings táblázatban.",
+  "how_to_verify": "06_kezirat/grade_sof.md minden elsődleges kimenetre kitöltve, leminősítési lábjegyzetekkel ↔ `ma.py project list <mappa> grades`; a következtetések nyelvezete a bizonyossághoz igazodik.",
+  "stage_id": "S13",
+  "source_ids": "prisma2020,grade_handbook"
+ },
+ {
+  "item_id": "PRISMA2020-23a",
+  "checklist": "PRISMA2020",
+  "section": "Megbeszélés",
+  "ord": 33,
+  "text": "Értelmezd általánosan az eredményeket más bizonyítékok (pl. korábbi áttekintések, nagy vizsgálatok) összefüggésében.",
+  "how_to_verify": "A kézirat Discussion része; a következtetések erőssége megfelel a GRADE-bizonyosságnak (06_kezirat/grade_sof.md „GRADE-nyelvezet”); megfigyeléses adatnál nem oksági nyelvezet; a hivatkozások PubMed/DOI alapján ellenőrzöttek.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-23b",
+  "checklist": "PRISMA2020",
+  "section": "Megbeszélés",
+  "ord": 34,
+  "text": "Tárgyald a bevont bizonyítékok korlátait (pl. torzítási kockázat, inkonzisztencia, pontatlanság, indirektség, hiányzó eredmények).",
+  "how_to_verify": "A Discussion korlátokról szóló része ↔ a 06_kezirat/grade_sof.md leminősítési indoklásai (a–e) és a `ma.py project list <mappa> grades` indoklásai.",
+  "stage_id": "S13",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-23c",
+  "checklist": "PRISMA2020",
+  "section": "Megbeszélés",
+  "ord": 35,
+  "text": "Tárgyald az áttekintés folyamatának korlátait (pl. keresési korlátozások, egy bírálóval végzett lépések, eltérések a protokolltól, automatizálás vagy MI használata, a hiányzó adatok kezelése).",
+  "how_to_verify": "protokoll.md 11. pont (eltérések), 01_kereses/kereses_naplo.md „Szűrők / korlátozások” oszlopa, a projektnapló döntései és lezárt megállapításai (`ma.py project export <mappa>` → 07_ellenorzes/dontesi_naplo.md) → mind megjelenik a Discussion-ben.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-23d",
+  "checklist": "PRISMA2020",
+  "section": "Megbeszélés",
+  "ord": 36,
+  "text": "Tárgyald az eredmények következményeit a klinikai gyakorlatra, az egészségpolitikára és a további kutatásra.",
+  "how_to_verify": "A Discussion/Conclusions része: a gyakorlati üzenet nem erősebb, mint a GRADE-bizonyosság (06_kezirat/grade_sof.md); a kutatási javaslatok konkrét bizonyítékhiányokra (pl. pontatlanság, hiányzó kimenetek, alulreprezentált populációk) épülnek.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-24a",
+  "checklist": "PRISMA2020",
+  "section": "Egyéb információk – Regisztráció és protokoll",
+  "ord": 37,
+  "text": "Add meg az áttekintés regisztrációs adatait (a regiszter neve, pl. PROSPERO vagy OSF, és az azonosító), vagy jelentsd ki, hogy nem regisztráltátok.",
+  "how_to_verify": "protokoll.md 1. pont „Regisztráció (PROSPERO/OSF azonosító, dátum)”; ellenőrizd, hogy a regisztráció dátuma megelőzi-e a szűrés kezdetét (ha nem, a kéziratban jelezni kell); ugyanez az azonosító áll az absztraktban és a Methods-ban. KB: K-MOR20-006, K-MOR20-007.",
+  "stage_id": "S02",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-24b",
+  "checklist": "PRISMA2020",
+  "section": "Egyéb információk – Regisztráció és protokoll",
+  "ord": 38,
+  "text": "Jelöld meg, hol érhető el az áttekintés protokollja (pl. regisztrációs rekord, közölt protokoll, kiegészítő anyag), vagy jelentsd ki, hogy protokoll nem készült.",
+  "how_to_verify": "A Methods hivatkozik a 00_protokoll/protokoll.md jóváhagyott, a keresés előtt rögzített változatának elérhetőségére (regisztrációs rekord / OSF / kiegészítő anyag); a protokoll-ellenőrzés naplózva (`ma.py project list <mappa> checkpoints --stage S02`). KB: K-ZHA22-012.",
+  "stage_id": "S02",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-24c",
+  "checklist": "PRISMA2020",
+  "section": "Egyéb információk – Regisztráció és protokoll",
+  "ord": 39,
+  "text": "Írd le és indokold a regisztrációban vagy a protokollban rögzítettekhez képest végrehajtott összes módosítást.",
+  "how_to_verify": "protokoll.md 11. pont táblázata (dátum, módosítás, indoklás, döntés-ID) ↔ `ma.py project list <mappa> decisions`; a Methods vagy a kiegészítő anyag minden eltérést felsorol; a fő elemzésben dokumentálatlan eltérés blocker-szintű megállapítás.",
+  "stage_id": "S02",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-25",
+  "checklist": "PRISMA2020",
+  "section": "Egyéb információk – Támogatás",
+  "ord": 40,
+  "text": "Írd le az áttekintés anyagi és nem anyagi támogatásának forrásait, valamint a finanszírozók vagy szponzorok szerepét az áttekintésben (vagy azt, hogy nem volt szerepük).",
+  "how_to_verify": "protokoll.md 1. pont „Finanszírozás, összeférhetetlenség” ↔ a kézirat Funding-nyilatkozata (06_kezirat/); a finanszírozó szerepe kifejezetten megnevezve.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-26",
+  "checklist": "PRISMA2020",
+  "section": "Egyéb információk – Összeférhetetlenség",
+  "ord": 41,
+  "text": "Nyilatkozz az áttekintés szerzőinek minden versengő érdekeltségéről (pl. ha egy szerző bevont vizsgálat szerzője, vagy ipari kapcsolata van).",
+  "how_to_verify": "protokoll.md 1. pont ↔ a kézirat Competing interests nyilatkozata (06_kezirat/); minden szerzőre kiterjed, és egyezik a protokollban rögzítettel.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA2020-27",
+  "checklist": "PRISMA2020",
+  "section": "Egyéb információk – Adatok, kód és egyéb anyagok elérhetősége",
+  "ord": 42,
+  "text": "Jelezd, mely anyagok nyilvánosan elérhetők és hol: az adatgyűjtő űrlapsablonok, a vizsgálatokból kinyert adatok, az összes elemzéshez felhasznált adat, az elemző kód és az áttekintés egyéb anyagai.",
+  "how_to_verify": "Data availability nyilatkozat ↔ a megosztott fájlok: 03_adatok/adatkinyeres.csv (és az űrlapsablon), 04_torzitas_kockazat/rob.csv, 05_elemzes/*/results.json és effect_sizes.csv (a futtatás beállításai: options, engine.version), a futtatott parancsok (`ma.py project list <mappa> runs`: parancs, adat-SHA256, kimeneti mappa), 07_ellenorzes/dontesi_naplo.md (`ma.py project export <mappa>`); betegazonosításra alkalmas adat nem lehet benne. KB: K-MOR20-077, K-CHE16-072.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020"
+ },
+ {
+  "item_id": "PRISMA_S-01",
+  "checklist": "PRISMA_S",
+  "section": "Információforrások és módszerek",
+  "ord": 1,
+  "text": "Nevezd meg külön-külön az összes átkutatott adatbázist, és mindegyiknél azt a felületet (platformot), amelyen kerestél (pl. MEDLINE PubMeden vagy Ovidon keresztül).",
+  "how_to_verify": "01_kereses/kereses_naplo.md: minden adatbázis külön sorban, kitöltött „Forrás” és „Felület / platform” oszloppal; konnektoron vagy API-n (pl. PubMed MCP, NCBI E-utilities) futtatott keresésnél ez is a „Felület / platform” oszlopban.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-02",
+  "checklist": "PRISMA_S",
+  "section": "Információforrások és módszerek",
+  "ord": 2,
+  "text": "Ha egy platformon egyszerre több adatbázisban kerestél, nevezd meg a platformot, és sorold fel az összes így átkutatott adatbázist.",
+  "how_to_verify": "kereses_naplo.md „Felület / platform” és „Megjegyzés” oszlopa: a platform és a kiválasztott összes adatbázis (pl. a Web of Science-on belül a ténylegesen keresett indexek) felsorolva; a „Web of Science / Scopus” sorban egyértelmű, melyiket használtad.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-03",
+  "checklist": "PRISMA_S",
+  "section": "Információforrások és módszerek",
+  "ord": 3,
+  "text": "Sorold fel az összes átkutatott vizsgálati regisztert (pl. ClinicalTrials.gov, WHO ICTRP).",
+  "how_to_verify": "kereses_naplo.md ClinicalTrials.gov és WHO ICTRP sora (és minden további regiszteré) dátummal és találatszámmal; ha regiszterben nem kerestél, ennek indoka a protokoll.md 5. pontjában. KB: K-KHN1113-002.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-04",
+  "checklist": "PRISMA_S",
+  "section": "Információforrások és módszerek",
+  "ord": 4,
+  "text": "Írd le, milyen online vagy nyomtatott forrást kerestél vagy böngésztél célzottan (pl. folyóiratok tartalomjegyzékei, konferenciakötetek, szervezetek vagy hatóságok weboldalai), és hogyan.",
+  "how_to_verify": "kereses_naplo.md: minden weboldal vagy kézi böngészés külön sorban, a „Stratégia (fájl vagy sor)” oszlopban a kifejezésekkel vagy a böngészés módjával, a „Keresés dátuma” oszlopban a dátummal.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-05",
+  "checklist": "PRISMA_S",
+  "section": "Információforrások és módszerek",
+  "ord": 5,
+  "text": "Jelezd, átnézted-e a bevont vizsgálatok hivatkozásait (visszafelé) és az őket idéző közleményeket (előre), és írd le a módszert (pl. hivatkozáslisták átnézése, hivatkozási index vagy eszköz, értesítők a bevont vizsgálatokat idéző új közleményekről).",
+  "how_to_verify": "kereses_naplo.md „Hivatkozás-követés (előre/hátra)” sora: a használt index vagy eszköz (pl. Google Scholar „Cited by”, Litmaps), dátum, találatszám; az így talált rekordok a 02_szures/prisma_folyamat.md egyéb módszerek ágában. KB: K-KHA26-014.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-06",
+  "checklist": "PRISMA_S",
+  "section": "Információforrások és módszerek",
+  "ord": 6,
+  "text": "Jelezd, kerestél-e további vizsgálatokat vagy adatokat szerzők, szakértők, gyártók vagy más szereplők megkeresésével.",
+  "how_to_verify": "kereses_naplo.md külön sor a szerzői/szakértői megkeresésekre (kit, mikor, milyen eredménnyel); a kapott adatkiegészítés a 03_adatok/adatkinyeres.csv „megjegyzes” oszlopában.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-07",
+  "checklist": "PRISMA_S",
+  "section": "Információforrások és módszerek",
+  "ord": 7,
+  "text": "Írd le az összes további információforrást vagy keresési módszert, amelyet használtál (pl. MI-alapú vagy szemantikus keresők, hasonlósági gráfok).",
+  "how_to_verify": "kereses_naplo.md további sorai; MI-eszköz (pl. Consensus, Elicit) csak kiegészítő forrásként, az eszköz nevével, dátummal és a lekérdezéssel naplózva (00_protokoll/eszkozok_hozzaferesek.md is); az MI-keresés nem helyettesíti a reprodukálható adatbázis-keresést. KB: K-KHA26-013.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-08",
+  "checklist": "PRISMA_S",
+  "section": "Keresési stratégiák",
+  "ord": 8,
+  "text": "Közöld minden adatbázis és egyéb információforrás keresési stratégiáját pontosan úgy, ahogyan lefuttattad (bemásolva, nem utólag átírva).",
+  "how_to_verify": "kereses_naplo.md „Stratégia (fájl vagy sor)” oszlopa minden forráshoz létező 01_kereses/strategia_<forrás>.txt fájlra mutat, amely a ténylegesen futtatott keresőstringet tartalmazza; ezek változtatás nélkül a kiegészítő anyagban. KB: K-SIM24-021.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-09",
+  "checklist": "PRISMA_S",
+  "section": "Keresési stratégiák",
+  "ord": 9,
+  "text": "Jelentsd ki, hogy nem alkalmaztál korlátozást, vagy írd le az összes korlátozást (pl. időszak, nyelv, vizsgálati elrendezés, közlési típus), és indokold őket.",
+  "how_to_verify": "kereses_naplo.md „Szűrők / korlátozások” oszlopa minden sorban kitöltött („nincs” is); minden korlátozás következik a protokoll.md 4. pontjából, vagy eltérésként a 11. pontban indokolt. KB: K-SIM24-011.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-10",
+  "checklist": "PRISMA_S",
+  "section": "Keresési stratégiák",
+  "ord": 10,
+  "text": "Jelezd, használtál-e publikált keresőszűrőt (pl. RCT-szűrőt) eredeti vagy módosított formában, és ha igen, hivatkozz rá.",
+  "how_to_verify": "kereses_naplo.md „Szűrők / korlátozások” és „Megjegyzés” oszlopa: a szűrő neve, változata, a módosítás ténye és ellenőrzött (PubMed/DOI) hivatkozása; a szűrő a strategia_<forrás>.txt-ben külön blokként látszik.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-11",
+  "checklist": "PRISMA_S",
+  "section": "Keresési stratégiák",
+  "ord": 11,
+  "text": "Jelezd, ha a keresési stratégiát egészben vagy lényeges részében korábbi áttekintésből vetted át vagy adaptáltad, és hivatkozz az eredeti áttekintésre.",
+  "how_to_verify": "kereses_naplo.md „Megjegyzés” oszlopa vagy 01_kereses/kereses_strategia_vazlat.md: az átvett stratégia forrása (ellenőrzött hivatkozás) és a módosítások.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-12",
+  "checklist": "PRISMA_S",
+  "section": "Keresési stratégiák",
+  "ord": 12,
+  "text": "Írd le, milyen módszerrel frissítetted a kereséseket (pl. a stratégiák újrafuttatása, e-mail-értesítők), és mely időszakra.",
+  "how_to_verify": "kereses_naplo.md: a frissítő keresések külön sorokban (új dátum, lefedett időszak, új találatok száma); az értesítők csak kiegészítők, a frissítést a dokumentált adatbázisokban újra kell futtatni. KB: K-KHA26-019.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-13",
+  "checklist": "PRISMA_S",
+  "section": "Keresési stratégiák",
+  "ord": 13,
+  "text": "Minden keresési stratégiánál add meg az utolsó keresés dátumát.",
+  "how_to_verify": "kereses_naplo.md „Keresés dátuma” oszlopa minden sorban kitöltött (ÉÉÉÉ-HH-NN), és egyezik a kézirat Methods-ában közölt dátumokkal; ha a legutóbbi keresés a tervezett közlés előtt 12 hónapnál régebbi (Cochrane MECIR-elvárás), frissítő keresés kell. KB: K-KHA26-019.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s,cochrane_handbook"
+ },
+ {
+  "item_id": "PRISMA_S-14",
+  "checklist": "PRISMA_S",
+  "section": "Szakértői átnézés",
+  "ord": 14,
+  "text": "Írd le, hogyan nézte át a keresési stratégiát egy második, keresésben jártas szakember (pl. PRESS-ellenőrzés), vagy jelezd, hogy ilyen átnézés nem történt.",
+  "how_to_verify": "kereses_naplo.md „Ellenőrzés” része: „PRESS-ellenőrzés (második kereső szakember)” kipipálva, a bíráló nevével és a dátummal; ha csak a ma-ellenorzo S03 checkpointja történt (`ma.py project list <mappa> checkpoints --stage S03`), azt automatizált ellenőrzésként jelentsd, ne PRESS-átnézésként. KB: K-ZHA22-014.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-15",
+  "checklist": "PRISMA_S",
+  "section": "Rekordkezelés",
+  "ord": 15,
+  "text": "Dokumentáld minden adatbázisra és egyéb információforrásra külön az azonosított rekordok teljes számát.",
+  "how_to_verify": "kereses_naplo.md „Találatok” oszlopa minden sorban és az „Összes azonosított rekord” mező; az adatbázis-sorok összege = 02_szures/prisma_folyamat.md A1, a regisztereké = A2, a többi forrás (weboldal, hivatkozás-követés, szakértő) az egyéb módszerek ágában; `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` P002 nélkül.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s"
+ },
+ {
+  "item_id": "PRISMA_S-16",
+  "checklist": "PRISMA_S",
+  "section": "Rekordkezelés",
+  "ord": 16,
+  "text": "Írd le, hogyan és milyen szoftverrel szűrted ki a több adatbázisból és egyéb forrásból származó duplikált rekordokat (pl. Zotero, EndNote, Rayyan, Covidence).",
+  "how_to_verify": "kereses_naplo.md „Duplikátumok (eszköz)” mezője (módszer: automatikus/kézi, eszköz) ↔ 02_szures/prisma_folyamat.md D1; a deduplikáció előtti és utáni rekordszám dokumentált. KB: K-KHA26-036.",
+  "stage_id": "S04",
+  "source_ids": "prisma_s"
+ }
+]

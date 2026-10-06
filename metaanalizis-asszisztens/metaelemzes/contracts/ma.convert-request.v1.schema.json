@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.convert-request:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.convert-request/v1 — átváltási kérés, felület → motor (api.convert; terv 4.7)",
+  "type": "object",
+  "required": [
+    "schema",
+    "kind",
+    "inputs"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.convert-request/v1"
+    },
+    "kind": {
+      "enum": [
+        "median_to_mean_sd",
+        "se_to_sd",
+        "ci_to_sd",
+        "ci_to_se",
+        "p_to_se",
+        "smd_variance",
+        "combine_groups",
+        "change_sd",
+        "corr_from_change",
+        "split_shared_control",
+        "paired_sums",
+        "t_to_d",
+        "logor_to_d",
+        "d_to_logor",
+        "r_to_d",
+        "d_to_r",
+        "cstat",
+        "oe"
+      ],
+      "description": "a motor convert-alparancsaiból; a cstat és az oe a v2-ben jön (E13)"
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "null"
+        ]
+      },
+      "description": "bemenetek nyers szövegként ('12,5'); a motor (tableio) értelmezi, a felület nem parszol"
+    },
+    "method": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "módszerválasztás, pl. median_to_mean_sd: luo | hozo"
+    },
+    "target": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "dataset",
+        "row_uid",
+        "fields"
+      ],
+      "properties": {
+        "dataset": {
+          "$ref": "urn:szk:contract:common:1#/$defs/relpath"
+        },
+        "row_uid": {
+          "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "kimenet → kanonikus oszlopnév (pl. mean → m1)"
+        },
+        "decimal_mark": {
+          "enum": [
+            ",",
+            ".",
+            null
+          ],
+          "description": "a cél tábla tizedesjele (a cell_text ehhez igazodik)"
+        },
+        "delimiter": {
+          "enum": [
+            ",",
+            ";",
+            "\t",
+            null
+          ],
+          "description": "a cél tábla tagolója (ha a tizedesjel ismeretlen)"
+        }
+      }
+    }
+  }
+}

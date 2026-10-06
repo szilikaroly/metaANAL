@@ -1,0 +1,154 @@
+{
+ "description": "GET /api/log/finding — projekt.list_items('findings') sorai (3.5.1, 3.5.15); a szűrt változat a nyitott blockereké.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/log/finding",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log/v1",
+    "data": {
+     "kind": "finding",
+     "items": [
+      {
+       "id": 3,
+       "ts": "2026-09-28T09:15:00Z",
+       "agent": "reviewer",
+       "stage_id": "S03",
+       "severity": "major",
+       "title": "A keresési napló nem tartalmazza a regiszter-keresés dátumát",
+       "detail": "PRISMA-S 13. tétel",
+       "evidence": null,
+       "kb_refs": "D-S04-009",
+       "status": "fixed",
+       "resolution": "A 01_kereses/naplo.md kiegészítve (2026-09-29).",
+       "resolved_ts": "2026-09-29T08:00:00Z",
+       "kb_unverified": null
+      },
+      {
+       "id": 7,
+       "ts": "2026-10-01T11:20:00Z",
+       "agent": "user",
+       "stage_id": "S05",
+       "severity": "minor",
+       "title": "Vizsgálatcímke ellenőrzése: <img src=x onerror=alert(1)>",
+       "detail": "A címke HTML-nek látszik — szövegként kell megjelennie.",
+       "evidence": null,
+       "kb_refs": null,
+       "status": "open",
+       "resolution": null,
+       "resolved_ts": null,
+       "kb_unverified": null
+      },
+      {
+       "id": 12,
+       "ts": "2026-10-03T14:02:00Z",
+       "agent": "reviewer",
+       "stage_id": "S04",
+       "severity": "blocker",
+       "title": "P007: a kizárási okok összege ≠ H",
+       "detail": null,
+       "evidence": "02_szures/prisma_flow.json",
+       "kb_refs": "P007",
+       "status": "open",
+       "resolution": null,
+       "resolved_ts": null,
+       "kb_unverified": null
+      },
+      {
+       "id": 14,
+       "ts": "2026-10-04T08:30:00Z",
+       "agent": "evaluator",
+       "stage_id": "S09",
+       "severity": "info",
+       "title": "k = 13 < 10? nem — a torzítás-tesztek értelmezhetők",
+       "detail": null,
+       "evidence": null,
+       "kb_refs": "V016",
+       "status": "open",
+       "resolution": null,
+       "resolved_ts": null,
+       "kb_unverified": null
+      },
+      {
+       "id": 15,
+       "ts": "2026-10-04T19:40:00Z",
+       "agent": "reviewer",
+       "stage_id": "S05",
+       "severity": "blocker",
+       "title": "SE/SD csere gyanú (Hart & Sutherland 1977)",
+       "detail": null,
+       "evidence": null,
+       "kb_refs": "V011 D-S07-004",
+       "status": "open",
+       "resolution": null,
+       "resolved_ts": null,
+       "kb_unverified": null
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr31"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/log/finding",
+   "query": {
+    "status": "open",
+    "severity": "blocker"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log/v1",
+    "data": {
+     "kind": "finding",
+     "items": [
+      {
+       "id": 12,
+       "ts": "2026-10-03T14:02:00Z",
+       "agent": "reviewer",
+       "stage_id": "S04",
+       "severity": "blocker",
+       "title": "P007: a kizárási okok összege ≠ H",
+       "detail": null,
+       "evidence": "02_szures/prisma_flow.json",
+       "kb_refs": "P007",
+       "status": "open",
+       "resolution": null,
+       "resolved_ts": null,
+       "kb_unverified": null
+      },
+      {
+       "id": 15,
+       "ts": "2026-10-04T19:40:00Z",
+       "agent": "reviewer",
+       "stage_id": "S05",
+       "severity": "blocker",
+       "title": "SE/SD csere gyanú (Hart & Sutherland 1977)",
+       "detail": null,
+       "evidence": null,
+       "kb_refs": "V011 D-S07-004",
+       "status": "open",
+       "resolution": null,
+       "resolved_ts": null,
+       "kb_unverified": null
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr32"
+    }
+   }
+  }
+ ]
+}

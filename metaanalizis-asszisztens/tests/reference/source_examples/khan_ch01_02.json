@@ -1,0 +1,185 @@
+[
+ {
+  "case_id": "khan_ch01_02__prisma2009_flow_d1_vs_d2_gastrectomy",
+  "example_id": "khan_ch01_02__prisma_flow_d1_vs_d2_gastrectomy",
+  "source_id": "khan2020",
+  "location": "Ch1 §1.4.1, text p. 8; Fig. 1.1 p. 9 (counts read from the embedded figure image)",
+  "description": "PRISMA 2009-style flow-diagram counts for the D1 vs D2 gastrectomy review (Memon et al. 2011): 28+1 identified, 14 excluded at screening, 15 full texts, 9 excluded (5+4 reasons), 6 qualitative = 6 meta-analysed.",
+  "measure": "other",
+  "options": {},
+  "rows": [
+   {
+    "study": "Memon et al. 2011 (PRISMA flow, single review)",
+    "records_identified_database_searching": 28,
+    "records_identified_other_sources": 1,
+    "records_after_duplicates_removed": 29,
+    "records_screened": 29,
+    "records_excluded_at_screening": 14,
+    "fulltext_assessed_for_eligibility": 15,
+    "fulltext_excluded_with_reasons": 9,
+    "fulltext_excluded_reasons": {
+     "longitudinal_studies_same_trial": 5,
+     "interim_analysis": 4
+    },
+    "studies_included_qualitative_synthesis": 6,
+    "studies_included_quantitative_synthesis": 6
+   }
+  ],
+  "call": "prisma_flow",
+  "call_args": {
+   "template": "PRISMA2009"
+  },
+  "expected": [
+   {
+    "path": "records_identified_total",
+    "value": 29,
+    "tol": 0,
+    "transform": null,
+    "note": "derived = 28 + 1; also printed in the text p. 8 ('the initial search resulted in 29 records')"
+   },
+   {
+    "path": "records_after_duplicates_removed",
+    "value": 29,
+    "tol": 0,
+    "transform": null,
+    "note": "printed (Fig. 1.1)"
+   },
+   {
+    "path": "duplicates_removed",
+    "value": 0,
+    "tol": 0,
+    "transform": null,
+    "note": "derived, not printed: 29 - 29 (the figure has no duplicates box; a validator must treat it as 0)"
+   },
+   {
+    "path": "records_screened",
+    "value": 29,
+    "tol": 0,
+    "transform": null,
+    "note": "printed (Fig. 1.1)"
+   },
+   {
+    "path": "fulltext_assessed",
+    "value": 15,
+    "tol": 0,
+    "transform": null,
+    "note": "printed; = 29 - 14"
+   },
+   {
+    "path": "fulltext_excluded_sum_of_reasons",
+    "value": 9,
+    "tol": 0,
+    "transform": null,
+    "note": "printed total 9; = 5 (longitudinal studies of the same trial) + 4 (interim analysis)"
+   },
+   {
+    "path": "studies_included_qualitative",
+    "value": 6,
+    "tol": 0,
+    "transform": null,
+    "note": "printed; = 15 - 9"
+   },
+   {
+    "path": "studies_included_quantitative",
+    "value": 6,
+    "tol": 0,
+    "transform": null,
+    "note": "printed (Fig. 1.1 and text p. 8 'only 6 of them ... were included in the meta-analysis'); must be <= qualitative (here equal)"
+   }
+  ],
+  "status": "active",
+  "activation_note": "Activated: metaelemzes.prisma.check_flow (runner call 'prisma_flow' = 'prisma_check') validates the PRISMA 2009 flow and derives the identified total, the implied 0 duplicates, the sum of exclusion reasons and the qualitative/quantitative inclusions; the paths resolve directly on the FlowCheck result."
+ },
+ {
+  "case_id": "khan_ch01_02__z_crit_95_unit_se_ci",
+  "example_id": "khan_ch01_02__normal_critical_values",
+  "source_id": "khan2020",
+  "location": "Ch2 §2.2.2 pp. 19-20; §2.2.4 p. 22",
+  "description": "95% CI critical value z_{0.025} = 1.96 recovered as the half-width of the z-based (Wald) CI of a single unit-SE estimate (yi = 0, vi = 1).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "unit-SE estimate (yi = 0, vi = 1)",
+    "yi": 0.0,
+    "vi": 1.0
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z",
+   "level": 0.95
+  },
+  "expected": [
+   {
+    "path": "ci_upper",
+    "value": 1.96,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 1.96 (2 dp) on pp. 19, 20, 22; CI = estimate +/- z*SE with estimate 0, SE 1, so ci_upper = z_{alpha/2}; tol = half a unit of the 2nd decimal"
+   },
+   {
+    "path": "ci_lower",
+    "value": -1.96,
+    "tol": 0.005,
+    "transform": null,
+    "note": "symmetric lower limit -z_{alpha/2}; printed 1.96, tol = half a unit of the 2nd decimal"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.959963984540054,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check against the verifier's full-precision value scipy norm.ppf(0.975) = 1.959963984540054 (not printed in the source)"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch01_02__z_crit_90_unit_se_ci",
+  "example_id": "khan_ch01_02__normal_critical_values",
+  "source_id": "khan2020",
+  "location": "Ch2 §2.2.2 p. 20",
+  "description": "90% CI critical value z_{0.05} = 1.645 recovered as the half-width of the z-based (Wald) CI (level 0.90) of a single unit-SE estimate (yi = 0, vi = 1).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "unit-SE estimate (yi = 0, vi = 1)",
+    "yi": 0.0,
+    "vi": 1.0
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z",
+   "level": 0.9
+  },
+  "expected": [
+   {
+    "path": "ci_upper",
+    "value": 1.645,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed 1.645 (3 dp) on p. 20 ('90% with z = 1.645'); ci_upper = z_{alpha/2} for estimate 0, SE 1; tol = half a unit of the 3rd decimal"
+   },
+   {
+    "path": "ci_lower",
+    "value": -1.645,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "symmetric lower limit -z_{alpha/2}; printed 1.645, tol = half a unit of the 3rd decimal"
+   },
+   {
+    "path": "ci_upper",
+    "value": 1.6448536269514722,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check against the verifier's full-precision value scipy norm.ppf(0.95) = 1.6448536269514722 (not printed in the source)"
+   }
+  ],
+  "status": "active"
+ }
+]

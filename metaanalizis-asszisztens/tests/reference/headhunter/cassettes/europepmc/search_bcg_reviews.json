@@ -1,0 +1,1834 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "europepmc-search_bcg_reviews",
+  "recorded_at": "2026-10-05T14:10:47Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "BCG-áttekintések (core, 5 találat; absztrakt kivágva) — TITLE_ABS/KW-mezős lekérdezés",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?cursorMark=%2A&format=json&pageSize=5&query=%28%28TITLE_ABS%3Atuberculosis+OR+KW%3Atuberculosis%29+AND+%28TITLE_ABS%3A%22BCG+vaccine%22+OR+TITLE_ABS%3A%22BCG+vaccination%22+OR+KW%3A%22BCG+vaccine%22+OR+KW%3A%22BCG+vaccination%22%29%29+AND+%28PUB_TYPE%3A%22systematic-review%22+OR+PUB_TYPE%3A%22meta-analysis%22+OR+TITLE%3A%22meta-analysis%22+OR+TITLE%3A%22systematic+review%22%29&resultType=core",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json;charset=UTF-8"
+        },
+        "body_json": {
+          "version": "6.9",
+          "hitCount": 119,
+          "nextCursorMark": "AoIIQSG0Zyg1MjgxODc1OQ==",
+          "nextPageUrl": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%28%28TITLE_ABS%3Atuberculosis+OR+KW%3Atuberculosis%29+AND+%28TITLE_ABS%3A%22BCG+vaccine%22+OR+TITLE_ABS%3A%22BCG+vaccination%22+OR+KW%3A%22BCG+vaccine%22+OR+KW%3A%22BCG+vaccination%22%29%29+AND+%28PUB_TYPE%3A%22systematic-review%22+OR+PUB_TYPE%3A%22meta-analysis%22+OR+TITLE%3A%22meta-analysis%22+OR+TITLE%3A%22systematic+review%22%29&cursorMark=AoIIQSG0Zyg1MjgxODc1OQ%3D%3D&resultType=core&pageSize=5&format=json",
+          "request": {
+            "queryString": "((TITLE_ABS:tuberculosis OR KW:tuberculosis) AND (TITLE_ABS:\"BCG vaccine\" OR TITLE_ABS:\"BCG vaccination\" OR KW:\"BCG vaccine\" OR KW:\"BCG vaccination\")) AND (PUB_TYPE:\"systematic-review\" OR PUB_TYPE:\"meta-analysis\" OR TITLE:\"meta-analysis\" OR TITLE:\"systematic review\")",
+            "resultType": "core",
+            "cursorMark": "*",
+            "pageSize": 5,
+            "sort": "",
+            "synonym": false
+          },
+          "resultList": {
+            "result": [
+              {
+                "id": "41965973",
+                "source": "MED",
+                "pmid": "41965973",
+                "doi": "10.1016/j.resinv.2026.101422",
+                "title": "Clinical evidence on BCG vaccination and COVID-19 infection: A systematic review.",
+                "authorString": "Yadav P, Singh A, Kumari M, Verma SK, Singh D.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Yadav P",
+                      "lastName": "Yadav",
+                      "firstName": "Praneta",
+                      "initials": "P",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Faculty of Biotechnology, Institute of Biosciences and Technology, Shri Ramswaroop Memorial University, Lucknow Deva Road, Barabanki, 225001, Uttar Pradesh, India."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Singh A",
+                      "lastName": "Singh",
+                      "firstName": "Arpita",
+                      "initials": "A",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Faculty of Biotechnology, Institute of Biosciences and Technology, Shri Ramswaroop Memorial University, Lucknow Deva Road, Barabanki, 225001, Uttar Pradesh, India."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Kumari M",
+                      "lastName": "Kumari",
+                      "firstName": "Manju",
+                      "initials": "M",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Biochemistry, King George's Medical University, Shah Meena Road, Lucknow, 226001, India."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Verma SK",
+                      "lastName": "Verma",
+                      "firstName": "Sunil Kumar",
+                      "initials": "SK",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Faculty of Biotechnology, Institute of Biosciences and Technology, Shri Ramswaroop Memorial University, Lucknow Deva Road, Barabanki, 225001, Uttar Pradesh, India."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Singh D",
+                      "lastName": "Singh",
+                      "firstName": "Devendra",
+                      "initials": "D",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Faculty of Biotechnology, Institute of Biosciences and Technology, Shri Ramswaroop Memorial University, Lucknow Deva Road, Barabanki, 225001, Uttar Pradesh, India. Electronic address: devendrasingh.ibst@srmu.ac.in."
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "authorIdList": {
+                  "authorId": [
+                    {
+                      "type": "ORCID",
+                      "value": "0000-0002-9795-5641"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "3",
+                  "volume": "64",
+                  "journalIssueId": 4188112,
+                  "dateOfPublication": "2026 May",
+                  "monthOfPublication": 5,
+                  "yearOfPublication": 2026,
+                  "journal": {
+                    "medlineAbbreviation": "Respir Investig",
+                    "title": "Respiratory investigation",
+                    "essn": "2212-5353",
+                    "issn": "2212-5345",
+                    "isoabbreviation": "Respir Investig",
+                    "nlmid": "101581124"
+                  },
+                  "printPublicationDate": "2026-05-01"
+                },
+                "pubYear": "2026",
+                "pageInfo": "101422",
+                "abstractText": "«redacted»",
+                "affiliation": "Faculty of Biotechnology, Institute of Biosciences and Technology, Shri Ramswaroop Memorial University, Lucknow Deva Road, Barabanki, 225001, Uttar Pradesh, India.",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Systematic Review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Vaccination"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Immunity, Innate"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Cross Protection"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "COVID-19",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Trained Immunity"
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "BCG vaccine",
+                    "innate immunity",
+                    "Trained Immunity",
+                    "Covid-19",
+                    "Sars-cov-2"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "fullTextUrlList": {
+                  "fullTextUrl": [
+                    {
+                      "availability": "Subscription required",
+                      "availabilityCode": "S",
+                      "documentStyle": "doi",
+                      "site": "DOI",
+                      "url": "https://doi.org/10.1016/j.resinv.2026.101422"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasData": "N",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2026-07-15",
+                "dateOfCreation": "2026-04-12",
+                "dateOfRevision": "2026-08-03",
+                "electronicPublicationDate": "2026-04-10",
+                "firstPublicationDate": "2026-04-10",
+                "firstIndexDate": "2026-04-13",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "41689765",
+                "source": "MED",
+                "pmid": "41689765",
+                "pmcid": "PMC12915884",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC12915884"
+                  ]
+                },
+                "doi": "10.1080/21645515.2026.2630512",
+                "title": "Efficacy, immunogenicity, and safety of BCG revaccination against Mycobacterium tuberculosis: A systematic review and meta-analysis.",
+                "authorString": "Ali SH, Shakir S, Shaikh UA, Shaikh UA, Khalid M, Jawed M, Ali SI, Samo M, Shariq H, Khan MS, Naeem U, Waafira A.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Ali SH",
+                      "lastName": "Ali",
+                      "firstName": "Syed Hassan",
+                      "initials": "SH",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0004-5360-6249"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Shakir S",
+                      "lastName": "Shakir",
+                      "firstName": "Shanza",
+                      "initials": "S",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0002-9994-3414"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Shaikh UA",
+                      "lastName": "Shaikh",
+                      "firstName": "Umais Ahmed",
+                      "initials": "UA",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0001-4396-8375"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Shaikh UA",
+                      "lastName": "Shaikh",
+                      "firstName": "Umais Ahmed",
+                      "initials": "UA",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0005-8050-5440"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Khalid M",
+                      "lastName": "Khalid",
+                      "firstName": "Maryam",
+                      "initials": "M",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0002-2088-9508"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Jawed M",
+                      "lastName": "Jawed",
+                      "firstName": "Maria",
+                      "initials": "M",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0007-0468-1236"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Ali SI",
+                      "lastName": "Ali",
+                      "firstName": "Syed Ibad",
+                      "initials": "SI",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0007-1928-1286"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Samo M",
+                      "lastName": "Samo",
+                      "firstName": "Maheen",
+                      "initials": "M",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0004-8891-4858"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Shariq H",
+                      "lastName": "Shariq",
+                      "firstName": "Hadeel",
+                      "initials": "H",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0003-3244-9988"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Khan MS",
+                      "lastName": "Khan",
+                      "firstName": "Muhammad Saad",
+                      "initials": "MS",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0002-4228-6476"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Jinnah Sindh Medical University, Karachi, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Naeem U",
+                      "lastName": "Naeem",
+                      "firstName": "Umaimah",
+                      "initials": "U",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medicine, Jinnah Sindh Medical University, Karachi, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Waafira A",
+                      "lastName": "Waafira",
+                      "firstName": "Aminath",
+                      "initials": "A",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0000-3283-1982"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "School of Medicine, The Maldives National University, Malé, Maldives."
+                          },
+                          {
+                            "affiliation": "Public Health, Organisation Mondiale de la Santé (WHO), Antananarivo, Madagascar."
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "authorIdList": {
+                  "authorId": [
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0000-3283-1982"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0001-4396-8375"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0002-2088-9508"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0002-4228-6476"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0002-9994-3414"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0003-3244-9988"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0004-5360-6249"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0004-8891-4858"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0005-8050-5440"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0007-0468-1236"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0007-1928-1286"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "supporting_data"
+                  ]
+                },
+                "journalInfo": {
+                  "issue": "1",
+                  "volume": "22",
+                  "journalIssueId": 4076581,
+                  "dateOfPublication": "2026 Dec",
+                  "monthOfPublication": 12,
+                  "yearOfPublication": 2026,
+                  "journal": {
+                    "medlineAbbreviation": "Hum Vaccin Immunother",
+                    "title": "Human vaccines & immunotherapeutics",
+                    "essn": "2164-554X",
+                    "issn": "2164-5515",
+                    "isoabbreviation": "Hum Vaccin Immunother",
+                    "nlmid": "101572652"
+                  },
+                  "printPublicationDate": "2026-12-01"
+                },
+                "pubYear": "2026",
+                "pageInfo": "2630512",
+                "abstractText": "«redacted»",
+                "affiliation": "Department of Medicine, Liaquat University of Medical and Health Sciences, Jamshoro, Pakistan.",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "review-article",
+                    "Journal Article"
+                  ]
+                },
+                "grantsList": {
+                  "grant": [
+                    {
+                      "agency": "World Health Organization",
+                      "acronym": "WHO_",
+                      "grantId": "001",
+                      "orderIn": 0
+                    }
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "CD4-Positive T-Lymphocytes",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "CD8-Positive T-Lymphocytes",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Mycobacterium tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AE",
+                            "qualifierName": "adverse effects"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Immunization, Secondary"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Randomized Controlled Trials as Topic"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Immunogenicity, Vaccine"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Vaccine Efficacy"
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Tuberculosis",
+                    "Immunogenicity",
+                    "Bcg Vaccination",
+                    "T-cell Responses",
+                    "Quantiferon-tb (Qft)"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "fullTextUrlList": {
+                  "fullTextUrl": [
+                    {
+                      "availability": "Subscription required",
+                      "availabilityCode": "S",
+                      "documentStyle": "doi",
+                      "site": "DOI",
+                      "url": "https://doi.org/10.1080/21645515.2026.2630512"
+                    },
+                    {
+                      "availability": "Open access",
+                      "availabilityCode": "OA",
+                      "documentStyle": "html",
+                      "site": "Europe_PMC",
+                      "url": "https://europepmc.org/articles/PMC12915884"
+                    },
+                    {
+                      "availability": "Open access",
+                      "availabilityCode": "OA",
+                      "documentStyle": "pdf",
+                      "site": "Europe_PMC",
+                      "url": "https://europepmc.org/articles/PMC12915884?pdf=render"
+                    }
+                  ]
+                },
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 3,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "Y",
+                "hasData": "Y",
+                "license": "cc by-nc",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "dateOfCompletion": "2026-07-07",
+                "dateOfCreation": "2026-02-14",
+                "dateOfRevision": "2026-08-13",
+                "electronicPublicationDate": "2026-02-14",
+                "firstPublicationDate": "2026-02-14",
+                "firstIndexDate": "2026-02-15",
+                "fullTextReceivedDate": "2026-02-19",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "41459544",
+                "source": "MED",
+                "pmid": "41459544",
+                "pmcid": "PMC12738926",
+                "fullTextIdList": {
+                  "fullTextId": [
+                    "PMC12738926"
+                  ]
+                },
+                "doi": "10.3389/fimmu.2025.1615039",
+                "title": "Incidence, risk factors and outcomes of BCGosis following BCG vaccination in infants: a systematic review and meta-analyses.",
+                "authorString": "Riyas Mohamed FR, Nisar M, Saeed I, Irfan MR, Khalid A, Faiz M, Younis AF, Javed S, Sen A, Azam A, Raji MA, Barakzai A, Shibl AM, Kim Sing G.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Riyas Mohamed FR",
+                      "lastName": "Riyas Mohamed",
+                      "firstName": "Fathima Raahima",
+                      "initials": "FR",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Nisar M",
+                      "lastName": "Nisar",
+                      "firstName": "Mudasar",
+                      "initials": "M",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0009-7133-3180"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Services Institute of Medical Sciences, Lahore, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Saeed I",
+                      "lastName": "Saeed",
+                      "firstName": "Ismail",
+                      "initials": "I",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Irfan MR",
+                      "lastName": "Irfan",
+                      "firstName": "Mohammed Rushdhi",
+                      "initials": "MR",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Khalid A",
+                      "lastName": "Khalid",
+                      "firstName": "Ahlaam",
+                      "initials": "A",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0004-9938-1639"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Gomal Medical College, Dera Ismail Khan, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Faiz M",
+                      "lastName": "Faiz",
+                      "firstName": "Muneeb",
+                      "initials": "M",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "King Edward Medical University, Lahore, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Younis AF",
+                      "lastName": "Younis",
+                      "firstName": "Ahmed F",
+                      "initials": "AF",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Damietta Faculty of Medicine, Al-Azhar University, Cairo, Egypt."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Javed S",
+                      "lastName": "Javed",
+                      "firstName": "Shahan",
+                      "initials": "S",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0002-4048-2633"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Sen A",
+                      "lastName": "Sen",
+                      "firstName": "Arya",
+                      "initials": "A",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Kolkata Medical College, Kolkata, West Bengal, India."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Azam A",
+                      "lastName": "Azam",
+                      "firstName": "Asma",
+                      "initials": "A",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0001-3592-7493"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Karachi Medical and Dental College (KMDC), Karachi, Pakistan."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Raji MA",
+                      "lastName": "Raji",
+                      "firstName": "Muhabat Adeola",
+                      "initials": "MA",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Microbiology/Immunology, College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Barakzai A",
+                      "lastName": "Barakzai",
+                      "firstName": "Abrar",
+                      "initials": "A",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Pathology, College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Shibl AM",
+                      "lastName": "Shibl",
+                      "firstName": "Atef Mohamed",
+                      "initials": "AM",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Microbiology/Immunology, College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Kim Sing G",
+                      "lastName": "Kim Sing",
+                      "firstName": "Garwin",
+                      "initials": "G",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Microbiology/Immunology, College of Medicine, Alfaisal University, Riyadh, Saudi Arabia."
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "authorIdList": {
+                  "authorId": [
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0001-3592-7493"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0002-4048-2633"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0004-9938-1639"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0007-5917-3087"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0009-3803-1711"
+                    },
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0009-7133-3180"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics",
+                    "supporting_data"
+                  ]
+                },
+                "journalInfo": {
+                  "volume": "16",
+                  "journalIssueId": 3892856,
+                  "dateOfPublication": "2025 ",
+                  "monthOfPublication": 0,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "Front Immunol",
+                    "title": "Frontiers in immunology",
+                    "essn": "1664-3224",
+                    "issn": "1664-3224",
+                    "isoabbreviation": "Front Immunol",
+                    "nlmid": "101560960"
+                  },
+                  "printPublicationDate": "2025-01-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "1615039",
+                "abstractText": "«redacted»",
+                "affiliation": "College of Medicine, Alfaisal University, Riyadh, Saudi Arabia.",
+                "publicationStatus": "epublish",
+                "language": "eng",
+                "pubModel": "Electronic-eCollection",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "systematic-review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "EP",
+                            "qualifierName": "epidemiology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Severe Combined Immunodeficiency",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AE",
+                            "qualifierName": "adverse effects"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Vaccination",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AE",
+                            "qualifierName": "adverse effects"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Incidence"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Risk Factors"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Infant"
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Tuberculosis",
+                    "BCG vaccine",
+                    "Immunodeficiency",
+                    "Neonatal Vaccination",
+                    "Bcgosis"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "fullTextUrlList": {
+                  "fullTextUrl": [
+                    {
+                      "availability": "Subscription required",
+                      "availabilityCode": "S",
+                      "documentStyle": "doi",
+                      "site": "DOI",
+                      "url": "https://doi.org/10.3389/fimmu.2025.1615039"
+                    },
+                    {
+                      "availability": "Open access",
+                      "availabilityCode": "OA",
+                      "documentStyle": "html",
+                      "site": "Europe_PMC",
+                      "url": "https://europepmc.org/articles/PMC12738926"
+                    },
+                    {
+                      "availability": "Open access",
+                      "availabilityCode": "OA",
+                      "documentStyle": "pdf",
+                      "site": "Europe_PMC",
+                      "url": "https://europepmc.org/articles/PMC12738926?pdf=render"
+                    }
+                  ]
+                },
+                "isOpenAccess": "Y",
+                "inEPMC": "Y",
+                "inPMC": "Y",
+                "citedByCount": 3,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "Y",
+                "hasBook": "N",
+                "hasSuppl": "Y",
+                "hasLabsLinks": "Y",
+                "hasData": "Y",
+                "license": "cc by",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "Y",
+                "tmAccessionTypeList": {
+                  "accessionType": [
+                    "doi"
+                  ]
+                },
+                "dateOfCompletion": "2025-12-29",
+                "dateOfCreation": "2025-12-29",
+                "dateOfRevision": "2026-01-14",
+                "electronicPublicationDate": "2025-12-11",
+                "firstPublicationDate": "2025-12-11",
+                "firstIndexDate": "2026-01-02",
+                "fullTextReceivedDate": "2025-12-26",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "42398701",
+                "source": "MED",
+                "pmid": "42398701",
+                "doi": "10.1016/j.ijid.2026.108949",
+                "title": "Interferon-gamma release assays versus tuberculin skin test for latent tuberculosis infection positivity among healthcare workers and first responders: a systematic review and meta-analysis.",
+                "authorString": "Alahmari H, Hanson L, Kelley PG, Spong J, Milazzo A, Mnatzaganian G.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Alahmari H",
+                      "lastName": "Alahmari",
+                      "firstName": "Hamoud",
+                      "initials": "H",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Rural Allied Health, La Trobe Rural Health School, La Trobe University, Bendigo, Victoria, Australia; Emergency Medical Services Program, Department of Nursing, College of Nursing and Health Sciences, Jazan University, Jazan, Saudi Arabia. Electronic address: H.Alahmari@latrobe.edu.au."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Hanson L",
+                      "lastName": "Hanson",
+                      "firstName": "Lisa",
+                      "initials": "L",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Rural Allied Health, La Trobe Rural Health School, La Trobe University, Bendigo, Victoria, Australia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Kelley PG",
+                      "lastName": "Kelley",
+                      "firstName": "Peter G",
+                      "initials": "PG",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Infectious Diseases, Peninsula Health, Frankston, Victoria, Australia; Department of Microbiology, Eastern Health, Box Hill, Victoria, Australia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Spong J",
+                      "lastName": "Spong",
+                      "firstName": "Jo",
+                      "initials": "J",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Rural Allied Health, La Trobe Rural Health School, La Trobe University, Bendigo, Victoria, Australia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Milazzo A",
+                      "lastName": "Milazzo",
+                      "firstName": "Adriana",
+                      "initials": "A",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "School of Public Health, College of Health, Adelaide University, South Australia, Australia."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Mnatzaganian G",
+                      "lastName": "Mnatzaganian",
+                      "firstName": "George",
+                      "initials": "G",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Rural Allied Health, La Trobe Rural Health School, La Trobe University, Bendigo, Victoria, Australia."
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "journalInfo": {
+                  "volume": "170",
+                  "journalIssueId": 4238604,
+                  "dateOfPublication": "2026 Sep",
+                  "monthOfPublication": 9,
+                  "yearOfPublication": 2026,
+                  "journal": {
+                    "medlineAbbreviation": "Int J Infect Dis",
+                    "title": "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases",
+                    "essn": "1878-3511",
+                    "issn": "1201-9712",
+                    "isoabbreviation": "Int J Infect Dis",
+                    "nlmid": "9610933"
+                  },
+                  "printPublicationDate": "2026-09-01"
+                },
+                "pubYear": "2026",
+                "pageInfo": "108949",
+                "abstractText": "«redacted»",
+                "affiliation": "Department of Rural Allied Health, La Trobe Rural Health School, La Trobe University, Bendigo, Victoria, Australia; Emergency Medical Services Program, Department of Nursing, College of Nursing and Health Sciences, Jazan University, Jazan, Saudi Arabia. Electronic address: H.Alahmari@latrobe.edu.au.",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Comparative Study",
+                    "Systematic Review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculin Test",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "MT",
+                            "qualifierName": "methods"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Health Personnel"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Latent Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "DI",
+                            "qualifierName": "diagnosis"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "EP",
+                            "qualifierName": "epidemiology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Interferon-gamma Release Tests",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "MT",
+                            "qualifierName": "methods"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Prevalence",
+                    "Occupational Exposure",
+                    "Healthcare Workers",
+                    "Latent Tuberculosis",
+                    "Tst",
+                    "Igra"
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "fullTextUrlList": {
+                  "fullTextUrl": [
+                    {
+                      "availability": "Subscription required",
+                      "availabilityCode": "S",
+                      "documentStyle": "doi",
+                      "site": "DOI",
+                      "url": "https://doi.org/10.1016/j.ijid.2026.108949"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 0,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "N",
+                "hasData": "N",
+                "license": "cc by",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2026-08-05",
+                "dateOfCreation": "2026-07-03",
+                "dateOfRevision": "2026-08-27",
+                "electronicPublicationDate": "2026-07-10",
+                "firstPublicationDate": "2026-07-10",
+                "firstIndexDate": "2026-07-04",
+                "hasEvaluations": "N"
+              },
+              {
+                "id": "40250749",
+                "source": "MED",
+                "pmid": "40250749",
+                "doi": "10.1016/j.ijid.2025.107909",
+                "title": "Effect of Bacillus Calmette-Guérin vaccination against Mycobacterium tuberculosis infection in children: an updated systematic review and meta-analysis.",
+                "authorString": "Cai S, Luo Q, Zhou G, Guo X, Dong Y, Chen H, Luo S, He J, Xia Y, Li H, Zhou Y, Song C.",
+                "authorList": {
+                  "author": [
+                    {
+                      "fullName": "Cai S",
+                      "lastName": "Cai",
+                      "firstName": "Shunli",
+                      "initials": "S",
+                      "authorId": {
+                        "type": "ORCID",
+                        "value": "0009-0006-3810-9986"
+                      },
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Pain Medicine, The Affiliated Anning First People's Hospital of Kunming University of Science and Technology, Kunming, Yunnan Province, China; Faculty of Life Science and Technology, The affiliated Anning First People's Hospital, Kunming University of Science and Technology, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Luo Q",
+                      "lastName": "Luo",
+                      "firstName": "Qingyi",
+                      "initials": "Q",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Medical Imaging, Yan'an Hospital Affiliated to Kunming Medical University, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Zhou G",
+                      "lastName": "Zhou",
+                      "firstName": "Guozhong",
+                      "initials": "G",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Pain Medicine, The Affiliated Anning First People's Hospital of Kunming University of Science and Technology, Kunming, Yunnan Province, China; School of Basic Medical Sciences, Kunming University of Science and Technology, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Guo X",
+                      "lastName": "Guo",
+                      "firstName": "Xin",
+                      "initials": "X",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Faculty of Life Science and Technology, The affiliated Anning First People's Hospital, Kunming University of Science and Technology, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Dong Y",
+                      "lastName": "Dong",
+                      "firstName": "Yan",
+                      "initials": "Y",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Pain Medicine, The Affiliated Anning First People's Hospital of Kunming University of Science and Technology, Kunming, Yunnan Province, China; School of Basic Medical Sciences, Kunming University of Science and Technology, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Chen H",
+                      "lastName": "Chen",
+                      "firstName": "Hongbo",
+                      "initials": "H",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Pulmonary and Critical Care Medicine, Anning First People's Hospital Affiliated to Kunming University of Science and Technology, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Luo S",
+                      "lastName": "Luo",
+                      "firstName": "Shiqi",
+                      "initials": "S",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Immunology, Institute of Basic Medical Sciences Chinese Academy of Medical Sciences, School of Basic Medicine Peking Union Medical College, Beijing, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "He J",
+                      "lastName": "He",
+                      "firstName": "Jian",
+                      "initials": "J",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Pulmonary and Critical Care Medicine, Anning First People's Hospital Affiliated to Kunming University of Science and Technology, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Xia Y",
+                      "lastName": "Xia",
+                      "firstName": "Yuan",
+                      "initials": "Y",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "School of Basic Medical Sciences, Kunming Medical University, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Li H",
+                      "lastName": "Li",
+                      "firstName": "Hanse",
+                      "initials": "H",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "School of Basic Medical Sciences, Kunming Medical University, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Zhou Y",
+                      "lastName": "Zhou",
+                      "firstName": "Yingchen",
+                      "initials": "Y",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "The School of Medicine, Kunming University, Kunming, Yunnan Province, China."
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "fullName": "Song C",
+                      "lastName": "Song",
+                      "firstName": "Chao",
+                      "initials": "C",
+                      "authorAffiliationDetailsList": {
+                        "authorAffiliation": [
+                          {
+                            "affiliation": "Department of Pain Medicine, The Affiliated Anning First People's Hospital of Kunming University of Science and Technology, Kunming, Yunnan Province, China; Department of Medical Imaging, Anning First People's Hospital Affiliated to Kunming University of Science and Technology, Kunming, Yunnan Province, China. Electronic address: chaoge6870@163.com."
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "authorIdList": {
+                  "authorId": [
+                    {
+                      "type": "ORCID",
+                      "value": "0009-0006-3810-9986"
+                    }
+                  ]
+                },
+                "dataLinksTagsList": {
+                  "dataLinkstag": [
+                    "altmetrics"
+                  ]
+                },
+                "journalInfo": {
+                  "volume": "156",
+                  "journalIssueId": 3959879,
+                  "dateOfPublication": "2025 Jul",
+                  "monthOfPublication": 7,
+                  "yearOfPublication": 2025,
+                  "journal": {
+                    "medlineAbbreviation": "Int J Infect Dis",
+                    "title": "International journal of infectious diseases : IJID : official publication of the International Society for Infectious Diseases",
+                    "essn": "1878-3511",
+                    "issn": "1201-9712",
+                    "isoabbreviation": "Int J Infect Dis",
+                    "nlmid": "9610933"
+                  },
+                  "printPublicationDate": "2025-07-01"
+                },
+                "pubYear": "2025",
+                "pageInfo": "107909",
+                "abstractText": "«redacted»",
+                "affiliation": "Department of Pain Medicine, The Affiliated Anning First People's Hospital of Kunming University of Science and Technology, Kunming, Yunnan Province, China; Faculty of Life Science and Technology, The affiliated Anning First People's Hospital, Kunming University of Science and Technology, Kunming, Yunnan Province, China.",
+                "publicationStatus": "ppublish",
+                "language": "eng",
+                "pubModel": "Print-Electronic",
+                "pubTypeList": {
+                  "pubType": [
+                    "Meta-Analysis",
+                    "Systematic Review",
+                    "Journal Article"
+                  ]
+                },
+                "meshHeadingList": {
+                  "meshHeading": [
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Humans"
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Mycobacterium tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "EP",
+                            "qualifierName": "epidemiology"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "Tuberculosis, Pulmonary",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "PC",
+                            "qualifierName": "prevention & control"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "Y",
+                      "descriptorName": "BCG Vaccine",
+                      "meshQualifierList": {
+                        "meshQualifier": [
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "AD",
+                            "qualifierName": "administration & dosage"
+                          },
+                          {
+                            "majorTopic_YN": "N",
+                            "abbreviation": "IM",
+                            "qualifierName": "immunology"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Vaccination"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Adolescent"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Child"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Child, Preschool"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Infant"
+                    },
+                    {
+                      "majorTopic_YN": "N",
+                      "descriptorName": "Interferon-gamma Release Tests"
+                    }
+                  ]
+                },
+                "keywordList": {
+                  "keyword": [
+                    "Children",
+                    "Meta-analysis",
+                    "Mycobacterium Tuberculosis Infection",
+                    "Bacillus Calmette-guérin",
+                    "Interferon-gamma Release Assays"
+                  ]
+                },
+                "chemicalList": {
+                  "chemical": [
+                    {
+                      "name": "BCG Vaccine",
+                      "registryNumber": "0"
+                    }
+                  ]
+                },
+                "subsetList": {
+                  "subset": [
+                    {
+                      "code": "IM",
+                      "name": "Index Medicus"
+                    }
+                  ]
+                },
+                "fullTextUrlList": {
+                  "fullTextUrl": [
+                    {
+                      "availability": "Subscription required",
+                      "availabilityCode": "S",
+                      "documentStyle": "doi",
+                      "site": "DOI",
+                      "url": "https://doi.org/10.1016/j.ijid.2025.107909"
+                    }
+                  ]
+                },
+                "isOpenAccess": "N",
+                "inEPMC": "N",
+                "inPMC": "N",
+                "citedByCount": 4,
+                "hasReferences": "Y",
+                "hasTextMinedTerms": "Y",
+                "hasDbCrossReferences": "N",
+                "hasPDF": "N",
+                "hasBook": "N",
+                "hasSuppl": "N",
+                "hasLabsLinks": "Y",
+                "hasData": "N",
+                "license": "cc by-nc-nd",
+                "authMan": "N",
+                "epmcAuthMan": "N",
+                "nihAuthMan": "N",
+                "hasTMAccessionNumbers": "N",
+                "dateOfCompletion": "2025-06-11",
+                "dateOfCreation": "2025-04-18",
+                "dateOfRevision": "2025-06-16",
+                "electronicPublicationDate": "2025-04-16",
+                "firstPublicationDate": "2025-04-16",
+                "firstIndexDate": "2025-04-20",
+                "hasEvaluations": "N"
+              }
+            ]
+          }
+        },
+        "redactions": [
+          "abstractText"
+        ]
+      },
+      "delay_ms": null
+    }
+  ]
+}

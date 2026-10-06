@@ -1,0 +1,2258 @@
+[
+ {
+  "case_id": "borenstein_fe_re__reading_scores_fixed",
+  "example_id": "borenstein_fe_re__reading_scores_fixed",
+  "source_id": "borenstein2007_fe_re",
+  "location": "pp. 90-92 (PDF pp. 12-14): forest plot p. 90, hand calculation p. 91, spreadsheet F13-F20 p. 92",
+  "description": "Six fictional reading-score studies (Hedges' g with given variances): fixed-effect inverse-variance pooling, z-based CI and test.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Carroll",
+    "yi": 0.1,
+    "vi": 0.03
+   },
+   {
+    "study": "Grant",
+    "yi": 0.3,
+    "vi": 0.03
+   },
+   {
+    "study": "Peck",
+    "yi": 0.35,
+    "vi": 0.05
+   },
+   {
+    "study": "Donat",
+    "yi": 0.65,
+    "vi": 0.01
+   },
+   {
+    "study": "Stewart",
+    "yi": 0.45,
+    "vi": 0.05
+   },
+   {
+    "study": "Young",
+    "yi": 0.15,
+    "vi": 0.02
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.3968,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "spreadsheet F13 / text p. 91"
+   },
+   {
+    "path": "se",
+    "value": 0.0624,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "spreadsheet F15"
+   },
+   {
+    "path": "se",
+    "value": 0.0039,
+    "tol": 5e-05,
+    "transform": "square",
+    "note": "variance, spreadsheet F14"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.2744,
+    "tol": 5.235e-05,
+    "transform": null,
+    "note": "spreadsheet F16; tol = half unit + |1.96 - z_.975|*SE (source uses the rounded 1.96 multiplier)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5191,
+    "tol": 5.235e-05,
+    "transform": null,
+    "note": "spreadsheet F17; tol = half unit + 1.96-vs-exact-quantile allowance"
+   },
+   {
+    "path": "stat",
+    "value": 6.3563,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Z, spreadsheet F18"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "two-tailed p printed '0.0000' (F20)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.397,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "forest plot summary row p. 90"
+   },
+   {
+    "path": "se",
+    "value": 0.062,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "forest plot summary row p. 90"
+   },
+   {
+    "path": "se",
+    "value": 0.004,
+    "tol": 0.0005,
+    "transform": "square",
+    "note": "forest plot variance p. 90"
+   },
+   {
+    "path": "estimate",
+    "value": 0.39675324675324675,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.062418778393235924,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "stat",
+    "value": 6.356312266377858,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "p",
+    "value": 2.066546933576774e-10,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.27441244110250435,
+    "tol": 2.35e-06,
+    "transform": null,
+    "note": "tight check vs verifier value computed with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5190940524039892,
+    "tol": 2.35e-06,
+    "transform": null,
+    "note": "tight check vs verifier value computed with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7"
+   },
+   {
+    "path": "Q",
+    "value": 12.8056277056277,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived (not printed in the FE section): Cochran Q, verifier full precision"
+   },
+   {
+    "path": "I2",
+    "value": 60.95466684696256,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "derived, not printed: I^2 (%), verifier full precision"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.025269952612902102,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "derived, not printed: chi-square(5) p for Q, verifier full precision"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 12.987012987012987,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: FE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 12.987012987012987,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: FE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 7.792207792207791,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: FE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 38.96103896103896,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: FE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 7.792207792207791,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: FE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 19.48051948051948,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: FE relative weight (%), verifier full precision"
+   }
+  ],
+  "note": "Inputs are exact (fictional data). Raw weights (33.333...), sum of weights 256.667 and sum of w*y 101.833 are printed but the engine exposes only relative weights, so they are not checked. One-tailed p (also 0.0000) is not checked (no halving transform); the two-tailed p is.",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__reading_scores_random_dl",
+  "example_id": "borenstein_fe_re__reading_scores_random_dl",
+  "source_id": "borenstein2007_fe_re",
+  "location": "pp. 98-104 (PDF pp. 20-26): Q/C/tau^2 p. 98, RE forest plot p. 100, RE hand calculation p. 101, spreadsheet blocks (5),(7) p. 102",
+  "description": "Same six reading-score studies: Cochran Q, C, method-of-moments (DerSimonian-Laird) tau^2 and random-effects pooling with z-based CI.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Carroll",
+    "yi": 0.1,
+    "vi": 0.03
+   },
+   {
+    "study": "Grant",
+    "yi": 0.3,
+    "vi": 0.03
+   },
+   {
+    "study": "Peck",
+    "yi": 0.35,
+    "vi": 0.05
+   },
+   {
+    "study": "Donat",
+    "yi": 0.65,
+    "vi": 0.01
+   },
+   {
+    "study": "Stewart",
+    "yi": 0.45,
+    "vi": 0.05
+   },
+   {
+    "study": "Young",
+    "yi": 0.15,
+    "vi": 0.02
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 12.8056,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "text p. 98 / spreadsheet H13"
+   },
+   {
+    "path": "Q_df",
+    "value": 5,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "df printed 5.0000 (H14)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 196.1905,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "C, spreadsheet H16"
+   },
+   {
+    "path": "tau2",
+    "value": 0.0398,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "tau^2, spreadsheet H17"
+   },
+   {
+    "path": "estimate",
+    "value": 0.3442,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "spreadsheet M13 (full precision 0.34424968 lies 3.2e-7 inside the cell)"
+   },
+   {
+    "path": "se",
+    "value": 0.1068,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "spreadsheet M15"
+   },
+   {
+    "path": "se",
+    "value": 0.0114,
+    "tol": 5e-05,
+    "transform": "square",
+    "note": "variance, spreadsheet M14"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.135,
+    "tol": 5.394e-05,
+    "transform": null,
+    "note": "spreadsheet M16; tol = half unit + |1.96 - z_.975|*SE (source uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5535,
+    "tol": 5.394e-05,
+    "transform": null,
+    "note": "spreadsheet M17; tol = half unit + 1.96-vs-exact-quantile allowance"
+   },
+   {
+    "path": "stat",
+    "value": 3.2247,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Z*, spreadsheet M18"
+   },
+   {
+    "path": "p",
+    "value": 0.0013,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "two-tailed p, spreadsheet M20"
+   },
+   {
+    "path": "estimate",
+    "value": 0.344,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "forest plot summary row p. 100"
+   },
+   {
+    "path": "se",
+    "value": 0.107,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "forest plot summary row p. 100"
+   },
+   {
+    "path": "se",
+    "value": 0.011,
+    "tol": 0.0005,
+    "transform": "square",
+    "note": "forest plot variance p. 100"
+   },
+   {
+    "path": "estimate",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "text p. 101 'from 0.40 to 0.34'"
+   },
+   {
+    "path": "tau2",
+    "value": 0.03978596646072371,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "tau",
+    "value": 0.19946419844353952,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.03978596646072371,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "Q",
+    "value": 12.8056277056277,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 196.1904761904762,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.3442496784190061,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.10675419027375886,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "stat",
+    "value": 3.2246947640764017,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "p",
+    "value": 0.0012610704502906689,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "I2",
+    "value": 60.95466684696256,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "derived, not printed: I^2 (%), verifier full precision"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.025269952612902102,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "derived, not printed: p for Q, verifier full precision"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.13501146548243875,
+    "tol": 3.94e-06,
+    "transform": null,
+    "note": "tight check vs verifier value computed with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5534878913555734,
+    "tol": 3.94e-06,
+    "transform": null,
+    "note": "tight check vs verifier value computed with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 16.33058581687761,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: RE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 16.33058581687761,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: RE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 12.692915819969725,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: RE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 22.890902700455978,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: RE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 12.692915819969725,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: RE relative weight (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 19.06209402584935,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: RE relative weight (%), verifier full precision"
+   }
+  ],
+  "note": "tau^2 must be the unrounded DL value (the spreadsheet column shows 0.040, but the printed weights/estimate use 0.03978597). Raw RE weights (Carroll 14.330), sum w* 87.747, sum w*y 30.207 and Q-df 7.8056 are printed but not exposed by the engine; one-tailed p 0.0006 not checked (no halving transform). The p. 101 text line '1/(0.030+0.040) = 14.330' is internally inconsistent in the source (1/0.070 = 14.286).",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__reading_scores_random_dl__fe_block",
+  "example_id": "borenstein_fe_re__reading_scores_random_dl",
+  "source_id": "borenstein2007_fe_re",
+  "location": "p. 102 (PDF p. 24) spreadsheet block (3) F13-F20 (repeat of the FE results); text p. 101 'from 0.40 to 0.34'",
+  "description": "Fixed-effect block repeated in the combined FE/RE spreadsheet (reading-score studies), plus the 2-dp FE value quoted in the text.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Carroll",
+    "yi": 0.1,
+    "vi": 0.03
+   },
+   {
+    "study": "Grant",
+    "yi": 0.3,
+    "vi": 0.03
+   },
+   {
+    "study": "Peck",
+    "yi": 0.35,
+    "vi": 0.05
+   },
+   {
+    "study": "Donat",
+    "yi": 0.65,
+    "vi": 0.01
+   },
+   {
+    "study": "Stewart",
+    "yi": 0.45,
+    "vi": 0.05
+   },
+   {
+    "study": "Young",
+    "yi": 0.15,
+    "vi": 0.02
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.3968,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "F13"
+   },
+   {
+    "path": "se",
+    "value": 0.0039,
+    "tol": 5e-05,
+    "transform": "square",
+    "note": "variance F14"
+   },
+   {
+    "path": "se",
+    "value": 0.0624,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "F15"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.2744,
+    "tol": 5.235e-05,
+    "transform": null,
+    "note": "F16; tol includes 1.96-vs-exact-quantile allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5191,
+    "tol": 5.235e-05,
+    "transform": null,
+    "note": "F17; tol includes 1.96-vs-exact-quantile allowance"
+   },
+   {
+    "path": "stat",
+    "value": 6.3563,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "F18"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "two-tailed p printed '0.0000' (F20)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.4,
+    "tol": 0.005,
+    "transform": null,
+    "note": "text p. 101 'from 0.40 to 0.34'"
+   }
+  ],
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__extreme_effect_in_large_study__cohen_d_variance",
+  "example_id": "borenstein_fe_re__extreme_effect_in_large_study",
+  "source_id": "borenstein2007_fe_re",
+  "location": "p. 106 (PDF p. 28) scenario (N=100 for A-E, N=1000 for F); CMA screenshot table p. 107 (PDF p. 29)",
+  "description": "CMA 'Std diff in means' per-study SE and variance reproduced from d and total N (equal arms) with the Cohen's d variance formula.",
+  "measure": "COHEN_D",
+  "options": {
+   "smd_vtype": "LS2"
+  },
+  "rows": [
+   {
+    "study": "A",
+    "m1": 0.7,
+    "sd1": 1.0,
+    "n1": 50,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 50
+   },
+   {
+    "study": "B",
+    "m1": 0.4,
+    "sd1": 1.0,
+    "n1": 50,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 50
+   },
+   {
+    "study": "C",
+    "m1": 0.6,
+    "sd1": 1.0,
+    "n1": 50,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 50
+   },
+   {
+    "study": "D",
+    "m1": 0.8,
+    "sd1": 1.0,
+    "n1": 50,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 50
+   },
+   {
+    "study": "E",
+    "m1": 0.75,
+    "sd1": 1.0,
+    "n1": 50,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 50
+   },
+   {
+    "study": "F",
+    "m1": 0.2,
+    "sd1": 1.0,
+    "n1": 500,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 500
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.7,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.042,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.206,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.4,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.041,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.202,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.6,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.042,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.204,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.8,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.043,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.208,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.75,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.043,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.207,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.2,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.004,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.063,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.04245,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.0408,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0418,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.0432,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.0428125,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.00402,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   }
+  ],
+  "note": "The source gives only d and total N per study; per-arm sizes (N/2 each) are inferred by the verifier. d is encoded as m1=d, m2=0, sd1=sd2=1 (pooled SD exactly 1) so that COHEN_D with smd_vtype 'LS2' applies v = (n1+n2)/(n1 n2) + d^2/(2(n1+n2)), the variance that reproduces every printed SE/variance.",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__extreme_effect_in_large_study__fixed",
+  "example_id": "borenstein_fe_re__extreme_effect_in_large_study",
+  "source_id": "borenstein2007_fe_re",
+  "location": "CMA screenshot table p. 107 (PDF p. 29); text pp. 107-108",
+  "description": "Five small studies (N=100, d 0.40-0.80) plus one large study F (N=1000, d=0.20). Fixed-effect row: pooled d, SE, variance and relative weights.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.7,
+    "vi": 0.04245,
+    "n_total": 100
+   },
+   {
+    "study": "B",
+    "yi": 0.4,
+    "vi": 0.0408,
+    "n_total": 100
+   },
+   {
+    "study": "C",
+    "yi": 0.6,
+    "vi": 0.0418,
+    "n_total": 100
+   },
+   {
+    "study": "D",
+    "yi": 0.8,
+    "vi": 0.0432,
+    "n_total": 100
+   },
+   {
+    "study": "E",
+    "yi": 0.75,
+    "vi": 0.0428125,
+    "n_total": 100
+   },
+   {
+    "study": "F",
+    "yi": 0.2,
+    "vi": 0.00402,
+    "n_total": 1000
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.344,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Fixed' row point estimate"
+   },
+   {
+    "path": "se",
+    "value": 0.052,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Fixed' row SE"
+   },
+   {
+    "path": "se",
+    "value": 0.003,
+    "tol": 0.0005,
+    "transform": "square",
+    "note": "CMA 'Fixed' row variance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": null,
+    "note": "text value (2 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 68,
+    "tol": 0.5,
+    "transform": null,
+    "note": "text: study F share of FE weight (%)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 6.41,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 6.67,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 6.51,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 6.3,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 6.36,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 67.73,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.3442754495564174,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.05218163408226583,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "Q",
+    "value": 18.451943925487626,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "derived, not printed: Q, verifier full precision"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.07038883999251123,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "derived, not printed: DL tau^2, verifier full precision"
+   },
+   {
+    "path": "I2",
+    "value": 72.90258403021964,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "derived, not printed: I^2 (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 6.414423876314457,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 6.673830724253644,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 6.514169702142314,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 6.303062350683996,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 6.360111966120845,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 67.73440138048474,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   }
+  ],
+  "note": "Inputs: printed d and vi_reconstructed_from_n (full-precision Cohen's d variance with n1=n2=N/2). The printed 3-dp variances/SEs must NOT be used as input (they shift the FE estimate by ~0.001-0.003).",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__extreme_effect_in_large_study__random_dl",
+  "example_id": "borenstein_fe_re__extreme_effect_in_large_study",
+  "source_id": "borenstein2007_fe_re",
+  "location": "CMA screenshot table p. 107 (PDF p. 29); text pp. 107-108",
+  "description": "Five small studies (N=100, d 0.40-0.80) plus one large study F (N=1000, d=0.20). Random-effects (DerSimonian-Laird) row: pooled d, SE, variance and relative weights.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.7,
+    "vi": 0.04245,
+    "n_total": 100
+   },
+   {
+    "study": "B",
+    "yi": 0.4,
+    "vi": 0.0408,
+    "n_total": 100
+   },
+   {
+    "study": "C",
+    "yi": 0.6,
+    "vi": 0.0418,
+    "n_total": 100
+   },
+   {
+    "study": "D",
+    "yi": 0.8,
+    "vi": 0.0432,
+    "n_total": 100
+   },
+   {
+    "study": "E",
+    "yi": 0.75,
+    "vi": 0.0428125,
+    "n_total": 100
+   },
+   {
+    "study": "F",
+    "yi": 0.2,
+    "vi": 0.00402,
+    "n_total": 1000
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.545,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Random' row point estimate"
+   },
+   {
+    "path": "se",
+    "value": 0.131,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Random' row SE"
+   },
+   {
+    "path": "se",
+    "value": 0.017,
+    "tol": 0.0005,
+    "transform": "square",
+    "note": "CMA 'Random' row variance"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 23,
+    "tol": 0.5,
+    "transform": null,
+    "note": "text: study F share of RE weight (%)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 15.32,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 15.55,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 15.41,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 15.22,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 15.27,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 23.23,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.07038883999251123,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "derived, not printed: DL tau^2, verifier full precision"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5446390987148464,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.13148086212033191,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.28693660895899586,
+    "tol": 4.84e-06,
+    "transform": null,
+    "note": "derived, not printed: verifier CI with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.8023415884706969,
+    "tol": 4.84e-06,
+    "transform": null,
+    "note": "derived, not printed: verifier CI with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 15.320271907308719,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 15.547618902283771,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 15.409034539495801,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 15.21911580842401,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 15.271212430037806,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 23.23274641244989,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   }
+  ],
+  "note": "Inputs: printed d and vi_reconstructed_from_n (full-precision Cohen's d variance with n1=n2=N/2). The printed 3-dp variances/SEs must NOT be used as input (they shift the FE estimate by ~0.001-0.003). tau^2 estimator not stated; DL identified by the verifier (REML/ML/PM do not reproduce the CMA row).",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__extreme_effect_in_large_study__random_text_value",
+  "example_id": "borenstein_fe_re__extreme_effect_in_large_study",
+  "source_id": "borenstein2007_fe_re",
+  "location": "p. 108 (PDF p. 30) text",
+  "description": "Random-effects pooled d quoted in the text at 2 dp (0.55).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.7,
+    "vi": 0.04245,
+    "n_total": 100
+   },
+   {
+    "study": "B",
+    "yi": 0.4,
+    "vi": 0.0408,
+    "n_total": 100
+   },
+   {
+    "study": "C",
+    "yi": 0.6,
+    "vi": 0.0418,
+    "n_total": 100
+   },
+   {
+    "study": "D",
+    "yi": 0.8,
+    "vi": 0.0432,
+    "n_total": 100
+   },
+   {
+    "study": "E",
+    "yi": 0.75,
+    "vi": 0.0428125,
+    "n_total": 100
+   },
+   {
+    "study": "F",
+    "yi": 0.2,
+    "vi": 0.00402,
+    "n_total": 1000
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.55,
+    "tol": 0.005,
+    "transform": null,
+    "note": "text value 0.55"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (double rounding): the text quotes 0.55, but the CMA table value 0.545 comes from the full-precision RE estimate 0.544639, which rounds to 0.54 at 2 dp. The authors rounded the displayed 0.545 a second time. The CMA-table value 0.545 is checked in the __random_dl case."
+ },
+ {
+  "case_id": "borenstein_fe_re__extreme_effect_in_small_study__cohen_d_variance",
+  "example_id": "borenstein_fe_re__extreme_effect_in_small_study",
+  "source_id": "borenstein2007_fe_re",
+  "location": "p. 108 (PDF p. 30) scenario (N=1000 for A-E, N=100 for F) and CMA screenshot table",
+  "description": "CMA 'Std diff in means' per-study SE and variance reproduced from d and total N (equal arms) with the Cohen's d variance formula.",
+  "measure": "COHEN_D",
+  "options": {
+   "smd_vtype": "LS2"
+  },
+  "rows": [
+   {
+    "study": "A",
+    "m1": 0.7,
+    "sd1": 1.0,
+    "n1": 500,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 500
+   },
+   {
+    "study": "B",
+    "m1": 0.4,
+    "sd1": 1.0,
+    "n1": 500,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 500
+   },
+   {
+    "study": "C",
+    "m1": 0.6,
+    "sd1": 1.0,
+    "n1": 500,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 500
+   },
+   {
+    "study": "D",
+    "m1": 0.8,
+    "sd1": 1.0,
+    "n1": 500,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 500
+   },
+   {
+    "study": "E",
+    "m1": 0.75,
+    "sd1": 1.0,
+    "n1": 500,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 500
+   },
+   {
+    "study": "F",
+    "m1": 0.2,
+    "sd1": 1.0,
+    "n1": 50,
+    "m2": 0.0,
+    "sd2": 1.0,
+    "n2": 50
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.7,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.004,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.065,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.4,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.004,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.064,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.6,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.004,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.065,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.8,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.004,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.066,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.75,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.004,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.065,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.2,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed d"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.04,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed variance (3 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.2,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "printed SE (3 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.004245,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.00408,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.00418,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.00432,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.00428125,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.0402,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier's reconstructed variance (n1+n2)/(n1 n2) + d^2/(2(n1+n2))"
+   }
+  ],
+  "note": "The source gives only d and total N per study; per-arm sizes (N/2 each) are inferred by the verifier. d is encoded as m1=d, m2=0, sd1=sd2=1 (pooled SD exactly 1) so that COHEN_D with smd_vtype 'LS2' applies v = (n1+n2)/(n1 n2) + d^2/(2(n1+n2)), the variance that reproduces every printed SE/variance.",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__extreme_effect_in_small_study__fixed",
+  "example_id": "borenstein_fe_re__extreme_effect_in_small_study",
+  "source_id": "borenstein2007_fe_re",
+  "location": "CMA screenshot table p. 108 (PDF p. 30); text pp. 108-109",
+  "description": "Five large studies (N=1000, d 0.40-0.80) plus one small study F (N=100, d=0.20). Fixed-effect row: pooled d, SE, variance and relative weights.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.7,
+    "vi": 0.004245,
+    "n_total": 1000
+   },
+   {
+    "study": "B",
+    "yi": 0.4,
+    "vi": 0.00408,
+    "n_total": 1000
+   },
+   {
+    "study": "C",
+    "yi": 0.6,
+    "vi": 0.00418,
+    "n_total": 1000
+   },
+   {
+    "study": "D",
+    "yi": 0.8,
+    "vi": 0.00432,
+    "n_total": 1000
+   },
+   {
+    "study": "E",
+    "yi": 0.75,
+    "vi": 0.00428125,
+    "n_total": 1000
+   },
+   {
+    "study": "F",
+    "yi": 0.2,
+    "vi": 0.0402,
+    "n_total": 100
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.638,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Fixed' row point estimate"
+   },
+   {
+    "path": "se",
+    "value": 0.029,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Fixed' row SE"
+   },
+   {
+    "path": "se",
+    "value": 0.001,
+    "tol": 0.0005,
+    "transform": "square",
+    "note": "CMA 'Fixed' row variance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.64,
+    "tol": 0.005,
+    "transform": null,
+    "note": "text value (2 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2,
+    "tol": 0.5,
+    "transform": null,
+    "note": "text: study F share of FE weight (%)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 19.47,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 20.26,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 19.77,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 19.13,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 19.31,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.06,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, fixed (%)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.6379555620222287,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.028749909373915535,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "Q",
+    "value": 28.91154562172818,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "derived, not printed: Q, verifier full precision"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.024471662753161087,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "derived, not printed: DL tau^2, verifier full precision"
+   },
+   {
+    "path": "I2",
+    "value": 82.70587098518074,
+    "tol": 1e-07,
+    "transform": null,
+    "note": "derived, not printed: I^2 (%), verifier full precision"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 19.471314228700976,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 20.258757083538143,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 19.77409782316642,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 19.133270578897136,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 19.306447626472554,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 2.056112659224767,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   }
+  ],
+  "note": "Inputs: printed d and vi_reconstructed_from_n (full-precision Cohen's d variance with n1=n2=N/2). The printed 3-dp variances/SEs must NOT be used as input (they shift the FE estimate by ~0.001-0.003).",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__extreme_effect_in_small_study__random_dl",
+  "example_id": "borenstein_fe_re__extreme_effect_in_small_study",
+  "source_id": "borenstein2007_fe_re",
+  "location": "CMA screenshot table p. 108 (PDF p. 30); text pp. 108-109",
+  "description": "Five large studies (N=1000, d 0.40-0.80) plus one small study F (N=100, d=0.20). Random-effects (DerSimonian-Laird) row: pooled d, SE, variance and relative weights.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.7,
+    "vi": 0.004245,
+    "n_total": 1000
+   },
+   {
+    "study": "B",
+    "yi": 0.4,
+    "vi": 0.00408,
+    "n_total": 1000
+   },
+   {
+    "study": "C",
+    "yi": 0.6,
+    "vi": 0.00418,
+    "n_total": 1000
+   },
+   {
+    "study": "D",
+    "yi": 0.8,
+    "vi": 0.00432,
+    "n_total": 1000
+   },
+   {
+    "study": "E",
+    "yi": 0.75,
+    "vi": 0.00428125,
+    "n_total": 1000
+   },
+   {
+    "study": "F",
+    "yi": 0.2,
+    "vi": 0.0402,
+    "n_total": 100
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.613,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Random' row point estimate"
+   },
+   {
+    "path": "se",
+    "value": 0.073,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "CMA 'Random' row SE"
+   },
+   {
+    "path": "se",
+    "value": 0.005,
+    "tol": 0.0005,
+    "transform": "square",
+    "note": "CMA 'Random' row variance"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 8,
+    "tol": 0.5,
+    "transform": null,
+    "note": "text: study F share of RE weight (%)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.61,
+    "tol": 0.005,
+    "transform": null,
+    "note": "text value (2 dp)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 18.35,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 18.46,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 18.4,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 18.31,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 18.33,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 8.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "CMA relative weight, random (%)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.024471662753161087,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "derived, not printed: DL tau^2, verifier full precision"
+   },
+   {
+    "path": "estimate",
+    "value": 0.6129434913898419,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.07260051063432683,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4706464905465614,
+    "tol": 2.71e-06,
+    "transform": null,
+    "note": "derived, not printed: verifier CI with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.7552404922331225,
+    "tol": 2.71e-06,
+    "transform": null,
+    "note": "derived, not printed: verifier CI with z=1.96; tol = |1.96 - z_.975|*SE + 1e-7"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 18.354619370890507,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 18.46069067827388,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 18.396259197150723,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 18.306807041862527,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 18.331478934375195,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 8.150144777447169,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   }
+  ],
+  "note": "Inputs: printed d and vi_reconstructed_from_n (full-precision Cohen's d variance with n1=n2=N/2). The printed 3-dp variances/SEs must NOT be used as input (they shift the FE estimate by ~0.001-0.003). tau^2 estimator not stated; DL identified by the verifier (REML/ML/PM do not reproduce the CMA row).",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__huge_n_fixed",
+  "example_id": "borenstein_fe_re__huge_n_fixed",
+  "source_id": "borenstein2007_fe_re",
+  "location": "Figure 'Fixed effect model with huge N', p. 111 (PDF p. 33)",
+  "description": "Five identical effects (d=0.400) with SE 0.001: fixed-effect pooled d and SE (SE prints as 0.000).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "B",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "C",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "D",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "E",
+    "yi": 0.4,
+    "sei": 0.001
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.4,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "figure summary row 0.400"
+   },
+   {
+    "path": "se",
+    "value": 0.0,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "figure summary row SE printed 0.000"
+   },
+   {
+    "path": "estimate",
+    "value": 0.4,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.00044721359549995795,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier value sqrt(1e-6/5), taking sei=0.001 as exact"
+   },
+   {
+    "path": "Q",
+    "value": 0.0,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "derived, not printed: Q = 0"
+   }
+  ],
+  "note": "Input SEs are printed to 3 dp (0.001) and taken as exact; the printed SE 0.000 holds for any sei in [0.0005, 0.0015].",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__huge_n_fixed__re_tau2_truncation",
+  "example_id": "borenstein_fe_re__huge_n_fixed",
+  "source_id": "borenstein2007_fe_re",
+  "location": "Figure 'Fixed effect model with huge N', p. 111 (PDF p. 33); Eq. 3.5 truncation p. 98",
+  "description": "Same five identical effects under DL random effects: tau^2 must truncate to exactly 0 so the RE result equals the FE result.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "B",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "C",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "D",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "E",
+    "yi": 0.4,
+    "sei": 0.001
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "tau2",
+    "value": 0.0,
+    "tol": 0.0,
+    "transform": null,
+    "note": "derived, not printed: Eq. 3.5 sets tau^2 = 0 when Q <= df; must be exactly 0, not a small negative number"
+   },
+   {
+    "path": "estimate",
+    "value": 0.4,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "figure summary 0.400 (RE = FE when tau^2 = 0)"
+   },
+   {
+    "path": "se",
+    "value": 0.0,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "figure summary SE 0.000 (RE = FE when tau^2 = 0)"
+   },
+   {
+    "path": "se",
+    "value": 0.00044721359549995795,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check: verifier RE SE equals FE SE because tau^2 = 0"
+   }
+  ],
+  "note": "Regression test for tau^2 truncation at 0 (statsmodels returns tau^2 = -1e-6 here). Values beyond the printed 0.400/0.000 come from the verifier's computation.",
+  "status": "active"
+ },
+ {
+  "case_id": "borenstein_fe_re__huge_n_random",
+  "example_id": "borenstein_fe_re__huge_n_random",
+  "source_id": "borenstein2007_fe_re",
+  "location": "Figure 'Random effects model with huge N', p. 113 (PDF p. 35)",
+  "description": "Five dispersed effects (0.35-0.45) with SE 0.001: DL random-effects SE stays near sqrt(tau^2/k) despite huge within-study N.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "A",
+    "yi": 0.4,
+    "sei": 0.001
+   },
+   {
+    "study": "B",
+    "yi": 0.45,
+    "sei": 0.001
+   },
+   {
+    "study": "C",
+    "yi": 0.35,
+    "sei": 0.001
+   },
+   {
+    "study": "D",
+    "yi": 0.45,
+    "sei": 0.001
+   },
+   {
+    "study": "E",
+    "yi": 0.35,
+    "sei": 0.001
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.4,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "figure summary row 0.400"
+   },
+   {
+    "path": "se",
+    "value": 0.022,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "figure summary row SE 0.022"
+   },
+   {
+    "path": "estimate",
+    "value": 0.4,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "se",
+    "value": 0.022360679774997897,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (verification.computed)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.002499,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "derived, not printed: DL tau^2"
+   },
+   {
+    "path": "Q",
+    "value": 10000.0,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "derived, not printed: Q = 10000"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 4000000.0,
+    "tol": 0.0001,
+    "transform": null,
+    "note": "derived, not printed: C = 4e6"
+   },
+   {
+    "path": "I2",
+    "value": 99.96000000000001,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "derived, not printed: I^2 = 99.96%"
+   }
+  ],
+  "note": "Input SEs (0.001) are taken as exact; SE_random is insensitive to sei in [0.0005, 0.0015] (all 0.02236). ML would give 0.020, so the printed 0.022 also discriminates against ML.",
+  "status": "active"
+ }
+]

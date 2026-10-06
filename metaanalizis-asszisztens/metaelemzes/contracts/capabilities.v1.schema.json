@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:capabilities:1",
+  "title": "szk.capabilities/v1 — kézfogás (--capabilities; terv 4.1)",
+  "type": "object",
+  "required": [
+    "schema",
+    "plugin",
+    "version",
+    "ok",
+    "contracts",
+    "commands"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.capabilities/v1"
+    },
+    "plugin": {
+      "type": "string",
+      "examples": [
+        "metaelemzes",
+        "validator",
+        "figure-forge",
+        "composer",
+        "presubmit"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+"
+    },
+    "python": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean",
+      "description": "a deklarált parancsok ebben az interpreterben futtathatók"
+    },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "dir",
+          "sha256"
+        ],
+        "properties": {
+          "dir": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "in",
+                "out"
+              ]
+            }
+          },
+          "sha256": {
+            "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+          }
+        }
+      },
+      "description": "a plugin contracts/ mappájában lévő séma bájt-hash-e — futásidejű sodródás-őr"
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "argv"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "argv": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "in": {
+            "type": "array"
+          },
+          "out": {
+            "type": "array"
+          },
+          "needs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "available": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "requires": {
+      "type": "object",
+      "properties": {
+        "modules": {
+          "type": "array"
+        },
+        "missing": {
+          "type": "array"
+        }
+      }
+    },
+    "known_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "summary"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "fixed_in": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

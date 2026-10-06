@@ -1,0 +1,57 @@
+{
+ "description": "GET /api/changes?since=<rev> — long-poll (2.2), ChangeWatcher.changes_since: {rev, changed, external, reset}. Az első válasz 2 külső változás, utána 25 s-os üres válaszok.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/changes",
+   "sequence": [
+    {
+     "delay_ms": 400,
+     "envelope": {
+      "ok": true,
+      "schema": "szk.ma.changes/v1",
+      "data": {
+       "rev": 42,
+       "changed": [
+        "03_adatok/o1.csv",
+        "projekt.sqlite"
+       ],
+       "external": [
+        "03_adatok/o1.csv",
+        "projekt.sqlite"
+       ],
+       "reset": false
+      },
+      "warnings": [],
+      "meta": {
+       "engine": "0.2.0",
+       "elapsed_ms": 1,
+       "project_rev": 42,
+       "request_id": "q_fx07"
+      }
+     }
+    },
+    {
+     "delay_ms": 25000,
+     "envelope": {
+      "ok": true,
+      "schema": "szk.ma.changes/v1",
+      "data": {
+       "rev": 42,
+       "changed": [],
+       "external": [],
+       "reset": false
+      },
+      "warnings": [],
+      "meta": {
+       "engine": "0.2.0",
+       "elapsed_ms": 1,
+       "project_rev": 42,
+       "request_id": "q_fx08"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

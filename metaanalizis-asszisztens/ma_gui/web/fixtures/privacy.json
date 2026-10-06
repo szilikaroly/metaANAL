@@ -1,0 +1,76 @@
+{
+ "description": "GET /api/privacy — ma_gui/privacy.py status() kimenete (3.5.2, 3.5.16, 7.4–7.5). A szerver opcionálisan 'status' mezőt is adhat (protected | at_risk | blocked); ha nincs, a fejléc a logikai mezőkből jelenít meg.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/privacy",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy/v1",
+    "data": {
+     "data_class": "A",
+     "data_class_label": "publikált aggregált",
+     "vault": {
+      "tracked": true,
+      "root": "~/Documents/claude",
+      "reason": "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+      "installed": true,
+      "config": "~/.claude/vault/config.json",
+      "max_depth": 2,
+      "depth": 2,
+      "under_root": true,
+      "paused": false,
+      "excluded": false,
+      "exclude_match": null,
+      "via": null,
+      "error": null
+     },
+     "cloud_sync": {
+      "kind": "onedrive",
+      "path": "~/Documents",
+      "known_folder_move": true
+     },
+     "git": {
+      "available": true,
+      "repo": true,
+      "toplevel": "~/Documents/claude"
+     },
+     "gitignore_block_present": true,
+     "deny_rule_present": true,
+     "precommit_guard_installed": false,
+     "tracked_sensitive_files": [],
+     "history": {
+      "checked": true,
+      "git": true,
+      "repo": true,
+      "in_history": false,
+      "in_remote": null,
+      "commits": 0,
+      "paths": [],
+      "reason": null
+     },
+     "write_hold": {
+      "active": false,
+      "reason": null
+     },
+     "open_blocked": {
+      "blocked": false,
+      "reasons": []
+     },
+     "recommendations": [
+      "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+      "A projekt mappáját a(z) OneDrive szinkronizálja (~/Documents); A osztálynál ez csak figyelmeztetés."
+     ],
+     "actions": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_fx04"
+    }
+   }
+  }
+ ]
+}

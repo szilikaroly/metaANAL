@@ -1,0 +1,90 @@
+{
+  "schema": "szk.ma.validation/v1",
+  "engine_version": "0.2.0",
+  "measure": "SMD",
+  "input_sha256": "9f3a000000000000000000000000000000000000000000000000000000000000",
+  "column_map": {
+    "study": "vizsgálat",
+    "m1": "átlag1",
+    "sd1": "SD1",
+    "n1": "n1",
+    "m2": "átlag2",
+    "sd2": "SD2",
+    "n2": "n2"
+  },
+  "decimal_mark": ",",
+  "summary": {
+    "error": 1,
+    "warning": 2,
+    "info": 0
+  },
+  "k_analysable": 4,
+  "findings": [
+    {
+      "code": "V011",
+      "severity": "warning",
+      "title": "SD/SE-csere gyanú",
+      "study": "Smith 2010",
+      "row": 3,
+      "rows": [
+        3
+      ],
+      "row_uid": "r7f3a2b",
+      "line": 5,
+      "fields": [
+        "sd1",
+        "n1"
+      ],
+      "detail": "sd1=0.42, sd1·√n=3.1, medián SD=3.2",
+      "advice": "Ellenőrizd, hogy SD vagy SE szerepel-e.",
+      "source": "Cochrane Handbook 6.5.2.3",
+      "blocking": false,
+      "kb_id": "V011",
+      "acknowledged": null
+    },
+    {
+      "code": "V015",
+      "severity": "warning",
+      "title": "Kevés vizsgálat",
+      "study": null,
+      "row": null,
+      "rows": [],
+      "row_uid": null,
+      "line": null,
+      "fields": [],
+      "detail": "k = 4 elemezhető vizsgálat (5 sorból)",
+      "advice": "k < 5: HKSJ-CI és predikciós intervallum ajánlott.",
+      "source": "Cochrane Handbook 10.10.4",
+      "blocking": false,
+      "kb_id": "V015"
+    },
+    {
+      "code": "V002",
+      "severity": "error",
+      "title": "Hiányzó kötelező érték",
+      "study": "Lee 2015",
+      "row": 4,
+      "rows": [
+        4
+      ],
+      "row_uid": "r9k2m4p",
+      "line": 6,
+      "fields": [
+        "m2"
+      ],
+      "detail": "hiányzik: m2",
+      "advice": "A vizsgálat kimarad az elemzésből.",
+      "source": "Cochrane Handbook 6.5.2",
+      "blocking": true,
+      "kb_id": "V002",
+      "acknowledged": 12
+    }
+  ],
+  "excluded": [
+    {
+      "study": "Lee 2015",
+      "row": 4,
+      "reason": "validálási hiba: V002"
+    }
+  ]
+}

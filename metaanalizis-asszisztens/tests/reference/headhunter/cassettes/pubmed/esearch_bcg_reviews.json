@@ -1,0 +1,49 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "pubmed-esearch_bcg_reviews",
+  "recorded_at": "2026-10-05T11:08:27Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "BCG-áttekintések keresése (TERV 5.1 szűrő), retmax=5",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=5&retmode=json&retstart=0&term=%28%28tuberculosis%5Btiab%5D%29+AND+%28%22BCG+vaccine%22%5Btiab%5D+OR+%22BCG+vaccination%22%5Btiab%5D%29%29+AND+%28systematic%5Bsb%5D+OR+meta-analysis%5Bpt%5D+OR+%22meta-analysis%22%5Bti%5D+OR+%22systematic+review%22%5Bti%5D%29",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_json": {
+          "header": {
+            "type": "esearch",
+            "version": "0.3"
+          },
+          "esearchresult": {
+            "count": "90",
+            "retmax": "5",
+            "retstart": "0",
+            "idlist": [
+              "42458287",
+              "42398701",
+              "42226180",
+              "42203236",
+              "41965973"
+            ],
+            "translationset": [],
+            "querytranslation": "\"tuberculosis\"[Title/Abstract] AND (\"BCG vaccine\"[Title/Abstract] OR \"BCG vaccination\"[Title/Abstract]) AND (\"systematic\"[Filter] OR \"meta-analysis\"[Publication Type] OR \"meta-analysis\"[Title] OR \"systematic review\"[Title])"
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

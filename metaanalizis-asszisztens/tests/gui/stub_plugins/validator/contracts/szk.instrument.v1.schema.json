@@ -1,0 +1,11 @@
+{
+  "$id": "urn:szk:contract:instrument:1",
+  "title": "szk.instrument/v1 (stub-másolat a sodródás-teszthez)",
+  "type": "object",
+  "required": ["schema", "key", "items"],
+  "properties": {
+    "schema": {"const": "szk.instrument/v1"},
+    "key": {"type": "string"},
+    "items": {"type": "array"}
+  }
+}

@@ -1,0 +1,5128 @@
+[
+ {
+  "case_id": "khan_ch09__bonjer2015_md_effect_size",
+  "example_id": "khan_ch09__bonjer2015_single_study_md",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Example 9.1 pp. 197-198; Table 9.1 p. 197",
+  "description": "Single-study raw MD for Bonjer 2015 (LARR 699/200/222 vs ORR 345/400/370) with its unequal-variance Var and SE.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": -200,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed md (0 dp), Ex 9.1 p. 197; MD = 200 - 400"
+   },
+   {
+    "path": "vi.0",
+    "value": 467.318,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed var_md (3 dp), Ex 9.1 p. 197; Var = 222^2/699 + 370^2/345"
+   },
+   {
+    "path": "vi.0",
+    "value": 21.6175,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "printed se_md (4 dp), Ex 9.1 p. 197; SE = sqrt(Var)"
+   },
+   {
+    "path": "yi.0",
+    "value": -200.0,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "vi.0",
+    "value": 467.3180319711389,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "vi.0",
+    "value": 21.617539914873266,
+    "tol": 1e-06,
+    "transform": "sqrt",
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (SE)"
+   }
+  ],
+  "note": "Arm 1 = LARR, arm 2 = ORR, effect = mean(LARR) - mean(ORR). The printed weight W = 1/Var = 0.00214 and W x MD = -0.428 have no engine result path and are not checked (they are implied by vi.0)."
+ },
+ {
+  "case_id": "khan_ch09__bonjer2015_md_wald_ci",
+  "example_id": "khan_ch09__bonjer2015_single_study_md",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Example 9.1 p. 198",
+  "description": "95% Wald CI of the Bonjer 2015 MD (hand calculation with z = 1.96), as a one-study fixed-effect z analysis.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -200,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed md (0 dp), Ex 9.1 p. 197"
+   },
+   {
+    "path": "se",
+    "value": 21.6175,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed se_md (4 dp), Ex 9.1 p. 197"
+   },
+   {
+    "path": "ci_lower",
+    "value": -242.37,
+    "tol": 0.005778565643,
+    "transform": null,
+    "note": "printed ci_lower_95 (2 dp), p. 198; tol = half unit + 1.96-vs-exact-z allowance SE*3.6e-5 = 7.8e-04"
+   },
+   {
+    "path": "ci_upper",
+    "value": -157.63,
+    "tol": 0.005778565643,
+    "transform": null,
+    "note": "printed ci_upper_95 (2 dp), p. 198; tol = half unit + 1.96-vs-exact-z allowance SE*3.6e-5 = 7.8e-04"
+   },
+   {
+    "path": "ci_lower",
+    "value": -242.36959966750865,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (verifier's z=1.96 limit shifted to the exact normal quantile: -200 - 1.959964*SE)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -157.63040033249135,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact-z limit: -200 + 1.959964*SE)"
+   }
+  ],
+  "note": "k = 1, so the 'pooled' result is the study itself; the engine uses the exact normal quantile, the book 1.96 (allowance added to the printed-value tolerance)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_effect_sizes",
+  "example_id": "khan_ch09__blood_loss_md_fixed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Table 9.1 p. 197 (inputs); Table 9.2 p. 198; Table 9.3 p. 202; Fig. 9.1 p. 200",
+  "description": "Per-study raw MDs (LARR - ORR, mL), unequal-variance variances and SEs for the 11 blood-loss studies.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": -200.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 467.318,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) Var, Table 9.3 p. 202 (3 dp)"
+   },
+   {
+    "path": "vi.0",
+    "value": 21.618,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Bonjer et al. (2015) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.1",
+    "value": -62.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 885.2478,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) Var, Table 9.3 p. 202 (4 dp)"
+   },
+   {
+    "path": "vi.1",
+    "value": 29.753,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Fleshman et al. (2015) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.2",
+    "value": -50.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 191.9487,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) Var, Table 9.3 p. 202 (4 dp)"
+   },
+   {
+    "path": "vi.2",
+    "value": 13.855,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Stevenson et al. (2015) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.3",
+    "value": -17.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 330.1706,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Jeong et al. (2014) Var, Table 9.3 p. 202 (4 dp)"
+   },
+   {
+    "path": "vi.3",
+    "value": 18.171,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Jeong et al. (2014) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.4",
+    "value": -219.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.4",
+    "value": 15953.23,
+    "tol": 0.005000001,
+    "transform": null,
+    "note": "Ng et al. (2014) Var, Table 9.3 p. 202 (2 dp); exact value 15953.2250 is a rounding tie (printed half-up), +1e-9 float slack"
+   },
+   {
+    "path": "vi.4",
+    "value": 126.31,
+    "tol": 0.005,
+    "transform": "sqrt",
+    "note": "Ng et al. (2014) SE, Table 9.2 p. 198 (2 dp)"
+   },
+   {
+    "path": "yi.5",
+    "value": -70.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 176.1431,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Liu et al. (2011) Var, Table 9.3 p. 202 (4 dp)"
+   },
+   {
+    "path": "vi.5",
+    "value": 13.272,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Liu et al. (2011) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.6",
+    "value": -106.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.6",
+    "value": 422.0541,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Lujan et al. (2009) Var, Table 9.3 p. 202 (4 dp)"
+   },
+   {
+    "path": "vi.6",
+    "value": 20.544,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Lujan et al. (2009) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.7",
+    "value": -57.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.7",
+    "value": 5613.227,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Ng et al. (2009) Var, Table 9.3 p. 202 (3 dp)"
+   },
+   {
+    "path": "vi.7",
+    "value": 74.921,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Ng et al. (2009) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.8",
+    "value": -233.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.8",
+    "value": 40432.41,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) Var, Table 9.3 p. 202 (2 dp)"
+   },
+   {
+    "path": "vi.8",
+    "value": 201.08,
+    "tol": 0.005,
+    "transform": "sqrt",
+    "note": "Ng et al. (2008) SE, Table 9.2 p. 198 (2 dp)"
+   },
+   {
+    "path": "yi.9",
+    "value": -183.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.9",
+    "value": 1585.082,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "Braga et al. (2007) Var, Table 9.3 p. 202 (3 dp)"
+   },
+   {
+    "path": "vi.9",
+    "value": 39.813,
+    "tol": 0.0005,
+    "transform": "sqrt",
+    "note": "Braga et al. (2007) SE, Table 9.2 p. 198 (3 dp)"
+   },
+   {
+    "path": "yi.10",
+    "value": -72.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) MD, Fig. 9.1 p. 200 (1 dp)"
+   },
+   {
+    "path": "vi.10",
+    "value": 11.42491,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Zhou et al. (2004) Var, Table 9.3 p. 202 (5 dp)"
+   },
+   {
+    "path": "vi.10",
+    "value": 3.3801,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Zhou et al. (2004) SE, Table 9.2 p. 198 (4 dp)"
+   }
+  ],
+  "note": "Table 9.2 displays some MDs rounded to integers (-219, -106, -234); the forest-plot MDs (1 dp) are used here. Var/SE are Excel 'General' displays, so the printed decimals vary by row."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_per_study_wald_ci",
+  "example_id": "khan_ch09__blood_loss_md_fixed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Table 9.2 p. 198; Fig. 9.1 p. 200",
+  "description": "Per-study 95% Wald CIs of the 11 blood-loss MDs (Fig. 9.1 at 2 dp with exact z; Table 9.2 with z = 1.96), each study in its own group of a 'subgroup' call.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.S1.ci_lower",
+    "value": -242.37,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S1.ci_upper",
+    "value": -157.63,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S1.ci_lower",
+    "value": -242.4,
+    "tol": 0.05077856564,
+    "transform": null,
+    "note": "Bonjer et al. (2015) 95% CI LL, Table 9.2 p. 198 (1 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 7.8e-04"
+   },
+   {
+    "path": "groups.S1.ci_upper",
+    "value": -157.63,
+    "tol": 0.005778565643,
+    "transform": null,
+    "note": "Bonjer et al. (2015) 95% CI UL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 7.8e-04"
+   },
+   {
+    "path": "groups.S2.ci_lower",
+    "value": -120.62,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S2.ci_upper",
+    "value": -3.98,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S2.ci_lower",
+    "value": -120.6,
+    "tol": 0.05107157208,
+    "transform": null,
+    "note": "Fleshman et al. (2015) 95% CI LL, Table 9.2 p. 198 (1 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 1.1e-03"
+   },
+   {
+    "path": "groups.S2.ci_upper",
+    "value": -3.9839,
+    "tol": 0.001121572077,
+    "transform": null,
+    "note": "Fleshman et al. (2015) 95% CI UL, Table 9.2 p. 198 (4 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 1.1e-03"
+   },
+   {
+    "path": "groups.S3.ci_lower",
+    "value": -77.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S3.ci_upper",
+    "value": -22.85,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S3.ci_lower",
+    "value": -77.15,
+    "tol": 0.005498978171,
+    "transform": null,
+    "note": "Stevenson et al. (2015) 95% CI LL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 5.0e-04"
+   },
+   {
+    "path": "groups.S3.ci_upper",
+    "value": -22.845,
+    "tol": 0.0009989781714,
+    "transform": null,
+    "note": "Stevenson et al. (2015) 95% CI UL, Table 9.2 p. 198 (3 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 5.0e-04"
+   },
+   {
+    "path": "groups.S4.ci_lower",
+    "value": -53.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S4.ci_upper",
+    "value": 18.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S4.ci_lower",
+    "value": -53.11,
+    "tol": 0.005654422401,
+    "transform": null,
+    "note": "Jeong et al. (2014) 95% CI LL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 6.5e-04"
+   },
+   {
+    "path": "groups.S4.ci_upper",
+    "value": 18.114,
+    "tol": 0.001154422401,
+    "transform": null,
+    "note": "Jeong et al. (2014) 95% CI UL, Table 9.2 p. 198 (3 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 6.5e-04"
+   },
+   {
+    "path": "groups.S5.ci_lower",
+    "value": -466.86,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S5.ci_upper",
+    "value": 28.26,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S5.ci_lower",
+    "value": -466.9,
+    "tol": 0.05454897144,
+    "transform": null,
+    "note": "Ng et al. (2014) 95% CI LL, Table 9.2 p. 198 (1 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 4.5e-03"
+   },
+   {
+    "path": "groups.S5.ci_upper",
+    "value": 28.26,
+    "tol": 0.009548971445,
+    "transform": null,
+    "note": "Ng et al. (2014) 95% CI UL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 4.5e-03"
+   },
+   {
+    "path": "groups.S6.ci_lower",
+    "value": -96.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liu et al. (2011) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S6.ci_upper",
+    "value": -43.99,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liu et al. (2011) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S6.ci_lower",
+    "value": -96.01,
+    "tol": 0.005477993256,
+    "transform": null,
+    "note": "Liu et al. (2011) 95% CI LL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 4.8e-04"
+   },
+   {
+    "path": "groups.S6.ci_upper",
+    "value": -43.987,
+    "tol": 0.0009779932565,
+    "transform": null,
+    "note": "Liu et al. (2011) 95% CI UL, Table 9.2 p. 198 (3 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 4.8e-04"
+   },
+   {
+    "path": "groups.S7.ci_lower",
+    "value": -146.67,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S7.ci_upper",
+    "value": -66.13,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S7.ci_lower",
+    "value": -146.7,
+    "tol": 0.05073990003,
+    "transform": null,
+    "note": "Lujan et al. (2009) 95% CI LL, Table 9.2 p. 198 (1 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 7.4e-04"
+   },
+   {
+    "path": "groups.S7.ci_upper",
+    "value": -66.134,
+    "tol": 0.00123990003,
+    "transform": null,
+    "note": "Lujan et al. (2009) 95% CI UL, Table 9.2 p. 198 (3 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 7.4e-04"
+   },
+   {
+    "path": "groups.S8.ci_lower",
+    "value": -203.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2009) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S8.ci_upper",
+    "value": 89.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2009) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S8.ci_lower",
+    "value": -203.8,
+    "tol": 0.05269833127,
+    "transform": null,
+    "note": "Ng et al. (2009) 95% CI LL, Table 9.2 p. 198 (1 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 2.7e-03"
+   },
+   {
+    "path": "groups.S8.ci_upper",
+    "value": 89.846,
+    "tol": 0.003198331265,
+    "transform": null,
+    "note": "Ng et al. (2009) 95% CI UL, Table 9.2 p. 198 (3 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 2.7e-03"
+   },
+   {
+    "path": "groups.S9.ci_lower",
+    "value": -628.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S9.ci_upper",
+    "value": 160.21,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S9.ci_lower",
+    "value": -628,
+    "tol": 0.5072419211,
+    "transform": null,
+    "note": "Ng et al. (2008) 95% CI LL, Table 9.2 p. 198 (0 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 7.2e-03"
+   },
+   {
+    "path": "groups.S9.ci_upper",
+    "value": 160.21,
+    "tol": 0.0122419211,
+    "transform": null,
+    "note": "Ng et al. (2008) 95% CI UL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 7.2e-03"
+   },
+   {
+    "path": "groups.S10.ci_lower",
+    "value": -261.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Braga et al. (2007) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S10.ci_upper",
+    "value": -104.97,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Braga et al. (2007) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S10.ci_lower",
+    "value": -261,
+    "tol": 0.5014338866,
+    "transform": null,
+    "note": "Braga et al. (2007) 95% CI LL, Table 9.2 p. 198 (0 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 1.4e-03"
+   },
+   {
+    "path": "groups.S10.ci_upper",
+    "value": -104.97,
+    "tol": 0.00643388659,
+    "transform": null,
+    "note": "Braga et al. (2007) 95% CI UL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 1.4e-03"
+   },
+   {
+    "path": "groups.S11.ci_lower",
+    "value": -78.62,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) 95% CI LL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S11.ci_upper",
+    "value": -65.38,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) 95% CI UL, Fig. 9.1 (2 dp, MetaXL exact z)"
+   },
+   {
+    "path": "groups.S11.ci_lower",
+    "value": -78.62,
+    "tol": 0.005121734977,
+    "transform": null,
+    "note": "Zhou et al. (2004) 95% CI LL, Table 9.2 p. 198 (2 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 1.2e-04"
+   },
+   {
+    "path": "groups.S11.ci_upper",
+    "value": -65.375,
+    "tol": 0.0006217349767,
+    "transform": null,
+    "note": "Zhou et al. (2004) 95% CI UL, Table 9.2 p. 198 (3 dp, hand calc with z = 1.96); tol = half unit + 1.96 allowance SE*3.6e-5 = 1.2e-04"
+   }
+  ],
+  "note": "Ng 2009 is discriminating: Fig. 9.1 prints (-203.84, 89.84), which needs the exact normal quantile 1.959964 (z = 1.96 gives -203.846/89.846 -> -203.85/89.85)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_fixed",
+  "example_id": "khan_ch09__blood_loss_md_fixed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Ex 9.2 pp. 198-199; Ex 9.3 p. 200; Ex 9.4 pp. 201-202 with Table 9.3; Fig. 9.1 p. 200",
+  "description": "Blood loss, 11 studies: fixed-effect inverse-variance WMD with SE, 95% CI, z test, Cochran Q, p, I^2 and FE % weights.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -73.2411,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed summary_estimate_fixed (4 dp), Ex 9.3 p. 200; theta_FE = -7.9085/0.10798 from full precision"
+   },
+   {
+    "path": "estimate",
+    "value": -73.24,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed summary_estimate_fixed_rounded (2 dp), Ex 9.3 p. 200; Fig. 9.1"
+   },
+   {
+    "path": "se",
+    "value": 3.043199,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed se_fixed (6 dp), Ex 9.3 p. 200; SE = sqrt(1/sum w)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -79.2058,
+    "tol": 0.0001596022055,
+    "transform": null,
+    "note": "printed ci_lower_fixed (4 dp), Ex 9.3 p. 200; hand calc with z = 1.96; tol = half unit + 1.96 allowance SE*3.6e-5 = 1.1e-04"
+   },
+   {
+    "path": "ci_upper",
+    "value": -67.2764,
+    "tol": 0.0001596022055,
+    "transform": null,
+    "note": "printed ci_upper_fixed (4 dp), Ex 9.3 p. 200; hand calc with z = 1.96; tol = half unit + 1.96 allowance SE*3.6e-5 = 1.1e-04"
+   },
+   {
+    "path": "ci_lower",
+    "value": -79.21,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_lower_fixed_rounded (2 dp), Ex 9.3 p. 200; Fig. 9.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": -67.28,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_upper_fixed_rounded (2 dp), Ex 9.3 p. 200; Fig. 9.1"
+   },
+   {
+    "path": "stat",
+    "value": -24.0671,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed z_fixed (4 dp), Ex 9.2 p. 198; z0 = -73.2411/3.043199"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed 'P(|Z| > 24.07) = 0', Ex 9.2 p. 199; checked at the 2-dp precision used for p in the forest plots (exact 5.5e-128)"
+   },
+   {
+    "path": "Q",
+    "value": 59.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Ex 9.4 p. 202; Fig. 9.1; Q = 638.3923 - (-7.9085)^2/0.10798"
+   },
+   {
+    "path": "Q_df",
+    "value": 10,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed df (0 dp), Ex 9.4 p. 202"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p_Q_forest (2 dp), Fig. 9.1"
+   },
+   {
+    "path": "I2",
+    "value": 83.098,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed I^2 = 0.83098 (5 dp fraction), Ex 9.4 p. 202, expressed in % (x100, exact) -> tol 5e-4 %"
+   },
+   {
+    "path": "I2",
+    "value": 83,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I2_pct (0 dp), Ex 9.4 p. 202; Fig. 9.1"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 2.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 1.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 4.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 0.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 2.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 0.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 0.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) FE % weight, Fig. 9.1 (1 dp)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 81.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight, Fig. 9.1 (1 dp)"
+   }
+  ],
+  "note": "The printed column sums (sum w = 0.10798, sum w*MD = -7.9085, sum w^2 = 0.00774, sum w*MD^2 = 638.392) have no engine result path; they are implied by estimate, se and Q."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_fixed_fullprec",
+  "example_id": "khan_ch09__blood_loss_md_fixed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Ex 9.2-9.4 pp. 198-202; Fig. 9.1 p. 200",
+  "description": "Tight full-precision checks of the blood-loss fixed-effect WMD analysis against the verifier's independent computation.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -73.24108128469769,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "se",
+    "value": 3.0431988270376444,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -79.20564138348601,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -67.27652118590936,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "stat",
+    "value": -24.067136407249833,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "Q",
+    "value": 59.16526143681119,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "p_Q",
+    "value": 5.212152142458616e-09,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (5.2e-9; tol 1e-12)"
+   },
+   {
+    "path": "I2",
+    "value": 83.09819012516314,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (in %)"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 0.03628354700018975,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (C = sum w - sum w^2/sum w)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 1.9817465766985956,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 1.0461544572778418,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 4.824757527356089,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.8049315810902744,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 0.05805132881209469,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.257690864076126,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 2.194282284284034,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 0.16498636550390097,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 0.0229050375594152,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 0.5842638015823979,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 81.06023017575923,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   }
+  ],
+  "note": "Not printed by the book at this precision; values computed by the verifier with the standard IV fixed-effect formulas."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_fixed_reversed",
+  "example_id": "khan_ch09__blood_loss_md_fixed_reversed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Remark p. 203; Fig. 9.2 p. 204 (MetaXL forest plot 'Blood Loss WMD Reversed FE')",
+  "description": "Blood loss with arms swapped (ORR - LARR): fixed-effect WMD flips sign while Q, p, I^2 and % weights are unchanged.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 400,
+    "sd1": 370,
+    "n1": 345,
+    "m2": 200,
+    "sd2": 222,
+    "n2": 699
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 318.4,
+    "sd1": 331.7,
+    "n1": 222,
+    "m2": 256.1,
+    "sd2": 305.8,
+    "n2": 240
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 150,
+    "sd1": 181.5,
+    "n1": 235,
+    "m2": 100,
+    "sd2": 111,
+    "n2": 238
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 217.5,
+    "sd1": 185,
+    "n1": 170,
+    "m2": 200,
+    "sd2": 148,
+    "n2": 170
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 361.1,
+    "sd1": 623,
+    "n1": 40,
+    "m2": 141.8,
+    "sd2": 500,
+    "n2": 40
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 380,
+    "sd1": 85,
+    "n1": 88,
+    "m2": 310,
+    "sd2": 96,
+    "n2": 98
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 234.2,
+    "sd1": 174.3,
+    "n1": 103,
+    "m2": 127.8,
+    "sd2": 113.3,
+    "n2": 101
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 337,
+    "sd1": 423,
+    "n1": 77,
+    "m2": 280,
+    "sd2": 500,
+    "n2": 76
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 555.6,
+    "sd1": 1188,
+    "n1": 48,
+    "m2": 321.7,
+    "sd2": 750,
+    "n2": 51
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 396,
+    "sd1": 258,
+    "n1": 85,
+    "m2": 213,
+    "sd2": 258,
+    "n2": 83
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 92,
+    "sd1": 25,
+    "n1": 89,
+    "m2": 20,
+    "sd2": 19,
+    "n2": 82
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 73.24,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed summary_estimate_fixed (2 dp), Fig. 9.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 67.28,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_lower_fixed (2 dp), Fig. 9.2"
+   },
+   {
+    "path": "ci_upper",
+    "value": 79.21,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_upper_fixed (2 dp), Fig. 9.2"
+   },
+   {
+    "path": "Q",
+    "value": 59.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Fig. 9.2"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p_Q (2 dp), Fig. 9.2"
+   },
+   {
+    "path": "I2",
+    "value": 83,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I2_pct (0 dp), Fig. 9.2"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 2.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 1.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 4.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 0.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 2.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 0.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 0.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 81.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight, Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "estimate",
+    "value": 73.24108128469769,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact sign mirror of the unreversed FE)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 67.27652118590936,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 79.20564138348601,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "Q",
+    "value": 59.16526143681119,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   }
+  ],
+  "note": "Arm 1 = ORR, arm 2 = LARR (Remark p. 203). Last four checks are tight full-precision checks against the verifier's computation."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_reversed_per_study_ci",
+  "example_id": "khan_ch09__blood_loss_md_fixed_reversed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Remark p. 203; Fig. 9.2 p. 204",
+  "description": "Per-study MDs and 95% CIs with arms swapped (ORR - LARR), each study in its own group of a 'subgroup' call.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 400,
+    "sd1": 370,
+    "n1": 345,
+    "m2": 200,
+    "sd2": 222,
+    "n2": 699
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 318.4,
+    "sd1": 331.7,
+    "n1": 222,
+    "m2": 256.1,
+    "sd2": 305.8,
+    "n2": 240
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 150,
+    "sd1": 181.5,
+    "n1": 235,
+    "m2": 100,
+    "sd2": 111,
+    "n2": 238
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 217.5,
+    "sd1": 185,
+    "n1": 170,
+    "m2": 200,
+    "sd2": 148,
+    "n2": 170
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 361.1,
+    "sd1": 623,
+    "n1": 40,
+    "m2": 141.8,
+    "sd2": 500,
+    "n2": 40
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 380,
+    "sd1": 85,
+    "n1": 88,
+    "m2": 310,
+    "sd2": 96,
+    "n2": 98
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 234.2,
+    "sd1": 174.3,
+    "n1": 103,
+    "m2": 127.8,
+    "sd2": 113.3,
+    "n2": 101
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 337,
+    "sd1": 423,
+    "n1": 77,
+    "m2": 280,
+    "sd2": 500,
+    "n2": 76
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 555.6,
+    "sd1": 1188,
+    "n1": 48,
+    "m2": 321.7,
+    "sd2": 750,
+    "n2": 51
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 396,
+    "sd1": 258,
+    "n1": 85,
+    "m2": 213,
+    "sd2": 258,
+    "n2": 83
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 92,
+    "sd1": 25,
+    "n1": 89,
+    "m2": 20,
+    "sd2": 19,
+    "n2": 82
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "key",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.S1.estimate",
+    "value": 200.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S1.ci_lower",
+    "value": 157.63,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S1.ci_upper",
+    "value": 242.37,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Bonjer et al. (2015) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S2.estimate",
+    "value": 62.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S2.ci_lower",
+    "value": 3.98,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S2.ci_upper",
+    "value": 120.62,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Fleshman et al. (2015) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S3.estimate",
+    "value": 50.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S3.ci_lower",
+    "value": 22.85,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S3.ci_upper",
+    "value": 77.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Stevenson et al. (2015) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S4.estimate",
+    "value": 17.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S4.ci_lower",
+    "value": -18.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S4.ci_upper",
+    "value": 53.11,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Jeong et al. (2014) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S5.estimate",
+    "value": 219.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S5.ci_lower",
+    "value": -28.26,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S5.ci_upper",
+    "value": 466.86,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2014) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S6.estimate",
+    "value": 70.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S6.ci_lower",
+    "value": 43.99,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liu et al. (2011) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S6.ci_upper",
+    "value": 96.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Liu et al. (2011) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S7.estimate",
+    "value": 106.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S7.ci_lower",
+    "value": 66.13,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S7.ci_upper",
+    "value": 146.67,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Lujan et al. (2009) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S8.estimate",
+    "value": 57.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S8.ci_lower",
+    "value": -89.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2009) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S8.ci_upper",
+    "value": 203.84,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2009) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S9.estimate",
+    "value": 233.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S9.ci_lower",
+    "value": -160.21,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S9.ci_upper",
+    "value": 628.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Ng et al. (2008) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S10.estimate",
+    "value": 183.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S10.ci_lower",
+    "value": 104.97,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Braga et al. (2007) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S10.ci_upper",
+    "value": 261.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Braga et al. (2007) CI UL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S11.estimate",
+    "value": 72.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) MD (ORR - LARR), Fig. 9.2 (1 dp)"
+   },
+   {
+    "path": "groups.S11.ci_lower",
+    "value": 65.38,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI LL, Fig. 9.2 (2 dp, exact z)"
+   },
+   {
+    "path": "groups.S11.ci_upper",
+    "value": 78.62,
+    "tol": 0.005,
+    "transform": null,
+    "note": "Zhou et al. (2004) CI UL, Fig. 9.2 (2 dp, exact z)"
+   }
+  ]
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_random_dl",
+  "example_id": "khan_ch09__blood_loss_md_random_dl",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Ex 9.5 pp. 205-206; Ex 9.6 pp. 206-207 with Table 9.4; Fig. 9.3 p. 207",
+  "description": "Blood loss, 11 studies: DerSimonian-Laird random-effects WMD (Q, C, tau^2, estimate, SE, 95% Wald CI, RE % weights).",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 59.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), Ex 9.5 p. 206"
+   },
+   {
+    "path": "Q_df",
+    "value": 10,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed df (0 dp), Ex 9.5 p. 206"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 0.0363,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed C (4 dp), Ex 9.5 p. 206; C = 0.10798 - 0.007742/0.10798"
+   },
+   {
+    "path": "tau2",
+    "value": 1355.029,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed tau2 (3 dp), Ex 9.5 p. 206; tau^2 = (Q - df)/C from full precision"
+   },
+   {
+    "path": "tau2",
+    "value": 1355.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed tau2_table (2 dp), Table 9.4 p. 206"
+   },
+   {
+    "path": "estimate",
+    "value": -89.98,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed summary_estimate_random (2 dp), Ex 9.6 p. 207; Fig. 9.3; theta_RE = -0.42723/0.00475 from full precision"
+   },
+   {
+    "path": "se",
+    "value": 14.513,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed se_random (3 dp), Ex 9.6 p. 207; SE = sqrt(1/sum w*)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -118.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_lower_random (2 dp), Ex 9.6 p. 207; Fig. 9.3; same 2-dp value in the text (z = 1.96) and in Fig. 9.3 (MetaXL exact z)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -61.54,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_upper_random (2 dp), Ex 9.6 p. 207; Fig. 9.3; same 2-dp value in the text (z = 1.96) and in Fig. 9.3 (MetaXL exact z)"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p_Q_forest (2 dp), Fig. 9.3"
+   },
+   {
+    "path": "I2",
+    "value": 83,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I2_pct (0 dp), Fig. 9.3"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 9.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 1.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 13.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 0.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 15.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) RE % weight, Fig. 9.3 p. 207 (1 dp)"
+   }
+  ],
+  "note": "Per-study v* = v + tau^2 (Bonjer 1822.3), w* (0.00055) and the sums sum w* = 0.00475, sum w*MD = -0.42723 have no engine result path; they are implied by tau2, estimate and se. The book computed its finals from full precision, not from the rounded intermediates."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_random_dl_fullprec",
+  "example_id": "khan_ch09__blood_loss_md_random_dl",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Ex 9.5-9.6 pp. 205-207; Fig. 9.3 p. 207",
+  "description": "Tight full-precision checks of the blood-loss DL random-effects WMD, plus the (unprinted) t(k-2) prediction interval.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z",
+   "pi_method": "t_k-2"
+  },
+  "expected": [
+   {
+    "path": "heterogeneity.C",
+    "value": 0.03628354700018975,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "tau2",
+    "value": 1355.02908347285,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "tau",
+    "value": 36.8107196815391,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "estimate",
+    "value": -89.98365049242565,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "se",
+    "value": 14.512714133630759,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -118.42804751226736,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -61.53925347258395,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "stat",
+    "value": -6.200332319914148,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "pi_lower",
+    "value": -179.49329486922505,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare); NOT printed by the book: Higgins-Thompson-Spiegelhalter t(k-2) PI"
+   },
+   {
+    "path": "pi_upper",
+    "value": -0.4740061156262385,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare); NOT printed by the book: t(k-2) PI"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 11.557560562394377,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 9.40146617707534,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.614860826251448,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.498155266728688,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 1.2168695381332533,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 13.755400947297435,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 11.851941957926645,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 3.022547838198427,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 0.5040243366175549,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 7.163637048985996,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 15.413535500390841,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   }
+  ],
+  "note": "Values computed by the verifier with the standard DL formulas (identical in metafor rma(method='DL') and statsmodels combine_effects)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_ivhet",
+  "example_id": "khan_ch09__blood_loss_md_ivhet",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Ex 9.7 pp. 209-210 with Table 9.5 p. 210; Fig. 9.4 p. 211 (MetaXL forest plot)",
+  "description": "Blood loss, 11 studies: IVhet WMD (FE point estimate, Var = sum (w_i/sum w)^2 (v_i + tau2_DL)), SE, 95% CI and % weights.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -73.24,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed summary_estimate_ivhet (2 dp), Ex 9.7 p. 210; Fig. 9.4; = FE estimate"
+   },
+   {
+    "path": "se",
+    "value": 908.968,
+    "tol": 0.0005,
+    "transform": "square",
+    "note": "printed var_ivhet (3 dp), Table 9.5 sum row p. 210; Var = sum (w_i/sum w)^2 (v_i + tau^2)"
+   },
+   {
+    "path": "se",
+    "value": 908.96775,
+    "tol": 5e-06,
+    "transform": "square",
+    "note": "printed var_ivhet_text (5 dp), Ex 9.7 p. 210"
+   },
+   {
+    "path": "se",
+    "value": 30.1491,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed se_ivhet (4 dp), Ex 9.7 p. 210"
+   },
+   {
+    "path": "ci_lower",
+    "value": -132.33,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_lower_ivhet (2 dp), Ex 9.7 p. 210; Fig. 9.4; same 2-dp value with z = 1.96 (text) and exact z (Fig. 9.4)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -14.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed ci_upper_ivhet (2 dp), Ex 9.7 p. 210; Fig. 9.4; same 2-dp value with z = 1.96 (text) and exact z (Fig. 9.4)"
+   },
+   {
+    "path": "tau2",
+    "value": 1355.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "DL tau^2 column of Table 9.5 p. 210 (2 dp)"
+   },
+   {
+    "path": "Q",
+    "value": 59.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q_forest (2 dp), Fig. 9.4"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p_Q_forest (2 dp), Fig. 9.4"
+   },
+   {
+    "path": "I2",
+    "value": 83,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I2_pct (0 dp), Fig. 9.4"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 2.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 1.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 4.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 0.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 2.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 0.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 0.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 81.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) IVhet % weight (= FE weight), Fig. 9.4 p. 211 (1 dp)"
+   }
+  ],
+  "note": "Table 9.5's 'W*' column is each study's variance contribution (Bonjer 0.71569); it has no engine result path and is implied by the summed Var (checked via se^2)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_md_ivhet_fullprec",
+  "example_id": "khan_ch09__blood_loss_md_ivhet",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 Ex 9.7 pp. 209-210; Fig. 9.4 p. 211",
+  "description": "Tight full-precision checks of the blood-loss IVhet WMD against the verifier's computation.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": -73.24108128469769,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "tau2",
+    "value": 1355.02908347285,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "se",
+    "value": 908.9677506970464,
+    "tol": 1e-06,
+    "transform": "square",
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (Var)"
+   },
+   {
+    "path": "se",
+    "value": 30.14909203768907,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -132.33221584515158,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "ci_upper",
+    "value": -14.149946724243797,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 1.9817465766985956,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 1.0461544572778418,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 4.824757527356089,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.8049315810902744,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 0.05805132881209469,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.257690864076126,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 2.194282284284034,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 0.16498636550390097,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 0.0229050375594152,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 0.5842638015823979,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 81.06023017575923,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   }
+  ],
+  "note": "IVhet (Doi et al. 2015) as described in Khan Ch9 §9.6 and implemented in MetaXL."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_subgroup_period_fixed",
+  "example_id": "khan_ch09__blood_loss_subgroup_period_fixed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 §9.7 p. 212, Fig. 9.5 p. 212 (MetaXL 'Blood Loss WMD Subgroup FE by Study Period'); interpretation pp. 212-213",
+  "description": "Blood loss subgroup analysis by study period (Recent vs Old), fixed-effect WMD within each subgroup and overall.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "subgroup",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.recent.estimate",
+    "value": -70.91,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_summary_fixed (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "groups.recent.ci_lower",
+    "value": -85.83,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_ci_lower (2 dp), Fig. 9.5 p. 212; MetaXL exact z"
+   },
+   {
+    "path": "groups.recent.ci_upper",
+    "value": -55.98,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_ci_upper (2 dp), Fig. 9.5 p. 212; MetaXL exact z"
+   },
+   {
+    "path": "groups.recent.Q",
+    "value": 48.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_Q (2 dp), Fig. 9.5 p. 212; within-subgroup Q (FE weights)"
+   },
+   {
+    "path": "groups.recent.p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_p_Q (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "groups.recent.I2",
+    "value": 90,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed subgroup_recent_I2_pct (0 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "groups.old.estimate",
+    "value": -73.68,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_summary_fixed (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "groups.old.ci_lower",
+    "value": -80.19,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_ci_lower (2 dp), Fig. 9.5 p. 212; MetaXL exact z"
+   },
+   {
+    "path": "groups.old.ci_upper",
+    "value": -67.18,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_ci_upper (2 dp), Fig. 9.5 p. 212; MetaXL exact z"
+   },
+   {
+    "path": "groups.old.Q",
+    "value": 11.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_Q (2 dp), Fig. 9.5 p. 212; within-subgroup Q (FE weights)"
+   },
+   {
+    "path": "groups.old.p_Q",
+    "value": 0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_p_Q (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "groups.old.I2",
+    "value": 64,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed subgroup_old_I2_pct (0 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "overall.estimate",
+    "value": -73.24,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_summary_fixed (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "overall.ci_lower",
+    "value": -79.21,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_ci_lower (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "overall.ci_upper",
+    "value": -67.28,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_ci_upper (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "overall.Q",
+    "value": 59.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_Q (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "overall.p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_p_Q (2 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "overall.I2",
+    "value": 83,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed overall_I2_pct (0 dp), Fig. 9.5 p. 212"
+   },
+   {
+    "path": "overall.weights_pct.0",
+    "value": 2.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.1",
+    "value": 1.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.2",
+    "value": 4.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.3",
+    "value": 2.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.4",
+    "value": 0.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.5",
+    "value": 5.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.6",
+    "value": 2.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.7",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.8",
+    "value": 0.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.9",
+    "value": 0.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.10",
+    "value": 81.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) FE % weight (of the overall total), Fig. 9.5 (1 dp)"
+   }
+  ],
+  "note": "Recent = 2011-2015 (k = 6), Old = 2004-2009 (k = 5), Appendix A9.1 study_period. The subgroup total weights (16.0% / 84.0%) are sums of per-study overall weights and have no engine result path; the per-study overall weights are checked via overall.weights_pct."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_subgroup_period_fixed_fullprec",
+  "example_id": "khan_ch09__blood_loss_subgroup_period_fixed",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 §9.7 p. 212, Fig. 9.5 p. 212 (MetaXL 'Blood Loss WMD Subgroup FE by Study Period'); interpretation pp. 212-213",
+  "description": "Tight full-precision checks of the fixed-effect subgroup pools and the (unprinted) FE Q_between.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "subgroup",
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "groups.recent.estimate",
+    "value": -70.90680330083927,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.se",
+    "value": 7.614345239044563,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.ci_lower",
+    "value": -85.83064573522064,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.recent.ci_upper",
+    "value": -55.9829608664579,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.recent.Q",
+    "value": 48.04568965381118,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.p_Q",
+    "value": 3.4764553057922722e-09,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (tol 1e-12)"
+   },
+   {
+    "path": "groups.recent.I2",
+    "value": 89.59323919371947,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.estimate",
+    "value": -73.68482371832557,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.se",
+    "value": 3.31987519580419,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.ci_lower",
+    "value": -80.19165953526965,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.old.ci_upper",
+    "value": -67.1779879013815,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.old.Q",
+    "value": 11.007725159191864,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.p_Q",
+    "value": 0.026477331261400207,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (tol 1e-9)"
+   },
+   {
+    "path": "groups.old.I2",
+    "value": 63.66188343047564,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "Q_between",
+    "value": 0.11184662380814814,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare); NOT printed by the book: FE Q_between = Q_total - sum Q_within"
+   },
+   {
+    "path": "df_between",
+    "value": 1,
+    "tol": 0.0,
+    "transform": null,
+    "note": "G - 1 = 1 (2 subgroups)"
+   }
+  ],
+  "note": "The book reports no test for subgroup differences; Q_between is the verifier's standard computation (Borenstein ch. 19)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_subgroup_period_random",
+  "example_id": "khan_ch09__blood_loss_subgroup_period_random",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 §9.7, Fig. 9.6 p. 213 (MetaXL 'Blood Loss WMD Subgroup RE by Study Period'); interpretation p. 213",
+  "description": "Blood loss subgroup analysis by study period, DerSimonian-Laird random effects with a separate tau^2 in each subgroup.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "subgroup",
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z",
+   "common_tau2": false
+  },
+  "expected": [
+   {
+    "path": "groups.recent.estimate",
+    "value": -84.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_summary_random (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "groups.recent.ci_lower",
+    "value": -136.9,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_ci_lower (2 dp), Fig. 9.6 p. 213; MetaXL exact z"
+   },
+   {
+    "path": "groups.recent.ci_upper",
+    "value": -31.96,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_ci_upper (2 dp), Fig. 9.6 p. 213; MetaXL exact z"
+   },
+   {
+    "path": "groups.recent.Q",
+    "value": 48.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_Q (2 dp), Fig. 9.6 p. 213; within-subgroup Q (FE weights)"
+   },
+   {
+    "path": "groups.recent.p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_p_Q (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "groups.recent.I2",
+    "value": 90,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed subgroup_recent_I2_pct (0 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "groups.old.estimate",
+    "value": -103.37,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_summary_random (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "groups.old.ci_lower",
+    "value": -146.48,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_ci_lower (2 dp), Fig. 9.6 p. 213; MetaXL exact z"
+   },
+   {
+    "path": "groups.old.ci_upper",
+    "value": -60.26,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_ci_upper (2 dp), Fig. 9.6 p. 213; MetaXL exact z"
+   },
+   {
+    "path": "groups.old.Q",
+    "value": 11.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_Q (2 dp), Fig. 9.6 p. 213; within-subgroup Q (FE weights)"
+   },
+   {
+    "path": "groups.old.p_Q",
+    "value": 0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_p_Q (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "groups.old.I2",
+    "value": 64,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed subgroup_old_I2_pct (0 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "overall.estimate",
+    "value": -89.98,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_summary_random (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "overall.ci_lower",
+    "value": -118.43,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_ci_lower (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "overall.ci_upper",
+    "value": -61.54,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_ci_upper (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "overall.Q",
+    "value": 59.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_Q (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "overall.p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_p_Q (2 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "overall.I2",
+    "value": 83,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed overall_I2_pct (0 dp), Fig. 9.6 p. 213"
+   },
+   {
+    "path": "overall.weights_pct.0",
+    "value": 11.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.1",
+    "value": 9.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.2",
+    "value": 13.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.3",
+    "value": 12.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.4",
+    "value": 1.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.5",
+    "value": 13.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.6",
+    "value": 11.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.7",
+    "value": 3.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.8",
+    "value": 0.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.9",
+    "value": 7.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.10",
+    "value": 15.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) RE % weight under the OVERALL tau^2 = 1355.03 (MetaXL display convention), Fig. 9.6 (1 dp)"
+   }
+  ],
+  "note": "Recent = 2011-2015 (k = 6), Old = 2004-2009 (k = 5), Appendix A9.1 study_period. The subgroup total weights (62.0% / 38.0%, computed with the overall tau^2) are sums of per-study overall weights and have no engine result path; the per-study overall weights are checked via overall.weights_pct. Subgroup pools reproduce only with a separate within-subgroup DL tau^2 (common_tau2 = False)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_subgroup_period_random_fullprec",
+  "example_id": "khan_ch09__blood_loss_subgroup_period_random",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 §9.7, Fig. 9.6 p. 213 (MetaXL 'Blood Loss WMD Subgroup RE by Study Period'); interpretation p. 213",
+  "description": "Tight full-precision checks of the DL random-effects subgroup pools (separate tau^2) and the (unprinted) RE Q_between.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "subgroup",
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z",
+   "common_tau2": false
+  },
+  "expected": [
+   {
+    "path": "groups.recent.tau2",
+    "value": 3328.0973630770036,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.estimate",
+    "value": -84.42846284866087,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.se",
+    "value": 26.769279666784264,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.ci_lower",
+    "value": -136.8952868876384,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.recent.ci_upper",
+    "value": -31.961638809683336,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.old.tau2",
+    "value": 1125.4567918089936,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.estimate",
+    "value": -103.37127880831065,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.se",
+    "value": 21.994292676655615,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.ci_lower",
+    "value": -146.4793003199887,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.old.ci_upper",
+    "value": -60.26325729663258,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "Q_between",
+    "value": 0.2989397226231499,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare); NOT printed by the book: Q_between from the separate-tau^2 RE subgroup estimates and their SEs"
+   },
+   {
+    "path": "overall.weights_pct.0",
+    "value": 11.557560562394377,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.1",
+    "value": 9.40146617707534,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.2",
+    "value": 13.614860826251448,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.3",
+    "value": 12.498155266728688,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.4",
+    "value": 1.2168695381332533,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.5",
+    "value": 13.755400947297435,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.6",
+    "value": 11.851941957926645,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.7",
+    "value": 3.022547838198427,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.8",
+    "value": 0.5040243366175549,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.9",
+    "value": 7.163637048985996,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   },
+   {
+    "path": "overall.weights_pct.10",
+    "value": 15.413535500390841,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (overall tau^2)"
+   }
+  ],
+  "note": "Values computed by the verifier (identical in statsmodels combine_effects(method_re='dl') and pymare per subgroup)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_subgroup_period_ivhet",
+  "example_id": "khan_ch09__blood_loss_subgroup_period_ivhet",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 §9.7, Fig. 9.7 p. 214 (MetaXL 'Blood Loss WMD Subgroup IVhet by Study Period'); interpretation p. 214",
+  "description": "Blood loss subgroup analysis by study period, IVhet within each subgroup (within-subgroup DL tau^2) and overall.",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "subgroup",
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "groups.recent.estimate",
+    "value": -70.91,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_summary_ivhet (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "groups.recent.ci_lower",
+    "value": -129.39,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_ci_lower (2 dp), Fig. 9.7 p. 214; MetaXL exact z"
+   },
+   {
+    "path": "groups.recent.ci_upper",
+    "value": -12.42,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_ci_upper (2 dp), Fig. 9.7 p. 214; MetaXL exact z"
+   },
+   {
+    "path": "groups.recent.Q",
+    "value": 48.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_Q (2 dp), Fig. 9.7 p. 214; within-subgroup Q (FE weights)"
+   },
+   {
+    "path": "groups.recent.p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_recent_p_Q (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "groups.recent.I2",
+    "value": 90,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed subgroup_recent_I2_pct (0 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "groups.old.estimate",
+    "value": -73.68,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_summary_ivhet (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "groups.old.ci_lower",
+    "value": -137.47,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_ci_lower (2 dp), Fig. 9.7 p. 214; MetaXL exact z"
+   },
+   {
+    "path": "groups.old.ci_upper",
+    "value": -9.9,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_ci_upper (2 dp), Fig. 9.7 p. 214; MetaXL exact z"
+   },
+   {
+    "path": "groups.old.Q",
+    "value": 11.01,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_Q (2 dp), Fig. 9.7 p. 214; within-subgroup Q (FE weights)"
+   },
+   {
+    "path": "groups.old.p_Q",
+    "value": 0.03,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed subgroup_old_p_Q (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "groups.old.I2",
+    "value": 64,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed subgroup_old_I2_pct (0 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "overall.estimate",
+    "value": -73.24,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_summary_ivhet (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "overall.ci_lower",
+    "value": -132.33,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_ci_lower (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "overall.ci_upper",
+    "value": -14.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_ci_upper (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "overall.Q",
+    "value": 59.17,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_Q (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "overall.p_Q",
+    "value": 0.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed overall_p_Q (2 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "overall.I2",
+    "value": 83,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed overall_I2_pct (0 dp), Fig. 9.7 p. 214"
+   },
+   {
+    "path": "overall.weights_pct.0",
+    "value": 2.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Bonjer et al. (2015) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.1",
+    "value": 1.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Fleshman et al. (2015) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.2",
+    "value": 4.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Stevenson et al. (2015) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.3",
+    "value": 2.8,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Jeong et al. (2014) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.4",
+    "value": 0.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2014) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.5",
+    "value": 5.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Liu et al. (2011) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.6",
+    "value": 2.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Lujan et al. (2009) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.7",
+    "value": 0.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2009) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.8",
+    "value": 0.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Ng et al. (2008) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.9",
+    "value": 0.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Braga et al. (2007) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   },
+   {
+    "path": "overall.weights_pct.10",
+    "value": 81.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Zhou et al. (2004) IVhet % weight (= FE weight), Fig. 9.7 (1 dp)"
+   }
+  ],
+  "note": "Recent = 2011-2015 (k = 6), Old = 2004-2009 (k = 5), Appendix A9.1 study_period. The subgroup total weights (16.0% / 84.0%) are sums of per-study overall weights and have no engine result path; the per-study overall weights are checked via overall.weights_pct. The Old upper limit -9.90 is discriminating: it needs the exact normal quantile (z = 1.96 gives -9.89)."
+ },
+ {
+  "case_id": "khan_ch09__blood_loss_subgroup_period_ivhet_fullprec",
+  "example_id": "khan_ch09__blood_loss_subgroup_period_ivhet",
+  "source_id": "khan2020",
+  "measure": "MD",
+  "options": {},
+  "status": "active",
+  "location": "Ch9 §9.7, Fig. 9.7 p. 214 (MetaXL 'Blood Loss WMD Subgroup IVhet by Study Period'); interpretation p. 214",
+  "description": "Tight full-precision checks of the IVhet subgroup pools (within-subgroup DL tau^2).",
+  "rows": [
+   {
+    "study": "Bonjer et al. (2015)",
+    "key": "S1",
+    "m1": 200,
+    "sd1": 222,
+    "n1": 699,
+    "m2": 400,
+    "sd2": 370,
+    "n2": 345,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Fleshman et al. (2015)",
+    "key": "S2",
+    "m1": 256.1,
+    "sd1": 305.8,
+    "n1": 240,
+    "m2": 318.4,
+    "sd2": 331.7,
+    "n2": 222,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Stevenson et al. (2015)",
+    "key": "S3",
+    "m1": 100,
+    "sd1": 111,
+    "n1": 238,
+    "m2": 150,
+    "sd2": 181.5,
+    "n2": 235,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Jeong et al. (2014)",
+    "key": "S4",
+    "m1": 200,
+    "sd1": 148,
+    "n1": 170,
+    "m2": 217.5,
+    "sd2": 185,
+    "n2": 170,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Ng et al. (2014)",
+    "key": "S5",
+    "m1": 141.8,
+    "sd1": 500,
+    "n1": 40,
+    "m2": 361.1,
+    "sd2": 623,
+    "n2": 40,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Liu et al. (2011)",
+    "key": "S6",
+    "m1": 310,
+    "sd1": 96,
+    "n1": 98,
+    "m2": 380,
+    "sd2": 85,
+    "n2": 88,
+    "subgroup": "recent"
+   },
+   {
+    "study": "Lujan et al. (2009)",
+    "key": "S7",
+    "m1": 127.8,
+    "sd1": 113.3,
+    "n1": 101,
+    "m2": 234.2,
+    "sd2": 174.3,
+    "n2": 103,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2009)",
+    "key": "S8",
+    "m1": 280,
+    "sd1": 500,
+    "n1": 76,
+    "m2": 337,
+    "sd2": 423,
+    "n2": 77,
+    "subgroup": "old"
+   },
+   {
+    "study": "Ng et al. (2008)",
+    "key": "S9",
+    "m1": 321.7,
+    "sd1": 750,
+    "n1": 51,
+    "m2": 555.6,
+    "sd2": 1188,
+    "n2": 48,
+    "subgroup": "old"
+   },
+   {
+    "study": "Braga et al. (2007)",
+    "key": "S10",
+    "m1": 213,
+    "sd1": 258,
+    "n1": 83,
+    "m2": 396,
+    "sd2": 258,
+    "n2": 85,
+    "subgroup": "old"
+   },
+   {
+    "study": "Zhou et al. (2004)",
+    "key": "S11",
+    "m1": 20,
+    "sd1": 19,
+    "n1": 82,
+    "m2": 92,
+    "sd2": 25,
+    "n2": 89,
+    "subgroup": "old"
+   }
+  ],
+  "call": "subgroup",
+  "call_args": {
+   "group_col": "subgroup",
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "groups.recent.tau2",
+    "value": 3328.0973630770036,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.estimate",
+    "value": -70.90680330083927,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.recent.se",
+    "value": 890.3617131365504,
+    "tol": 1e-06,
+    "transform": "square",
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (Var)"
+   },
+   {
+    "path": "groups.recent.ci_lower",
+    "value": -129.39003043936793,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.recent.ci_upper",
+    "value": -12.423576162310624,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.old.tau2",
+    "value": 1125.4567918089936,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.estimate",
+    "value": -73.68482371832557,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare)"
+   },
+   {
+    "path": "groups.old.se",
+    "value": 1059.2422205217397,
+    "tol": 1e-06,
+    "transform": "square",
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (Var)"
+   },
+   {
+    "path": "groups.old.ci_lower",
+    "value": -137.47381470638612,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   },
+   {
+    "path": "groups.old.ci_upper",
+    "value": -9.895832730265035,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs verifier full-precision value (pure Python, cross-checked with metafor/statsmodels/pymare) (exact z)"
+   }
+  ],
+  "note": "IVhet per subgroup as in MetaXL / Stata admetan ivhet by()."
+ }
+]

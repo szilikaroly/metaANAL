@@ -1,0 +1,849 @@
+{
+ "description": "GET/PUT /api/table — 3.5.3: a tábla nyers szöveges cellákkal (ma_gui/store.py Table.to_json), mentés If-Match-csel; o1 = BCG (13 vizsgálat, egy elírással: Ferguson e1 = 600 > n1 → V006; Hart n1 = '13,598' → V023), o2 = halálozás (DOM-biztonsági címkékkel; a PUT 423 LOCKED: Excel-zár), o3 = Normand 1999 (MD; Montreal-Home m1/sd1 hiányzik → V002, átváltóval pótolható).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/table",
+   "query": {
+    "dataset": "03_adatok/o1.csv"
+   },
+   "etag": "\"a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.table/v1",
+    "data": {
+     "dataset": "03_adatok/o1.csv",
+     "etag": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333",
+     "header": [
+      "vizsgálat",
+      "esemény1",
+      "n1",
+      "esemény2",
+      "n2",
+      "szélesség",
+      "év",
+      "allokáció",
+      "rob",
+      "estimated"
+     ],
+     "rows": [
+      {
+       "row_uid": "rbcg01",
+       "cells": [
+        "Aronson 1948",
+        "4",
+        "123",
+        "11",
+        "139",
+        "44",
+        "1948",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 2
+      },
+      {
+       "row_uid": "rbcg02",
+       "cells": [
+        "Ferguson & Simes 1949",
+        "600",
+        "306",
+        "29",
+        "303",
+        "55",
+        "1949",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 3
+      },
+      {
+       "row_uid": "rbcg03",
+       "cells": [
+        "Rosenthal et al 1960",
+        "3",
+        "231",
+        "11",
+        "220",
+        "42",
+        "1960",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 4
+      },
+      {
+       "row_uid": "rbcg04",
+       "cells": [
+        "Hart & Sutherland 1977",
+        "62",
+        "13,598",
+        "248",
+        "12867",
+        "52",
+        "1977",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 5
+      },
+      {
+       "row_uid": "rbcg05",
+       "cells": [
+        "Frimodt-Moller et al 1973",
+        "33",
+        "5069",
+        "47",
+        "5808",
+        "13",
+        "1973",
+        "alternate",
+        "some concerns",
+        "nem"
+       ],
+       "line": 6
+      },
+      {
+       "row_uid": "rbcg06",
+       "cells": [
+        "Stein & Aronson 1953",
+        "180",
+        "1541",
+        "372",
+        "1451",
+        "44",
+        "1953",
+        "alternate",
+        "some concerns",
+        "nem"
+       ],
+       "line": 7
+      },
+      {
+       "row_uid": "rbcg07",
+       "cells": [
+        "Vandiviere et al 1973",
+        "8",
+        "2545",
+        "10",
+        "629",
+        "19",
+        "1973",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 8
+      },
+      {
+       "row_uid": "rbcg08",
+       "cells": [
+        "TPT Madras 1980",
+        "505",
+        "88391",
+        "499",
+        "88391",
+        "13",
+        "1980",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 9
+      },
+      {
+       "row_uid": "rbcg09",
+       "cells": [
+        "Coetzee & Berjak 1968",
+        "29",
+        "7499",
+        "45",
+        "7277",
+        "27",
+        "1968",
+        "random",
+        "low",
+        "igen"
+       ],
+       "line": 10
+      },
+      {
+       "row_uid": "rbcg10",
+       "cells": [
+        "Rosenthal et al 1961",
+        "17",
+        "1716",
+        "65",
+        "1665",
+        "42",
+        "1961",
+        "systematic",
+        "high",
+        "igen"
+       ],
+       "line": 11
+      },
+      {
+       "row_uid": "rbcg11",
+       "cells": [
+        "Comstock et al 1974",
+        "186",
+        "50634",
+        "141",
+        "27338",
+        "18",
+        "1974",
+        "systematic",
+        "high",
+        "nem"
+       ],
+       "line": 12
+      },
+      {
+       "row_uid": "rbcg12",
+       "cells": [
+        "Comstock & Webster 1969",
+        "5",
+        "2498",
+        "3",
+        "2341",
+        "33",
+        "1969",
+        "systematic",
+        "high",
+        "nem"
+       ],
+       "line": 13
+      },
+      {
+       "row_uid": "rbcg13",
+       "cells": [
+        "Comstock et al 1976",
+        "27",
+        "16913",
+        "29",
+        "17854",
+        "33",
+        "1976",
+        "systematic",
+        "high",
+        "nem"
+       ],
+       "line": 14
+      }
+     ],
+     "format": {
+      "encoding": "utf-8",
+      "bom": true,
+      "delimiter": ";",
+      "decimal_mark": ",",
+      "newline": "crlf",
+      "final_newline": true,
+      "quoting": "minimal",
+      "header_quoting": "minimal"
+     },
+     "uid": {
+      "column": true,
+      "persisted": true,
+      "issues": []
+     },
+     "column_map": {
+      "study": "vizsgálat",
+      "e1": "esemény1",
+      "n1": "n1",
+      "e2": "esemény2",
+      "n2": "n2",
+      "szélesség": "szélesség",
+      "year": "év",
+      "allokáció": "allokáció",
+      "rob": "rob",
+      "estimated": "estimated"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex01"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/table",
+   "query": {
+    "dataset": "03_adatok/o2.csv"
+   },
+   "etag": "\"398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.table/v1",
+    "data": {
+     "dataset": "03_adatok/o2.csv",
+     "etag": "398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550",
+     "header": [
+      "study",
+      "e1",
+      "n1",
+      "e2",
+      "n2"
+     ],
+     "rows": [
+      {
+       "row_uid": "rmrt01",
+       "cells": [
+        "Aronson 1948",
+        "0",
+        "123",
+        "2",
+        "139"
+       ],
+       "line": 2
+      },
+      {
+       "row_uid": "rmrt02",
+       "cells": [
+        "<img src=x onerror=alert(1)>",
+        "3",
+        "306",
+        "5",
+        "303"
+       ],
+       "line": 3
+      },
+      {
+       "row_uid": "rmrt03",
+       "cells": [
+        "Stein & Aronson 1953",
+        "11",
+        "1541",
+        "19",
+        "1451"
+       ],
+       "line": 4
+      },
+      {
+       "row_uid": "rmrt04",
+       "cells": [
+        "\"><script>alert(1)</script>",
+        "2",
+        "2545",
+        "4",
+        "629"
+       ],
+       "line": 5
+      }
+     ],
+     "format": {
+      "encoding": "utf-8",
+      "bom": true,
+      "delimiter": ";",
+      "decimal_mark": ",",
+      "newline": "crlf",
+      "final_newline": true,
+      "quoting": "minimal",
+      "header_quoting": "minimal"
+     },
+     "uid": {
+      "column": true,
+      "persisted": true,
+      "issues": []
+     },
+     "column_map": {
+      "study": "study",
+      "e1": "e1",
+      "n1": "n1",
+      "e2": "e2",
+      "n2": "n2"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex02"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/table",
+   "query": {
+    "dataset": "03_adatok/o3.csv"
+   },
+   "etag": "\"4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.table/v1",
+    "data": {
+     "dataset": "03_adatok/o3.csv",
+     "etag": "4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7",
+     "header": [
+      "study",
+      "m1",
+      "sd1",
+      "n1",
+      "m2",
+      "sd2",
+      "n2",
+      "estimated"
+     ],
+     "rows": [
+      {
+       "row_uid": "rnrm01",
+       "cells": [
+        "Edinburgh",
+        "55",
+        "47",
+        "155",
+        "75",
+        "64",
+        "156",
+        "nem"
+       ],
+       "line": 2
+      },
+      {
+       "row_uid": "rnrm02",
+       "cells": [
+        "Orpington-Mild",
+        "27",
+        "7",
+        "31",
+        "29",
+        "4",
+        "32",
+        "nem"
+       ],
+       "line": 3
+      },
+      {
+       "row_uid": "rnrm03",
+       "cells": [
+        "Orpington-Moderate",
+        "64",
+        "17",
+        "75",
+        "119",
+        "29",
+        "71",
+        "nem"
+       ],
+       "line": 4
+      },
+      {
+       "row_uid": "rnrm04",
+       "cells": [
+        "Orpington-Severe",
+        "66",
+        "20",
+        "18",
+        "137",
+        "48",
+        "18",
+        "nem"
+       ],
+       "line": 5
+      },
+      {
+       "row_uid": "rnrm05",
+       "cells": [
+        "Montreal-Home",
+        "",
+        "",
+        "8",
+        "18",
+        "11",
+        "13",
+        "nem"
+       ],
+       "line": 6
+      },
+      {
+       "row_uid": "rnrm06",
+       "cells": [
+        "Montreal-Transfer",
+        "19",
+        "7",
+        "57",
+        "18",
+        "4",
+        "52",
+        "nem"
+       ],
+       "line": 7
+      },
+      {
+       "row_uid": "rnrm07",
+       "cells": [
+        "Newcastle",
+        "52",
+        "45",
+        "34",
+        "41",
+        "34",
+        "33",
+        "nem"
+       ],
+       "line": 8
+      },
+      {
+       "row_uid": "rnrm08",
+       "cells": [
+        "Umea",
+        "21",
+        "16",
+        "110",
+        "31",
+        "27",
+        "183",
+        "nem"
+       ],
+       "line": 9
+      },
+      {
+       "row_uid": "rnrm09",
+       "cells": [
+        "Uppsala",
+        "30",
+        "27",
+        "60",
+        "23",
+        "20",
+        "52",
+        "nem"
+       ],
+       "line": 10
+      }
+     ],
+     "format": {
+      "encoding": "utf-8",
+      "bom": true,
+      "delimiter": ";",
+      "decimal_mark": ",",
+      "newline": "crlf",
+      "final_newline": true,
+      "quoting": "minimal",
+      "header_quoting": "minimal"
+     },
+     "uid": {
+      "column": true,
+      "persisted": true,
+      "issues": []
+     },
+     "column_map": {
+      "study": "study",
+      "m1": "m1",
+      "sd1": "sd1",
+      "n1": "n1",
+      "m2": "m2",
+      "sd2": "sd2",
+      "n2": "n2",
+      "estimated": "estimated"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex03"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/table",
+   "etag": "\"ab795e88c353fddd1b630e39d3b9d7f678fa5feaf2d021a7adc3d11d65a96f72\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.table/v1",
+    "data": {
+     "dataset": "03_adatok/o1.csv",
+     "etag": "ab795e88c353fddd1b630e39d3b9d7f678fa5feaf2d021a7adc3d11d65a96f72",
+     "header": [
+      "vizsgálat",
+      "esemény1",
+      "n1",
+      "esemény2",
+      "n2",
+      "szélesség",
+      "év",
+      "allokáció",
+      "rob",
+      "estimated"
+     ],
+     "rows": [
+      {
+       "row_uid": "rbcg01",
+       "cells": [
+        "Aronson 1948",
+        "4",
+        "123",
+        "11",
+        "139",
+        "44",
+        "1948",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 2
+      },
+      {
+       "row_uid": "rbcg02",
+       "cells": [
+        "Ferguson & Simes 1949",
+        "6",
+        "306",
+        "29",
+        "303",
+        "55",
+        "1949",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 3
+      },
+      {
+       "row_uid": "rbcg03",
+       "cells": [
+        "Rosenthal et al 1960",
+        "3",
+        "231",
+        "11",
+        "220",
+        "42",
+        "1960",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 4
+      },
+      {
+       "row_uid": "rbcg04",
+       "cells": [
+        "Hart & Sutherland 1977",
+        "62",
+        "13,598",
+        "248",
+        "12867",
+        "52",
+        "1977",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 5
+      },
+      {
+       "row_uid": "rbcg05",
+       "cells": [
+        "Frimodt-Moller et al 1973",
+        "33",
+        "5069",
+        "47",
+        "5808",
+        "13",
+        "1973",
+        "alternate",
+        "some concerns",
+        "nem"
+       ],
+       "line": 6
+      },
+      {
+       "row_uid": "rbcg06",
+       "cells": [
+        "Stein & Aronson 1953",
+        "180",
+        "1541",
+        "372",
+        "1451",
+        "44",
+        "1953",
+        "alternate",
+        "some concerns",
+        "nem"
+       ],
+       "line": 7
+      },
+      {
+       "row_uid": "rbcg07",
+       "cells": [
+        "Vandiviere et al 1973",
+        "8",
+        "2545",
+        "10",
+        "629",
+        "19",
+        "1973",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 8
+      },
+      {
+       "row_uid": "rbcg08",
+       "cells": [
+        "TPT Madras 1980",
+        "505",
+        "88391",
+        "499",
+        "88391",
+        "13",
+        "1980",
+        "random",
+        "low",
+        "nem"
+       ],
+       "line": 9
+      },
+      {
+       "row_uid": "rbcg09",
+       "cells": [
+        "Coetzee & Berjak 1968",
+        "29",
+        "7499",
+        "45",
+        "7277",
+        "27",
+        "1968",
+        "random",
+        "low",
+        "igen"
+       ],
+       "line": 10
+      },
+      {
+       "row_uid": "rbcg10",
+       "cells": [
+        "Rosenthal et al 1961",
+        "17",
+        "1716",
+        "65",
+        "1665",
+        "42",
+        "1961",
+        "systematic",
+        "high",
+        "igen"
+       ],
+       "line": 11
+      },
+      {
+       "row_uid": "rbcg11",
+       "cells": [
+        "Comstock et al 1974",
+        "186",
+        "50634",
+        "141",
+        "27338",
+        "18",
+        "1974",
+        "systematic",
+        "high",
+        "nem"
+       ],
+       "line": 12
+      },
+      {
+       "row_uid": "rbcg12",
+       "cells": [
+        "Comstock & Webster 1969",
+        "5",
+        "2498",
+        "3",
+        "2341",
+        "33",
+        "1969",
+        "systematic",
+        "high",
+        "nem"
+       ],
+       "line": 13
+      },
+      {
+       "row_uid": "rbcg13",
+       "cells": [
+        "Comstock et al 1976",
+        "27",
+        "16913",
+        "29",
+        "17854",
+        "33",
+        "1976",
+        "systematic",
+        "high",
+        "nem"
+       ],
+       "line": 14
+      }
+     ],
+     "format": {
+      "encoding": "utf-8",
+      "bom": true,
+      "delimiter": ";",
+      "decimal_mark": ",",
+      "newline": "crlf",
+      "final_newline": true,
+      "quoting": "minimal",
+      "header_quoting": "minimal"
+     },
+     "uid": {
+      "column": true,
+      "persisted": true,
+      "issues": []
+     },
+     "column_map": {
+      "study": "vizsgálat",
+      "e1": "esemény1",
+      "n1": "n1",
+      "e2": "esemény2",
+      "n2": "n2",
+      "szélesség": "szélesség",
+      "year": "év",
+      "allokáció": "allokáció",
+      "rob": "rob",
+      "estimated": "estimated"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex04"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/table",
+   "body": {
+    "dataset": "03_adatok/o2.csv"
+   },
+   "status": 423,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "LOCKED",
+     "http": 423,
+     "message": "Zárd be a fájlt az Excelben, majd próbáld újra.",
+     "details": {
+      "path": "03_adatok/o2.csv"
+     }
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.validation:1",
+  "title": "szk.ma.validation/v1 — validálás, motor → felület (api.validate_table, validate --json; terv 4.3)",
+  "type": "object",
+  "required": [
+    "schema",
+    "engine_version",
+    "measure",
+    "summary",
+    "findings",
+    "k_analysable"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.validation/v1"
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "measure": {
+      "type": "string"
+    },
+    "input_sha256": {
+      "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+    },
+    "column_map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "kanonikus → eredeti fejléc"
+    },
+    "decimal_mark": {
+      "enum": [
+        ",",
+        ".",
+        null
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "error",
+        "warning",
+        "info"
+      ]
+    },
+    "k_analysable": {
+      "type": "integer"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "severity",
+          "title",
+          "study",
+          "row",
+          "fields",
+          "detail",
+          "advice",
+          "source",
+          "blocking"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^V\\d{3}$"
+          },
+          "severity": {
+            "$ref": "urn:szk:contract:common:1#/$defs/severity"
+          },
+          "title": {
+            "type": "string"
+          },
+          "study": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "row": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "0-alapú adatsor; null = táblaszintű (V001, V015)"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "többsoros szabályok (V007, V017)"
+          },
+          "row_uid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "line": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "1-alapú fájlsor"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "kanonikus oszlopnevek"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "advice": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean",
+            "description": "a sor kimarad az elemzésből"
+          },
+          "kb_id": {
+            "$ref": "urn:szk:contract:common:1#/$defs/kbid"
+          },
+          "acknowledged": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "„Nem hiba — indoklás” döntés-ID (projekt.sqlite)"
+          }
+        }
+      }
+    },
+    "excluded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "study",
+          "row",
+          "reason"
+        ]
+      }
+    }
+  }
+}

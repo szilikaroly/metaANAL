@@ -1,0 +1,687 @@
+{
+ "description": "GET /api/kb/search (rule/knowledge: a valódi kb.search; chunk: SZINTETIKUS) és GET /api/kb/item/<id> (a valódi kb.show; X-szabály még nincs a KB-ban → 404) — 3.5.15, „Miért?”.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/kb/search",
+   "query": {
+    "scope": "rule"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-search/v1",
+    "data": {
+     "query": "predikciós intervallum",
+     "scopes": [
+      "rule"
+     ],
+     "results": {
+      "rule": [
+       {
+        "id": "V015",
+        "stage_id": "S05",
+        "strength": "should",
+        "applies_to": "engine",
+        "condition": "Kevés vizsgálat",
+        "recommendation": "k < 5: a τ² becslése megbízhatatlan; HKSJ-CI és predikciós intervallum ajánlott, a véletlen hatású eredményt óvatosan értelmezd.",
+        "source_ids": "engine",
+        "locator": "Cochrane Handbook 10.10.4"
+       },
+       {
+        "id": "D-S02-006",
+        "stage_id": "S02",
+        "strength": "must",
+        "applies_to": "planner",
+        "condition": "Az elemzési tervben a szintézis modellje, a τ²-becslő, a CI-módszer vagy a predikciós intervallum nincs előre rögzítve, vagy a modellválasztás a Q-teszttől vagy az I²-től függne",
+        "recommendation": "Rögzítsd előre, indoklással: véletlen hatású modell, ha klinikai/módszertani sokféleség várható (független kutatócsoportok vizsgálatai); τ²: REML (alternatíva: PM); CI: HKSJ; predikciós intervallum t(k−2)-vel (csak k ≥ 3 esetén számolható; k < 5-nél nagyon széles) — motor: `ma.py analyze --model random --tau2 REML --ci hksj --pi t_k-2` (ez az alapértelmezés). DL τ², z-alapú CI és közös (fix) hatású modell csak előre megnevezett érzékenységi elemzésként szerepelhet. A modell nem függhet a heterogenitás-teszt eredményétől.",
+        "source_ids": "borenstein2009,borenstein2007_fe_re,simplypsychology2024,khan2020,cochrane_handbook,inthout2016,veroniki2016,rover2015",
+        "locator": "Cochrane Handbook v6.5 ch. 10; K-BOR07-003, K-BOR07-004, K-BOR07-062, K-BOR07-049, K-BOR09-034, K-KHN0102-046, K-SIM24-052"
+       },
+       {
+        "id": "D-S08-020",
+        "stage_id": "S08",
+        "strength": "should",
+        "applies_to": "all",
+        "condition": "Véletlen vagy közös hatású összesített eredményt értelmezel vagy szövegezel (absztrakt, eredmények, következtetés).",
+        "recommendation": "A véletlen hatású becslést a valódi hatások eloszlása átlagaként fogalmazd meg ('átlagos hatás'), ne 'a' hatásként; mellé mindig add meg a τ-t és a predikciós intervallumot (D-S09-007). Ha a CI tartalmazza a nullát, ne olvasd úgy, hogy 'egyik vizsgálatban sincs hatás'. A közös hatású becslést csak a bevont vizsgálatok közös (súlyozott) hatásaként értelmezd. Kevés, de nagy vizsgálatnál se várj szűk véletlen hatású CI-t: az SE nem csökkenhet kb. √(τ²/k) alá. Kétoldalú p-t közölj; egyoldalút csak előre regisztrált irányított hipotézisnél.",
+        "source_ids": "borenstein2007_fe_re,borenstein2009,cochrane_handbook,inthout2016",
+        "locator": "Cochrane Handbook v6.5 10.10.4.2; K-BOR07-017, K-BOR07-060, K-BOR07-076, K-BOR09-033, K-BOR09-036, K-BOR09-037, F-BOR09-026"
+       },
+       {
+        "id": "D-S11-012",
+        "stage_id": "S11",
+        "strength": "should",
+        "applies_to": "all",
+        "condition": "Jelentős heterogenitás van (nagy τ² és I², széles predikciós intervallum), és aszimmetria-tesztet vagy trim-and-fill-t értelmeznél.",
+        "recommendation": "Fokozott óvatossággal kezeld: a heterogenitás maga is okozhat aszimmetriát, a trim-and-fill pedig ilyenkor rosszul teljesít. Előbb a heterogenitás előre rögzített magyarázatait vizsgáld (S10), és ha egy moderátor magyarázza, az aszimmetriát a homogénebb alcsoportokban (ha ott k ≥ 10) nézd. A funnel / Doi-plot nem a heterogenitás mérőeszköze — azt Q, I², τ² és a PI méri.",
+        "source_ids": "sterne2011,zhang2022_jslhr,khan2020,cochrane_handbook",
+        "locator": "Sterne 2011; Cochrane Handbook v6.5 ch. 13; K-ZHA22-065, K-ZHA22-069, K-KHN08-056, K-KHN08-055"
+       },
+       {
+        "id": "D-S09-008",
+        "stage_id": "S09",
+        "strength": "should",
+        "applies_to": "all",
+        "condition": "El kell döntened, hogy a heterogenitás klinikailag fontos-e (a következtetés megfogalmazásához vagy a GRADE inkonzisztencia-doménhez).",
+        "recommendation": "Ne az I² küszöbéből dönts, hanem együtt nézd: a vizsgálati pontbecslések szóródását és irányát, a CI-k átfedését, a τ nagyságát az összesített hatáshoz és a klinikai döntési küszöbhöz (MCID) viszonyítva, azt, hogy a predikciós intervallum átnyúlik-e a döntési küszöbön vagy a nullhatáson, és hogy előre tervezett alcsoport vagy meta-regresszió megmagyarázza-e. Ha a szóródás jelentős és megmagyarázatlan, a következtetés a szóródásra is fókuszáljon (ne csak az átlagra), és jelezd a GRADE inkonzisztencia miatti leminősítés lehetőségét (S13).",
+        "source_ids": "grade_handbook,cochrane_handbook,borenstein2009,borenstein2007_fe_re,morvaridzadeh2020,simplypsychology2024,zhang2022_jslhr,khan2020",
+        "locator": "GRADE Handbook (inconsistency); K-MOR20-064, K-BOR07-079, K-BOR09-048, K-BOR09-068, K-SIM24-074, K-ZHA22-080, K-KHN0607-070"
+       },
+       {
+        "id": "D-S09-001",
+        "stage_id": "S09",
+        "strength": "must",
+        "applies_to": "all",
+        "condition": "Egy összesített kimenet heterogenitásának vizsgálatát tervezed (PRISMA-P 15b), közlöd (PRISMA 2020 13d, 20b), vagy egy kéziratot vagy közölt metaanalízist ellenőrzöl.",
+        "recommendation": "Mindig az alábbi együttest add meg: a forest plot vizuális értékelése (átfednek-e a vizsgálati CI-k, egyező-e az irány); Q (df, pontos p — ne 'p = 0'); I² a CI-jével; τ² a becslő nevével és Q-profile CI-jével, valamint τ (a hatásméret skáláján); véletlen hatásnál a predikciós intervallum. A motor ezeket a `results.json` `random` és `random.heterogeneity` blokkjában (Q, p_Q, I2, I2_ci_HT, I2_from_tau2, I2_ci_QP, tau2_ci_QP, pi_lower, pi_upper) és a riport táblázatában adja. Ellenőrzéskor ha csak I² vagy csak a Q p-értéke szerepel: major megállapítás.",
+        "source_ids": "prisma2020,prisma_p,cochrane_handbook,cheung2016,simplypsychology2024,morvaridzadeh2020,khan2020,zhang2022_jslhr,borenstein2009",
+        "locator": "PRISMA 2020 items 13d, 20b; PRISMA-P 2015 item 15b; Cochrane Handbook v6.5 10.10.2, 10.10.4.2; K-CHE16-050, K-SIM24-060, K-MOR20-043, K-MOR20-047, K-KHN09-041, K-KHN10-045, K-ZHA22-086, K-BOR09-051, K-KHN05-041, K-KHN09-071"
+       }
+      ]
+     },
+     "local_only": true,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr12"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/search",
+   "query": {
+    "scope": "knowledge"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-search/v1",
+    "data": {
+     "query": "predikciós intervallum",
+     "scopes": [
+      "knowledge"
+     ],
+     "results": {
+      "knowledge": [
+       {
+        "id": "K-SIM24-059",
+        "stage_id": "S09",
+        "kind": "concept",
+        "title": "Predikciós intervallum",
+        "snippet": "The guide notes that a wide prediction interval indicates substantial heterogeneity in the true effects but gives no formula. [note: the usual random-effects … ",
+        "source_id": "simplypsychology2024",
+        "locator": "p. 21"
+       },
+       {
+        "id": "K-ZHA22-052",
+        "stage_id": "S09",
+        "kind": "pitfall",
+        "title": "Összesített átlag nagy heterogenitás mellett; hiányzó predikciós intervallum",
+        "snippet": "Reporting a pooled mean as if it applied everywhere despite large heterogeneity (here I^2 = 75%) is misleading. Fix: interpret it with caution and … ",
+        "source_id": "zhang2022_jslhr",
+        "locator": "p. 10"
+       },
+       {
+        "id": "K-KHN0607-036",
+        "stage_id": "S08",
+        "kind": "convention",
+        "title": "Csak z-alapú CI; nincs HKSJ és predikciós intervallum",
+        "snippet": "Every CI and test in these chapters uses the standard normal (z_{0.025} = 1.96), for single studies and for FE, RE and … ",
+        "source_id": "khan2020",
+        "locator": "Ch6–7 throughout; e.g. Ch6 §6.4 p. 122; Ch7 §7.4 p. 142"
+       },
+       {
+        "id": "K-MOR20-047",
+        "stage_id": "S09",
+        "kind": "check",
+        "title": "Ellenőrzés: a véletlen hatású modell teljes jelentése",
+        "snippet": "Reviewer check: random-effects reporting includes the tau^2 estimator, tau^2, Q with df and p, I^2 (ideally with a CI), the … ",
+        "source_id": "morvaridzadeh2020",
+        "locator": "p. 7 Table 2"
+       },
+       {
+        "id": "K-KHN0304-027",
+        "stage_id": "S08",
+        "kind": "convention",
+        "title": "CI-módszer: mindenhol Wald z = 1,96",
+        "snippet": "All 95% CIs in this chunk, for single studies and for FE, RE and IVhet pooled estimates, use the Wald normal approximation with z … ",
+        "source_id": "khan2020",
+        "locator": "Ch4 pp. 57, 60, 70, 73"
+       },
+       {
+        "id": "K-SIM24-074",
+        "stage_id": "S13",
+        "kind": "criterion",
+        "title": "Értékelési szempont: a heterogenitás számszerűsítése és magyarázata",
+        "snippet": "Evaluator criterion: the magnitude of heterogeneity is quantified with τ², I² and a prediction interval; its causes are explored through pre-specified moderators or … ",
+        "source_id": "simplypsychology2024",
+        "locator": "pp. 2, 20–21"
+       }
+      ]
+     },
+     "local_only": true,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr13"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/search",
+   "query": {
+    "scope": "chunk"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-search/v1",
+    "data": {
+     "query": "predikciós intervallum",
+     "scopes": [
+      "chunk"
+     ],
+     "results": {
+      "chunk": [
+       {
+        "id": 9412,
+        "ref": "cochrane_handbook#412",
+        "source_id": "cochrane_handbook",
+        "seq": 412,
+        "locator": "10.10.4.3",
+        "snippet": "… a [predikciós intervallum] (SZINTETIKUS minta a fejlesztői fixture-ben — a jogvédett teljes szöveg nem kerül a repóba) … <script>alert(1)</script> …"
+       }
+      ]
+     },
+     "local_only": true,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr14"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/search",
+   "query": {
+    "q": "nincs-ilyen-kifejezes"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-search/v1",
+    "data": {
+     "query": "nincs-ilyen-kifejezes",
+     "scopes": [
+      "rule"
+     ],
+     "results": {
+      "rule": []
+     },
+     "local_only": true,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr15"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/V006",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "V006",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "V006",
+      "stage_id": "S05",
+      "applies_to": "engine",
+      "condition": "Érvénytelen eseményszám",
+      "recommendation": "Az eseményszám negatív vagy nagyobb, mint n.",
+      "rationale": "Hibás vagy hiányzó adattal a vizsgálat hatásmérete nem számolható helyesen. A motor ezt a sort kihagyja az elemzésből, amíg ki nem javítod, így az összesített eredmény kevesebb vizsgálaton alapulhat, mint amennyit bevontál.",
+      "strength": "must",
+      "machine_check": "metaelemzes.validate:V006",
+      "source_ids": "engine",
+      "locator": "engine"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr16"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/V011",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "V011",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "V011",
+      "stage_id": "S05",
+      "applies_to": "engine",
+      "condition": "SD helyett SE gyanúja",
+      "recommendation": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
+      "rationale": "Az adat lehet helyes, de az ilyen minta gyakran adatkinyerési hibát jelez (pl. SE az SD helyén, rossz mértékegység). Ha valóban hiba, az összesített eredményt is torzítja — nézd meg a forrásban, és ha rendben van, rögzítsd indoklással.",
+      "strength": "should",
+      "machine_check": "metaelemzes.validate:V011",
+      "source_ids": "engine",
+      "locator": "Cochrane Handbook 6.5.2.2"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr17"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/V023",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "V023",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "V023",
+      "stage_id": "S05",
+      "applies_to": "engine",
+      "condition": "Kétértelmű számformátum",
+      "recommendation": "A számot ezres tagolásként olvastuk (pl. '2,000' → 2000), mert tizedesjelként értelmetlen lenne vagy ellentmond a fájl tizedesjelének. Ellenőrizd a forrással.",
+      "rationale": "Az adat lehet helyes, de az ilyen minta gyakran adatkinyerési hibát jelez (pl. SE az SD helyén, rossz mértékegység). Ha valóban hiba, az összesített eredményt is torzítja — nézd meg a forrásban, és ha rendben van, rögzítsd indoklással.",
+      "strength": "should",
+      "machine_check": "metaelemzes.validate:V023",
+      "source_ids": "engine",
+      "locator": "engine"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr18"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/P006",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "P006",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "P006",
+      "stage_id": "S04",
+      "applies_to": "engine",
+      "condition": "Több bevont vizsgálat, mint bevont jelentés",
+      "recommendation": "I ≤ J: egy vizsgálatnak több jelentése (közleménye) lehet, fordítva nem. A vizsgálatokat és a jelentéseket külön számold.",
+      "rationale": "A PRISMA-folyamatábra dobozainak számai egymásból következnek. Ha nem adódnak össze, a bíráló és az olvasó nem tudja követni, hány rekord és vizsgálat maradt ki, és miért.",
+      "strength": "must",
+      "machine_check": "metaelemzes.prisma:P006",
+      "source_ids": "engine",
+      "locator": "PRISMA 2020 1. ábra; Cochrane Handbook 4.6.2"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr19"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/P007",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "P007",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "P007",
+      "stage_id": "S04",
+      "applies_to": "engine",
+      "condition": "A kizárási okok összege nem egyezik",
+      "recommendation": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+      "rationale": "A PRISMA-folyamatábra dobozainak számai egymásból következnek. Ha nem adódnak össze, a bíráló és az olvasó nem tudja követni, hány rekord és vizsgálat maradt ki, és miért.",
+      "strength": "must",
+      "machine_check": "metaelemzes.prisma:P007",
+      "source_ids": "engine",
+      "locator": "PRISMA 2020 16a tétel"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr20"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/P011",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "P011",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "P011",
+      "stage_id": "S04",
+      "applies_to": "engine",
+      "condition": "Levezetett (nem közölt) doboz-érték",
+      "recommendation": "Az érték a többi dobozból adódik (pl. hiányzó duplikátum-doboz = 0); a folyamatábrán érdemes kifejezetten feltüntetni.",
+      "rationale": "Tájékoztatás a PRISMA-folyamatábráról: hiányzó vagy még nem ellenőrizhető doboz.",
+      "strength": "consider",
+      "machine_check": "metaelemzes.prisma:P011",
+      "source_ids": "engine",
+      "locator": "PRISMA 2020 1. ábra"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr21"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/D-S04-009",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "D-S04-009",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "D-S04-009",
+      "stage_id": "S04",
+      "applies_to": "reviewer",
+      "condition": "S04 checkpointot végzel, vagy a PRISMA-számok bármelyike megváltozott",
+      "recommendation": "Futtasd: `ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (ha a composer plugin `prisma-flow.json`-ja létezik, ugyanabban a futásban `--composer prisma-flow.json` is — az a számok egyetlen forrása: a motor a composer számait ellenőrzi, a `prisma_folyamat.md`-t dobozonként és a kizárási okok bontásában is összeveti vele, és minden eltérés P017-hiba, azaz blocker), és vesd össze a keresési naplóval: A1 = az adatbázis-találatok összege; B = A1 + A2 − D1 − D2 − D3; E = B − C; G = E − F; J = G − H (+ az 'egyéb módszerek' ág bevont közleményei); a bevont vizsgálatok száma I ≤ J; kimenetenként a metaanalízis k-ja ≤ I. Ellenőrizd, hogy a PRISMA 2020 sablon szerepel (nem a 2009-es 'Eligibility' / 'qualitative synthesis' dobozok; a `prisma check` kimenete megadja a felismert sablont — új áttekintésben a 2009-es sablon → major). Bármely error súlyosságú P-kód → blocker; figyelmeztetés (P008 hiányzó kizárási okok, P013 elbírálásra váró tételek a végleges ábrán, P014, P016) → major; P011/P012 (levezetett vagy nem ellenőrizhető doboz) → minor. v1: a `--studies 03_adatok/studies.json` kapcsolóval a bevont vizsgálatok száma (I) a vizsgálat-térképből jön (eltérésnél P017), az `--emit-flowchart <ki.json>` pedig a teljes PRISMA 2020 folyamatábra-specifikációt írja ki a figure-forge-nak (`ff.py flowchart --spec <ki.json> --width double`).",
+      "rationale": "Khan 2020 és a SimplyPsychology: a folyamatábra-számtan ellenőrzése; a PRISMA 2020 sablon felváltotta a 2009-est (a közleményeket és a vizsgálatokat külön számolja). A ma-ellenorzo S04 checkpointja és a REVIEWER ellenőrzőlista a P-kódú hibákat blockerként kezeli. Tesztesetek a forrásokból: Khan Fig. 1.1 (28 + 1 = 29; 29 − 14 = 15; 15 − 9 = 6), Białek 2023 (756 − 663 = 93; 93 − 78 = 15), Zhang 2022 (229 + 7 → 233; 233 − 207 = 26; 26 − 12 = 14). Kulcsszavak (EN): PRISMA flow diagram arithmetic, PRISMA 2020 template, flow chart numbers, reconciliation, prisma check.",
+      "strength": "must",
+      "machine_check": "ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md [--composer prisma-flow.json] (kilépési kód 1, ha hibás); metaelemzes.prisma:P001–P007, P009, P010, P015, P017 (error); P008, P013, P014, P016 (warning); ma.py prisma check --studies 03_adatok/studies.json --emit-flowchart <ki.json> (szk.ff.flowchart/v1); metaelemzes.audit:X015, X020, X021",
+      "source_ids": "zhang2022_jslhr,simplypsychology2024,khan2020,engine,prisma2020",
+      "locator": "PRISMA 2020 flow diagram, item 16a; README.md (PRISMA); .claude/agents/ma-ellenorzo.md (S04); K-KHN0102-020, K-KHN0102-019, K-SIM24-025, K-SIM24-026, K-SIM24-027, K-ZHA22-019, K-ZHA22-020"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr22"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/D-S07-004",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "D-S07-004",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "D-S07-004",
+      "stage_id": "S07",
+      "applies_to": "planner",
+      "condition": "Ugyanazt a konstruktumot a vizsgálatok különböző, egymásba át nem váltható mérőeszközökkel mérik (pl. eltérő fájdalom- vagy depresszióskálák).",
+      "recommendation": "SMD-t használj kis mintás korrekcióval: Hedges g (`--measure SMD`; motor-alapértelmezés: pontos J és LS-variancia, `--j-method exact --smd-vtype LS`); a korrekció nélküli Cohen d (`--measure COHEN_D`) csak indokolt esetben. Feltétel: a skálák ugyanazt a konstruktumot mérik; a vizsgálatok közötti SD-különbségeket (eltérő populációs szóródás) a heterogenitás értelmezésénél vedd figyelembe.",
+      "rationale": "Cochrane/Simply Psychology: eltérő skálán SMD; a Hedges g kis mintánál kevésbé torzított (Morvaridzadeh nem nevezi meg a változatot). Khan Ch8: az SMD a hatást a vizsgálatok közötti SD-különbségekkel keveri. [EN: standardized mean difference, Hedges g, Cohen d, different instruments or scales]",
+      "strength": "must",
+      "machine_check": "ma.py analyze --measure SMD --j-method exact --smd-vtype LS",
+      "source_ids": "cochrane_handbook,khan2020,simplypsychology2024,morvaridzadeh2020,borenstein2009",
+      "locator": "Cochrane Handbook v6.5 6.5, 10.5.1; K-KHN08-011, K-SIM24-041, K-MOR20-032, K-KHN08-018, K-KHN08-021, F-BOR09-028, F-BOR09-030"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr23"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/D-S13-001",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "D-S13-001",
+     "table": "decision_rule",
+     "item": {
+      "rule_id": "D-S13-001",
+      "stage_id": "S13",
+      "applies_to": "evaluator",
+      "condition": "Egy kimenet (összehasonlítás × kimenet × időpont) bizonyosságának GRADE-értékelését kezded, és el kell döntened a kiinduló szintet.",
+      "recommendation": "Kimenetenként értékelj (nem vizsgálatonként és nem az egész áttekintésre), és a kiindulást a bevont vizsgálatok elrendezése adja: randomizált vizsgálatok → magas (⊕⊕⊕⊕); nem randomizált / megfigyeléses vizsgálatok → alacsony (⊕⊕◯◯). Ha a nem randomizált vizsgálatokat ROBINS-I-vel értékelted, indulhatsz magasról, de ekkor a zavaró tényezők és a szelekció miatti kockázat a torzítási kockázat doménben visz le — 'serious' vagy 'critical' ROBINS-I-ítéletnél jellemzően több szinttel —, így a nem randomizált bizonyíték nem kerülhet indokolatlanul az RCT-k szintjére; a kiindulást (és hogy ROBINS-I-gyel értékeltél-e) az indoklásban mindig nevezd meg. RCT- és nem randomizált bizonyítékot külön értékelj és külön SoF-sorban mutass (szintézis: D-S06-010). Ezután jön az öt leminősítési domén (D-S13-003 … D-S13-008) és — főleg megfigyeléses bizonyítéknál — a felminősítés (D-S13-009). A négy szint jelentése a szövegben: magas = nagyon bízunk benne, hogy a valódi hatás közel van a becsléshez; mérsékelt = valószínűleg közel van, de lényegesen eltérhet; alacsony = lényegesen eltérhet; nagyon alacsony = valószínűleg lényegesen eltér. Rögzítés: `ma.py project grade <mappa> --outcome \"…\" --certainty …` (D-S13-002).",
+      "rationale": "GRADE Handbook 5.1 és Cochrane Handbook v6.5 ch. 14 (14.2): a bizonyosság kimenetenként értékelt, a kiindulás az elrendezéstől függ. Eltérés a feltöltött forrásokban: Khan 2020 (Ch1 §1.5) elrendezés-hierarchiája a nem randomizált kontrollált vizsgálatokat az RCT-kkel egy szintre teszi, és csak az elrendezésből ítél — ezt a GRADE felváltotta, nem követendő. A SimplyPsychology-útmutató és Khan Ch10 GRADE-et nem tárgyal. [EN: GRADE starting level, randomised trials start high, observational studies start low, ROBINS-I start high, certainty per outcome]",
+      "strength": "must",
+      "machine_check": "metaelemzes.projekt.grade_consistency (a `ma.py project grade` figyelmeztet, ha a végső szint a lépésekből semmilyen kiindulással nem érhető el; az elrendezést a motor nem ismeri, a magas és az alacsony kiindulás közti tartományt fogadja el)",
+      "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,robins_i,khan2020,simplypsychology2024,engine",
+      "locator": "GRADE Handbook 5.1 (5.1.1 study design); Cochrane Handbook v6.5 ch. 14 (14.2), ch. 25; K-KHN0102-068, K-KHN0102-073, K-SIM24-078, K-KHN10-057"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr24"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/K-SIM24-059",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "K-SIM24-059",
+     "table": "knowledge",
+     "item": {
+      "k_id": "K-SIM24-059",
+      "stage_id": "S09",
+      "kind": "concept",
+      "title": "Predikciós intervallum",
+      "body": "The guide notes that a wide prediction interval indicates substantial heterogeneity in the true effects but gives no formula. [note: the usual random-effects prediction interval is M ± t_{k−2}·sqrt(T² + SE(M)²), computed by models.meta_analysis (pi_method='t_k-2', which needs k ≥ 3); it shows where the true effect of a new comparable study is expected to fall and should accompany every random-effects summary.]",
+      "source_id": "simplypsychology2024",
+      "locator": "p. 21",
+      "tags": "prediction interval predikciós intervallum PI heterogeneity heterogenitás random effects véletlen hatás tau2 new study új vizsgálat"
+     },
+     "local_only": false,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr25"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/cochrane_handbook%23412",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.kb-item/v1",
+    "data": {
+     "id": "cochrane_handbook#412",
+     "table": "chunk",
+     "local_only": true,
+     "note": {
+      "hu": "helyi forrás — nem exportálható",
+      "en": "local source — not for export"
+     },
+     "item": {
+      "chunk_id": 9412,
+      "source_id": "cochrane_handbook",
+      "seq": 412,
+      "locator": "10.10.4.3",
+      "ref": "cochrane_handbook#412",
+      "text": "SZINTETIKUS szövegrész a fejlesztői fixture-ben. A valódi teljes szöveg jogvédett, csak a felhasználó gépén olvasható (tudasbazis.sqlite), és soha nem kerül exportba vagy a repóba."
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr26"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/X001",
+   "status": 404,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "NOT_FOUND",
+     "http": 404,
+     "message": "Nincs ilyen azonosító a tudásbázisban."
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/X005",
+   "status": 404,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "NOT_FOUND",
+     "http": 404,
+     "message": "Nincs ilyen azonosító a tudásbázisban."
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/kb/item/X010",
+   "status": 404,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "NOT_FOUND",
+     "http": 404,
+     "message": "Nincs ilyen azonosító a tudásbázisban."
+    }
+   }
+  }
+ ]
+}

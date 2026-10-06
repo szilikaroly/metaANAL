@@ -1,0 +1,804 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.grade:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.grade/v1 — GRADE-ítélet kimenetenként (06_kezirat/grade/<kimenet>.grade.json; terv 4.14, E10)",
+  "description": "Az öt leminősítési domén EMBERI ítélete (rating, step, rationale) a motor tanácsa mellett (advisory: számok; suggestion: javasolt ítélet, „Miért?” szöveg, KB-azonosítók — grade_help.advice). A motor nem dönt: az advice() piszkozatában minden ítélet null. A rating és a step összetartozik (not serious 0, serious −1, very serious −2). Publikációs torzítás (11. döntés, 4. pont): undetected 0; strongly suspected −1 (−2 csak indoklással); suspected lépés nélkül FELOLDATLAN (status: unresolved, step: null) — 0 vagy −1 csak indoklással (status: resolved); ítélet nélkül status: open. A certainty null, amíg bármely domén ítélete hiányzik vagy feloldatlan. Rögzítés: projekt.record_grade_doc → projekt.add_grade előjeles lépés-szövegekkel (a grade_consistency így változatlanul ellenőriz); X019: feloldatlan publikációs torzítás S13-tól hiba. Egy GRADE-szótár (contracts:m2): a kanonikus alak szóközös ('very low', 'not serious', 'very serious', 'strongly suspected', 'not important'); az aláhúzásos alakok ('very_low', 'not_serious' …) csak bemeneten elfogadott álnevek, mentéskor a kanonikusra normalizálódnak. A bizonyosság egyetlen motor-szabálya (projekt.grade_arithmetic): kiindulás − Σ|lépés|, a felminősítés csak leminősítés nélkül számít (GRADE 9; D-S13-009). A számolt szint (certainty_source: computed) csak előtöltés: a rögzítéshez ember erősíti meg (certainty_source: human; GRADE-09).",
+  "type": "object",
+  "required": [
+    "schema",
+    "outcome_id",
+    "run_id",
+    "start",
+    "domains",
+    "upgrades",
+    "certainty"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.grade/v1"
+    },
+    "outcome_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+    },
+    "importance": {
+      "enum": [
+        "critical",
+        "important",
+        "limited",
+        "not important",
+        null
+      ],
+      "description": "a kimenet fontossága (GRADE 1–9: 7–9 kritikus, 4–6 fontos, 1–3 korlátozott)"
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{8}T\\d{6}Z-[0-9a-f]{6}$",
+      "description": "a commit-futás, amelyre az ítélet hivatkozik; null: piszkozat explore-futásból (rögzíteni nem lehet)"
+    },
+    "start": {
+      "enum": [
+        "high",
+        "low",
+        null
+      ],
+      "description": "kiindulás: high — RCT (ROBINS-I); low — megfigyeléses"
+    },
+    "start_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "design": {
+      "enum": [
+        "RCT",
+        "NRSI",
+        "observational",
+        "mixed",
+        null
+      ],
+      "description": "a bizonyíték elrendezése (SoF „Résztvevők (vizsgálatok)” cellája, felminősítési tanács) — nem a kiindulásból következik: ROBINS-I-gyel értékelt NRSI is indulhat magasról (GRADE 18), mégsem RCT; null: ismeretlen"
+    },
+    "domains": {
+      "type": "object",
+      "required": [
+        "risk_of_bias",
+        "inconsistency",
+        "indirectness",
+        "imprecision",
+        "publication_bias"
+      ],
+      "properties": {
+        "risk_of_bias": {
+          "$ref": "#/$defs/domain"
+        },
+        "inconsistency": {
+          "$ref": "#/$defs/domain"
+        },
+        "indirectness": {
+          "$ref": "#/$defs/domain"
+        },
+        "imprecision": {
+          "$ref": "#/$defs/domain"
+        },
+        "publication_bias": {
+          "$ref": "#/$defs/publication_bias"
+        }
+      }
+    },
+    "upgrades": {
+      "type": "object",
+      "description": "felminősítés: true (lépés az upgrade_details-ből, alapból +1) vagy egész lépés",
+      "properties": {
+        "large_effect": {
+          "type": [
+            "boolean",
+            "integer"
+          ],
+          "minimum": 0,
+          "maximum": 2
+        },
+        "dose_response": {
+          "type": [
+            "boolean",
+            "integer"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "opposing_confounding": {
+          "type": [
+            "boolean",
+            "integer"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "upgrade_details": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "step": {
+            "enum": [
+              1,
+              2,
+              null
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "upgrades_rationale": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "certainty": {
+      "enum": [
+        "high",
+        "moderate",
+        "low",
+        "very low",
+        null
+      ]
+    },
+    "certainty_source": {
+      "enum": [
+        "computed",
+        "human",
+        null
+      ],
+      "description": "computed: a kiindulásból és a lépésekből (projekt.grade_arithmetic) — csak előtöltés, így nem rögzíthető; human: az ember adta meg vagy erősítette meg (eltérésnél consistency_warning). A jóvá nem hagyott AI-vázlat szintje nem emberi (6. döntés)."
+    },
+    "consistency_warning": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "validator_rollup": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "a validator GRADE-összesítése (szk.appraisal-result/v1 grade blokk), ha van"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "recorded"
+      ]
+    },
+    "origin": {
+      "enum": [
+        "human",
+        "ai_draft"
+      ],
+      "description": "ai_draft: Claude-vázlat — rögzítés csak emberi jóváhagyással (approved_by; 11. döntés, 6. pont)"
+    },
+    "approved_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "journal_id": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "rationale": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kb_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "mid": {
+      "$ref": "#/$defs/mid"
+    },
+    "mid_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "run_summary": {
+      "$ref": "#/$defs/run_summary"
+    },
+    "advice": {
+      "$ref": "#/$defs/advice"
+    },
+    "override_warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/flag"
+      }
+    },
+    "actor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "updated": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "$defs": {
+    "domain": {
+      "type": "object",
+      "required": [
+        "rating",
+        "step"
+      ],
+      "properties": {
+        "rating": {
+          "enum": [
+            "not serious",
+            "serious",
+            "very serious",
+            null
+          ]
+        },
+        "step": {
+          "enum": [
+            0,
+            -1,
+            -2,
+            null
+          ]
+        },
+        "rationale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "advisory": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "a motor számai (pl. high_rob_weight_pct, I2, pi_crosses_null, ois_met)"
+        },
+        "suggestion": {
+          "$ref": "#/$defs/suggestion"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "rating": {
+              "const": "not serious"
+            },
+            "step": {
+              "const": 0
+            }
+          }
+        },
+        {
+          "properties": {
+            "rating": {
+              "const": "serious"
+            },
+            "step": {
+              "const": -1
+            }
+          }
+        },
+        {
+          "properties": {
+            "rating": {
+              "const": "very serious"
+            },
+            "step": {
+              "const": -2
+            }
+          }
+        },
+        {
+          "properties": {
+            "rating": {
+              "const": null
+            },
+            "step": {
+              "const": null
+            }
+          }
+        }
+      ]
+    },
+    "publication_bias": {
+      "type": "object",
+      "required": [
+        "rating",
+        "step"
+      ],
+      "properties": {
+        "rating": {
+          "enum": [
+            "undetected",
+            "suspected",
+            "strongly suspected",
+            null
+          ]
+        },
+        "step": {
+          "enum": [
+            0,
+            -1,
+            -2,
+            null
+          ]
+        },
+        "status": {
+          "enum": [
+            "open",
+            "unresolved",
+            "resolved",
+            null
+          ]
+        },
+        "rationale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "advisory": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "suggestion": {
+          "$ref": "#/$defs/suggestion"
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "rating": {
+              "const": "undetected"
+            },
+            "step": {
+              "const": 0
+            },
+            "status": {
+              "enum": [
+                "resolved",
+                null
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "rating": {
+              "const": "strongly suspected"
+            },
+            "step": {
+              "const": -1
+            },
+            "status": {
+              "enum": [
+                "resolved",
+                null
+              ]
+            }
+          }
+        },
+        {
+          "required": [
+            "rationale"
+          ],
+          "properties": {
+            "rating": {
+              "const": "strongly suspected"
+            },
+            "step": {
+              "const": -2
+            },
+            "status": {
+              "enum": [
+                "resolved",
+                null
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "rating": {
+              "const": "suspected"
+            },
+            "step": {
+              "const": null
+            },
+            "status": {
+              "const": "unresolved"
+            }
+          }
+        },
+        {
+          "required": [
+            "rationale"
+          ],
+          "properties": {
+            "rating": {
+              "const": "suspected"
+            },
+            "step": {
+              "enum": [
+                0,
+                -1
+              ]
+            },
+            "status": {
+              "enum": [
+                "resolved",
+                null
+              ]
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "properties": {
+            "rating": {
+              "const": null
+            },
+            "step": {
+              "const": null
+            },
+            "status": {
+              "enum": [
+                "open",
+                null
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "suggestion": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "rating",
+        "step",
+        "status",
+        "summary",
+        "why",
+        "kb_refs"
+      ],
+      "properties": {
+        "rating": {
+          "enum": [
+            "not serious",
+            "serious",
+            "very serious",
+            "undetected",
+            "suspected",
+            "strongly suspected",
+            null
+          ]
+        },
+        "step": {
+          "enum": [
+            0,
+            -1,
+            -2,
+            null
+          ]
+        },
+        "status": {
+          "enum": [
+            "suggested",
+            "borderline",
+            "human_judgement",
+            "not_applicable",
+            "insufficient_data"
+          ]
+        },
+        "concern": {
+          "type": "boolean",
+          "description": "a javaslat leminősítést (vagy feloldandó „gyanított”-at) jelez"
+        },
+        "summary": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "why": {
+          "$ref": "#/$defs/why"
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/flag"
+          }
+        },
+        "kb_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "why": {
+      "type": "object",
+      "description": "a „Miért?” panel kezdőknek (11. döntés, 6. pont): mit kérdez a domén, miért ez a javaslat, mi változtatná meg, és a bizonytalanság / határeset jelölése",
+      "required": [
+        "asks",
+        "because",
+        "change"
+      ],
+      "properties": {
+        "asks": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "because": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "change": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "uncertain": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "label",
+        "text"
+      ],
+      "properties": {
+        "label": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "flag": {
+      "type": "object",
+      "required": [
+        "code",
+        "text"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "level": {
+          "enum": [
+            "info",
+            "warning"
+          ]
+        },
+        "domain": {
+          "enum": [
+            "risk_of_bias",
+            "inconsistency",
+            "indirectness",
+            "imprecision",
+            "publication_bias",
+            null
+          ]
+        },
+        "text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "mid": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "lower",
+        "upper"
+      ],
+      "properties": {
+        "lower": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "upper": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "scale": {
+          "enum": [
+            "display"
+          ]
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sd": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "run_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "k": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "participants": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "measure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "display_text": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "effect_text": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            }
+          ]
+        },
+        "data_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "spec_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "advice": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "engine": {
+          "type": "object",
+          "required": [
+            "name",
+            "version"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        },
+        "upgrades": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "kb_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "expected_certainty_if_suggested": {
+          "enum": [
+            "high",
+            "moderate",
+            "low",
+            "very low",
+            null
+          ]
+        }
+      }
+    }
+  }
+}

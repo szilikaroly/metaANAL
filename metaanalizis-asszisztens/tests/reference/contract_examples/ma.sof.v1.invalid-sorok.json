@@ -1,0 +1,124 @@
+{
+  "schema": "szk.ma.sof/v1",
+  "outcome_id": "o1",
+  "run_id": "20261004T211200Z-a1f3c2",
+  "measure": "RR",
+  "title": {
+    "hu": "Az eredmények összefoglalása (SoF)",
+    "en": "Summary of findings"
+  },
+  "header": {
+    "intervention": {
+      "hu": "a BCG-oltás",
+      "en": "BCG vaccination"
+    }
+  },
+  "rows": [],
+  "columns": [
+    {
+      "key": "outcome_text",
+      "label": {
+        "hu": "Kimenet",
+        "en": "Outcome"
+      }
+    },
+    {
+      "key": "participants_text",
+      "label": {
+        "hu": "Résztvevők (vizsgálatok)",
+        "en": "No. of participants (studies)"
+      }
+    },
+    {
+      "key": "relative_text",
+      "label": {
+        "hu": "Relatív hatás (95% CI)",
+        "en": "Relative effect (95% CI)"
+      }
+    },
+    {
+      "key": "assumed_risk_text",
+      "label": {
+        "hu": "Alapkockázat",
+        "en": "Assumed risk"
+      }
+    },
+    {
+      "key": "absolute_text",
+      "label": {
+        "hu": "Abszolút hatás (95% CI)",
+        "en": "Absolute effect (95% CI)"
+      }
+    },
+    {
+      "key": "certainty_cell",
+      "label": {
+        "hu": "A bizonyíték bizonyossága (GRADE)",
+        "en": "Certainty of the evidence (GRADE)"
+      }
+    },
+    {
+      "key": "comments_text",
+      "label": {
+        "hu": "Megjegyzés",
+        "en": "Comments"
+      }
+    }
+  ],
+  "footnotes": [
+    {
+      "id": "a",
+      "text": {
+        "hu": "Inkonzisztencia: −1 (súlyos) — A PI (0.13–1.79) átnyúlik az 1-en; a súly 14%-a a másik oldalon.",
+        "en": "Inconsistency: −1 (serious) — A PI (0.13–1.79) átnyúlik az 1-en; a súly 14%-a a másik oldalon."
+      },
+      "domain": "inconsistency",
+      "kind": "grade"
+    },
+    {
+      "id": "b",
+      "text": {
+        "hu": "Publikációs torzítás: 0 (gyanított) — Harbord p 0.23, Peters p 0.20; a regiszterkeresés teljes — nem minősítünk le.",
+        "en": "Publication bias: 0 (suspected) — Harbord p 0.23, Peters p 0.20; a regiszterkeresés teljes — nem minősítünk le."
+      },
+      "domain": "publication_bias",
+      "kind": "grade"
+    },
+    {
+      "id": "c",
+      "text": {
+        "hu": "Alapkockázat (kontroll-pool): a kontrollkarok összesített kockázata (Σe2/Σn2 = 9.1/1000) — illusztratív; a klinikailag releváns alapkockázat forrással adható meg (GRADE-10a).",
+        "en": "Assumed risk (control-arm pool): pooled risk of the control arms (Σe2/Σn2 = 9.1 per 1,000) — illustrative; a clinically relevant baseline risk with a source can be added (GRADE-10a)."
+      },
+      "domain": null,
+      "kind": "baseline"
+    },
+    {
+      "id": "d",
+      "text": {
+        "hu": "Alapkockázat (magas kockázatú csoport): 40.0/1000 — forrás: kohorsz (pmid:00000000).",
+        "en": "Assumed risk (high-risk group): 40.0 per 1,000 — source: kohorsz (pmid:00000000)."
+      },
+      "domain": null,
+      "kind": "baseline"
+    }
+  ],
+  "statement": {
+    "hu": "Tbc-fertőzés: a BCG-oltás valószínűleg csökkenti.",
+    "en": "BCG vaccination probably reduces Tuberculosis."
+  },
+  "engine": {
+    "name": "metaelemzes",
+    "version": "0.1.0"
+  },
+  "notes": [],
+  "kb_refs": [
+    "GRADE-10",
+    "GRADE-10a",
+    "GRADE-10b",
+    "GRADE-11",
+    "D-S13-011",
+    "D-S13-012",
+    "D-S13-016"
+  ]
+}

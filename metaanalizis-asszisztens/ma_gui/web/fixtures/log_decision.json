@@ -1,0 +1,64 @@
+{
+ "description": "GET /api/log/decision — projekt.list_items('decisions') sorai (3.5.15).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/log/decision",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log/v1",
+    "data": {
+     "kind": "decision",
+     "items": [
+      {
+       "id": 1,
+       "ts": "2026-09-20T10:05:00Z",
+       "agent": "planner",
+       "stage_id": "S01",
+       "status": "active",
+       "decision": "Elsődleges kimenet: TBC-incidencia (RR), véletlen hatású modell REML + HKSJ",
+       "rationale": "Klinikai és módszertani sokféleség várható (1948–1980, eltérő szélességi körök).",
+       "alternatives": "közös hatású modell (érzékenységi elemzésként)",
+       "kb_refs": "D-S08-001,D-S02-006",
+       "supersedes": null,
+       "kb_unverified": null
+      },
+      {
+       "id": 2,
+       "ts": "2026-10-02T16:40:00Z",
+       "agent": "user",
+       "stage_id": "S05",
+       "status": "active",
+       "decision": "V023 „Nem hiba”: a Hart & Sutherland 1977 n1 = 13,598 ezres tagolás",
+       "rationale": "A közlemény 2. táblázatában ezres tagolással: 13 598 fő.",
+       "alternatives": null,
+       "kb_refs": "V023",
+       "supersedes": null,
+       "kb_unverified": null
+      },
+      {
+       "id": 3,
+       "ts": "2026-10-03T09:00:00Z",
+       "agent": "user",
+       "stage_id": "S04",
+       "status": "active",
+       "decision": "Vizsgálatcímke rögzítve: <img src=x onerror=alert(1)>",
+       "rationale": "XSS-próba: a címke szövegként jelenik meg.",
+       "alternatives": null,
+       "kb_refs": null,
+       "supersedes": null,
+       "kb_unverified": null
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr33"
+    }
+   }
+  }
+ ]
+}

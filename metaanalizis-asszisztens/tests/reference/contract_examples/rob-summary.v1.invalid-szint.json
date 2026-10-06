@@ -1,0 +1,199 @@
+{
+ "schema": "szk.rob-summary/v1",
+ "tool": "rob2",
+ "outcome": "o1",
+ "name": "RoB 2",
+ "instrument_sha256": "6a9c81e40d0a556220d18044e86bd118c2edbae9bb0afd075d81ae1fd5ad2c51",
+ "algorithm": "conservative",
+ "engine_version": "0.1.0",
+ "domains": [
+  {
+   "id": "1",
+   "pass": null,
+   "title": {
+    "hu": "Randomizációs folyamat",
+    "en": "Randomisation process"
+   },
+   "short": "D1"
+  },
+  {
+   "id": "2",
+   "pass": null,
+   "title": {
+    "hu": "Eltérés a tervezett beavatkozástól",
+    "en": "Deviations from intended interventions"
+   },
+   "short": "D2"
+  },
+  {
+   "id": "3",
+   "pass": null,
+   "title": {
+    "hu": "Hiányzó kimeneti adatok",
+    "en": "Missing outcome data"
+   },
+   "short": "D3"
+  },
+  {
+   "id": "4",
+   "pass": null,
+   "title": {
+    "hu": "A kimenet mérése",
+    "en": "Measurement of the outcome"
+   },
+   "short": "D4"
+  },
+  {
+   "id": "5",
+   "pass": null,
+   "title": {
+    "hu": "A közölt eredmény kiválasztása",
+    "en": "Selection of the reported result"
+   },
+   "short": "D5"
+  }
+ ],
+ "scale": [
+  {
+   "value": "low",
+   "label": {
+    "hu": "Alacsony",
+    "en": "Low"
+   },
+   "level": "low"
+  },
+  {
+   "value": "some_concerns",
+   "label": {
+    "hu": "Némi aggály",
+    "en": "Some concerns"
+   },
+   "level": "some"
+  },
+  {
+   "value": "high",
+   "label": {
+    "hu": "Magas",
+    "en": "High"
+   },
+   "level": "high"
+  }
+ ],
+ "studies": [
+  {
+   "study_id": "NCT0456",
+   "label": "Smith 2010",
+   "weight_pct": 62.5,
+   "weight_text": "62.5%",
+   "rows": [
+    "rabcd1"
+   ],
+   "judgements": {
+    "1": "low",
+    "2": "low",
+    "3": "low",
+    "4": "low",
+    "5": "low"
+   },
+   "domains": [
+    {
+     "domain": "1",
+     "pass": null,
+     "judgement": "low",
+     "implied": "low",
+     "level": "low",
+     "from": "judgement"
+    },
+    {
+     "domain": "2",
+     "pass": null,
+     "judgement": "low",
+     "implied": "low",
+     "level": "low",
+     "from": "judgement"
+    },
+    {
+     "domain": "3",
+     "pass": null,
+     "judgement": "low",
+     "implied": "low",
+     "level": "low",
+     "from": "judgement"
+    },
+    {
+     "domain": "4",
+     "pass": null,
+     "judgement": "low",
+     "implied": "low",
+     "level": "low",
+     "from": "judgement"
+    },
+    {
+     "domain": "5",
+     "pass": null,
+     "judgement": "low",
+     "implied": "low",
+     "level": "low",
+     "from": "judgement"
+    }
+   ],
+   "overall": "low",
+   "overall_implied": "low",
+   "level": "very",
+   "source": "consensus",
+   "status": "consensus",
+   "origin": "human",
+   "assessors": [
+    "SzK"
+   ],
+   "files": [],
+   "complete": true,
+   "rob_value": "low"
+  }
+ ],
+ "weighted": [
+  {
+   "level": "low",
+   "n": 1,
+   "pct": 62.5,
+   "text": "62.5%"
+  },
+  {
+   "level": "some",
+   "n": 0,
+   "pct": 0.0,
+   "text": "0.0%"
+  },
+  {
+   "level": "high",
+   "n": 0,
+   "pct": 0.0,
+   "text": "0.0%"
+  },
+  {
+   "level": "unassessed",
+   "n": 1,
+   "pct": 37.5,
+   "text": "37.5%"
+  }
+ ],
+ "high_weight_pct": 0.0,
+ "weights_source": {
+  "run_id": "20261004T211200Z-a1f3c2",
+  "total_weight_pct": 100.0
+ },
+ "unmatched_plot_rows": [
+  {
+   "row_uid": "rabcd2",
+   "study_id": "NCT0999",
+   "label": "Kovács 2019",
+   "weight_pct": 37.5
+  }
+ ],
+ "notes": [
+  {
+   "hu": "Validátor-kompatibilis konzervatív szabály — NEM a hivatalos RoB 2 algoritmus",
+   "en": "Validator-compatible conservative rule — NOT the official RoB 2 algorithm"
+  }
+ ]
+}

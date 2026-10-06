@@ -1,0 +1,55 @@
+{
+  "schema": "szk.ma.compare-result/v1",
+  "key": [
+    "study_id",
+    "arm"
+  ],
+  "summary": {
+    "rows_a": 24,
+    "rows_b": 24,
+    "matched": 24,
+    "cells_compared": 312,
+    "agree": 296,
+    "disagree": 16,
+    "agreement_pct": 94.9,
+    "by_field": {
+      "sd1": {
+        "compared": 24,
+        "disagree": 5
+      },
+      "rob": {
+        "compared": 24,
+        "disagree": 4,
+        "kappa": 0.71,
+        "kappa_ci": [
+          0.52,
+          0.9
+        ]
+      }
+    }
+  },
+  "disagreements": [
+    {
+      "key": "NCT0456|T",
+      "row_uid_a": "r11aa",
+      "row_uid_b": "r22bb",
+      "field": "sd1",
+      "a": "0.42",
+      "b": "4.2",
+      "a_value": 0.42,
+      "b_value": 4.2,
+      "kind": "value",
+      "hint": "10× eltérés: tizedesjel vagy mértékegység (V012 jellegű)",
+      "impact": {
+        "measure": "SMD",
+        "yi_a": 0.31,
+        "yi_b": 0.03,
+        "text": "SMD 0.31 → 0.03"
+      }
+    }
+  ],
+  "only_a": [
+    "NCT0123|T"
+  ],
+  "only_b": []
+}

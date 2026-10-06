@@ -1,0 +1,1541 @@
+{
+ "description": "GET /api/runs?outcome=<id> és GET /api/runs/<run_id> — a motor run.json-jai (szk.ma.run/v1: participants_text, rob_high, expanded_argv) a szerver mezőivel (outcome_id, stale = X001, measure, spec.purpose, dir, data_current_sha256). Generálta: tests/gui/ui/gen_fixtures_from_engine.py.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/runs",
+   "query": {
+    "outcome": "o1"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.runs/v1",
+    "data": {
+     "runs": [
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "mode": "commit",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "061383d8d18130c274f82cd61b0b4ec8faccce766d72b86ac41df058255b061b",
+        "name": "o1_primary",
+        "parent": null,
+        "purpose": "primary"
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2",
+        "--project",
+        "."
+       ],
+       "expanded_argv": [
+        "ma.py",
+        "analyze",
+        "--data",
+        "03_adatok/o1.csv",
+        "--measure",
+        "RR",
+        "--subgroup",
+        "allokáció",
+        "--cumulative",
+        "év",
+        "--out",
+        "05_elemzes/o1/20261004T211200Z-a1f3c2",
+        "--project",
+        "."
+       ],
+       "engine_version": "0.1.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/results.json",
+         "sha256": "8bf3ced90f0997fa9f17759ccae13ba59816ff822b624038bc7fe7f14aa03d20"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/plot_data.json",
+         "sha256": "7977f52e84f33d009b8d08891a070109d210df6148bb8f0b1d4a1373f977a664"
+        },
+        "report": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/report.md",
+         "sha256": "d38274b0999aa301f5679b319c44f646924fdabc8a2c3572e891c83a23c71fbb"
+        },
+        "effect_sizes": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/effect_sizes.csv",
+         "sha256": "138026396ddd53e666b7f46546a8b2b3e089f7eafe4655fc0420cfa2eecb9e6d"
+        },
+        "forest": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/forest.svg",
+         "sha256": "151d36f1fbfe9a959f74754893df6681535cc8c1de9a54eb593a7fc31dfa4a6f"
+        },
+        "funnel": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/funnel.svg",
+         "sha256": "fb1d50eefb381213a19df65bdac8b644dcff5aa9cef64de11307ebad83703ef7"
+        },
+        "doi": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/doi.svg",
+         "sha256": "a9033c078e58708e5033464da40b8533d210816874c7bfd2d9df9699f6854898"
+        },
+        "cumulative": {
+         "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/cumulative.svg",
+         "sha256": "25a996641bd2808553a9b70654d1261926fa7c6f34f38d6096fd802f79da3a34"
+        }
+       },
+       "k": 13,
+       "measure": "RR",
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0.49 [0.33; 0.73]",
+         "en": "0.49 [0.33; 0.73]"
+        },
+        "i2_text": {
+         "hu": "92%",
+         "en": "92%"
+        },
+        "pi_text": {
+         "hu": "[0.13; 1.79]",
+         "en": "[0.13; 1.79]"
+        }
+       },
+       "participants_text": {
+        "hu": "357347",
+        "en": "357347"
+       },
+       "rob_high": 4,
+       "rob_missing": 0,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 6
+       },
+       "client_seq": 57,
+       "elapsed_ms": 84,
+       "started": "2026-10-04T21:12:00Z",
+       "finished": "2026-10-04T21:12:00Z",
+       "outcome_id": "o1",
+       "stale": false,
+       "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "dir": "05_elemzes/o1/20261004T211200Z-a1f3c2"
+      },
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261004T211500Z-c9d2a7",
+       "mode": "commit",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary_no_estim.json",
+        "sha256": "046f19eff51ec6c0fd6b22c05fa4a416e67c79ac7fce277573fe876b5d048da7",
+        "name": "o1_primary_no_estim",
+        "parent": "o1_primary",
+        "purpose": "sensitivity"
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary_no_estim.json",
+        "--out",
+        "05_elemzes/o1/20261004T211500Z-c9d2a7",
+        "--project",
+        "."
+       ],
+       "expanded_argv": [
+        "ma.py",
+        "analyze",
+        "--data",
+        "03_adatok/o1.csv",
+        "--measure",
+        "RR",
+        "--subgroup",
+        "allokáció",
+        "--cumulative",
+        "év",
+        "--exclude",
+        "estimated=igen",
+        "--out",
+        "05_elemzes/o1/20261004T211500Z-c9d2a7",
+        "--project",
+        "."
+       ],
+       "engine_version": "0.1.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/results.json",
+         "sha256": "f186d4f28b8f335ce799e72246e1e97c9bc98bbc9d455f82e1c9566b55f0a327"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/plot_data.json",
+         "sha256": "a996931413962513d6572a6a4082c5f7af33c724c8505aec7185ec0896d4e4db"
+        },
+        "report": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/report.md",
+         "sha256": "e4c6d0875169ced21a289a3366e385118472f7ff8155d74465cd7b791f05bdc1"
+        },
+        "effect_sizes": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/effect_sizes.csv",
+         "sha256": "90dd44596729fde93df6dcb8b3bf341fe989aab955baa7b335cd14de22a3e1c2"
+        },
+        "forest": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/forest.svg",
+         "sha256": "711f7d05083c0bcf2562c1200bcdabf89e526d59496fa39ff08b9099be2887d7"
+        },
+        "funnel": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/funnel.svg",
+         "sha256": "5b57fdabfab2a82b66544124c905f84c66466ab1e6ad0b3f2c64a28906a1bd10"
+        },
+        "doi": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/doi.svg",
+         "sha256": "8d5c9e19c88dbb719bfc5c816fa85163fd0dd3e5bc2e25ae42535b9bea70402a"
+        },
+        "cumulative": {
+         "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/cumulative.svg",
+         "sha256": "9e993d7101c8ef9bb916de98c22216b40740f0de12dbc41af0888c2690ede0e9"
+        }
+       },
+       "k": 11,
+       "measure": "RR",
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0.51 [0.32; 0.80]",
+         "en": "0.51 [0.32; 0.80]"
+        },
+        "i2_text": {
+         "hu": "93%",
+         "en": "93%"
+        },
+        "pi_text": {
+         "hu": "[0.12; 2.07]",
+         "en": "[0.12; 2.07]"
+        }
+       },
+       "participants_text": {
+        "hu": "339190",
+        "en": "339190"
+       },
+       "rob_high": 3,
+       "rob_missing": 0,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 3
+       },
+       "elapsed_ms": 84,
+       "started": "2026-10-04T21:15:00Z",
+       "finished": "2026-10-04T21:15:00Z",
+       "outcome_id": "o1",
+       "stale": false,
+       "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "dir": "05_elemzes/o1/20261004T211500Z-c9d2a7"
+      },
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261003T180200Z-4c0d1e",
+       "mode": "commit",
+       "spec": {
+        "path": "05_elemzes/specs/o1_primary.json",
+        "sha256": "061383d8d18130c274f82cd61b0b4ec8faccce766d72b86ac41df058255b061b",
+        "name": "o1_primary",
+        "parent": null,
+        "purpose": "primary"
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json",
+        "--out",
+        "05_elemzes/o1/20261003T180200Z-4c0d1e",
+        "--project",
+        "."
+       ],
+       "expanded_argv": [
+        "ma.py",
+        "analyze",
+        "--data",
+        "03_adatok/o1.csv",
+        "--measure",
+        "RR",
+        "--subgroup",
+        "allokáció",
+        "--cumulative",
+        "év",
+        "--out",
+        "05_elemzes/o1/20261003T180200Z-4c0d1e",
+        "--project",
+        "."
+       ],
+       "engine_version": "0.1.0",
+       "data": {
+        "path": "03_adatok/o1.csv",
+        "sha256": "4c0dcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "rows": 13
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/results.json",
+         "sha256": "53c85fe684a175ef50ee7b7987edb97ecffec1f35207f92d6a46c820d51c7bfd"
+        },
+        "plot": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/plot_data.json",
+         "sha256": "dda67f722909c9a29af12cdb080936eb4999a27a70a0a2971f104027d60e6dcb"
+        },
+        "report": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/report.md",
+         "sha256": "71ab45525771e807643f2f2d2b81c62f70be1d820da5bef809107ba82c308ecd"
+        },
+        "effect_sizes": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/effect_sizes.csv",
+         "sha256": "49efb51a4ac728b08f0f4e7325c1b35be342d5368e19590ec50806509ba94d34"
+        },
+        "forest": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/forest.svg",
+         "sha256": "a9d788e4c9ee238f260b793c5c02e20b64b4b95a60485c0671587b5009d3708d"
+        },
+        "funnel": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/funnel.svg",
+         "sha256": "a6f2cfb2475b9ecf7cc691730b535d29b75f5a26675bdc2cfaafe3303adb13e8"
+        },
+        "doi": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/doi.svg",
+         "sha256": "481d820dabf85254f9b7aff26e095a4ab6fa4a2b8c153d628b23265b7a372eac"
+        },
+        "cumulative": {
+         "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/cumulative.svg",
+         "sha256": "59e6cb44bec3c7a6c31947234bd3810986ad5041c297b8f34bec01d839bd657b"
+        }
+       },
+       "k": 13,
+       "measure": "RR",
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "0.50 [0.34; 0.74]",
+         "en": "0.50 [0.34; 0.74]"
+        },
+        "i2_text": {
+         "hu": "92%",
+         "en": "92%"
+        },
+        "pi_text": {
+         "hu": "[0.14; 1.81]",
+         "en": "[0.14; 1.81]"
+        }
+       },
+       "participants_text": {
+        "hu": "357347",
+        "en": "357347"
+       },
+       "rob_high": 4,
+       "rob_missing": 0,
+       "validation_summary": {
+        "error": 0,
+        "warning": 0,
+        "info": 6
+       },
+       "client_seq": 12,
+       "elapsed_ms": 84,
+       "started": "2026-10-03T18:02:00Z",
+       "finished": "2026-10-03T18:02:00Z",
+       "outcome_id": "o1",
+       "stale": true,
+       "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "dir": "05_elemzes/o1/20261003T180200Z-4c0d1e"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an10"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs",
+   "query": {
+    "outcome": "o2"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.runs/v1",
+    "data": {
+     "runs": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an11"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs",
+   "query": {
+    "outcome": "o3"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.runs/v1",
+    "data": {
+     "runs": [
+      {
+       "schema": "szk.ma.run/v1",
+       "run_id": "20261005T101000Z-3e7a51",
+       "mode": "commit",
+       "spec": {
+        "path": "05_elemzes/specs/o3_primary.json",
+        "sha256": "b1ea2bc964c52273d05490aac7c890c4f48b8d1fe723f8eb1ca78d7f2e2fdc71",
+        "name": "o3_primary",
+        "parent": null,
+        "purpose": "primary"
+       },
+       "equivalent_argv": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o3_primary.json",
+        "--out",
+        "05_elemzes/o3/20261005T101000Z-3e7a51",
+        "--project",
+        "."
+       ],
+       "expanded_argv": [
+        "ma.py",
+        "analyze",
+        "--data",
+        "03_adatok/o3.csv",
+        "--measure",
+        "MD",
+        "--out",
+        "05_elemzes/o3/20261005T101000Z-3e7a51",
+        "--project",
+        "."
+       ],
+       "engine_version": "0.1.0",
+       "data": {
+        "path": "03_adatok/o3.csv",
+        "sha256": "105a1d5b7895483e4579d56e6c95581995b79a30f85e3255c6ff9d4a0620f0ec",
+        "rows": 9
+       },
+       "files": {
+        "results": {
+         "path": "05_elemzes/o3/20261005T101000Z-3e7a51/results.json",
+         "sha256": "2c02d8aae844115c36c31c0082e364341730fb91cad1217f9b79fb77b700264d"
+        },
+        "plot": {
+         "path": "05_elemzes/o3/20261005T101000Z-3e7a51/plot_data.json",
+         "sha256": "4541e42b64332384ac2c38b6c94f3b6716c07575278041feebc4ac1d77c53df4"
+        },
+        "report": {
+         "path": "05_elemzes/o3/20261005T101000Z-3e7a51/report.md",
+         "sha256": "556a089f99f170dc4aec9691ffff7036e5d874c69c6b0b7cbe06c41f9efcbcf7"
+        },
+        "effect_sizes": {
+         "path": "05_elemzes/o3/20261005T101000Z-3e7a51/effect_sizes.csv",
+         "sha256": "2c3244408ec2b510fe3317d489234dbe9d0679107ca49a9cbb3d073036b667cd"
+        },
+        "forest": {
+         "path": "05_elemzes/o3/20261005T101000Z-3e7a51/forest.svg",
+         "sha256": "eb8f105ef61b137e50bb5759fb86b7cef4ff245cc77ee9a0603e51632aa1d9f9"
+        },
+        "funnel": {
+         "path": "05_elemzes/o3/20261005T101000Z-3e7a51/funnel.svg",
+         "sha256": "da1db04094213e48b90ee804690aac7d65a2e175fe04f7ced956ac4617ef9373"
+        },
+        "doi": {
+         "path": "05_elemzes/o3/20261005T101000Z-3e7a51/doi.svg",
+         "sha256": "5dc274ae55fe7c7ce22dbaa3a3975c8361674fa4e9a17aa24d95e730585c4dee"
+        }
+       },
+       "k": 9,
+       "measure": "MD",
+       "primary": {
+        "model": "random",
+        "display_text": {
+         "hu": "-15.11 [-36.32; 6.11]",
+         "en": "−15.11 [−36.32; 6.11]"
+        },
+        "i2_text": {
+         "hu": "97%",
+         "en": "97%"
+        },
+        "pi_text": {
+         "hu": "[-80.69; 50.48]",
+         "en": "[−80.69; 50.48]"
+        }
+       },
+       "participants_text": {
+        "hu": "1158",
+        "en": "1158"
+       },
+       "rob_high": null,
+       "rob_missing": 9,
+       "validation_summary": {
+        "error": 0,
+        "warning": 1,
+        "info": 11
+       },
+       "elapsed_ms": 84,
+       "started": "2026-10-05T10:10:00Z",
+       "finished": "2026-10-05T10:10:00Z",
+       "outcome_id": "o3",
+       "stale": false,
+       "data_current_sha256": "105a1d5b7895483e4579d56e6c95581995b79a30f85e3255c6ff9d4a0620f0ec",
+       "dir": "05_elemzes/o3/20261005T101000Z-3e7a51"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an12"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261004T211200Z-a1f3c2",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261004T211200Z-a1f3c2",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary.json",
+      "sha256": "061383d8d18130c274f82cd61b0b4ec8faccce766d72b86ac41df058255b061b",
+      "name": "o1_primary",
+      "parent": null,
+      "purpose": "primary"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary.json",
+      "--out",
+      "05_elemzes/o1/20261004T211200Z-a1f3c2",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261004T211200Z-a1f3c2",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/results.json",
+       "sha256": "8bf3ced90f0997fa9f17759ccae13ba59816ff822b624038bc7fe7f14aa03d20"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/plot_data.json",
+       "sha256": "7977f52e84f33d009b8d08891a070109d210df6148bb8f0b1d4a1373f977a664"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/report.md",
+       "sha256": "d38274b0999aa301f5679b319c44f646924fdabc8a2c3572e891c83a23c71fbb"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/effect_sizes.csv",
+       "sha256": "138026396ddd53e666b7f46546a8b2b3e089f7eafe4655fc0420cfa2eecb9e6d"
+      },
+      "forest": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/forest.svg",
+       "sha256": "151d36f1fbfe9a959f74754893df6681535cc8c1de9a54eb593a7fc31dfa4a6f"
+      },
+      "funnel": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/funnel.svg",
+       "sha256": "fb1d50eefb381213a19df65bdac8b644dcff5aa9cef64de11307ebad83703ef7"
+      },
+      "doi": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/doi.svg",
+       "sha256": "a9033c078e58708e5033464da40b8533d210816874c7bfd2d9df9699f6854898"
+      },
+      "cumulative": {
+       "path": "05_elemzes/o1/20261004T211200Z-a1f3c2/cumulative.svg",
+       "sha256": "25a996641bd2808553a9b70654d1261926fa7c6f34f38d6096fd802f79da3a34"
+      }
+     },
+     "k": 13,
+     "measure": "RR",
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0.49 [0.33; 0.73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0.13; 1.79]",
+       "en": "[0.13; 1.79]"
+      }
+     },
+     "participants_text": {
+      "hu": "357347",
+      "en": "357347"
+     },
+     "rob_high": 4,
+     "rob_missing": 0,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "client_seq": 57,
+     "elapsed_ms": 84,
+     "started": "2026-10-04T21:12:00Z",
+     "finished": "2026-10-04T21:12:00Z",
+     "outcome_id": "o1",
+     "stale": false,
+     "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "dir": "05_elemzes/o1/20261004T211200Z-a1f3c2"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an13"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261003T180200Z-4c0d1e",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261003T180200Z-4c0d1e",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary.json",
+      "sha256": "061383d8d18130c274f82cd61b0b4ec8faccce766d72b86ac41df058255b061b",
+      "name": "o1_primary",
+      "parent": null,
+      "purpose": "primary"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary.json",
+      "--out",
+      "05_elemzes/o1/20261003T180200Z-4c0d1e",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261003T180200Z-4c0d1e",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "4c0dcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/results.json",
+       "sha256": "53c85fe684a175ef50ee7b7987edb97ecffec1f35207f92d6a46c820d51c7bfd"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/plot_data.json",
+       "sha256": "dda67f722909c9a29af12cdb080936eb4999a27a70a0a2971f104027d60e6dcb"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/report.md",
+       "sha256": "71ab45525771e807643f2f2d2b81c62f70be1d820da5bef809107ba82c308ecd"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/effect_sizes.csv",
+       "sha256": "49efb51a4ac728b08f0f4e7325c1b35be342d5368e19590ec50806509ba94d34"
+      },
+      "forest": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/forest.svg",
+       "sha256": "a9d788e4c9ee238f260b793c5c02e20b64b4b95a60485c0671587b5009d3708d"
+      },
+      "funnel": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/funnel.svg",
+       "sha256": "a6f2cfb2475b9ecf7cc691730b535d29b75f5a26675bdc2cfaafe3303adb13e8"
+      },
+      "doi": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/doi.svg",
+       "sha256": "481d820dabf85254f9b7aff26e095a4ab6fa4a2b8c153d628b23265b7a372eac"
+      },
+      "cumulative": {
+       "path": "05_elemzes/o1/20261003T180200Z-4c0d1e/cumulative.svg",
+       "sha256": "59e6cb44bec3c7a6c31947234bd3810986ad5041c297b8f34bec01d839bd657b"
+      }
+     },
+     "k": 13,
+     "measure": "RR",
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0.50 [0.34; 0.74]",
+       "en": "0.50 [0.34; 0.74]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0.14; 1.81]",
+       "en": "[0.14; 1.81]"
+      }
+     },
+     "participants_text": {
+      "hu": "357347",
+      "en": "357347"
+     },
+     "rob_high": 4,
+     "rob_missing": 0,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "client_seq": 12,
+     "elapsed_ms": 84,
+     "started": "2026-10-03T18:02:00Z",
+     "finished": "2026-10-03T18:02:00Z",
+     "outcome_id": "o1",
+     "stale": true,
+     "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "dir": "05_elemzes/o1/20261003T180200Z-4c0d1e"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an14"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261004T211500Z-c9d2a7",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261004T211500Z-c9d2a7",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_no_estim.json",
+      "sha256": "046f19eff51ec6c0fd6b22c05fa4a416e67c79ac7fce277573fe876b5d048da7",
+      "name": "o1_primary_no_estim",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_no_estim.json",
+      "--out",
+      "05_elemzes/o1/20261004T211500Z-c9d2a7",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--exclude",
+      "estimated=igen",
+      "--out",
+      "05_elemzes/o1/20261004T211500Z-c9d2a7",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/results.json",
+       "sha256": "f186d4f28b8f335ce799e72246e1e97c9bc98bbc9d455f82e1c9566b55f0a327"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/plot_data.json",
+       "sha256": "a996931413962513d6572a6a4082c5f7af33c724c8505aec7185ec0896d4e4db"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/report.md",
+       "sha256": "e4c6d0875169ced21a289a3366e385118472f7ff8155d74465cd7b791f05bdc1"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/effect_sizes.csv",
+       "sha256": "90dd44596729fde93df6dcb8b3bf341fe989aab955baa7b335cd14de22a3e1c2"
+      },
+      "forest": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/forest.svg",
+       "sha256": "711f7d05083c0bcf2562c1200bcdabf89e526d59496fa39ff08b9099be2887d7"
+      },
+      "funnel": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/funnel.svg",
+       "sha256": "5b57fdabfab2a82b66544124c905f84c66466ab1e6ad0b3f2c64a28906a1bd10"
+      },
+      "doi": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/doi.svg",
+       "sha256": "8d5c9e19c88dbb719bfc5c816fa85163fd0dd3e5bc2e25ae42535b9bea70402a"
+      },
+      "cumulative": {
+       "path": "05_elemzes/o1/20261004T211500Z-c9d2a7/cumulative.svg",
+       "sha256": "9e993d7101c8ef9bb916de98c22216b40740f0de12dbc41af0888c2690ede0e9"
+      }
+     },
+     "k": 11,
+     "measure": "RR",
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0.51 [0.32; 0.80]",
+       "en": "0.51 [0.32; 0.80]"
+      },
+      "i2_text": {
+       "hu": "93%",
+       "en": "93%"
+      },
+      "pi_text": {
+       "hu": "[0.12; 2.07]",
+       "en": "[0.12; 2.07]"
+      }
+     },
+     "participants_text": {
+      "hu": "339190",
+      "en": "339190"
+     },
+     "rob_high": 3,
+     "rob_missing": 0,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 3
+     },
+     "elapsed_ms": 84,
+     "started": "2026-10-04T21:15:00Z",
+     "finished": "2026-10-04T21:15:00Z",
+     "outcome_id": "o1",
+     "stale": false,
+     "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "dir": "05_elemzes/o1/20261004T211500Z-c9d2a7"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an15"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091600Z-a7b8c9",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091600Z-a7b8c9",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_no_rob_high.json",
+      "sha256": "767d3ac606223544e3d46a1a8ae0f1a6bb8ac0bc8467d4ca91d7016dfadeb2e6",
+      "name": "o1_primary_no_rob_high",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_no_rob_high.json",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-a7b8c9",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--exclude",
+      "rob=high",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-a7b8c9",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/results.json",
+       "sha256": "bea7ea9f0fc4454641a1dc097e3433484fa1e9a2e329fb65308c48ff3686fc94"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/plot_data.json",
+       "sha256": "db49d6584a0a315ba587f14a2d457a2440a5da7153e8e352115cf0698f560f93"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/report.md",
+       "sha256": "fc4d50b73ed302aa34007d640e8464bcd9ff954e52126fffbe86d213262fc22d"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/effect_sizes.csv",
+       "sha256": "2df6c10985a71778c02137ff3f611a3b2e0753564275cc5370c09331a3f5a5b3"
+      },
+      "forest": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/forest.svg",
+       "sha256": "613a39740ed15b52f996b1e4f5c6eab796812136137f30cc588c55df6df50ec2"
+      },
+      "funnel": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/funnel.svg",
+       "sha256": "740741beeafb5dea247e286874869cb78b0a4ab5843e696fe5962f25ae6e47ed"
+      },
+      "doi": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/doi.svg",
+       "sha256": "5a3105fca5c51c1dfd373ad30d25219a079e5eb3986917fda0f15e47bf13a086"
+      },
+      "cumulative": {
+       "path": "05_elemzes/o1/20261005T091600Z-a7b8c9/cumulative.svg",
+       "sha256": "b1584804a111bfe98bf63c1bfa23ade4b30a8771d9f1d04cb0a3a2b7c7dfe20d"
+      }
+     },
+     "k": 9,
+     "measure": "RR",
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0.43 [0.27; 0.70]",
+       "en": "0.43 [0.27; 0.70]"
+      },
+      "i2_text": {
+       "hu": "94%",
+       "en": "94%"
+      },
+      "pi_text": {
+       "hu": "[0.10; 1.79]",
+       "en": "[0.10; 1.79]"
+      }
+     },
+     "participants_text": {
+      "hu": "236388",
+      "en": "236388"
+     },
+     "rob_high": 0,
+     "rob_missing": 0,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 2
+     },
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:16:00Z",
+     "finished": "2026-10-05T09:16:00Z",
+     "outcome_id": "o1",
+     "stale": false,
+     "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "dir": "05_elemzes/o1/20261005T091600Z-a7b8c9"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an16"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091500Z-f1e2d3",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091500Z-f1e2d3",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_fixed.json",
+      "sha256": "0a4a73b1f648974878435c91dd99b33f3f0d2e4c9937757e35bc3b6452570aa3",
+      "name": "o1_primary_fixed",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_fixed.json",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-f1e2d3",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--model",
+      "fixed",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-f1e2d3",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/results.json",
+       "sha256": "60fb096c2fe8621e1da1e449a69e8f5bab36e7f220824b3823be4813e1361f39"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/plot_data.json",
+       "sha256": "f746567a2388c3d59cab8344c2e49fdf531fd3af80bb5063c7fec384bd3fc94f"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/report.md",
+       "sha256": "49a225dc6528436008b54b3be883d7722402f1c65ce7b048cabe344e67090750"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/effect_sizes.csv",
+       "sha256": "8aca8199b754825213f854dae6987ae2776f7b55e28868f050c2a11fd1a66a7a"
+      },
+      "forest": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/forest.svg",
+       "sha256": "4e10e6fc01ce93781e66675211fbd07904ace1fb67e5b6810c8fe6176f8d70c3"
+      },
+      "funnel": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/funnel.svg",
+       "sha256": "7664afd6981e97f5eb2d3e192028ca1902081c3e5d23805eb4a546d263f5d556"
+      },
+      "doi": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/doi.svg",
+       "sha256": "a9033c078e58708e5033464da40b8533d210816874c7bfd2d9df9699f6854898"
+      },
+      "cumulative": {
+       "path": "05_elemzes/o1/20261005T091500Z-f1e2d3/cumulative.svg",
+       "sha256": "49bee6005e96ccb26cbae5687325b8096fe1c3e39e711fcfc1a9560972b86b5e"
+      }
+     },
+     "k": 13,
+     "measure": "RR",
+     "primary": {
+      "model": "fixed",
+      "display_text": {
+       "hu": "0.65 [0.60; 0.70]",
+       "en": "0.65 [0.60; 0.70]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      }
+     },
+     "participants_text": {
+      "hu": "357347",
+      "en": "357347"
+     },
+     "rob_high": 4,
+     "rob_missing": 0,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:15:00Z",
+     "finished": "2026-10-05T09:15:00Z",
+     "outcome_id": "o1",
+     "stale": false,
+     "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "dir": "05_elemzes/o1/20261005T091500Z-f1e2d3"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an17"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091500Z-d1a2b3",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091500Z-d1a2b3",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_dl.json",
+      "sha256": "53ea9012763417d130c5edd5d898006168db1e621cc69d204e6bdfad84361401",
+      "name": "o1_primary_dl",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_dl.json",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-d1a2b3",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--tau2",
+      "DL",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--out",
+      "05_elemzes/o1/20261005T091500Z-d1a2b3",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/results.json",
+       "sha256": "d73677b1cf96f6b48d080e7f5eb36b5f3cebbf6db8d1099a974c4abda955528b"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/plot_data.json",
+       "sha256": "e4a4399a0a1c96dfde42b1116164e90bca4156f0818649298b970f249f558b1a"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/report.md",
+       "sha256": "f9d9fce4461be792fb3b36c38f60e0d212d3a28b427f1d0c7a681b1b93dfcfa0"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/effect_sizes.csv",
+       "sha256": "225670778254500de160c5acc6714daf7abbec6ebf94468faed35e890d37bc02"
+      },
+      "forest": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/forest.svg",
+       "sha256": "22c18a8417f10f1ea0d18b08a5bfb848320204a0f678bf7485ce40f6804e8dd7"
+      },
+      "funnel": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/funnel.svg",
+       "sha256": "282f806ca90b80786f11e20f70c9600aa8e4dda7c421cfdaa92934c4042b4109"
+      },
+      "doi": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/doi.svg",
+       "sha256": "a9033c078e58708e5033464da40b8533d210816874c7bfd2d9df9699f6854898"
+      },
+      "cumulative": {
+       "path": "05_elemzes/o1/20261005T091500Z-d1a2b3/cumulative.svg",
+       "sha256": "336d7c573e16443a1aaa6f085a7db7ffea5d1f60052bb18a8204bc7d8216e2a0"
+      }
+     },
+     "k": 13,
+     "measure": "RR",
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0.49 [0.33; 0.73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0.14; 1.77]",
+       "en": "[0.14; 1.77]"
+      }
+     },
+     "participants_text": {
+      "hu": "357347",
+      "en": "357347"
+     },
+     "rob_high": 4,
+     "rob_missing": 0,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:15:00Z",
+     "finished": "2026-10-05T09:15:00Z",
+     "outcome_id": "o1",
+     "stale": false,
+     "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "dir": "05_elemzes/o1/20261005T091500Z-d1a2b3"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an18"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T091600Z-0f1e2d",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T091600Z-0f1e2d",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o1_primary_no_outliers.json",
+      "sha256": "cf254a516341f718d89d7f3655b2100c6b833e2d26c25b346fce557e9c57f936",
+      "name": "o1_primary_no_outliers",
+      "parent": "o1_primary",
+      "purpose": "sensitivity"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o1_primary_no_outliers.json",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-0f1e2d",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o1.csv",
+      "--measure",
+      "RR",
+      "--subgroup",
+      "allokáció",
+      "--cumulative",
+      "év",
+      "--outliers",
+      "--out",
+      "05_elemzes/o1/20261005T091600Z-0f1e2d",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o1.csv",
+      "sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "rows": 13
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/results.json",
+       "sha256": "c1e477fc33b44945b523dc27c65b5d67829416fb8d791a26c68dfec101b4fb67"
+      },
+      "plot": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/plot_data.json",
+       "sha256": "91a261d7f558afd7ef2a112740d5eeef3e697cdbff007819e5bc15934a7ee025"
+      },
+      "report": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/report.md",
+       "sha256": "b4896d1d1494ecd98a3912fb61701c16c999d1730c92949db53ba278db28c7af"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/effect_sizes.csv",
+       "sha256": "138026396ddd53e666b7f46546a8b2b3e089f7eafe4655fc0420cfa2eecb9e6d"
+      },
+      "forest": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/forest.svg",
+       "sha256": "151d36f1fbfe9a959f74754893df6681535cc8c1de9a54eb593a7fc31dfa4a6f"
+      },
+      "funnel": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/funnel.svg",
+       "sha256": "fb1d50eefb381213a19df65bdac8b644dcff5aa9cef64de11307ebad83703ef7"
+      },
+      "doi": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/doi.svg",
+       "sha256": "a9033c078e58708e5033464da40b8533d210816874c7bfd2d9df9699f6854898"
+      },
+      "cumulative": {
+       "path": "05_elemzes/o1/20261005T091600Z-0f1e2d/cumulative.svg",
+       "sha256": "25a996641bd2808553a9b70654d1261926fa7c6f34f38d6096fd802f79da3a34"
+      }
+     },
+     "k": 13,
+     "measure": "RR",
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "0.49 [0.33; 0.73]",
+       "en": "0.49 [0.33; 0.73]"
+      },
+      "i2_text": {
+       "hu": "92%",
+       "en": "92%"
+      },
+      "pi_text": {
+       "hu": "[0.13; 1.79]",
+       "en": "[0.13; 1.79]"
+      }
+     },
+     "participants_text": {
+      "hu": "357347",
+      "en": "357347"
+     },
+     "rob_high": 4,
+     "rob_missing": 0,
+     "validation_summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 6
+     },
+     "elapsed_ms": 84,
+     "started": "2026-10-05T09:16:00Z",
+     "finished": "2026-10-05T09:16:00Z",
+     "outcome_id": "o1",
+     "stale": false,
+     "data_current_sha256": "9f3abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "dir": "05_elemzes/o1/20261005T091600Z-0f1e2d"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an19"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/runs/20261005T101000Z-3e7a51",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.run/v1",
+    "data": {
+     "schema": "szk.ma.run/v1",
+     "run_id": "20261005T101000Z-3e7a51",
+     "mode": "commit",
+     "spec": {
+      "path": "05_elemzes/specs/o3_primary.json",
+      "sha256": "b1ea2bc964c52273d05490aac7c890c4f48b8d1fe723f8eb1ca78d7f2e2fdc71",
+      "name": "o3_primary",
+      "parent": null,
+      "purpose": "primary"
+     },
+     "equivalent_argv": [
+      "ma.py",
+      "analyze",
+      "--spec",
+      "05_elemzes/specs/o3_primary.json",
+      "--out",
+      "05_elemzes/o3/20261005T101000Z-3e7a51",
+      "--project",
+      "."
+     ],
+     "expanded_argv": [
+      "ma.py",
+      "analyze",
+      "--data",
+      "03_adatok/o3.csv",
+      "--measure",
+      "MD",
+      "--out",
+      "05_elemzes/o3/20261005T101000Z-3e7a51",
+      "--project",
+      "."
+     ],
+     "engine_version": "0.1.0",
+     "data": {
+      "path": "03_adatok/o3.csv",
+      "sha256": "105a1d5b7895483e4579d56e6c95581995b79a30f85e3255c6ff9d4a0620f0ec",
+      "rows": 9
+     },
+     "files": {
+      "results": {
+       "path": "05_elemzes/o3/20261005T101000Z-3e7a51/results.json",
+       "sha256": "2c02d8aae844115c36c31c0082e364341730fb91cad1217f9b79fb77b700264d"
+      },
+      "plot": {
+       "path": "05_elemzes/o3/20261005T101000Z-3e7a51/plot_data.json",
+       "sha256": "4541e42b64332384ac2c38b6c94f3b6716c07575278041feebc4ac1d77c53df4"
+      },
+      "report": {
+       "path": "05_elemzes/o3/20261005T101000Z-3e7a51/report.md",
+       "sha256": "556a089f99f170dc4aec9691ffff7036e5d874c69c6b0b7cbe06c41f9efcbcf7"
+      },
+      "effect_sizes": {
+       "path": "05_elemzes/o3/20261005T101000Z-3e7a51/effect_sizes.csv",
+       "sha256": "2c3244408ec2b510fe3317d489234dbe9d0679107ca49a9cbb3d073036b667cd"
+      },
+      "forest": {
+       "path": "05_elemzes/o3/20261005T101000Z-3e7a51/forest.svg",
+       "sha256": "eb8f105ef61b137e50bb5759fb86b7cef4ff245cc77ee9a0603e51632aa1d9f9"
+      },
+      "funnel": {
+       "path": "05_elemzes/o3/20261005T101000Z-3e7a51/funnel.svg",
+       "sha256": "da1db04094213e48b90ee804690aac7d65a2e175fe04f7ced956ac4617ef9373"
+      },
+      "doi": {
+       "path": "05_elemzes/o3/20261005T101000Z-3e7a51/doi.svg",
+       "sha256": "5dc274ae55fe7c7ce22dbaa3a3975c8361674fa4e9a17aa24d95e730585c4dee"
+      }
+     },
+     "k": 9,
+     "measure": "MD",
+     "primary": {
+      "model": "random",
+      "display_text": {
+       "hu": "-15.11 [-36.32; 6.11]",
+       "en": "−15.11 [−36.32; 6.11]"
+      },
+      "i2_text": {
+       "hu": "97%",
+       "en": "97%"
+      },
+      "pi_text": {
+       "hu": "[-80.69; 50.48]",
+       "en": "[−80.69; 50.48]"
+      }
+     },
+     "participants_text": {
+      "hu": "1158",
+      "en": "1158"
+     },
+     "rob_high": null,
+     "rob_missing": 9,
+     "validation_summary": {
+      "error": 0,
+      "warning": 1,
+      "info": 11
+     },
+     "elapsed_ms": 84,
+     "started": "2026-10-05T10:10:00Z",
+     "finished": "2026-10-05T10:10:00Z",
+     "outcome_id": "o3",
+     "stale": false,
+     "data_current_sha256": "105a1d5b7895483e4579d56e6c95581995b79a30f85e3255c6ff9d4a0620f0ec",
+     "dir": "05_elemzes/o3/20261005T101000Z-3e7a51"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an20"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "scopus-check-entitled-handmade",
+  "recorded_at": "2026-10-05T12:00:00Z",
+  "origin": "hand_made",
+  "unverified_live": true,
+  "license_note": null,
+  "notes": "KÉZI: sources --check jogosult kulccsal — keresés 200 + view=REF 200 → search_and_ref (szintetikus EID)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/search/scopus?count=1&field=dc%3Aidentifier%2Ceid&query=PMID%288309034%29"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "x-ratelimit-limit": "20000",
+          "x-ratelimit-remaining": "19990",
+          "x-ratelimit-reset": "1791460800"
+        },
+        "body_json": {
+          "search-results": {
+            "opensearch:totalResults": "1",
+            "entry": [
+              {
+                "@_fa": "true",
+                "dc:identifier": "SCOPUS_ID:0000000101",
+                "eid": "2-s2.0-0000000101"
+              }
+            ]
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/abstract/eid/2-s2.0-0000000101?refcount=1&view=REF"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "abstracts-retrieval-response": {
+            "references": {
+              "@total-references": "1",
+              "reference": [
+                {
+                  "@id": "1",
+                  "scopus-id": "0000000201",
+                  "scopus-eid": "2-s2.0-0000000201",
+                  "ce:doi": "10.5555/fixture.ref.1",
+                  "title": "Synthetic trial 1 (fixture)",
+                  "sourcetitle": "Fixture Trials",
+                  "prism:coverDate": "2009-01-01",
+                  "author-list": {
+                    "author": [
+                      {
+                        "@seq": "1",
+                        "ce:surname": "Alpha1",
+                        "ce:initials": "A.",
+                        "ce:indexed-name": "Alpha1 A."
+                      }
+                    ]
+                  },
+                  "citedby-count": "1",
+                  "type": "resolvedReference"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

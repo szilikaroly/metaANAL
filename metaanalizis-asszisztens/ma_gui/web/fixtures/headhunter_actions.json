@@ -1,0 +1,331 @@
+{
+ "description": "Szintetikus Metaheadhunter-projekt (a PMID-ek 99…-kezdetűek, a címek „(synthetic)” jelölésűek — NEM valós közlemények). Generálja: python3 tests/gui/test_headhunter_fixtures.py --write",
+ "routes": [
+  {
+   "envelope": {
+    "data": {
+     "cancel_requested": false,
+     "cancellable": true,
+     "created": "2026-10-05T19:10:22Z",
+     "data": null,
+     "data_truncated": false,
+     "elapsed_ms": 116,
+     "error": null,
+     "errors": [],
+     "exit_code": null,
+     "hh_code": null,
+     "job_id": "hh-1bf73fd26a83",
+     "kind": "run",
+     "message": null,
+     "needs_human": false,
+     "next": null,
+     "ok": null,
+     "partial": false,
+     "pending": [],
+     "progress": [
+      {
+       "done": 40,
+       "message": {
+        "en": "Searching PubMed…",
+        "hu": "Keresés a PubMedben…"
+       },
+       "phase": "search",
+       "source": "pubmed",
+       "step": "find_reviews",
+       "total": 120,
+       "ts": "2026-10-05T10:00:00Z"
+      }
+     ],
+     "run_id": null,
+     "status": "running",
+     "step": "prisma",
+     "timeout_s": 300,
+     "warnings": []
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-job/v1",
+    "warnings": []
+   },
+   "method": "POST",
+   "path": "/api/headhunter/run",
+   "status": 202
+  },
+  {
+   "method": "GET",
+   "path": "/api/headhunter/runs/*",
+   "sequence": [
+    {
+     "envelope": {
+      "data": {
+       "cancel_requested": false,
+       "cancellable": true,
+       "created": "2026-10-05T19:10:22Z",
+       "data": null,
+       "data_truncated": false,
+       "elapsed_ms": 116,
+       "error": null,
+       "errors": [],
+       "exit_code": null,
+       "hh_code": null,
+       "job_id": "hh-1bf73fd26a83",
+       "kind": "run",
+       "message": null,
+       "needs_human": false,
+       "next": null,
+       "ok": null,
+       "partial": false,
+       "pending": [],
+       "progress": [
+        {
+         "done": 40,
+         "message": {
+          "en": "Searching PubMed…",
+          "hu": "Keresés a PubMedben…"
+         },
+         "phase": "search",
+         "source": "pubmed",
+         "step": "find_reviews",
+         "total": 120,
+         "ts": "2026-10-05T10:00:00Z"
+        }
+       ],
+       "run_id": null,
+       "status": "running",
+       "step": "prisma",
+       "timeout_s": 300,
+       "warnings": []
+      },
+      "meta": {
+       "elapsed_ms": 0,
+       "engine": "fixture",
+       "project_rev": null,
+       "request_id": "fx-headhunter"
+      },
+      "ok": true,
+      "schema": "szk.ma.hh-job/v1",
+      "warnings": []
+     },
+     "status": 200
+    },
+    {
+     "envelope": {
+      "data": {
+       "cancel_requested": false,
+       "cancellable": false,
+       "created": "2026-10-05T19:10:22Z",
+       "data": {
+        "boxes": {
+         "assessed": 0,
+         "automation_removed": 0,
+         "awaiting": 5,
+         "duplicates_removed": 0,
+         "excluded_eligibility": 0,
+         "excluded_screening": 0,
+         "identified_databases": 0,
+         "identified_registers": 0,
+         "included_reports": 0,
+         "included_studies": 0,
+         "not_retrieved": 0,
+         "other_methods_assessed": 5,
+         "other_methods_excluded": 0,
+         "other_methods_identified": 5,
+         "other_methods_not_retrieved": 0,
+         "other_methods_sought": 5,
+         "other_removed": 0,
+         "screened": 0,
+         "sought": 0
+        },
+        "check_command": "python3 ma.py prisma check --json <projekt>/01_kereses/headhunter/prisma_flow.json --out-format json",
+        "file": "01_kereses/headhunter/prisma_flow.json",
+        "findings": [
+         {
+          "advice": "Vannak még elbírálásra váró rekordok/jelentések; a végleges folyamatábra előtt döntsd el őket (vagy tüntesd fel „folyamatban lévő” dobozként).",
+          "code": "P013",
+          "detail": "5 elbírálásra vár",
+          "fields": [
+           "awaiting"
+          ],
+          "severity": "warning",
+          "title": "A szűrés nem lezárt"
+         }
+        ],
+        "footnotes": {
+         "already_known": 0,
+         "citations_total": 6,
+         "other_methods_title_excluded": 0
+        },
+        "summary": {
+         "error": 0,
+         "info": 0,
+         "warning": 1
+        }
+       },
+       "data_truncated": false,
+       "elapsed_ms": 116,
+       "error": null,
+       "errors": [],
+       "exit_code": 0,
+       "hh_code": null,
+       "job_id": "hh-1bf73fd26a83",
+       "kind": "run",
+       "message": null,
+       "needs_human": false,
+       "next": "Motor-ellenőrzés: python3 ma.py prisma check --json <projekt>/01_kereses/headhunter/prisma_flow.json --out-format json",
+       "ok": true,
+       "partial": false,
+       "pending": [],
+       "progress": [],
+       "run_id": null,
+       "status": "done",
+       "step": "prisma",
+       "timeout_s": 300,
+       "warnings": [
+        {
+         "code": "H012",
+         "en": "Incomplete update search (s-pubmed-20261005T191021Z, s-europepmc-20261005T191021Z, s-openalex-20261005T191021Z, s-ctgov-20261005T191021Z): PRISMA numbers are not final.",
+         "hu": "Hiányos frissítő keresés (s-pubmed-20261005T191021Z, s-europepmc-20261005T191021Z, s-openalex-20261005T191021Z, s-ctgov-20261005T191021Z): a PRISMA-szám nem véglegesíthető, amíg a keresés nem teljes."
+        },
+        {
+         "code": "P013",
+         "en": "The PRISMA flow is not final yet: 5 reports await a decision.",
+         "hu": "A PRISMA-ábra még nem végleges: 5 jelentés vár döntésre (EP4)."
+        }
+       ]
+      },
+      "meta": {
+       "elapsed_ms": 0,
+       "engine": "fixture",
+       "project_rev": null,
+       "request_id": "fx-headhunter"
+      },
+      "ok": true,
+      "schema": "szk.ma.hh-job/v1",
+      "warnings": []
+     },
+     "status": 200
+    }
+   ]
+  },
+  {
+   "envelope": {
+    "data": {
+     "cancel_requested": true,
+     "cancel_written": true,
+     "cancellable": true,
+     "created": "2026-10-05T19:10:22Z",
+     "data": null,
+     "data_truncated": false,
+     "elapsed_ms": 116,
+     "error": null,
+     "errors": [],
+     "exit_code": null,
+     "hh_code": null,
+     "job_id": "hh-1bf73fd26a83",
+     "kind": "run",
+     "message": null,
+     "needs_human": false,
+     "next": null,
+     "ok": null,
+     "partial": false,
+     "pending": [],
+     "progress": [
+      {
+       "done": 40,
+       "message": {
+        "en": "Searching PubMed…",
+        "hu": "Keresés a PubMedben…"
+       },
+       "phase": "search",
+       "source": "pubmed",
+       "step": "find_reviews",
+       "total": 120,
+       "ts": "2026-10-05T10:00:00Z"
+      }
+     ],
+     "run_id": null,
+     "status": "running",
+     "step": "prisma",
+     "timeout_s": 300,
+     "warnings": []
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-job/v1",
+    "warnings": []
+   },
+   "method": "POST",
+   "path": "/api/headhunter/runs/*/cancel",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "cancel_requested": false,
+     "cancellable": false,
+     "created": "2026-10-05T19:10:22Z",
+     "data": {
+      "decisions": [
+       {
+        "decision_id": "d-20261005T191022Z-0003",
+        "kind": "candidate_confirm",
+        "target": "rv-pmid-99000001#c0003",
+        "value": "confirm"
+       }
+      ],
+      "n": 1
+     },
+     "data_truncated": false,
+     "elapsed_ms": 115,
+     "error": null,
+     "errors": [],
+     "etag": "7dd086ab3b9950e78a9aa1ec6092208355fdde74b80b2a989641be304975c0aa",
+     "exit_code": 0,
+     "hh_code": null,
+     "job_id": "hh-535b5bb04e85",
+     "kind": "decide",
+     "message": {
+      "en": "1 decisions recorded.",
+      "hu": "1 döntés rögzítve a decisions.jsonl-ban."
+     },
+     "needs_human": false,
+     "next": "resolve <projekt>",
+     "ok": true,
+     "partial": false,
+     "path": "01_kereses/headhunter/reviews/rv-pmid-99000001.json",
+     "pending": [],
+     "progress": [],
+     "run_id": null,
+     "status": "done",
+     "step": "decide",
+     "timeout_s": 600,
+     "warnings": []
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-job/v1",
+    "warnings": [
+     "A tevékenységnaplót (07_ellenorzes/activity.jsonl) nem sikerült írni; a művelet megtörtént."
+    ]
+   },
+   "method": "POST",
+   "path": "/api/headhunter/decide",
+   "status": 200
+  }
+ ]
+}

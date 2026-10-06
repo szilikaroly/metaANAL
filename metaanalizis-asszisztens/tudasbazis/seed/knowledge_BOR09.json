@@ -1,0 +1,812 @@
+[
+ {
+  "k_id": "K-BOR09-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A forrás hatóköre: csak a metaanalízis statisztikája",
+  "body": "The book by Borenstein, Hedges, Higgins & Rothstein (2009) teaches the statistical synthesis of effect sizes only; the other parts of a systematic review (question, search, appraisal, dissemination) get just an annotated reading list in Part 10. Meta-analysis of diagnostic tests is explicitly not covered, and methods that combine p-values are treated only briefly (Part 8). The examples are deliberately incomplete on substance (e.g. an efficacy analysis may ignore harms), so they must never be used for clinical conclusions.",
+  "source_id": "borenstein2009",
+  "locator": "pp. xxvi-xxviii",
+  "tags": "scope hatókör Borenstein Introduction to Meta-Analysis textbook tankönyv diagnostic test diagnosztikai teszt p-value combination examples példák"
+ },
+ {
+  "k_id": "K-BOR09-002",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "Mi van a 56 oldalas mintában és mi nincs",
+  "body": "The publisher sample contains only the copyright pages, the full Contents (pp. v-xii), the Preface (pp. xxi-xxviii), Part 3 on fixed- versus random-effects models (Ch10-13, pp. 61-86) and Ch43 'Criticisms of Meta-Analysis' (pp. 377-387). It does NOT contain the effect-size formulas (Part 2), the worked examples (Ch14), heterogeneity statistics such as I^2 and prediction intervals (Part 4), subgroup/meta-regression chapters, publication bias (Ch30) or the software chapter (Ch44). Claims on those topics must not be cited to this sample; anything the knowledge base adds about them is labelled NOT IN SAMPLE.",
+  "source_id": "borenstein2009",
+  "locator": "pp. iii-xii (title, copyright, Contents); pp. xxi-xxviii; pp. 59-86; pp. 377-387",
+  "tags": "sample minta contents tartalomjegyzék coverage lefedettség not in sample nincs a mintában Part 3 Ch43 source limits forráskorlát"
+ },
+ {
+  "k_id": "K-BOR09-003",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Számolási eszközök: Excel NORMSDIST és a könyv weboldala",
+  "body": "The book computes the normal CDF for its p-values (eqs 11.9-11.10 and 12.13-12.14) with the Excel function =NORMSDIST(Z), or Z* under random effects. The three worked-example datasets and all computations are Excel spreadsheets on the book's web site www.Meta-Analysis.com, which also hosts course materials and exercises. Downloads were free in 2009; current availability is unknown and should be checked. [note: newer Excel versions use NORM.S.DIST(z,TRUE); the engine uses distributions.norm_cdf and distributions.z_two_sided_p.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 66; p. 74; p. 62; p. xxvi",
+  "tags": "Excel NORMSDIST normal CDF normális eloszlásfüggvény p-value p-érték spreadsheet táblázat website weboldal Meta-Analysis.com data files adatfájlok"
+ },
+ {
+  "k_id": "K-BOR09-004",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Szoftverfejezet (Ch44) – csak a tartalomjegyzékben",
+  "body": "Chapter 44 (pp. 391-403, NOT IN SAMPLE) reviews three programs: Comprehensive Meta-Analysis (CMA) 2.0, RevMan 5.0 and Stata macros with Stata 10.0. The sample contains no code, commands or default settings for any of them. Note a potential conflict of interest: CMA is published by Biostat, the company of the first author (affiliation printed as Biostat Inc., New Jersey).",
+  "source_id": "borenstein2009",
+  "locator": "p. xii (Contents); p. iii",
+  "tags": "software szoftver CMA Comprehensive Meta-Analysis RevMan Stata macros makrók conflict of interest összeférhetetlenség"
+ },
+ {
+  "k_id": "K-BOR09-005",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "A motor beállításai a könyv számainak reprodukálásához",
+  "body": "To reproduce Borenstein's Part 3 numbers with the engine use effect_sizes.smd(..., j_method='approx', vtype='LS2') for Hedges' g, and models.meta_analysis(..., model='fixed', ci_method='z') or (..., model='random', tau2_method='DL', ci_method='z'). The engine defaults differ on purpose (REML tau^2, HKSJ CI for random effects, exact J and the metafor 'LS' variance), so default output will not match the book. Verified: the six-study example then gives FE M = 0.4143 (SE 0.0640) and RE M* = 0.3582 (SE 0.1052), matching the printed 0.41/0.064 and 0.36/0.105.",
+  "source_id": "borenstein2009",
+  "locator": "Figs 13.1-13.2, p. 78; p. 80",
+  "tags": "engine motor reproduce reprodukálás DerSimonian-Laird DL z Wald settings beállítások Hedges g LS2 approx J default alapértelmezés"
+ },
+ {
+  "k_id": "K-BOR09-006",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "A szintézis célja határozza meg a módszert",
+  "body": "Meta-analyses serve many purposes: synthesising evidence for policy or practice, letting a sponsor combine its own series of trials (a more powerful test and a more precise estimate), or accumulating rare adverse events across studies. The purpose decides when the synthesis should be performed, which model is used, which sensitivity analyses are run and how results are interpreted; the authors argue there is no single 'right way'. If effects are consistent the synthesis shows robustness and gains precision; if they vary it reports the range and may identify factors linked to effect size. A planner should therefore record the purpose explicitly before choosing the model or sensitivity analyses.",
+  "source_id": "borenstein2009",
+  "locator": "p. xxiii; p. xxii; p. xxiv",
+  "tags": "purpose cél research question kutatási kérdés model choice modellválasztás sensitivity analysis érzékenységi elemzés planning tervezés adverse events mellékhatások sponsor szponzor"
+ },
+ {
+  "k_id": "K-BOR09-007",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "Szisztematikus áttekintés új vizsgálat előtt",
+  "body": "A systematic review or meta-analysis should precede a new study: it can show that the study is unnecessary because existing data already answer the question (Chalmers 2007), or inform its design, e.g. by identifying the most sensitive outcome index or the most effective mode of administration. Some government agencies encourage or require such a synthesis before funding new studies. Reports of new trials should begin and end with an up-to-date systematic review so that results are not 'islands in search of continents' (Chalmers & Clarke 1998; Clarke et al. 2007).",
+  "source_id": "borenstein2009",
+  "locator": "p. xxv; p. xxviii (Further Reading)",
+  "tags": "new study új vizsgálat research waste kutatási pazarlás trial design vizsgálattervezés Chalmers Islands in Search of Continents funding finanszírozás"
+ },
+ {
+  "k_id": "K-BOR09-008",
+  "stage_id": "S01",
+  "kind": "example",
+  "title": "SIDS-példa: a halmozott evidencia figyelmen kívül hagyásának ára",
+  "body": "Spock's advice to let babies sleep on their stomachs appeared in most of the 50 million copies of his book sold from the 1950s to the 1990s, a period with more than 100,000 SIDS deaths; in the early 1990s back-sleeping was found to cut SIDS risk by at least 50%. Gilbert et al. (2005) argued that a systematic review of risk factors from 1970 could perhaps have averted more than 10,000 infant deaths in the UK and 50,000 or more across Europe, the USA and Australasia. The authors use this (after Chalmers 2006) as an ethical argument for always looking at the body of evidence rather than single studies.",
+  "source_id": "borenstein2009",
+  "locator": "p. xxi",
+  "tags": "SIDS bölcsőhalál ethical imperative etikai kötelesség cumulative evidence halmozott evidencia Chalmers Gilbert systematic review rationale indoklás"
+ },
+ {
+  "k_id": "K-BOR09-009",
+  "stage_id": "S01",
+  "kind": "concept",
+  "title": "A narratív áttekintés korlátai",
+  "body": "Narrative reviews are subjective and opaque: reviewers may use different inclusion criteria and weight studies differently (by size, 'quality' or equally), and two narrative reviews can reach opposite conclusions on the same treatment. They also become unworkable as the number of studies grows, and they are poorly equipped to show how an effect varies with study-level covariates such as population, dose or outcome. Systematic reviews and meta-analysis replaced them from the mid-1980s onward for these reasons.",
+  "source_id": "borenstein2009",
+  "locator": "pp. xxii-xxiii",
+  "tags": "narrative review narratív áttekintés subjectivity szubjektivitás transparency átláthatóság covariates kovariánsok systematic review szisztematikus áttekintés"
+ },
+ {
+  "k_id": "K-BOR09-010",
+  "stage_id": "S02",
+  "kind": "concept",
+  "title": "A szisztematikus áttekintés összetevői",
+  "body": "A systematic review specifies: the question; the methods for searching the literature and for including or excluding studies; how the validity of included studies will be appraised; the statistical methods; and how results will be disseminated. If the search matches the question and yields a reasonably complete, unbiased set of valid studies, the meta-analysis addresses the intended question. A search flawed in concept or execution, or biased primary studies, cause problems that the meta-analysis cannot correct.",
+  "source_id": "borenstein2009",
+  "locator": "p. xxviii",
+  "tags": "protocol protokoll components összetevők systematic review search keresés appraisal értékelés dissemination disszemináció validity validitás"
+ },
+ {
+  "k_id": "K-BOR09-011",
+  "stage_id": "S02",
+  "kind": "concept",
+  "title": "Átláthatóság és előre rögzített súlyozás",
+  "body": "Systematic reviews use explicit rules to find studies and to decide inclusion; because setting the criteria involves judgement the process is not fully objective, but every decision is stated, so it is transparent. Unlike the implicit weighting of a narrative review, meta-analytic study weights follow mathematical criteria specified in advance, giving a transparent, objective and replicable framework. These pre-specifications belong in the protocol.",
+  "source_id": "borenstein2009",
+  "locator": "p. xxiii",
+  "tags": "transparency átláthatóság pre-specification előzetes rögzítés weights súlyok protocol protokoll objectivity objektivitás replicable reprodukálható"
+ },
+ {
+  "k_id": "K-BOR09-012",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "A metaanalízis csak szisztematikusan gyűjtött vizsgálatokon értelmes",
+  "body": "Meta-analytic procedures can be applied to any data set, but the synthesis is meaningful only if the studies were collected systematically: either by a systematic review (locating, appraising and synthesising studies from many sources) or as a defined set such as all trials a sponsor ran for a new drug. When the aim is to synthesise evidence from various sources, compiling the data within a systematic review is usually imperative.",
+  "source_id": "borenstein2009",
+  "locator": "pp. xxi-xxii; p. xxvii",
+  "tags": "systematic collection szisztematikus gyűjtés meaningful synthesis értelmes szintézis sponsor szponzor trial programme vizsgálati program"
+ },
+ {
+  "k_id": "K-BOR09-013",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Publikációs torzítás minden irodalomkeresést érint",
+  "body": "Publication bias is a problem for any literature-based search: the clinician searching a database, the narrative reviewer and the meta-analyst all face it. It is associated with meta-analysis only because meta-analysis aims for an accurate synthesis and can make the bias visible and testable; in narrative reviews it is simply easier to ignore. The search plan should therefore aim to reduce it rather than assume a narrative approach avoids it. [note: current guidance (Cochrane Handbook v6 ch. 4 and 13; PRISMA 2020 items 6-7 and 14) is to search trial registers and grey literature as well, and to judge the risk of bias due to missing results, e.g. with ROB-ME.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 379; pp. 386-387",
+  "tags": "publication bias publikációs torzítás search keresés file drawer fiókprobléma grey literature szürke irodalom narrative review narratív áttekintés"
+ },
+ {
+  "k_id": "K-BOR09-014",
+  "stage_id": "S04",
+  "kind": "guidance",
+  "title": "Beválasztási kritériumok: relevancia + torzítás, keresés előtt",
+  "body": "Eligibility criteria combine considerations of relevance and of risk of bias and are typically fixed before the search is run. Studies should be similar enough for the results to be interpretable and free enough of bias for the results to be believable; both require judgement, and not every analyst would decide the same way. What distinguishes meta-analysis is that the criteria are transparent and described in the report.",
+  "source_id": "borenstein2009",
+  "locator": "p. 381",
+  "tags": "eligibility criteria beválasztási kritériumok inclusion exclusion kizárás pre-specified előre rögzített relevance relevancia risk of bias torzítás kockázata"
+ },
+ {
+  "k_id": "K-BOR09-015",
+  "stage_id": "S04",
+  "kind": "guidance",
+  "title": "Minőségi beválasztási kritériumok ('hulladékkezelés')",
+  "body": "Instead of 'garbage in, garbage out', the authors frame meta-analysis as waste management: inclusion criteria should include study-quality criteria, e.g. only randomised or placebo-controlled trials, or only observational studies that handled confounders adequately in design or analysis. It is normal for a large initial pool of studies to shrink to a much smaller included set once all criteria are applied.",
+  "source_id": "borenstein2009",
+  "locator": "p. 380",
+  "tags": "quality criteria minőségi kritériumok garbage in garbage out randomised randomizált placebo confounding zavaró tényezők waste management screening szűrés"
+ },
+ {
+  "k_id": "K-BOR09-016",
+  "stage_id": "S04",
+  "kind": "example",
+  "title": "'Fontos vizsgálatokat kihagytak' – antioxidáns-példa",
+  "body": "A common criticism, often raised by people unhappy with a meta-analysis's findings, is that important studies were left out. Example: a meta-analysis of antioxidant supplements (beta-carotene, vitamins A, C, E, selenium) and mortality was attacked on the Linus Pauling Institute web site because 815 trials were examined but only 68 included. The authors' answer is that explicit, pre-specified, reported eligibility criteria are exactly what makes such exclusions defensible.",
+  "source_id": "borenstein2009",
+  "locator": "p. 381",
+  "tags": "excluded studies kizárt vizsgálatok criticism kritika antioxidant antioxidáns 815 68 eligibility beválasztás transparency átláthatóság"
+ },
+ {
+  "k_id": "K-BOR09-017",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Kerekítési tolerancia a közölt értékek ellenőrzésénél",
+  "body": "Printed values in this source may be double-rounded: Carroll's g is printed as 0.10 although recomputation from the full-book data gives 0.0945 (likely 0.0945 -> 0.095 -> 0.10). When checking printed two-decimal values against recomputation, use a tolerance of +/-0.01 rather than exact half-up rounding. The book prints g to 2 decimals, relative weights as integer percentages and summary SEs to 3 decimals.",
+  "source_id": "borenstein2009",
+  "locator": "Fig 13.1, p. 78; p. 80",
+  "tags": "rounding kerekítés tolerance tolerancia double rounding dupla kerekítés reproduction reprodukálás unit test egységteszt data check adatellenőrzés"
+ },
+ {
+  "k_id": "K-BOR09-018",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "Azonos irányú torzítás: pontos, de hibás eredmény",
+  "body": "If every included study is biased in the same direction, the meta-analysis inherits that bias and reports it with higher precision, so performing it can be more dangerous than not performing one. Detect: look at the risk-of-bias profile across studies and ask whether a shared bias could explain the pooled effect. Fix: quality-based eligibility criteria, appraisal of every study, and subgroup or sensitivity analyses by study quality.",
+  "source_id": "borenstein2009",
+  "locator": "p. 380",
+  "tags": "risk of bias torzítás kockázata same direction azonos irányú garbage in garbage out precision pontosság bias amplification"
+ },
+ {
+  "k_id": "K-BOR09-019",
+  "stage_id": "S06",
+  "kind": "guidance",
+  "title": "Minden beválasztott vizsgálat validitását értékelni kell",
+  "body": "A systematic review must specify in advance how the validity of included studies will be appraised, and a good review assesses every included study for quality or risk of bias; meta-analytic methods then allow the impact of these biases to be examined formally. Without a systematic appraisal of every study, a reviewer can dismiss any inconvenient study, since a limitation can be found for virtually any study. [note: the source names no specific tool; current practice uses e.g. RoB 2 for randomised trials and ROBINS-I for non-randomised studies.]",
+  "source_id": "borenstein2009",
+  "locator": "p. xxviii; p. 385",
+  "tags": "risk of bias torzítás kockázata quality appraisal minőségértékelés validity validitás RoB 2 ROBINS-I systematic assessment szisztematikus értékelés"
+ },
+ {
+  "k_id": "K-BOR09-020",
+  "stage_id": "S06",
+  "kind": "check",
+  "title": "Ellenőrzés: torzításértékelés minden vizsgálatra",
+  "body": "Reviewer check: the validity (risk of bias) of every included study is appraised with a pre-specified method, and the report discusses whether bias in the same direction across studies could explain the result. Flag reviews that appraise only some studies or that exclude studies post hoc for unstated limitations.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 380, 385",
+  "tags": "reviewer check ellenőrzés risk of bias torzítás kockázata appraisal értékelés every study minden vizsgálat same-direction bias"
+ },
+ {
+  "k_id": "K-BOR09-021",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Standardizált átlagkülönbség (d, Hedges g) – a teljes könyvből",
+  "body": "NOT IN SAMPLE (full book Ch4, pp. 25-29; supplied only to reproduce Figs 13.1-13.2): d = (Xbar1 - Xbar2)/S_within with the pooled SD S_within; V_d = (n1+n2)/(n1*n2) + d^2/(2(n1+n2)); Hedges' g = J*d with J = 1 - 3/(4*df - 1), df = n1+n2-2, and V_g = J^2*V_d. Group 1 is treated and group 2 control. The forest plots in Ch13 report g ('Std Diff (g)'). The engine's effect_sizes.smd matches this with j_method='approx', vtype='LS2'; its default (exact J, vtype 'LS' = 1/n1 + 1/n2 + g^2/(2(n1+n2))) differs slightly.",
+  "source_id": "borenstein2009",
+  "locator": "Ch4, pp. 25-29 [NOT IN SAMPLE]; Figs 13.1-13.2, p. 78",
+  "tags": "standardized mean difference standardizált átlagkülönbség SMD Cohen d Hedges g small-sample correction kismintás korrekció J pooled SD összevont szórás variance variancia"
+ },
+ {
+  "k_id": "K-BOR09-022",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Ugyanazok a képletek bármely hatásméretre; hatásméret-fejezetek térképe",
+  "body": "The pooling formulas are the same for any effect-size index: each study needs only an effect estimate Y_i and its within-study variance V_Yi, so a pipeline validated on one index carries over to others. The full book's Part 2 (NOT IN SAMPLE) covers D, d, g and response ratios (Ch4, pp. 21-32), risk ratio, odds ratio, risk difference and choice of index (Ch5, pp. 33-39), correlations (Ch6, pp. 41-43), conversions log OR <-> d and r <-> d (Ch7, pp. 45-49) and factors affecting precision (Ch8, pp. 51-55); Mantel-Haenszel and Peto methods are in Ch37 (pp. 331-339). The worked examples (Ch14, NOT IN SAMPLE) use the SMD (p. 87), the odds ratio (p. 92) and correlations (p. 97). Engine equivalents: effect_sizes.two_by_two, effect_sizes.correlation, conversions.logor_to_d, conversions.d_to_logor, conversions.r_to_d, conversions.d_to_r, models.mantel_haenszel, models.peto.",
+  "source_id": "borenstein2009",
+  "locator": "p. 62; pp. 66-67; pp. v-xi (Contents)",
+  "tags": "effect size hatásméret generic inverse variance általános inverz variancia risk ratio kockázati arány odds ratio esélyhányados risk difference kockázatkülönbség correlation korreláció conversion konverzió Mantel-Haenszel Peto worked example kidolgozott példa"
+ },
+ {
+  "k_id": "K-BOR09-023",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Nullérték (0/1) és arányok log-skálán – ellenőrzés",
+  "body": "The null value of a summary effect is 0 for difference measures and 1 for ratio measures. Reviewer check: ratio measures (RR, OR) are pooled on the log scale, where the null is 0, and back-transformed for display; forest plots of ratios use a log-scaled axis (ticks 0.50, 1.0, 2.0 in Ch43). Flag arithmetic averaging of raw ratios, a linear ratio axis, or a null line drawn at the wrong value.",
+  "source_id": "borenstein2009",
+  "locator": "Ch11 Summary points, p. 67; Ch12 Summary points, p. 74; Figs 43.1-43.2",
+  "tags": "null value nullérték ratio arány log scale log-skála risk ratio kockázati arány odds ratio esélyhányados back-transform visszatranszformálás reviewer check ellenőrzés forest plot"
+ },
+ {
+  "k_id": "K-BOR09-024",
+  "stage_id": "S08",
+  "kind": "definition",
+  "title": "Fix hatású (közös hatású) modell",
+  "body": "Under the fixed-effect model one true effect size theta underlies every study and all differences between observed effects are sampling error: Y_i = theta + eps_i (eq. 11.1); e.g. with theta = 0.60, errors of -0.20, +0.10 and -0.10 give observed effects 0.40, 0.70 and 0.50. The authors note that 'common-effect model' would be a more descriptive name. The summary estimates this common effect, the null is that it equals 0 (difference) or 1 (ratio), and weights aim to minimise within-study error only. Under both models the summary is simply a weighted mean that gives more weight to more precise studies.",
+  "source_id": "borenstein2009",
+  "locator": "p. 61; Ch11, pp. 63-64, eq. 11.1; Ch11 Summary points, p. 67; pp. 61-62",
+  "tags": "fixed effect fix hatás common effect közös hatás model modell sampling error mintavételi hiba weighted mean súlyozott átlag definition definíció theta"
+ },
+ {
+  "k_id": "K-BOR09-025",
+  "stage_id": "S08",
+  "kind": "definition",
+  "title": "Véletlen hatású modell",
+  "body": "Under the random-effects model the true effect may differ between studies (e.g. by participants' age, education or health, or intervention intensity), and the true effects are treated as a random sample from a distribution, usually assumed normal. Observed effects decompose as Y_i = mu + zeta_i + eps_i (eq. 12.1): the grand mean, the study's true deviation from it (variance tau^2) and sampling error (variance V_Yi); e.g. in Fig 12.3 mu = 0.60, theta_3 = 0.50 and Y_3 = 0.40. The summary estimates the mean of this distribution, and the null is a mean of 0 (or 1 for ratios). Weights aim to minimise both within-study error and between-study variation.",
+  "source_id": "borenstein2009",
+  "locator": "p. 61; pp. 69-71, eq. 12.1, Fig 12.3; Ch12 Summary points, pp. 74-75",
+  "tags": "random effects véletlen hatás distribution of true effects valódi hatások eloszlása mean átlag zeta between-study variance vizsgálatok közötti variancia definition definíció"
+ },
+ {
+  "k_id": "K-BOR09-026",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Jelölések: valódi vs megfigyelt hatás, szimbólumok",
+  "body": "A study's true effect is the effect that would be observed with an infinite sample size (no sampling error); the observed effect is the one actually measured. In the schematics, true study effects are circles and observed ones squares; the true summary is a triangle and the observed summary a diamond. tau^2 denotes the parameter and T^2 its sample estimate, an asterisk (*) marks random-effects quantities, k is the number of studies and V_Yi the within-study variance.",
+  "source_id": "borenstein2009",
+  "locator": "Fig 10.1, p. 62; p. 65; p. 73",
+  "tags": "notation jelölés true effect valódi hatás observed effect megfigyelt hatás tau2 T2 asterisk csillag symbols szimbólumok"
+ },
+ {
+  "k_id": "K-BOR09-027",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Fix hatású inverz-variancia összesítés (11.2-11.10)",
+  "body": "Weights W_i = 1/V_Yi; summary M = sum(W_i*Y_i)/sum(W_i); V_M = 1/sum(W_i); SE_M = sqrt(V_M); 95% CI = M -/+ 1.96*SE_M; Z = M/SE_M tests H0: theta = 0. One-tailed p = 1 - Phi(+/-|Z|) (+ if the effect is in the expected direction), two-tailed p = 2[1 - Phi(|Z|)], with Phi the standard normal CDF. Engine: models.meta_analysis(model='fixed', ci_method='z').",
+  "source_id": "borenstein2009",
+  "locator": "Ch11, pp. 64-66, eqs 11.2-11.10",
+  "tags": "fixed effect fix hatás inverse variance inverz variancia weights súlyok summary összesítés confidence interval konfidenciaintervallum z test p-value"
+ },
+ {
+  "k_id": "K-BOR09-028",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Véletlen hatású összesítés (12.6-12.14)",
+  "body": "Each study's total variance is V*_Yi = V_Yi + T^2 and its weight W*_i = 1/V*_Yi; M* = sum(W*_i*Y_i)/sum(W*_i); V_M* = 1/sum(W*_i); SE_M* = sqrt(V_M*); 95% CI = M* -/+ 1.96*SE_M*; Z* = M*/SE_M* tests H0: mu = 0; p-values as for the fixed-effect model. The book estimates T^2 by the DerSimonian-Laird method of moments. Engine: models.meta_analysis(model='random', tau2_method='DL', ci_method='z'). [note: DerSimonian-Laird with a z interval is used here only because the book does; for new analyses Cochrane Handbook v6 prefers REML or Paule-Mandel for tau^2, often with a HKSJ/t-based CI (engine default).]",
+  "source_id": "borenstein2009",
+  "locator": "Ch12, pp. 73-74, eqs 12.6-12.14",
+  "tags": "random effects véletlen hatás weights súlyok T2 tau2 summary összesítés DerSimonian-Laird confidence interval konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-BOR09-029",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "CI és teszt: z = 1,96 (Wald), normál p-értékek",
+  "body": "In this source both the fixed- and random-effects 95% CIs use the normal multiplier 1.96 and p-values come from the standard normal distribution; no t-based, Hartung-Knapp-Sidik-Jonkman (HKSJ), REML, Paule-Mandel or other estimator, and no IVhet or quality-effects model, appears in the sample. [note: Cochrane Handbook v6 and later methods literature recommend REML or Paule-Mandel over DerSimonian-Laird for tau^2 and often a HKSJ/t-based CI for the random-effects mean, especially with few studies; the engine defaults to REML + HKSJ. Use z + DL only to reproduce the book or when pre-specified.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 66, 74; p. 72",
+  "tags": "confidence interval konfidenciaintervallum Wald z 1.96 HKSJ Hartung-Knapp REML Paule-Mandel DerSimonian-Laird estimator becslő default alapértelmezés"
+ },
+ {
+  "k_id": "K-BOR09-030",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Véletlen hatásnál kiegyensúlyozottabb súlyok",
+  "body": "Whenever tau^2 > 0, random-effects relative weights are more balanced than fixed-effect weights: large studies lose relative weight and small studies gain it. Rationale: under random effects each study informs about a different true effect, so a small study cannot be discounted and a very large one should not dominate the estimate of the mean. In the Ch13 example Donat (largest study) gets about 5 times Peck's (smallest) weight under fixed effect but only 1.8 times under random effects.",
+  "source_id": "borenstein2009",
+  "locator": "p. 79; Ch13 Summary points, p. 85",
+  "tags": "weights súlyok balanced kiegyensúlyozott relative weight relatív súly large study nagy vizsgálat small study kis vizsgálat tau2 random effects"
+ },
+ {
+  "k_id": "K-BOR09-031",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Hat vizsgálatos SMD-példa: FE 0,41 vs RE 0,36",
+  "body": "Six studies (Carroll, Grant, Peck, Donat, Stewart, Young) with g = 0.10, 0.28, 0.37, 0.66, 0.46, 0.19 have fixed-effect relative weights 12/13/8/39/10/18% and random-effects weights 16/16/13/23/14/18%. Donat, the largest study with the highest effect, pulls the FE mean up to 0.41 (39% of the weight) but only to 0.36 under RE (23%); Carroll, small with the smallest effect, rises from 12% to 16%. The summary SE is 0.064 (FE) vs 0.105 (RE). Recomputation from the full-book inputs (NOT IN SAMPLE) gives Q = 12.0033, df = 5, C = 187.698, T^2 = 0.0373.",
+  "source_id": "borenstein2009",
+  "locator": "Figs 13.1-13.2, p. 78; pp. 79-80",
+  "tags": "worked example kidolgozott példa Carroll Grant Peck Donat Stewart Young Hedges g forest plot fixed vs random weights súlyok test oracle"
+ },
+ {
+  "k_id": "K-BOR09-032",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "SE véletlen hatásnál: mindig nagyobb, és alsó korlátja van",
+  "body": "Random effects add between-study variance to within-study error, so the summary's variance, SE and CI are always at least as large as under fixed effect, and equal only when T^2 = 0 (example: SE 0.064 FE vs 0.105 RE). For k one-group studies with common n and SD sigma (Box 13.1: V_Yi = sigma^2/n), SE_M = sqrt(sigma^2/(k*n)) under FE but SE_M* = sqrt(sigma^2/(k*n) + tau^2/k) under RE. The first term vanishes as within-study samples grow, but the second falls only as the number of studies k grows; with infinitely large studies the FE CI shrinks to zero width while the RE CI does not. Hence, with few studies, the SE can remain substantial even when total N is in the tens of thousands. [note: 'always at least as large' holds for the Wald/z variance and CI used in the book. A HKSJ interval multiplies the variance by a data-based factor q, and when Q < df it can be narrower than the fixed-effect interval; the engine warns in that case and offers ci_method='hksj_adhoc'.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 80; pp. 81-82, eqs 13.1-13.2; Box 13.1; Figs 13.3-13.4, p. 80",
+  "tags": "standard error standard hiba confidence interval width CI-szélesség number of studies vizsgálatok száma k tau2 sample size mintaméret precision floor pontossági korlát Box 13.1"
+ },
+ {
+  "k_id": "K-BOR09-033",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "FE és RE nullhipotézise nem felcserélhető",
+  "body": "The fixed-effect test asks whether the effect is zero in every study; the random-effects test asks whether the mean of the true effects is zero. Treating these as interchangeable is an error; choose the test that matches the intended inference. Detect: random-effects results read as 'no effect in any study', or fixed-effect results generalised to other populations. Fix: state the inference target (common effect vs mean of true effects) in the methods.",
+  "source_id": "borenstein2009",
+  "locator": "p. 83",
+  "tags": "null hypothesis nullhipotézis fixed effect random effects inference következtetés mean effect átlagos hatás common effect közös hatás"
+ },
+ {
+  "k_id": "K-BOR09-034",
+  "stage_id": "S08",
+  "kind": "guidance",
+  "title": "Modellválasztás: FE csak két feltétellel, egyébként RE",
+  "body": "The fixed-effect model fits only if (a) all studies are functionally identical and (b) the goal is the common effect in the identified population, not generalisation; the authors' example is a sponsor running ten identical 100-patient drug-vs-placebo trials from one patient pool with the same researchers, dose and measure, a situation they call relatively rare. Studies done by independent researchers, as in the published literature, are unlikely to be functionally equivalent and are usually meant to support generalisation, so the random-effects model is more easily justified. Model choice should rest solely on which model fits the distribution of effects and its sources of error. [note: Cochrane Handbook v6 (10.10.4.1) also regards random effects as usually more plausible, but warns that it gives relatively more weight to small studies, so a fixed-effect result is a useful sensitivity comparison when small-study effects are suspected, and that tau^2 is unreliable when there are few studies.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 83-84; Ch13 Summary points, p. 86",
+  "tags": "model choice modellválasztás fixed effect fix hatás random effects véletlen hatás functionally identical funkcionálisan azonos generalisation általánosítás published literature publikált irodalom"
+ },
+ {
+  "k_id": "K-BOR09-035",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Modellválasztás a heterogenitási teszt alapján",
+  "body": "Starting with a fixed-effect model and switching to random effects only if the homogeneity test is significant is a mistake and should be strongly discouraged: the model must follow from whether the studies are believed to share a common effect, not from a test that often has low power. Detect: the methods describe a post hoc, Q-p-value-driven choice. Fix: pre-specify the model from how the studies were generated and the inference goal (random effects for independently conducted studies). [note: this matches current consensus; Cochrane Handbook v6 (10.10.4.1) states that the choice between fixed- and random-effects models should never be made on the basis of a heterogeneity test.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 84; Ch13 Summary points, p. 86",
+  "tags": "model selection modellválasztás heterogeneity test heterogenitási teszt Q test post hoc pre-specification előzetes rögzítés pitfall hiba"
+ },
+ {
+  "k_id": "K-BOR09-036",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Fix hatású elemzésből általánosítás",
+  "body": "A fixed-effect analysis supports inference only about the common effect of the included, functionally identical studies; using it to draw broad, population-level conclusions is an error. Detect: a fixed-effect model paired with generalising conclusions. Fix: use random effects, or limit the conclusions to the included studies.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 83-84",
+  "tags": "fixed effect fix hatás generalisation általánosítás inference következtetés population populáció conclusion következtetés pitfall"
+ },
+ {
+  "k_id": "K-BOR09-037",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Kevés nagy vizsgálattól várt pontosság",
+  "body": "Expecting a few large trials to make a random-effects summary precise is an error, because the SE cannot fall below roughly sqrt(tau^2/k) however large the studies are. Detect: claims of high certainty from a small number of large trials under random effects. Fix: report and interpret the SE floor; only more studies reduce the between-study component.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 81-82",
+  "tags": "precision pontosság large trials nagy vizsgálatok standard error standard hiba tau2 k few studies kevés vizsgálat overconfidence túlzott magabiztosság"
+ },
+ {
+  "k_id": "K-BOR09-038",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Nagyon kevés vizsgálat: tau² rosszul becsülhető – három opció",
+  "body": "With very few studies the random-effects model is still appropriate, but tau^2 is estimated with poor precision, so a confidently reported pooled result is misleading. Options, each problematic: (i) report the separate effects without a summary (readers may revert to vote counting); (ii) a fixed-effect analysis as a purely descriptive summary (no basis for wider inference, yet readers will infer anyway); (iii) a Bayesian analysis with tau^2 informed by data outside the current studies, probably the best option, though few researchers have the expertise and some object on principle. Detect: very small k with no comment on the precision of tau^2; fix: state the limitation and which option was taken. The book defers the general question to Ch40 'When does it make sense to perform a meta-analysis?' (pp. 357-364, NOT IN SAMPLE). [note: newer guidance also discusses HKSJ-type CIs and empirically based priors for tau^2 here; this is outside the source.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 84; p. xi (Contents, Ch40)",
+  "tags": "few studies kevés vizsgálat small k tau2 imprecise pontatlan Bayesian bayesi informative prior informatív prior vote counting szavazatszámlálás descriptive leíró pitfall"
+ },
+ {
+  "k_id": "K-BOR09-039",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "FE becslés mint súlyozott átlag homogenitás nélkül",
+  "body": "Some argue the fixed-effect point estimate is valid without assuming a common true effect, since it is merely a weighted average that need not estimate one shared quantity. For simplicity the book nevertheless defines a fixed-effect meta-analysis as assuming homogeneity of effect. Reports should make clear which interpretation they adopt. [note: later work (e.g. Rice, Higgins & Lumley 2018) defends the fixed-effect estimate as a weighted average of the included studies' effects even under heterogeneity; that still does not license generalisation, so the estimand should be named explicitly.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 85",
+  "tags": "fixed effect fix hatás weighted average súlyozott átlag homogeneity homogenitás assumption feltevés interpretation értelmezés"
+ },
+ {
+  "k_id": "K-BOR09-040",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "A forrás hibái, amelyeket nem szabad átvenni",
+  "body": "Known inconsistencies in this sample: Ch12 text gives the true effects theta_1-3 as 0.50, 0.55, 0.65 whereas Figs 12.2-12.3 place Study 3 at 0.50; eq 13.2 in the main text is labelled SE_M although it is the random-effects SE_M* (Box 13.1 has the asterisk); p. 72 says within-study variance formulas were 'presented in Part 3' although they are in Part 2; Carroll's g prints as 0.10 vs 0.0945 recomputed. In Ch43, Fig 43.1's text says 'odds ratio of 0.80' while the column is headed RR, and the caption reads 'new trail'; p. 386 spells Bailar as 'Bailer'. Engines and reviewers should not copy these.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 70-72; p. 81; Fig 13.1, p. 78; p. 382; p. 386",
+  "tags": "errata hibajegyzék typo elírás inconsistency ellentmondás SE_M theta Carroll odds ratio risk ratio source error forráshiba"
+ },
+ {
+  "k_id": "K-BOR09-041",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: a-priori indokolt modellválasztás",
+  "body": "Reviewer check: the choice between fixed and random effects is justified a priori from how the studies were generated and the inference goal, and is NOT conditional on the Q test. If fixed effect is used, the report must state (a) that the studies are functionally identical and (b) that no generalisation is intended; otherwise random effects should be used.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 83-86",
+  "tags": "reviewer check ellenőrzés model choice modellválasztás a priori fixed effect random effects justification indoklás"
+ },
+ {
+  "k_id": "K-BOR09-042",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: súlyok újraszámolása",
+  "body": "Reviewer check: recompute the weights, W_i = 1/V_i (FE) and W*_i = 1/(V_i + T^2) (RE), and confirm the relative weights (%) sum to 100. When T^2 > 0, the random-effects weights must be more balanced: the max/min weight ratio under RE must not exceed that under FE.",
+  "source_id": "borenstein2009",
+  "locator": "eqs 11.2, 12.6; Figs 13.1-13.2; p. 79",
+  "tags": "reviewer check ellenőrzés weights súlyok recompute újraszámolás relative weight relatív súly 100% balance kiegyensúlyozottság"
+ },
+ {
+  "k_id": "K-BOR09-043",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: összesítés, SE, CI, Z, p újraszámolása",
+  "body": "Reviewer check: recompute M (or M*), V, SE, CI = M +/- 1.96*SE (when z-based CIs are reported), Z and the two-tailed p = 2[1 - Phi(|Z|)] from the study-level Y_i and V_i. For the Wald (z) SEs, SE_RE >= SE_FE must hold, with equality only when T^2 = 0; output that violates this indicates a bug. [note: a HKSJ-adjusted SE can be smaller than the fixed-effect SE, so apply this check to the Wald SEs (engine attribute se_wald).]",
+  "source_id": "borenstein2009",
+  "locator": "eqs 11.3-11.10, 12.7-12.14; p. 80",
+  "tags": "reviewer check ellenőrzés recompute újraszámolás summary összesítés standard error confidence interval z p-value bug hiba"
+ },
+ {
+  "k_id": "K-BOR09-044",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: kevés vizsgálatnál a választott opció dokumentálása",
+  "body": "Reviewer check: when there are very few studies the report acknowledges that tau^2 is imprecise and states which option was taken (no pooling, descriptive fixed-effect analysis, or Bayesian analysis with an external prior for tau^2), with the reason.",
+  "source_id": "borenstein2009",
+  "locator": "p. 84",
+  "tags": "reviewer check ellenőrzés few studies kevés vizsgálat tau2 imprecision pontatlanság Bayesian option opció"
+ },
+ {
+  "k_id": "K-BOR09-045",
+  "stage_id": "S09",
+  "kind": "definition",
+  "title": "tau² és tau: a valódi hatások varianciája és szórása",
+  "body": "tau^2 is the between-studies variance: the variance of the true effect sizes across an infinite population of studies; tau is their standard deviation. The same tau^2 applies to every study in the meta-analysis. For instance, with a mean true effect of 0.60, the true effects in Fig 12.1 mostly lie between about 0.50 and 0.70. The parameter is tau^2; its sample estimate is written T^2.",
+  "source_id": "borenstein2009",
+  "locator": "p. 71; p. 72; p. 73; Fig 12.1, p. 70",
+  "tags": "tau2 tau between-study variance vizsgálatok közötti variancia heterogeneity heterogenitás true effects valódi hatások definition definíció"
+ },
+ {
+  "k_id": "K-BOR09-046",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "tau² momentum- (DerSimonian-Laird) becslése (12.2-12.5)",
+  "body": "T^2 = (Q - df)/C, with Q = sum(W_i*Y_i^2) - [sum(W_i*Y_i)]^2/sum(W_i) using fixed-effect weights W_i = 1/V_Yi, df = k - 1 and C = sum(W_i) - sum(W_i^2)/sum(W_i). The sample does not state the truncation rule, but the full book (Ch16, p. 114, NOT IN SAMPLE) sets T^2 = 0 when Q < df, and engines should truncate at 0 (models.tau2_dl does). [note: Cochrane Handbook v6 now prefers REML or Paule-Mandel over DL, which tends to underestimate tau^2 with few studies.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 72-73, eqs 12.2-12.5",
+  "tags": "tau2 DerSimonian-Laird DL method of moments momentumok módszere Q statistic Q-statisztika C df truncation csonkolás REML Paule-Mandel"
+ },
+ {
+  "k_id": "K-BOR09-047",
+  "stage_id": "S09",
+  "kind": "guidance",
+  "title": "Alacsony erejű homogenitási teszt; nem szignifikáns Q mellett is RE",
+  "body": "The test of H0: tau^2 = 0 often has low power, so a non-significant result neither shows homogeneity nor justifies ignoring tau^2; the variance should still be reflected in the weights. If between-studies variance is substantial and statistically significant, the fixed-effect model is inappropriate. If T^2 turns out to be zero, the random-effects analysis reduces to the fixed-effect one, so using it costs nothing. If a fixed-effect model was chosen a priori and the homogeneity test is significant, the assumptions behind that choice should be revisited. [note: 'no cost' is exact only when T^2 = 0. When T^2 > 0, random effects gives small studies relatively more weight, which can pull the estimate towards small-study effects or publication bias (Cochrane Handbook v6, 10.10.4.1). Revisiting the model after a significant test must not become a data-driven switch; heterogeneity should be quantified (tau^2, I^2 with its CI, prediction interval) rather than judged by the Q p-value.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 84-85",
+  "tags": "heterogeneity test heterogenitási teszt Q test low power alacsony erő homogeneity homogenitás non-significant nem szignifikáns random effects véletlen hatás T2 zero"
+ },
+ {
+  "k_id": "K-BOR09-048",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Csak az összesített hatás közlése, a szóródás figyelmen kívül hagyása",
+  "body": "The goal of a meta-analysis is to synthesise effect sizes, not merely to report a summary: consistent effects show robustness across the included studies, modest dispersion puts the mean in context, and substantial dispersion should shift the focus from the summary to the dispersion itself. Bailar (1997) criticised reducing results to one number; the authors reply that the error lies in ignoring dispersion, not in the method. Detect: no T^2, tau or heterogeneity discussion in the report. Fix: report and interpret dispersion and explore covariates that might explain it; meta-analysis has tools for this that a narrative review lacks.",
+  "source_id": "borenstein2009",
+  "locator": "p. 378; p. 385",
+  "tags": "dispersion szóródás heterogeneity heterogenitás summary only csak összesítés Bailar one number tau2 interpretation értelmezés covariates kovariánsok pitfall"
+ },
+ {
+  "k_id": "K-BOR09-049",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "I², H², tau²-CI és predikciós intervallum: nincs a mintában",
+  "body": "Ch16 (pp. 107-125: computing Q, estimating tau^2, the I^2 statistic, comparing measures, CIs for tau^2 and uncertainty intervals for I^2) and Ch17 (prediction intervals, pp. 127-133) are NOT IN SAMPLE, and no I^2 thresholds or H^2 appear in it. Fig 13.2's caption says the random-effects plot shows 95% confidence and prediction intervals, but no PI values or formula are printed. Cite other sources for I^2 thresholds and PI formulas. [note: the engine's models.meta_analysis computes a PI with t(k-2) by default and models.heterogeneity gives I^2, H^2 and CIs for tau^2.] [note: Cochrane Handbook v6 (10.10.2) gives only rough, overlapping I^2 bands (0-40% might not be important, 30-60% moderate, 50-90% substantial, 75-100% considerable) and stresses that I^2 is a relative measure that depends on study precision. It should not be used as an absolute rule or to choose the model; report tau^2/tau and a prediction interval as well.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. vii-viii (Contents); Fig 13.2, p. 78",
+  "tags": "I2 H2 prediction interval predikciós intervallum tau2 confidence interval not in sample nincs a mintában heterogeneity heterogenitás Ch16 Ch17"
+ },
+ {
+  "k_id": "K-BOR09-050",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzés: Q, df, C, T² újraszámolása",
+  "body": "Reviewer check: recompute Q, df = k - 1, C and T^2 = (Q - df)/C from the study-level Y_i and V_i, and confirm that T^2 is truncated at 0 when Q < df. Compare with engine models.heterogeneity (keys Q, df, C, tau2_DL).",
+  "source_id": "borenstein2009",
+  "locator": "eqs 12.2-12.5",
+  "tags": "reviewer check ellenőrzés Q df C T2 tau2 recompute újraszámolás truncation csonkolás DerSimonian-Laird"
+ },
+ {
+  "k_id": "K-BOR09-051",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzés: a szóródás bemutatása és értelmezése",
+  "body": "Reviewer check: the report presents dispersion (T^2 and/or tau, plus the heterogeneity test) and interprets it substantively, not just the mean effect.",
+  "source_id": "borenstein2009",
+  "locator": "p. 378",
+  "tags": "reviewer check ellenőrzés dispersion szóródás heterogeneity heterogenitás tau2 tau interpretation értelmezés"
+ },
+ {
+  "k_id": "K-BOR09-052",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Alacsony erejű alcsoport-összehasonlítások túlértelmezése",
+  "body": "Meta-analysis can test whether effects differ by study characteristics, e.g. ten studies with acceptable vs ten with questionable randomisation. Such subgroup comparisons can have very low power and must be interpreted carefully, especially with few studies per subgroup. Detect: firm conclusions from non-significant or sparse subgroup contrasts. Fix: report them as exploratory and observational, with their limited power. [note: current guidance (Cochrane Handbook v6 10.11; ICEMAN credibility criteria) asks for few, pre-specified subgroups with a stated direction, a formal test for subgroup differences (not a comparison of p-values within subgroups) and an explicit credibility judgement.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 380-381",
+  "tags": "subgroup analysis alcsoport-elemzés low power alacsony erő randomisation randomizáció quality minőség moderator moderátor pitfall"
+ },
+ {
+  "k_id": "K-BOR09-053",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "'Alma és körte': a különbözőség formálisan vizsgálható",
+  "body": "Meta-analyses address broader questions than single studies (a question about 'fruit' to which apples, oranges, pears and melons contribute), so included studies inevitably differ and inclusion is a judgement. A strength of meta-analysis is that consistency, and hence generalisability, across study types can be assessed formally. Example: if a treatment works for acute but not chronic patients, a pooled 'modest' average is wrong for both groups, but a meta-analysis including both lets the difference be tested empirically.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 379-380",
+  "tags": "apples and oranges alma és körte heterogeneity heterogenitás generalisability általánosíthatóság subgroup alcsoport acute akut chronic krónikus"
+ },
+ {
+  "k_id": "K-BOR09-054",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Stroke-neuroprotektív példa: kovariáns magyarázza a szóródást",
+  "body": "Five fictional trials of a neuroprotective stroke drug: 1990, very poor prognosis, RR 0.55; 1994, somewhat better prognosis, RR 0.61; then 0.67 and 0.74; 1998, all patients, RR 0.82; summary RR 0.67. A later trial in a relatively healthy population gave RR 0.91 (0.82 to 1.0). Using health status or study year as a covariate explains the trend and would have predicted the new result, so the lesson is to explain dispersion rather than report only the mean.",
+  "source_id": "borenstein2009",
+  "locator": "Fig 43.2, pp. 383-384",
+  "tags": "meta-regression metaregresszió covariate kovariáns stroke risk ratio kockázati arány dispersion szóródás prediction előrejelzés example példa"
+ },
+ {
+  "k_id": "K-BOR09-055",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "Alcsoport ~ ANOVA, metaregresszió ~ regresszió; fejezettérkép",
+  "body": "Subgroup analysis is the meta-analytic analogue of analysis of variance and meta-regression of multiple regression; both relate effects to study-level covariates. Per the Contents (NOT IN SAMPLE), Ch19 (pp. 149-186) covers fixed effect within subgroups, random effects with separate vs pooled tau^2, proportion of variance explained, the mixed-effects model and the overall effect in the presence of subgroups. Ch20 (pp. 187-203) covers meta-regression under fixed and random effects, and Ch21 (pp. 205-211) the computational model, multiple comparisons, software, the observational nature of these analyses and statistical power. Engine equivalents: moderators.subgroup_analysis and moderators.meta_regression.",
+  "source_id": "borenstein2009",
+  "locator": "p. xxiii; pp. xxvi-xxvii; pp. viii-ix (Contents)",
+  "tags": "subgroup alcsoport meta-regression metaregresszió ANOVA varianciaanalízis multiple regression többszörös regresszió pooled tau2 közös tau2 mixed effects vegyes hatás multiple comparisons többszörös összehasonlítás power erő"
+ },
+ {
+  "k_id": "K-BOR09-056",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Ellenőrzés: alcsoport-összehasonlítások jelölése",
+  "body": "Reviewer check: subgroup comparisons are flagged as low-powered and observational when there are few studies per subgroup, and no causal or confirmatory claims rest on them.",
+  "source_id": "borenstein2009",
+  "locator": "p. 381",
+  "tags": "reviewer check ellenőrzés subgroup alcsoport low power alacsony erő observational megfigyeléses few studies kevés vizsgálat"
+ },
+ {
+  "k_id": "K-BOR09-057",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Fiókprobléma (file drawer)",
+  "body": "Several lines of evidence show that studies with relatively large treatment effects are more likely to be published, while the rest stay in researchers' file drawers. Since published studies are more likely to be included, a meta-analysis may overestimate the true effect. Ch30 (NOT IN SAMPLE) gives methods to judge how much bias is likely and whether a result is robust to it.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 378-379",
+  "tags": "publication bias publikációs torzítás file drawer fiókprobléma overestimation túlbecslés unpublished studies nem publikált vizsgálatok"
+ },
+ {
+  "k_id": "K-BOR09-058",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "A publikációs torzítás figyelmen kívül hagyása",
+  "body": "Ignoring the file-drawer problem leaves a possibly inflated effect unchallenged, and it is no argument for a narrative review, which suffers the same bias but hides it. Fix: assess publication bias and judge whether the conclusions are robust; the full book's Ch30 (pp. 277-291, NOT IN SAMPLE) covers evidence of bias, whether the entire effect is an artifact, how large the impact could be, caveats and small-study effects. The sample gives no funnel-plot, Egger, Begg, trim-and-fill or fail-safe N formulas but cites Lau et al. 2006 'The case of the misleading funnel plot' (BMJ 333:597-600) and Egger & Davey Smith 1998 (BMJ 316:61-66). Engine: bias.egger_test, bias.begg_test, bias.trim_and_fill, bias.failsafe_n_rosenthal. [note: Cochrane Handbook v6 (13.3.5) advises against fail-safe N because it ignores effect size and assumes missing studies average zero; it is not evidence of robustness. Funnel-plot asymmetry tests need at least about 10 studies and indicate small-study effects, which are not necessarily publication bias. Trim-and-fill is only a sensitivity analysis. Judge risk of bias due to missing results with a structured tool such as ROB-ME, and in GRADE under the publication-bias domain.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 378-379; p. 385; p. 387; p. x (Contents)",
+  "tags": "publication bias publikációs torzítás small-study effects kis vizsgálati hatás funnel plot tölcsérdiagram misleading félrevezető Egger Begg trim and fill fail-safe N robustness robusztusság pitfall"
+ },
+ {
+  "k_id": "K-BOR09-059",
+  "stage_id": "S11",
+  "kind": "check",
+  "title": "Ellenőrzés: publikációs torzítás értékelése",
+  "body": "Reviewer check: publication (file-drawer) bias is assessed and discussed, and the report states whether the conclusions would survive plausible bias. [note: acceptable evidence is a structured judgement (registries, outcome-reporting checks, funnel-plot tests only when k >= 10, selection-model or trim-and-fill sensitivity analyses), not a fail-safe N.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 378-379",
+  "tags": "reviewer check ellenőrzés publication bias publikációs torzítás file drawer fiókprobléma robustness robusztusság"
+ },
+ {
+  "k_id": "K-BOR09-060",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Érzékenységi elemzések: a céltól függenek",
+  "body": "Which sensitivity analyses to run follows from the purpose of the synthesis. Useful analyses shown in the sample: compare fixed- vs random-effects results to reveal influential studies (Donat's weight falls from 39% to 23% and the summary moves from 0.41 to 0.36; Carroll rises from 12% to 16%), and compare studies of higher vs lower methodological quality (e.g. by method of randomisation). Ch41 (sensitivity analysis, p. 368) and Ch42 (cumulative meta-analysis, pp. 371-376) are NOT IN SAMPLE; engine: sensitivity.leave_one_out, sensitivity.influence, sensitivity.cumulative.",
+  "source_id": "borenstein2009",
+  "locator": "p. xxiii; p. 79; p. 380",
+  "tags": "sensitivity analysis érzékenységi elemzés influence befolyás fixed vs random quality minőség cumulative meta-analysis kumulatív leave-one-out"
+ },
+ {
+  "k_id": "K-BOR09-061",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Szavazatszámlálás és szignifikancia alapú 'egyezés'",
+  "body": "LeLorier et al. (1997) called a meta-analysis and a later large trial concordant only if both were, or both were not, significant (66% matched, 34% did not). In Fig 43.1 five trials each have RR 0.80 (N = 800, p = 0.265); pooled RR 0.80 (N = 4,000, p = 0.013); a new trial again shows RR 0.80 (p = 0.265); by that rule they 'conflict' despite identical effects. Detect: comparisons of p-values rather than effects. Fix: compare effect sizes and confidence intervals. The full book discusses vote counting in Ch28 (pp. 251-255, NOT IN SAMPLE). [note: Cochrane Handbook v6 (ch. 12) and the SWiM guideline likewise reject vote counting by statistical significance; when pooling is impossible, vote counting by direction of effect, with a sign test, is the acceptable minimum.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 381-382; Fig 43.1; p. 84; p. ix (Contents, Ch28)",
+  "tags": "vote counting szavazatszámlálás statistical significance statisztikai szignifikancia LeLorier p-value p-érték effect size hatásméret confidence interval konfidenciaintervallum pitfall"
+ },
+ {
+  "k_id": "K-BOR09-062",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Ha a metaanalízis és egy nagy RCT eltér",
+  "body": "Assuming the single large trial is right and the meta-analysis wrong is an error: the meta-analysis pooling five trials is the stronger position, and randomised trials themselves fail to match the next trial on the same topic roughly a third of the time (Harris Cooper's point at the 1996 Cochrane meeting). When results truly differ, e.g. a meta-analysis RR 0.67 (at least a 23% reduction) vs a new trial RR 0.91 (0.82 to 1.0, at most 18%), ask why; differences in question, method or patient population usually explain it.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 382-384",
+  "tags": "discrepancy eltérés randomized trial randomizált vizsgálat meta-analysis metaanalízis LeLorier population populáció method módszer pitfall"
+ },
+ {
+  "k_id": "K-BOR09-063",
+  "stage_id": "S13",
+  "kind": "concept",
+  "title": "Bailar kritikája és a narratív áttekintés",
+  "body": "Bailar (1997) argued that meta-analysis is so complex that errors are almost inevitable and preferred conventional narrative reviews. The authors accept his list as a checklist of mistakes to avoid, but call them flaws in applying the method rather than in the method itself, as with primary studies. Every criticism applies to narrative reviews too, only less visibly: no explicit selection criteria, the same publication bias, studies dismissed for unstated limitations, undisclosed weights (some reviewers focusing on effect sizes, others on significance tests) and little ability to assess the pattern of dispersion. Expert knowledge is no narrative-review advantage, since experts play the same role in a meta-analysis; the key advantage of the systematic approach is that every step is transparent.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 384-386",
+  "tags": "criticism kritika Bailar narrative review narratív áttekintés errors hibák transparency átláthatóság expert szakértő weighting súlyozás checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-BOR09-064",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Nem dokumentált, implicit súlyozás",
+  "body": "Narrative reviews weight studies by criteria the reviewer does not state and may not be able to articulate; a meta-analysis that does not report its weighting scheme repeats this problem. Fix: state that weights are inverse-variance (fixed effect: 1/V_i, to minimise variance) or inverse of within- plus between-study variance (random effects: 1/(V_i + T^2), to reflect the range of effects), so readers can agree or disagree.",
+  "source_id": "borenstein2009",
+  "locator": "pp. xxii, 385",
+  "tags": "weighting súlyozás implicit weights implicit súlyok inverse variance inverz variancia transparency átláthatóság reporting jelentés pitfall"
+ },
+ {
+  "k_id": "K-BOR09-065",
+  "stage_id": "S13",
+  "kind": "guidance",
+  "title": "Goodman: mit kell nyújtania egy metaanalízisnek",
+  "body": "Quoting Goodman (1991), the authors say the best meta-analyses combine clinical insight with quantitative results and the rigour of a good experiment with the thought of a good review. Whatever the summary number, a meta-analysis should explain why trial results differ, raise research and editorial standards by exposing strengths and weaknesses of the evidence, and give practitioners an objective view less distorted by personal experience. Valid criticisms should be met through planned analyses and careful interpretation.",
+  "source_id": "borenstein2009",
+  "locator": "p. 386",
+  "tags": "interpretation értelmezés Goodman clinical insight klinikai belátás quality minőség expert szakértő discrepancy eltérés objective objektív"
+ },
+ {
+  "k_id": "K-BOR09-066",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: átláthatóság",
+  "body": "Evaluator criterion: are the search, eligibility criteria, weighting scheme and model choice explicit enough for a reader to replicate the review? The authors consider transparency the main advantage of the systematic approach over narrative reviews.",
+  "source_id": "borenstein2009",
+  "locator": "pp. xxiii, 381, 385-386",
+  "tags": "evaluator criterion értékelési kritérium transparency átláthatóság replicability reprodukálhatóság weighting súlyozás eligibility beválasztás"
+ },
+ {
+  "k_id": "K-BOR09-067",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: a modell illeszkedése a kérdéshez",
+  "body": "Evaluator criterion: does the inference target of the model (common effect under fixed effect vs mean of a distribution of effects under random effects) match the conclusions drawn? Conclusions about other populations or settings require a random-effects analysis.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 83-84",
+  "tags": "evaluator criterion értékelési kritérium model fit modellilleszkedés inference következtetés fixed effect random effects generalisation általánosítás"
+ },
+ {
+  "k_id": "K-BOR09-068",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: a szóródás kezelése",
+  "body": "Evaluator criterion: has dispersion been addressed? Consistent effects support robustness across the included range; modest dispersion should qualify the mean; substantial dispersion should shift the focus to explaining it (e.g. via covariates). A review that reports only a mean effect despite substantial heterogeneity has missed the point of the synthesis, and the evaluator should record this as a weakness. [note: in GRADE, unexplained heterogeneity is rated under the inconsistency domain, judged from the prediction interval, tau, the overlap of CIs and the clinical importance of the variation, not from I^2 cut-offs alone. GRADE is not in the source.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 378",
+  "tags": "evaluator criterion értékelési kritérium dispersion szóródás heterogeneity heterogenitás robustness robusztusság covariates kovariánsok"
+ },
+ {
+  "k_id": "K-BOR09-069",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: torzítással szembeni robusztusság",
+  "body": "Evaluator criterion: is study quality appraised systematically for every included study; could the same bias in every study drive the pooled result; and has publication bias been addressed? Negative answers lower confidence in the review's conclusions. [note: in GRADE these map to the risk-of-bias and publication-bias domains; use RoB 2 or ROBINS-I at study level and ROB-ME for missing results. None of these tools is in the source.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 378-380, 385",
+  "tags": "evaluator criterion értékelési kritérium risk of bias torzítás kockázata publication bias publikációs torzítás robustness robusztusság certainty bizonyosság"
+ },
+ {
+  "k_id": "K-BOR09-070",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: reális pontosság",
+  "body": "Evaluator criterion: with few studies, do not accept a narrow random-effects CI or a confident conclusion at face value; a large total N does not guarantee precision under random effects because the SE has a floor of about sqrt(tau^2/k). [note: in GRADE terms this bears on the imprecision domain; GRADE itself is not in the source.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 81, 84",
+  "tags": "evaluator criterion értékelési kritérium precision pontosság imprecision pontatlanság few studies kevés vizsgálat GRADE confidence interval"
+ },
+ {
+  "k_id": "K-BOR09-071",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: eltérések magyarázata",
+  "body": "Evaluator criterion: when the meta-analysis conflicts with a large trial (or trials conflict with each other), has the review examined differences in population, methods or covariates instead of declaring one result 'wrong'?",
+  "source_id": "borenstein2009",
+  "locator": "pp. 383-384",
+  "tags": "evaluator criterion értékelési kritérium discrepancy eltérés large trial nagy vizsgálat covariates kovariánsok population populáció"
+ },
+ {
+  "k_id": "K-BOR09-072",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: hatásméret, nem p-érték",
+  "body": "Evaluator criterion: conclusions should rest on the magnitude of the effect and its confidence interval, not on whether p < 0.05; significance-based 'agreement' between studies is misleading. The full book devotes Ch32 'Effect sizes rather than p-values' (p. 297, NOT IN SAMPLE) to this.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 382, 297 (Ch32 title)",
+  "tags": "evaluator criterion értékelési kritérium effect size hatásméret p-value p-érték confidence interval konfidenciaintervallum significance szignifikancia"
+ },
+ {
+  "k_id": "K-BOR09-073",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: a cél és az elemzések összhangja",
+  "body": "Evaluator criterion: are the model, the analyses and the sensitivity analyses suited to the stated purpose of the synthesis (e.g. estimating a sponsor's common effect vs generalising across the literature)?",
+  "source_id": "borenstein2009",
+  "locator": "p. xxiii",
+  "tags": "evaluator criterion értékelési kritérium purpose cél sensitivity analysis érzékenységi elemzés model modell alignment összhang"
+ },
+ {
+  "k_id": "K-BOR09-074",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési kritérium: szakértői belátás",
+  "body": "Evaluator criterion: does the review combine clinical or substantive insight with quantitative rigour, as Goodman's ideal quoted by the authors demands, e.g. by using expert knowledge to identify study flaws and plausible moderators?",
+  "source_id": "borenstein2009",
+  "locator": "p. 386",
+  "tags": "evaluator criterion értékelési kritérium expert input szakértői bevonás clinical insight klinikai belátás moderators moderátorok Goodman"
+ },
+ {
+  "k_id": "K-BOR09-075",
+  "stage_id": "S13",
+  "kind": "check",
+  "title": "Ellenőrzés: összehasonlítás hatásmérettel és CI-vel",
+  "body": "Reviewer check: results (between studies, or between the meta-analysis and other trials) are compared as effect sizes with CIs, never by significance-based 'vote counting'.",
+  "source_id": "borenstein2009",
+  "locator": "pp. 382, 84",
+  "tags": "reviewer check ellenőrzés vote counting szavazatszámlálás effect size hatásméret confidence interval konfidenciaintervallum significance szignifikancia"
+ },
+ {
+  "k_id": "K-BOR09-076",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Forest plot konvenciók (Fig 13.1-13.2)",
+  "body": "Each study has one row with its effect size (g to 2 decimals) and relative weight (integer %), plus a summary row whose weights total 100%. The area of each box is proportional to the study's weight and the summary is drawn as a diamond. The random-effects plot is labelled as showing 95% confidence and prediction intervals. [note: the source predates PRISMA 2009/2020; check current PRISMA 2020 items separately.]",
+  "source_id": "borenstein2009",
+  "locator": "Figs 13.1-13.2, pp. 78-79",
+  "tags": "forest plot erdődiagram relative weight relatív súly box area négyzet területe diamond rombusz prediction interval predikciós intervallum reporting jelentés"
+ },
+ {
+  "k_id": "K-BOR09-077",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Arány-mértékek forest plotja (Fig 43.1-43.2)",
+  "body": "Ratio forest plots use a log-scaled axis (0.50, 1.0, 2.0) with direction labels 'Favours Treatment' and 'Favours Placebo'; Fig 43.1 has columns for RR, N and p-value, while Fig 43.2 shows only RR. Ch43 prints RR to 2 decimals, p to 3 decimals and N as an integer with a thousands separator (e.g. 4,000). A trial that is not part of the meta-analysis (the 'new trial') is shown separately below the summary.",
+  "source_id": "borenstein2009",
+  "locator": "Figs 43.1-43.2, pp. 382-383",
+  "tags": "forest plot erdődiagram log scale log-skála risk ratio kockázati arány favours treatment kezelés javára axis tengely decimals tizedesjegyek"
+ },
+ {
+  "k_id": "K-BOR09-078",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Mit kell közölni",
+  "body": "Report: the weighting scheme, so readers can agree or disagree with it; the inclusion criteria and their reasons (relevance or bias); the pattern of dispersion, not only the summary effect; and which model was used and why, justified by the expected data structure rather than by a heterogeneity test. Ch41 'Reporting the results of a meta-analysis' (pp. 365-369; computational model, forest plots, sensitivity analysis) is NOT IN SAMPLE. [note: the source predates PRISMA. Current minimum reporting follows PRISMA 2020: synthesis methods, including the model, the tau^2 estimator, the CI method, heterogeneity methods and software (item 13d), plus items 13e-13f, 14-15 and 20-22.]",
+  "source_id": "borenstein2009",
+  "locator": "p. 385; p. 381; p. 378; pp. 83-86",
+  "tags": "reporting jelentés weighting scheme súlyozási séma inclusion criteria beválasztási kritériumok dispersion szóródás model rationale modellindoklás PRISMA"
+ },
+ {
+  "k_id": "K-BOR09-079",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: minden CI tartalmazza a pontbecslést",
+  "body": "Reviewer check: every printed confidence interval must contain its point estimate and have lower < upper. The source itself prints a meta-analysis result as RR 0.67 'with a 95% confidence interval of 0.84 to 0.77', which is impossible; a log-symmetric interval with upper limit 0.77 implies a lower limit of about 0.58, consistent with the text's 'at least 23%' reduction. Never use the 0.84 value as a test target.",
+  "source_id": "borenstein2009",
+  "locator": "p. 383",
+  "tags": "reviewer check ellenőrzés confidence interval konfidenciaintervallum typo elírás point estimate pontbecslés data validation adatvalidálás"
+ },
+ {
+  "k_id": "K-BOR09-080",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: beválasztási kritériumok közlése",
+  "body": "Reviewer check: inclusion and exclusion criteria are stated in the report, were pre-specified (before the search) and are justified by relevance or risk of bias.",
+  "source_id": "borenstein2009",
+  "locator": "p. 381",
+  "tags": "reviewer check ellenőrzés inclusion criteria beválasztási kritériumok exclusion kizárás pre-specified előre rögzített reporting jelentés"
+ },
+ {
+  "k_id": "K-BOR09-081",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Nem szignifikáns heterogenitási teszt ≠ homogenitás",
+  "body": "Reading a non-significant test of tau^2 = 0 as proof that all studies share one effect, and then dropping the between-study variance (switching to or staying with a fixed-effect model), is an error. The test often has low power, so a non-significant result may only mean there is too little information to detect real variation. Detect: wording such as 'no heterogeneity (p > 0.05), therefore a fixed-effect model'. Fix: keep the model chosen a priori, report T^2 (and tau) with its uncertainty, and let the between-study variance enter the weights even when it is not significant. [note: Cochrane Handbook v6 (10.10.2) likewise warns that the chi-squared test has low power when studies are few or small, and that a non-significant result is not evidence of homogeneity; quantify heterogeneity (tau^2, I^2 with its CI, prediction interval) instead of relying on the p-value.]",
+  "source_id": "borenstein2009",
+  "locator": "pp. 84-85; Ch13 Summary points, p. 86",
+  "tags": "heterogeneity test heterogenitási teszt Q test Q-próba low power alacsony erő non-significant nem szignifikáns homogeneity homogenitás fixed effect fix hatás tau2 pitfall hiba"
+ }
+]

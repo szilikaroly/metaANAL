@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ff.flowchart:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ff.flowchart/v1 — figure-forge folyamatábra-specifikáció (ff.py flowchart --spec; prisma check --emit-flowchart; terv 4.12, E9)",
+  "description": "A figure-forge flowchart parancsának bemenete: csomópontok és élek egy 0–100-as vásznon. A csomópont x/y-ja a doboz KÖZEPE, az y felfelé nő; x/y nélkül a figure-forge függőlegesen (TB) vagy vízszintesen (LR) rendez. A shape és a color megjelenítési tipp; a box, a phase és a többi gyökérmező a motor megjegyzése (a figure-forge figyelmen kívül hagyja).",
+  "type": "object",
+  "required": [
+    "schema",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ff.flowchart/v1"
+    },
+    "kind": {
+      "type": "string",
+      "examples": [
+        "prisma2020",
+        "consort"
+      ],
+      "description": "az ábra fajtája"
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lang": {
+      "enum": [
+        "hu",
+        "en",
+        null
+      ]
+    },
+    "direction": {
+      "enum": [
+        "TB",
+        "LR"
+      ],
+      "description": "csak az alapértelmezett elrendezést befolyásolja"
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.\\-]+$"
+          },
+          "text": {
+            "type": "string",
+            "description": "a doboz felirata; sortörés: \\n"
+          },
+          "x": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "a doboz közepe, 0–100 (balról)"
+          },
+          "y": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "a doboz közepe, 0–100 (alulról)"
+          },
+          "w": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 100,
+            "description": "szélesség a vászon egységeiben"
+          },
+          "h": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 100,
+            "description": "magasság a vászon egységeiben"
+          },
+          "shape": {
+            "enum": [
+              "box",
+              "sharp"
+            ],
+            "description": "box: lekerekített (alap), sharp: szögletes"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$",
+            "description": "kitöltőszín"
+          },
+          "box": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "a PRISMA-doboz betűjele (A1+A2, B, … I+J)"
+          },
+          "phase": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "identification",
+              "screening",
+              "included"
+            ]
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "enum": [
+            "single",
+            "double"
+          ],
+          "description": "javasolt --width"
+        },
+        "arrangement": {
+          "type": "string"
+        },
+        "canvas_height_mm": {
+          "type": "number",
+          "minimum": 0
+        },
+        "updated_review": {
+          "type": "boolean"
+        },
+        "other_methods": {
+          "type": "boolean"
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "description": "PRISMA-dobozok értékei betűjel szerint (null = ismeretlen)",
+      "additionalProperties": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "minimum": 0
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": [
+        "ok"
+      ],
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "description": "a számok ellenőrzése (prisma check) hibamentes-e"
+        },
+        "summary": {
+          "type": "object"
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^P\\d{3}$"
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object"
+    },
+    "render_hint": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      }
+    }
+  }
+}

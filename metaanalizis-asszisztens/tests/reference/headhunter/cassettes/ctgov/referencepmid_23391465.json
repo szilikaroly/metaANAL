@@ -1,0 +1,208 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "ctgov-referencepmid_23391465",
+  "recorded_at": "2026-10-05T11:08:12Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "AREA[ReferencePMID]23391465 → NCT00953927 és NCT04975178, mindkettő BACKGROUND",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://clinicaltrials.gov/api/v2/studies?countTotal=true&fields=protocolSection.identificationModule.nctId%2CprotocolSection.referencesModule&format=json&pageSize=100&query.term=AREA%5BReferencePMID%5D23391465",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "totalCount": 2,
+          "studies": [
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT04975178"
+                },
+                "referencesModule": {
+                  "references": [
+                    {
+                      "pmid": "31416768",
+                      "type": "BACKGROUND",
+                      "citation": "Tameris M, Mearns H, Penn-Nicholson A, Gregg Y, Bilek N, Mabwe S, Geldenhuys H, Shenje J, Luabeya AKK, Murillo I, Doce J, Aguilo N, Marinova D, Puentes E, Rodriguez E, Gonzalo-Asensio J, Fritzell B, Thole J, Martin C, Scriba TJ, Hatherill M; MTBVAC Clinical Trial Team. Live-attenuated Mycobacterium tuberculosis vaccine MTBVAC versus BCG in adults and neonates: a randomised controlled, double-blind dose-escalation trial. Lancet Respir Med. 2019 Sep;7(9):757-770. doi: 10.1016/S2213-2600(19)30251-6. Epub 2019 Aug 12."
+                    },
+                    {
+                      "pmid": "26598141",
+                      "type": "BACKGROUND",
+                      "citation": "Spertini F, Audran R, Chakour R, Karoui O, Steiner-Monard V, Thierry AC, Mayor CE, Rettby N, Jaton K, Vallotton L, Lazor-Blanchet C, Doce J, Puentes E, Marinova D, Aguilo N, Martin C. Safety of human immunisation with a live-attenuated Mycobacterium tuberculosis vaccine: a randomised, double-blind, controlled phase I trial. Lancet Respir Med. 2015 Dec;3(12):953-62. doi: 10.1016/S2213-2600(15)00435-X. Epub 2015 Nov 17."
+                    },
+                    {
+                      "pmid": "23965219",
+                      "type": "BACKGROUND",
+                      "citation": "Arbues A, Aguilo JI, Gonzalo-Asensio J, Marinova D, Uranga S, Puentes E, Fernandez C, Parra A, Cardona PJ, Vilaplana C, Ausina V, Williams A, Clark S, Malaga W, Guilhot C, Gicquel B, Martin C. Construction, characterization and preclinical evaluation of MTBVAC, the first live-attenuated M. tuberculosis-based vaccine to enter clinical trials. Vaccine. 2013 Oct 1;31(42):4867-73. doi: 10.1016/j.vaccine.2013.07.051. Epub 2013 Aug 17."
+                    },
+                    {
+                      "pmid": "28706226",
+                      "type": "BACKGROUND",
+                      "citation": "Aguilo N, Gonzalo-Asensio J, Alvarez-Arguedas S, Marinova D, Gomez AB, Uranga S, Spallek R, Singh M, Audran R, Spertini F, Martin C. Reactogenicity to major tuberculosis antigens absent in BCG is linked to improved protection against Mycobacterium tuberculosis. Nat Commun. 2017 Jul 14;8:16085. doi: 10.1038/ncomms16085."
+                    },
+                    {
+                      "pmid": "22267721",
+                      "type": "BACKGROUND",
+                      "citation": "Andrews JR, Noubary F, Walensky RP, Cerda R, Losina E, Horsburgh CR. Risk of progression to active tuberculosis following reinfection with Mycobacterium tuberculosis. Clin Infect Dis. 2012 Mar;54(6):784-91. doi: 10.1093/cid/cir951. Epub 2012 Jan 19."
+                    },
+                    {
+                      "pmid": "10564470",
+                      "type": "BACKGROUND",
+                      "citation": "Camacho LR, Ensergueix D, Perez E, Gicquel B, Guilhot C. Identification of a virulence gene cluster of Mycobacterium tuberculosis by signature-tagged transposon mutagenesis. Mol Microbiol. 1999 Oct;34(2):257-67. doi: 10.1046/j.1365-2958.1999.01593.x."
+                    },
+                    {
+                      "pmid": "25211768",
+                      "type": "BACKGROUND",
+                      "citation": "Copin R, Coscolla M, Efstathiadis E, Gagneux S, Ernst JD. Impact of in vitro evolution on antigenic diversity of Mycobacterium bovis bacillus Calmette-Guerin (BCG). Vaccine. 2014 Oct 14;32(45):5998-6004. doi: 10.1016/j.vaccine.2014.07.113. Epub 2014 Sep 6."
+                    },
+                    {
+                      "pmid": "29326700",
+                      "type": "BACKGROUND",
+                      "citation": "Gonzalo-Asensio J, Marinova D, Martin C, Aguilo N. MTBVAC: Attenuating the Human Pathogen of Tuberculosis (TB) Toward a Promising Vaccine against the TB Epidemic. Front Immunol. 2017 Dec 15;8:1803. doi: 10.3389/fimmu.2017.01803. eCollection 2017."
+                    },
+                    {
+                      "pmid": "18946503",
+                      "type": "BACKGROUND",
+                      "citation": "Gonzalo-Asensio J, Mostowy S, Harders-Westerveen J, Huygen K, Hernandez-Pando R, Thole J, Behr M, Gicquel B, Martin C. PhoP: a missing piece in the intricate puzzle of Mycobacterium tuberculosis virulence. PLoS One. 2008;3(10):e3496. doi: 10.1371/journal.pone.0003496. Epub 2008 Oct 23."
+                    },
+                    {
+                      "pmid": "22448023",
+                      "type": "BACKGROUND",
+                      "citation": "Graham SM, Ahmed T, Amanullah F, Browning R, Cardenas V, Casenghi M, Cuevas LE, Gale M, Gie RP, Grzemska M, Handelsman E, Hatherill M, Hesseling AC, Jean-Philippe P, Kampmann B, Kabra SK, Lienhardt C, Lighter-Fisher J, Madhi S, Makhene M, Marais BJ, McNeeley DF, Menzies H, Mitchell C, Modi S, Mofenson L, Musoke P, Nachman S, Powell C, Rigaud M, Rouzier V, Starke JR, Swaminathan S, Wingfield C. Evaluation of tuberculosis diagnostics in children: 1. Proposed clinical case definitions for classification of intrathoracic tuberculosis disease. Consensus from an expert panel. J Infect Dis. 2012 May 15;205 Suppl 2(Suppl 2):S199-208. doi: 10.1093/infdis/jis008. Epub 2012 Mar 22."
+                    },
+                    {
+                      "pmid": "15893612",
+                      "type": "BACKGROUND",
+                      "citation": "Kamath AT, Fruth U, Brennan MJ, Dobbelaer R, Hubrechts P, Ho MM, Mayner RE, Thole J, Walker KB, Liu M, Lambert PH; AERAS Global TB Vaccine Foundation; World Health Organization. New live mycobacterial vaccines: the Geneva consensus on essential steps towards clinical development. Vaccine. 2005 May 31;23(29):3753-61. doi: 10.1016/j.vaccine.2005.03.001. Epub 2005 Mar 24."
+                    },
+                    {
+                      "pmid": "25288770",
+                      "type": "BACKGROUND",
+                      "citation": "Knight GM, Griffiths UK, Sumner T, Laurence YV, Gheorghe A, Vassall A, Glaziou P, White RG. Impact and cost-effectiveness of new tuberculosis vaccines in low- and middle-income countries. Proc Natl Acad Sci U S A. 2014 Oct 28;111(43):15520-5. doi: 10.1073/pnas.1404386111. Epub 2014 Oct 6."
+                    },
+                    {
+                      "pmid": "20822958",
+                      "type": "BACKGROUND",
+                      "citation": "Marais S, Thwaites G, Schoeman JF, Torok ME, Misra UK, Prasad K, Donald PR, Wilkinson RJ, Marais BJ. Tuberculous meningitis: a uniform case definition for use in clinical research. Lancet Infect Dis. 2010 Nov;10(11):803-12. doi: 10.1016/S1473-3099(10)70138-9. Epub 2010 Sep 6."
+                    },
+                    {
+                      "pmid": "27247343",
+                      "type": "BACKGROUND",
+                      "citation": "Scriba TJ, Kaufmann SH, Henri Lambert P, Sanicas M, Martin C, Neyrolles O. Vaccination Against Tuberculosis With Whole-Cell Mycobacterial Vaccines. J Infect Dis. 2016 Sep 1;214(5):659-64. doi: 10.1093/infdis/jiw228. Epub 2016 May 30."
+                    },
+                    {
+                      "pmid": "27798628",
+                      "type": "BACKGROUND",
+                      "citation": "Stucki D, Brites D, Jeljeli L, Coscolla M, Liu Q, Trauner A, Fenner L, Rutaihwa L, Borrell S, Luo T, Gao Q, Kato-Maeda M, Ballif M, Egger M, Macedo R, Mardassi H, Moreno M, Tudo Vilanova G, Fyfe J, Globan M, Thomas J, Jamieson F, Guthrie JL, Asante-Poku A, Yeboah-Manu D, Wampande E, Ssengooba W, Joloba M, Henry Boom W, Basu I, Bower J, Saraiva M, Vaconcellos SEG, Suffys P, Koch A, Wilkinson R, Gail-Bekker L, Malla B, Ley SD, Beck HP, de Jong BC, Toit K, Sanchez-Padilla E, Bonnet M, Gil-Brusola A, Frank M, Penlap Beng VN, Eisenach K, Alani I, Wangui Ndung'u P, Revathi G, Gehre F, Akter S, Ntoumi F, Stewart-Isherwood L, Ntinginya NE, Rachow A, Hoelscher M, Cirillo DM, Skenders G, Hoffner S, Bakonyte D, Stakenas P, Diel R, Crudu V, Moldovan O, Al-Hajoj S, Otero L, Barletta F, Jane Carter E, Diero L, Supply P, Comas I, Niemann S, Gagneux S. Mycobacterium tuberculosis lineage 4 comprises globally distributed and geographically restricted sublineages. Nat Genet. 2016 Dec;48(12):1535-1543. doi: 10.1038/ng.3704. Epub 2016 Oct 31."
+                    },
+                    {
+                      "pmid": "31661198",
+                      "type": "BACKGROUND",
+                      "citation": "Tait DR, Hatherill M, Van Der Meeren O, Ginsberg AM, Van Brakel E, Salaun B, Scriba TJ, Akite EJ, Ayles HM, Bollaerts A, Demoitie MA, Diacon A, Evans TG, Gillard P, Hellstrom E, Innes JC, Lempicki M, Malahleha M, Martinson N, Mesia Vela D, Muyoyeta M, Nduba V, Pascal TG, Tameris M, Thienemann F, Wilkinson RJ, Roman F. Final Analysis of a Trial of M72/AS01E Vaccine to Prevent Tuberculosis. N Engl J Med. 2019 Dec 19;381(25):2429-2439. doi: 10.1056/NEJMoa1909953. Epub 2019 Oct 29."
+                    },
+                    {
+                      "pmid": "23391465",
+                      "type": "BACKGROUND",
+                      "citation": "Tameris MD, Hatherill M, Landry BS, Scriba TJ, Snowden MA, Lockhart S, Shea JE, McClain JB, Hussey GD, Hanekom WA, Mahomed H, McShane H; MVA85A 020 Trial Study Team. Safety and efficacy of MVA85A, a new tuberculosis vaccine, in infants previously vaccinated with BCG: a randomised, placebo-controlled phase 2b trial. Lancet. 2013 Mar 23;381(9871):1021-8. doi: 10.1016/S0140-6736(13)60177-4."
+                    },
+                    {
+                      "pmid": "20074686",
+                      "type": "BACKGROUND",
+                      "citation": "Walker KB, Brennan MJ, Ho MM, Eskola J, Thiry G, Sadoff J, Dobbelaer R, Grode L, Liu MA, Fruth U, Lambert PH. The second Geneva Consensus: Recommendations for novel live TB vaccines. Vaccine. 2010 Mar 8;28(11):2259-70. doi: 10.1016/j.vaccine.2009.12.083. Epub 2010 Jan 20."
+                    },
+                    {
+                      "pmid": "33397991",
+                      "type": "BACKGROUND",
+                      "citation": "White AD, Sibley L, Sarfas C, Morrison A, Gullick J, Clark S, Gleeson F, McIntyre A, Arlehamn CL, Sette A, Salguero FJ, Rayner E, Rodriguez E, Puentes E, Laddy D, Williams A, Dennis M, Martin C, Sharpe S. MTBVAC vaccination protects rhesus macaques against aerosol challenge with M. tuberculosis and induces immune signatures analogous to those observed in clinical studies. NPJ Vaccines. 2021 Jan 4;6(1):4. doi: 10.1038/s41541-020-00262-8."
+                    },
+                    {
+                      "pmid": "1316826",
+                      "type": "BACKGROUND",
+                      "citation": "Whitehead J. Overrunning and underrunning in sequential clinical trials. Control Clin Trials. 1992 Apr;13(2):106-21. doi: 10.1016/0197-2456(92)90017-t."
+                    },
+                    {
+                      "pmid": "39752894",
+                      "type": "DERIVED",
+                      "citation": "Giersing B, Mo AX, Hwang A, Baqar S, Earle K, Ford A, Deal C, Dull P, Friede M, Hall BF. Meeting summary: Global vaccine and immunization research forum, 2023. Vaccine. 2025 Feb 6;46:126686. doi: 10.1016/j.vaccine.2024.126686. Epub 2025 Jan 5."
+                    }
+                  ],
+                  "seeAlsoLinks": [
+                    {
+                      "label": "WHO, Global Tuberculosis Report 2022. \\[Online\\] https://www.who.int/publications /i/item/9789240061729 \\[accessed on 27 June 2023\\].",
+                      "url": "https://www.who.int/publications/i/item/9789240061729"
+                    },
+                    {
+                      "label": "WHO preferred products characteristics for TB vaccines 2018. \\[Online\\] https://apps.who.int/iris/ bitstream/handle/10665/273089/ WHO-IVB-18.06-eng.pdf?ua=1 \\[accessed on 05 May 2021\\].",
+                      "url": "https://cdn.who.int/media/docs/default-source/immunization/product-and-delivery-research/framework_working_document_july_2023.pdf?sfvrsn=224b6151_3&download=true"
+                    },
+                    {
+                      "label": "Division of AIDS (DAIDS) Table for Grading the Severity of Adult and Pediatric Adverse Events, Corrected Version 2.1, July 2017. \\[Online\\] https://rsc.niaid.nih.gov/clinical-research-sites/daids-adverse-event-grading-tables \\[Accessed on 05 May 2021\\].",
+                      "url": "https://rsc.niaid.nih.gov/sites/default/files/daidsgradingcorrectedv21.pdf"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT00953927"
+                },
+                "referencesModule": {
+                  "references": [
+                    {
+                      "pmid": "23391465",
+                      "type": "BACKGROUND",
+                      "citation": "Tameris MD, Hatherill M, Landry BS, Scriba TJ, Snowden MA, Lockhart S, Shea JE, McClain JB, Hussey GD, Hanekom WA, Mahomed H, McShane H; MVA85A 020 Trial Study Team. Safety and efficacy of MVA85A, a new tuberculosis vaccine, in infants previously vaccinated with BCG: a randomised, placebo-controlled phase 2b trial. Lancet. 2013 Mar 23;381(9871):1021-8. doi: 10.1016/S0140-6736(13)60177-4."
+                    },
+                    {
+                      "pmid": "23410889",
+                      "type": "BACKGROUND",
+                      "citation": "Tameris M, McShane H, McClain JB, Landry B, Lockhart S, Luabeya AK, Geldenhuys H, Shea J, Hussey G, van der Merwe L, de Kock M, Scriba T, Walker R, Hanekom W, Hatherill M, Mahomed H. Lessons learnt from the first efficacy trial of a new infant tuberculosis vaccine since BCG. Tuberculosis (Edinb). 2013 Mar;93(2):143-9. doi: 10.1016/j.tube.2013.01.003. Epub 2013 Feb 12."
+                    },
+                    {
+                      "pmid": "26226446",
+                      "type": "BACKGROUND",
+                      "citation": "Mulenga H, Tameris MD, Luabeya KK, Geldenhuys H, Scriba TJ, Hussey GD, Mahomed H, Landry BS, Hanekom WA, McShane H, Hatherill M. The Role of Clinical Symptoms in the Diagnosis of Intrathoracic Tuberculosis in Young Children. Pediatr Infect Dis J. 2015 Nov;34(11):1157-62. doi: 10.1097/INF.0000000000000847."
+                    },
+                    {
+                      "pmid": "26252568",
+                      "type": "BACKGROUND",
+                      "citation": "Luabeya KK, Tameris MD, Geldenhuys HD, Mulenga H, Van Schalkwyk A, Hughes EJ, Toefey A, Scriba TJ, Hussey G, Mahomed H, McShane H, Landry B, Hanekom WA, Hatherill M. Risk of Disease After Isoniazid Preventive Therapy for Mycobacterium tuberculosis Exposure in Young HIV-uninfected Children. Pediatr Infect Dis J. 2015 Nov;34(11):1218-22. doi: 10.1097/INF.0000000000000874."
+                    },
+                    {
+                      "pmid": "31697647",
+                      "type": "DERIVED",
+                      "citation": "Muller J, Tanner R, Matsumiya M, Snowden MA, Landry B, Satti I, Harris SA, O'Shea MK, Stockdale L, Marsay L, Chomka A, Harrington-Kandt R, Thomas ZM, Naranbhai V, Stylianou E, Mbandi SK, Hatherill M, Hussey G, Mahomed H, Tameris M, McClain JB, Evans TG, Hanekom WA, Scriba TJ, McShane H, Fletcher HA. Cytomegalovirus infection is a risk factor for tuberculosis disease in infants. JCI Insight. 2019 Dec 5;4(23):e130090. doi: 10.1172/jci.insight.130090."
+                    },
+                    {
+                      "pmid": "26554383",
+                      "type": "DERIVED",
+                      "citation": "Bunyasi EW, Tameris M, Geldenhuys H, Schmidt BM, Luabeya AK, Mulenga H, Scriba TJ, Hanekom WA, Mahomed H, McShane H, Hatherill M. Evaluation of Xpert(R) MTB/RIF Assay in Induced Sputum and Gastric Lavage Samples from Young Children with Suspected Tuberculosis from the MVA85A TB Vaccine Trial. PLoS One. 2015 Nov 10;10(11):e0141623. doi: 10.1371/journal.pone.0141623. eCollection 2015."
+                    },
+                    {
+                      "pmid": "24912498",
+                      "type": "DERIVED",
+                      "citation": "Matsumiya M, Harris SA, Satti I, Stockdale L, Tanner R, O'Shea MK, Tameris M, Mahomed H, Hatherill M, Scriba TJ, Hanekom WA, McShane H, Fletcher HA. Inflammatory and myeloid-associated gene expression before and one day after infant vaccination with MVA85A correlates with induction of a T cell response. BMC Infect Dis. 2014 Jun 9;14:314. doi: 10.1186/1471-2334-14-314."
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

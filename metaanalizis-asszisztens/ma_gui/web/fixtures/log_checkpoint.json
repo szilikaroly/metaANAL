@@ -1,0 +1,60 @@
+{
+ "description": "GET /api/log/checkpoint — a szakaszok ellenőrzőpontjai (3.5.1, 3.5.15).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/log/checkpoint",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log/v1",
+    "data": {
+     "kind": "checkpoint",
+     "items": [
+      {
+       "id": 1,
+       "stage_id": "S00",
+       "verdict": "PASS",
+       "agent": "planner",
+       "ts": "2026-09-20T10:00:00Z"
+      },
+      {
+       "id": 2,
+       "stage_id": "S01",
+       "verdict": "PASS",
+       "agent": "planner",
+       "ts": "2026-09-21T10:00:00Z"
+      },
+      {
+       "id": 3,
+       "stage_id": "S02",
+       "verdict": "PASS",
+       "agent": "reviewer",
+       "ts": "2026-09-24T10:00:00Z"
+      },
+      {
+       "id": 4,
+       "stage_id": "S03",
+       "verdict": "PASS_WITH_FIXES",
+       "agent": "reviewer",
+       "ts": "2026-09-28T10:00:00Z"
+      },
+      {
+       "id": 5,
+       "stage_id": "S04",
+       "verdict": "FAIL",
+       "agent": "reviewer",
+       "ts": "2026-10-03T14:05:00Z"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_fx12"
+    }
+   }
+  }
+ ]
+}

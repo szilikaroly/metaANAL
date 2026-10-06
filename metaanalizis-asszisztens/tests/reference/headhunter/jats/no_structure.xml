@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SZINTETIKUS tesztfixture / SYNTHETIC test fixture. Fictitious studies; identifiers use unassigned ranges
+     (PMID 9999xxxx) and the 10.5555 test DOI prefix - never use them outside tests.
+     A review WITHOUT a structured list of included studies: the "Details of included studies" table exists
+     only as an image (empty table body), the inclusion statement has no citations, and the search date is an
+     ambiguous numeric date (03/04/2019: day/month or month/day?). Expected: every reference becomes an
+     'unknown' role, low-confidence candidate for agent/human classification (6.2), plus warnings. -->
+<article xmlns:xlink="http://www.w3.org/1999/xlink" article-type="review-article">
+<front>
+<journal-meta><journal-title-group><journal-title>Synthetic Psychosomatic Medicine</journal-title></journal-title-group></journal-meta>
+<article-meta>
+<article-id pub-id-type="pmid">99990400</article-id>
+<article-id pub-id-type="doi">10.5555/hh.0400</article-id>
+<title-group><article-title>Effects of intervention Q on symptom R: a meta-analysis of randomized controlled trials</article-title></title-group>
+<pub-date pub-type="epub"><month>02</month><year>2020</year></pub-date>
+<abstract>
+<sec><title>Results</title><p>Sixteen eligible randomized controlled trials with outcome data for 4826 participants were included.</p></sec>
+</abstract>
+</article-meta>
+</front>
+<body>
+<sec><title>Introduction</title>
+<p>Intervention Q has been studied widely <xref ref-type="bibr" rid="R1">1</xref>,<xref ref-type="bibr" rid="R2">2</xref>.</p>
+</sec>
+<sec><title>Methods</title>
+<p>The primary search was performed in MEDLINE and PsycINFO from inception until 03/04/2019.</p>
+</sec>
+<sec><title>Results</title>
+<p>Sixteen trials were included in the analyses <xref ref-type="bibr" rid="R3">3</xref>.</p>
+<table-wrap id="T1">
+<label>TABLE 1</label>
+<caption><title>Details of Included Studies</title></caption>
+<graphic xlink:href="synthetic-t1.jpg"/>
+</table-wrap>
+</sec>
+</body>
+<back>
+<ref-list><title>References</title>
+<ref id="R1"><label>1</label><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Tango</surname><given-names>A</given-names></name></person-group><article-title>A narrative review of intervention Q</article-title><source>Synthetic Rev</source><year>2015</year><volume>1</volume><fpage>1</fpage><lpage>9</lpage><pub-id pub-id-type="doi">10.5555/hh.0401</pub-id></element-citation></ref>
+<ref id="R2"><label>2</label><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Uniform</surname><given-names>B</given-names></name></person-group><article-title>Mechanisms of symptom R</article-title><source>Synthetic Psychiatry</source><year>2016</year><volume>2</volume><fpage>10</fpage><lpage>19</lpage></element-citation></ref>
+<ref id="R3"><label>3</label><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Victor</surname><given-names>C</given-names></name></person-group><article-title>Intervention Q versus usual care: a randomized trial</article-title><source>Synthetic Trials</source><year>2017</year><volume>3</volume><fpage>20</fpage><lpage>29</lpage><pub-id pub-id-type="pmid">99990403</pub-id></element-citation></ref>
+<ref id="R4"><label>4</label><element-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Whiskey</surname><given-names>D</given-names></name></person-group><article-title>Intervention Q in older adults: a randomized trial</article-title><source>Synthetic Trials</source><year>2018</year><volume>4</volume><fpage>30</fpage><lpage>39</lpage></element-citation></ref>
+</ref-list>
+</back>
+</article>

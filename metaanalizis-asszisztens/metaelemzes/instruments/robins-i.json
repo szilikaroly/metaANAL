@@ -1,0 +1,2962 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "robins-i",
+  "name": "ROBINS-I",
+  "label": {
+    "hu": "ROBINS-I — nem randomizált beavatkozásos vizsgálatok",
+    "en": "ROBINS-I — non-randomised studies of interventions"
+  },
+  "full_name": "Risk Of Bias In Non-randomised Studies — of Interventions (2016)",
+  "family": "rob",
+  "tool_version": "2016",
+  "definition_version": 2,
+  "validator_version": "1.0.0",
+  "reference_sha256": "e88d43342973571e2040b91f9fca7401e1f6cc5a5971abb41f6219b54452397e",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/robins-i.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételkészlet, a számozás, a feltételek és a válaszlehetőségek a publikált 2016-os eszköz (BMJ web-extra Table A) szerint; a munkaszövegek és a súgó részben a validator referenciafájljából, a magyar szöveg saját fordítás. A validator 1.0.0 eltérő tételazonosítói a 'validator_ids' mezőben.",
+      "en": "Item set, numbering, conditions and response options follow the published 2016 tool (BMJ web-extra Table A); working texts and help partly from the validator reference file; Hungarian texts are this project's own. Validator 1.0.0's differing item ids are kept in 'validator_ids'."
+    }
+  },
+  "citation": "Sterne JAC, Hernán MA, Reeves BC, et al. ROBINS-I: a tool for assessing risk of bias in non-randomised studies of interventions. BMJ 2016;355:i4919; guidance at riskofbias.info.",
+  "licence": {
+    "instrument_licence": "CC BY-NC-ND 4.0 (riskofbias.info) — ellenőrizendő",
+    "verbatim_allowed": true,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "A ROBINS-I a riskofbias.info oldalán CC BY-NC-ND 4.0 licenccel érhető el (ellenőrizendő). Ez a fájl parafrázist tartalmaz a 2016-os eszköz (Sterne és mtsai, BMJ 2016;355:i4919, web-extra Table A) tételkészletével és számozásával: 34 tétel, a besorolás hatására 30, a megkezdés és betartás hatására 32 kérdezendő. A 2024-es ROBINS-I V2 más tételkészlet — ha azt használod, ne ezt a definíciót hivatkozd.",
+      "en": "ROBINS-I is distributed at riskofbias.info under CC BY-NC-ND 4.0 (to be verified). This file paraphrases the 2016 tool (Sterne et al., BMJ 2016;355:i4919, web-extra Table A) with its item set and numbering: 34 items, 30 for the effect of assignment and 32 for the effect of starting and adhering. ROBINS-I V2 (2024) has a different item set — do not cite this definition for it."
+    }
+  },
+  "intro": {
+    "hu": "A ROBINS-I egy nem randomizált vizsgálatot egy elképzelt CÉLVIZSGÁLATHOZ (a kérdést megválaszoló pragmatikus RCT-hez) mér. Az első kérdés előtt írd le három sorban: beválasztás, a két összehasonlított beavatkozás, a kimenet és ideje. Az „alacsony” itt a jól kivitelezett RCT-vel egyenértékű — megfigyeléses vizsgálatnál ritka. A „kritikus” azt jelenti, hogy a vizsgálat nem használható a szintézisben.",
+    "en": "ROBINS-I judges a non-randomised study against a hypothetical TARGET TRIAL. Write the target trial down first (eligibility, the two interventions, the outcome and its timing). 'Low' means comparable to a well-performed RCT — unusual for an observational study. 'Critical' means the study should not enter the synthesis."
+  },
+  "unit": "result",
+  "unit_label": {
+    "hu": "eredményenként (egy kimenet, egy összehasonlítás)",
+    "en": "per result (one outcome, one comparison)"
+  },
+  "scopes": [
+    {
+      "id": "assignment",
+      "label": {
+        "hu": "A beavatkozás kiosztásának hatása",
+        "en": "Effect of assignment"
+      },
+      "default": true
+    },
+    {
+      "id": "adherence",
+      "label": {
+        "hu": "A beavatkozás betartásának hatása",
+        "en": "Effect of adhering"
+      },
+      "default": false
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "probably_yes",
+      "label": "PY",
+      "text": {
+        "hu": "Valószínűleg igen",
+        "en": "Probably yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "py",
+        "probably yes",
+        "prob yes",
+        "valoszinuleg igen",
+        "vi"
+      ]
+    },
+    {
+      "value": "probably_no",
+      "label": "PN",
+      "text": {
+        "hu": "Valószínűleg nem",
+        "en": "Probably no"
+      },
+      "kind": "negative",
+      "aliases": [
+        "pn",
+        "probably no",
+        "prob no",
+        "valoszinuleg nem",
+        "vn"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "no_information",
+      "label": "NI",
+      "text": {
+        "hu": "Nincs információ",
+        "en": "No information"
+      },
+      "kind": "unknown",
+      "aliases": [
+        "ni",
+        "no information",
+        "no info",
+        "nincs informacio",
+        "nincs adat"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "probably_yes",
+    "probably_no",
+    "no",
+    "no_information"
+  ],
+  "verdicts": [
+    {
+      "value": "low",
+      "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+      },
+      "level": "low"
+    },
+    {
+      "value": "moderate",
+      "label": {
+        "hu": "Mérsékelt",
+        "en": "Moderate"
+      },
+      "level": "some"
+    },
+    {
+      "value": "serious",
+      "label": {
+        "hu": "Súlyos",
+        "en": "Serious"
+      },
+      "level": "high"
+    },
+    {
+      "value": "critical",
+      "label": {
+        "hu": "Kritikus",
+        "en": "Critical"
+      },
+      "level": "critical"
+    },
+    {
+      "value": "no_information",
+      "label": {
+        "hu": "Nincs információ",
+        "en": "No information"
+      },
+      "level": "ni"
+    }
+  ],
+  "domains": [
+    {
+      "id": "1",
+      "title": {
+        "hu": "Zavaró tényezők (confounding) miatti torzítás",
+        "en": "Bias due to confounding"
+      },
+      "short": "D1",
+      "passes": null,
+      "applicability": false,
+      "rules": [
+        {
+          "id": "1-a",
+          "if": {
+            "item": "1.1",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Nem várható zavarás (1.1 N/VN) → alacsony.",
+            "en": "No confounding expected (1.1 N/PN) → low."
+          }
+        },
+        {
+          "id": "1-b",
+          "if": {
+            "all": [
+              {
+                "all": [
+                  {
+                    "item": "1.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "1.3",
+                    "in": [
+                      "yes",
+                      "probably_yes",
+                      "no_information"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "1.7",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.7"
+          ],
+          "text": {
+            "hu": "Az idővel változó zavarást nem kontrollálták megfelelően (1.7 N/VN) → súlyos.",
+            "en": "Time-varying confounding not appropriately controlled (1.7 N/PN) → serious."
+          }
+        },
+        {
+          "id": "1-c",
+          "if": {
+            "all": [
+              {
+                "all": [
+                  {
+                    "item": "1.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "1.3",
+                    "in": [
+                      "yes",
+                      "probably_yes",
+                      "no_information"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "1.8",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.8"
+          ],
+          "text": {
+            "hu": "A kontrollált zavaró domének mérése nem érvényes / megbízható (1.8 N/VN) → súlyos.",
+            "en": "Controlled confounding domains not measured validly/reliably (1.8 N/PN) → serious."
+          }
+        },
+        {
+          "id": "1-d",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "1.2",
+                    "in": [
+                      "no",
+                      "probably_no",
+                      "no_information"
+                    ]
+                  },
+                  {
+                    "item": "1.3",
+                    "in": [
+                      "no",
+                      "probably_no",
+                      "no_information"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "1.4",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.4"
+          ],
+          "text": {
+            "hu": "Nem minden fontos zavaró domént kontrolláltak (1.4 N/VN) → súlyos.",
+            "en": "Not all important confounding domains controlled (1.4 N/PN) → serious."
+          }
+        },
+        {
+          "id": "1-e",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "1.2",
+                    "in": [
+                      "no",
+                      "probably_no",
+                      "no_information"
+                    ]
+                  },
+                  {
+                    "item": "1.3",
+                    "in": [
+                      "no",
+                      "probably_no",
+                      "no_information"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "1.5",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.5"
+          ],
+          "text": {
+            "hu": "A kontrollált zavaró domének mérése nem érvényes / megbízható (1.5 N/VN) → súlyos.",
+            "en": "Controlled confounding domains not measured validly/reliably (1.5 N/PN) → serious."
+          }
+        },
+        {
+          "id": "1-f",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "1.2",
+                    "in": [
+                      "no",
+                      "probably_no",
+                      "no_information"
+                    ]
+                  },
+                  {
+                    "item": "1.3",
+                    "in": [
+                      "no",
+                      "probably_no",
+                      "no_information"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "1.6",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "1.6"
+          ],
+          "text": {
+            "hu": "Beavatkozás utáni (közvetítő) változóra korrigáltak (1.6 I/VI) → súlyos.",
+            "en": "Adjusted for post-intervention variables (1.6 Y/PY) → serious."
+          }
+        },
+        {
+          "id": "1-g",
+          "if": {
+            "any": [
+              {
+                "all": [
+                  {
+                    "all": [
+                      {
+                        "item": "1.2",
+                        "in": [
+                          "yes",
+                          "probably_yes"
+                        ]
+                      },
+                      {
+                        "item": "1.3",
+                        "in": [
+                          "yes",
+                          "probably_yes",
+                          "no_information"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "any": [
+                      {
+                        "item": "1.7",
+                        "in": [
+                          "no_information"
+                        ]
+                      },
+                      {
+                        "item": "1.8",
+                        "in": [
+                          "no_information"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "any": [
+                      {
+                        "item": "1.2",
+                        "in": [
+                          "no",
+                          "probably_no",
+                          "no_information"
+                        ]
+                      },
+                      {
+                        "item": "1.3",
+                        "in": [
+                          "no",
+                          "probably_no",
+                          "no_information"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "any": [
+                      {
+                        "item": "1.4",
+                        "in": [
+                          "no_information"
+                        ]
+                      },
+                      {
+                        "item": "1.5",
+                        "in": [
+                          "no_information"
+                        ]
+                      },
+                      {
+                        "item": "1.6",
+                        "in": [
+                          "no_information"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "1.4",
+            "1.5",
+            "1.6",
+            "1.7",
+            "1.8"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a zavaró tényezők kezeléséről → mérsékelt (konzervatív; a „nincs információ” ítélet emberi döntés).",
+            "en": "No information on confounding control → moderate (conservative; 'no information' is a human judgement)."
+          }
+        },
+        {
+          "id": "1-h",
+          "if": {
+            "always": true
+          },
+          "tier": "some",
+          "because": [
+            "1.1"
+          ],
+          "text": {
+            "hu": "Várható zavarás, a fontos domének megfelelően kontrollálva → mérsékelt.",
+            "en": "Confounding expected, important domains appropriately controlled → moderate."
+          }
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": {
+        "hu": "A résztvevők beválasztásából eredő torzítás",
+        "en": "Bias in selection of participants into the study"
+      },
+      "short": "D2",
+      "passes": null,
+      "applicability": false,
+      "rules": [
+        {
+          "id": "2-a",
+          "if": {
+            "all": [
+              {
+                "all": [
+                  {
+                    "item": "2.1",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "2.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "2.3",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "2.5",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "2.2",
+            "2.3",
+            "2.5"
+          ],
+          "text": {
+            "hu": "A beválasztás a beavatkozással és a kimenettel is összefüggött (2.2, 2.3 I/VI), korrekció nélkül → súlyos.",
+            "en": "Selection related to both intervention and outcome (2.2, 2.3 Y/PY), not corrected → serious."
+          }
+        },
+        {
+          "id": "2-b",
+          "if": {
+            "all": [
+              {
+                "item": "2.4",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "2.5",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "2.4",
+            "2.5"
+          ],
+          "text": {
+            "hu": "A követés és a beavatkozás kezdete nem esik egybe (2.4 N/VN), korrekció nélkül → súlyos.",
+            "en": "Start of follow-up and intervention do not coincide (2.4 N/PN), not corrected → serious."
+          }
+        },
+        {
+          "id": "2-c",
+          "if": {
+            "all": [
+              {
+                "all": [
+                  {
+                    "item": "2.1",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "2.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "2.3",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "2.5",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "2.2",
+            "2.3"
+          ],
+          "text": {
+            "hu": "Szelekciós torzítás lehetősége, megfelelő korrekcióval (2.5 I/VI) → mérsékelt.",
+            "en": "Potential selection bias, corrected (2.5 Y/PY) → moderate."
+          }
+        },
+        {
+          "id": "2-d",
+          "if": {
+            "all": [
+              {
+                "item": "2.4",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "2.5",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "2.4"
+          ],
+          "text": {
+            "hu": "A követés és a beavatkozás kezdete nem esik egybe, megfelelő korrekcióval (2.5 I/VI) → mérsékelt.",
+            "en": "Start of follow-up and intervention do not coincide, corrected (2.5 Y/PY) → moderate."
+          }
+        },
+        {
+          "id": "2-e",
+          "if": {
+            "any": [
+              {
+                "item": "2.1",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "item": "2.1",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "2.2",
+                    "in": [
+                      "no_information"
+                    ]
+                  }
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "item": "2.1",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "2.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "2.3",
+                    "in": [
+                      "no_information"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "2.4",
+                "in": [
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "2.1",
+            "2.2",
+            "2.3",
+            "2.4"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a beválasztásról → mérsékelt (konzervatív).",
+            "en": "No information on selection → moderate (conservative)."
+          }
+        },
+        {
+          "id": "2-f",
+          "if": {
+            "always": true
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Nincs szelekciós torzításra utaló válasz → alacsony.",
+            "en": "No answer indicating selection bias → low."
+          }
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "title": {
+        "hu": "A beavatkozások besorolásából eredő torzítás",
+        "en": "Bias in classification of interventions"
+      },
+      "short": "D3",
+      "passes": null,
+      "applicability": false
+    },
+    {
+      "id": "4",
+      "title": {
+        "hu": "A tervezett beavatkozástól való eltérés miatti torzítás",
+        "en": "Bias due to deviations from intended interventions"
+      },
+      "short": "D4",
+      "passes": null,
+      "applicability": false,
+      "rules": [
+        {
+          "id": "4-a",
+          "scopes": [
+            "assignment"
+          ],
+          "if": {
+            "item": "4.1",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Nincs a szokásos gyakorlaton túli eltérés (4.1 N/VN) → alacsony.",
+            "en": "No deviations beyond usual practice (4.1 N/PN) → low."
+          }
+        },
+        {
+          "id": "4-b",
+          "scopes": [
+            "assignment"
+          ],
+          "if": {
+            "all": [
+              {
+                "item": "4.1",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "4.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "4.1",
+            "4.2"
+          ],
+          "text": {
+            "hu": "Kiegyensúlyozatlan, a kimenetet valószínűleg befolyásoló eltérések (4.2 I/VI) → súlyos.",
+            "en": "Unbalanced deviations likely to have affected the outcome (4.2 Y/PY) → serious."
+          }
+        },
+        {
+          "id": "4-c",
+          "scopes": [
+            "assignment"
+          ],
+          "if": {
+            "all": [
+              {
+                "item": "4.1",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "4.2",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "4.1"
+          ],
+          "text": {
+            "hu": "Volt eltérés, de nem kiegyensúlyozatlan / nem befolyásolta a kimenetet (4.2 N/VN) → mérsékelt (konzervatív).",
+            "en": "Deviations, but not unbalanced / not affecting the outcome (4.2 N/PN) → moderate (conservative)."
+          }
+        },
+        {
+          "id": "4-d",
+          "scopes": [
+            "assignment"
+          ],
+          "if": {
+            "always": true
+          },
+          "tier": "some",
+          "because": [
+            "4.1",
+            "4.2"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ az eltérésekről → mérsékelt (konzervatív).",
+            "en": "No information on deviations → moderate (conservative)."
+          }
+        },
+        {
+          "id": "4-e",
+          "scopes": [
+            "adherence"
+          ],
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "4.3",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "4.4",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "4.5",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "4.6",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "4.3",
+            "4.4",
+            "4.5",
+            "4.6"
+          ],
+          "text": {
+            "hu": "Kiegyensúlyozatlan ko-intervenció vagy hibás megvalósítás / adherencia, megfelelő elemzés nélkül (4.6 N/VN/NI) → súlyos.",
+            "en": "Unbalanced co-interventions or failed implementation / adherence, without an appropriate analysis (4.6 N/PN/NI) → serious."
+          }
+        },
+        {
+          "id": "4-f",
+          "scopes": [
+            "adherence"
+          ],
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "4.3",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "4.4",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "4.5",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "4.6",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "4.3",
+            "4.4",
+            "4.5"
+          ],
+          "text": {
+            "hu": "Eltérések a tervezett beavatkozástól, megfelelő elemzéssel (4.6 I/VI) → mérsékelt.",
+            "en": "Deviations from the intended intervention, with an appropriate analysis (4.6 Y/PY) → moderate."
+          }
+        },
+        {
+          "id": "4-g",
+          "scopes": [
+            "adherence"
+          ],
+          "if": {
+            "any": [
+              {
+                "item": "4.3",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "4.4",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "4.5",
+                "in": [
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "4.3",
+            "4.4",
+            "4.5"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a ko-intervenciókról / megvalósításról / adherenciáról → mérsékelt (konzervatív).",
+            "en": "No information on co-interventions / implementation / adherence → moderate (conservative)."
+          }
+        },
+        {
+          "id": "4-h",
+          "scopes": [
+            "adherence"
+          ],
+          "if": {
+            "always": true
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Kiegyensúlyozott ko-intervenciók, sikeres megvalósítás és adherencia → alacsony.",
+            "en": "Balanced co-interventions, successful implementation and adherence → low."
+          }
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "title": {
+        "hu": "Hiányzó adatok miatti torzítás",
+        "en": "Bias due to missing data"
+      },
+      "short": "D5",
+      "passes": null,
+      "applicability": false,
+      "rules": [
+        {
+          "id": "5-a",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "5.1",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "5.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "5.3",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "any": [
+                  {
+                    "item": "5.4",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "5.5",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Hiányzó adat, de az arány és az ok hasonló (5.4 I/VI), vagy az eredmény robusztus (5.5 I/VI) → alacsony.",
+            "en": "Missing data, but proportions and reasons similar (5.4 Y/PY) or results robust (5.5 Y/PY) → low."
+          }
+        },
+        {
+          "id": "5-b",
+          "if": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "item": "5.1",
+                    "in": [
+                      "no",
+                      "probably_no"
+                    ]
+                  },
+                  {
+                    "item": "5.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "5.3",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "item": "5.4",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "5.5",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "5.1",
+            "5.2",
+            "5.3",
+            "5.4",
+            "5.5"
+          ],
+          "text": {
+            "hu": "Hiányzó adat, eltérő arányban / okból, robusztusság nélkül (5.4, 5.5 N/VN) → súlyos (konzervatív; enyhe eltérésnél mérsékelt is lehet).",
+            "en": "Missing data, differing proportions / reasons, not robust (5.4, 5.5 N/PN) → serious (conservative; slight differences may justify moderate)."
+          }
+        },
+        {
+          "id": "5-c",
+          "if": {
+            "any": [
+              {
+                "item": "5.1",
+                "in": [
+                  "no",
+                  "probably_no"
+                ]
+              },
+              {
+                "item": "5.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "5.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "5.4",
+            "5.5"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Hiányzó adat, a hatásáról nincs információ → mérsékelt (konzervatív).",
+            "en": "Missing data with no information on its impact → moderate (conservative)."
+          }
+        },
+        {
+          "id": "5-d",
+          "if": {
+            "any": [
+              {
+                "item": "5.1",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "5.2",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "5.3",
+                "in": [
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "5.1",
+            "5.2",
+            "5.3"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a hiányzó adatokról → mérsékelt (konzervatív).",
+            "en": "No information on missing data → moderate (conservative)."
+          }
+        },
+        {
+          "id": "5-e",
+          "if": {
+            "always": true
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Teljes vagy közel teljes adat, kizárás nélkül → alacsony.",
+            "en": "Complete or nearly complete data, no exclusions → low."
+          }
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "title": {
+        "hu": "A kimenet mérésének torzítása",
+        "en": "Bias in measurement of outcomes"
+      },
+      "short": "D6",
+      "passes": null,
+      "applicability": false,
+      "rules": [
+        {
+          "id": "6-a",
+          "if": {
+            "item": "6.3",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "6.3"
+          ],
+          "text": {
+            "hu": "A kimenetmérés módszerei nem összehasonlíthatók (6.3 N/VN) → súlyos.",
+            "en": "Outcome assessment methods not comparable (6.3 N/PN) → serious."
+          }
+        },
+        {
+          "id": "6-b",
+          "if": {
+            "item": "6.4",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "6.4"
+          ],
+          "text": {
+            "hu": "A mérési hiba összefügg a beavatkozással (6.4 I/VI) → súlyos.",
+            "en": "Measurement error related to intervention (6.4 Y/PY) → serious."
+          }
+        },
+        {
+          "id": "6-c",
+          "if": {
+            "all": [
+              {
+                "item": "6.1",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "6.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          "tier": "high",
+          "because": [
+            "6.1",
+            "6.2"
+          ],
+          "text": {
+            "hu": "Szubjektív kimenet, a beavatkozást ismerő értékelőkkel (6.1, 6.2 I/VI) → súlyos.",
+            "en": "Subjective outcome assessed by assessors aware of the intervention (6.1, 6.2 Y/PY) → serious."
+          }
+        },
+        {
+          "id": "6-d",
+          "if": {
+            "any": [
+              {
+                "item": "6.3",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "item": "6.4",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "item": "6.1",
+                    "in": [
+                      "yes",
+                      "probably_yes",
+                      "no_information"
+                    ]
+                  },
+                  {
+                    "item": "6.2",
+                    "in": [
+                      "yes",
+                      "probably_yes",
+                      "no_information"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "6.1",
+            "6.2",
+            "6.3",
+            "6.4"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ a kimenet méréséről → mérsékelt (konzervatív).",
+            "en": "No information on outcome measurement → moderate (conservative)."
+          }
+        },
+        {
+          "id": "6-e",
+          "if": {
+            "always": true
+          },
+          "tier": "low",
+          "because": [],
+          "text": {
+            "hu": "Objektív vagy vakon értékelt kimenet, összehasonlítható módszerekkel → alacsony.",
+            "en": "Objective or blind-assessed outcome with comparable methods → low."
+          }
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "title": {
+        "hu": "A közölt eredmény kiválasztásának torzítása",
+        "en": "Bias in selection of the reported result"
+      },
+      "short": "D7",
+      "passes": null,
+      "applicability": false
+    }
+  ],
+  "items": [
+    {
+      "id": "1.1",
+      "key": "1.1",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Fennáll-e ebben a vizsgálatban a beavatkozás hatásának zavaró tényezők általi torzítása?",
+        "en": "Is there potential for confounding of the effect of intervention in this study?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Megfigyeléses vizsgálatnál szinte mindig Igen; Nem csak akkor, ha a beavatkozás kiosztása gyakorlatilag véletlenszerű volt — ekkor a domén alacsony kockázatú, és a többi kérdést (1.2–1.8) nem kell feltenni (Nem alkalmazható). Ennél a kérdésnél nincs „Nincs információ” válasz. Az „Igen” önmagában legalább mérsékelt kockázatot jelent, mert a ROBINS-I-ben az „alacsony” a jól kivitelezett randomizált vizsgálattal egyenértékű.",
+        "en": "Almost always Yes for an observational study; No only where intervention allocation was effectively random — the domain is then Low and 1.2–1.8 are not asked (Not applicable). There is no 'No information' option here. A Yes alone means at least moderate risk."
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no"
+      ],
+      "severity": "some"
+    },
+    {
+      "id": "1.2",
+      "key": "1.2",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.1 válasza I/VI: a résztvevők követési idejét a ténylegesen kapott beavatkozás szerint bontották-e fel?",
+        "en": "If Y/PY to 1.1: was the analysis based on splitting participants' follow-up time according to intervention received?"
+      },
+      "tags": [
+        "all",
+        "router"
+      ],
+      "polarity": "router",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Irányító kérdés: N/VN → a kiindulási zavarás kérdései (1.4–1.6); I/VI → 1.3.",
+        "en": "Routing question: N/PN → baseline confounding questions (1.4–1.6); Y/PY → 1.3."
+      },
+      "condition": {
+        "hu": "Ha az 1.1 válasza I/VI",
+        "en": "If Y/PY to 1.1"
+      },
+      "ask_if": {
+        "item": "1.1",
+        "in": [
+          "yes",
+          "probably_yes"
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.3",
+      "key": "1.3",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.2 válasza I/VI: valószínű-e, hogy a beavatkozás abbahagyása vagy a váltás a kimenet szempontjából prognosztikus tényezőkkel függött össze?",
+        "en": "If Y/PY to 1.2: were intervention discontinuations or switches likely to be related to factors that are prognostic for the outcome?"
+      },
+      "tags": [
+        "all",
+        "router"
+      ],
+      "polarity": "router",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Irányító kérdés, nem probléma-jelző: N/VN → csak a kiindulási zavarás kérdései (1.4–1.6); I/VI → a kiindulási ÉS az idővel változó zavarás kérdései (1.7–1.8). A jól kezelt idővel változó zavarás (1.7–1.8 I/VI) nem ad súlyos kockázatot.",
+        "en": "Routing question, not a problem marker: N/PN → baseline confounding only (1.4–1.6); Y/PY → baseline AND time-varying confounding (1.7–1.8). Well-handled time-varying confounding (1.7–1.8 Y/PY) does not make the domain serious."
+      },
+      "condition": {
+        "hu": "Ha az 1.2 válasza I/VI",
+        "en": "If Y/PY to 1.2"
+      },
+      "ask_if": {
+        "all": [
+          {
+            "item": "1.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "item": "1.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.4",
+      "key": "1.4",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Kiindulási zavarás (ha az 1.2 vagy az 1.3 válasza N/VN): megfelelő elemzési módszerrel kontrollálták-e az összes fontos zavaró domént?",
+        "en": "Baseline confounding (if N/PN to 1.2 or 1.3): did the authors use an appropriate analysis method that controlled for all the important confounding domains?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "„Az összes fontos” azokat jelenti, amelyeket TE soroltál fel a cikk elolvasása előtt (a témából, nem a cikk táblázatából) — különben a vizsgálat maga szabja meg a mércét.",
+        "en": "\"All the important\" means the ones *you* listed before reading the paper. Decide the confounder list from the topic, not from the paper's own table — otherwise the study defines the standard it is judged by."
+      },
+      "condition": {
+        "hu": "Ha az 1.2 vagy az 1.3 válasza N/VN",
+        "en": "If N/PN to 1.2 or 1.3"
+      },
+      "ask_if": {
+        "all": [
+          {
+            "item": "1.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "any": [
+              {
+                "item": "1.2",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.5",
+      "key": "1.5",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.4 válasza I/VI: érvényesen és megbízhatóan mérték-e a kontrollált zavaró doméneket a rendelkezésre álló változók?",
+        "en": "If Y/PY to 1.4: were confounding domains that were controlled for measured validly and reliably by the variables available in this study?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Egy erős zavaró tényező önbevallásos helyettesítője „mérve” van, de valójában nincs kontrollálva.",
+        "en": "A self-reported proxy for a strong confounder is measured, not controlled."
+      },
+      "condition": {
+        "hu": "Ha az 1.4 válasza I/VI",
+        "en": "If Y/PY to 1.4"
+      },
+      "ask_if": {
+        "all": [
+          {
+            "item": "1.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "any": [
+              {
+                "item": "1.2",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "1.4",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.6",
+      "key": "1.6",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Kiindulási zavarás: korrigáltak-e a szerzők olyan, a beavatkozás után mért változókra, amelyeket a beavatkozás befolyásolhatott?",
+        "en": "Baseline confounding: did the authors control for any post-intervention variables that could have been affected by the intervention?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Közvetítő változóra korrigálni túlkorrigálás, és torzítja a teljes hatást — gyakori és láthatatlan hiba, mert szigorúbb korrekciónak látszik.",
+        "en": "Adjusting for a mediator is over-adjustment and biases the total effect — a common and invisible error, because it looks like more rigorous adjustment."
+      },
+      "condition": {
+        "hu": "Ha az 1.2 vagy az 1.3 válasza N/VN",
+        "en": "If N/PN to 1.2 or 1.3"
+      },
+      "ask_if": {
+        "all": [
+          {
+            "item": "1.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "any": [
+              {
+                "item": "1.2",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "no",
+                  "probably_no",
+                  "no_information"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.7",
+      "key": "1.7",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Kiindulási és idővel változó zavarás (ha az 1.3 válasza I/VI): megfelelő elemzési módszerrel kontrollálták-e az összes fontos zavaró domént és az idővel változó zavaró tényezőket?",
+        "en": "Baseline and time-varying confounding (if Y/PY to 1.3): did the authors use an appropriate analysis method that controlled for all the important confounding domains and for time-varying confounding?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Például marginális strukturális modell vagy g-becslés. A szokásos regresszió idővel változó expozícióval nem kontrollálja azt a zavaró tényezőt, amelyet a korábbi expozíció befolyásolt.",
+        "en": "Marginal structural models, g-estimation. Standard regression on a time-varying exposure with a time-varying confounder affected by prior exposure does not control it."
+      },
+      "condition": {
+        "hu": "Ha az 1.3 válasza I/VI",
+        "en": "If Y/PY to 1.3"
+      },
+      "ask_if": {
+        "all": [
+          {
+            "item": "1.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "all": [
+              {
+                "item": "1.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "yes",
+                  "probably_yes",
+                  "no_information"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "1.8",
+      "key": "1.8",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 1.7 válasza I/VI: érvényesen és megbízhatóan mérték-e a kontrollált zavaró doméneket a rendelkezésre álló változók?",
+        "en": "If Y/PY to 1.7: were confounding domains that were controlled for measured validly and reliably by the variables available in this study?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha az 1.7 válasza I/VI",
+        "en": "If Y/PY to 1.7"
+      },
+      "ask_if": {
+        "all": [
+          {
+            "item": "1.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "all": [
+              {
+                "item": "1.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "1.3",
+                "in": [
+                  "yes",
+                  "probably_yes",
+                  "no_information"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "1.7",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "2.1",
+      "key": "2.1",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "A vizsgálatba (vagy az elemzésbe) való beválasztás a beavatkozás kezdete után megfigyelt jellemzőkön alapult-e?",
+        "en": "Was selection of participants into the study (or into the analysis) based on participant characteristics observed after the start of intervention?"
+      },
+      "tags": [
+        "all",
+        "router"
+      ],
+      "polarity": "router",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Irányító kérdés (N/VN → 2.4). Itt jelenik meg a „halhatatlan idő” torzítás (immortal time bias) és a prevalens felhasználós elrendezés: ha azokat választják be, akik elég sokáig éltek a beavatkozáshoz, az eredmény már a kohorszba van építve.",
+        "en": "Routing question (N/PN → 2.4). Immortal time bias and prevalent-user designs live here: selecting people who survived long enough to receive the intervention builds the result into the cohort."
+      }
+    },
+    {
+      "id": "2.2",
+      "key": "2.2",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 2.1 válasza I/VI: összefüggtek-e a beválasztást befolyásoló, beavatkozás utáni változók a beavatkozással?",
+        "en": "If Y/PY to 2.1: were the post-intervention variables that influenced selection likely to be associated with intervention?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha a 2.1 válasza I/VI",
+        "en": "If Y/PY to 2.1"
+      },
+      "ask_if": {
+        "item": "2.1",
+        "in": [
+          "yes",
+          "probably_yes"
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "2.3",
+      "key": "2.3",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 2.2 válasza I/VI: befolyásolta-e a beválasztást meghatározó, beavatkozás utáni változókat a kimenet vagy a kimenet valamely oka?",
+        "en": "If Y/PY to 2.2: were the post-intervention variables that influenced selection likely to be influenced by the outcome or a cause of the outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha a 2.2 válasza I/VI",
+        "en": "If Y/PY to 2.2"
+      },
+      "ask_if": {
+        "all": [
+          {
+            "item": "2.1",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "item": "2.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "2.4",
+      "key": "2.4",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "A résztvevők többségénél egybeesett-e a követés kezdete és a beavatkozás kezdete?",
+        "en": "Do start of follow-up and start of intervention coincide for most participants?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ha nem, a köztes, nem megfigyelt időszakban halmozódik fel a „halhatatlan idő”.",
+        "en": "When they do not, the unobserved period between them is where immortal time accumulates."
+      }
+    },
+    {
+      "id": "2.5",
+      "key": "2.5",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 2.2 és a 2.3 válasza I/VI, vagy a 2.4 válasza N/VN: alkalmaztak-e olyan korrekciós eljárást, amely valószínűleg kiküszöböli a szelekciós torzításokat?",
+        "en": "If Y/PY to 2.2 and 2.3, or N/PN to 2.4: were adjustment techniques used that are likely to correct for the presence of selection biases?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ilyen eljárás (pl. inverz valószínűségi súlyozás) ritka; a válasz többnyire Nem.",
+        "en": "Such methods (e.g. inverse probability weighting) are rarely used; the answer is usually No."
+      },
+      "condition": {
+        "hu": "Ha a 2.2 és a 2.3 válasza I/VI, vagy a 2.4 válasza N/VN",
+        "en": "If Y/PY to 2.2 and 2.3, or N/PN to 2.4"
+      },
+      "ask_if": {
+        "any": [
+          {
+            "all": [
+              {
+                "item": "2.1",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "2.2",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              },
+              {
+                "item": "2.3",
+                "in": [
+                  "yes",
+                  "probably_yes"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "2.4",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "3.1",
+      "key": "3.1",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Egyértelműen definiálták-e a beavatkozási csoportokat?",
+        "en": "Were intervention groups clearly defined?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A dózissal, az időtartammal és az összehasonlítóval együtt. A „használók kontra nem használók” nem definíció.",
+        "en": "Including the dose, duration and comparator. \"Users versus non-users\" is not a definition."
+      }
+    },
+    {
+      "id": "3.2",
+      "key": "3.2",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "A beavatkozási csoportok meghatározásához használt információt a beavatkozás kezdetekor rögzítették-e?",
+        "en": "Was the information used to define intervention groups recorded at the start of the intervention?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "3.3",
+      "key": "3.3",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "Befolyásolhatta-e a beavatkozási státusz besorolását a kimenet vagy a kimenet kockázatának ismerete?",
+        "en": "Could classification of intervention status have been affected by knowledge of the outcome or risk of the outcome?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az eset-kontroll elrendezés visszaemlékezési torzítása itt jelenik meg.",
+        "en": "Recall bias in a case-control design sits here."
+      }
+    },
+    {
+      "id": "4.1",
+      "key": "4.1",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "A kiosztás hatása: volt-e a szokásos gyakorlatban várhatónál nagyobb eltérés a tervezett beavatkozástól?",
+        "en": "Effect of assignment: were there deviations from the intended intervention beyond what would be expected in usual practice?"
+      },
+      "tags": [
+        "assignment",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A szokásos gyakorlatban is előforduló eltérés (pl. toxicitás miatti abbahagyás) a beavatkozás része, nem torzítás.",
+        "en": "Deviations that happen in usual practice are part of the intended intervention and do not cause bias."
+      }
+    },
+    {
+      "id": "4.2",
+      "key": "4.2",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 4.1 válasza I/VI: kiegyensúlyozatlanok voltak-e ezek az eltérések a csoportok között, és valószínűleg befolyásolták-e a kimenetet?",
+        "en": "If Y/PY to 4.1: were these deviations from intended intervention unbalanced between groups and likely to have affected the outcome?"
+      },
+      "tags": [
+        "assignment",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha a 4.1 válasza I/VI",
+        "en": "If Y/PY to 4.1"
+      },
+      "ask_if": {
+        "item": "4.1",
+        "in": [
+          "yes",
+          "probably_yes"
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "4.3",
+      "key": "4.3",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "A megkezdés és betartás hatása: kiegyensúlyozottak voltak-e a fontos együttes beavatkozások (ko-intervenciók) a csoportok között?",
+        "en": "Effect of starting and adhering: were important co-interventions balanced across intervention groups?"
+      },
+      "tags": [
+        "adherence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a jó válasz (kiegyensúlyozott ko-intervenció).",
+        "en": "Yes is the good answer."
+      }
+    },
+    {
+      "id": "4.4",
+      "key": "4.4",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Sikeresen valósították-e meg a beavatkozást a résztvevők többségénél?",
+        "en": "Was the intervention implemented successfully for most participants?"
+      },
+      "tags": [
+        "adherence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "4.5",
+      "key": "4.5",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Betartották-e a résztvevők a kijelölt beavatkozási rendet?",
+        "en": "Did study participants adhere to the assigned intervention regimen?"
+      },
+      "tags": [
+        "adherence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Egyszer adott beavatkozásnál (ahol a nem-adherencia nem lehetséges) a válasz Igen.",
+        "en": "Answer Yes for interventions given once, where non-adherence is not possible."
+      }
+    },
+    {
+      "id": "4.6",
+      "key": "4.6",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Ha a 4.3, a 4.4 vagy a 4.5 válasza N/VN: megfelelő elemzéssel becsülték-e a beavatkozás megkezdésének és betartásának hatását?",
+        "en": "If N/PN to 4.3, 4.4 or 4.5: was an appropriate analysis used to estimate the effect of starting and adhering to the intervention?"
+      },
+      "tags": [
+        "adherence"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Például inverz valószínűségi súlyozás vagy instrumentális változós becslés. Ha az egyik csoport minden tagja kapott ko-intervenciót, ez korrekcióval nem javítható.",
+        "en": "E.g. inverse probability weighting or instrumental variable estimation. If everyone in one group received a co-intervention, no adjustment can repair it."
+      },
+      "condition": {
+        "hu": "Ha a 4.3, a 4.4 vagy a 4.5 válasza N/VN",
+        "en": "If N/PN to 4.3, 4.4 or 4.5"
+      },
+      "ask_if": {
+        "any": [
+          {
+            "item": "4.3",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          {
+            "item": "4.4",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          {
+            "item": "4.5",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "5.1",
+      "key": "5.1",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Rendelkezésre álltak-e a kimeneti adatok az összes vagy szinte az összes résztvevőre?",
+        "en": "Were outcome data available for all, or nearly all, participants?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "5.2",
+      "key": "5.2",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Kizártak-e résztvevőket a beavatkozási státuszra vonatkozó hiányzó adat miatt?",
+        "en": "Were participants excluded due to missing data on intervention status?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a 5.4–5.5 kérdésekhez vezet.",
+        "en": "Yes leads to 5.4–5.5."
+      }
+    },
+    {
+      "id": "5.3",
+      "key": "5.3",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Kizártak-e résztvevőket más, az elemzéshez szükséges változóra (pl. kontrollált zavaró tényezőre) vonatkozó hiányzó adat miatt?",
+        "en": "Were participants excluded due to missing data on other variables needed for the analysis?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a 5.4–5.5 kérdésekhez vezet.",
+        "en": "Yes leads to 5.4–5.5."
+      }
+    },
+    {
+      "id": "5.4",
+      "key": "5.4",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 5.1 válasza VN/N, vagy az 5.2 vagy az 5.3 válasza I/VI: hasonló-e a hiányzó adatú résztvevők aránya és a hiány oka a beavatkozási csoportok között?",
+        "en": "If PN/N to 5.1, or Y/PY to 5.2 or 5.3: are the proportion of participants and reasons for missing data similar across interventions?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "condition": {
+        "hu": "Ha az 5.1 válasza VN/N, vagy az 5.2 vagy az 5.3 válasza I/VI",
+        "en": "If PN/N to 5.1, or Y/PY to 5.2 or 5.3"
+      },
+      "ask_if": {
+        "any": [
+          {
+            "item": "5.1",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          {
+            "item": "5.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "item": "5.3",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "5.5",
+      "key": "5.5",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Ha az 5.1 válasza VN/N, vagy az 5.2 vagy az 5.3 válasza I/VI: van-e bizonyíték arra, hogy az eredmény robusztus a hiányzó adatokra?",
+        "en": "If PN/N to 5.1, or Y/PY to 5.2 or 5.3: is there evidence that results were robust to the presence of missing data?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Bizonyíték lehet a hiány kezelésének módja és az érzékenységi elemzés; a többszörös imputálás önmagában nem garancia — vesd össze a teljes esetes elemzéssel.",
+        "en": "Evidence may come from how missing data were handled and sensitivity analyses; multiple imputation alone is no guarantee — compare with the complete-case analysis."
+      },
+      "condition": {
+        "hu": "Ha az 5.1 válasza VN/N, vagy az 5.2 vagy az 5.3 válasza I/VI",
+        "en": "If PN/N to 5.1, or Y/PY to 5.2 or 5.3"
+      },
+      "ask_if": {
+        "any": [
+          {
+            "item": "5.1",
+            "in": [
+              "no",
+              "probably_no"
+            ]
+          },
+          {
+            "item": "5.2",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          },
+          {
+            "item": "5.3",
+            "in": [
+              "yes",
+              "probably_yes"
+            ]
+          }
+        ]
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "6.1",
+      "key": "6.1",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Befolyásolhatta-e a kimenet mérését a kapott beavatkozás ismerete?",
+        "en": "Could the outcome measure have been influenced by knowledge of the intervention received?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Regiszterben rögzített halálozást nem; klinikus által megítélt diagnózist igen.",
+        "en": "A registry-recorded death cannot; a clinician-adjudicated diagnosis can."
+      }
+    },
+    {
+      "id": "6.2",
+      "key": "6.2",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Tudtak-e a kimenet értékelői arról, ki milyen beavatkozást kapott?",
+        "en": "Were outcome assessors aware of the intervention received by study participants?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ha a résztvevők maguk jelentik a kimenetet (kérdőív), az értékelő maga a résztvevő.",
+        "en": "When participants report their own outcomes, the assessor is the participant."
+      }
+    },
+    {
+      "id": "6.3",
+      "key": "6.3",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Összehasonlíthatók voltak-e a kimenet értékelésének módszerei a beavatkozási csoportok között?",
+        "en": "Were the methods of outcome assessment comparable across intervention groups?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az „Igen” a jó válasz. Az eltérő megfigyelési intenzitás — több vizsgálat a kezelt csoportban — észlelési torzítást okoz, amit semmilyen korrekció nem javít.",
+        "en": "Yes is the good answer. Differential surveillance — more testing in the treated group — produces detection bias that no adjustment repairs."
+      }
+    },
+    {
+      "id": "6.4",
+      "key": "6.4",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Összefüggtek-e a kimenet mérésének esetleges szisztematikus hibái a kapott beavatkozással?",
+        "en": "Were any systematic errors in measurement of the outcome related to intervention received?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A kimenet differenciális félreosztályozása — akkor is előfordulhat, ha az értékelők vakok és a módszerek azonosak.",
+        "en": "Differential misclassification of the outcome — it can occur even with blinded assessors and comparable methods."
+      }
+    },
+    {
+      "id": "7.1",
+      "key": "7.1",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt hatásbecslést az eredmények alapján választották ki a kimeneti doménen belüli több mérés közül?",
+        "en": "Is the reported effect estimate likely to be selected, on the basis of the results, from multiple outcome measurements within the outcome domain?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null
+    },
+    {
+      "id": "7.2",
+      "key": "7.2",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt hatásbecslést a beavatkozás–kimenet kapcsolat több elemzése közül választották ki?",
+        "en": "... from multiple analyses of the intervention-outcome relationship?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Megfigyeléses kutatásban ez a legnagyobb szabadságfok: modellspecifikáció, kovariáns-készletek, kategorizálási vágópontok.",
+        "en": "In observational research this is the largest single degree of freedom: model specification, covariate sets, categorisation cut-points."
+      }
+    },
+    {
+      "id": "7.3",
+      "key": "7.3",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Valószínű-e, hogy a közölt hatásbecslést különböző alcsoportok közül választották ki?",
+        "en": "... from different subgroups?"
+      },
+      "tags": [
+        "all",
+        "reverse"
+      ],
+      "polarity": "reverse",
+      "critical": false,
+      "scopes": [
+        "assignment",
+        "adherence"
+      ],
+      "applies_to": null
+    }
+  ],
+  "rollup": {
+    "algorithm": "conservative",
+    "basis": "robins-i-2016-criteria-conservative",
+    "official": false,
+    "overall": "worst",
+    "tiers": {
+      "low": "low",
+      "some": "moderate",
+      "high": "serious"
+    },
+    "label": {
+      "hu": "Konzervatív szabály a ROBINS-I (2016) kritériumai szerint — NEM a hivatalos ROBINS-I algoritmus",
+      "en": "Conservative rule following the ROBINS-I (2016) criteria — NOT the official ROBINS-I algorithm"
+    },
+    "note": {
+      "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). A 3. és 7. domén a polaritás-alapú szabályt használja. A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
+      "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Domains 3 and 7 use the polarity rule. The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
+    },
+    "differences_from_validator": [
+      {
+        "hu": "A tételkészlet a publikált 2016-os eszközé (34 tétel; a validator 1.0.0 31 tétele helyett): 4.1–4.2 csak a besorolás, 4.3–4.6 csak a betartás hatására; az 5.2/5.3 szétválasztva; 5.5 és 6.4 pótolva.",
+        "en": "The item set is the published 2016 tool (34 items instead of validator 1.0.0's 31): 4.1–4.2 for assignment only, 4.3–4.6 for adherence only; 5.2/5.3 split; 5.5 and 6.4 added."
+      },
+      {
+        "hu": "Az 1.3 irányító kérdés (nem probléma-jelző); az 1.4–1.6 és az 1.7–1.8 ág az 1.2–1.3 szerint; a 2.5 feltétele „ha a 2.2 és a 2.3 I/VI, vagy a 2.4 N/VN”.",
+        "en": "1.3 is a routing question (not a problem marker); the 1.4–1.6 and 1.7–1.8 branches follow 1.2–1.3; 2.5 applies 'if Y/PY to 2.2 and 2.3, or N/PN to 2.4'."
+      },
+      {
+        "hu": "Az 1.1 „Igen” válasza legalább mérsékelt szintet ad, nem súlyosat.",
+        "en": "A 'Yes' to 1.1 yields at least moderate, not serious."
+      }
+    ]
+  },
+  "rob_column": {
+    "low": "low",
+    "moderate": "some",
+    "serious": "high",
+    "critical": "critical",
+    "no_information": "no information"
+  },
+  "counts": {
+    "parsed": 34,
+    "published": 34,
+    "per_scope": {
+      "assignment": 30,
+      "adherence": 32
+    },
+    "per_pass": null
+  },
+  "notes": [
+    {
+      "hu": "Domént és összítéletet ne összegezz és ne átlagolj: a ROBINS-I-nek nincs pontszáma. Az összítélet a legrosszabb domén; több mérsékelt domén együtt indokolhat súlyosat — ezt ki kell mondani.",
+      "en": "Never sum or average domains: ROBINS-I has no score. Overall = the worst domain; several moderate domains together may justify serious — say so if you make that call."
+    }
+  ],
+  "validator_differences": [
+    {
+      "item": "1.3",
+      "validator": "reverse",
+      "here": "router",
+      "reason": {
+        "hu": "A 2016-os eszközben az 1.3 csak az 1.4–1.6 / 1.7–1.8 ágat választja ki.",
+        "en": "In the 2016 tool 1.3 only selects the 1.4–1.6 / 1.7–1.8 branch."
+      }
+    },
+    {
+      "item": "1.7",
+      "validator": "If Y/PY to 1.2",
+      "here": "If Y/PY to 1.3",
+      "reason": {
+        "hu": "2016-os Table A: „If Y/PY [to 1.3], answer 1.7 and 1.8”.",
+        "en": "2016 Table A: 'If Y/PY [to 1.3], answer 1.7 and 1.8'."
+      }
+    },
+    {
+      "item": "2.5",
+      "validator": "If N/PN to 2.3 or N/PN to 2.4",
+      "here": "If Y/PY to 2.2 and 2.3, or N/PN to 2.4",
+      "reason": {
+        "hu": "2016-os Table A.",
+        "en": "2016 Table A."
+      }
+    },
+    {
+      "item": "4.3",
+      "validator": "analysis appropriate (assignment scope)",
+      "here": "co-interventions balanced (adherence scope)",
+      "reason": {
+        "hu": "2016-os Table A: a besorolás hatására csak 4.1–4.2; a betartásra 4.3–4.6, a 4.6 feltételes elemzés-kérdéssel.",
+        "en": "2016 Table A: assignment 4.1–4.2 only; adherence 4.3–4.6 with the conditional analysis question 4.6."
+      }
+    },
+    {
+      "item": "4.4",
+      "validator": "reverse (co-interventions)",
+      "here": "normal (implemented successfully)",
+      "reason": {
+        "hu": "Az „Igen” a jó válasz.",
+        "en": "Yes is the good answer."
+      }
+    },
+    {
+      "item": "5.2",
+      "validator": "normal (merged with 5.3)",
+      "here": "reverse; 5.2 és 5.3 külön",
+      "reason": {
+        "hu": "2016-os Table A: 5.2 beavatkozási státusz, 5.3 egyéb változók; az „Igen” a probléma.",
+        "en": "2016 Table A: 5.2 intervention status, 5.3 other variables; Yes is the problem."
+      }
+    },
+    {
+      "item": "5.5",
+      "validator": "—",
+      "here": "added",
+      "reason": {
+        "hu": "2016-os Table A.",
+        "en": "2016 Table A."
+      }
+    },
+    {
+      "item": "6.3",
+      "validator": "reverse",
+      "here": "normal",
+      "reason": {
+        "hu": "Az összehasonlítható kimenetmérés a jó válasz (Igen = rendben).",
+        "en": "Comparable outcome assessment is the good answer (Yes = fine)."
+      }
+    },
+    {
+      "item": "6.4",
+      "validator": "—",
+      "here": "added",
+      "reason": {
+        "hu": "2016-os Table A.",
+        "en": "2016 Table A."
+      }
+    },
+    {
+      "item": "1.1",
+      "validator": "reverse (high)",
+      "here": "reverse (legalább mérsékelt)",
+      "reason": {
+        "hu": "A zavarás lehetősége önmagában a mérsékelt szintet zárja ki az alacsonyt, nem súlyos kockázat.",
+        "en": "Potential confounding by itself rules out low (→ at least moderate), not serious."
+      }
+    }
+  ],
+  "validator_ids": [
+    "1.1",
+    "1.2",
+    "1.3",
+    "1.4",
+    "1.5",
+    "1.6",
+    "1.7",
+    "1.8",
+    "2.1",
+    "2.2",
+    "2.3",
+    "2.4",
+    "2.5",
+    "3.1",
+    "3.2",
+    "3.3",
+    "4.1",
+    "4.2",
+    "4.3",
+    "4.4",
+    "4.5",
+    "4.6",
+    "5.1",
+    "5.2",
+    "5.3",
+    "6.1",
+    "6.2",
+    "6.3",
+    "7.1",
+    "7.2",
+    "7.3"
+  ],
+  "numbering_changed": {
+    "items": [
+      "4.3",
+      "4.4",
+      "4.5",
+      "4.6",
+      "5.2",
+      "5.3"
+    ],
+    "note": {
+      "hu": "A validator 1.0.0 (és a v1-javítás előtti motor-definíció) ugyanezekkel az azonosítókkal MÁS kérdést jelölt: 4.3 = a megkezdés és betartás hatására megfelelő elemzés (besorolás-hatókör), 4.4–4.6 = ko-intervenciók / megvalósítás / betartás, 5.2 = hiányzó beavatkozási státusz VAGY egyéb változó, 5.3 = hasonló arány és ok. A 2016-os számozásban: 4.3–4.5 ko-intervenciók / megvalósítás / betartás, 4.6 feltételes elemzés-kérdés, 5.2 / 5.3 külön, 5.4 hasonló arány és ok, 5.5 robusztusság, 6.4 szisztematikus mérési hiba.",
+      "en": "Validator 1.0.0 (and the engine definition before the v1 fixes) used these ids for DIFFERENT questions: 4.3 = appropriate analysis for the effect of starting and adhering (assignment scope), 4.4–4.6 = co-interventions / implementation / adherence, 5.2 = missing intervention status OR other variables, 5.3 = similar proportions and reasons. In the 2016 numbering: 4.3–4.5 co-interventions / implementation / adherence, 4.6 the conditional analysis question, 5.2 / 5.3 split, 5.4 similar proportions and reasons, 5.5 robustness, 6.4 systematic measurement error."
+    }
+  }
+}

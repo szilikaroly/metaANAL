@@ -1,0 +1,96 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "ctgov-studies_update_window",
+  "recorded_at": "2026-10-05T11:08:13Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "frissítő keresés: AREA[StudyFirstPostDate]RANGE[2025-01-01,MAX] + BCG (3/lap, 5)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://clinicaltrials.gov/api/v2/studies?countTotal=true&fields=protocolSection.identificationModule.nctId&filter.advanced=AREA%5BStudyFirstPostDate%5DRANGE%5B2025-01-01%2CMAX%5D&format=json&pageSize=3&query.term=BCG+tuberculosis+vaccine",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "totalCount": 8,
+          "studies": [
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT06767982"
+                }
+              }
+            },
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT06833073"
+                }
+              }
+            },
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT07762014"
+                }
+              }
+            }
+          ],
+          "nextPageToken": "ZVNj7o2Elu8o3lpwTcito62tmpOQJJxobPet2_wW"
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://clinicaltrials.gov/api/v2/studies?fields=protocolSection.identificationModule.nctId&filter.advanced=AREA%5BStudyFirstPostDate%5DRANGE%5B2025-01-01%2CMAX%5D&format=json&pageSize=3&pageToken=ZVNj7o2Elu8o3lpwTcito62tmpOQJJxobPet2_wW&query.term=BCG+tuberculosis+vaccine",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "studies": [
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT07005726"
+                }
+              }
+            },
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT06997367"
+                }
+              }
+            },
+            {
+              "protocolSection": {
+                "identificationModule": {
+                  "nctId": "NCT06873282"
+                }
+              }
+            }
+          ],
+          "nextPageToken": "ZVNj7o2Elu8o3lpwTcito62tmpOQJJxtYPGj3_wZkA"
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

@@ -1,0 +1,812 @@
+[
+ {
+  "k_id": "K-SIM24-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A forrás jellege, korlátai és hiányai",
+  "body": "Simply Psychology's 'Doing a Meta-Analysis: A Practical, Step-by-Step Guide' is a 32-page web article printed to PDF (footer: © 2024 Simply Psychology) with no author, editor or revision date; it is non-peer-reviewed grey literature for psychology and social-science students, not a methods standard. It covers the pipeline in 10 numbered steps plus a 'Common Mistakes' list, with examples mostly from psychology (growth mindset, mindfulness, PTSD risk factors, mere-ownership effect) and clinical cases only in passing (vitamin D and fractures, beta-blockers after MI). Statistically it is shallow: it gives only inverse-variance weights (fixed and random), the weighted mean and the DerSimonian-Laird estimator with an undefined constant C, and no SE, CI, Q, I2, prediction-interval, effect-size or conversion formulas, no protocol registration, no GRADE, no forest/funnel plot conventions and no software code. Use it as a process and reporting checklist, take statistics from Borenstein et al. (2021), which it cites, or from the engine, and treat several of its statements as needing correction (see the pitfall units).",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 1; p. 32; pp. 1–30; pp. 25–27",
+  "tags": "scope hatókör source quality forrás minősége grey literature szürke irodalom educational oktatási limitations korlátok gaps hiányok Simply Psychology psychology pszichológia process checklist folyamat-ellenőrzőlista"
+ },
+ {
+  "k_id": "K-SIM24-002",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "Folyamat: 7 szakaszos ábra és a 10 számozott lépés",
+  "body": "The guide's pipeline figure has seven stages: problem formulation, literature search, screening of potentially eligible studies, data extraction/coding/critical appraisal, analysis and synthesis, reporting and dissemination, and updating or re-analysis; it stresses logical consistency across stages and that new findings or feedback can send the team back to earlier steps. The text is organised as 10 steps: research question (1), search strategy (2), literature search (3), screening and selection (4), 'Evaluating the Quality of Studies' (5), effect-size choice (6), heterogeneity (7), model choice (8), performing the meta-analysis (9) and sensitivity analysis (10). Step 5's heading is misleading: it also contains the data-collection and coding guidance, not only the appraisal tools.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 6; pp. 6–29; pp. 16–19",
+  "tags": "workflow munkafolyamat pipeline lépések steps iterative iteratív updating frissítés re-analysis újraelemzés overview áttekintés stage szakasz"
+ },
+ {
+  "k_id": "K-SIM24-003",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "Hivatkozott módszertani irodalom (olvasmánylista)",
+  "body": "The reading list names the methods works the guide builds on: Borenstein, Hedges, Higgins & Rothstein (2021) Introduction to Meta-Analysis; Hedges & Olkin (2014); Duval & Tweedie (2000) on trim-and-fill; Egger et al. (1997, BMJ 315:629) on the funnel-asymmetry test; Egger, Smith & Phillips (1997, BMJ 315:1533); Field & Gillett (2010); Hedges & Pigott (2004) on the power of moderator tests; Polanin & Pigott (2015) on significance testing; Rodgers & Pustejovsky (2021) on selective reporting with dependent effect sizes; Rosenthal (1991) on effect-size conversions; Tipton, Pustejovsky & Ahmadi (2019) on the history of meta-regression; and Littell, Corcoran & Pillai (2008). Applied meta-analyses listed as examples: Zhao et al. (2017, JAMA), Hofmann et al. (2010), Brewin et al. (2000), Białek et al. (2023), Macnamara & Burgoyne (2022), Bar-Haim et al. (2007), Lyubomirsky et al. (2005) and Crits-Christoph (1992). Where the guide is silent on a formula, go to these primary references, especially Borenstein et al. (2021).",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 31–32",
+  "tags": "references hivatkozások reading list olvasmánylista Borenstein Hedges Olkin Duval Tweedie Egger Rosenthal Tipton Pustejovsky meta-regression further reading további irodalom"
+ },
+ {
+  "k_id": "K-SIM24-004",
+  "stage_id": "S01",
+  "kind": "definition",
+  "title": "Metaanalízis, szisztematikus áttekintés és irodalmi áttekintés",
+  "body": "Meta-analysis is a statistical procedure that combines effect sizes from independent studies into an average, weighting each study by its precision; it gives a more precise estimate than small single studies and is most useful when individual results are inconclusive or contradictory. A systematic review uses strict protocols to minimise bias when finding and appraising studies but does not by itself quantify the size of an effect, whereas a literature review may follow no defined procedure. Opening example: Zhao et al. (2017, JAMA) pooled 81 RCTs with 53,537 participants and found vitamin D supplementation not associated with fewer fractures in community-dwelling adults, contradicting earlier single-study findings (narrative figures only; no study-level data are given). [note: the figures do not match Zhao et al. 2017, whose PubMed abstract (doi:10.1001/jama.2017.19344) reports 33 RCTs with 51,145 participants aged over 50; '81 RCTs, 53,537 participants' are the counts of Bolland, Grey & Avenell (2018, Lancet Diabetes Endocrinol, doi:10.1016/S2213-8587(18)30265-1), which reached a similar null conclusion, so do not reuse the source's numbers.] [note: per the Cochrane Handbook (v6, ch. 10) a meta-analysis should normally sit inside a systematic review, and pooling is an optional step taken only when studies are similar enough.]",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 1–2; p. 1",
+  "tags": "definition definíció meta-analysis metaanalízis systematic review szisztematikus áttekintés literature review irodalmi áttekintés narrative review narratív áttekintés precision pontosság weighting súlyozás vitamin D example példa Bolland misattribution téves hivatkozás"
+ },
+ {
+  "k_id": "K-SIM24-005",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "Kutatási kérdés és implicit PICO",
+  "body": "A clearly defined research question is the starting point: it should drive which studies are included and which statistical model is appropriate. Example questions: how dysfunctional attitudes and negative automatic thinking affect depression; whether growth-mindset interventions improve academic achievement; how child-parent attachment relates to prosociality; and which risk factors relate to PTSD. The guide never names PICO, but its eligibility dimensions (intervention, population, outcome measures, control group, design) cover the components implicitly, so the planner should make P, I, C, O and study design explicit when turning the question into criteria.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 6–7; pp. 10–11",
+  "tags": "research question kutatási kérdés PICO population populáció intervention beavatkozás comparator kontroll outcome kimenet study design vizsgálati elrendezés question formulation kérdésfeltevés"
+ },
+ {
+  "k_id": "K-SIM24-006",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Kutatási protokoll a kutatás megkezdése előtt",
+  "body": "Write a comprehensive protocol before the research starts, stating the objectives and hypotheses and the methods for identifying, selecting and analysing studies, including whether unpublished work will be searched. Its purpose is transparency and reproducibility. The guide also names a detailed written protocol (question, search strategy, inclusion criteria, analysis methods) as the remedy for inadequate reporting.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 3–4; p. 31",
+  "tags": "protocol protokoll a priori előzetes objectives célok hypotheses hipotézisek transparency átláthatóság reproducibility reprodukálhatóság unpublished nem publikált"
+ },
+ {
+  "k_id": "K-SIM24-007",
+  "stage_id": "S02",
+  "kind": "example",
+  "title": "Protokollpélda: növekedési szemléletmód (growth mindset) metaanalízis",
+  "body": "The worked protocol targets growth-mindset interventions and school achievement. Objectives: an overall effect plus moderator questions on student age and intervention duration, with directional hypotheses (a small positive effect, larger for younger pupils and for longer interventions). Eligibility: studies in English-language published journals, a quantitative achievement outcome (e.g., GPA, grades, exam or standardised test scores), growth mindset as the primary intervention with a control comparison, and exclusion of interventions combined with other components. Sources: ERIC, PsycInfo and PubMed with a Boolean string, plus citation chaining and expert contact; coding fields: sample size, age, duration, outcome type and design; analysis plan: an SMD per study, a random-effects model, and meta-regression for the moderator hypotheses.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 4–5",
+  "tags": "protocol example protokoll példa growth mindset növekedési szemléletmód education oktatás SMD random effects véletlen hatás meta-regression meta-regresszió moderator moderátor eligibility beválasztás"
+ },
+ {
+  "k_id": "K-SIM24-008",
+  "stage_id": "S02",
+  "kind": "pitfall",
+  "title": "A protokoll regisztrációja nem szerepel a forrásban",
+  "body": "The guide never mentions registering the review protocol; its only reference to registration is coding whether each primary study was pre-registered (yes/no). [note: PRISMA 2020 item 24 asks for the register name and registration number, or a statement that the review was not registered; register in PROSPERO or OSF before screening starts.] Detect: no registration ID or date in the methods. Fix: register the protocol (or justify not doing so) and report the record and any deviations.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 18",
+  "tags": "registration regisztráció PROSPERO OSF protocol protokoll pre-registration előzetes regisztráció PRISMA 2020 item 24 missing hiányzó pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-009",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Beválasztási kritériumok: előre, indoklással, minden dimenzióra",
+  "body": "Set inclusion and exclusion criteria a priori, before searching, and state the rationale for each in the protocol; the choices must not be arbitrary. Specify intervention characteristics (e.g., minimum duration, theoretical basis), population, outcome-measure standards, participant age range, diagnostic status, study design, control-group type (e.g., waiting list vs another intervention) and publication status (published only, or also dissertations and conference proceedings). The guide's stated ideal is to include only high-quality RCTs that follow the intention-to-treat principle. [note: limiting to published studies raises publication-bias risk, so justify it explicitly.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 10; pp. 10–11",
+  "tags": "eligibility criteria beválasztási kritériumok inclusion beválasztás exclusion kizárás a priori population populáció intervention beavatkozás outcome kimenet design elrendezés control group kontrollcsoport publication status publikációs státusz RCT ITT intention-to-treat"
+ },
+ {
+  "k_id": "K-SIM24-010",
+  "stage_id": "S02",
+  "kind": "example",
+  "title": "Hofmann et al. (2010) beválasztási kritériumai és az átfedő minták szabálya",
+  "body": "In this mindfulness meta-analysis, studies needed (a) a mindfulness-based intervention, (b) a clinical sample, (c) adults aged 18–65, (d) no combination with ACT or DBT, (e) anxiety and/or mood symptoms measured before and after the intervention, and (f) enough data to compute an effect size (means and SDs, t or F values, change scores, frequencies, or p-values). Studies whose sample partly or fully overlapped another eligible study were excluded, keeping the one with the larger sample or more complete anxiety/depression data. Authors of otherwise suitable studies with insufficient data were contacted for supplementary data.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 11",
+  "tags": "example példa Hofmann mindfulness eligibility beválasztás overlapping samples átfedő minták duplicate publication duplikált közlés larger sample nagyobb minta contact authors szerzők megkeresése sufficient data elegendő adat"
+ },
+ {
+  "k_id": "K-SIM24-011",
+  "stage_id": "S02",
+  "kind": "pitfall",
+  "title": "Csak angol nyelvű, publikált tanulmányok: torzítási forrás",
+  "body": "The guide's own example protocol limits eligibility to published studies in English-language journals. Language and publication-status limits can bias the pooled estimate, since published studies over-represent significant results, which the guide itself warns leads to overestimation. Detect: such limits in the criteria without justification. Fix: include unpublished and non-English studies where feasible, or justify the limit and discuss its likely impact. [note: the Cochrane Handbook (v6, ch. 4) advises against language and publication-status restrictions; if any are used, report them as eligibility criteria and search limits (PRISMA 2020 items 5 and 7) and discuss their likely impact.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 4; p. 30",
+  "tags": "language bias nyelvi torzítás English-only csak angol publication status publikációs státusz unpublished nem publikált eligibility beválasztás bias torzítás pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-012",
+  "stage_id": "S02",
+  "kind": "check",
+  "title": "Ellenőrzés: protokoll a szűrés előtt, teljes tartalommal",
+  "body": "Reviewer check: a protocol exists and is dated before screening began, and it states objectives, hypotheses, eligibility criteria, databases, search strings, coding fields, the effect-size metric, the model, and the planned moderators or meta-regression. Also verify that every eligibility dimension (intervention, population, outcome-measure standard, age, diagnostic status, design, control type, publication status) is explicit and has a stated rationale.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 3–5; pp. 10–11",
+  "tags": "check ellenőrzés protocol protokoll date dátum before screening szűrés előtt eligibility beválasztás rationale indoklás reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-013",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "A keresés célja és dokumentálása (PRISMA 2020 6–7. tétel)",
+  "body": "The search should aim to find all published and unpublished studies that meet the predefined criteria, and it must be comprehensive, reproducible and documented so that every decision can be audited. The guide quotes PRISMA 2020 item 7 (give the full search strategy for every database, register and website, including filters and limits) and item 6 (name every source searched or consulted and the date each was last searched). It recommends building the strategy with an expert librarian and asking topic experts on the team or advisory board for a complete list of terms for each concept.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 7; p. 8",
+  "tags": "search keresés search strategy keresési stratégia PRISMA 2020 item 6 item 7 information sources információforrások last searched date utolsó keresés dátuma librarian könyvtáros reproducibility reprodukálhatóság documentation dokumentálás"
+ },
+ {
+  "k_id": "K-SIM24-014",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Javasolt adatbázisok (pszichológiai fókusz)",
+  "body": "The guide lists 'seven key databases' (here in alphabetical order): APA PsycArticles, APA PsycInfo, CINAHL, Medline, Psychology and Behavioral Sciences Collection, SocINDEX with Full Text, and Web of Science Core Collection, while admitting the list may not be exhaustive. Its examples also use ERIC, PsycInfo and PubMed (growth-mindset protocol) and PubMed, PsycINFO and the Cochrane Library (Hofmann et al.). The selection is oriented to psychology and social science. [note: for clinical questions Cochrane guidance expects at least MEDLINE, Embase and CENTRAL plus trial registries; Embase is absent from this list.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 8; p. 5; p. 9",
+  "tags": "databases adatbázisok CINAHL Medline PubMed PsycInfo PsycArticles SocINDEX Web of Science ERIC Cochrane Library Embase CENTRAL bibliographic database bibliográfiai adatbázis"
+ },
+ {
+  "k_id": "K-SIM24-015",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Szürke irodalom, hivatkozáskövetés és szakértők megkeresése",
+  "body": "Beyond databases, run 'expansive' searches: grey-literature databases (OpenGrey, WorldCat, EThOS), conference proceedings, unpublished reports, theses, clinical-trial databases, searches on the names of authors of relevant papers, and independent research bodies (examples given: Centre for Research in Ethnic Relations, Joseph Rowntree Foundation, Carers UK). Screen reference lists of relevant papers (citation searching) and contact researchers in the field for unpublished data or ongoing work. [note: OpenGrey was archived around 2020 and EThOS has been disrupted since the 2023 British Library cyber-incident, so check availability; name the specific trial registries searched, e.g. ClinicalTrials.gov.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 8",
+  "tags": "grey literature szürke irodalom unpublished nem publikált OpenGrey WorldCat EThOS theses disszertációk conference proceedings konferenciakiadványok trial registry vizsgálati regiszter citation searching hivatkozáskövetés contact experts szakértők megkeresése"
+ },
+ {
+  "k_id": "K-SIM24-016",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Keresőkifejezés felépítése és futtatása",
+  "body": "Build the string from keywords tied to the question, key variables, participants and design, searched in indexed terms, titles and abstracts, with a separate strategy tailored to each database's own indexing terms. Add synonyms (e.g., a drug's generic and proprietary names), truncation (smok* retrieves smoke, smoker, smoking, smokes) and Boolean operators (AND narrows, OR broadens; NEAR and NOT are also available), and alternate browsing of publications with periods of focused systematic searching. Run each string in the database's own interface with its syntax and wildcards, and use its filters (study design, publication type) where appropriate.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 8–9; pp. 12–13",
+  "tags": "search string keresőkifejezés Boolean AND OR NOT NEAR truncation csonkolás wildcard helyettesítő karakter synonyms szinonimák MeSH indexed terms tárgyszavak database-specific adatbázis-specifikus filters szűrők"
+ },
+ {
+  "k_id": "K-SIM24-017",
+  "stage_id": "S03",
+  "kind": "example",
+  "title": "Keresési példa: Hofmann et al. (2010)",
+  "body": "Hofmann et al. searched PubMed, PsycINFO and the Cochrane Library from the first available year to 1 April 2009, combining 'mindfulness' with meditation, program, therapy or intervention and with anxiety, depression, mood or stress terms, and added an extensive manual review of the reference lists of relevant studies and reviews. It shows how to report databases, date span, concept blocks and supplementary hand-searching in one paragraph.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 9",
+  "tags": "example példa Hofmann search keresés PubMed PsycINFO Cochrane Library date range dátumtartomány hand searching kézi keresés reference lists irodalomjegyzékek mindfulness"
+ },
+ {
+  "k_id": "K-SIM24-018",
+  "stage_id": "S03",
+  "kind": "pitfall",
+  "title": "Hibás vagy sérült keresőstringek a forrás példáiban",
+  "body": "The growth-mindset protocol's Boolean string is malformed: quotes and parentheses are unbalanced, with stray fragments such as ')*' and ')**', so a database would reject or silently misparse it. In the Hofmann example the truncation asterisks after 'anxi' and 'depress' were lost in formatting, which shows how truncation symbols disappear when strings are copied and pasted. Detect: lint each string for balanced quotes and parentheses, valid truncation and field tags, and compare it with the string actually executed. Fix: rebuild the string per concept block, e.g. (A1 OR A2 OR A3) AND (B1 OR B2) AND (C1 OR C2), and report the executed string verbatim.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 5; p. 9",
+  "tags": "Boolean syntax error szintaktikai hiba search string keresőstring parentheses zárójelek truncation csonkolás asterisk csillag copy-paste másolás lint validation ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-019",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Iteratív keresésfejlesztés és naplózás",
+  "body": "A search strategy is refined in cycles: (1) draft it from the question (keywords, synonyms, databases, limits); (2) run test searches, check the hits for relevance and adjust terms, operators or databases; (3) discuss the results and proposed changes as a team; (4) repeat until the strategy captures all relevant studies while keeping irrelevant hits and workload manageable. Document every modification carefully for transparency and future replication.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 11–12",
+  "tags": "iterative iteratív search development keresésfejlesztés test search próbakeresés refinement finomítás sensitivity érzékenység documentation dokumentálás log napló"
+ },
+ {
+  "k_id": "K-SIM24-020",
+  "stage_id": "S03",
+  "kind": "threshold",
+  "title": "Pragmatikus szűkítés: 15 000 találat két szabadidős bírálónak túl sok",
+  "body": "Searching is pragmatic: if a search returns about 15,000 records and the team is two people working in their free time, narrow the review's scope and criteria, e.g. by publication date (the last 10 rather than 20 years), population or study designs. The figure is illustrative, not a formal threshold. [note: such narrowing should be pre-specified, or reported as a protocol deviation, because it can introduce bias.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 12",
+  "tags": "scope hatókör narrowing szűkítés yield találatszám 15000 resources erőforrások date limit időkorlát feasibility megvalósíthatóság threshold küszöb"
+ },
+ {
+  "k_id": "K-SIM24-021",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Ellenőrzés: adatbázisonkénti teljes keresőstring és módosítási napló",
+  "body": "Reviewer check: each database has its own full search string with filters, limits and the date last searched, and every string passes a syntax lint (balanced parentheses and quotes, valid truncation and field tags, Boolean logic structured by concept). Changes made while iterating the strategy are logged with dates and reasons.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 7–9, 5; p. 12",
+  "tags": "check ellenőrzés search string keresőstring lint syntax szintaxis last searched date keresés dátuma log napló PRISMA item 7 reproducibility reprodukálhatóság reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-022",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Ellenőrzés: a keresési források teljessége",
+  "body": "Reviewer check: the sources include at least one grey-literature source and one trial registry, plus citation chaining and expert contact; if any of these is missing, the omission is justified.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 4–5, 8",
+  "tags": "check ellenőrzés grey literature szürke irodalom trial registry vizsgálati regiszter citation chaining hivatkozáskövetés expert contact szakértők comprehensiveness teljesség reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-023",
+  "stage_id": "S04",
+  "kind": "guidance",
+  "title": "Rekordkezelés és a kiválasztási folyamat leírása (PRISMA 2020 8. tétel)",
+  "body": "Save retrieved records in a reference manager such as EndNote or Mendeley, with title, authors, date, journal and abstract where available. The guide quotes PRISMA 2020 item 8: report how inclusion decisions were made, how many reviewers screened each record and each retrieved report, whether they worked independently, and details of any automation tools used.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 13",
+  "tags": "reference manager referenciakezelő EndNote Mendeley records rekordok selection process kiválasztási folyamat PRISMA 2020 item 8 automation automatizálás reviewers bírálók"
+ },
+ {
+  "k_id": "K-SIM24-024",
+  "stage_id": "S04",
+  "kind": "guidance",
+  "title": "Kettős, független szűrés három lépésben",
+  "body": "Two reviewers independently screen titles and abstracts against the predefined criteria, removing duplicates and clearly irrelevant records. (1) At the title/abstract stage, err toward over-inclusion when relevance is uncertain; (2) obtain and assess the full text whenever the title and abstract do not allow a firm decision; (3) resolve disagreements with a pre-specified rule, either consensus discussion or arbitration by a third reviewer.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 14",
+  "tags": "screening szűrés title abstract cím absztrakt full text teljes szöveg two reviewers két bíráló independent független over-inclusion túlbeválasztás disagreement nézeteltérés third reviewer harmadik bíráló consensus konszenzus duplicates duplikátumok"
+ },
+ {
+  "k_id": "K-SIM24-025",
+  "stage_id": "S04",
+  "kind": "example",
+  "title": "PRISMA folyamatábra: szakaszok és a Białek et al. (2023) számai",
+  "body": "The flowchart shows identification (records found), screening (titles and abstracts), eligibility (full texts retrieved and assessed) and inclusion, with the reasons for exclusions recorded. Worked example (Białek et al. 2023): 756 records from databases plus 0 from other sources; 756 after deduplication; 756 screened and 663 excluded; 93 full texts assessed and 78 excluded with reasons; 15 studies in the qualitative synthesis; 13 in the meta-analysis. The arithmetic is consistent (756 − 663 = 93; 93 − 78 = 15; 13 ≤ 15).",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 14–15; p. 16",
+  "tags": "PRISMA flow diagram folyamatábra identification azonosítás screening szűrés eligibility alkalmasság included beválasztott example példa Białek counts számok exclusion reasons kizárási okok"
+ },
+ {
+  "k_id": "K-SIM24-026",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "PRISMA 2009 folyamatábra-sablon PRISMA 2020 hivatkozás mellett",
+  "body": "The text quotes PRISMA 2020 items, but the example flow diagram uses the 2009 layout (Identification, Screening, Eligibility, Included; 'qualitative synthesis' followed by 'quantitative synthesis (meta-analysis)'). The 2020 template instead has separate boxes for records removed before screening, reports sought for retrieval, reports not retrieved, reports assessed for eligibility, and studies and reports included. Detect: an 'Eligibility' box or 'qualitative synthesis' wording in the diagram. Fix: use the PRISMA 2020 flow template. [note: PRISMA 2020 (Page et al., BMJ 2021) superseded the 2009 statement and flow diagram; the 2020 template also separates database/register searches from other search methods and counts studies and reports separately.]",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 13–16",
+  "tags": "PRISMA 2020 PRISMA 2009 flow diagram folyamatábra template sablon outdated elavult reports sought reports assessed reporting beszámolás pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-027",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Ellenőrzés: a folyamatábra aritmetikája",
+  "body": "Reviewer check that the PRISMA counts are internally consistent: identified (databases + other sources) − duplicates = screened; screened − excluded = full texts assessed (or sought); assessed − excluded = included; studies in the meta-analysis ≤ studies included; every full-text exclusion has a reason and the reason counts sum to the total excluded. Also confirm that the 2020 template, not the 2009 one, is used.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 14–16",
+  "tags": "check ellenőrzés PRISMA flow diagram folyamatábra arithmetic aritmetika counts számok consistency konzisztencia exclusion reasons kizárási okok reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-028",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Ellenőrzés: legalább két független bíráló a szűrésnél",
+  "body": "Reviewer check: screening was done by at least two independent reviewers at both the title/abstract and the full-text stage, with a pre-specified rule for resolving disagreements, and any automation tool used is reported.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 13–14",
+  "tags": "check ellenőrzés screening szűrés two reviewers két bíráló independent független disagreement nézeteltérés automation automatizálás PRISMA item 8 reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-029",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Adatgyűjtés és kódolás: standard űrlap, két kódoló, pilot",
+  "body": "The guide quotes PRISMA 2020 item 9: report how many reviewers collected data from each report, whether they worked independently, how data were obtained or confirmed from study investigators, and any automation tools. Extract the data the question needs (effect sizes, sample sizes, means, SDs and other statistics) with a standardised coding form or protocol; two independent coders improve accuracy and reduce errors. Pilot the form on a small subset of studies to find ambiguities before full coding, and decide in advance how missing data will be handled (contact authors, imputation, or sensitivity analysis of their impact). The guide's tip to prefer authors' interpretations over participant quotes is qualitative-synthesis advice and does not apply to effect-size extraction.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 17; p. 18",
+  "tags": "data extraction adatkinyerés coding kódolás coding form kódolólap standardised standardizált two coders két kódoló pilot próbakódolás missing data hiányzó adat imputation imputálás contact authors szerzők megkeresése PRISMA 2020 item 9"
+ },
+ {
+  "k_id": "K-SIM24-030",
+  "stage_id": "S05",
+  "kind": "convention",
+  "title": "Kódolási kategóriák (9 csoport)",
+  "body": "Code: (1) study characteristics: year, authors, country and publication status (published = peer-reviewed article or book chapter; unpublished = government report, website, thesis, conference presentation or manuscript); (2) intervention: type, duration, frequency, delivery mode, and whether ITT analysis was used; (3) outcomes: primary vs secondary and measurement time points; (4) moderators: age, gender, diagnosis, SES, education, comorbidities; (5) design: RCT or quasi-experiment, blinding, control type, setting, pre-registration, allocation method; (6) sample: recruitment, total and per-group N, location, attrition, and overlap with another study's sample; (7) adherence to reporting guidelines (CONSORT, STROBE, PRISMA); (8) funding source; (9) effect size. A downloadable 'Example of Coding Manual' is linked but not reproduced in the PDF.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 18; p. 19",
+  "tags": "coding categories kódolási kategóriák codebook kódkönyv moderators moderátorok ITT attrition lemorzsolódás blinding vakítás funding finanszírozás publication status publikációs státusz sample overlap mintaátfedés CONSORT STROBE"
+ },
+ {
+  "k_id": "K-SIM24-031",
+  "stage_id": "S05",
+  "kind": "convention",
+  "title": "Hatásméret rögzítése: 3 tizedes és oldal/táblázat-hivatkozás",
+  "body": "Effect sizes (computed as d and/or r with Comprehensive Meta-Analysis) and internal-consistency coefficients are recorded with up to 3 digits after the decimal point. For every coded value, note the page and table number of the source report so coders can confirm they coded from the same information and reliability can be checked. [note: keep unrounded values in the analysis dataset and round only for reporting.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 18",
+  "tags": "decimals tizedesjegyek precision pontosság rounding kerekítés page number oldalszám table number táblázatszám locator forrásmegjelölés provenance Comprehensive Meta-Analysis CMA effect size hatásméret reliability megbízhatóság"
+ },
+ {
+  "k_id": "K-SIM24-032",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: kinyerési folyamat és adatpontosság",
+  "body": "Reviewer check: extraction used a piloted standardised form, with at least two independent extractors or verification by a second person; every extracted number has a page/table locator; effect sizes are recorded with 3 decimal places, as the guide suggests ('up to 3 digits') [note: keep unrounded values in the analysis file and round only when reporting].",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 17–18",
+  "tags": "check ellenőrzés data extraction adatkinyerés double extraction kettős kinyerés pilot locator forrásmegjelölés decimals tizedesjegyek reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-033",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: függőség és mintaátfedés",
+  "body": "Reviewer check: no sample contributes more than one independent effect size to the same analysis unless the dependence is modelled, and overlapping samples across reports are flagged and resolved (keep the report with the larger N or more complete data). Detect via duplicate study or sample IDs in the dataset and the coded 'overlap with another study' field.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 11, 18, 31",
+  "tags": "check ellenőrzés dependence függőség overlapping samples átfedő minták duplicate duplikátum multiple effect sizes több hatásméret sample ID mintaazonosító unit of analysis elemzési egység reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-034",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "Cochrane RoB: a forrás a régi (RoB 1) doméneket írja le",
+  "body": "For RCTs the guide recommends the Cochrane Risk of Bias tool but describes the original RoB 1 domains: selection, performance, detection, attrition and reporting bias. [note: current Cochrane guidance uses RoB 2, whose five domains are the randomisation process, deviations from intended interventions, missing outcome data, measurement of the outcome, and selection of the reported result.] Detect: an RCT risk-of-bias table built on the RoB 1 bias types. Fix: assess RCTs with RoB 2 for each result and report domain-level and overall judgements.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 19",
+  "tags": "risk of bias torzítási kockázat RoB 1 RoB 2 Cochrane RCT randomised randomizált domains domének selection bias performance detection attrition reporting outdated elavult pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-035",
+  "stage_id": "S06",
+  "kind": "tool",
+  "title": "ROBINS-I, Newcastle–Ottawa skála és QUADAS-2",
+  "body": "ROBINS-I assesses non-randomised studies of interventions across confounding, participant selection, classification of interventions, deviations from intended interventions, missing data, outcome measurement, and selection of the reported result. The Newcastle–Ottawa Scale (NOS) rates non-randomised case-control and cohort studies on selection, comparability, and outcome (or exposure) assessment. QUADAS-2 covers diagnostic accuracy studies, judging risk of bias and applicability concerns for patient selection, index test, reference standard, and flow and timing. [note: the Cochrane Handbook discourages quality scales with summary scores such as an NOS total; prefer domain-based tools (ROBINS-I for interventions, ROBINS-E for exposures) and check riskofbias.info for the current tool versions.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 19",
+  "tags": "ROBINS-I NOS Newcastle-Ottawa QUADAS-2 non-randomised nem randomizált observational megfigyeléses cohort kohorsz case-control eset-kontroll diagnostic accuracy diagnosztikus pontosság confounding zavaró tényező applicability alkalmazhatóság risk of bias torzítási kockázat ROBINS-E quality scale minőségi skála"
+ },
+ {
+  "k_id": "K-SIM24-036",
+  "stage_id": "S06",
+  "kind": "guidance",
+  "title": "Minőséggel kapcsolatos kódolandó jellemzők",
+  "body": "Alongside formal tools, the coding scheme records quality-related features: ITT analysis (yes/no), blinding, allocation method (e.g., simple or block randomisation), pre-registration, attrition rate, funding source (government, industry, non-profit) and adherence to reporting guidelines (CONSORT, STROBE, PRISMA). The guide's ideal evidence base is high-quality RCTs analysed by intention to treat, and trials of questionable quality should be examined in sensitivity analysis.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 18; p. 10; p. 29",
+  "tags": "study quality vizsgálati minőség ITT intention-to-treat blinding vakítás allocation randomizáció pre-registration előregisztráció attrition lemorzsolódás funding finanszírozás industry ipari CONSORT STROBE"
+ },
+ {
+  "k_id": "K-SIM24-037",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "Téves állítás: az értékelő eszközök „biztosítják” a magas minőséget",
+  "body": "The guide claims that using appraisal tools ensures the included studies are of high methodological quality. Risk-of-bias tools only assess bias; they do not remove it. Fix: act on the assessment through eligibility decisions, sensitivity analyses excluding high-risk studies, subgroup analysis or meta-regression by risk of bias, and a certainty rating [note: e.g. GRADE, which the source does not mention], and report the per-study judgements.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 19",
+  "tags": "risk of bias torzítási kockázat assessment értékelés quality minőség misconception tévhit sensitivity analysis érzékenységi elemzés GRADE pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-038",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "A vizsgálati minőség figyelmen kívül hagyása (5. gyakori hiba)",
+  "body": "Including methodologically poor studies can bias the pooled estimate and make it unreliable; which studies enter should follow predefined eligibility criteria. Detect: no risk-of-bias table, or RoB results not used anywhere in the analysis. Fix: apply validated, design-appropriate RoB tools and re-run the analysis without low-quality or high-RoB trials.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 30; p. 29",
+  "tags": "study quality vizsgálati minőség risk of bias torzítási kockázat common mistake gyakori hiba sensitivity analysis érzékenységi elemzés low quality alacsony minőség exclusion kizárás pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-039",
+  "stage_id": "S06",
+  "kind": "check",
+  "title": "Ellenőrzés: elrendezéshez illő RoB-eszköz",
+  "body": "Reviewer check: every included design was appraised with an appropriate tool: RoB 2 for RCTs, ROBINS-I for non-randomised studies of interventions, NOS for observational case-control and cohort studies, and QUADAS-2 for diagnostic accuracy studies. [note: the source does not mention dual independent RoB assessment; Cochrane expects two independent assessors.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 19",
+  "tags": "check ellenőrzés risk of bias torzítási kockázat tool eszköz RoB 2 ROBINS-I NOS QUADAS-2 study design vizsgálati elrendezés reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-040",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Hatásméret a statisztikai szignifikancia helyett",
+  "body": "Statistical significance only indicates whether an effect is unlikely to be due to chance and says nothing about its size or practical importance; a significant effect may be too small to matter. Effect sizes give a standardised measure of magnitude, and meta-analysis combines them into a weighted average. If effects are consistent, the finding is robust across studies; if they vary, understanding the reasons for the dispersion matters more than the summary value.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 2",
+  "tags": "effect size hatásméret statistical significance statisztikai szignifikancia p-value p-érték magnitude nagyság practical significance gyakorlati jelentőség clinical relevance klinikai relevancia"
+ },
+ {
+  "k_id": "K-SIM24-041",
+  "stage_id": "S07",
+  "kind": "guidance",
+  "title": "Hatásméret-családok és a mérőszám kiválasztása",
+  "body": "Three families are used: mean-difference effect sizes for comparing groups or conditions (e.g., treatment vs control), correlation effect sizes for the association between two continuous measures, and odds-ratio effect sizes for binary outcomes. The choice follows the question and the dependent variable: OR or relative risk for binary outcomes (common in medicine); the raw (unstandardised) mean difference when the scale is meaningful and comparable across studies; the SMD (e.g., Cohen's d) when studies use different scales; and Pearson r for relationships between continuous variables, which is also the usual choice for observational studies. [note: for an SMD prefer the small-sample-corrected Hedges' g; the engine's effect_sizes.smd applies the J correction by default.] [note: clinical observational studies usually report OR, RR or HR rather than r, so r is the default only in psychology-type correlational research.]",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 2–3; pp. 19–20",
+  "tags": "effect size hatásméret odds ratio esélyhányados risk ratio relatív kockázat mean difference átlagkülönbség SMD standardizált átlagkülönbség Cohen d Hedges g correlation korreláció Pearson r binary bináris continuous folytonos metric choice mérőszám-választás"
+ },
+ {
+  "k_id": "K-SIM24-042",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Hatásméret-átváltások képlet nélkül; vitatható „minden átváltható” állítás",
+  "body": "The guide states that all common effect sizes can be transformed into one another and that r↔d and OR→r conversions exist, but prints no equations and refers readers to Rosenthal (1991). [note: these conversions are approximate and rest on assumptions: d↔r needs the group sizes and assumes a two-group (point-biserial) setting, and logOR→d assumes an underlying logistic distribution, so pooling converted with native effects should be flagged and checked in sensitivity analysis.] Use the Borenstein et al. (2021) formulas implemented as conversions.d_to_r, conversions.r_to_d, conversions.logor_to_d and conversions.d_to_logor, converting each study's variance together with its estimate.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 3; p. 20",
+  "tags": "conversion átváltás effect size hatásméret r to d d to r odds ratio to d logOR Rosenthal Borenstein assumptions feltevések common metric közös mérőszám pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-043",
+  "stage_id": "S07",
+  "kind": "convention",
+  "title": "A forrás nem ad hatásméret-képleteket: Borenstein et al. (2021) a referencia",
+  "body": "Formulas for Cohen's d, Hedges' g and its J correction, var(d), log OR or RR and their variances, Fisher's z, zero-cell handling and proportion transforms are all absent from the guide; it only says Comprehensive Meta-Analysis computes d and/or r. Take these from Borenstein et al. (2021), which the guide cites, as implemented in the engine (effect_sizes.smd, effect_sizes.two_by_two, effect_sizes.correlation, effect_sizes.proportion).",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 18; p. 20; p. 31",
+  "tags": "effect size formulas hatásméret-képletek Cohen d Hedges g variance variancia log odds ratio Fisher z zero cells nulla cellák continuity correction folytonossági korrekció proportion arány Borenstein gap hiány"
+ },
+ {
+  "k_id": "K-SIM24-044",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Ellenőrzés: dokumentált átváltások, egyetlen közös mérőszám",
+  "body": "Reviewer check: every effect-size conversion (r↔d, OR→r or d) is documented with its formula and source, and only one common metric is pooled in each analysis.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 20",
+  "tags": "check ellenőrzés conversion átváltás documentation dokumentálás common metric közös mérőszám effect size hatásméret reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-045",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Az összesítés algoritmusa: súlyozott átlag",
+  "body": "Pooling is a weighted mean: compute a weight for each study, multiply each effect size by its weight, sum the products, and divide by the sum of the weights, M = Σ(w_i·ES_i)/Σw_i. More precise studies (usually the larger ones) get more weight because their estimates have better sampling accuracy. The same four steps apply to fixed and random effects; only the weights differ.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 24; p. 25",
+  "tags": "weighted mean súlyozott átlag pooling összesítés inverse variance inverz variancia weights súlyok precision pontosság algorithm algoritmus formula képlet"
+ },
+ {
+  "k_id": "K-SIM24-046",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Fix hatású modell: feltevés, súlyok és megítélés",
+  "body": "The fixed-effect model assumes one true effect shared by all studies, so observed differences reflect sampling error only; weights are the inverse within-study variance, W_i = 1/VY_i (e.g., VY_i = 0.04 gives W_i = 25), and τ² is not computed. Larger studies therefore get much more weight. Pros given: simplicity, narrower CIs when the common-effect assumption holds, and suitability for conditional inference about the included studies only. Cons: the assumption is often unrealistic, results do not generalise beyond the included studies, and they mislead when heterogeneity is substantial. The PDF prints the weight as 'Wi = 1 / VYi1'; the trailing 1 is a stray character, so read it as W_i = 1/VY_i.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 22, 24–26; p. 25",
+  "tags": "fixed effect fix hatás common effect közös hatás inverse variance inverz variancia weights súlyok conditional inference feltételes következtetés generalisability általánosíthatóság typo elírás"
+ },
+ {
+  "k_id": "K-SIM24-047",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Véletlen hatású modell: feltevés, súlyok és megítélés",
+  "body": "The random-effects model lets true effects vary between studies and estimates their mean, accounting for both within-study and between-study variance; weights are W*_i = 1/(VY_i + T²), where T² estimates τ² (the guide uses the two symbols interchangeably). Weights are more balanced between large and small studies, CIs are wider, and results generalise to a broader population of studies; the guide calls it often more realistic in the social and behavioural sciences. Cons given: more complexity, less precision, and the need for enough studies to estimate the between-study variance, so it 'might not be feasible' with very few studies. [note: with few studies the remedy is a better CI method (e.g., HKSJ) and a careful τ² estimator, not a switch to fixed effect.]",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 22–23, 26–28",
+  "tags": "random effects véletlen hatás between-study variance vizsgálatok közötti variancia tau2 T2 weights súlyok generalisability általánosíthatóság confidence interval konfidenciaintervallum small studies kis vizsgálatok"
+ },
+ {
+  "k_id": "K-SIM24-048",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "τ² becslése: DerSimonian–Laird momentumbecslő és REML",
+  "body": "The guide gives the method-of-moments (DerSimonian–Laird) estimator T² = (Q − df)/C, where Q is the homogeneity statistic, df = k − 1 and C is only described as a constant based on the study weights; it also names REML as a common method computed with software. [note: standard DL uses C = Σw_i − Σw_i²/Σw_i with the fixed-effect weights w_i = 1/VY_i, and sets T² to 0 when Q < df.] [note: the Cochrane Handbook (v6) and simulation studies favour REML or Paule–Mandel over DL, which underestimates τ² when k is small or heterogeneity is large; the engine defaults to REML (models.tau2_reml) and also offers models.tau2_dl, models.tau2_pm, models.tau2_ml, models.tau2_he and models.tau2_sj.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 26; p. 27",
+  "tags": "tau2 tau-négyzet DerSimonian Laird DL method of moments momentumbecslő REML Paule-Mandel between-study variance vizsgálatok közötti variancia estimator becslő truncation csonkolás formula képlet"
+ },
+ {
+  "k_id": "K-SIM24-049",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "DL-képlet a C állandó definíciója és a nullánál vágás nélkül",
+  "body": "The guide prints T² = (Q − df)/C but never defines C and never says that T² is set to 0 when Q < df, so a literal implementation can return a negative between-study variance. Detect: a negative T² or τ² in any output. Fix: use C = Σw − Σw²/Σw (fixed-effect weights) and T² = max(0, (Q − df)/C), as models.tau2_dl does.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 27",
+  "tags": "DerSimonian Laird DL tau2 negative negatív truncation csonkolás constant C állandó formula képlet implementation implementáció pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-050",
+  "stage_id": "S08",
+  "kind": "guidance",
+  "title": "Modellválasztás (8. lépés)",
+  "body": "The guide quotes a rule of thumb (random effects when heterogeneity is high; fixed effect when it is low, or when all studies are functionally identical and no generalisation is sought) but then says the homogeneity test should not dictate the choice, which is ultimately conceptual and rests on knowledge of the field and the goals of the meta-analysis. Follow the conceptual principle: choose the model a priori from the intended inference (the included studies only vs a wider population of studies) and record it in the protocol. The guide regards random effects as often more realistic in the social and behavioural sciences. [note: the Cochrane Handbook (v6, ch. 10) states that the fixed- vs random-effects choice must not be based on a statistical test for heterogeneity; random effects are the usual choice when clinical or methodological diversity is expected, and the model belongs in the protocol.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21; p. 28",
+  "tags": "model choice modellválasztás fixed effect fix hatás random effects véletlen hatás a priori előzetes conceptual koncepcionális heterogeneity test heterogenitási próba protocol protokoll inference következtetés"
+ },
+ {
+  "k_id": "K-SIM24-051",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Ellentmondásos modellválasztási tanács",
+  "body": "On one page the guide both recommends random effects when heterogeneity is high and says the homogeneity test should not drive model choice; read literally, the first rule makes the model data-driven by the Q test. Detect: methods that justify the model by the Q p-value or the I² value. Fix: choose the model on conceptual grounds before seeing the data and record it in the protocol; an FE vs RE comparison can still be reported as a sensitivity analysis. Reviewer check: the model is pre-specified and conceptually justified, not chosen after seeing the Q test. [note: this is the current consensus (Cochrane Handbook v6, ch. 10): never select the model from the Q test or I².]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21",
+  "tags": "model choice modellválasztás contradiction ellentmondás Q test Q-próba data-driven adatvezérelt fixed effect fix hatás random effects véletlen hatás pre-specified előre rögzített check ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-052",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "„Kevés vizsgálatnál a fix hatású modell a megfelelőbb” – vitatható",
+  "body": "The guide says a fixed-effect analysis is more appropriate when the number of studies is limited, because random effects need more studies for a stable estimate of between-study variance. [note: this is contested: few studies make τ² hard to estimate, but switching to fixed effect silently assumes τ² = 0 and gives overconfident CIs; current guidance keeps random effects with a small-sample CI method, or forgoes pooling. With k = 2–4 even HKSJ intervals can be extremely wide, or narrower than the Wald interval when q < 1; the engine warns in that case and offers ci_method='hksj_adhoc' as a sensitivity analysis.] Fix: keep random effects with a small-sample CI method (e.g., Hartung–Knapp–Sidik–Jonkman, the engine's default ci_method='hksj' in models.meta_analysis) and report a prediction interval, or do not pool; present the decision as a judgement, not a rule.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21",
+  "tags": "few studies kevés vizsgálat small k fixed effect fix hatás random effects véletlen hatás HKSJ Hartung-Knapp overconfidence túlzott magabiztosság confidence interval konfidenciaintervallum pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-053",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "A véletlen hatású modell „konzervatívabb” – csak részben igaz",
+  "body": "The guide calls the random-effects model generally the more conservative approach and notes that its CIs are typically wider. [note: this is not guaranteed: with a Wald/z CI and DL τ², random-effects intervals can be too narrow when k is small, and because random effects give relatively more weight to small studies, the pooled estimate can shift toward small-study effects such as publication bias; compare FE and RE estimates and prefer HKSJ CIs.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21; p. 28",
+  "tags": "conservative konzervatív random effects véletlen hatás confidence interval konfidenciaintervallum small-study effects kisvizsgálat-hatás Wald HKSJ caveat figyelmeztetés"
+ },
+ {
+  "k_id": "K-SIM24-054",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Függőség figyelmen kívül hagyása (8. gyakori hiba)",
+  "body": "Treating several effect sizes from the same study, or overlapping samples, as independent inflates Type I error and distorts the average effect size and its standard error. Detect: repeated study or sample IDs in the analysis dataset, or the same participants appearing in more than one report. Fix: keep one effect per sample (select or average within study) or model the dependence [note: e.g., multilevel models or robust variance estimation, which the source does not cover; see Rodgers & Pustejovsky (2021) in its reading list].",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 31; pp. 11, 18",
+  "tags": "dependence függőség multiple effect sizes több hatásméret overlapping samples átfedő minták Type I error elsőfajú hiba unit of analysis elemzési egység multilevel többszintű robust variance robusztus variancia pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-055",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: súlyok, τ² és összesített becslés reprodukálása",
+  "body": "Reviewer check: recompute the weights (FE w_i = 1/v_i; RE w*_i = 1/(v_i + T²)) and the pooled M = Σw·ES/Σw, and confirm they match the software output; confirm τ² ≥ 0 (truncated), the τ² estimator is named (DL, REML, ...), and df = k − 1. models.meta_analysis reproduces all of these.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 25–27",
+  "tags": "check ellenőrzés reproducibility reprodukálhatóság weights súlyok tau2 estimator becslő pooled estimate összesített becslés degrees of freedom szabadsági fok software output szoftverkimenet reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-056",
+  "stage_id": "S09",
+  "kind": "definition",
+  "title": "Heterogenitás: meghatározás és jelentőség",
+  "body": "Heterogeneity is variation in effect sizes across studies beyond what within-study sampling error explains; no variation means no heterogeneity. It shows whether an intervention works consistently across contexts and guides how results are combined and interpreted. Little heterogeneity supports confidence in the overall conclusion, while substantial heterogeneity calls for investigating its causes (e.g., with meta-regression) rather than just reporting a summary effect.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 20; p. 21; p. 2",
+  "tags": "heterogeneity heterogenitás definition definíció variation szóródás sampling error mintavételi hiba consistency konzisztencia investigate causes okok feltárása"
+ },
+ {
+  "k_id": "K-SIM24-057",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Q homogenitási próba",
+  "body": "Meta-analyses typically test whether all effect sizes estimate the same population parameter with Q, a weighted sum of squares that follows a chi-square distribution; a significant Q suggests heterogeneity. No formula is printed. [note: Q = Σw_i(ES_i − M_FE)² with df = k − 1 (models.cochran_q); the test has low power with few studies and high power with many, so it only signals that heterogeneity is present, not how much.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21",
+  "tags": "Q statistic Q-statisztika Cochran Q homogeneity test homogenitási próba chi-square khi-négyzet heterogeneity heterogenitás power erő degrees of freedom szabadsági fok"
+ },
+ {
+  "k_id": "K-SIM24-058",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "I² statisztika",
+  "body": "I² is described as a relative measure: the ratio of between-study variance (τ²) to total variance (between-study plus within-study variance), with higher values meaning more heterogeneity. The guide gives no computational formula, no interpretation thresholds and no CI. [note: it is usually computed as I² = max(0, (Q − df)/Q)·100%; the Cochrane Handbook gives overlapping rough bands (0–40% might not be important, 30–60% moderate, 50–90% substantial, 75–100% considerable); I² depends on study precision and is not an absolute measure, so also report τ², a prediction interval and a CI for I² (models.heterogeneity).]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21",
+  "tags": "I2 I-négyzet heterogeneity heterogenitás relative measure relatív mérőszám thresholds küszöbök between-study variance vizsgálatok közötti variancia confidence interval konfidenciaintervallum precision pontosság"
+ },
+ {
+  "k_id": "K-SIM24-059",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Predikciós intervallum",
+  "body": "The guide notes that a wide prediction interval indicates substantial heterogeneity in the true effects but gives no formula. [note: the usual random-effects prediction interval is M ± t_{k−2}·sqrt(T² + SE(M)²), computed by models.meta_analysis (pi_method='t_k-2', which needs k ≥ 3); it shows where the true effect of a new comparable study is expected to fall and should accompany every random-effects summary.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21",
+  "tags": "prediction interval predikciós intervallum PI heterogeneity heterogenitás random effects véletlen hatás tau2 new study új vizsgálat"
+ },
+ {
+  "k_id": "K-SIM24-060",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "A Q-próba vagy p-értéke mint egyetlen heterogenitási mérőszám (3. gyakori hiba)",
+  "body": "Using the Q statistic or its p-value as the only indicator of heterogeneity is a common mistake: they can signal that heterogeneity exists but do not quantify how much effects vary. Detect: a report that gives only Q and/or its p-value. Fix and reviewer check: report τ² (and τ), I² and a prediction interval in addition to Q, df and p.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 30; p. 21",
+  "tags": "heterogeneity heterogenitás Q statistic Q-statisztika p-value p-érték I2 tau2 prediction interval predikciós intervallum common mistake gyakori hiba check ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-061",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "Meta-regresszió és moderátorok",
+  "body": "Meta-regression relates effect sizes to study characteristics and is the guide's suggested tool for exploring dispersion; in the example protocol it tests the pre-specified moderators (student age and intervention duration). Candidate moderators (age, gender, diagnosis, SES, education, comorbidities) and design features should be coded at extraction. The guide gives no Q-between formula, R² analogue, permutation test or studies-per-covariate rule and no warning about ecological bias or multiple testing; it points to Hedges & Pigott (2004) on moderator-test power and Tipton et al. (2019). [note: the engine provides moderators.meta_regression and moderators.subgroup_analysis; pre-specify few moderators and treat their findings as observational; the Cochrane Handbook advises against meta-regression with fewer than about 10 studies per examined characteristic.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 2; p. 5; p. 18; pp. 31–32",
+  "tags": "meta-regression meta-regresszió moderators moderátorok subgroup alcsoport heterogeneity heterogenitás pre-specified előre rögzített power erő ecological bias ökológiai torzítás covariates kovariánsok ten studies tíz vizsgálat"
+ },
+ {
+  "k_id": "K-SIM24-062",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Alcsoportok összevetése külön p-értékek alapján (7. gyakori hiba)",
+  "body": "Seeing that an effect is significant in one subgroup but not in another is not evidence that the subgroups differ. Detect: wording such as 'significant in A but not in B'. Fix and reviewer check: base subgroup claims on a formal test of the between-subgroup difference (Q-between or meta-regression) or report the difference with its confidence interval (moderators.subgroup_analysis, moderators.meta_regression).",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 30",
+  "tags": "subgroup analysis alcsoport-elemzés interaction interakció between-group test csoportok közötti próba Q-between p-value p-érték difference különbség confidence interval konfidenciaintervallum common mistake gyakori hiba check ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-063",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Publikált tanulmányokra hagyatkozás és publikációs torzítás (4. gyakori hiba)",
+  "body": "Publication bias arises because studies with statistically significant or favourable results are more likely to be published, so relying on published studies alone risks overestimating the true effect. Detect: no grey-literature or trial-registry search, an asymmetric funnel plot, or a positive Egger or Begg test. Fix: search grey literature and registries, contact experts, and assess the bias (funnel plot, Egger and/or Begg test) with trim-and-fill or another sensitivity analysis when indicated. Reviewer check: a publication-bias assessment is reported. [note: funnel asymmetry shows small-study effects, which can also come from heterogeneity, chance or poorer quality of small trials, so it is not proof of publication bias; trim-and-fill gives a sensitivity estimate, not a corrected effect (Cochrane Handbook v6, ch. 13).]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 29; p. 30",
+  "tags": "publication bias publikációs torzítás overestimation túlbecslés published studies publikált vizsgálatok grey literature szürke irodalom funnel plot tölcsérdiagram Egger Begg trim-and-fill common mistake gyakori hiba check ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-064",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "A publikációs torzítás vizsgálati módszerei és megelőzése",
+  "body": "The guide names funnel plots, Begg and Mazumdar's rank correlation test, Egger's test and sensitivity analyses; its reading list adds Duval & Tweedie (2000) trim-and-fill, Egger et al. (1997, BMJ 315:629) and Rodgers & Pustejovsky (2021) on selective reporting with dependent effect sizes. Prevention starts with the search: grey literature, unpublished studies and expert contact. It gives no formulas, significance levels or minimum number of studies. [note: these tests have low power with fewer than about 10 studies and Egger's test is often judged at p < 0.10; engine: bias.egger_test, bias.begg_test, bias.trim_and_fill and plots.funnel_svg.] [note: Rosenthal's fail-safe N, not mentioned in the guide, should not be used as evidence against publication bias (Cochrane Handbook v6, ch. 13); bias.failsafe_n_rosenthal exists only to reproduce older reports and returns a warning.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 29; pp. 31–32; pp. 4, 8",
+  "tags": "publication bias publikációs torzítás small-study effects kisvizsgálat-hatás funnel plot tölcsérdiagram Egger test Egger-próba Begg Mazumdar rank correlation rangkorreláció trim-and-fill Duval Tweedie selective reporting szelektív közlés fail-safe N hibabiztos N"
+ },
+ {
+  "k_id": "K-SIM24-065",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Érzékenységi elemzés: cél és modell-összevetés",
+  "body": "Step 10: test how robust the conclusions are by repeating the analysis with different statistical methods, models (fixed vs random effects) or inclusion criteria, because analysts may reasonably disagree about the best approach. Example: in the meta-analysis of beta-blockers after myocardial infarction, fixed- and random-effects models gave almost identical overall estimates, which the guide reads as robustness to the model (no numbers are given). [note: the engine supports this with models.meta_analysis (model='fixed' or 'random') and with sensitivity.leave_one_out, sensitivity.influence and sensitivity.cumulative, which the source does not mention.] [note: close FE and RE estimates are reassuring but do not rule out heterogeneity or bias; a marked FE–RE difference is a sign of small-study effects (Cochrane Handbook v6, ch. 13).]",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 28–29",
+  "tags": "sensitivity analysis érzékenységi elemzés robustness robusztusság fixed vs random fix vs véletlen beta-blocker béta-blokkoló myocardial infarction miokardiális infarktus leave-one-out influence befolyás"
+ },
+ {
+  "k_id": "K-SIM24-066",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Érzékenységi elemzés: minőség, méret, korán leállított vizsgálatok, hiányzó adatok",
+  "body": "Re-run the analysis with and without trials of questionable quality, and across trial sizes, to see how these affect the overall finding. Trials stopped early after an interim analysis can introduce bias, so check whether excluding them changes the estimate (in the beta-blocker example the impact was negligible). Also test how the handling of missing data affects results, and keep only one report per overlapping sample (larger N or more complete data).",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 29; p. 18; p. 11",
+  "tags": "sensitivity analysis érzékenységi elemzés study quality vizsgálati minőség trial size vizsgálatméret stopped early korán leállított interim analysis időközi elemzés missing data hiányzó adat overlapping samples átfedő minták"
+ },
+ {
+  "k_id": "K-SIM24-067",
+  "stage_id": "S12",
+  "kind": "check",
+  "title": "Ellenőrzés: jelentett érzékenységi elemzések",
+  "body": "Reviewer check: sensitivity analyses are reported for FE vs RE, excluding low-quality or high-RoB trials, by trial size, excluding trials stopped early, and for the handling of missing data. [note: leave-one-out and influence diagnostics are not in the source but are standard additions.]",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 18, 29",
+  "tags": "check ellenőrzés sensitivity analysis érzékenységi elemzés robustness robusztusság fixed random risk of bias torzítási kockázat stopped early korán leállított missing data hiányzó adat reviewer bíráló"
+ },
+ {
+  "k_id": "K-SIM24-068",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Túl kevés vizsgálat (1. gyakori hiba)",
+  "body": "A meta-analysis can technically be run with only two studies, but conclusions from very few studies are not seen as reliable evidence and may signal that the field is not mature enough to synthesise; no numeric minimum is given. Detect: count k for each pooled outcome. Fix: pre-specify a minimum k, report narratively or state the limitation explicitly, and do not over-interpret unstable τ² estimates. Reviewer check: the number of studies per pooled outcome is reported and very-small-k analyses are flagged (the engine warns when k < 5 under random effects). [note: Cochrane sets no minimum k, and two sufficiently similar studies may be pooled; with very few studies τ² is unreliable, so use a small-sample CI method and reflect the imprecision in the GRADE certainty rating.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 30; pp. 21, 26",
+  "tags": "few studies kevés vizsgálat small k minimum number of studies minimális vizsgálatszám two studies két vizsgálat reliability megbízhatóság tau2 common mistake gyakori hiba check ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-069",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "„Alma és körte” – össze nem illő vizsgálatok összevonása (2. gyakori hiba)",
+  "body": "Pooling studies with different objectives, designs, measures or samples indiscriminately can hide important differences and lead to misleading conclusions. Detect: check the clinical and methodological comparability of populations, interventions, outcomes and designs before pooling. Fix: tighten the eligibility criteria, run separate syntheses, or analyse subgroups.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 30",
+  "tags": "apples and oranges alma és körte comparability összehasonlíthatóság clinical heterogeneity klinikai heterogenitás pooling összevonás separate synthesis külön szintézis common mistake gyakori hiba pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-070",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "A statisztikai szignifikancia túlhangsúlyozása (6. gyakori hiba)",
+  "body": "Emphasising whether the overall effect is statistically significant while neglecting its practical significance is a critical error, in meta-analysis as in primary studies. Detect: conclusions that rest only on p < 0.05. Fix and reviewer check: interpret the magnitude and its clinical or substantive relevance using the effect size, its CI and the prediction interval.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 30; p. 2",
+  "tags": "statistical significance statisztikai szignifikancia practical significance gyakorlati jelentőség clinical relevance klinikai relevancia p-value p-érték interpretation értelmezés common mistake gyakori hiba check ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-071",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: átláthatóság és reprodukálhatóság",
+  "body": "Evaluator criterion: the review has a pre-specified protocol, full search strings for every source with dates, described screening and extraction methods (number of reviewers, independence), a complete PRISMA flow diagram and a PRISMA checklist. Downgrade the review if any of these is missing.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 3–17, 31",
+  "tags": "criterion értékelési szempont transparency átláthatóság reproducibility reprodukálhatóság protocol protokoll search strings keresőstringek PRISMA checklist ellenőrzőlista evaluator értékelő"
+ },
+ {
+  "k_id": "K-SIM24-072",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a keresés teljessége",
+  "body": "Evaluator criterion: several databases suited to the field, grey literature, citation searching and expert contact, with no unjustified language or publication-status limits. Restricting to English-language published studies, as the guide's own protocol example does, is a source of potential bias.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 4, 8, 30",
+  "tags": "criterion értékelési szempont search comprehensiveness keresés teljessége grey literature szürke irodalom language restriction nyelvi korlátozás publication status publikációs státusz evaluator értékelő"
+ },
+ {
+  "k_id": "K-SIM24-073",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: összehasonlíthatóság és elegendő vizsgálatszám",
+  "body": "Evaluator criterion: are the pooled populations, interventions, outcomes and designs similar enough for their average to be meaningful ('apples and oranges')? Is k adequate? Few studies limit the reliability of τ² and the credibility of the conclusions.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 30; pp. 21, 26, 30",
+  "tags": "criterion értékelési szempont comparability összehasonlíthatóság apples and oranges alma és körte number of studies vizsgálatszám small k tau2 credibility hitelesség evaluator értékelő"
+ },
+ {
+  "k_id": "K-SIM24-074",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a heterogenitás számszerűsítése és magyarázata",
+  "body": "Evaluator criterion: the magnitude of heterogeneity is quantified with τ², I² and a prediction interval; its causes are explored through pre-specified moderators or meta-regression; and the conclusion reflects the spread of effects, not just the mean.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 2, 20–21",
+  "tags": "criterion értékelési szempont heterogeneity heterogenitás tau2 I2 prediction interval predikciós intervallum meta-regression meta-regresszió inconsistency inkonzisztencia evaluator értékelő"
+ },
+ {
+  "k_id": "K-SIM24-075",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: vizsgálati minőség és robusztusság",
+  "body": "Evaluator criterion: risk of bias is assessed with validated tools, and results hold when low-quality studies are excluded; the ideal evidence base is RCTs analysed by intention to treat. Robustness: fixed and random effects give similar answers, and results are stable when early-stopped or low-quality trials are excluded and under different missing-data assumptions.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 10, 19, 29; p. 29",
+  "tags": "criterion értékelési szempont study quality vizsgálati minőség risk of bias torzítási kockázat robustness robusztusság sensitivity analysis érzékenységi elemzés RCT ITT evaluator értékelő"
+ },
+ {
+  "k_id": "K-SIM24-076",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: publikációs torzítás és statisztikai függetlenség",
+  "body": "Evaluator criterion: publication-bias risk was assessed and discussed, remembering that heavy reliance on published studies means the effect may be overestimated. Statistical independence: no sample is double-counted and no set of dependent effect sizes is treated as independent.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 29–30; pp. 11, 31",
+  "tags": "criterion értékelési szempont publication bias publikációs torzítás overestimation túlbecslés independence függetlenség double counting kettős számolás dependence függőség evaluator értékelő"
+ },
+ {
+  "k_id": "K-SIM24-077",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: értelmezés és általánosíthatóság",
+  "body": "Evaluator criterion: practical or clinical significance is discussed, subgroup inferences rest on valid between-group comparisons, and the generalisation claimed matches the model: a fixed-effect result supports conditional inference about the included studies only, a random-effects result about a wider population of studies.",
+  "source_id": "simplypsychology2024",
+  "locator": "pp. 22–23, 28, 30",
+  "tags": "criterion értékelési szempont interpretation értelmezés generalisability általánosíthatóság clinical significance klinikai jelentőség subgroup alcsoport fixed effect fix hatás random effects véletlen hatás conditional inference feltételes következtetés evaluator értékelő"
+ },
+ {
+  "k_id": "K-SIM24-078",
+  "stage_id": "S13",
+  "kind": "concept",
+  "title": "A bizonyosság értékelése (GRADE) hiányzik a forrásból",
+  "body": "The guide covers no certainty-of-evidence framework (GRADE, AMSTAR 2 and Jadad are all absent) and does not explain how risk-of-bias results feed into conclusions beyond a sensitivity analysis excluding low-quality trials. [note: for clinical reviews rate certainty per outcome with GRADE (risk of bias, inconsistency, indirectness, imprecision, publication bias) and present a summary-of-findings table, using the Cochrane or GRADE handbooks rather than this source.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 29",
+  "tags": "GRADE certainty of evidence bizonyosság evidence quality evidenciaminőség AMSTAR summary of findings eredményösszefoglaló táblázat gap hiány interpretation értelmezés"
+ },
+ {
+  "k_id": "K-SIM24-079",
+  "stage_id": "S14",
+  "kind": "concept",
+  "title": "PRISMA: ellenőrzőlista, E&E dokumentum és folyamatábra",
+  "body": "PRISMA is a reporting guideline created to address incomplete reporting of systematic reviews: a 27-item checklist running from rationale and objectives to synthesis and limitations, each item backed by an Explanation and Elaboration document, plus a flow diagram of study selection. The guide quotes, without item numbers, the PRISMA 2020 wording on eligibility criteria (item 5), information sources and last-searched dates (item 6), search strategy (item 7), selection process (item 8) and data collection process (item 9); the numbering here is added from PRISMA 2020. It offers no conventions for forest or funnel plots. [note: PRISMA guides reporting only; to appraise how well a review was conducted, use AMSTAR 2 or ROBIS.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 6; p. 10; p. 8; p. 7; p. 13; p. 17",
+  "tags": "PRISMA 2020 reporting beszámolás checklist ellenőrzőlista 27 items 27 tétel explanation and elaboration flow diagram folyamatábra eligibility search selection data collection forest plot funnel plot AMSTAR 2 ROBIS"
+ },
+ {
+  "k_id": "K-SIM24-080",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Elégtelen beszámolás (9. gyakori hiba)",
+  "body": "Failing to report the meta-analytic process transparently and completely is a critical mistake; the guide asks for a detailed written protocol covering the question, search strategy, inclusion criteria and analysis methods. Detect: no protocol, no search strings, or missing PRISMA items. Fix: complete the PRISMA 2020 checklist and flow diagram and publish or register the protocol.",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 31",
+  "tags": "reporting beszámolás inadequate reporting elégtelen beszámolás PRISMA 2020 checklist ellenőrzőlista protocol protokoll transparency átláthatóság common mistake gyakori hiba pitfall buktató"
+ },
+ {
+  "k_id": "K-SIM24-081",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "Példa: PTSD-kockázati tényezők (Brewin et al., 2000) – heterogén hatások",
+  "body": "Brewin, Andrews & Valentine (2000) synthesised 77 articles on predictors of PTSD in trauma-exposed adults. Pre-trauma factors (female sex, less education, lower intelligence, earlier trauma, childhood adversity, psychiatric history) each related only weakly to PTSD (r about 0.10–0.19), while factors acting during or after the trauma (its severity, poor social support, further life stress) were somewhat stronger (r about 0.23–0.40). Most predictors varied across populations and study types; only psychiatric history, childhood abuse and family psychiatric history were homogeneous. Military and civilian samples differed and some effects depended on study methods, so the authors judged a universal list of pre-trauma predictors premature. Lesson: when effects are heterogeneous, report the spread and explore moderators such as population and design instead of quoting one pooled r. These are narrative figures only; no study-level data are given, and the quoted sample-size range (1,149 to over 11,000) has no stated unit. [note: Cohen's small/medium/large labels are generic; judge magnitude in the clinical context.]",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 3",
+  "tags": "example példa Brewin PTSD poszttraumás stressz zavar risk factors kockázati tényezők correlation korreláció heterogeneity heterogenitás homogeneous homogén moderators moderátorok military katonai civilian polgári population populáció"
+ }
+]

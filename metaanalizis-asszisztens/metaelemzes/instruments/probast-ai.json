@@ -1,0 +1,1183 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "probast-ai",
+  "name": "PROBAST+AI",
+  "label": {
+    "hu": "PROBAST+AI — predikciós modellek minősége, torzítása és alkalmazhatósága",
+    "en": "PROBAST+AI — quality, risk of bias and applicability of prediction models"
+  },
+  "full_name": "Prediction model Risk Of Bias ASsessment Tool, updated for AI (PROBAST+AI)",
+  "family": "prediction",
+  "tool_version": "2025",
+  "definition_version": 1,
+  "validator_version": "1.0.0",
+  "reference_sha256": "f84793c62b792e4271392ddaec3168657749fe139fe2f67524637e379ea62d6a",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/probast-ai.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Moons KGM, Damen JAA, Kaul T, et al. PROBAST+AI: an updated quality, risk of bias, and applicability assessment tool for prediction models using regression or artificial intelligence methods. BMJ 2025;388:e082505.",
+  "licence": {
+    "instrument_licence": "ismeretlen — a BMJ-közlemény licencét ellenőrizd",
+    "verbatim_allowed": null,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "A licencet nem tudtuk ellenőrizni, ezért a fájl csak parafrázist tartalmaz a hivatalos tételszámozással.",
+      "en": "The licence could not be verified, so this file holds paraphrases only, with the official numbering."
+    }
+  },
+  "intro": {
+    "hu": "A PROBAST+AI egy MODELLT értékel egy vizsgálaton belül, két menetben: fejlesztés (minőség, 16 kérdés) és értékelés (torzítási kockázat, 18 kérdés). Az 1–3. domén kérdései a két menetben azonosak, de KÜLÖN kell megválaszolni őket (34 hely, nem 23). Doménenként alacsony / magas / nem egyértelmű ítélet, az 1–3. doménben alkalmazhatóság is (a PICOTS-hoz mérve). Az összítélet HOLISZTIKUS: nincs algoritmus, indoklás kötelező.",
+    "en": "PROBAST+AI rates one MODEL in one study in two passes: development (quality, 16 questions) and evaluation (risk of bias, 18 questions). Domains 1–3 share their questions but are answered TWICE (34 slots, not 23). The overall judgement is HOLISTIC: no algorithm, a rationale is required."
+  },
+  "unit": "model",
+  "unit_label": {
+    "hu": "modellenként, menetenként",
+    "en": "per model, per pass"
+  },
+  "scopes": [
+    {
+      "id": "both",
+      "label": {
+        "hu": "Fejlesztés és értékelés (34 hely)",
+        "en": "Development and evaluation (34 slots)"
+      },
+      "default": true,
+      "passes": [
+        "development",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "development",
+      "label": {
+        "hu": "Csak fejlesztés (16 hely)",
+        "en": "Development only (16 slots)"
+      },
+      "default": false,
+      "passes": [
+        "development"
+      ]
+    },
+    {
+      "id": "evaluation",
+      "label": {
+        "hu": "Csak értékelés (18 hely)",
+        "en": "Evaluation only (18 slots)"
+      },
+      "default": false,
+      "passes": [
+        "evaluation"
+      ]
+    }
+  ],
+  "passes": [
+    {
+      "id": "development",
+      "label": {
+        "hu": "Minőség (fejlesztés)",
+        "en": "Quality (development)"
+      }
+    },
+    {
+      "id": "evaluation",
+      "label": {
+        "hu": "Torzítási kockázat (értékelés)",
+        "en": "Risk of bias (evaluation)"
+      }
+    }
+  ],
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "probably_yes",
+      "label": "PY",
+      "text": {
+        "hu": "Valószínűleg igen",
+        "en": "Probably yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "py",
+        "probably yes",
+        "prob yes",
+        "valoszinuleg igen",
+        "vi"
+      ]
+    },
+    {
+      "value": "probably_no",
+      "label": "PN",
+      "text": {
+        "hu": "Valószínűleg nem",
+        "en": "Probably no"
+      },
+      "kind": "negative",
+      "aliases": [
+        "pn",
+        "probably no",
+        "prob no",
+        "valoszinuleg nem",
+        "vn"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "no_information",
+      "label": "NI",
+      "text": {
+        "hu": "Nincs információ",
+        "en": "No information"
+      },
+      "kind": "unknown",
+      "aliases": [
+        "ni",
+        "no information",
+        "no info",
+        "nincs informacio",
+        "nincs adat"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "probably_yes",
+    "probably_no",
+    "no",
+    "no_information"
+  ],
+  "verdicts": [
+    {
+      "value": "low",
+      "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+      },
+      "level": "low"
+    },
+    {
+      "value": "high",
+      "label": {
+        "hu": "Magas",
+        "en": "High"
+      },
+      "level": "high"
+    },
+    {
+      "value": "unclear",
+      "label": {
+        "hu": "Nem egyértelmű",
+        "en": "Unclear"
+      },
+      "level": "some"
+    }
+  ],
+  "domains": [
+    {
+      "id": "1",
+      "title": {
+        "hu": "Résztvevők és adatforrások",
+        "en": "Participants and data sources"
+      },
+      "short": "1",
+      "passes": [
+        "development",
+        "evaluation"
+      ],
+      "applicability": true
+    },
+    {
+      "id": "2",
+      "title": {
+        "hu": "Prediktorok",
+        "en": "Predictors"
+      },
+      "short": "2",
+      "passes": [
+        "development",
+        "evaluation"
+      ],
+      "applicability": true
+    },
+    {
+      "id": "3",
+      "title": {
+        "hu": "Kimenet",
+        "en": "Outcome"
+      },
+      "short": "3",
+      "passes": [
+        "development",
+        "evaluation"
+      ],
+      "applicability": true
+    },
+    {
+      "id": "4",
+      "title": {
+        "hu": "Elemzés",
+        "en": "Analysis"
+      },
+      "short": "4",
+      "passes": [
+        "development",
+        "evaluation"
+      ],
+      "applicability": false
+    }
+  ],
+  "items": [
+    {
+      "id": "1.1",
+      "key": "development/1.1",
+      "domain": "1",
+      "pass": "development",
+      "text": {
+        "hu": "Megfelelő adatforrásokat használtak-e?",
+        "en": "Were appropriate data sources used?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony aggály: prospektív kohorsz (RCT-kar is), vagy előre rögzített, következetesen alkalmazott kritériumú regiszter; illetve beágyazott eset-kontroll / eset-kohorsz a mintavételi arány helyes korrekciójával. Magas: nem beágyazott eset-kontroll, vagy korrekció nélküli beágyazott elrendezés — az alapkockázat és az abszolút valószínűség nem állítható helyre, ami a kalibrációt torzítja.",
+        "en": "- Low concern: prospective cohort (including an RCT arm) or registry data with prespecified, consistently-applied criteria; OR a nested case-control/case-cohort design **with** correct adjustment for the original sampling fraction in the analysis (this recovers correct baseline risk). - High concern: a non-nested case-control design, or a nested design *without* that adjustment — baseline risk and absolute probabilities can't be correctly recovered, which biases calibration even if discrimination looks fine. - NI: sampling/recruitment method isn't described clearly enough to tell. - Note if RCT data are used: treatment allocation should generally be included as a predictor, since an effective treatment is itself a predictor of outcome."
+      }
+    },
+    {
+      "id": "1.2",
+      "key": "development/1.2",
+      "domain": "1",
+      "pass": "development",
+      "text": {
+        "hu": "Megfelelő vizsgálati elrendezést használtak-e?",
+        "en": "Was an appropriate study design used?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Prognosztikai vizsgálatnál a prospektív longitudinális kohorsz alacsony aggály; a rutinellátási (EHR-) adatok retrospektív felhasználása alapból magasabb, hacsak nem igazolják az adatminőséget. Diagnosztikai vizsgálatnál a keresztmetszeti elrendezés, a prediktorok és a referenciastandard egyidejű mérésével.",
+        "en": "- Prognostic studies: a prospective longitudinal cohort is low concern. Retrospective reuse of routine-care/EHR data is higher concern by default (inconsistent recording, no protocol) unless the paper demonstrates the data quality was checked and adequate. - Diagnostic studies: cross-sectional, with predictors and the reference standard measured contemporaneously (or with a justified, bounded follow-up window when the reference standard requires it), is low concern. - This question was split out from 1.1 in the PROBAST+AI update specifically to separate \"was the *source* appropriate\" from \"was the *design* appropriate for a diagnostic vs. prognostic question\" — a good data source can still be paired with an inappropriate design."
+      }
+    },
+    {
+      "id": "1.3",
+      "key": "development/1.3",
+      "domain": "1",
+      "pass": "development",
+      "text": {
+        "hu": "Reprezentatív adathalmazt eredményeztek-e a be- és kizárások?",
+        "en": "Did inclusions/exclusions result in a representative dataset?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony aggály: nem vontak be olyanokat, akiknél a prediktorok felvételekor már fennállt a kimenet, és nem szűkítették csendben a betegkört. Ez nem a bevonás utáni lemorzsolódásról szól (az a 4. domén).",
+        "en": "- Low concern: no participants were included who already had the outcome at the point predictors were assessed (this inflates apparent performance and biases toward finding the wrong predictors); no exclusions that quietly narrow the case-mix away from the population the model is meant to serve, without that narrowing being stated as a limitation. - High concern: e.g., a diagnosis-prediction model developed on people already diagnosed; a study that excludes complex/comorbid patients without flagging that the model therefore doesn't apply to them. - This is **not** about loss to follow-up after enrolment — that's a domain 4 (analysis) question, not a domain 1 question."
+      }
+    },
+    {
+      "id": "2.1",
+      "key": "development/2.1",
+      "domain": "2",
+      "pass": "development",
+      "text": {
+        "hu": "Minden résztvevőnél hasonló módon definiálták és mérték-e a prediktorokat?",
+        "en": "Were predictors defined and assessed in a similar way for all participants?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Magas aggály, ha ugyanazt a névleges prediktort résztvevőnként más eszközzel vagy küszöbbel mérték (pl. „vér a székletben” részben szemrevételezéssel, részben székletvér-teszttel).",
+        "en": "- Low concern: consistent definitions/instruments across all participants and (if multi-site) across sites. - High concern: the same nominal predictor measured with different instruments/thresholds for different participants (e.g., \"blood in stool\" assessed by visual inspection for some, faecal occult blood test for others, pooled as one variable) — especially risky for anything requiring subjective interpretation."
+      }
+    },
+    {
+      "id": "2.2",
+      "key": "development/2.2",
+      "domain": "2",
+      "pass": "development",
+      "text": {
+        "hu": "Minden résztvevőnél hasonló volt-e a prediktorok előfeldolgozása?",
+        "en": "Was any preprocessing of predictors similar for all participants?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az előfeldolgozás (skálázás, kódolás, imputálás, jellemzőképzés) paramétereit csak a tanító adaton szabad illeszteni, és változatlanul kell alkalmazni az értékelésnél.",
+        "en": "(new relative to PROBAST-2019 — separated out because tree-based and neural-network pipelines routinely apply scaling, encoding, imputation, or embeddings as distinct pipeline steps, and these need to be fit only on training data and applied identically at evaluation.) - Low concern: preprocessing/transformation steps (scaling, encoding, imputation, feature engineering) are documented and applied consistently; any parameters of the preprocessing (e.g., normalisation constants) are fit on training data only, not re-derived on evaluation data. - High concern: preprocessing parameters were refit on the evaluation set, or preprocessing differed between development and evaluation in a way that isn't just \"apply the same transform.\""
+      }
+    },
+    {
+      "id": "2.3",
+      "key": "development/2.3",
+      "domain": "2",
+      "pass": "development",
+      "text": {
+        "hu": "A kimeneti adatok ismerete nélkül mérték-e a prediktorokat?",
+        "en": "Were predictor assessments made without knowledge of outcome data?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Prospektív kohorszban ez szerkezetileg általában teljesül (a prediktort a kimenet előtt mérik) — ezt indoklással alacsony kockázatnak veheted. A „Nincs információ” gyakori, és ilyen elrendezésnél összefér az alacsony doménítélettel.",
+        "en": "- Low concern: predictors were measured/recorded before outcome status was known, or the paper states outcome information was unavailable to whoever assessed predictors — this is usually structurally true in prospective cohorts (predictors measured before the outcome occurs) even if not explicitly stated as \"blinding,\" and it's reasonable to infer low risk here with a stated rationale. - High concern: predictor assessment clearly used outcome information (e.g., re-reading imaging with the diagnosis already known). - NI is common and often still compatible with an overall low-concern domain judgment if the design makes blinding structurally likely (say so in the rationale)."
+      }
+    },
+    {
+      "id": "2.4",
+      "key": "development/2.4",
+      "domain": "2",
+      "pass": "development",
+      "text": {
+        "hu": "Elérhetők voltak-e a modell prediktorai a modell tervezett használatának időpontjában?",
+        "en": "Were the predictors included in the model available at the time the model was intended to be used?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Magas aggály: műtét előtti használatra szánt modell műtét közbeni változóval; vagy olyan validálás, amely az elérhetetlen prediktorokat elhagyva valójában egy másik, szűkített modellt validál.",
+        "en": "- Low concern: every predictor in the final model would genuinely be on hand at the point of use (e.g., available to a clinician at triage, or in the record at admission). - High concern: a model meant for pre-operative use that includes an intra-operative variable; a validation study that dropped predictors unavailable at validation time and validated a *different*, reduced model while calling it the same one."
+      }
+    },
+    {
+      "id": "3.1",
+      "key": "development/3.1",
+      "domain": "3",
+      "pass": "development",
+      "text": {
+        "hu": "Megfelelően definiálták és mérték-e a kimenetet?",
+        "en": "Were outcomes defined and assessed appropriately?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony aggály: elfogadott, irányelv szerinti vagy validált kimenetdefiníció; egyetlen prediktor sem része a kimenet meghatározásának (beépülési torzítás); nem válogattak a kimenet-küszöbök között a legkedvezőbbre.",
+        "en": "(this merges three separate PROBAST-2019 questions — appropriateness of the determination method, use of a standard/prespecified definition, and exclusion of predictors from the outcome definition — into one question in PROBAST+AI.) - Low concern: an accepted/guideline-based or previously-validated outcome definition and measurement method; no predictor variable forms part of how the outcome itself was determined (that circularity is \"incorporation bias\" and inflates apparent performance); no evidence of testing multiple outcome thresholds and reporting the most favourable one. - High concern: an ad hoc or post hoc outcome definition, especially one chosen after looking at what improves model performance; a predictor variable double-counted inside the outcome definition (e.g., a biomarker used both as a predictor and as part of a composite outcome)."
+      }
+    },
+    {
+      "id": "3.2",
+      "key": "development/3.2",
+      "domain": "3",
+      "pass": "development",
+      "text": {
+        "hu": "Minden résztvevőnél hasonló módon definiálták és mérték-e a kimenetet?",
+        "en": "Were outcomes defined and assessed in a similar way for all participants?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ugyanaz a logika, mint a 2.1-nél, a kimenet oldalán: egységes küszöbök, összetett végpont-szabályok és adjudikáció minden résztvevőnél és helyszínen.",
+        "en": "- Same logic as 2.1, applied to the outcome side — consistent thresholds/composite-outcome rules/adjudication method across all participants and sites."
+      }
+    },
+    {
+      "id": "3.3",
+      "key": "development/3.3",
+      "domain": "3",
+      "pass": "development",
+      "text": {
+        "hu": "A prediktoradatok használata vagy ismerete nélkül mérték-e a kimenetet?",
+        "en": "Were outcome assessments made without use or knowledge of predictor data?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A 2.3 tükörképe. Különösen fontos, ha modelleket hasonlítanak össze, vagy egy prediktor többlet-értékét vizsgálják.",
+        "en": "- Mirror of 2.3 in the other direction. Especially important when the explicit aim is comparing models or assessing one predictor's incremental value — then blinding of outcome assessment to predictor data matters more, not less."
+      }
+    },
+    {
+      "id": "3.4",
+      "key": "development/3.4",
+      "domain": "3",
+      "pass": "development",
+      "text": {
+        "hu": "Megfelelő volt-e az időköz a prediktorok és a kimenet mérése között?",
+        "en": "Was the time interval between predictor assessment and outcome assessment appropriate?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Diagnosztikánál ideálisan egyidejű; prognózisnál a túl rövid horizont alulbecsli a kimenetet, a túl hosszú más folyamatot ragad meg. A közöletlen időköz (Nincs információ) valódi és gyakori hiány.",
+        "en": "- Diagnostic studies: ideally simultaneous, or a follow-up window that's justified by how long it takes the reference standard to become positive. - Prognostic studies: too short a horizon under-captures the outcome; too long risks capturing a different underlying process. Needs clinical judgment about what's appropriate for the specific outcome, not a fixed rule. - NI here (no interval reported at all) is a real and common gap."
+      }
+    },
+    {
+      "id": "4.1",
+      "key": "development/4.1",
+      "domain": "4",
+      "pass": "development",
+      "text": {
+        "hu": "Van-e bizonyíték arra, hogy a mintanagyság megfelelő volt?",
+        "en": "Was there evidence that the sample size was reasonable?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Hüvelykujjszabály (PROBAST-2019): regressziós modellnél paraméterenként legalább 20 esemény kényelmes, 10–20 határeset, 10 alatt valódi aggály; a jelölt prediktorokat számold, szabadsági fokban (egy 6 kategóriás prediktor 5). ML-modellekhez jóval nagyobb minta kell; az alacsony aggályhoz tényleges indoklás kell, nem csak nagy N.",
+        "en": "- Background heuristic (carried over from PROBAST-2019, since PROBAST+AI's own updated numeric guidance for this item isn't available to this skill — treat as a starting point, not gospel): for regression-type models, events-per-predictor-parameter (EPP/EPV) ≥ 20 is comfortable, 10–20 is borderline (judge using outcome prevalence, overall model performance, and predictor distribution), below 10 is a real concern. Count *candidate* predictors considered at any modelling stage, not just those in the final model, and count degrees of freedom (a 6-category predictor costs 5, not 1). - ML models (random forests, neural networks, gradient boosting) typically need substantially larger effective sample sizes than this to avoid overfitting — flag as a concern if a paper doesn't address sample size adequacy at all, and be more skeptical of \"we used all available data\" as a sufficient justification for anything beyond simple models. - Low concern requires an actual justification, not just a large-sounding raw N."
+      }
+    },
+    {
+      "id": "4.2",
+      "key": "development/4.2",
+      "domain": "4",
+      "pass": "development",
+      "text": {
+        "hu": "Megfelelően kezelték-e a folytonos és a kategoriális prediktorokat?",
+        "en": "Were continuous and categorical predictors handled appropriately?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony: a folytonos prediktor folytonos marad, a nemlinearitást vizsgálták (spline, frakcionált polinom). Magas: adatvezérelt „optimális” vágóponton dichotomizált prediktor.",
+        "en": "- Low concern: continuous predictors kept continuous, with nonlinearity examined (splines, fractional polynomials) rather than assumed away; where categorisation is used, cut points were prespecified (clinically standard, not data-driven) and there are ≥3–4 categories rather than a single dichotomisation. - High concern: continuous predictors dichotomised at a data-derived \"optimal\" cut point (this loses information and inflates apparent associations — a well-documented problem, not a stylistic preference)."
+      }
+    },
+    {
+      "id": "4.3",
+      "key": "development/4.3",
+      "domain": "4",
+      "pass": "development",
+      "text": {
+        "hu": "Megfelelően kezelték-e az elemzésben a hiányzó vagy cenzorált adatú résztvevőket?",
+        "en": "Were participants with missing or censored data handled appropriately in the analysis?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony: többszörös imputálás külön a fejlesztési és az értékelési adaton (szivárgás nélkül), vagy kimondottan nem volt hiány. Magas: indokolatlan teljes esetes elemzés, egyszeres imputálás, hiány-indikátor módszer.",
+        "en": "- Low concern: multiple imputation, done separately for development and evaluation data (no leakage); or a clear statement that there was no missingness. - High concern: unexplained complete-case analysis, single imputation without justification, \"missing indicator\" method, or last-value-carried-forward used inappropriately; no mention of missingness handling at all despite it being plausible."
+      }
+    },
+    {
+      "id": "4.4",
+      "key": "development/4.4",
+      "domain": "4",
+      "pass": "development",
+      "text": {
+        "hu": "Ha osztálykiegyensúlyozatlanság-kezelést alkalmaztak, újrakalibrálták-e a modellt vagy az előrejelzéseit?",
+        "en": "If methods to address class imbalance were used, was the model or the model predictions recalibrated?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A túl- vagy alulmintavételezés (pl. SMOTE) eltolja a tanításkor látott kimenetgyakoriságot, ami korrekció nélkül felfelé torzítja a valószínűségeket. Ha nem alkalmaztak ilyen módszert, a tétel nem alkalmazható.",
+        "en": "(new item) - Rebalancing methods (SMOTE, over/undersampling) shift the outcome frequency the model sees during training, which distorts predicted probabilities upward if not corrected for afterward. Low concern requires an explicit recalibration step after any such rebalancing; if no imbalance-correction method was used at all, this item is not applicable."
+      },
+      "condition": {
+        "hu": "Ha osztálykiegyensúlyozatlanság-kezelést alkalmaztak",
+        "en": "If methods to address class imbalance were used"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "4.5",
+      "key": "development/4.5",
+      "domain": "4",
+      "pass": "development",
+      "text": {
+        "hu": "Alkalmaztak-e módszereket a modell túlillesztésének kezelésére?",
+        "en": "Were methods used to address potential model overfitting?"
+      },
+      "tags": [
+        "development"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "development",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony: belső validálás (bootstrap vagy keresztvalidálás), amely minden fejlesztési lépést — hiperparaméter-hangolást, prediktorszelekciót — minden újramintavételben megismétel, optimizmus-korrigált teljesítménnyel. Magas: nincs belső validálás, vagy csak egyetlen véletlen tanító/teszt felosztás.",
+        "en": "- Low concern: internal validation (bootstrap or cross-validation) that replays *every* development step inside each resample — including any hyperparameter tuning or predictor selection, not just the final fit — with optimism-adjusted performance reported. - High concern: no internal validation at all; a single random train/test split presented as validation (this is a weak, high-variance substitute, not a real check); cross-validation/bootstrapping that only refits the final chosen model and skips re-doing tuning/selection inside each fold (this understates optimism, sometimes substantially)."
+      }
+    },
+    {
+      "id": "1.1",
+      "key": "evaluation/1.1",
+      "domain": "1",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Megfelelő adatforrásokat használtak-e?",
+        "en": "Were appropriate data sources used?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony aggály: prospektív kohorsz (RCT-kar is), vagy előre rögzített, következetesen alkalmazott kritériumú regiszter; illetve beágyazott eset-kontroll / eset-kohorsz a mintavételi arány helyes korrekciójával. Magas: nem beágyazott eset-kontroll, vagy korrekció nélküli beágyazott elrendezés — az alapkockázat és az abszolút valószínűség nem állítható helyre, ami a kalibrációt torzítja.",
+        "en": "- Low concern: prospective cohort (including an RCT arm) or registry data with prespecified, consistently-applied criteria; OR a nested case-control/case-cohort design **with** correct adjustment for the original sampling fraction in the analysis (this recovers correct baseline risk). - High concern: a non-nested case-control design, or a nested design *without* that adjustment — baseline risk and absolute probabilities can't be correctly recovered, which biases calibration even if discrimination looks fine. - NI: sampling/recruitment method isn't described clearly enough to tell. - Note if RCT data are used: treatment allocation should generally be included as a predictor, since an effective treatment is itself a predictor of outcome."
+      }
+    },
+    {
+      "id": "1.2",
+      "key": "evaluation/1.2",
+      "domain": "1",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Megfelelő vizsgálati elrendezést használtak-e?",
+        "en": "Was an appropriate study design used?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Prognosztikai vizsgálatnál a prospektív longitudinális kohorsz alacsony aggály; a rutinellátási (EHR-) adatok retrospektív felhasználása alapból magasabb, hacsak nem igazolják az adatminőséget. Diagnosztikai vizsgálatnál a keresztmetszeti elrendezés, a prediktorok és a referenciastandard egyidejű mérésével.",
+        "en": "- Prognostic studies: a prospective longitudinal cohort is low concern. Retrospective reuse of routine-care/EHR data is higher concern by default (inconsistent recording, no protocol) unless the paper demonstrates the data quality was checked and adequate. - Diagnostic studies: cross-sectional, with predictors and the reference standard measured contemporaneously (or with a justified, bounded follow-up window when the reference standard requires it), is low concern. - This question was split out from 1.1 in the PROBAST+AI update specifically to separate \"was the *source* appropriate\" from \"was the *design* appropriate for a diagnostic vs. prognostic question\" — a good data source can still be paired with an inappropriate design."
+      }
+    },
+    {
+      "id": "1.3",
+      "key": "evaluation/1.3",
+      "domain": "1",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Reprezentatív adathalmazt eredményeztek-e a be- és kizárások?",
+        "en": "Did inclusions/exclusions result in a representative dataset?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony aggály: nem vontak be olyanokat, akiknél a prediktorok felvételekor már fennállt a kimenet, és nem szűkítették csendben a betegkört. Ez nem a bevonás utáni lemorzsolódásról szól (az a 4. domén).",
+        "en": "- Low concern: no participants were included who already had the outcome at the point predictors were assessed (this inflates apparent performance and biases toward finding the wrong predictors); no exclusions that quietly narrow the case-mix away from the population the model is meant to serve, without that narrowing being stated as a limitation. - High concern: e.g., a diagnosis-prediction model developed on people already diagnosed; a study that excludes complex/comorbid patients without flagging that the model therefore doesn't apply to them. - This is **not** about loss to follow-up after enrolment — that's a domain 4 (analysis) question, not a domain 1 question."
+      }
+    },
+    {
+      "id": "2.1",
+      "key": "evaluation/2.1",
+      "domain": "2",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Minden résztvevőnél hasonló módon definiálták és mérték-e a prediktorokat?",
+        "en": "Were predictors defined and assessed in a similar way for all participants?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Magas aggály, ha ugyanazt a névleges prediktort résztvevőnként más eszközzel vagy küszöbbel mérték (pl. „vér a székletben” részben szemrevételezéssel, részben székletvér-teszttel).",
+        "en": "- Low concern: consistent definitions/instruments across all participants and (if multi-site) across sites. - High concern: the same nominal predictor measured with different instruments/thresholds for different participants (e.g., \"blood in stool\" assessed by visual inspection for some, faecal occult blood test for others, pooled as one variable) — especially risky for anything requiring subjective interpretation."
+      }
+    },
+    {
+      "id": "2.2",
+      "key": "evaluation/2.2",
+      "domain": "2",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Minden résztvevőnél hasonló volt-e a prediktorok előfeldolgozása?",
+        "en": "Was any preprocessing of predictors similar for all participants?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az előfeldolgozás (skálázás, kódolás, imputálás, jellemzőképzés) paramétereit csak a tanító adaton szabad illeszteni, és változatlanul kell alkalmazni az értékelésnél.",
+        "en": "(new relative to PROBAST-2019 — separated out because tree-based and neural-network pipelines routinely apply scaling, encoding, imputation, or embeddings as distinct pipeline steps, and these need to be fit only on training data and applied identically at evaluation.) - Low concern: preprocessing/transformation steps (scaling, encoding, imputation, feature engineering) are documented and applied consistently; any parameters of the preprocessing (e.g., normalisation constants) are fit on training data only, not re-derived on evaluation data. - High concern: preprocessing parameters were refit on the evaluation set, or preprocessing differed between development and evaluation in a way that isn't just \"apply the same transform.\""
+      }
+    },
+    {
+      "id": "2.3",
+      "key": "evaluation/2.3",
+      "domain": "2",
+      "pass": "evaluation",
+      "text": {
+        "hu": "A kimeneti adatok ismerete nélkül mérték-e a prediktorokat?",
+        "en": "Were predictor assessments made without knowledge of outcome data?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Prospektív kohorszban ez szerkezetileg általában teljesül (a prediktort a kimenet előtt mérik) — ezt indoklással alacsony kockázatnak veheted. A „Nincs információ” gyakori, és ilyen elrendezésnél összefér az alacsony doménítélettel.",
+        "en": "- Low concern: predictors were measured/recorded before outcome status was known, or the paper states outcome information was unavailable to whoever assessed predictors — this is usually structurally true in prospective cohorts (predictors measured before the outcome occurs) even if not explicitly stated as \"blinding,\" and it's reasonable to infer low risk here with a stated rationale. - High concern: predictor assessment clearly used outcome information (e.g., re-reading imaging with the diagnosis already known). - NI is common and often still compatible with an overall low-concern domain judgment if the design makes blinding structurally likely (say so in the rationale)."
+      }
+    },
+    {
+      "id": "2.4",
+      "key": "evaluation/2.4",
+      "domain": "2",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Elérhetők voltak-e a modell prediktorai a modell tervezett használatának időpontjában?",
+        "en": "Were the predictors included in the model available at the time the model was intended to be used?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Magas aggály: műtét előtti használatra szánt modell műtét közbeni változóval; vagy olyan validálás, amely az elérhetetlen prediktorokat elhagyva valójában egy másik, szűkített modellt validál.",
+        "en": "- Low concern: every predictor in the final model would genuinely be on hand at the point of use (e.g., available to a clinician at triage, or in the record at admission). - High concern: a model meant for pre-operative use that includes an intra-operative variable; a validation study that dropped predictors unavailable at validation time and validated a *different*, reduced model while calling it the same one."
+      }
+    },
+    {
+      "id": "3.1",
+      "key": "evaluation/3.1",
+      "domain": "3",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Megfelelően definiálták és mérték-e a kimenetet?",
+        "en": "Were outcomes defined and assessed appropriately?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony aggály: elfogadott, irányelv szerinti vagy validált kimenetdefiníció; egyetlen prediktor sem része a kimenet meghatározásának (beépülési torzítás); nem válogattak a kimenet-küszöbök között a legkedvezőbbre.",
+        "en": "(this merges three separate PROBAST-2019 questions — appropriateness of the determination method, use of a standard/prespecified definition, and exclusion of predictors from the outcome definition — into one question in PROBAST+AI.) - Low concern: an accepted/guideline-based or previously-validated outcome definition and measurement method; no predictor variable forms part of how the outcome itself was determined (that circularity is \"incorporation bias\" and inflates apparent performance); no evidence of testing multiple outcome thresholds and reporting the most favourable one. - High concern: an ad hoc or post hoc outcome definition, especially one chosen after looking at what improves model performance; a predictor variable double-counted inside the outcome definition (e.g., a biomarker used both as a predictor and as part of a composite outcome)."
+      }
+    },
+    {
+      "id": "3.2",
+      "key": "evaluation/3.2",
+      "domain": "3",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Minden résztvevőnél hasonló módon definiálták és mérték-e a kimenetet?",
+        "en": "Were outcomes defined and assessed in a similar way for all participants?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ugyanaz a logika, mint a 2.1-nél, a kimenet oldalán: egységes küszöbök, összetett végpont-szabályok és adjudikáció minden résztvevőnél és helyszínen.",
+        "en": "- Same logic as 2.1, applied to the outcome side — consistent thresholds/composite-outcome rules/adjudication method across all participants and sites."
+      }
+    },
+    {
+      "id": "3.3",
+      "key": "evaluation/3.3",
+      "domain": "3",
+      "pass": "evaluation",
+      "text": {
+        "hu": "A prediktoradatok használata vagy ismerete nélkül mérték-e a kimenetet?",
+        "en": "Were outcome assessments made without use or knowledge of predictor data?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "A 2.3 tükörképe. Különösen fontos, ha modelleket hasonlítanak össze, vagy egy prediktor többlet-értékét vizsgálják.",
+        "en": "- Mirror of 2.3 in the other direction. Especially important when the explicit aim is comparing models or assessing one predictor's incremental value — then blinding of outcome assessment to predictor data matters more, not less."
+      }
+    },
+    {
+      "id": "3.4",
+      "key": "evaluation/3.4",
+      "domain": "3",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Megfelelő volt-e az időköz a prediktorok és a kimenet mérése között?",
+        "en": "Was the time interval between predictor assessment and outcome assessment appropriate?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Diagnosztikánál ideálisan egyidejű; prognózisnál a túl rövid horizont alulbecsli a kimenetet, a túl hosszú más folyamatot ragad meg. A közöletlen időköz (Nincs információ) valódi és gyakori hiány.",
+        "en": "- Diagnostic studies: ideally simultaneous, or a follow-up window that's justified by how long it takes the reference standard to become positive. - Prognostic studies: too short a horizon under-captures the outcome; too long risks capturing a different underlying process. Needs clinical judgment about what's appropriate for the specific outcome, not a fixed rule. - NI here (no interval reported at all) is a real and common gap."
+      }
+    },
+    {
+      "id": "4.1",
+      "key": "evaluation/4.1",
+      "domain": "4",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Elkerülték-e, hogy az értékelés csak a látszólagos (apparent) teljesítményen alapuljon?",
+        "en": "Was model evaluation based on only apparent performance avoided?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ha az egyetlen közölt teljesítmény ugyanazon az adaton mért, amelyen a modellt illesztették, az automatikusan magas aggály.",
+        "en": "(new item — arguably the single most important gate in this domain) - If the *only* performance figure reported is on the same data the model was fit on, with no internal or external validation at all, this is an automatic high-concern flag — apparent performance is essentially always optimistic and on its own tells you little about real-world performance."
+      }
+    },
+    {
+      "id": "4.2",
+      "key": "evaluation/4.2",
+      "domain": "4",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Van-e bizonyíték arra, hogy a mintanagyság megfelelő volt?",
+        "en": "Was there evidence that the sample size was reasonable?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Hüvelykujjszabály: kb. 100 kimeneti esemény alatt az értékelő vizsgálat alulméretezett, a kalibráció instabil.",
+        "en": "- Background heuristic: evaluation studies are conventionally underpowered below roughly 100 outcome events (from PROBAST-2019 methodology) — below that, performance estimates (especially calibration) get unstable and confidence intervals get wide even before considering bias."
+      }
+    },
+    {
+      "id": "4.3",
+      "key": "evaluation/4.3",
+      "domain": "4",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Megfelelően kezelték-e az elemzésben a hiányzó vagy cenzorált adatú résztvevőket?",
+        "en": "Were participants with missing or censored data handled appropriately in the analysis?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ugyanaz a mérce, mint a fejlesztési 4.3-nál.",
+        "en": "- Same standard as development 4.3."
+      }
+    },
+    {
+      "id": "4.4",
+      "key": "evaluation/4.4",
+      "domain": "4",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Ha osztálykiegyensúlyozatlanság-kezelést alkalmaztak, korrekció nélküli adathalmazon értékeltek-e?",
+        "en": "If methods to address class imbalance were used, was the evaluation done in a dataset without imbalance correction?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Az értékelő halmaz a valós kimenetgyakoriságot tükrözze; mesterségesen kiegyensúlyozott halmazon az eredmény félrevezető.",
+        "en": "(new item) — the evaluation set should reflect the real-world outcome prevalence the model will actually face; evaluating on an artificially rebalanced set gives a misleadingly rosy (or just wrong) picture of real-world performance."
+      },
+      "condition": {
+        "hu": "Ha osztálykiegyensúlyozatlanság-kezelést alkalmaztak",
+        "en": "If methods to address class imbalance were used"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "4.5",
+      "key": "evaluation/4.5",
+      "domain": "4",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Ha az adatokat tanító és teszt halmazra bontották, van-e bizonyíték az adatszivárgás elkerülésére?",
+        "en": "If data splitting was done to create training and test datasets, was there evidence that data leakage was avoided?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Keresd: közös résztvevők vagy rekordok (pl. személyenként több felvétel); a teljes adaton illesztett előfeldolgozás vagy jellemzőszelekció a felosztás előtt; a tesztet akár közvetve érintő hangolás.",
+        "en": "(new item) — check for: any shared participants/records between train and test (including multiple records per person, e.g. repeated scans); preprocessing/imputation/feature-selection parameters fit on the full dataset before splitting rather than on training data alone; hyperparameter tuning that touched the test set even indirectly."
+      },
+      "condition": {
+        "hu": "Ha az adatokat tanító és teszt halmazra bontották",
+        "en": "If data splitting was done to create training and test datasets"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "4.6",
+      "key": "evaluation/4.6",
+      "domain": "4",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Ha újramintavételi módszerrel értékelték a teljesítményt, minden modellfejlesztési lépést megismételtek-e az újramintavételben?",
+        "en": "If resampling methods were used to evaluate model performance, were all model development steps replicated in the resampling process?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Ugyanaz a beágyazott validálási logika, mint a fejlesztési 4.5-nél, az értékelés oldalán: ha keresztvalidálással értékelnek egy modellépítési folyamatot, annak minden lépését (előfeldolgozás, szelekció, hangolás) minden hajtásban újra kell futtatni — nem elég egyszer elvégezni, majd hajtásonként értékelni.",
+        "en": "(new item) — same nested-validation logic as development 4.5, now applied on the evaluation side: if cross-validation is being used to evaluate an existing model-building pipeline, every step of that pipeline needs to be redone inside each fold, not just applied once and then evaluated fold-by-fold."
+      },
+      "condition": {
+        "hu": "Ha újramintavételi módszerrel értékelték a teljesítményt",
+        "en": "If resampling methods were used to evaluate model performance"
+      },
+      "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+      ]
+    },
+    {
+      "id": "4.7",
+      "key": "evaluation/4.7",
+      "domain": "4",
+      "pass": "evaluation",
+      "text": {
+        "hu": "Megfelelően értékelték-e a modell prediktív teljesítményét (pl. kalibráció, diszkrimináció, nettó haszon)?",
+        "en": "Was the predictive performance of the model evaluated appropriately — e.g., calibration, discrimination, and net benefit?"
+      },
+      "tags": [
+        "evaluation"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "evaluation",
+        "both"
+      ],
+      "applies_to": null,
+      "help": {
+        "hu": "Alacsony: kalibráció (lehetőleg simított kalibrációs görbe) ÉS diszkrimináció konfidencia-intervallummal; időhöz kötött kimenetnél a cenzorálást figyelembe vevő módszer. Magas: csak AUC / c-statisztika, kalibráció nélkül.",
+        "en": "- Low concern: both calibration (ideally a smoothed calibration plot, not just a Hosmer-Lemeshow p-value or calibration-in-the-large alone) *and* discrimination reported, with confidence intervals; for time-to-event outcomes, methods that properly account for censoring (Harrell's c-index or similar, not a naive AUC that ignores censoring). - High concern: discrimination (AUC/c-statistic) reported alone with no calibration assessment at all — this is one of the most common and most consequential gaps in prediction-model evaluation, and worth calling out explicitly whenever you see it, since a well-discriminating but poorly-calibrated model can still give badly wrong absolute risk estimates."
+      }
+    }
+  ],
+  "rollup": {
+    "algorithm": "none",
+    "official": false,
+    "label": {
+      "hu": "HOLISZTIKUS — a PROBAST+AI-nak nincs algoritmusa",
+      "en": "HOLISTIC — PROBAST+AI has no algorithm"
+    },
+    "note": {
+      "hu": "Az összítélet nem a doménítéletek gépies összesítése, hanem indokolt mérlegelés; egy domén jelzése is felülbírálható, ha a teljes kép alátámasztja — de ezt mindig ki kell mondani. A munkapad csak a „Nem / Valószínűleg nem / Nincs információ” válaszokat jelzi segítségként.",
+      "en": "The overall judgement is a reasoned call, not a mechanical roll-up; a single domain flag can be overridden when the full picture supports it — always say so. The workbench only flags 'No / Probably no / No information' answers as an aid."
+    }
+  },
+  "rob_column": {
+    "low": "low",
+    "unclear": "some",
+    "high": "high"
+  },
+  "counts": {
+    "parsed": 34,
+    "published": 34,
+    "per_scope": {
+      "both": 34,
+      "development": 16,
+      "evaluation": 18
+    },
+    "per_pass": {
+      "development": 16,
+      "evaluation": 18
+    }
+  },
+  "notes": [
+    {
+      "hu": "Bridge-módban (validator 1.0.0) a validator teljesség-számolása itt megbízhatatlan (H2): a két menet közös azonosítói egymást „teljesítik”. A munkapad ezért menettel minősített kulcsokkal (development/1.1, evaluation/1.1) maga számol.",
+      "en": "In bridge mode (validator 1.0.0) the validator's completeness count is unreliable here (H2). The workbench counts itself with pass-qualified keys."
+    }
+  ],
+  "validator_differences": []
+}

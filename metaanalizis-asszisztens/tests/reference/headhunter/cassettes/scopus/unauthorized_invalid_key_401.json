@@ -1,0 +1,33 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "scopus-unauthorized-invalid-key-401",
+  "recorded_at": "2026-10-05T11:08:30Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "VALÓS 401 érvénytelen kulccsal: APIKEY_INVALID (error-response alak) — a kulcs fejlécben ment, a kazettából kimaradt",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.elsevier.com/content/search/scopus?count=1&field=dc%3Aidentifier%2Ceid&query=PMID%288309034%29",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 401,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": {
+          "error-response": {
+            "error-code": "APIKEY_INVALID",
+            "error-message": "The provided apiKey is invalid."
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

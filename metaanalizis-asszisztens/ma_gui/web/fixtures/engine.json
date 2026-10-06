@@ -1,0 +1,2399 @@
+{
+ "description": "GET /api/engine — api.engine_info(): verzió, önteszt, mértékek, opció- és szabály-metaadat (3.2, 3.4), a valódi motorból. Normalizálva (gépfüggő): python, kb.db (relatív), selftest.elapsed_ms. Generálta: tests/gui/ui/gen_fixtures_from_engine.py.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/engine",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.engine-info/v1",
+    "data": {
+     "schema": "szk.ma.engine-info/v1",
+     "engine_version": "0.1.0",
+     "python": "3.x",
+     "selftest": {
+      "state": "pass",
+      "ok": true,
+      "cases": 223,
+      "active": 196,
+      "checks": 3283,
+      "passed": 3283,
+      "failed": 0,
+      "elapsed_ms": 200,
+      "source": "tests/source_cases.py"
+     },
+     "kb": {
+      "db": "tudasbazis/tudasbazis.sqlite",
+      "built": true,
+      "fresh": true
+     },
+     "contracts": {
+      "appraisal": 1,
+      "appraisal-result": 1,
+      "capabilities": 1,
+      "common": 1,
+      "ff.flowchart": 1,
+      "instrument": 1,
+      "ma.activity": 1,
+      "ma.analysis-spec": 1,
+      "ma.appraisal-agreement": 1,
+      "ma.compare-result": 1,
+      "ma.consensus": 1,
+      "ma.convert-request": 1,
+      "ma.convert-result": 1,
+      "ma.grade": 1,
+      "ma.plot": 2,
+      "ma.project": 1,
+      "ma.project-audit": 1,
+      "ma.provenance": 1,
+      "ma.rob-sync-proposal": 1,
+      "ma.run": 1,
+      "ma.sof": 1,
+      "ma.studies": 1,
+      "ma.validate-request": 1,
+      "ma.validation": 1,
+      "rob-summary": 1
+     },
+     "measures": [
+      {
+       "id": "MD",
+       "label": {
+        "hu": "Átlagkülönbség (MD)",
+        "en": "Mean difference (MD)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "SMD",
+       "label": {
+        "hu": "Standardizált átlagkülönbség (Hedges g)",
+        "en": "Standardised mean difference (Hedges g)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "COHEN_D",
+       "label": {
+        "hu": "Standardizált átlagkülönbség (Cohen d, korrekció nélkül)",
+        "en": "Standardised mean difference (Cohen d, uncorrected)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "ROM",
+       "label": {
+        "hu": "Válaszhányados (ratio of means)",
+        "en": "Ratio of means"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "log",
+       "ratio": true
+      },
+      {
+       "id": "SMD_GLASS",
+       "label": {
+        "hu": "Standardizált átlagkülönbség (Glass Δ, a kontroll SD-jével)",
+        "en": "Standardised mean difference (Glass Δ, control SD)"
+       },
+       "family": "continuous",
+       "required_columns": [
+        "m1",
+        "sd1",
+        "n1",
+        "m2",
+        "sd2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "MC",
+       "label": {
+        "hu": "Átlagos változás (párosított, nyers)",
+        "en": "Mean change (paired, raw)"
+       },
+       "family": "paired",
+       "required_columns": [
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "SMCC",
+       "label": {
+        "hu": "Standardizált átlagos változás (a változás SD-jével)",
+        "en": "Standardised mean change (change-score SD)"
+       },
+       "family": "paired",
+       "required_columns": [
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "OR",
+       "label": {
+        "hu": "Esélyhányados (OR)",
+        "en": "Odds ratio (OR)"
+       },
+       "family": "binary",
+       "required_columns": [
+        "e1",
+        "n1",
+        "e2",
+        "n2"
+       ],
+       "scale": "log",
+       "ratio": true
+      },
+      {
+       "id": "RR",
+       "label": {
+        "hu": "Relatív kockázat (RR)",
+        "en": "Risk ratio (RR)"
+       },
+       "family": "binary",
+       "required_columns": [
+        "e1",
+        "n1",
+        "e2",
+        "n2"
+       ],
+       "scale": "log",
+       "ratio": true
+      },
+      {
+       "id": "RD",
+       "label": {
+        "hu": "Kockázatkülönbség (RD)",
+        "en": "Risk difference (RD)"
+       },
+       "family": "binary",
+       "required_columns": [
+        "e1",
+        "n1",
+        "e2",
+        "n2"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "PR",
+       "label": {
+        "hu": "Arány",
+        "en": "Proportion"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "PLN",
+       "label": {
+        "hu": "Arány (log)",
+        "en": "Proportion (log)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "log",
+       "ratio": false
+      },
+      {
+       "id": "PLO",
+       "label": {
+        "hu": "Arány (logit)",
+        "en": "Proportion (logit)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "logit",
+       "ratio": false
+      },
+      {
+       "id": "PAS",
+       "label": {
+        "hu": "Arány (arcsin)",
+        "en": "Proportion (arcsine)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "asin_sqrt",
+       "ratio": false
+      },
+      {
+       "id": "PFT",
+       "label": {
+        "hu": "Arány (Freeman–Tukey)",
+        "en": "Proportion (Freeman–Tukey)"
+       },
+       "family": "proportion",
+       "required_columns": [
+        "x",
+        "n"
+       ],
+       "scale": "pft",
+       "ratio": false
+      },
+      {
+       "id": "COR",
+       "label": {
+        "hu": "Korreláció (r)",
+        "en": "Correlation (r)"
+       },
+       "family": "correlation",
+       "required_columns": [
+        "r",
+        "n"
+       ],
+       "scale": "identity",
+       "ratio": false
+      },
+      {
+       "id": "ZCOR",
+       "label": {
+        "hu": "Korreláció (Fisher z → r)",
+        "en": "Correlation (Fisher z → r)"
+       },
+       "family": "correlation",
+       "required_columns": [
+        "r",
+        "n"
+       ],
+       "scale": "atanh",
+       "ratio": false
+      },
+      {
+       "id": "GEN",
+       "label": {
+        "hu": "Generikus hatásméret",
+        "en": "Generic effect size"
+       },
+       "family": "generic",
+       "required_columns": [
+        "yi"
+       ],
+       "scale": "identity",
+       "ratio": false
+      }
+     ],
+     "options": {
+      "measure": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "MD",
+        "SMD",
+        "COHEN_D",
+        "ROM",
+        "SMD_GLASS",
+        "MC",
+        "SMCC",
+        "OR",
+        "RR",
+        "RD",
+        "PR",
+        "PLN",
+        "PLO",
+        "PAS",
+        "PFT",
+        "COR",
+        "ZCOR",
+        "GEN"
+       ],
+       "cli": "--measure",
+       "flags": [
+        "--measure"
+       ],
+       "dest": "measure",
+       "kind": "value",
+       "nullable": false,
+       "required": true,
+       "help": "hatásméret (a szükséges oszlopokat lásd lent); kötelező, ha nincs --spec",
+       "group": "basic",
+       "advanced": false,
+       "gui_help": {
+        "hu": "Hatásméret: milyen mérőszámmal hasonlítjuk össze a csoportokat (bináris kimenetnél pl. RR, OR, RD; folytonosnál MD, SMD). Ettől függ, mely oszlopok kellenek az adattáblában.",
+        "en": "Effect measure: how the groups are compared (binary outcomes: e.g. RR, OR, RD; continuous: MD, SMD). It determines which columns the data table needs."
+       }
+      },
+      "model": {
+       "default": "random",
+       "type": "enum",
+       "choices": [
+        "random",
+        "fixed",
+        "ivhet"
+       ],
+       "cli": "--model",
+       "flags": [
+        "--model"
+       ],
+       "dest": "model",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "basic",
+       "advanced": false
+      },
+      "tau2": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "DL",
+        "REML",
+        "ML",
+        "PM",
+        "HE",
+        "SJ"
+       ],
+       "cli": "--tau2",
+       "flags": [
+        "--tau2"
+       ],
+       "dest": "tau2",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "τ²-becslő (alap: a modellé — random → REML, ivhet → DL, a Doi 2015 szerint; ivhet-nél más becslő figyelmeztetéssel)",
+       "group": "basic",
+       "advanced": false
+      },
+      "ci": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "z",
+        "t",
+        "hksj",
+        "hksj_adhoc"
+       ],
+       "cli": "--ci",
+       "flags": [
+        "--ci"
+       ],
+       "dest": "ci",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "alap: random→hksj, fixed→z",
+       "group": "basic",
+       "advanced": false
+      },
+      "pi": {
+       "default": "t_k-2",
+       "type": "enum",
+       "choices": [
+        "t_k-2",
+        "t_k-1",
+        "z"
+       ],
+       "cli": "--pi",
+       "flags": [
+        "--pi"
+       ],
+       "dest": "pi",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "basic",
+       "advanced": false
+      },
+      "level": {
+       "default": 0.95,
+       "type": "number",
+       "choices": null,
+       "cli": "--level",
+       "flags": [
+        "--level"
+       ],
+       "dest": "level",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "megbízhatósági szint: 0.95 vagy 95",
+       "group": "basic",
+       "advanced": false
+      },
+      "smd_vtype": {
+       "default": "LS",
+       "type": "enum",
+       "choices": [
+        "LS",
+        "LS2",
+        "UB",
+        "METAN_COHEN",
+        "METAN_HEDGES"
+       ],
+       "cli": "--smd-vtype",
+       "flags": [
+        "--smd-vtype"
+       ],
+       "dest": "smd_vtype",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "SMD / Cohen d / SMCC variancia: LS (alap), LS2 (Borenstein), UB (torzítatlan), METAN_COHEN (Stata metan/MetaXL: N/(n1n2) + d²/(2(N−2))), METAN_HEDGES (N/(n1n2) + g²/(2(N−3.94)), közelítő J)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "j_method": {
+       "default": "exact",
+       "type": "enum",
+       "choices": [
+        "exact",
+        "approx"
+       ],
+       "cli": "--j-method",
+       "flags": [
+        "--j-method"
+       ],
+       "dest": "j_method",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "advanced",
+       "advanced": true
+      },
+      "cc": {
+       "default": 0.5,
+       "type": "number",
+       "choices": null,
+       "cli": "--cc",
+       "flags": [
+        "--cc"
+       ],
+       "dest": "cc",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "folytonossági korrekció (>= 0; 0 = nincs)",
+       "group": "binary",
+       "advanced": false
+      },
+      "cc_to": {
+       "default": "only0",
+       "type": "enum",
+       "choices": [
+        "only0",
+        "all",
+        "none"
+       ],
+       "cli": "--cc-to",
+       "flags": [
+        "--cc-to"
+       ],
+       "dest": "cc_to",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "only0: csak nulla cellás vizsgálatnál (RD-nél nincs korrekció, Cochrane 10.4.4.1); all: minden vizsgálatnál (RD-nél is, metafor to='all'); none: soha",
+       "group": "binary",
+       "advanced": false
+      },
+      "drop00": {
+       "default": null,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--drop00",
+       "flags": [
+        "--drop00"
+       ],
+       "dest": "drop00",
+       "kind": "tristate",
+       "nullable": true,
+       "required": false,
+       "help": null,
+       "group": "binary",
+       "advanced": false
+      },
+      "mh": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--mh",
+       "flags": [
+        "--mh"
+       ],
+       "dest": "mh",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "Mantel–Haenszel (bináris)",
+       "group": "binary",
+       "advanced": false
+      },
+      "peto": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--peto",
+       "flags": [
+        "--peto"
+       ],
+       "dest": "peto",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "Peto OR",
+       "group": "binary",
+       "advanced": false
+      },
+      "rd_var": {
+       "default": "sato",
+       "type": "enum",
+       "choices": [
+        "sato",
+        "gr"
+       ],
+       "cli": "--rd-var",
+       "flags": [
+        "--rd-var"
+       ],
+       "dest": "rd_var",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "binary",
+       "advanced": false
+      },
+      "subgroup": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--subgroup",
+       "flags": [
+        "--subgroup"
+       ],
+       "dest": "subgroup",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "alcsoport-oszlop",
+       "group": "basic",
+       "advanced": false
+      },
+      "common_tau2": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--common-tau2",
+       "flags": [
+        "--common-tau2"
+       ],
+       "dest": "common_tau2",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "közös τ² az alcsoportokban (faktor-moderátoros vegyes modell; véletlen hatású és IVhet modellnél — IVhet-nél alapból DL; fix hatású modellnél figyelmeztetéssel figyelmen kívül marad)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "moderators": {
+       "default": [],
+       "type": "array",
+       "choices": null,
+       "cli": "--moderators",
+       "flags": [
+        "--moderators"
+       ],
+       "dest": "moderators",
+       "kind": "csv",
+       "nullable": false,
+       "required": false,
+       "help": "meta-regresszió moderátorai, vesszővel",
+       "group": "basic",
+       "advanced": false
+      },
+      "metareg_test": {
+       "default": "knha",
+       "type": "enum",
+       "choices": [
+        "knha",
+        "z"
+       ],
+       "cli": "--metareg-test",
+       "flags": [
+        "--metareg-test"
+       ],
+       "dest": "metareg_test",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "advanced",
+       "advanced": true
+      },
+      "cumulative": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--cumulative",
+       "flags": [
+        "--cumulative"
+       ],
+       "dest": "cumulative",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "kumulatív elemzés rendező oszlopa (pl. year)",
+       "group": "basic",
+       "advanced": false
+      },
+      "title": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--title",
+       "flags": [
+        "--title"
+       ],
+       "dest": "title",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": null,
+       "group": "plot",
+       "advanced": false
+      },
+      "left_label": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--left-label",
+       "flags": [
+        "--left-label"
+       ],
+       "dest": "left_label",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "forest plot bal oldali felirat (pl. 'kontroll jobb')",
+       "group": "plot",
+       "advanced": false
+      },
+      "right_label": {
+       "default": null,
+       "type": "string",
+       "choices": null,
+       "cli": "--right-label",
+       "flags": [
+        "--right-label"
+       ],
+       "dest": "right_label",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": null,
+       "group": "plot",
+       "advanced": false
+      },
+      "label_col": {
+       "default": "study",
+       "type": "string",
+       "choices": null,
+       "cli": null,
+       "flags": [],
+       "dest": null,
+       "kind": "spec_only",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "plot",
+       "advanced": false
+      },
+      "bias_min_k": {
+       "default": 10,
+       "type": "integer",
+       "choices": null,
+       "cli": null,
+       "flags": [],
+       "dest": null,
+       "kind": "spec_only",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "advanced",
+       "advanced": true
+      },
+      "trimfill_estimator": {
+       "default": "L0",
+       "type": "enum",
+       "choices": [
+        "L0",
+        "R0"
+       ],
+       "cli": "--trimfill-estimator",
+       "flags": [
+        "--trimfill-estimator"
+       ],
+       "dest": "trimfill_estimator",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": null,
+       "group": "advanced",
+       "advanced": true
+      },
+      "md_vtype": {
+       "default": "unequal",
+       "type": "enum",
+       "choices": [
+        "unequal",
+        "pooled"
+       ],
+       "cli": "--md-vtype",
+       "flags": [
+        "--md-vtype"
+       ],
+       "dest": "md_vtype",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "MD variancia: unequal (alap; sd1²/n1 + sd2²/n2, metafor LS) vagy pooled (közös SD, metafor HO)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "glass_vtype": {
+       "default": "METAN",
+       "type": "enum",
+       "choices": [
+        "METAN",
+        "LS",
+        "LS2",
+        "UB",
+        "SMD1H"
+       ],
+       "cli": "--glass-vtype",
+       "flags": [
+        "--glass-vtype"
+       ],
+       "dest": "glass_vtype",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "SMD_GLASS variancia: METAN (alap; Stata metan/MetaXL), LS, LS2, UB, SMD1H (metafor)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "gen_smd_vtype": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "LS",
+        "LS2",
+        "UB",
+        "METAN_COHEN",
+        "METAN_HEDGES"
+       ],
+       "cli": "--gen-smd-vtype",
+       "flags": [
+        "--gen-smd-vtype"
+       ],
+       "dest": "gen_smd_vtype",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "GEN: ha egy sorban nincs vi/sei, de van n1 és n2, a yi-t közölt SMD-nek veszi és ezzel a képlettel számol varianciát",
+       "group": "advanced",
+       "advanced": true
+      },
+      "pft_backtransform": {
+       "default": "harmonic",
+       "type": "enum",
+       "choices": [
+        "harmonic",
+        "variance"
+       ],
+       "cli": "--pft-backtransform",
+       "flags": [
+        "--pft-backtransform"
+       ],
+       "dest": "pft_backtransform",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "PFT visszatranszformálás n-je: harmonic (alap; metafor/meta) vagy variance (MetaXL: m = 1/Var(t) az adott összesített becslésből)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "h_centre": {
+       "default": "truncated",
+       "type": "enum",
+       "choices": [
+        "truncated",
+        "untruncated"
+       ],
+       "cli": "--ht-centre",
+       "flags": [
+        "--ht-centre",
+        "--ht-center"
+       ],
+       "dest": "ht_centre",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "a Higgins–Thompson H/I² CI középpontja: truncated (alap; ln max(1, H), R meta) vagy untruncated (½·ln(Q/df), Borenstein 2009)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "trimfill_trim_model": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "fixed",
+        "random"
+       ],
+       "cli": "--trimfill-trim-model",
+       "flags": [
+        "--trimfill-trim-model"
+       ],
+       "dest": "trimfill_trim_model",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "a trim-and-fill vágási modellje (alap: az elsődleges modell, mint a metafor; fixed: közös hatással vág, a kitöltött adatokat az elsődleges modellel összesíti — a meta::trimfill alapértelmezése)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "egger_ci_dist": {
+       "default": "t",
+       "type": "enum",
+       "choices": [
+        "t",
+        "norm"
+       ],
+       "cli": "--egger-ci-dist",
+       "flags": [
+        "--egger-ci-dist"
+       ],
+       "dest": "egger_ci_dist",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "az Egger-tengelymetszet CI-je: t (alap; t(k−2), metafor) vagy norm (z, dmetar)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "begg_method": {
+       "default": "auto",
+       "type": "enum",
+       "choices": [
+        "auto",
+        "exact",
+        "normal"
+       ],
+       "cli": "--begg-method",
+       "flags": [
+        "--begg-method"
+       ],
+       "dest": "begg_method",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "Begg-teszt: auto (alap; metafor: pontos Kendall-eloszlás, kötésnél normális), exact, normal (Stata metabias)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "begg_continuity": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--begg-continuity",
+       "flags": [
+        "--begg-continuity"
+       ],
+       "dest": "begg_continuity",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "Begg normális közelítés folytonossági korrekcióval (Stata metabias 2. sora)",
+       "group": "advanced",
+       "advanced": true
+      },
+      "metareg_robust": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--robust",
+       "flags": [
+        "--robust"
+       ],
+       "dest": "robust",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "meta-regresszió: robusztus (HC1 szendvics) SE-k, t(k−p) és robusztus F is, a meta-regresszió súlyaival (1/(v+τ²); = metafor robust(…, adjust=TRUE)); Stata regress [aw=1/v], vce(robust) csak --metareg-tau2 FE mellett; --moderators kell hozzá",
+       "group": "advanced",
+       "advanced": true,
+       "gui_help": {
+        "hu": "Meta-regresszió robusztus (HC1 szendvics) standard hibákkal, t(k−p)-vel és robusztus F-próbával. Moderátor(ok) kellenek hozzá.",
+        "en": "Meta-regression with robust (HC1 sandwich) standard errors, t(k−p) and a robust F test. Needs moderator(s)."
+       }
+      },
+      "outliers": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--outliers",
+       "flags": [
+        "--outliers"
+       ],
+       "dest": "outliers",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "kiugró vizsgálatok szűrése (dmetar::find.outliers: a vizsgálat CI-je teljesen az összesített CI-n kívül) és újraillesztés nélkülük (érzékenységi elemzés)",
+       "group": "basic",
+       "advanced": false
+      },
+      "metareg_tau2": {
+       "default": null,
+       "type": "enum",
+       "choices": [
+        "REML",
+        "ML",
+        "DL",
+        "PM",
+        "HE",
+        "SJ",
+        "FE"
+       ],
+       "cli": "--metareg-tau2",
+       "flags": [
+        "--metareg-tau2"
+       ],
+       "dest": "metareg_tau2",
+       "kind": "value",
+       "nullable": true,
+       "required": false,
+       "help": "a meta-regresszió τ²-becslője (alap: a --tau2, ha ott értelmezett, különben REML); FE = inverz-variancia súlyok, τ² = 0 — a --robust így = Stata regress [aw=1/v], vce(robust) (Khan 2020 11. fej.)",
+       "group": "advanced",
+       "advanced": true,
+       "gui_help": {
+        "hu": "A meta-regresszió τ²-becslője (alap: a fenti τ²-becslő, ha ott értelmezett, különben REML); FE = inverz-variancia súlyok, τ² = 0.",
+        "en": "The τ² estimator of the meta-regression (default: the τ² estimator above if defined there, otherwise REML); FE = inverse-variance weights, τ² = 0."
+       }
+      },
+      "subgroup_prespecified": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--subgroup-prespecified",
+       "flags": [
+        "--subgroup-prespecified"
+       ],
+       "dest": "subgroup_prespecified",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "az alcsoport-elemzés a protokollban előre tervezett (a Methods csak ekkor írja: Pre-specified)",
+       "group": "basic",
+       "advanced": false
+      },
+      "plot_schema": {
+       "default": "v2",
+       "type": "enum",
+       "choices": [
+        "v1",
+        "v2"
+       ],
+       "cli": "--plot-schema",
+       "flags": [
+        "--plot-schema"
+       ],
+       "dest": "plot_schema",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "plot_data.json sémája (alap: v2 = szk.ma.plot/v2; v1 = a korábbi kulcsok)",
+       "group": "output",
+       "advanced": true
+      },
+      "plot_locale": {
+       "default": "hu",
+       "type": "enum",
+       "choices": [
+        "hu",
+        "en"
+       ],
+       "cli": "--lang",
+       "flags": [
+        "--lang",
+        "--plot-locale"
+       ],
+       "dest": "plot_locale",
+       "kind": "value",
+       "nullable": false,
+       "required": false,
+       "help": "az ábrák feliratainak nyelve és a plot_data megjelenítési nyelve (alap: hu)",
+       "group": "plot",
+       "advanced": false
+      },
+      "svg_annotate": {
+       "default": false,
+       "type": "boolean",
+       "choices": null,
+       "cli": "--svg-annotate",
+       "flags": [
+        "--svg-annotate"
+       ],
+       "dest": "svg_annotate",
+       "kind": "flag",
+       "nullable": false,
+       "required": false,
+       "help": "elnevezett rétegek és sor-azonosítók (data-*) az SVG-kben, U+2212 mínusz",
+       "group": "output",
+       "advanced": true
+      }
+     },
+     "rules": [
+      {
+       "id": "V001",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Hiányzó kötelező oszlop",
+        "en": "Missing required column"
+       },
+       "advice": "A választott hatásmérethez szükséges oszlop hiányzik a táblából.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V001"
+      },
+      {
+       "id": "V002",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Hiányzó kötelező érték",
+        "en": "Missing required value"
+       },
+       "advice": "A vizsgálat kimarad az elemzésből; pótold a közleményből, a szerzőtől, vagy dokumentált konverzióval (medián/IQR, SE, CI → SD).",
+       "source": "Cochrane Handbook 6.5.2",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V002"
+      },
+      {
+       "id": "V003",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Nem szám érték",
+        "en": "Non-numeric value"
+       },
+       "advice": "A hatásmérethez szükséges cella nem értelmezhető számként; a vizsgálat kimarad az elemzésből, amíg nem javítod.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V003"
+      },
+      {
+       "id": "V004",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Érvénytelen mintanagyság",
+        "en": "Invalid sample size"
+       },
+       "advice": "Nem egész n, vagy túl kicsi: folytonos adatnál n < 2 (karonként), bináris és arány-adatnál n < 1, korrelációnál n < 4, GEN-nél (ha megadod) n < 1. A vizsgálat kimarad az elemzésből.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V004"
+      },
+      {
+       "id": "V005",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Nem pozitív SD",
+        "en": "Non-positive SD"
+       },
+       "advice": "Az SD <= 0 (GEN-nél: negatív SE); valószínű adatkinyerési hiba.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V005"
+      },
+      {
+       "id": "V006",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Érvénytelen eseményszám",
+        "en": "Invalid event count"
+       },
+       "advice": "Az eseményszám negatív vagy nagyobb, mint n.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V006"
+      },
+      {
+       "id": "V007",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Ismétlődő vizsgálat-azonosító",
+        "en": "Duplicate study identifier"
+       },
+       "advice": "Ugyanaz a címke többször: többkarú vizsgálat vagy kettős közlés? Az egységelemzési hibát kerüld (Cochrane 23.3.4).",
+       "source": "Cochrane Handbook 23.3",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V007"
+      },
+      {
+       "id": "V008",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Kettős nulla esemény",
+        "en": "Double-zero events"
+       },
+       "advice": "Mindkét karban 0 (vagy 100%) esemény: alapértelmezésben OR/RR-nél kimarad, RD-nél bent marad (--drop00; a tényleges kezelést a részletek mutatják). Ritka eseménynél fontold meg a Peto- vagy MH-módszert, és érzékenységi elemzést.",
+       "source": "Cochrane Handbook 10.4.4",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V008"
+      },
+      {
+       "id": "V009",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "info",
+       "stage": "S05",
+       "title": {
+        "hu": "Nulla cella",
+        "en": "Zero cell"
+       },
+       "advice": "Folytonossági korrekció kerül alkalmazásra a vizsgálat hatásméreténél (mértéke: --cc, alapértelmezés 0,5; lásd a részleteket).",
+       "source": "Cochrane Handbook 10.4.4.1",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V009"
+      },
+      {
+       "id": "V010",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Érvénytelen korreláció",
+        "en": "Invalid correlation"
+       },
+       "advice": "r a (-1, 1) intervallumon kívül.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V010"
+      },
+      {
+       "id": "V011",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "SD helyett SE gyanúja",
+        "en": "Suspected SE reported as SD"
+       },
+       "advice": "Az SD feltűnően kicsi, de SD·√n közel esik a többi vizsgálat SD-jéhez: valószínűleg SE-t közöltek. Ellenőrizd a forrást (táblázat lábjegyzete!).",
+       "source": "Cochrane Handbook 6.5.2.2",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V011"
+      },
+      {
+       "id": "V012",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Mértékegység-eltérés gyanúja",
+        "en": "Suspected unit mismatch"
+       },
+       "advice": "Az átlag nagyságrendileg (>= 10x) eltér a többi vizsgálattól (pl. mg/dL vs mmol/L).",
+       "source": "Cochrane Handbook 6.5.2",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V012"
+      },
+      {
+       "id": "V013",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "info",
+       "stage": "S05",
+       "title": {
+        "hu": "Ferde eloszlás gyanúja",
+        "en": "Suspected skewness"
+       },
+       "advice": "Nemnegatív változónál átlag < 2·SD: ferde eloszlásra utal; a medián/IQR-ből becsült értékek és az átlagkülönbség óvatosan kezelendők.",
+       "source": "Cochrane Handbook 10.5.3",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V013"
+      },
+      {
+       "id": "V014",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Szélsőséges hatásméret",
+        "en": "Extreme effect size"
+       },
+       "advice": "|SMD| > 3 vagy |log OR/RR| > ln(20): gyakran adatkinyerési hiba (SE/SD csere, előjel, mértékegység).",
+       "source": "Borenstein 2009; gyakorlati szabály",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V014"
+      },
+      {
+       "id": "V015",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Kevés vizsgálat",
+        "en": "Few studies"
+       },
+       "advice": "k < 5: a τ² becslése megbízhatatlan; HKSJ-CI és predikciós intervallum ajánlott, a véletlen hatású eredményt óvatosan értelmezd.",
+       "source": "Cochrane Handbook 10.10.4",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V015"
+      },
+      {
+       "id": "V016",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "info",
+       "stage": "S05",
+       "title": {
+        "hu": "Publikációs torzítás tesztje alulerőzött",
+        "en": "Publication-bias test underpowered"
+       },
+       "advice": "k < 10: funnel-aszimmetria tesztek (Egger, Begg) nem ajánlottak.",
+       "source": "Sterne et al. 2011 BMJ",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V016"
+      },
+      {
+       "id": "V017",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Közös kontrollkar többszöri használata",
+        "en": "Shared control arm used repeatedly"
+       },
+       "advice": "Azonos study_id és azonos kontrollkar-adatok több sorban: a kontroll n-jét osztsd fel, vagy vond össze a kísérleti karokat. Ha a felosztás megtörtént, jelöld a sorokat control_split=igen oszloppal (ekkor a figyelmeztetés eltűnik).",
+       "source": "Cochrane Handbook 23.3.4",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V017"
+      },
+      {
+       "id": "V018",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "info",
+       "stage": "S05",
+       "title": {
+        "hu": "Becsült (imputált) értékek",
+        "en": "Estimated (imputed) values"
+       },
+       "advice": "Becsült/imputált adatot tartalmazó vizsgálatok: érzékenységi elemzés javasolt nélkülük.",
+       "source": "Cochrane Handbook 6.5.2.10",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V018"
+      },
+      {
+       "id": "V019",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "info",
+       "stage": "S05",
+       "title": {
+        "hu": "Magas torzítási kockázatú vizsgálatok",
+        "en": "Studies at high risk of bias"
+       },
+       "advice": "Érzékenységi elemzés javasolt a magas RoB-ú vizsgálatok kizárásával.",
+       "source": "Cochrane Handbook 7–8",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V019"
+      },
+      {
+       "id": "V020",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Nagyon kis mintájú vizsgálat",
+        "en": "Very small study"
+       },
+       "advice": "n < 10 karonként: a normális közelítés és a variancia-becslés bizonytalan.",
+       "source": "Borenstein 2009 8. fejezet",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V020"
+      },
+      {
+       "id": "V021",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Nem szám érték nem kötelező oszlopban",
+        "en": "Non-numeric value in optional column"
+       },
+       "advice": "A cella nem értelmezhető számként (pl. év '2001a' helyett 'in press'). A választott hatásméretet nem érinti; ha az oszlopot moderátorként, alcsoportként vagy kumulatív rendezőkulcsként használod, javítsd.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V021"
+      },
+      {
+       "id": "V022",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Kizárt sor a hatásméret-számításból",
+        "en": "Row excluded from effect-size calculation"
+       },
+       "advice": "A sor nem kerül be az elemzésbe (pl. ROM nem pozitív átlaggal, korreláció n <= 3, nulla cella korrekció nélkül); ellenőrizd az okát és a forrást.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V022"
+      },
+      {
+       "id": "V023",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Kétértelmű számformátum",
+        "en": "Ambiguous number format"
+       },
+       "advice": "A számot ezres tagolásként olvastuk (pl. '2,000' → 2000), mert tizedesjelként értelmetlen lenne vagy ellentmond a fájl tizedesjelének. Ellenőrizd a forrással.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V023"
+      },
+      {
+       "id": "V024",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Elcsúszott sor",
+        "en": "Shifted row"
+       },
+       "advice": "A sorban több cella van, mint a fejlécben (tipikusan idézőjel nélküli tizedesvessző vesszővel tagolt fájlban): az értékek elcsúsztak, a sor kimarad az elemzésből. Tedd idézőjelbe a tizedesvesszős számokat, vagy használj pontosvesszős tagolást.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V024"
+      },
+      {
+       "id": "V025",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Képletnek látszó szöveges cella",
+        "en": "Text cell that looks like a formula"
+       },
+       "advice": "A cella =, +, -, @, tabulátor vagy sortörés (CR) jellel kezdődik, de nem szám (pl. '=B2/2', '+A1', '@SUM(…)'): valószínűleg a táblázatkezelő képlete került be az értéke helyett — másold be újra „csak értékként”, vagy írd be a számot a forrásból. Az ilyen cella a CSV-t Excelben megnyitva képletként futhat (CSV-injekció); ha szándékos szöveg, kezdd másként (pl. aposztróffal).",
+       "source": "OWASP: CSV Injection; engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V025"
+      },
+      {
+       "id": "V026",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Nincs elemezhető vizsgálat",
+        "en": "No analysable study"
+       },
+       "advice": "k = 0: minden sor kimaradt (validálási hiba, kettős nulla, nem számolható hatásméret) vagy a tábla üres; az elemzés nem futtatható. Lásd a kizárt sorokat és az okukat.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V026"
+      },
+      {
+       "id": "V027",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Fel nem ismert kategóriaérték",
+        "en": "Unrecognised category value"
+       },
+       "advice": "A rob / estimated cella értéke egyik elfogadott kategóriának sem felel meg, ezért a sor nem számít magas RoB-únak (V019, --exclude rob=high), illetve becsültnek (V018, --exclude estimated=igen). rob: low / some concerns / high (RoB 2), low / moderate / serious / critical / no information (ROBINS-I), alacsony / közepes / magas ('… risk of bias' / '… kockázat' alakban is); estimated: igen / nem.",
+       "source": "Cochrane Handbook 8 (RoB 2), 25 (ROBINS-I)",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V027"
+      },
+      {
+       "id": "V028",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Ismétlődő oszlop",
+        "en": "Duplicate column"
+       },
+       "advice": "Több fejléc illeszkedik ugyanarra az oszlopra (pl. kétszer 'm1', vagy 'mean1' és 'm1'): az elemzés az elsőt (a szinonimák közül az elsőbbségit) használja, a többi külön oszlopként marad. Töröld vagy nevezd át a fölösleges oszlopot.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V028"
+      },
+      {
+       "id": "V029",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Hiányzó vizsgálat-címke",
+        "en": "Missing study label"
+       },
+       "advice": "A sornak nincs vizsgálat-címkéje (study / Szerző / author / label / ID oszlop vagy study_id), ezért sorszámot kap (#1, #2, …): a forest plot, a riport és a szűrők nem nevezik meg a vizsgálatot, és a sorszám a szűréstől függ. Adj címkeoszlopot (pl. 'Szerző, év').",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V029"
+      },
+      {
+       "id": "V030",
+       "kind": "validation",
+       "module": "validate",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Numerikusan kezelhetetlen variancia",
+        "en": "Numerically unmanageable variance"
+       },
+       "advice": "Egy vizsgálat mintavételi varianciája olyan kicsi (pl. vi = 1e-300), hogy a súlyok túlcsordulnának: az elemzés nem futtatható. Valószínű adatkinyerési hiba — ellenőrizd a vi/SE (vagy az SD) értékét.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.validate:V030"
+      },
+      {
+       "id": "P001",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "Érvénytelen PRISMA-szám",
+        "en": "Invalid PRISMA count"
+       },
+       "advice": "Minden dobozérték nemnegatív egész szám (rekordok, jelentések, vizsgálatok darabszáma).",
+       "source": "PRISMA 2020 (Page et al. 2021) 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P001"
+      },
+      {
+       "id": "P002",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "A szűrt rekordok száma nem egyezik",
+        "en": "Number of screened records does not match"
+       },
+       "advice": "B = A1 + A2 (+ egyéb forrás) − D1 − D2 − D3: a szűrés előtt eltávolított (duplikátum, automatikus, egyéb) rekordokat mind fel kell tüntetni; a keresési naplóval vesd össze.",
+       "source": "PRISMA 2020 1. ábra; PRISMA-S",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P002"
+      },
+      {
+       "id": "P003",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "A teljes szövegre keresett jelentések száma nem egyezik",
+        "en": "Number of reports sought for retrieval does not match"
+       },
+       "advice": "E = B − C: a cím/absztrakt alapján ki nem zárt rekordok mindegyikét teljes szövegre kell keresni.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P003"
+      },
+      {
+       "id": "P004",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "Az értékelt jelentések száma nem egyezik",
+        "en": "Number of reports assessed does not match"
+       },
+       "advice": "G = E − F: a keresett, de el nem ért teljes szövegeket a „nem elérhető” dobozban kell jelezni.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P004"
+      },
+      {
+       "id": "P005",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "A bevont jelentések száma nem egyezik",
+        "en": "Number of included reports does not match"
+       },
+       "advice": "J = G − H (+ az egyéb módszerek ágának bevont jelentései): minden értékelt jelentés vagy kizárt (okkal), vagy bevont.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P005"
+      },
+      {
+       "id": "P006",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "Több bevont vizsgálat, mint bevont jelentés",
+        "en": "More included studies than included reports"
+       },
+       "advice": "I ≤ J: egy vizsgálatnak több jelentése (közleménye) lehet, fordítva nem. A vizsgálatokat és a jelentéseket külön számold.",
+       "source": "PRISMA 2020 1. ábra; Cochrane Handbook 4.6.2",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P006"
+      },
+      {
+       "id": "P007",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "A kizárási okok összege nem egyezik",
+        "en": "Exclusion reasons do not add up"
+       },
+       "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+       "source": "PRISMA 2020 16a tétel",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P007"
+      },
+      {
+       "id": "P008",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "Hiányzó kizárási okok",
+        "en": "Missing exclusion reasons"
+       },
+       "advice": "A teljes szöveg szintű kizárásokat okonként kell közölni (folyamatábra vagy melléklet).",
+       "source": "PRISMA 2020 16a tétel",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P008"
+      },
+      {
+       "id": "P009",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "Egyéb módszerek ága: az értékelt jelentések száma nem egyezik",
+        "en": "Other methods branch: number of reports assessed does not match"
+       },
+       "advice": "Az egyéb módszerek (weboldal, szervezet, hivatkozáskövetés) ágában: értékelt = keresett − nem elérhető.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P009"
+      },
+      {
+       "id": "P010",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "Több vizsgálat a metaanalízisben, mint a bevontak között",
+        "en": "More studies in the meta-analysis than included"
+       },
+       "advice": "A metaanalízisbe (kvantitatív szintézisbe) vont vizsgálatok a bevont vizsgálatok részhalmaza.",
+       "source": "PRISMA 2009 / 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P010"
+      },
+      {
+       "id": "P011",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "info",
+       "stage": "S04",
+       "title": {
+        "hu": "Levezetett (nem közölt) doboz-érték",
+        "en": "Derived (unreported) box value"
+       },
+       "advice": "Az érték a többi dobozból adódik (pl. hiányzó duplikátum-doboz = 0); a folyamatábrán érdemes kifejezetten feltüntetni.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P011"
+      },
+      {
+       "id": "P012",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "info",
+       "stage": "S04",
+       "title": {
+        "hu": "Nem ellenőrizhető összefüggés",
+        "en": "Relationship cannot be checked"
+       },
+       "advice": "Egy doboz hiányzik, ezért az összefüggés nem ellenőrizhető; töltsd ki a hiányzó dobozt.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P012"
+      },
+      {
+       "id": "P013",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "A szűrés nem lezárt",
+        "en": "Screening not completed"
+       },
+       "advice": "Vannak még elbírálásra váró rekordok/jelentések; a végleges folyamatábra előtt döntsd el őket (vagy tüntesd fel „folyamatban lévő” dobozként).",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P013"
+      },
+      {
+       "id": "P014",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "Kevesebb bevont vizsgálat, mint értékelt − kizárt (2009-es sablon)",
+        "en": "Fewer included studies than assessed minus excluded (2009 template)"
+       },
+       "advice": "A 2009-es sablon a cikkeket és a vizsgálatokat nem választja szét: ha több cikk tartozik egy vizsgálathoz, ez magyarázza; PRISMA 2020-ban a jelentéseket (J) és a vizsgálatokat (I) külön dobozban add meg.",
+       "source": "PRISMA 2020 (Page et al. 2021) magyarázó cikk",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P014"
+      },
+      {
+       "id": "P015",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "Frissített áttekintés: az összesítés nem egyezik",
+        "en": "Updated review: totals do not match"
+       },
+       "advice": "Összes bevont = korábbi változatban bevont + új (vizsgálatokra és jelentésekre külön).",
+       "source": "PRISMA 2020 1. ábra (frissített áttekintés)",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P015"
+      },
+      {
+       "id": "P016",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "Egyéb módszerek ága: több keresett, mint azonosított",
+        "en": "Other methods branch: more sought than identified"
+       },
+       "advice": "Az egyéb módszerekkel azonosított rekordoknál több jelentést kerestél teljes szövegre; ellenőrizd a számokat.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P016"
+      },
+      {
+       "id": "P017",
+       "kind": "prisma",
+       "module": "prisma",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "A források számai eltérnek",
+        "en": "Sources disagree on the counts"
+       },
+       "advice": "Ugyanaz a doboz (vagy a kizárási okok okonkénti bontása) a megadott fájlokban (composer prisma-flow.json, --json, prisma_folyamat.md) más értékű. A számok egyetlen forrása a composer export (ha van), a prisma_folyamat.md csak ellenőrzés: javítsd az eltérő fájlt, és a kéziratban is az egyező számokat közöld.",
+       "source": "PRISMA 2020 1. ábra; D-S04-009",
+       "kb_refs": [],
+       "escalation": null,
+       "machine_check": "metaelemzes.prisma:P017"
+      },
+      {
+       "id": "X001",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S08",
+       "title": {
+        "hu": "Elavult commit-futás: az adattábla a futás óta megváltozott",
+        "en": "Stale commit run: the data table changed after the run"
+       },
+       "advice": "A futás a tábla egy korábbi állapotából készült, így az eredményei — és minden rájuk hivatkozó GRADE-, SoF- és kéziratszám — nem a mostani adatot tükrözik. Futtasd újra ugyanazzal a speccel (ha a spec rögzíti a data.sha256-ot, előbb frissítsd), és a hivatkozásokat állítsd át az új futásra. Az S08 (szintézis) szakasztól hiba, előtte figyelmeztetés.",
+       "source": "engine",
+       "kb_refs": [],
+       "escalation": {
+        "from": "S08",
+        "before": "warning"
+       },
+       "machine_check": "metaelemzes.audit:X001"
+      },
+      {
+       "id": "X002",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S14",
+       "title": {
+        "hu": "Elavult ábra: az exportált ábra nem a legutóbbi futás adataiból készült",
+        "en": "Stale figure: the exported figure was not drawn from the latest run"
+       },
+       "advice": "Az ábra (06_kezirat/abrak/<név>.result.json) olyan plot_data.json-ból készült, amely már nem a kimenet legutóbbi commit-futásáé, vagy a futás plot_data.json-ja azóta megváltozott. A kéziratban így más számok állhatnak, mint az elemzésben. Rajzold újra az ábrát a legutóbbi futásból (Ábra-export), és cseréld le a kéziratban.",
+       "source": "PRISMA 2020 20b; terv 5.3",
+       "kb_refs": [
+        "D-S14-008",
+        "D-S14-012"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X002"
+      },
+      {
+       "id": "X003",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S06",
+       "title": {
+        "hu": "A tábla rob értéke eltér az értékelés végső összítéletétől",
+        "en": "Table rob value differs from the final appraisal judgement"
+       },
+       "advice": "A kinyerési tábla rob oszlopa nem egyezik a lezárt (konszenzusos) torzításikockázat-értékelés összítéletével, így a V019, a „magas RoB nélkül” érzékenységi futás és a GRADE RoB-doménje rossz értéket lát. Írd át a rob cellát az értékelés összítéletére (vagy javítsd az értékelést), majd futtasd újra az érintett elemzéseket.",
+       "source": "Cochrane Handbook 7–8; RoB 2 / ROBINS-I",
+       "kb_refs": [
+        "D-S06-008",
+        "D-S13-003"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X003"
+      },
+      {
+       "id": "X004",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S06",
+       "title": {
+        "hu": "Elemzett vizsgálat torzításikockázat-értékelés nélkül",
+        "en": "Analysed study without a risk-of-bias appraisal"
+       },
+       "advice": "Minden elemzett vizsgálathoz kell egy lezárt (complete vagy konszenzusos) értékelés a kimenethez rögzített eszközzel (ma-projekt.json appraisal_tools; pl. randomizált vizsgálatnál RoB 2). Enélkül a „magas RoB nélkül” érzékenységi futás és a GRADE torzítási kockázat doménje nem megalapozott. Töltsd ki és zárd le az értékelést a Torzítási kockázat lapon (a vázlat és a jóvá nem hagyott AI-vázlat nem számít). Az S13 (bizonyosság) szakasztól hiba, előtte figyelmeztetés.",
+       "source": "Cochrane Handbook 7–8; RoB 2 / ROBINS-I",
+       "kb_refs": [
+        "D-S06-008",
+        "D-S06-016"
+       ],
+       "escalation": {
+        "from": "S13",
+        "before": "warning"
+       },
+       "machine_check": "metaelemzes.audit:X004"
+      },
+      {
+       "id": "X005",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S12",
+       "title": {
+        "hu": "Becsült adatú sor van, de nincs „becsült nélkül” érzékenységi futás",
+        "en": "Estimated rows present but no sensitivity run without them"
+       },
+       "advice": "Futtass gyermek-futást a becsült / imputált sorok kizárásával (--exclude estimated=igen; specben: purpose sensitivity, parent az elsődleges spec), és közöld, változik-e a következtetés.",
+       "source": "Cochrane Handbook 6.5.2.10, 10.14",
+       "kb_refs": [
+        "D-S12-003",
+        "D-S05-023"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X005"
+      },
+      {
+       "id": "X006",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S12",
+       "title": {
+        "hu": "Magas RoB-ú sor van, de nincs „magas RoB nélkül” érzékenységi futás",
+        "en": "High-RoB rows present but no sensitivity run without them"
+       },
+       "advice": "Futtass gyermek-futást a magas torzítási kockázatú sorok kizárásával (--exclude rob=high; specben: purpose sensitivity, parent az elsődleges spec), és közöld az eredményt. A szűrőnek a mostani tábla minden magas RoB-ú sorát ki kell zárnia.",
+       "source": "Cochrane Handbook 7–8, 10.14",
+       "kb_refs": [
+        "D-S12-002"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X006"
+      },
+      {
+       "id": "X007",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S13",
+       "title": {
+        "hu": "A GRADE-ítélet számai eltérnek az elsődleges commit-futástól",
+        "en": "GRADE numbers differ from the primary commit run"
+       },
+       "advice": "A projektnapló GRADE-sorában (vagy a rögzített 06_kezirat/grade/<kimenet>.grade.json-ban) álló vizsgálatszám (k), résztvevőszám vagy hatás-szöveg nem az, amit a kimenet elsődleges elemzésének legutóbbi commit-futása ad: a GRADE egy régebbi eredményre épül. Nyisd meg a GRADE-lapot, frissítsd a futásra, nézd át a doménítéleteket, és rögzítsd újra.",
+       "source": "GRADE Handbook 5; Cochrane Handbook 14",
+       "kb_refs": [
+        "D-S13-026",
+        "D-S13-002"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X007"
+      },
+      {
+       "id": "X008",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S13",
+       "title": {
+        "hu": "A SoF-táblázat egy cellája eltér a motor eredményétől",
+        "en": "Summary-of-findings cell differs from the engine result"
+       },
+       "advice": "A 06_kezirat/sof/<kimenet>.sof.json egy cellája (k, résztvevők, a relatív hatás szövege vagy az abszolút hatás /1000) nem egyezik azzal, amit a motor a kimenet elsődleges commit-futásából számol: kézzel írt vagy régi futásból maradt szám került a táblázatba. A bizonyosság-cella csak a kimenet rögzített GRADE-ítéletének szintje lehet (ugyanarra a futásra): piszkozat, feloldatlan publikációs torzítás, jóvá nem hagyott AI-vázlat vagy GRADE nélküli bizonyosság is ide tartozik. Generáld újra a SoF-ot a GRADE-lapon (a számokat a motor sof() függvénye, a bizonyosságot a rögzített GRADE adja), ne szerkeszd kézzel.",
+       "source": "Cochrane Handbook 14.1; GRADE Handbook 5.2",
+       "kb_refs": [
+        "D-S13-011",
+        "D-S13-012"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X008"
+      },
+      {
+       "id": "X009",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Kettős kinyerés lezáratlan eltéréssel",
+        "en": "Double data extraction has unresolved disagreements"
+       },
+       "advice": "A két független kinyerő táblája (03_adatok/kettos/<kimenet>.A.csv és .B.csv) eltér, és nem minden eltérésre van érvényes egyeztetési döntés a <kimenet>.consensus.json-ban — vagy egy döntés óta valamelyik tábla megváltozott, így a döntés elavult. Amíg ez így van, a szintézis (S08) nem indulhat. Döntsd el az eltéréseket a Kettős kinyerés lapon (röviden indokolva), majd írd ki a konszenzus-táblát.",
+       "source": "Cochrane Handbook 5.5.2",
+       "kb_refs": [
+        "D-S05-001"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X009"
+      },
+      {
+       "id": "X010",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S05",
+       "title": {
+        "hu": "Elemzett cellának nincs forrásoldala",
+        "en": "Analysed cell has no source page"
+       },
+       "advice": "Minden elemzett számhoz rögzíts forráshelyet — oldalt vagy táblázat/ábra-lokátort az eredet-oldalfájl (.prov.json) source mezőjében, oldalfájl nélkül a forras_oldal oszlopban —, hogy az érték a közleményben visszakereshető és ellenőrizhető legyen.",
+       "source": "Cochrane Handbook 5; PRISMA 2020 9. tétel",
+       "kb_refs": [
+        "D-S05-001",
+        "D-S05-002"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X010"
+      },
+      {
+       "id": "X011",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S06",
+       "title": {
+        "hu": "Predikciósmodell-áttekintés: vizsgálat PROBAST+AI-értékelés nélkül",
+        "en": "Prediction-model review: study without a PROBAST+AI appraisal"
+       },
+       "advice": "A ma-projekt.json szerint az áttekintés predikciós modellekről szól (review_type: prediction_model), ezért minden bevont vizsgálat modelljének torzítási kockázatát és alkalmazhatóságát PROBAST+AI-jal kell értékelni — a RoB 2 vagy a ROBINS-I erre nem alkalmas. Töltsd ki és zárd le a PROBAST+AI-értékelést a felsorolt vizsgálatokra; az AI-vázlat csak emberi jóváhagyás után számít.",
+       "source": "PROBAST+AI (Moons et al. 2025); Cochrane Prognosis Methods",
+       "kb_refs": [
+        "D-S13-023",
+        "D-S02-011"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X011"
+      },
+      {
+       "id": "X012",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S14",
+       "title": {
+        "hu": "AMSTAR 2 önellenőrzés hiányos, vagy a besorolás nem egyezik a válaszokkal",
+        "en": "AMSTAR 2 self-assessment incomplete or rating inconsistent with the answers"
+       },
+       "advice": "A saját áttekintés AMSTAR 2 önellenőrzésében (04_torzitas_kockazat/appraisals/review.amstar2.*.json) nincs mind a 16 tétel megválaszolva, vagy a rögzített összbesorolás egyik konvencióval sem az, ami a válaszokból adódik (a projekt konvenciója a KB AMSTAR2-00 szerint: kritikus tételen a „részben igen” nem hiba). Válaszold meg a hiányzó tételeket, és a besorolást igazítsd a motor által számolthoz (vagy javítsd a válaszokat). A hiányosság az S14 (jelentés) szakasztól és a FINAL kéréskor számít.",
+       "source": "AMSTAR 2 (Shea et al. 2017); KB AMSTAR2-00",
+       "kb_refs": [
+        "D-S13-021",
+        "D-S04-014"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X012"
+      },
+      {
+       "id": "X013",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "A sor becsült-jelölése ellentmond a cellák eredetének",
+        "en": "Row estimated flag contradicts cell provenance"
+       },
+       "advice": "Az eredet-oldalfájl (.prov.json) szerint a sor egy hatásméret-releváns cellája becsült / digitalizált / imputált, de a sor estimated oszlopa nem 'igen' — vagy fordítva: a sor 'igen', de minden dokumentált cellája közölt érték. Hangold össze őket: az estimated oszlop vezérli a V018-at és az --exclude estimated=igen érzékenységi futást.",
+       "source": "Cochrane Handbook 6.5.2",
+       "kb_refs": [
+        "D-S05-023"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X013"
+      },
+      {
+       "id": "X014",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S04",
+       "title": {
+        "hu": "Több elemzett vizsgálat, mint bevont vizsgálat (I)",
+        "en": "More analysed studies than included studies (I)"
+       },
+       "advice": "Az elemzett vizsgálatok (a commit-futás k-ja, illetve a tábla egyedi study_id-i) a bevont vizsgálatok (PRISMA I; studies.json) részhalmazai. Több karú vizsgálatnál a k a sorok száma, ilyenkor az egyedi study_id számít. Javítsd a studies.json-t, a PRISMA-számokat vagy az adattáblát.",
+       "source": "PRISMA 2020 1. ábra",
+       "kb_refs": [
+        "P010"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X014"
+      },
+      {
+       "id": "X015",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "A metaanalízisbe vont vizsgálatok száma eltér a commit-futásétól",
+        "en": "Number of studies in the meta-analysis differs from the commit run"
+       },
+       "advice": "A kimenetenként közölt „metaanalízisben” szám (a studies.json vizsgálatainak outcomes listája, illetve a PRISMA-folyamat included_meta mezője) nem egyezik azzal, ahány vizsgálat a kimenet elsődleges commit-futásában ténylegesen szerepel. Javítsd a vizsgálat-térképet (melyik vizsgálat melyik kimenethez tartozik) vagy a PRISMA-számot, és a különbség okát a kéziratban közöld.",
+       "source": "PRISMA 2020 16b, 20b",
+       "kb_refs": [
+        "D-S04-015",
+        "P010"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X015"
+      },
+      {
+       "id": "X016",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S12",
+       "title": {
+        "hu": "Protokoll-eltérés döntés nélkül: az elsődleges elemzés nem az előre rögzített",
+        "en": "Protocol deviation without decision: primary analysis is not the prespecified one"
+       },
+       "advice": "Az elsődleges spec nincs előre rögzítve (prespecified: false), vagy eltér az előre rögzített spectől (modell, τ²-becslő, szűrők, adatfájl). Ha az eltérés indokolt, naplózd döntésként (project log <mappa> --agent … --stage S12 --kb X016,D-S12-006 --decision 'Protokoll-eltérés (<kimenet>): …' --rationale …), és a kéziratban közöld; különben az előre rögzített elemzés maradjon az elsődleges.",
+       "source": "PRISMA 2020 24c; Cochrane Handbook 10.14",
+       "kb_refs": [
+        "D-S12-006",
+        "D-S02-017"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X016"
+      },
+      {
+       "id": "X017",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S06",
+       "title": {
+        "hu": "Az implikálttól eltérő ítélet indoklás nélkül",
+        "en": "Judgement differs from the implied one without a reason"
+       },
+       "advice": "Egy domén- vagy összítélet eltér attól, amit a válaszok a motor szabálya szerint kikényszerítenek (implikált ítélet), de nincs megadva a felülbírálás oka (override_reason). Az eltérés nem tilos — az ítélet emberi döntés —, de indokolni kell, és döntésként naplózni. Az értékelőlapon írd be röviden, miért tér el az ítéleted (pl. „a hiányzó adat aránya elhanyagolható”), vagy igazítsd az ítéletet a válaszokhoz.",
+       "source": "RoB 2 útmutató (Sterne et al. 2019); Cochrane Handbook 8",
+       "kb_refs": [
+        "D-S06-004",
+        "D-S06-005"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X017"
+      },
+      {
+       "id": "X018",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S14",
+       "title": {
+        "hu": "Kéziratba szánt ábra minőségellenőrzése nem tiszta",
+        "en": "Manuscript figure did not pass quality control"
+       },
+       "advice": "A 06_kezirat/abrak/<név>.result.json szerint az ábra QC-je nem tiszta (felirat lóg ki a dobozából, vagy görbét, nyilat takar), egy karakter hiányzik a betűkészletből, vagy a számhűség-ellenőrzés eltérést talált (egy szám nem pontosan az, amit a motor számolt). Rajzold újra az ábrát (pl. szélesebb doboz, más elrendezés), és csak tiszta QC-vel tedd a kéziratba.",
+       "source": "terv 5.3, 6.7",
+       "kb_refs": [
+        "D-S14-008",
+        "D-S14-012"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X018"
+      },
+      {
+       "id": "X019",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S13",
+       "title": {
+        "hu": "A GRADE publikációs torzítás doménje feloldatlan („suspected”)",
+        "en": "GRADE publication bias domain unresolved ('suspected')"
+       },
+       "advice": "A „gyanított” (suspected) publikációs torzítás addig feloldatlan, amíg ember nem választ 0-t (nem minősít le) vagy −1-et (leminősít) indoklással; az ilyen kimenet GRADE-je nem rögzíthető, és nem kerülhet a SoF-ba. Döntsd el a GRADE-lapon (a „Miért?” panel mutatja a tesztek értelmezhetőségét és a keresés teljességét), vagy válaszd a „nem észlelt” / „erősen gyanított” ítéletet. Az S13 (bizonyosság) szakasztól hiba, előtte figyelmeztetés.",
+       "source": "GRADE Handbook 5.2.5; 11. döntés, 4. pont",
+       "kb_refs": [
+        "D-S13-008"
+       ],
+       "escalation": {
+        "from": "S13",
+        "before": "warning"
+       },
+       "machine_check": "metaelemzes.audit:X019"
+      },
+      {
+       "id": "X020",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "A szűrésben még elbírálatlan rekord van",
+        "en": "Screening still has undecided records"
+       },
+       "advice": "A composer PRISMA-exportja (02_szures/prisma_flow.json) szerint vannak még döntésre váró (undecided) rekordok. A végleges áttekintés előtt minden teljes szöveget be kell vonni vagy okkal kizárni, különben a PRISMA-számok nem véglegesek. Zárd le a döntéseket a composerben és frissítsd az exportot, vagy a folyamatábrán jelöld őket „folyamatban lévő” vizsgálatként. Az S14-től és a FINAL kéréskor számít.",
+       "source": "PRISMA 2020 1. ábra; composer",
+       "kb_refs": [
+        "D-S04-008",
+        "P013"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X020"
+      },
+      {
+       "id": "X021",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "warning",
+       "stage": "S04",
+       "title": {
+        "hu": "A teljes szöveg szintű kizárási okok eltérnek a szűrési döntési naplótól",
+        "en": "Full-text exclusion reasons differ from the screening decision log"
+       },
+       "advice": "A PRISMA-folyamat okonkénti kizárási számai (02_szures/prisma_flow.json vagy prisma_folyamat.md) nem egyeznek a 02_szures mappába exportált döntési naplóval (a teljes szöveg szintű kizárások okonként összeszámolva). A folyamatábra számainak a naplóból kell jönniük: exportáld újra a naplót a szűrőeszközből (vagy frissítsd a composer-exportot), és javítsd az eltérő számot.",
+       "source": "PRISMA 2020 16a",
+       "kb_refs": [
+        "D-S04-008",
+        "D-S04-013",
+        "P007"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X021"
+      },
+      {
+       "id": "X022",
+       "kind": "audit",
+       "module": "audit",
+       "severity": "error",
+       "stage": "S05",
+       "title": {
+        "hu": "Az eredet-oldalfájl nem a mostani adattáblához tartozik",
+        "en": "Provenance sidecar does not belong to the current data table"
+       },
+       "advice": "A .prov.json table_sha256-ja nem a mostani CSV hash-e (megszakadt kétfájlos írás vagy külső szerkesztés), és van olyan eredet-bejegyzés, amely nem egyeztethető a táblával (hiányzó sor vagy oszlop, eltérő érték). Ellenőrizd az érintett cellákat a forrással, majd mentsd újra az eredetet (mentéskor a table_sha256 frissül).",
+       "source": "engine",
+       "kb_refs": [
+        "D-S05-001"
+       ],
+       "escalation": null,
+       "machine_check": "metaelemzes.audit:X022"
+      }
+     ],
+     "stages": [
+      {
+       "id": "S00",
+       "name": {
+        "hu": "Előfeltételek, eszközök és hozzáférések",
+        "en": "Preflight: tools and access"
+       }
+      },
+      {
+       "id": "S01",
+       "name": {
+        "hu": "Kutatási kérdés (PICO/PECO)",
+        "en": "Review question"
+       }
+      },
+      {
+       "id": "S02",
+       "name": {
+        "hu": "Protokoll és regisztráció",
+        "en": "Protocol and registration"
+       }
+      },
+      {
+       "id": "S03",
+       "name": {
+        "hu": "Irodalomkeresés",
+        "en": "Search"
+       }
+      },
+      {
+       "id": "S04",
+       "name": {
+        "hu": "Szűrés és kiválasztás",
+        "en": "Screening and selection"
+       }
+      },
+      {
+       "id": "S05",
+       "name": {
+        "hu": "Adatkinyerés",
+        "en": "Data extraction"
+       }
+      },
+      {
+       "id": "S06",
+       "name": {
+        "hu": "Torzítási kockázat",
+        "en": "Risk of bias"
+       }
+      },
+      {
+       "id": "S07",
+       "name": {
+        "hu": "Hatásméret",
+        "en": "Effect size"
+       }
+      },
+      {
+       "id": "S08",
+       "name": {
+        "hu": "Szintézis (modell)",
+        "en": "Synthesis model"
+       }
+      },
+      {
+       "id": "S09",
+       "name": {
+        "hu": "Heterogenitás",
+        "en": "Heterogeneity"
+       }
+      },
+      {
+       "id": "S10",
+       "name": {
+        "hu": "Alcsoport-elemzés és meta-regresszió",
+        "en": "Subgroups and meta-regression"
+       }
+      },
+      {
+       "id": "S11",
+       "name": {
+        "hu": "Kis-vizsgálat hatások / publikációs torzítás",
+        "en": "Small-study effects and publication bias"
+       }
+      },
+      {
+       "id": "S12",
+       "name": {
+        "hu": "Érzékenységi elemzés",
+        "en": "Sensitivity analysis"
+       }
+      },
+      {
+       "id": "S13",
+       "name": {
+        "hu": "Bizonyosság és értelmezés (GRADE)",
+        "en": "Certainty of evidence"
+       }
+      },
+      {
+       "id": "S14",
+       "name": {
+        "hu": "Jelentés és kézirat (PRISMA 2020)",
+        "en": "Reporting"
+       }
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 3,
+     "project_rev": 41,
+     "request_id": "q_fx39"
+    }
+   }
+  }
+ ]
+}

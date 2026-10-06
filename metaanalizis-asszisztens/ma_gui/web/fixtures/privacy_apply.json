@@ -1,0 +1,537 @@
+{
+ "description": "POST /api/privacy/apply (3.5.2, 7.5): {action, dry_run: true} → privacy.plan_*() diff-előnézet; {action, base_sha256, confirm: true} → privacy.apply_*()/install_precommit_guard(). GET /api/privacy?data_class=B|C → status() előnézet (nem ír). A diffek a ma_gui/privacy.py valódi kimenetei.",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/privacy/apply",
+   "body": {
+    "action": "gitignore",
+    "dry_run": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy-plan/v1",
+    "data": {
+     "path": ".gitignore",
+     "exists": true,
+     "changed": true,
+     "diff": "--- a/.gitignore\n+++ b/.gitignore\n@@ -1,2 +1,13 @@\n node_modules/\n *.pyc\n+\n+# >>> ma-munkapad (kezelt blokk) >>>\n+# A MA-munkapad kezeli: a jelölők közti sorok felülíródnak; saját sort a blokkon kívülre írj.\n+_privat/\n+*_PHI*\n+*.phi.*\n+07_ellenorzes/audit/**/data/\n+*.snapshot.html\n+projekt.sqlite-wal\n+projekt.sqlite-shm\n+# <<< ma-munkapad <<<\n",
+     "base_sha256": "68bf23bfa4148a08ab678890906d860c40f08fdf915de2e2f85ef2107dd36bb8",
+     "block_present": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex22"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/privacy/apply",
+   "body": {
+    "action": "gitignore",
+    "confirm": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy-plan/v1",
+    "data": {
+     "path": ".gitignore",
+     "exists": true,
+     "changed": true,
+     "diff": "--- a/.gitignore\n+++ b/.gitignore\n@@ -1,2 +1,13 @@\n node_modules/\n *.pyc\n+\n+# >>> ma-munkapad (kezelt blokk) >>>\n+# A MA-munkapad kezeli: a jelölők közti sorok felülíródnak; saját sort a blokkon kívülre írj.\n+_privat/\n+*_PHI*\n+*.phi.*\n+07_ellenorzes/audit/**/data/\n+*.snapshot.html\n+projekt.sqlite-wal\n+projekt.sqlite-shm\n+# <<< ma-munkapad <<<\n",
+     "base_sha256": "68bf23bfa4148a08ab678890906d860c40f08fdf915de2e2f85ef2107dd36bb8",
+     "block_present": false,
+     "applied": true,
+     "action": "gitignore",
+     "dry_run": false,
+     "sha256": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
+     "status": {
+      "data_class": "A",
+      "data_class_label": "publikált aggregált",
+      "vault": {
+       "tracked": true,
+       "root": "~/Documents/claude",
+       "reason": "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+       "installed": true,
+       "config": "~/.claude/vault/config.json",
+       "max_depth": 2,
+       "depth": 2,
+       "under_root": true,
+       "paused": false,
+       "excluded": false,
+       "exclude_match": null,
+       "via": null,
+       "error": null
+      },
+      "cloud_sync": {
+       "kind": "onedrive",
+       "path": "~/Documents",
+       "known_folder_move": true
+      },
+      "git": {
+       "available": true,
+       "repo": true,
+       "toplevel": "~/Documents/claude"
+      },
+      "gitignore_block_present": true,
+      "deny_rule_present": true,
+      "precommit_guard_installed": false,
+      "tracked_sensitive_files": [],
+      "history": {
+       "checked": true,
+       "git": true,
+       "repo": true,
+       "in_history": false,
+       "in_remote": null,
+       "commits": 0,
+       "paths": [],
+       "reason": null
+      },
+      "write_hold": {
+       "active": false,
+       "reason": null
+      },
+      "open_blocked": {
+       "blocked": false,
+       "reasons": []
+      },
+      "recommendations": [
+       "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+       "A projekt mappáját a(z) OneDrive szinkronizálja (~/Documents); A osztálynál ez csak figyelmeztetés."
+      ],
+      "actions": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex23"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/privacy/apply",
+   "body": {
+    "action": "deny",
+    "dry_run": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy-plan/v1",
+    "data": {
+     "path": ".claude/settings.json",
+     "exists": false,
+     "changed": true,
+     "diff": "--- a/.claude/settings.json\n+++ b/.claude/settings.json\n@@ -0,0 +1,8 @@\n+{\n+  \"permissions\": {\n+    \"deny\": [\n+      \"Read(./_privat/**)\",\n+      \"Read(**/*_PHI*)\"\n+    ]\n+  }\n+}\n",
+     "base_sha256": null,
+     "missing_rules": [
+      "Read(./_privat/**)",
+      "Read(**/*_PHI*)"
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex24"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/privacy/apply",
+   "body": {
+    "action": "deny",
+    "confirm": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy-plan/v1",
+    "data": {
+     "path": ".claude/settings.json",
+     "exists": false,
+     "changed": true,
+     "diff": "--- a/.claude/settings.json\n+++ b/.claude/settings.json\n@@ -0,0 +1,8 @@\n+{\n+  \"permissions\": {\n+    \"deny\": [\n+      \"Read(./_privat/**)\",\n+      \"Read(**/*_PHI*)\"\n+    ]\n+  }\n+}\n",
+     "base_sha256": null,
+     "missing_rules": [
+      "Read(./_privat/**)",
+      "Read(**/*_PHI*)"
+     ],
+     "applied": true,
+     "action": "deny",
+     "dry_run": false,
+     "sha256": "a1fce4363854ff888cff4b8e7875d600c2682390412a8cf79b37d0b11148b0fa",
+     "status": {
+      "data_class": "A",
+      "data_class_label": "publikált aggregált",
+      "vault": {
+       "tracked": true,
+       "root": "~/Documents/claude",
+       "reason": "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+       "installed": true,
+       "config": "~/.claude/vault/config.json",
+       "max_depth": 2,
+       "depth": 2,
+       "under_root": true,
+       "paused": false,
+       "excluded": false,
+       "exclude_match": null,
+       "via": null,
+       "error": null
+      },
+      "cloud_sync": {
+       "kind": "onedrive",
+       "path": "~/Documents",
+       "known_folder_move": true
+      },
+      "git": {
+       "available": true,
+       "repo": true,
+       "toplevel": "~/Documents/claude"
+      },
+      "gitignore_block_present": true,
+      "deny_rule_present": true,
+      "precommit_guard_installed": false,
+      "tracked_sensitive_files": [],
+      "history": {
+       "checked": true,
+       "git": true,
+       "repo": true,
+       "in_history": false,
+       "in_remote": null,
+       "commits": 0,
+       "paths": [],
+       "reason": null
+      },
+      "write_hold": {
+       "active": false,
+       "reason": null
+      },
+      "open_blocked": {
+       "blocked": false,
+       "reasons": []
+      },
+      "recommendations": [
+       "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+       "A projekt mappáját a(z) OneDrive szinkronizálja (~/Documents); A osztálynál ez csak figyelmeztetés."
+      ],
+      "actions": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex25"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/privacy/apply",
+   "body": {
+    "action": "precommit",
+    "dry_run": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy-plan/v1",
+    "data": {
+     "hook_path": ".git/hooks/pre-commit",
+     "installed": false,
+     "will_chain": false,
+     "chained_path": ".git/hooks/pre-commit.ma-munkapad-elozo",
+     "shared_hooks_dir": false,
+     "script": "#!python3\n# -*- coding: utf-8 -*-\n# ma-munkapad pre-commit őr v1 — a MA-munkapad generálta (csak stdlib); kézzel ne szerkeszd, a munkapad\n# felülírja. Csak akkor utasítja el a commitot, ha érzékeny fájl (_privat/, *_PHI* …) MÉGIS az\n# indexbe került (kényszerített add vagy korábban követett fájl). A korábbi hookot láncolja.\nimport fnmatch\nimport os\nimport shutil\nimport subprocess\nimport sys\n\nPATTERNS = ['_privat/', '*_PHI*', '*.phi.*', '07_ellenorzes/audit/**/data/', '*.snapshot.html', 'projekt.sqlite-wal', 'projekt.sqlite-shm']\nCHAINED = 'pre-commit.ma-munkapad-elozo'\nIGNORE_CASE = sys.platform.startswith(\"win\") or sys.platform == \"darwin\"\n\n\ndef _fm(name, pat):\n    if IGNORE_CASE:\n        return fnmatch.fnmatchcase(name.casefold(), pat.casefold())\n    return fnmatch.fnmatchcase(name, pat)\n\n\ndef _match_parts(pparts, parts):\n    if not pparts:\n        return not parts\n    if pparts[0] == \"**\":\n        return any(_match_parts(pparts[1:], parts[i:]) for i in range(len(parts) + 1))\n    return bool(parts) and _fm(parts[0], pparts[0]) and _match_parts(pparts[1:], parts[1:])\n\n\ndef is_sensitive(path):\n    \"\"\"A repó-relatív út illeszkedik-e (bármely mélységben) a kezelt mintákra.\"\"\"\n    parts = [p for p in path.replace(\"\\\\\", \"/\").split(\"/\") if p]\n    for pattern in PATTERNS:\n        dir_only = pattern.endswith(\"/\")\n        pparts = pattern.strip(\"/\").split(\"/\")\n        for k in range(1, len(parts) + 1):\n            if k == len(parts) and dir_only:\n                continue\n            prefix = parts[:k]\n            if len(pparts) == 1:\n                if _fm(prefix[-1], pparts[0]):\n                    return True\n            elif any(_match_parts(pparts, prefix[s:]) for s in range(len(prefix))):\n                return True\n    return False\n\n\ndef _say(text):\n    data = text.encode(getattr(sys.stderr, \"encoding\", None) or \"utf-8\", \"replace\")\n    try:\n        sys.stderr.buffer.write(data)\n    except AttributeError:\n        sys.stderr.write(data.decode(\"ascii\", \"replace\"))\n    sys.stderr.flush()\n\n\ndef staged_paths():\n    try:\n        p = subprocess.run([\"git\", \"-c\", \"core.quotepath=false\", \"diff\", \"--cached\", \"--name-only\", \"-z\",\n                            \"--diff-filter=ACMRT\"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)\n    except OSError:\n        return None\n    if p.returncode != 0:\n        return None\n    return [x for x in p.stdout.decode(\"utf-8\", \"replace\").split(\"\\0\") if x]\n\n\ndef _chained_argv(path):\n    if os.name != \"nt\":\n        return [path] if os.access(path, os.X_OK) else None\n    with open(path, \"rb\") as fh:\n        first = fh.readline(300).decode(\"utf-8\", \"replace\").strip()\n    if first.startswith(\"#!\"):\n        parts = first[2:].split()\n        if parts and os.path.basename(parts[0]).lower() in (\"env\", \"env.exe\"):\n            parts = parts[1:]\n        if parts:\n            exe = shutil.which(parts[0]) or shutil.which(os.path.basename(parts[0]))\n            if exe:\n                return [exe] + parts[1:] + [path]\n    sh = shutil.which(\"sh\")\n    return [sh, path] if sh else None\n\n\ndef run_chained():\n    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CHAINED)\n    if not os.path.isfile(path):\n        return 0\n    argv = _chained_argv(path)\n    if argv is None:\n        return 0\n    try:\n        return subprocess.call(argv + sys.argv[1:])\n    except OSError:\n        _say(\"ma-munkapad őr: a láncolt hook (%s) nem indítható.\\n\" % CHAINED)\n        return 1\n\n\ndef main():\n    paths = staged_paths()\n    if paths is None:\n        _say(\"ma-munkapad őr: az index nem kérdezhető le, ezért a commit leállt (biztonsági alapállás).\\n\")\n        return 1\n    bad = [p for p in paths if is_sensitive(p)]\n    if bad:\n        lines = [\"ma-munkapad őr: érzékeny fájl került az indexbe, a commit leállt:\"]\n        lines += [\"  \" + p for p in bad[:20]]\n        if len(bad) > 20:\n            lines.append(\"  … és még %d\" % (len(bad) - 20))\n        lines.append(\"Vedd ki az indexből (a fájl a lemezen marad):  git rm --cached -- <út>\")\n        lines.append(\"A vault mentése addig elmarad; a kezelt .gitignore-blokk a szokásos 'git add -A'-t \"\n                     \"már kiszűri.\")\n        _say(\"\\n\".join(lines) + \"\\n\")\n        return 1\n    return run_chained()\n\n\nif __name__ == \"__main__\":\n    sys.exit(main())\n",
+     "note": "A pre-commit őr csak tartalék: akkor állítja meg a commitot (a vault mentését is), ha érzékeny fájl mégis az indexbe került — kényszerített 'git add -f' vagy korábban követett fájl miatt. A szokásos 'git add -A'-t a kezelt .gitignore-blokk már kiszűri."
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex26"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/privacy/apply",
+   "body": {
+    "action": "precommit",
+    "confirm": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy-plan/v1",
+    "data": {
+     "hook_path": ".git/hooks/pre-commit",
+     "installed": true,
+     "will_chain": false,
+     "chained_path": ".git/hooks/pre-commit.ma-munkapad-elozo",
+     "shared_hooks_dir": false,
+     "script": "#!python3\n# -*- coding: utf-8 -*-\n# ma-munkapad pre-commit őr v1 — a MA-munkapad generálta (csak stdlib); kézzel ne szerkeszd, a munkapad\n# felülírja. Csak akkor utasítja el a commitot, ha érzékeny fájl (_privat/, *_PHI* …) MÉGIS az\n# indexbe került (kényszerített add vagy korábban követett fájl). A korábbi hookot láncolja.\nimport fnmatch\nimport os\nimport shutil\nimport subprocess\nimport sys\n\nPATTERNS = ['_privat/', '*_PHI*', '*.phi.*', '07_ellenorzes/audit/**/data/', '*.snapshot.html', 'projekt.sqlite-wal', 'projekt.sqlite-shm']\nCHAINED = 'pre-commit.ma-munkapad-elozo'\nIGNORE_CASE = sys.platform.startswith(\"win\") or sys.platform == \"darwin\"\n\n\ndef _fm(name, pat):\n    if IGNORE_CASE:\n        return fnmatch.fnmatchcase(name.casefold(), pat.casefold())\n    return fnmatch.fnmatchcase(name, pat)\n\n\ndef _match_parts(pparts, parts):\n    if not pparts:\n        return not parts\n    if pparts[0] == \"**\":\n        return any(_match_parts(pparts[1:], parts[i:]) for i in range(len(parts) + 1))\n    return bool(parts) and _fm(parts[0], pparts[0]) and _match_parts(pparts[1:], parts[1:])\n\n\ndef is_sensitive(path):\n    \"\"\"A repó-relatív út illeszkedik-e (bármely mélységben) a kezelt mintákra.\"\"\"\n    parts = [p for p in path.replace(\"\\\\\", \"/\").split(\"/\") if p]\n    for pattern in PATTERNS:\n        dir_only = pattern.endswith(\"/\")\n        pparts = pattern.strip(\"/\").split(\"/\")\n        for k in range(1, len(parts) + 1):\n            if k == len(parts) and dir_only:\n                continue\n            prefix = parts[:k]\n            if len(pparts) == 1:\n                if _fm(prefix[-1], pparts[0]):\n                    return True\n            elif any(_match_parts(pparts, prefix[s:]) for s in range(len(prefix))):\n                return True\n    return False\n\n\ndef _say(text):\n    data = text.encode(getattr(sys.stderr, \"encoding\", None) or \"utf-8\", \"replace\")\n    try:\n        sys.stderr.buffer.write(data)\n    except AttributeError:\n        sys.stderr.write(data.decode(\"ascii\", \"replace\"))\n    sys.stderr.flush()\n\n\ndef staged_paths():\n    try:\n        p = subprocess.run([\"git\", \"-c\", \"core.quotepath=false\", \"diff\", \"--cached\", \"--name-only\", \"-z\",\n                            \"--diff-filter=ACMRT\"], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)\n    except OSError:\n        return None\n    if p.returncode != 0:\n        return None\n    return [x for x in p.stdout.decode(\"utf-8\", \"replace\").split(\"\\0\") if x]\n\n\ndef _chained_argv(path):\n    if os.name != \"nt\":\n        return [path] if os.access(path, os.X_OK) else None\n    with open(path, \"rb\") as fh:\n        first = fh.readline(300).decode(\"utf-8\", \"replace\").strip()\n    if first.startswith(\"#!\"):\n        parts = first[2:].split()\n        if parts and os.path.basename(parts[0]).lower() in (\"env\", \"env.exe\"):\n            parts = parts[1:]\n        if parts:\n            exe = shutil.which(parts[0]) or shutil.which(os.path.basename(parts[0]))\n            if exe:\n                return [exe] + parts[1:] + [path]\n    sh = shutil.which(\"sh\")\n    return [sh, path] if sh else None\n\n\ndef run_chained():\n    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), CHAINED)\n    if not os.path.isfile(path):\n        return 0\n    argv = _chained_argv(path)\n    if argv is None:\n        return 0\n    try:\n        return subprocess.call(argv + sys.argv[1:])\n    except OSError:\n        _say(\"ma-munkapad őr: a láncolt hook (%s) nem indítható.\\n\" % CHAINED)\n        return 1\n\n\ndef main():\n    paths = staged_paths()\n    if paths is None:\n        _say(\"ma-munkapad őr: az index nem kérdezhető le, ezért a commit leállt (biztonsági alapállás).\\n\")\n        return 1\n    bad = [p for p in paths if is_sensitive(p)]\n    if bad:\n        lines = [\"ma-munkapad őr: érzékeny fájl került az indexbe, a commit leállt:\"]\n        lines += [\"  \" + p for p in bad[:20]]\n        if len(bad) > 20:\n            lines.append(\"  … és még %d\" % (len(bad) - 20))\n        lines.append(\"Vedd ki az indexből (a fájl a lemezen marad):  git rm --cached -- <út>\")\n        lines.append(\"A vault mentése addig elmarad; a kezelt .gitignore-blokk a szokásos 'git add -A'-t \"\n                     \"már kiszűri.\")\n        _say(\"\\n\".join(lines) + \"\\n\")\n        return 1\n    return run_chained()\n\n\nif __name__ == \"__main__\":\n    sys.exit(main())\n",
+     "note": "A pre-commit őr csak tartalék: akkor állítja meg a commitot (a vault mentését is), ha érzékeny fájl mégis az indexbe került — kényszerített 'git add -f' vagy korábban követett fájl miatt. A szokásos 'git add -A'-t a kezelt .gitignore-blokk már kiszűri.",
+     "action": "precommit",
+     "dry_run": false,
+     "status": {
+      "data_class": "A",
+      "data_class_label": "publikált aggregált",
+      "vault": {
+       "tracked": true,
+       "root": "~/Documents/claude",
+       "reason": "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+       "installed": true,
+       "config": "~/.claude/vault/config.json",
+       "max_depth": 2,
+       "depth": 2,
+       "under_root": true,
+       "paused": false,
+       "excluded": false,
+       "exclude_match": null,
+       "via": null,
+       "error": null
+      },
+      "cloud_sync": {
+       "kind": "onedrive",
+       "path": "~/Documents",
+       "known_folder_move": true
+      },
+      "git": {
+       "available": true,
+       "repo": true,
+       "toplevel": "~/Documents/claude"
+      },
+      "gitignore_block_present": true,
+      "deny_rule_present": true,
+      "precommit_guard_installed": true,
+      "tracked_sensitive_files": [],
+      "history": {
+       "checked": true,
+       "git": true,
+       "repo": true,
+       "in_history": false,
+       "in_remote": null,
+       "commits": 0,
+       "paths": [],
+       "reason": null
+      },
+      "write_hold": {
+       "active": false,
+       "reason": null
+      },
+      "open_blocked": {
+       "blocked": false,
+       "reasons": []
+      },
+      "recommendations": [
+       "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+       "A projekt mappáját a(z) OneDrive szinkronizálja (~/Documents); A osztálynál ez csak figyelmeztetés."
+      ],
+      "actions": []
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex27"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/privacy/apply",
+   "body": {
+    "action": "gitignore"
+   },
+   "status": 400,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "BAD_REQUEST",
+     "http": 400,
+     "message": "Hiányzik a kifejezett jóváhagyás (confirm: true) vagy a dry_run."
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/privacy",
+   "query": {
+    "data_class": "B"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy/v1",
+    "data": {
+     "data_class": "B",
+     "data_class_label": "nem publikált aggregált",
+     "vault": {
+      "tracked": true,
+      "root": "~/Documents/claude",
+      "reason": "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+      "installed": true,
+      "config": "~/.claude/vault/config.json",
+      "max_depth": 2,
+      "depth": 2,
+      "under_root": true,
+      "paused": false,
+      "excluded": false,
+      "exclude_match": null,
+      "via": null,
+      "error": null
+     },
+     "cloud_sync": {
+      "kind": "onedrive",
+      "path": "~/Documents",
+      "known_folder_move": true
+     },
+     "git": {
+      "available": true,
+      "repo": true,
+      "toplevel": "~/Documents/claude"
+     },
+     "gitignore_block_present": true,
+     "deny_rule_present": true,
+     "precommit_guard_installed": false,
+     "tracked_sensitive_files": [],
+     "history": {
+      "checked": true,
+      "git": true,
+      "repo": true,
+      "in_history": false,
+      "in_remote": null,
+      "commits": 0,
+      "paths": [],
+      "reason": null
+     },
+     "write_hold": {
+      "active": false,
+      "reason": null
+     },
+     "open_blocked": {
+      "blocked": false,
+      "reasons": []
+     },
+     "recommendations": [
+      "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+      "Ha a projektet egészen ki akarod hagyni a vault mentéséből: 'vault pause', vagy vedd fel a mappa nevét (bcg-oltas) a vault exclude listájába (~/.claude/vault/config.json). A munkapad a vault konfigurációját nem módosítja.",
+      "A projekt mappáját a(z) OneDrive szinkronizálja (~/Documents): helyezd a _privat/ mappát szinkronizálatlan helyre, és hivatkozd át a doc_roots-ban."
+     ],
+     "actions": [
+      {
+       "id": "precommit",
+       "label": "Pre-commit őr telepítése (opt-in)"
+      }
+     ],
+     "preview": true,
+     "project_data_class": "A"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex28"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/privacy",
+   "query": {
+    "data_class": "C"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.privacy/v1",
+    "data": {
+     "data_class": "C",
+     "data_class_label": "betegszintű / azonosítható",
+     "vault": {
+      "tracked": true,
+      "root": "~/Documents/claude",
+      "reason": "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+      "installed": true,
+      "config": "~/.claude/vault/config.json",
+      "max_depth": 2,
+      "depth": 2,
+      "under_root": true,
+      "paused": false,
+      "excluded": false,
+      "exclude_match": null,
+      "via": null,
+      "error": null
+     },
+     "cloud_sync": {
+      "kind": "onedrive",
+      "path": "~/Documents",
+      "known_folder_move": true
+     },
+     "git": {
+      "available": true,
+      "repo": true,
+      "toplevel": "~/Documents/claude"
+     },
+     "gitignore_block_present": true,
+     "deny_rule_present": true,
+     "precommit_guard_installed": false,
+     "tracked_sensitive_files": [],
+     "history": {
+      "checked": true,
+      "git": true,
+      "repo": true,
+      "in_history": false,
+      "in_remote": null,
+      "commits": 0,
+      "paths": [],
+      "reason": null
+     },
+     "write_hold": {
+      "active": false,
+      "reason": null
+     },
+     "open_blocked": {
+      "blocked": true,
+      "reasons": [
+       "nincs telepítve a pre-commit őr (L3)"
+      ]
+     },
+     "recommendations": [
+      "A projekt a vault gyökere (~/Documents/claude) alatt van (mélység 2 ≤ 2): a munkamenet végén a vault git add -A + commit + push-t futtat egy privát GitHub-repóba.",
+      "Ha a projektet egészen ki akarod hagyni a vault mentéséből: 'vault pause', vagy vedd fel a mappa nevét (bcg-oltas) a vault exclude listájába (~/.claude/vault/config.json). A munkapad a vault konfigurációját nem módosítja.",
+      "C osztálynál a vault gyökere alatt a pre-commit őr is kell. A pre-commit őr csak tartalék: akkor állítja meg a commitot (a vault mentését is), ha érzékeny fájl mégis az indexbe került — kényszerített 'git add -f' vagy korábban követett fájl miatt. A szokásos 'git add -A'-t a kezelt .gitignore-blokk már kiszűri.",
+      "A projekt mappáját a(z) OneDrive szinkronizálja (~/Documents): helyezd a _privat/ mappát szinkronizálatlan helyre, és hivatkozd át a doc_roots-ban.",
+      "C osztály: a vault gyökere alatt a projekt csak védelemmel nyitható meg — nincs telepítve a pre-commit őr (L3). (Vagy szüneteltesd a vaultot, illetve zárd ki a projektet.)"
+     ],
+     "actions": [
+      {
+       "id": "precommit",
+       "label": "Pre-commit őr telepítése (opt-in)"
+      }
+     ],
+     "preview": true,
+     "project_data_class": "A"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex29"
+    }
+   }
+  }
+ ]
+}

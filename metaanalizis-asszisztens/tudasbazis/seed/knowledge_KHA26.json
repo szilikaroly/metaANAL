@@ -1,0 +1,852 @@
+[
+ {
+  "k_id": "K-KHA26-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A forrás jellege és korlátai",
+  "body": "Kharbach (2026) is a 27-page free PDF guide, i.e. grey literature with no DOI, ISBN or publisher, that catalogues 12 AI-assisted literature-discovery and review-management tools the author had earlier reviewed on his education blog. Its audience is educators and education researchers, and every usage example comes from education, none from medicine. The author calls the selection subjective, a starting point rather than a systematic comparison or benchmark, and declares no affiliation with any of the tools. Each tool section links to a longer online review that is not part of the PDF.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 1 cover; p. 2, Introduction; pp. 4–25; PDF metadata",
+  "tags": "source profile forrás jellege grey literature szürke irodalom AI tools MI-eszközök literature discovery irodalomkeresés education oktatás Kharbach conflict of interest érdekütközés guide útmutató"
+ },
+ {
+  "k_id": "K-KHA26-002",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "Mire NEM használható ez a forrás",
+  "body": "The guide has no formulas, statistical methods, effect-size content or worked numeric examples. It never mentions PICO, protocols or registration (e.g. PROSPERO), gives no search strings or database-specific syntax (Boolean searching appears only as an Elicit feature), and names no appraisal instrument (RoB 2, ROBINS-I, NOS, GRADE, AMSTAR). Cite it only for the search, screening and extraction workflow, the tool catalogue with access models, and its warnings against over-trusting AI and citation-graph tools. [note: statistical, protocol and certainty decisions must rest on methods sources such as the Cochrane Handbook, PRISMA 2020 and PRISMA-P.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "passim; p. 2, Introduction",
+  "tags": "scope hatókör limitations korlátok no statistics nincs statisztika no formulas nincs képlet PICO protocol protokoll PROSPERO GRADE source selection forrásválasztás"
+ },
+ {
+  "k_id": "K-KHA26-003",
+  "stage_id": "S00",
+  "kind": "pitfall",
+  "title": "Időérzékeny funkciók, árak és hozzáférés",
+  "body": "The author warns that features, pricing and access conditions change and tells readers to check current details before committing to a tool; the guide quotes no prices at all. All statements about plans, quotas and paid features reflect roughly September 2026. Fix: record each tool's name, plan or tier, version where available, and dates of use in the methods, and re-check access before building a workflow around a tool.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 2, Introduction; p. 1 cover",
+  "tags": "volatility változékonyság pricing árazás access hozzáférés plan előfizetési csomag tier date of use használat dátuma reproducibility reprodukálhatóság methods módszertan preflight"
+ },
+ {
+  "k_id": "K-KHA26-004",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Eszközkatalógus: cél és hozzáférési modell",
+  "body": "The at-a-glance table covers 12 tools: scholarly search with citation tracking (Google Scholar); AI question-driven search and synthesis (Consensus, Elicit, SciSpace, R Discovery); citation-graph discovery (ResearchRabbit, Connected Papers, Litmaps); citation-context analysis (Scite); structured reading summaries (Scholarcy); and review management for screening, extraction and appraisal (Rayyan, Covidence). Only Google Scholar is explicitly called free in the text. Website screenshots suggest Covidence is sold by subscription or institutional licence with a free trial and Scite by subscription with a free trial, while Rayyan, ResearchRabbit, SciSpace and Scholarcy advertise free sign-up next to paid tiers. For Litmaps, R Discovery, Elicit and Consensus the guide only names paid features, plans or premium tiers (Pro, Prime, Pro analysis), which implies but does not confirm a free entry tier; Connected Papers needs an account only for saving and shows a pricing link. Most access cues come from screenshots, not the author's text, so treat them as weak, time-bound evidence.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 3; p. 4 §1; p. 6 (screenshot); p. 8 (screenshot); p. 10 (screenshot); p. 11 §4; p. 12 (screenshot); p. 14 §6; p. 16 §7 and screenshot; p. 18 (screenshot); p. 19 §8; p. 20 (screenshot); p. 22 §10; p. 23 (screenshot); p. 24 §11; p. 25 §12 and screenshot",
+  "tags": "tool catalogue eszközkatalógus access model hozzáférési modell freemium subscription előfizetés institutional licence intézményi licenc free trial ingyenes próba Google Scholar Covidence Rayyan Elicit Consensus Scite Litmaps ResearchRabbit Connected Papers SciSpace R Discovery Scholarcy"
+ },
+ {
+  "k_id": "K-KHA26-005",
+  "stage_id": "S00",
+  "kind": "convention",
+  "title": "Marketing-számok a képernyőképekről",
+  "body": "The only numbers in the guide are product claims, mostly read from website screenshots, so they are time-sensitive and unverified: Scite claims to read across 319M+ full-text scholarly articles, Consensus claims 220M+ peer-reviewed papers, SciSpace claims 9.6 million+ researchers, R Discovery's Prime translation covers more than 30 languages, and the R Discovery AI assistant showed a '3/3 uses left' quota. Do not cite these figures as evidence of database coverage or search completeness.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 12 (screenshot); p. 25 (screenshot); p. 20 (screenshot); p. 22; p. 22 (screenshot)",
+  "tags": "coverage lefedettség marketing claims marketingállítások index size indexméret Scite Consensus SciSpace R Discovery quota kvóta numbers számok screenshot képernyőkép"
+ },
+ {
+  "k_id": "K-KHA26-006",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Hivatkozáskezelő-átjárhatóság (Zotero, Mendeley, RIS/BibTeX/CSV)",
+  "body": "Zotero links are named for Scholarcy (import), Scite (integration), Litmaps (Zotero Sync, Pro plan only), ResearchRabbit (mainly an importer), SciSpace (import), R Discovery (export, with automatic sync on Prime) and Elicit (import); R Discovery also exports to Mendeley. The exchange formats named are RIS, BibTeX and CSV: Scholarcy exports bibliographies as RIS or BibTeX, while Litmaps and ResearchRabbit handle BibTeX, RIS and CSV. Google Scholar and SciSpace also export citations to reference managers.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 8, 12, 14, 19, 20, 22, 24; p. 4 §1",
+  "tags": "reference manager hivatkozáskezelő Zotero Mendeley RIS BibTeX CSV export import interoperability átjárhatóság sync szinkronizálás"
+ },
+ {
+  "k_id": "K-KHA26-007",
+  "stage_id": "S00",
+  "kind": "pitfall",
+  "title": "Annotációk elvesztése eszközök közötti szinkronnál",
+  "body": "Litmaps' Zotero Sync moves article records and metadata but leaves out notes and attached PDFs, and ResearchRabbit's Zotero connection works mainly as an importer. Detect: screening notes, exclusion reasons or PDFs missing after records move between tools. Fix: keep one master library as the single source of truth and confirm that the fields you need survive each round trip.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 14 §6; p. 19 §8",
+  "tags": "sync szinkronizálás Zotero Litmaps ResearchRabbit notes jegyzetek PDF data loss adatvesztés master library törzskönyvtár pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-008",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "MI-konnektorok és MCP: megvalósítási megjegyzés",
+  "body": "Scite's website screenshot advertises 'Try our MCP', a Model Context Protocol connector for AI assistants. [note: not from the source. This assistant's session also exposes Consensus and PubMed MCP connectors. The guide's caveats apply fully to any automated use: connector or AI search output may seed or supplement a documented database search but never replace it, and every record it returns must be checked against the original paper.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 12 §5 (screenshot)",
+  "tags": "MCP connector konnektor Consensus PubMed Scite Claude automation automatizálás AI search MI keresés preflight supplementary kiegészítő"
+ },
+ {
+  "k_id": "K-KHA26-009",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "MI-keresők a kérdés feltárására és a szókincs gyűjtésére",
+  "body": "The guide recommends AI and question-driven search tools (Google Scholar Labs, Consensus, R Discovery's 'Ask', Elicit) for exploring an unfamiliar topic and for harvesting terms and synonyms from titles, abstracts and cited papers. Those terms then feed more focused database searches. The tools serve scoping and vocabulary building, not the formal search itself. Scholar Labs, for example, accepts detailed research questions, explains why each paper may be relevant and offers follow-up questions to refine the search.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 4 §1, Key features; p. 5 §1 'Explore an unfamiliar topic'; p. 23 §10 'Explore research vocabulary'; p. 25 §11 'Develop research vocabulary'; p. 26 §12 'Refine a research topic'",
+  "tags": "scoping feltáró keresés research question kutatási kérdés terminology terminológia synonyms szinonimák search terms keresőszavak vocabulary szókincs Consensus Elicit Scholar Labs R Discovery"
+ },
+ {
+  "k_id": "K-KHA26-010",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "Próbaszűrés a kérdés és a kritériumok finomítására",
+  "body": "Screening a small pilot set of papers can expose unclear definitions or inclusion criteria that are too broad, and so helps refine the research question before full screening. In its teaching suggestions the guide also has students screen a small set independently, discuss their disagreements and sharpen how they read the inclusion criteria.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 11 §4 Rayyan, 'Refine a research question'; p. 7 §2 'Teach research judgement'",
+  "tags": "pilot screening próbaszűrés eligibility criteria beválasztási kritériumok definitions definíciók research question kutatási kérdés calibration kalibráció"
+ },
+ {
+  "k_id": "K-KHA26-011",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Explicit beválasztási kritériumok és dokumentált döntések",
+  "body": "Covidence and Rayyan are recommended for running systematic and scoping reviews with explicit eligibility criteria and documented decisions, with colleagues assessing papers independently against agreed criteria. The guide says nothing about protocols or registration. [note: from other sources, not this guide: fix the eligibility criteria in a PRISMA-P protocol and register it (e.g. PROSPERO or OSF) before screening.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 7 §2; p. 11 §4",
+  "tags": "eligibility criteria beválasztási kritériumok protocol protokoll registration regisztráció PROSPERO OSF documented decisions dokumentált döntések scoping review systematic review szisztematikus áttekintés"
+ },
+ {
+  "k_id": "K-KHA26-012",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Dokumentált keresési stratégia megfelelő adatbázisokban",
+  "body": "The guide's central caveat is that a substantial or formal review must combine AI tools with appropriate academic databases, a documented search strategy and critical appraisal; AI and graph tools do not replace these. The same caveat closes the sections on R Discovery, Elicit and Consensus. [note: PRISMA 2020 item 7 asks for the full search strategy for every database, register and website, and PRISMA-S details how to report searches.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 2; p. 23 §10 closing caveat; p. 25 §11 closing caveat; p. 26 §12 closing caveat",
+  "tags": "search strategy keresési stratégia documented search dokumentált keresés bibliographic database bibliográfiai adatbázis PRISMA-S reproducibility reprodukálhatóság AI tools MI-eszközök"
+ },
+ {
+  "k_id": "K-KHA26-013",
+  "stage_id": "S03",
+  "kind": "pitfall",
+  "title": "MI-keresés mint teljes keresés",
+  "body": "The main pitfall is treating the output of AI search or recommendation tools as a complete search. The source says R Discovery feeds cannot establish that a search is complete, that ResearchRabbit maps and Consensus summaries do not establish search completeness, and that formal reviews still need a documented search and appropriate database coverage (Elicit). Detect: the methods list only AI or graph tools as sources, with no database list, no search dates and no reproducible strings. Fix: run and document searches in appropriate bibliographic databases, and use AI tools only for scoping, term harvesting and supplementary citation chasing. [note: AI and semantic search engines rank results with opaque models over corpora of unstated coverage that change over time, so their output cannot be reproduced; the Cochrane Handbook (ch. 4) and PRISMA-S expect reproducible, fully reported database strategies, and the 2025 joint position statement of Cochrane, Campbell, JBI and CEE on AI in evidence synthesis keeps authors accountable and expects any AI use to be justified and reported.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 19 §8; p. 23 §10; p. 25 §11; p. 26 §12",
+  "tags": "search completeness keresés teljessége AI search MI keresés Consensus Elicit R Discovery ResearchRabbit pitfall buktató database search adatbázis-keresés supplementary kiegészítő reproducibility reprodukálhatóság PRISMA-S"
+ },
+ {
+  "k_id": "K-KHA26-014",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Hivatkozáskövetés előre és hátra",
+  "body": "Several tools support supplementary citation chasing. Google Scholar offers 'Cited by' (later work) and 'Related articles'. Litmaps and ResearchRabbit maps follow references backward and citing papers forward. Connected Papers' 'Prior Works' lists earlier papers often cited by the graph's papers (likely foundational sources), and its 'Derivative Works' lists later papers citing several graph papers, including follow-ups and reviews. Tracing an influential study's references and citations brings up earlier work, later applications, replications and critiques. [note: citation searching is a supplementary method: PRISMA 2020 item 6 asks for every information source including citation searching, the PRISMA 2020 flow diagram has a separate 'other methods' column for such records, and the Cochrane Handbook (ch. 4) recommends checking the reference lists of included studies.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 4 §1; p. 5 §1 'Trace an influential study'; p. 14 §6; p. 16 §7; p. 18 §8, Key features; p. 19 §8",
+  "tags": "citation chasing hivatkozáskövetés backward forward snowballing hólabda cited by Prior Works Derivative Works Google Scholar Litmaps ResearchRabbit Connected Papers"
+ },
+ {
+  "k_id": "K-KHA26-015",
+  "stage_id": "S03",
+  "kind": "pitfall",
+  "title": "Gráfközelség nem jelent hivatkozást vagy egyetértést",
+  "body": "Connected Papers builds its graph from shared references and co-citation patterns (bibliographic similarity), so two papers can sit close together even when neither cites the other. The graph is not a citation tree, and graph position and citation counts show neither agreement nor quality. Detect: text claiming that paper A 'builds on' or 'confirms' paper B because they are neighbours in a map. Fix: check the actual reference lists and the full texts.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 15 §7; p. 17 §7",
+  "tags": "Connected Papers bibliographic similarity bibliográfiai hasonlóság co-citation együtthivatkozás citation tree hivatkozási fa graph gráf proximity közelség agreement egyetértés pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-016",
+  "stage_id": "S03",
+  "kind": "pitfall",
+  "title": "Kiinduló (seed) cikkektől függő torzítás",
+  "body": "Litmaps, ResearchRabbit and Connected Papers (multi-origin graphs) build recommendations from one or more seed papers, so what they return depends on those seeds and on the available citation data. Detect: all seeds come from one discipline, region, research group or method. Fix: use seeds from different disciplines, regions and methodological traditions, build separate graphs, compare their coverage, and list the seeds in the search log.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 14 §6; p. 16–17 §7; p. 19 §8 'Broaden a search'",
+  "tags": "seed papers kiinduló cikkek seed dependence seed-függés bias torzítás diversity sokféleség Litmaps ResearchRabbit Connected Papers recommendation ajánlás"
+ },
+ {
+  "k_id": "K-KHA26-017",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Eltérő felfedezési módszerek kombinálása",
+  "body": "Different discovery methods catch different studies. Litmaps combines citation-based search with 'Similar Text' search on titles and abstracts, which can surface work from neighbouring disciplines or with unfamiliar terminology. Elicit pairs semantic (meaning-based) natural-language search with Boolean keyword search for more control over the strategy. Scite's citation-statement search runs over indexed full-text citation passages and can find discussions that titles and abstracts do not mention.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 14 §6; p. 24 §11, Key features; p. 12 §5",
+  "tags": "semantic search szemantikus keresés Boolean search Boole-keresés Similar Text keyword kulcsszó full-text search teljes szöveges keresés terminology terminológia Litmaps Elicit Scite"
+ },
+ {
+  "k_id": "K-KHA26-018",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Teljes szöveg beszerzése",
+  "body": "Google Scholar's PDF links and 'All versions' help locate repository copies and other accessible versions. R Discovery connects to GetFTR and LibKey so that eligible users can retrieve subscribed full texts. Obtain full texts this way before full-text screening and extraction instead of relying on abstracts or AI summaries.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 4 §1; p. 22 §10",
+  "tags": "full text teljes szöveg retrieval beszerzés All versions GetFTR LibKey open access nyílt hozzáférés repository repozitórium Google Scholar R Discovery"
+ },
+ {
+  "k_id": "K-KHA26-019",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Keresés frissítése riasztásokkal",
+  "body": "Several tools watch for new publications: Google Scholar alerts on focused searches; Litmaps 'Monitor', which re-runs saved searches and emails users when new related papers appear; and alerts in ResearchRabbit, R Discovery and Scite. These support current awareness and update searches. [note: an update search before the final analysis should still be re-run in the documented databases, and PRISMA 2020 item 6 requires the date each source was last searched; Cochrane's MECIR standards expect searches to be re-run within 12 months before publication. Alerts alone do not show completeness.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 4 §1; p. 14 §6; p. 19 §8; p. 22 §10; p. 12 §5",
+  "tags": "alerts riasztások update search keresés frissítése monitoring figyelés current awareness Litmaps Monitor Google Scholar ResearchRabbit R Discovery Scite"
+ },
+ {
+  "k_id": "K-KHA26-020",
+  "stage_id": "S03",
+  "kind": "pitfall",
+  "title": "Üres térképrész nem kutatási rés, sűrű klaszter nem erős evidencia",
+  "body": "A citation map only shows how publications relate. The source states that dense clusters do not establish strong evidence and that empty spaces do not establish research gaps. Detect: a claimed research gap, or a claimed strong evidence base, supported only by a Litmaps-style map. Fix: confirm gaps with a documented database search and judge the strength of evidence by appraising the full texts.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 15 §6",
+  "tags": "citation map hivatkozási térkép research gap kutatási rés cluster klaszter evidence strength evidencia erőssége Litmaps pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-021",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Keresési eredet (provenance) ellenőrzése",
+  "body": "Reviewer check: every included record traces to a documented search, with the database or source name, the date, and the exact query string or seed paper(s). Records found only through AI tools (Consensus, Elicit, SciSpace, R Discovery, Scholar Labs) or citation-graph tools are labelled as supplementary sources.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 2, Introduction; p. 23 §10; p. 25 §11; p. 26 §12",
+  "tags": "provenance eredet search log keresési napló query string keresőkifejezés search date keresés dátuma supplementary sources kiegészítő források reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-022",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Adatbázis-lefedettség",
+  "body": "Reviewer check: at least one subject-specific bibliographic database was searched alongside Google Scholar or any AI tool. A search built only on Google Scholar or AI search falls short of the source's standard for a substantial review. [note: 'at least one' is only the floor implied by this education-focused guide, not a methods standard. The Cochrane Handbook (ch. 4) expects several databases for intervention reviews (at minimum CENTRAL, MEDLINE and Embase, plus trial registers and relevant subject databases), and AMSTAR 2 item 4 requires at least two databases. Google Scholar is unsuitable as the primary source because its ranking is opaque, queries are length-limited and only the first 1,000 hits can be viewed.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 5 §1; p. 25 §11",
+  "tags": "database coverage adatbázis-lefedettség subject database szakadatbázis Google Scholar AI search reviewer bíráló check ellenőrzés AMSTAR 2 Cochrane CENTRAL MEDLINE Embase trial registers vizsgálati regiszterek"
+ },
+ {
+  "k_id": "K-KHA26-023",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Hivatkozáskövetés dokumentálása",
+  "body": "Reviewer check: backward (reference lists) and forward (citing papers) citation chasing was done on the included studies or key seed papers, and the search documentation names the tool and lists the seed papers used.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 4 §1; p. 14 §6; p. 16 §7; p. 19 §8",
+  "tags": "citation chasing hivatkozáskövetés backward forward snowballing hólabda seed papers kiinduló cikkek documentation dokumentáció reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-024",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Seed-sokféleség",
+  "body": "Reviewer check: where possible, the seed papers used for graph-based discovery come from more than one research group, region and study design, so the recommendations are not locked into one community's citation network.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 19 §8",
+  "tags": "seed diversity seed-sokféleség seed papers kiinduló cikkek research group kutatócsoport region régió design elrendezés reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-025",
+  "stage_id": "S03",
+  "kind": "criterion",
+  "title": "A keresés teljességét bizonyítani kell",
+  "body": "Evaluator criterion: the review must show that its search is complete, not assume it. Rate the review lower if its search rests mainly on AI or recommendation tools or has no reproducible database strategy, because the source states that such feeds cannot establish that a literature search is complete. [note: the formal appraisal yardstick is AMSTAR 2 item 4: a partial 'yes' needs at least two relevant databases, a reported search strategy and justified publication restrictions; a full 'yes' also needs searches of reference lists, trial or study registries, grey literature, consultation of content experts and a search within 24 months of completing the review.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 23 §10; p. 19 §8; p. 26 §12",
+  "tags": "evaluator értékelő criterion kritérium search completeness keresés teljessége reproducible reprodukálható downgrade leminősítés AI search MI keresés AMSTAR 2"
+ },
+ {
+  "k_id": "K-KHA26-026",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Google Scholar (tudományos kereső)",
+  "body": "Google Scholar is a free scholarly search service across disciplines (articles, books, theses, conference papers). It has filters by date, author, publication and title words, 'Cited by', 'Related articles', PDF links and 'All versions', alerts, a labelled My Library, and citation export to reference managers. Its AI features are Scholar Labs (detailed research questions with relevance explanations and follow-ups), Quick Read (an AI overview of a paper's answers, approach and considerations) and the Scholar PDF Reader (AI outline, reference previews, jumps to figures and tables). The author warns that citation counts and AI overviews do not establish quality, and that substantial reviews need subject databases alongside Scholar. [note: not from the source: because Scholar's relevance ranking is opaque and changes over time, searches are not fully reproducible and only the first 1,000 results are viewable, so systematic reviews use it as a supplementary source, typically screening a pre-specified number of top-ranked hits and reporting that number.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 4–5 §1",
+  "tags": "Google Scholar free ingyenes Scholar Labs Quick Read PDF Reader cited by related articles all versions alerts riasztás My Library citation export discovery felfedezés"
+ },
+ {
+  "k_id": "K-KHA26-027",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Scite (hivatkozási kontextus)",
+  "body": "Scite's Smart Citations show the passage around each citation and classify it as supporting, contrasting or mentioning; citation reports filter these by year, classification, section and source type. Scite also offers Scite Assistant (natural-language answers linked to sources), citation-statement search over indexed full text, Reference Check (flags retractions, editorial notices and contrasting citations in an uploaded manuscript PDF), collections and alerts, a browser extension and Zotero integration. The author stresses that the classifications are prompts for closer reading: they neither establish quality nor prove a claim, and coverage depends on Scite's index. Access appears to be a subscription with a free trial (screenshot).",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 11–13 §5; p. 12 (screenshot)",
+  "tags": "Scite Smart Citations supporting támogató contrasting ellentmondó mentioning említő citation context hivatkozási kontextus Reference Check retraction visszavonás subscription előfizetés"
+ },
+ {
+  "k_id": "K-KHA26-028",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Litmaps (hivatkozási térkép és figyelés)",
+  "body": "Litmaps builds visual citation maps from a topic, several seed papers or an existing collection; the screenshot shows search by keyword, author, DOI, PubMed ID or arXiv ID. 'More Like This' feeds added papers into later searches. It offers citation-based and Similar Text (title/abstract) search, tags, BibTeX/RIS/CSV import and export, shareable maps and 'Monitor' email alerts. Advanced filters (date, keywords, author, journal, journal metrics) are paid, and Zotero Sync is Pro-only and leaves out notes and PDFs. Its role is discovery: the author notes that judging findings still requires reading the papers, alongside database searches and full-text appraisal.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 13–15 §6; p. 14 (screenshot)",
+  "tags": "Litmaps citation map hivatkozási térkép seed Similar Text Monitor alerts riasztás Zotero Sync Pro paid features fizetős funkciók discovery felfedezés"
+ },
+ {
+  "k_id": "K-KHA26-029",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Connected Papers (hasonlósági gráf)",
+  "body": "Connected Papers draws a similarity graph around an origin paper, entered by title, DOI, URL or another identifier, using shared references and co-citation. Position encodes similarity, circle size citation count and colour publication year. 'Prior Works' lists earlier papers often cited by the graph's papers (candidate foundational sources) and 'Derivative Works' lists later papers that cite several of them (follow-ups and reviews). Multi-origin graphs and graph and list views are available, and saving papers and graph history requires an account. Results depend on the origin papers and the citation data available, so use it alongside database searches and full-text evaluation.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 15–17 §7; p. 16 (screenshot)",
+  "tags": "Connected Papers similarity graph hasonlósági gráf origin paper kiinduló cikk Prior Works Derivative Works co-citation együtthivatkozás account fiók discovery felfedezés"
+ },
+ {
+  "k_id": "K-KHA26-030",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "ResearchRabbit (kiinduló cikkekre épülő felfedezés)",
+  "body": "ResearchRabbit explores connections among papers, references, citations and authors, starting from several seed papers. It offers interactive citation maps (backward and forward), similar-paper recommendations, author networks, collections with notes and labels, shared collections, BibTeX/RIS/CSV import and export, and alerts. The free account (screenshot: 'Sign up – it's free') is extended by paid ResearchRabbit+, which adds 'Signals' alerts on research-integrity concerns; paid filters cover retractions, open access, dates, keywords and journal metrics. The Zotero link mainly imports. Its maps do not establish study quality, agreement between findings or search completeness.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 18–19 §8; p. 18 (screenshot)",
+  "tags": "ResearchRabbit seed papers kiinduló cikkek author network szerzői hálózat citation map Signals research integrity kutatási integritás retraction visszavonás free account ingyenes fiók paid fizetős"
+ },
+ {
+  "k_id": "K-KHA26-031",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "R Discovery (új közlemények követése)",
+  "body": "R Discovery (by Editage) runs on the web, on mobile and as a Chrome extension. It offers search by topic, keyword, title, author or journal with saved searches, 'Ask R Discovery' answers with references, personalised feeds, alerts, Chat PDF, previews with reading-time estimates, shareable reading lists, and export to Zotero and Mendeley. The paid Prime tier adds audio, translation into more than 30 languages and automatic reference-manager sync, and GetFTR and LibKey give eligible users subscribed full texts. Feeds support awareness but cannot show that a search is complete, and answers, summaries and translations must be checked against the originals.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 21–23 §10; p. 22 (screenshot)",
+  "tags": "R Discovery Editage personalised feed személyre szabott hírfolyam alerts riasztás Chat PDF Prime translation fordítás GetFTR LibKey current awareness Zotero Mendeley"
+ },
+ {
+  "k_id": "K-KHA26-032",
+  "stage_id": "S03",
+  "kind": "tool",
+  "title": "Consensus (MI-alapú kereső és szintézis)",
+  "body": "Consensus is an AI academic search engine searched by question, keywords or problem description. Paper Search returns papers without an AI synthesis; Pro analysis writes a cited synthesis of selected results; Deep Review runs broader searches with a longer synthesis. The Consensus Meter shows apparent agreement among selected papers for yes/no questions, Study Snapshot shows methods, population, sample size and outcomes where available, filters cover date, study method, sample size and open access, and Ask Paper queries a single paper. Its summaries and agreement indicators establish neither evidence quality nor search completeness, and formal reviews still need appropriate databases and documented screening.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 25–26 §12; p. 25 (screenshot)",
+  "tags": "Consensus AI search MI keresés Consensus Meter agreement egyetértés Pro analysis Deep Review Study Snapshot Paper Search freemium"
+ },
+ {
+  "k_id": "K-KHA26-033",
+  "stage_id": "S04",
+  "kind": "tool",
+  "title": "Covidence (áttekintéskezelő platform)",
+  "body": "Covidence is a web platform for systematic and other structured reviews. It imports results from databases or reference managers and flags duplicates, and it supports independent title/abstract screening with votes hidden until both reviewers have decided, conflict management, full-text review with specific exclusion reasons, custom extraction forms, AI-assisted extraction with supporting quotations, screening prioritisation, configurable quality or risk-of-bias templates, collaboration and exports. It works only after the searches are done: it does not search databases or write the synthesis. The author finds it most useful with many records or several reviewers; access appears to be a subscription or institutional licence with a free trial (screenshot).",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 5–7 §2; p. 6 (screenshot)",
+  "tags": "Covidence screening szűrés systematic review szisztematikus áttekintés deduplication duplikátumszűrés extraction adatkinyerés risk of bias torzítási kockázat institutional licence intézményi licenc subscription előfizetés"
+ },
+ {
+  "k_id": "K-KHA26-034",
+  "stage_id": "S04",
+  "kind": "tool",
+  "title": "Rayyan (együttműködő szűrőplatform)",
+  "body": "Rayyan manages screening after the database searches. It offers import in several file formats, duplicate detection resolved by hand or by predefined matching rules, Include/Exclude/Maybe decisions with labels, notes and exclusion reasons, blind screening, conflict flags, relevance ranking, full-text screening with exclusion reasons, structured extraction with risk-of-bias recording, and exports. PRISMA flow diagrams are generated on supported plans, and ResearchPilot AI (AI-assisted reviewing, extraction and article chat) is available only on eligible institutional plans; the entry tier is free (screenshot). The screenshot shows an 8-step workflow: import and organise, invite collaborator, deduplicate, title and abstract screening, full-text screening, data extraction, risk of bias, reporting.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 10–11 §4; p. 10 (screenshot)",
+  "tags": "Rayyan screening szűrés blind screening vak szűrés Include Exclude Maybe relevance ranking relevanciarangsor PRISMA flow diagram folyamatábra ResearchPilot deduplication duplikátumszűrés freemium"
+ },
+ {
+  "k_id": "K-KHA26-035",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Duplikátumok",
+  "body": "Duplicate records inflate counts and can lead to studies being counted twice. Detect: identical or near-identical titles, DOIs or author lists among the records or in the included set. Fix: deduplicate at import, by hand or with matching rules; Covidence flags duplicate records, and Rayyan detects possible duplicates and resolves them manually or with predefined rules. [note: the engine's validation rule V007 (validate.validate) only flags identical study labels repeated in the analysis table; it cannot detect duplicate records or reports entered under different labels, so record-level deduplication must happen at the screening stage.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 10 §4",
+  "tags": "duplicates duplikátumok deduplication duplikátumszűrés double counting kettős számolás DOI matching rules egyeztetési szabályok Covidence Rayyan pitfall buktató V007"
+ },
+ {
+  "k_id": "K-KHA26-036",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Duplikátumszűrési napló",
+  "body": "Reviewer check: the number of records before and after deduplication is reported, together with the method (manual or rule-based) and the tool used. [note: the PRISMA 2020 flow diagram reports 'duplicate records removed' as its own count before screening.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 10 §4",
+  "tags": "deduplication log duplikátumnapló record counts rekordszám PRISMA reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-037",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Egyetlen vagy nem vak szűrő",
+  "body": "Screening by a single reviewer, or without blinding, is a pitfall. In Covidence each reviewer judges titles and abstracts separately, decisions stay hidden until both have voted, and disagreements are collected for discussion; Rayyan's blind screening hides decisions from each other and flags include-versus-exclude conflicts. Detect: no record of independent decisions or of how conflicts were resolved. Fix: two independent reviewers, decisions hidden until both have voted, and conflicts resolved by discussion. [note: PRISMA 2020 item 8 asks how many reviewers screened each record and report and whether they worked independently. The Cochrane Handbook (ch. 4) and MECIR expect at least two people to judge eligibility independently with a predefined way of resolving disagreements; single-reviewer title/abstract screening misses more studies and, if used (e.g. in rapid reviews), must be reported. 'Blind' here means reviewers cannot see each other's votes; masking study authors or journals is not generally required.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 10 §4",
+  "tags": "independent screening független szűrés dual screening kettős szűrés blinding vakítás conflict resolution konfliktuskezelés Covidence Rayyan pitfall buktató MECIR Cochrane PRISMA 2020"
+ },
+ {
+  "k_id": "K-KHA26-038",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Független szűrés igazolása",
+  "body": "Reviewer check: decisions from two reviewers exist for every title/abstract record, the decisions were blinded until both had voted, and the conflicts are listed together with how each was resolved.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 10 §4",
+  "tags": "independent screening független szűrés two reviewers két bíráló blinded vak conflicts konfliktusok reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-039",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Rangsorolás mint beválasztási döntés vagy korai leállás",
+  "body": "Covidence's screening prioritisation and Rayyan's relevance ranking learn from reviewers' decisions and move likely-relevant records up the queue. Rankings do not determine eligibility, however, and prioritisation still requires a human decision on every record. Detect: records left unscreened once the ranking suggested that nothing relevant remained. Fix: have a human screen every record and report any use of prioritisation. [note: the source does not discuss stopping rules and requires human decisions on all records. Current practice allows machine-learning exclusion or early stopping only with a validated classifier or a pre-specified, statistically justified stopping criterion, and PRISMA 2020 item 8 requires the automation tool, its use and its validation to be reported; without these, screen every record.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 7 §2; p. 10 §4; p. 11 §4",
+  "tags": "prioritisation priorizálás relevance ranking relevanciarangsor active learning aktív tanulás stopping rule leállási szabály machine learning gépi tanulás screening szűrés pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-040",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Nincs rangsor alapú leállás",
+  "body": "Reviewer check: if screening prioritisation or relevance ranking was used, every record still carries a human decision, and the use of the ranking feature is reported.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 7 §2; p. 11 §4",
+  "tags": "prioritisation priorizálás ranking rangsor human decision emberi döntés stopping leállás reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-041",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Hiányzó kizárási okok a teljes szöveges szűrésnél",
+  "body": "At the full-text stage, Covidence and Rayyan let reviewers attach PDFs, judge eligibility and record a specific exclusion reason for each paper; at title/abstract stage Rayyan also offers Include/Exclude/Maybe decisions with labels and notes. Without these reasons the PRISMA flow diagram and the methods section cannot be completed. Detect: a non-zero count of excluded full texts with no breakdown by reason. Fix: record one specific reason for each excluded full text, and keep the reasons and decisions available for reporting. [note: PRISMA 2020 requires reasons only for reports excluded after full-text assessment (flow diagram and item 16b), not for title/abstract exclusions.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 10 §4; p. 7 §2",
+  "tags": "exclusion reasons kizárási okok full-text screening teljes szöveges szűrés PRISMA flow diagram folyamatábra Include Exclude Maybe pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-042",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Kizárási okok összesítése",
+  "body": "Reviewer check: every excluded full text has a specific reason, and the counts per reason add up to the excluded-reports box of the PRISMA flow diagram.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 7 §2; p. 10 §4; p. 11 §4",
+  "tags": "exclusion reasons kizárási okok PRISMA flow diagram folyamatábra reconcile egyeztetés full text teljes szöveg reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-043",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Próbaszűrés dokumentálása",
+  "body": "Reviewer check: the eligibility criteria were piloted on a small sample of records before full screening, and any changes to definitions or criteria that followed are documented.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 11 §4",
+  "tags": "pilot screening próbaszűrés criteria kritériumok calibration kalibráció documentation dokumentáció reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-044",
+  "stage_id": "S04",
+  "kind": "criterion",
+  "title": "A kiválasztás átláthatósága",
+  "body": "Evaluator criterion: selection counts as transparent when the review has a PRISMA flow diagram whose numbers reconcile, full-text exclusions carry reasons, and the process for resolving screening conflicts is documented.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 7 §2; p. 11 §4",
+  "tags": "selection transparency kiválasztás átláthatósága PRISMA flow diagram folyamatábra exclusion reasons kizárási okok conflict resolution konfliktuskezelés evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-045",
+  "stage_id": "S05",
+  "kind": "tool",
+  "title": "Elicit (MI-alapú keresés és adatkinyerés)",
+  "body": "Elicit links discovery with evidence extraction. Natural-language (semantic) search finds studies that use different terminology and Boolean search adds control. Structured comparison tables have customisable columns (design, population, intervention, outcomes, limitations), and source-linked extraction shows the supporting passage for each value. Research Reports use templates (general review, one-page summary, research-gap analysis), paper chat works over a small set of papers, and a review workflow covers title/abstract and full-text screening, extraction and reporting; exports to spreadsheets, reference managers and documents depend on the plan. Its tables and reports are working material: check important extractions against the originals, note that some records hold only abstracts, and remember that formal reviews still need a documented search, database coverage and critical appraisal.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 23–25 §11; p. 23 (screenshot)",
+  "tags": "Elicit semantic search szemantikus keresés Boolean extraction table kinyerési tábla source-linked forráshoz kötött Research Reports review workflow screening szűrés plan-based"
+ },
+ {
+  "k_id": "K-KHA26-046",
+  "stage_id": "S05",
+  "kind": "tool",
+  "title": "SciSpace (MI-alapú olvasás és kinyerés)",
+  "body": "SciSpace combines search (results as filterable, exportable tables), Deep Review (a structured synthesis for initial exploration), Chat with PDF that points to passages, data-extraction tables on chosen parameters (participants, design, findings, limitations), multilingual extraction, a Research Agent (search, summarise, extract, draft), a library with Zotero import, citation formatting, writing support (outlines, paraphrasing) and a browser extension. Screenshots show free sign-up, paid tiers and an API. The author warns that generated reviews and tables need verification, that a Deep Review does not complete a systematic-review process, that formatted references need metadata checks, and that its AI detector is no proof of authorship or misconduct.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 19–21 §9; p. 20 (screenshot)",
+  "tags": "SciSpace Deep Review Chat with PDF extraction adatkinyerés multilingual többnyelvű Research Agent writing support írástámogatás API freemium"
+ },
+ {
+  "k_id": "K-KHA26-047",
+  "stage_id": "S05",
+  "kind": "tool",
+  "title": "Scholarcy (strukturált összefoglaló kártyák)",
+  "body": "Scholarcy turns papers, reports and chapters into structured summary cards (key findings, concepts, summary). It offers enhanced summaries, batch processing, imports (PDF, pasted text, public URLs, folders, cloud services, Zotero), editable notes, libraries, literature matrices for comparing papers, reference extraction to RIS or BibTeX, and exports to Word, Excel, PowerPoint, Markdown and reference managers; the entry tier is free (screenshot). The author calls its summaries reading guides: check claims, methods, limitations and citation details against the originals, and read the original abstract before setting a study aside.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 7–9 §3; p. 8 (screenshot)",
+  "tags": "Scholarcy summary cards összefoglaló kártyák literature matrix irodalmi mátrix reading guide olvasási segédlet RIS BibTeX export freemium abstract absztrakt"
+ },
+ {
+  "k_id": "K-KHA26-048",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "MI-kinyerés és összefoglalók ellenőrzés nélkül",
+  "body": "AI summaries and recommendations can miss context, drop qualifications or misrepresent a claim, so the author requires human verification of every AI suggestion and extracted value (Covidence, Rayyan, SciSpace, Elicit, Scholarcy). Detect: extracted fields with no supporting quotation or page locator, or mismatches when values are spot-checked against the PDF. Fix: verify each critical field against the supporting quotation (Covidence) or the linked source passage (Elicit) and the original full text, and record page numbers for important passages next to the notes. [note: the Cochrane Handbook (ch. 5) recommends that at least two people extract outcome data independently; an AI suggestion does not count as an independent extractor unless a human checks each value. PRISMA 2020 item 9 asks how many reviewers collected data, whether independently, and which automation tools were used.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 2, 7, 9, 11, 21, 25; p. 6 §2; p. 9 §3; p. 24 §11",
+  "tags": "AI extraction MI-alapú adatkinyerés verification ellenőrzés supporting quotation alátámasztó idézet source passage forrásrészlet page number oldalszám summaries összefoglalók hallucination pitfall buktató dual extraction kettős adatkinyerés PRISMA 2020"
+ },
+ {
+  "k_id": "K-KHA26-049",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "A kinyerés ellenőrzése",
+  "body": "Reviewer check: each AI-suggested extraction field has a supporting quotation or passage, a page locator and a human-verification flag, and a sample of values has been spot-checked against the PDF.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 9 §3; p. 24 §11",
+  "tags": "extraction verification kinyerés ellenőrzése page locator oldalszám spot check szúrópróba human verification emberi ellenőrzés reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-050",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Kódolandó mezők: kontextus és alkalmazhatóság",
+  "body": "The usage suggestions for Covidence, Rayyan and Elicit point to a consistent set of extraction fields: population (learners), setting, intervention and its duration, comparison conditions, measured outcomes and limitations. The tools offer this through Covidence's custom forms (setting, participants, methods, interventions, findings), Elicit's custom columns, SciSpace's parameter tables and Scholarcy's literature matrices. The guide also suggests checking how closely each study's context matches the target setting before applying its findings. [note: for a meta-analysis the extraction form must also capture outcome definitions, measurement instruments, time points and the numeric results needed for effect sizes (e.g. means, SDs and group sizes, or event counts), plus funding and conflicts of interest, as listed in the Cochrane Handbook (ch. 5); the guide's field list does not cover these.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 7 §2; p. 8 §3; p. 11 §4; p. 20 §9; p. 24 §11",
+  "tags": "extraction form kinyerő űrlap coding kódolás population populáció setting környezet intervention duration beavatkozás időtartama comparator összehasonlító outcomes kimenetek limitations korlátok applicability alkalmazhatóság numeric data numerikus adatok effect size hatásméret"
+ },
+ {
+  "k_id": "K-KHA26-051",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Kontextus- és alkalmazhatósági mezők",
+  "body": "Reviewer check: the context fields are filled in for every included study: population, setting, intervention duration, comparator, outcomes and limitations.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 7 §2; p. 24 §11",
+  "tags": "context fields kontextusmezők applicability alkalmazhatóság population populáció setting környezet comparator összehasonlító extraction adatkinyerés reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-052",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Kimenettípusok keverése (vélekedés vagy mért kimenet)",
+  "body": "The guide advises distinguishing whether a study measured an objective outcome (e.g. learning), collected participants' perceptions or opinions, or examined some other kind of evidence. Detect: pooled or compared studies where some measured objective outcomes and others recorded only self-reported perceptions. Fix: code the outcome type explicitly and synthesise the types separately. [note: pooling conceptually different outcomes breaks the requirement that combined effects estimate the same construct; use outcome type as a grouping variable or keep the syntheses separate.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 24 §11 'Distinguish perceptions from outcomes'",
+  "tags": "outcome type kimenettípus perception vélekedés self-report önbevallás objective outcome objektív kimenet pooling összevonás apples and oranges pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-053",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Kimenettípus kódolása",
+  "body": "Reviewer check: each outcome is coded as measured (objective), perception or self-report, or other, and different types are not pooled together without justification.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 24 §11",
+  "tags": "outcome type kimenettípus coding kódolás perception vélekedés self-report önbevallás pooling összevonás reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-054",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Csak absztraktot tartalmazó rekordok",
+  "body": "Some Elicit records contain only abstracts, so values in an AI extraction table may come from the abstract alone. Detect: extraction rows with no full-text source. Fix: retrieve the full text (Google Scholar 'All versions', GetFTR or LibKey via R Discovery, or the library), or flag the row as abstract-only.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 25 §11; p. 4 §1; p. 22 §10",
+  "tags": "abstract-only csak absztrakt full text teljes szöveg extraction adatkinyerés Elicit missing data hiányzó adat pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-055",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Absztrakt-alapú sorok jelölése",
+  "body": "Reviewer check: rows extracted from abstracts only are marked as such, and an attempt to retrieve the full text is logged.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 25 §11; p. 4 §1; p. 22 §10",
+  "tags": "abstract-only csak absztrakt flag jelölés full text retrieval teljes szöveg beszerzése extraction adatkinyerés reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-056",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Gépi fordításra hagyatkozás",
+  "body": "SciSpace extracts data across multiple languages and R Discovery's Prime tier translates papers, but the author advises checking important terminology and findings carefully and checking translations against the originals. Fix: have the key terms and results of non-English studies verified by a competent reader. [note: excluding non-English studies risks language bias, so the Cochrane Handbook advises against language restrictions; machine translation is often adequate for screening, but extracted numbers and key definitions should be checked by a fluent reader.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 21 §9; p. 23 §10",
+  "tags": "machine translation gépi fordítás non-English nem angol nyelvű multilingual többnyelvű language bias nyelvi torzítás SciSpace R Discovery pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-057",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Egy csoport több közleménye mint független evidencia",
+  "body": "The guide suggests using author networks to ask whether several publications come from independent teams or from one connected group. Detect: overlapping authors, sites or recruitment periods across included reports. Fix: link reports to the study rather than to the paper and count each study once. [note: the Cochrane Handbook treats the study, not the report, as the unit of interest; the engine's validation rule V007 flags repeated study labels.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 19 §8 'Explore research communities'",
+  "tags": "independence függetlenség multiple reports többszörös közlés duplicate publication kettős közlés author network szerzői hálózat unit of analysis elemzési egység pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-058",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "A vizsgálatok függetlensége",
+  "body": "Reviewer check: author and site overlap across the included reports has been checked, and companion reports are merged under one study.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 19 §8",
+  "tags": "independence függetlenség companion reports kísérő közlemények author overlap szerzőátfedés study vs report vizsgálat vagy közlemény reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-059",
+  "stage_id": "S05",
+  "kind": "criterion",
+  "title": "A kinyerés hűsége",
+  "body": "Evaluator criterion: a sample of extracted values matches the original full texts, and all AI-generated content was verified by humans before the analysis.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 24 §11; p. 25 §11",
+  "tags": "extraction fidelity kinyerés hűsége verification ellenőrzés AI-generated MI által generált sample check mintavételes ellenőrzés evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-060",
+  "stage_id": "S05",
+  "kind": "criterion",
+  "title": "Nyelvi lefedettség",
+  "body": "Evaluator criterion: where non-English studies were included through machine translation or multilingual AI extraction, their key data were checked rather than taken straight from the tool output.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 21 §9; p. 23 §10",
+  "tags": "language coverage nyelvi lefedettség non-English nem angol nyelvű translation fordítás multilingual többnyelvű evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-061",
+  "stage_id": "S06",
+  "kind": "concept",
+  "title": "Minőségértékelés: nincs megnevezett eszköz",
+  "body": "The guide names no appraisal instrument. It only notes that Covidence records quality or risk-of-bias judgements in configurable templates and that Rayyan records structured extraction and risk-of-bias assessments ('Risk of Bias' is a step in Rayyan's advertised workflow). It insists that formal reviews still need critical appraisal and that AI tables and reports are only working material. [note: choose a validated, domain-based instrument that fits the study design, e.g. RoB 2 for randomised trials or ROBINS-I for non-randomised studies of interventions. The Cochrane Handbook (ch. 7–8) separates risk of bias from 'quality' and advises against summary quality scores or scales.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 10 §4 (screenshot); p. 11 §4; p. 25 §11",
+  "tags": "risk of bias torzítási kockázat quality assessment minőségértékelés critical appraisal kritikai értékelés template sablon Covidence Rayyan RoB 2 ROBINS-I quality scores minőségi pontszámok"
+ },
+ {
+  "k_id": "K-KHA26-062",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "Népszerűségi jelek mint minőségi bizonyíték",
+  "body": "The source repeatedly states that popularity and AI signals are not markers of quality: Google Scholar citation counts and AI overviews, Scite's supporting/contrasting/mentioning labels, dense Litmaps clusters, Connected Papers node size or position, ResearchRabbit maps, and the Consensus Meter and summaries. Detect: inclusion, weighting or quality rationales such as 'highly cited', 'central in the map' or 'the Consensus Meter says yes'. Fix: base quality on a formal critical-appraisal or risk-of-bias assessment recorded in templates.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 5 §1; p. 13 §5; p. 15 §6; p. 17 §7; p. 19 §8; p. 26 §12; p. 6 §2; p. 11 §4",
+  "tags": "citation count hivatkozásszám popularity népszerűség quality minőség Consensus Meter node size csomópontméret centrality centralitás risk of bias torzítási kockázat pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-063",
+  "stage_id": "S06",
+  "kind": "check",
+  "title": "Nincs hivatkozásszámra épülő érvelés",
+  "body": "Reviewer check: no inclusion, weighting or quality judgement relies on citation counts, map centrality, cluster density or AI agreement meters.",
+  "source_id": "kharbach2026_tools",
+  "locator": "pp. 5, 13, 15, 17, 26",
+  "tags": "citation count hivatkozásszám centrality centralitás cluster klaszter Consensus Meter quality judgement minőségi ítélet weighting súlyozás reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-064",
+  "stage_id": "S06",
+  "kind": "criterion",
+  "title": "Népszerűségtől független minőségértékelés",
+  "body": "Evaluator criterion: study quality and risk of bias were judged with a recorded, template-based critical-appraisal instrument, not inferred from citation metrics, map position or AI agreement indicators.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 6 §2; p. 11 §4; p. 5 §1; p. 13 §5; p. 17 §7; p. 26 §12",
+  "tags": "critical appraisal kritikai értékelés risk of bias torzítási kockázat citation metrics hivatkozási mutatók popularity népszerűség evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-065",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "Visszavont vagy megjelölt vizsgálatok beválasztása",
+  "body": "Retracted or flagged studies can slip into the evidence base. Detect: run the reference list of the included studies through a check for retractions and editorial notices. Scite Reference Check reads an uploaded manuscript PDF and flags retractions, editorial notices and contrasting citations, and the paid ResearchRabbit+ adds 'Signals' integrity alerts and a retraction filter. Fix: exclude such studies, or run a sensitivity analysis without them, and report the decision. [note: under Cochrane's policy on potentially problematic studies, retracted studies are excluded, while studies with an expression of concern or other integrity doubts are investigated (e.g. by contacting authors), flagged and tested in sensitivity analysis; recheck status just before publication. Publisher notices and Crossref/Retraction Watch data are further checks not named in the source.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 12 §5; p. 19 §8",
+  "tags": "retraction visszavonás editorial notice szerkesztői közlemény expression of concern research integrity kutatási integritás Scite Reference Check ResearchRabbit Signals sensitivity analysis érzékenységi elemzés pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-066",
+  "stage_id": "S06",
+  "kind": "check",
+  "title": "Visszavonás- és integritásellenőrzés",
+  "body": "Reviewer check: the full reference list of the included studies has been screened for retractions, editorial notices and expressions of concern, for example with Scite Reference Check.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 12 §5; p. 19 §8",
+  "tags": "retraction visszavonás editorial notice szerkesztői közlemény expression of concern integrity integritás Scite Reference Check reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-067",
+  "stage_id": "S09",
+  "kind": "guidance",
+  "title": "Eltérő következtetések kvalitatív vizsgálata",
+  "body": "When studies reach different conclusions, the guide suggests asking whether their methods, populations or settings explain the differences, which is a qualitative look at sources of heterogeneity. [note: this does not replace formal heterogeneity assessment (Q, I2 with its confidence interval, tau2, prediction interval) or pre-specified subgroup analysis and meta-regression, which come from other sources; I2 should be read in context, not against fixed cut-offs (Cochrane Handbook 10.10.2). Engine: models.heterogeneity, moderators.subgroup_analysis, moderators.meta_regression.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 26 §12 Consensus, 'Compare findings'",
+  "tags": "heterogeneity heterogenitás conflicting results ellentmondó eredmények methods módszerek population populáció setting környezet subgroup alcsoport explanation magyarázat"
+ },
+ {
+  "k_id": "K-KHA26-068",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "A hivatkozás-alapú eszközök a sokat idézett munkák felé húznak",
+  "body": "In Connected Papers circle size encodes citation count, and the author asks readers to consider why a large or central node draws attention and what further evidence is needed to judge that paper's quality. Citation-based recommendations depend on the starting papers and on the citation data available. [note: inference, not stated in the source: citation-driven discovery tends to surface highly cited work, and citation bias, the preferential citation of studies with positive or significant results, is a recognised reporting bias (Cochrane Handbook ch. 13), so evidence found mainly through citation chasing may be skewed.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 16 §7, Key features; p. 17 §7 'Develop critical visual literacy' and closing caveat; p. 19 §8 closing caveat",
+  "tags": "citation bias hivatkozási torzítás highly cited sokat idézett reporting bias közlési torzítás publication bias publikációs torzítás node size csomópontméret Connected Papers"
+ },
+ {
+  "k_id": "K-KHA26-069",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Ellentmondó evidencia célzott keresése",
+  "body": "Scite's 'contrasting' citation statements help find studies that challenge a claim or an intervention before deciding how to apply it. Connected Papers' Derivative Works, Google Scholar's 'Cited by' and Scite's citation reports bring up later studies that extended, questioned or independently tested earlier work, including critiques and replications. Use them as a deliberate search for disconfirming evidence, then read the full citing passages. [note: in a systematic review the main protection against confirmation bias is a comprehensive, pre-specified search; a targeted hunt for contrasting citations is a supplement and must be documented like any other citation search.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 12 §5 'Look for conflicting findings'; p. 13 §5; p. 17 §7; p. 5 §1",
+  "tags": "disconfirming evidence cáfoló evidencia contrasting citations ellentmondó hivatkozások Scite critiques kritikák replications replikációk confirmation bias megerősítési torzítás"
+ },
+ {
+  "k_id": "K-KHA26-070",
+  "stage_id": "S12",
+  "kind": "criterion",
+  "title": "Az evidenciabázis integritása",
+  "body": "Evaluator criterion: no retracted or integrity-flagged study is included without a stated justification and a sensitivity analysis that shows its influence. [note: retracted studies should normally be excluded outright (Cochrane policy); the sensitivity analysis applies to studies with an expression of concern or other integrity doubts. The engine's sensitivity.leave_one_out (k >= 3) reports the pooled result with each study removed in turn; to drop several flagged studies at once, re-run models.meta_analysis on the reduced set.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 12 §5; p. 19 §8",
+  "tags": "integrity integritás retraction visszavonás sensitivity analysis érzékenységi elemzés leave-one-out evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-071",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Ellentmondó evidencia keresése és tárgyalása",
+  "body": "Evaluator criterion: for the key claims, contrasting or critical citing studies were actively sought, for example through citation-context analysis, and are discussed in the interpretation.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 12–13 §5",
+  "tags": "disconfirming evidence cáfoló evidencia contrasting citations ellentmondó hivatkozások interpretation értelmezés discussion megbeszélés evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-072",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "MI-szintézisekből levont következtetések",
+  "body": "AI-generated syntheses (SciSpace Deep Review, Consensus Pro analysis and Deep Review, Elicit Research Reports, R Discovery answers) and agreement indicators such as the Consensus Meter establish neither evidence quality nor search completeness, and a Deep Review does not complete a systematic-review process. Detect: conclusions or certainty statements that echo a tool's synthesis without reference to the primary studies. Fix: draw conclusions only from the verified primary studies and the formal analysis, and keep responsibility for the argument and citations even when using writing support. [note: certainty must be rated per outcome with GRADE (risk of bias, inconsistency, indirectness, imprecision, publication bias), never inferred from a tool's synthesis or agreement indicator.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 21 §9; p. 23 §10; p. 25 §11; p. 26 §12",
+  "tags": "AI synthesis MI-szintézis Deep Review Pro analysis Research Reports Consensus Meter conclusions következtetések certainty bizonyosság interpretation értelmezés pitfall buktató GRADE"
+ },
+ {
+  "k_id": "K-KHA26-073",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Alkalmazhatóság",
+  "body": "Evaluator criterion: the study contexts (population, setting, intervention, outcome type) match the target question and population, and perception outcomes are not presented as measured outcomes. [note: in GRADE this corresponds to the indirectness domain.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 7 §2; p. 24 §11",
+  "tags": "applicability alkalmazhatóság indirectness közvetettség GRADE context kontextus perception vélekedés outcome type kimenettípus evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-074",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "A vizsgálatok függetlensége (értékelés)",
+  "body": "Evaluator criterion: results are not inflated by counting several reports from one connected group as independent studies.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 19 §8",
+  "tags": "independence függetlenség multiple reports többszörös közlés connected group összefüggő csoport double counting kettős számolás evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-075",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "PRISMA-jelentés támogatása",
+  "body": "PRISMA appears only in passing. Rayyan exports review data and generates PRISMA flow diagrams on supported plans, and Covidence users are told to keep exclusion reasons, screening decisions and extracted data available for the methods section and PRISMA reporting. The recorded decisions and exclusion reasons should be used to explain how the final evidence base was selected. [note: PRISMA 2020 item 16a requires the flow of records from identification to inclusion, and 16b the studies that seemed eligible but were excluded, with reasons.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 11 §4, Key features; p. 7 §2; p. 11 §4 'Prepare transparent reports'",
+  "tags": "PRISMA 2020 flow diagram folyamatábra reporting jelentés methods section módszertani rész exclusion reasons kizárási okok Rayyan Covidence transparency átláthatóság"
+ },
+ {
+  "k_id": "K-KHA26-076",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Csak ellenőrzött tartalom exportálása",
+  "body": "When presenting material produced with AI tools, export only content that has been verified and keep the citations to the original studies. Build discussion or writing from verified notes, keeping responsibility for the argument and the citations.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 9 §3 'Prepare research presentations'; p. 21 §9",
+  "tags": "verified content ellenőrzött tartalom export citations hivatkozások original studies eredeti vizsgálatok writing írás manuscript kézirat responsibility felelősség"
+ },
+ {
+  "k_id": "K-KHA26-077",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "MI-használat közzététele",
+  "body": "The guide models disclosure of AI use: the author states that Claude and ChatGPT gave limited editorial support (language clarity, synthesis, stylistic consistency) and that he keeps full responsibility for all content and claims. [note: PRISMA 2020 items 8 and 9 ask for details of any automation tools used in selection and data collection; the 2025 joint position statement of Cochrane, Campbell, JBI and CEE on AI in evidence synthesis requires AI use to be reported and justified, with authors remaining accountable; many journals also require a generative-AI disclosure.]",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 27, AI Disclosure Statement",
+  "tags": "AI disclosure MI-használat közzététele transparency átláthatóság automation tools automatizálási eszközök PRISMA 2020 manuscript kézirat responsibility felelősség Claude ChatGPT"
+ },
+ {
+  "k_id": "K-KHA26-078",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Eszközhasználat közzététele",
+  "body": "Reviewer check: the methods name every tool used, its version or plan and the dates of use, and disclose any AI assistance.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 2; p. 27",
+  "tags": "tool disclosure eszközhasználat közzététele AI disclosure MI-közzététel version verzió plan csomag date of use használat dátuma methods módszertan reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-079",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Ellenőrizetlen hivatkozási metaadatok",
+  "body": "References formatted by AI tools still need metadata checks. Detect: DOI, author, year or journal mismatches against the publisher record. Fix: check every reference against the original source rather than the tool-generated citation.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 21 §9; p. 2; p. 5 §1",
+  "tags": "reference metadata hivatkozási metaadatok DOI citation formatting hivatkozásformázás bibliography irodalomjegyzék verification ellenőrzés pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-080",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Hivatkozási metaadatok ellenőrzése",
+  "body": "Reviewer check: every DOI, author list, year and journal in the reference list is verified against the source record, not copied from an AI-formatted citation.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 2; p. 21 §9",
+  "tags": "reference metadata hivatkozási metaadatok DOI author szerző year év journal folyóirat verification ellenőrzés reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-081",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Állítások ellenőrzése a teljes szöveggel",
+  "body": "Reviewer check: every claim the narrative attributes to a study matches the full text, including the qualifications that AI summaries tend to leave out.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 9 §3; p. 21 §9; p. 23 §10; p. 26 §12",
+  "tags": "claims check állításellenőrzés full text teljes szöveg qualifications fenntartások AI summary MI-összefoglaló narrative szöveges összefoglaló reviewer bíráló check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHA26-082",
+  "stage_id": "S14",
+  "kind": "criterion",
+  "title": "Őszinte jelentés: MI-használat és következtetések",
+  "body": "Evaluator criterion: AI tool use is disclosed, and no conclusion is drawn from an AI-generated synthesis (Deep Review, Pro analysis, Research Reports) without checking it against the primary studies.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 21 §9; p. 25 §11; p. 26 §12; p. 27",
+  "tags": "reporting honesty őszinte jelentés AI disclosure MI-közzététel AI synthesis MI-szintézis conclusions következtetések primary studies elsődleges vizsgálatok evaluator értékelő criterion kritérium"
+ },
+ {
+  "k_id": "K-KHA26-083",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "MI-detektor mint bizonyíték",
+  "body": "The author warns that SciSpace's AI detector should not be treated as proof of student authorship or misconduct. Fix: do not use AI-detector output as evidence of authorship or misconduct anywhere in screening, appraisal or reporting.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 21 §9",
+  "tags": "AI detector MI-detektor authorship szerzőség misconduct kötelességszegés evidence bizonyíték SciSpace pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-084",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Kizárás MI-összefoglaló vagy előnézet alapján",
+  "body": "The guide repeatedly treats AI previews as aids for deciding what to read, not as grounds for decisions: check the original abstract before setting a study aside after a Scholarcy preview, use a Google Scholar overview only to spot a promising article and then check its claims, methods and limitations in the full text, and read the selected studies after previewing R Discovery recommendations. Detect: screening decisions logged against AI summaries, previews or relevance scores instead of the record's own title and abstract or full text. Fix: base every include or exclude decision on the original title and abstract (and on the full text at the second stage), and use AI previews only to order reading.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 8 §3 'Prioritise professional reading'; p. 5 §1 'Compare AI previews with original papers'; p. 23 §10 'Prepare for a research discussion'",
+  "tags": "AI summary MI-összefoglaló preview előnézet screening decision szűrési döntés exclusion kizárás original abstract eredeti absztrakt Scholarcy Google Scholar R Discovery pitfall buktató"
+ },
+ {
+  "k_id": "K-KHA26-085",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Szűrési döntések az eredeti rekordon alapulnak",
+  "body": "Reviewer check: no record was excluded on the strength of an AI-generated summary, preview or relevance score alone; every screening decision refers to the record's own title and abstract or, at the second stage, its full text.",
+  "source_id": "kharbach2026_tools",
+  "locator": "p. 8 §3; p. 5 §1; p. 11 §4 closing caveat",
+  "tags": "screening decision szűrési döntés AI summary MI-összefoglaló relevance score relevanciapontszám original record eredeti rekord reviewer bíráló check ellenőrzés"
+ }
+]

@@ -1,0 +1,742 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "nos",
+  "name": "Newcastle–Ottawa",
+  "label": {
+    "hu": "Newcastle–Ottawa skála (NOS) — csillagrendszer",
+    "en": "Newcastle–Ottawa Scale (NOS) — star system"
+  },
+  "full_name": "Newcastle-Ottawa Scale for assessing the quality of nonrandomised studies in meta-analyses",
+  "family": "quality",
+  "tool_version": "coding manual",
+  "definition_version": 2,
+  "validator_version": "1.0.0",
+  "reference_sha256": "7a1ee9bf4c839c627962d0106ec437f7cf878f18e5309cb3146deee6411aa68b",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/nos.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Wells GA, Shea B, O'Connell D, et al. The Newcastle-Ottawa Scale (NOS) for assessing the quality of nonrandomised studies in meta-analyses. Ottawa Hospital Research Institute.",
+  "licence": {
+    "instrument_licence": "nincs nyílt licenc (© Ottawa Hospital Research Institute)",
+    "verbatim_allowed": null,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "A kódolási kézikönyv szabadon elérhető, de nyílt licenc nincs; a fájl tömörített parafrázist tartalmaz — a pontos csillagkiosztási szabályokat a kézikönyvben nézd meg.",
+      "en": "The coding manual is freely available but carries no open licence; this file holds compressed paraphrases — see the manual for the exact star rules."
+    }
+  },
+  "intro": {
+    "hu": "A NOS csillagokat oszt kiválasztásra, összehasonlíthatóságra és kimenetre (kohorsz) vagy expozícióra (eset-kontroll). Három dolgot tudj és írj le a módszertanban: (1) NINCS hivatalos küszöb — a 7–9 = jó / 4–6 = közepes / 0–3 = gyenge egy AHRQ-átváltásból jön, nem a skála szerzőitől; (2) a csillagok doménenként nem összemérhetők, ezért mindig a doménenkénti csillagokat közöld; (3) az értékelők közötti egyezése gyenge. Ha a review-t alaposan vizsgálni fogják, a ROBINS-I / ROBINS-E jobb választás.",
+    "en": "NOS awards stars for selection, comparability and outcome (cohort) or exposure (case-control). There is NO official threshold; report the per-domain stars; inter-rater reliability is poor. Prefer ROBINS-I / ROBINS-E when the review will be scrutinised."
+  },
+  "unit": "study",
+  "unit_label": {
+    "hu": "vizsgálatonként",
+    "en": "per study"
+  },
+  "scopes": [
+    {
+      "id": "cohort",
+      "label": {
+        "hu": "Kohorszvizsgálat (8 tétel, 9 csillag)",
+        "en": "Cohort study (8 items, 9 stars)"
+      },
+      "default": true
+    },
+    {
+      "id": "case-control",
+      "label": {
+        "hu": "Eset-kontroll vizsgálat (8 tétel, 9 csillag)",
+        "en": "Case-control study (8 items, 9 stars)"
+      },
+      "default": false
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "partial_yes",
+      "label": "P",
+      "text": {
+        "hu": "Részben igen",
+        "en": "Partial yes"
+      },
+      "kind": "partial",
+      "aliases": [
+        "p",
+        "partial yes",
+        "partially yes",
+        "reszben igen",
+        "ri",
+        "1 star",
+        "1 csillag"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "unclear",
+      "label": "U",
+      "text": {
+        "hu": "Nem egyértelmű",
+        "en": "Unclear"
+      },
+      "kind": "unknown",
+      "aliases": [
+        "u",
+        "unclear",
+        "unclear risk",
+        "nem egyertelmu",
+        "bizonytalan",
+        "?"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "no",
+    "unclear"
+  ],
+  "verdicts": [
+    {
+      "value": "good",
+      "label": {
+        "hu": "Jó (AHRQ-átváltás)",
+        "en": "Good (AHRQ conversion)"
+      },
+      "level": "low"
+    },
+    {
+      "value": "fair",
+      "label": {
+        "hu": "Közepes (AHRQ-átváltás)",
+        "en": "Fair (AHRQ conversion)"
+      },
+      "level": "some"
+    },
+    {
+      "value": "poor",
+      "label": {
+        "hu": "Gyenge (AHRQ-átváltás)",
+        "en": "Poor (AHRQ conversion)"
+      },
+      "level": "high"
+    }
+  ],
+  "domains": [
+    {
+      "id": "S",
+      "title": {
+        "hu": "Kiválasztás",
+        "en": "Selection"
+      },
+      "short": "S",
+      "passes": null,
+      "applicability": false,
+      "stars_max": {
+        "cohort": 4,
+        "case-control": 4
+      }
+    },
+    {
+      "id": "C",
+      "title": {
+        "hu": "Összehasonlíthatóság",
+        "en": "Comparability"
+      },
+      "short": "C",
+      "passes": null,
+      "applicability": false,
+      "stars_max": {
+        "cohort": 2,
+        "case-control": 2
+      }
+    },
+    {
+      "id": "O",
+      "title": {
+        "hu": "Kimenet (kohorsz)",
+        "en": "Outcome"
+      },
+      "short": "O",
+      "passes": null,
+      "applicability": false,
+      "stars_max": {
+        "cohort": 3,
+        "case-control": 0
+      }
+    },
+    {
+      "id": "E",
+      "title": {
+        "hu": "Expozíció (eset-kontroll)",
+        "en": "Exposure"
+      },
+      "short": "E",
+      "passes": null,
+      "applicability": false,
+      "stars_max": {
+        "cohort": 0,
+        "case-control": 3
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "S1",
+      "key": "S1",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "A kitett kohorsz reprezentativitása.",
+        "en": "Representativeness of the exposed cohort."
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Csillag jár, ha a kitett kohorsz valóban vagy nagyjából reprezentálja az átlagos kitett személyt a közösségben; válogatott felhasználói csoportnál vagy leírás hiányában nem.",
+        "en": "Truly or somewhat representative of the average exposed person in the community earns a star; a selected group of users, or no description, does not."
+      },
+      "official_id": "S1"
+    },
+    {
+      "id": "S2",
+      "key": "S2",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "A nem kitett kohorsz kiválasztása.",
+        "en": "Selection of the non-exposed cohort."
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Csillag, ha ugyanabból a közösségből származik, mint a kitett kohorsz.",
+        "en": "Drawn from the same community as the exposed cohort earns a star; a different source does not."
+      },
+      "official_id": "S2"
+    },
+    {
+      "id": "S3",
+      "key": "S3",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "Az expozíció megállapítása.",
+        "en": "Ascertainment of exposure."
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Biztos dokumentáció vagy strukturált interjú → csillag; írásos önbevallás vagy leírás hiánya → nem.",
+        "en": "Secure record or structured interview earns a star; written self-report or no description does not."
+      },
+      "official_id": "S3"
+    },
+    {
+      "id": "S4",
+      "key": "S4",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "Igazolták-e, hogy a vizsgált kimenet a vizsgálat kezdetén nem állt fenn?",
+        "en": "Demonstration that the outcome of interest was not present at the start of the study."
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "official_id": "S4"
+    },
+    {
+      "id": "C1",
+      "key": "C1",
+      "domain": "C",
+      "pass": null,
+      "text": {
+        "hu": "A kohorszok összehasonlíthatósága az elrendezés vagy az elemzés alapján (legfeljebb 2 csillag).",
+        "en": "Comparability of cohorts on the basis of the design or analysis."
+      },
+      "tags": [
+        "cohort",
+        "2star"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 2,
+      "answers": [
+        "yes",
+        "partial_yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Egy csillag a legfontosabb tényezőre való kontrollért, egy második bármely más fontos tényezőért: „Részben igen” = 1 csillag, „Igen” = 2 csillag. A két tényezőt a protokollban nevezd meg, mielőtt a cikket olvasod — különben ez a tétel azt méri, mire döntöttek korrigálni a szerzők.",
+        "en": "One star for controlling the single most important factor, a second for controlling any other important factor. **Name the two factors in your protocol before you read the study** — otherwise this item measures what the authors chose to adjust for."
+      },
+      "official_id": "C1"
+    },
+    {
+      "id": "O1",
+      "key": "O1",
+      "domain": "O",
+      "pass": null,
+      "text": {
+        "hu": "A kimenet megállapítása.",
+        "en": "Assessment of outcome."
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Független, vak értékelés vagy rekordösszekapcsolás → csillag; önbevallás → nem.",
+        "en": "Independent blind assessment or record linkage earns a star; self-report does not."
+      },
+      "official_id": "O1"
+    },
+    {
+      "id": "O2",
+      "key": "O2",
+      "domain": "O",
+      "pass": null,
+      "text": {
+        "hu": "Elég hosszú volt-e a követés a kimenetek bekövetkezéséhez?",
+        "en": "Was follow-up long enough for outcomes to occur?"
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Előre megadott időtartamhoz mérve.",
+        "en": "Against a duration you specify in advance."
+      },
+      "official_id": "O2"
+    },
+    {
+      "id": "O3",
+      "key": "O3",
+      "domain": "O",
+      "pass": null,
+      "text": {
+        "hu": "A kohorszok követésének megfelelősége.",
+        "en": "Adequacy of follow-up of cohorts."
+      },
+      "tags": [
+        "cohort"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "cohort"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Teljes követés, vagy a lemorzsolódás valószínűleg nem torzít, és a kiesetteket leírták.",
+        "en": "Complete follow-up, or loss unlikely to introduce bias with a description of those lost."
+      },
+      "official_id": "O3"
+    },
+    {
+      "id": "S5",
+      "key": "S5",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "Megfelelő-e az esetdefiníció?",
+        "en": "Is the case definition adequate?"
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Független validálás → csillag; csak rekordösszekapcsolás vagy önbevallás → nem.",
+        "en": "Independent validation earns a star; record linkage or self-report alone does not."
+      },
+      "official_id": "S1"
+    },
+    {
+      "id": "S6",
+      "key": "S6",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "Az esetek reprezentativitása.",
+        "en": "Representativeness of the cases."
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Egymást követő vagy nyilvánvalóan reprezentatív esetsor.",
+        "en": "Consecutive or obviously representative series."
+      },
+      "official_id": "S2"
+    },
+    {
+      "id": "S7",
+      "key": "S7",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "A kontrollok kiválasztása.",
+        "en": "Selection of controls."
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Közösségi kontrollok → csillag; kórházi kontrollok → nem.",
+        "en": "Community controls earn a star; hospital controls do not."
+      },
+      "official_id": "S3"
+    },
+    {
+      "id": "S8",
+      "key": "S8",
+      "domain": "S",
+      "pass": null,
+      "text": {
+        "hu": "A kontrollok definíciója.",
+        "en": "Definition of controls."
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Kimondják, hogy a kontrolloknak nincs a betegség az előzményében.",
+        "en": "No history of the disease, stated."
+      },
+      "official_id": "S4"
+    },
+    {
+      "id": "C2",
+      "key": "C2",
+      "domain": "C",
+      "pass": null,
+      "text": {
+        "hu": "Az esetek és a kontrollok összehasonlíthatósága az elrendezés vagy az elemzés alapján (legfeljebb 2 csillag).",
+        "en": "Comparability of cases and controls on the basis of the design or analysis."
+      },
+      "tags": [
+        "case-control",
+        "2star"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 2,
+      "answers": [
+        "yes",
+        "partial_yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Ugyanaz a szabály és ugyanaz a figyelmeztetés, mint a C1-nél.",
+        "en": "Same rule as C1, and the same warning."
+      },
+      "official_id": "C1"
+    },
+    {
+      "id": "E1",
+      "key": "E1",
+      "domain": "E",
+      "pass": null,
+      "text": {
+        "hu": "Az expozíció megállapítása.",
+        "en": "Ascertainment of exposure."
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Biztos dokumentáció vagy vakított strukturált interjú → csillag.",
+        "en": "Secure record or blinded structured interview earns a star."
+      },
+      "official_id": "E1"
+    },
+    {
+      "id": "E2",
+      "key": "E2",
+      "domain": "E",
+      "pass": null,
+      "text": {
+        "hu": "Azonos módszerrel állapították-e meg az expozíciót az eseteknél és a kontrolloknál?",
+        "en": "Same method of ascertainment for cases and controls."
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "official_id": "E2"
+    },
+    {
+      "id": "E3",
+      "key": "E3",
+      "domain": "E",
+      "pass": null,
+      "text": {
+        "hu": "Válaszadási arány.",
+        "en": "Non-response rate."
+      },
+      "tags": [
+        "case-control"
+      ],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "case-control"
+      ],
+      "applies_to": null,
+      "stars": 1,
+      "answers": [
+        "yes",
+        "no",
+        "unclear"
+      ],
+      "help": {
+        "hu": "Mindkét csoportban azonos, és le is írták.",
+        "en": "Same rate for both groups, described."
+      },
+      "official_id": "E3"
+    }
+  ],
+  "rollup": {
+    "algorithm": "count",
+    "official": false,
+    "label": {
+      "hu": "Csillagszámlálás — a küszöbök nem hivatalosak",
+      "en": "Star count — thresholds are not official"
+    },
+    "note": {
+      "hu": "A munkapad doménenként és összesen megszámolja a csillagokat (Igen = a tétel összes csillaga, Részben igen = 1 csillag). Minősítést (jó / közepes / gyenge) NEM ad: a skála szerzői nem közöltek küszöböt. Ha küszöböt használsz, nevezd meg a forrását.",
+      "en": "The workbench counts stars per domain and in total (Yes = all stars of the item, Partial yes = 1 star). It gives NO rating: the scale's authors published no threshold. If you use one, name its source."
+    }
+  },
+  "rob_column": null,
+  "counts": {
+    "parsed": 16,
+    "published": 16,
+    "per_scope": {
+      "cohort": 8,
+      "case-control": 8
+    },
+    "per_pass": null
+  },
+  "notes": [
+    {
+      "hu": "A „PY” rövidítés itt NEM érvényes (H4): a „Részben igen”-t írd ki, mert a „PY” más eszközökben „valószínűleg igen”-t jelent.",
+      "en": "'PY' is NOT accepted here (H4): write 'Partial yes', because 'PY' means 'probably yes' in other tools."
+    },
+    {
+      "hu": "Az eset-kontroll tételek kulcsa (S5–S8, C2, E1–E3) belső azonosító; a NOS kódolási kézikönyve szerinti hivatalos szám az 'official_id' (Selection 1–4, Comparability 1, Exposure 1–3) — kéziratban és táblázatban ezt közöld.",
+      "en": "The case-control item keys (S5–S8, C2, E1–E3) are internal ids; the official number per the NOS coding manual is 'official_id' (Selection 1–4, Comparability 1, Exposure 1–3) — report that in manuscripts and tables."
+    }
+  ],
+  "validator_differences": [
+    {
+      "item": "*",
+      "validator": "Partial yes = 1 csillag minden tételen; 'PY' = probably yes",
+      "here": "Részben igen csak a 2 csillagos C1/C2 tételen; 'PY' nem fogadott",
+      "reason": {
+        "hu": "A részleges csillag csak az összehasonlíthatóságnál értelmes; a „PY” kétértelmű (H4).",
+        "en": "A partial star only makes sense for comparability; 'PY' is ambiguous (H4)."
+      }
+    }
+  ]
+}

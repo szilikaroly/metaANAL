@@ -1,0 +1,37 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "openalex-work_404",
+  "recorded_at": "2026-10-05T11:08:26Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "/works/doi:10.9999/does-not-exist-xyz → 404",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://api.openalex.org/works/doi:10.9999/does-not-exist-xyz",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 404,
+        "headers": {
+          "content-type": "text/html; charset=utf-8",
+          "x-ratelimit-cost-usd": "0",
+          "x-ratelimit-credits-used": "0",
+          "x-ratelimit-limit": "1000",
+          "x-ratelimit-limit-usd": "0.1",
+          "x-ratelimit-onetime-remaining": "0",
+          "x-ratelimit-prepaid-remaining-usd": "0",
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-remaining-usd": "0",
+          "x-ratelimit-reset": "46294"
+        },
+        "body_text": "<!doctype html>\n<html lang=en>\n<title>404 Not Found</title>\n<h1>Not Found</h1>\n<p>The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</p>\n"
+      },
+      "delay_ms": null
+    }
+  ]
+}

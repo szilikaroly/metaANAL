@@ -1,0 +1,2823 @@
+[
+ {
+  "case_id": "jslhr_tutorial__k22_re_reml",
+  "example_id": "jslhr_tutorial__talker_variability_re_reml_k22",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 10 R output box (meta::metagen) and text; p. 11 Figure 2 (inputs TE/SE_TE, weights, footer)",
+  "description": "Talker-variability data set: 22 study-level Hedges' g pooled with inverse-variance random effects (REML tau^2, z-based CI, Q-profile tau^2 CI, Higgins-Thompson I^2/H CIs).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Davis_2015(1)",
+    "yi": -1.36,
+    "sei": 0.4047
+   },
+   {
+    "study": "Davis_2015(2)",
+    "yi": 3.63,
+    "sei": 0.9258
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Shehata_2013",
+    "yi": 4.51,
+    "sei": 0.7014
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "REML",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "k",
+    "value": 22,
+    "tol": 0,
+    "transform": null,
+    "note": "printed k = 22"
+   },
+   {
+    "path": "estimate",
+    "value": 0.468,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "printed 0.468 (3 dp): tol = 0.0005 half-unit + 0.002 allowance (input g printed to 2 dp only (sei 4 dp); verifier Monte Carlo over yi +/- 0.005 bounds the propagated input-rounding error; mu moves within +/-0.0021 of the rounded-input value; verifier recommends abs 0.002)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.038,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "printed 0.038: tol = 0.0005 half-unit + 0.002 input-rounding allowance (verifier: abs 0.002)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.898,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "printed 0.898: tol = 0.0005 half-unit + 0.002 input-rounding allowance (verifier: abs 0.002)"
+   },
+   {
+    "path": "stat",
+    "value": 2.13,
+    "tol": 0.015,
+    "transform": null,
+    "note": "printed z = 2.13 (2 dp): tol = 0.005 half-unit + 0.01 input-rounding allowance (MC range of z [2.1166, 2.1383] around the rounded-input 2.1266; verifier: abs 0.01)"
+   },
+   {
+    "path": "p",
+    "value": 0.0329,
+    "tol": 0.00105,
+    "transform": null,
+    "note": "printed p = 0.0329 (4 dp): tol = 0.00005 half-unit + 0.001 input-rounding allowance (MC range [0.0325, 0.0343]; verifier: abs 0.001)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.824,
+    "tol": 0.0001,
+    "transform": null,
+    "note": "printed tau^2 = 0.8240 (4 dp): tol = 0.00005 half-unit + 0.00005 (verifier: reproduces exactly at 4 dp from the printed inputs, abs 0.0001)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.0",
+    "value": 0.4601,
+    "tol": 0.0001,
+    "transform": null,
+    "note": "printed Q-profile tau^2 CI lower 0.4601 (4 dp; reproduces exactly; verifier abs 0.0001)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 2.7124,
+    "tol": 0.0001,
+    "transform": null,
+    "note": "printed Q-profile tau^2 CI upper 2.7124 (4 dp; reproduces exactly; verifier abs 0.0001)"
+   },
+   {
+    "path": "tau",
+    "value": 0.9077,
+    "tol": 0.0001,
+    "transform": null,
+    "note": "printed tau = 0.9077 (4 dp; verifier abs 0.0001)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.0",
+    "value": 0.6783,
+    "tol": 0.0001,
+    "transform": "sqrt",
+    "note": "printed tau CI lower 0.6783 = sqrt of the Q-profile tau^2 bound (4 dp)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 1.6469,
+    "tol": 0.0001,
+    "transform": "sqrt",
+    "note": "printed tau CI upper 1.6469 = sqrt of the Q-profile tau^2 bound (4 dp)"
+   },
+   {
+    "path": "I2",
+    "value": 75.0,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed I^2 = 75.0% (1 dp): tol = 0.05 half-unit + 0.05 allowance for the input rounding of Q (verifier: abs 0.1 pct-pt)"
+   },
+   {
+    "path": "heterogeneity.I2_ci_HT.0",
+    "value": 62.1,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed I^2 CI lower 62.1% (meta::calcH = Higgins-Thompson test-based CI, Q > k branch); tol 0.05 half-unit + 0.05 (verifier abs 0.1)"
+   },
+   {
+    "path": "heterogeneity.I2_ci_HT.1",
+    "value": 83.5,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed I^2 CI upper 83.5%; tol 0.05 half-unit + 0.05 (verifier abs 0.1)"
+   },
+   {
+    "path": "H2",
+    "value": 2.0,
+    "tol": 0.01,
+    "transform": "sqrt",
+    "note": "printed H = 2.00 = sqrt(Q/df) (2 dp): tol 0.005 half-unit + 0.005 (verifier abs 0.01)"
+   },
+   {
+    "path": "heterogeneity.H_ci_HT.0",
+    "value": 1.62,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed H CI lower 1.62 (Higgins-Thompson); tol 0.005 + 0.005 (verifier abs 0.01)"
+   },
+   {
+    "path": "heterogeneity.H_ci_HT.1",
+    "value": 2.46,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed H CI upper 2.46 (Higgins-Thompson); tol 0.005 + 0.005 (verifier abs 0.01)"
+   },
+   {
+    "path": "Q",
+    "value": 83.85,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed Q = 83.85 (2 dp): tol 0.005 half-unit + 0.095 allowance (rounded-input Q 83.81; MC range [83.47, 84.18]; verifier: abs 0.1)"
+   },
+   {
+    "path": "Q_df",
+    "value": 21,
+    "tol": 0,
+    "transform": null,
+    "note": "printed df = 21"
+   },
+   {
+    "path": "p_Q",
+    "value": 5e-05,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed 'p < .0001': encoded as 0 <= p_Q <= 0.0001"
+   },
+   {
+    "path": "estimate",
+    "value": 0.47,
+    "tol": 0.007,
+    "transform": null,
+    "note": "Figure 2 footer 0.47 (2 dp): tol 0.005 half-unit + 0.002 input-rounding allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.04,
+    "tol": 0.007,
+    "transform": null,
+    "note": "Figure 2 footer CI lower 0.04 (2 dp): tol 0.005 + 0.002"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9,
+    "tol": 0.007,
+    "transform": null,
+    "note": "Figure 2 footer CI upper 0.90 (2 dp): tol 0.005 + 0.002"
+   },
+   {
+    "path": "I2",
+    "value": 75,
+    "tol": 0.55,
+    "transform": null,
+    "note": "Figure 2 footer I^2 = 75% (0 dp): tol 0.5 half-unit + 0.05"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 5.7,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Brekelmans_2022, printed 5.7% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 4.7,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Brosseau-Lapré_2013, printed 4.7% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 4.9,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Davis_2015(1), printed 4.9% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.9,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Davis_2015(2), printed 2.9% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 5.1,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Deng_2018, printed 5.1% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.4,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Dong_2019, printed 5.4% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 5.3,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Giannakopoulou_2017, printed 5.3% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 4.3,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Hardison_2003, printed 4.3% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.3,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Lee_2007, printed 5.3% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 5.2,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Macdonald_2012, printed 5.2% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 4.6,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Perrachione_2011(1), printed 4.6% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.11",
+    "value": 4.8,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Perrachione_2011(2), printed 4.8% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.12",
+    "value": 3.7,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Shehata_2013, printed 3.7% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.13",
+    "value": 2.4,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Silpachai_2020, printed 2.4% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.14",
+    "value": 3.4,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Uchihara_2022(1), printed 3.4% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.15",
+    "value": 2.5,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Uchihara_2022(2), printed 2.5% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.16",
+    "value": 5.6,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Van Hedger_2021, printed 5.6% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.17",
+    "value": 5.4,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Wiener_2020(1), printed 5.4% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.18",
+    "value": 5.4,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Wiener_2020(2), printed 5.4% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.19",
+    "value": 3.0,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Wong_2013, printed 3.0% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.20",
+    "value": 5.4,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Zhang_2021(1), printed 5.4% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "weights_pct.21",
+    "value": 5.1,
+    "tol": 0.0502,
+    "transform": null,
+    "note": "Figure 2 random-effects weight of Zhang_2021(2), printed 5.1% (1 dp): tol 0.05 half-unit + 0.0002 (tau^2 known only to +/-0.00005 at its printed precision; weight sensitivity < 1.3 pct-pt per unit tau^2)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.466594,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "se",
+    "value": 0.219408,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.036561,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.896626,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "stat",
+    "value": 2.126601,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "p",
+    "value": 0.033453,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.823997,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source); REML also cross-checked with pymare (0.823997)"
+   },
+   {
+    "path": "tau",
+    "value": 0.907743,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.0",
+    "value": 0.460097,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 2.712351,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.0",
+    "value": 0.678304,
+    "tol": 1e-06,
+    "transform": "sqrt",
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 1.646922,
+    "tol": 1e-06,
+    "transform": "sqrt",
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "Q",
+    "value": 83.810678,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "p_Q",
+    "value": 1.8449354160241989e-09,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "I2",
+    "value": 74.943527,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "H2",
+    "value": 1.997745,
+    "tol": 1e-06,
+    "transform": "sqrt",
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.H_ci_HT.0",
+    "value": 1.623765,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (meta:::calcH)"
+   },
+   {
+    "path": "heterogeneity.H_ci_HT.1",
+    "value": 2.457859,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (meta:::calcH)"
+   },
+   {
+    "path": "heterogeneity.I2_ci_HT.0",
+    "value": 62.072535,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (meta:::calcH)"
+   },
+   {
+    "path": "heterogeneity.I2_ci_HT.1",
+    "value": 83.446643,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (meta:::calcH)"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.328571,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source); DL tau^2 (statsmodels and pymare agree)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 5.6843,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 4.7279,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 4.8736,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 2.8636,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 5.0722,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 5.4407,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 5.3174,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 4.3377,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.8",
+    "value": 5.291,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.9",
+    "value": 5.2225,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.10",
+    "value": 4.6225,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.11",
+    "value": 4.7906,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.12",
+    "value": 3.6582,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.13",
+    "value": 2.377,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.14",
+    "value": 3.4024,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.15",
+    "value": 2.4817,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.16",
+    "value": 5.55,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.17",
+    "value": 5.409,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.18",
+    "value": 5.4084,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.19",
+    "value": 3.0138,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.20",
+    "value": 5.3645,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   },
+   {
+    "path": "weights_pct.21",
+    "value": 5.091,
+    "tol": 5.1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (4 dp: tol 0.00005 half-unit)"
+   }
+  ],
+  "status": "active",
+  "notes": "Inputs are the printed TE (2 dp) and SE_TE (4 dp) of Figure 2; the printed summary was computed by meta from unrounded g, so mu/CI/z/p/Q/I^2 carry an input-rounding allowance quantified by the verifier (Monte Carlo over yi +/- 0.005); tau^2, its Q-profile CI, tau, H and its CI reproduce exactly at the printed precision. Printed per-study CIs are not tested (meta printed them from the unrounded g)."
+ },
+ {
+  "case_id": "jslhr_tutorial__k19_outliers_removed_re_reml",
+  "example_id": "jslhr_tutorial__outliers_removed_k19",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 11 output box (random-effects model without outliers) and p. 11 text; inputs = Figure 2 minus Davis_2015(1), Davis_2015(2), Shehata_2013",
+  "description": "Same REML random-effects analysis after dropping the three dmetar::find.outliers studies (k = 19): tau^2 truncates to 0 so RE = FE.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "REML",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "k",
+    "value": 19,
+    "tol": 0,
+    "transform": null,
+    "note": "printed k = 19"
+   },
+   {
+    "path": "estimate",
+    "value": 0.1756,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed 0.1756 (4 dp): tol 0.00005 half-unit + 0.00195 input-rounding allowance (CI-consistent yi Monte Carlo: mu in [0.1744, 0.1762] vs rounded-input 0.1746; verifier abs 0.002)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.0373,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed 0.0373; verifier abs 0.002 (input rounding)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.3139,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed 0.3139; verifier abs 0.002 (input rounding)"
+   },
+   {
+    "path": "stat",
+    "value": 2.49,
+    "tol": 0.02,
+    "transform": null,
+    "note": "printed z = 2.49 (2 dp): tol 0.005 half-unit + 0.015 (CI-consistent MC z range [2.472, 2.498] vs rounded-input 2.4745; verifier abs 0.02)"
+   },
+   {
+    "path": "p",
+    "value": 0.0128,
+    "tol": 0.001,
+    "transform": null,
+    "note": "printed p = 0.0128: tol 0.00005 half-unit + 0.00095 (MC range [0.0125, 0.0134]; verifier abs 0.001)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.0,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "printed tau^2 = 0 (REML truncated at 0 since Q < df)"
+   },
+   {
+    "path": "tau",
+    "value": 0.0,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "printed tau = 0"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.0",
+    "value": 0.0,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Q-profile tau^2 CI lower 0.0000 (Q(0) < chi2 upper quantile)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 0.1585,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed Q-profile tau^2 CI upper 0.1585 (4 dp): tol 0.00005 + 0.00195 input-rounding allowance (MC range [0.1572, 0.1601]; verifier abs 0.002)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.0",
+    "value": 0.0,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "printed tau CI lower 0.0000"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 0.3981,
+    "tol": 0.002,
+    "transform": "sqrt",
+    "note": "printed tau CI upper 0.3981 (sqrt of Q-profile bound); verifier abs 0.002"
+   },
+   {
+    "path": "I2",
+    "value": 0.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "printed I^2 = 0.0% (Q < df, truncated at 0)"
+   },
+   {
+    "path": "heterogeneity.I2_ci_HT.0",
+    "value": 0.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "printed I^2 CI lower 0.0%"
+   },
+   {
+    "path": "heterogeneity.H_ci_HT.0",
+    "value": 1.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed H CI lower 1.00 (truncated at 1)"
+   },
+   {
+    "path": "Q",
+    "value": 17.45,
+    "tol": 0.15,
+    "transform": null,
+    "note": "printed Q = 17.45 (2 dp): tol 0.005 half-unit + 0.145 (CI-consistent MC Q range [17.38, 17.55] vs rounded-input 17.353; verifier abs 0.15)"
+   },
+   {
+    "path": "Q_df",
+    "value": 18,
+    "tol": 0,
+    "transform": null,
+    "note": "printed df = 18"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.4926,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed p_Q = 0.4926: tol 0.00005 + 0.00995 (MC range [0.4858, 0.4969] vs rounded-input 0.4990; verifier abs 0.01)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.176,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "p. 11 text 0.176 (3 dp): tol 0.0005 + 0.002 input-rounding allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.037,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "p. 11 text CI lower 0.037: tol 0.0005 + 0.002"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.314,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "p. 11 text CI upper 0.314: tol 0.0005 + 0.002"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.49,
+    "tol": 0.015,
+    "transform": null,
+    "note": "p. 11 text p = .49 (2 dp): tol 0.005 + 0.01 input-rounding allowance"
+   },
+   {
+    "path": "I2",
+    "value": 0.05,
+    "tol": 0.05,
+    "transform": null,
+    "note": "p. 11 text 'I^2 < 0.1%': encoded as 0 <= I2 <= 0.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.174555,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "se",
+    "value": 0.070542,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.036296,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.312814,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "stat",
+    "value": 2.474496,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "p",
+    "value": 0.013342,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "Q",
+    "value": 17.352998,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.498974,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 0.157399,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.tau2_ci_QP.1",
+    "value": 0.396735,
+    "tol": 1e-06,
+    "transform": "sqrt",
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.0,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source); DL also truncated at 0 (Q < df)"
+   }
+  ],
+  "status": "active",
+  "notes": "The outlier set itself (dmetar::find.outliers: study CI entirely outside the pooled k = 22 CI) is taken as given; the engine has no find.outliers routine. The printed H = 1.00 and the upper H / I^2 CI limits (1.40, 48.9%) use meta's truncation of H at 1 before the Higgins-Thompson CI is formed; they are kept in the separate known_gap case jslhr_tutorial__k19_h_ci_truncated_centre."
+ },
+ {
+  "case_id": "jslhr_tutorial__k19_h_ci_truncated_centre",
+  "example_id": "jslhr_tutorial__outliers_removed_k19",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 11 output box ('H = 1.00 [1.00; 1.40]', 'I^2 = 0.0% [0.0%; 48.9%]')",
+  "description": "k = 19 H point estimate and upper H / I^2 CI limits, which meta computes after truncating H at 1 (Q = 17.35 < df = 18).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "REML",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "heterogeneity.H",
+    "value": 1.0,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed H = 1.00 = max(1, sqrt(Q/df)) (meta::calcH); engine H2 = Q/df = 0.964 is not truncated"
+   },
+   {
+    "path": "heterogeneity.H_ci_HT.1",
+    "value": 1.4,
+    "tol": 0.0075,
+    "transform": null,
+    "note": "printed H CI upper 1.40 (2 dp): tol 0.005 half-unit + 0.0025 (verifier: exp(ln(max(H,1)) + 1.96*SE) = 1.399251; SE is Q-independent in the Q <= k branch, so input rounding cannot move it)"
+   },
+   {
+    "path": "heterogeneity.I2_ci_HT.1",
+    "value": 48.9,
+    "tol": 0.05,
+    "transform": null,
+    "note": "printed I^2 CI upper 48.9% (1 dp): tol 0.05 half-unit (Q-independent in the Q <= k branch once H is truncated at 1)"
+   },
+   {
+    "path": "heterogeneity.H_ci_HT.1",
+    "value": 1.399251,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (meta:::calcH, H truncated at 1)"
+   },
+   {
+    "path": "heterogeneity.I2_ci_HT.1",
+    "value": 48.924962,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (meta:::calcH, H truncated at 1)"
+   }
+  ],
+  "status": "active",
+  "activation_note": "Activated: models.heterogeneity now reports H = max(1, sqrt(Q/df)) and centres the Higgins-Thompson H/I2 interval on ln max(1, H) by default (h_centre='truncated', the meta:::calcH convention). The H point estimate is read from heterogeneity.H (was the placeholder sqrt(H2), which is the untruncated Q/df)."
+ },
+ {
+  "case_id": "jslhr_tutorial__egger_k22",
+  "example_id": "jslhr_tutorial__egger_test_k22",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 12 R output box 'Eggers' test of the intercept' and p. 12 text; inputs p. 11 Figure 2",
+  "description": "Egger's regression test (standard normal deviate on precision) for the 22 study-level g values.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Davis_2015(1)",
+    "yi": -1.36,
+    "sei": 0.4047
+   },
+   {
+    "study": "Davis_2015(2)",
+    "yi": 3.63,
+    "sei": 0.9258
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Shehata_2013",
+    "yi": 4.51,
+    "sei": 0.7014
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   }
+  ],
+  "call": "egger",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "k",
+    "value": 22,
+    "tol": 0,
+    "transform": null,
+    "note": "22 studies"
+   },
+   {
+    "path": "intercept",
+    "value": 1.959,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed intercept 1.959 (3 dp): tol 0.0005 half-unit + 0.0045 input-rounding allowance (CI-consistent MC range [1.9531, 1.9615] vs rounded-input 1.9567; verifier abs 0.005)"
+   },
+   {
+    "path": "t",
+    "value": 2.277,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed t = 2.277 (3 dp): tol 0.0005 + 0.0045 (MC range [2.2690, 2.2801] vs rounded-input 2.2748; verifier abs 0.005)"
+   },
+   {
+    "path": "p",
+    "value": 0.03390475,
+    "tol": 0.0005,
+    "transform": null,
+    "note": "printed p = .03390475: tol 0.0005 input-rounding allowance (MC range [0.03371, 0.03449] vs rounded-input 0.034075; verifier abs 0.0005)"
+   },
+   {
+    "path": "df",
+    "value": 20,
+    "tol": 0,
+    "transform": null,
+    "note": "t test with k - 2 = 20 df (2*pt(-2.277, 20) = 0.03392 reproduces the printed p)"
+   },
+   {
+    "path": "p",
+    "value": 0.03,
+    "tol": 0.0055,
+    "transform": null,
+    "note": "p. 12 text p = .03 (2 dp): tol 0.005 + 0.0005"
+   },
+   {
+    "path": "intercept",
+    "value": 1.956718,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (classic Egger OLS of yi/sei on 1/sei; = metafor regtest model='lm', t = 2.2748, p = 0.0341)"
+   },
+   {
+    "path": "se_intercept",
+    "value": 0.860156,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "t",
+    "value": 2.27484,
+    "tol": 1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (given to 5 dp)"
+   },
+   {
+    "path": "p",
+    "value": 0.03407536,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (given to 8 dp)"
+   },
+   {
+    "path": "slope",
+    "value": -0.373427,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (slope on precision 1/sei)"
+   }
+  ],
+  "status": "active",
+  "notes": "The printed intercept CI [0.27, 3.64] uses the normal quantile (dmetar), not t(20); it is kept in the known_gap case jslhr_tutorial__egger_k22_normal_ci."
+ },
+ {
+  "case_id": "jslhr_tutorial__egger_k22_normal_ci",
+  "example_id": "jslhr_tutorial__egger_test_k22",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 12 R output box ('95% CI 0.27 - 3.64')",
+  "description": "Egger intercept 95% CI as printed by dmetar::eggers.test (intercept +/- 1.96*SE).",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Davis_2015(1)",
+    "yi": -1.36,
+    "sei": 0.4047
+   },
+   {
+    "study": "Davis_2015(2)",
+    "yi": 3.63,
+    "sei": 0.9258
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Shehata_2013",
+    "yi": 4.51,
+    "sei": 0.7014
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   }
+  ],
+  "call": "egger",
+  "call_args": {
+   "ci_dist": "norm"
+  },
+  "expected": [
+   {
+    "path": "ci_lower",
+    "value": 0.27,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed CI lower 0.27 (2 dp) = intercept - qnorm(.975)*SE: tol 0.005 half-unit + 0.005 intercept input-rounding allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 3.64,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed CI upper 3.64 (2 dp) = intercept + qnorm(.975)*SE: tol 0.005 + 0.005"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.270843,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (normal-quantile CI)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 3.642594,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (normal-quantile CI)"
+   }
+  ],
+  "status": "active",
+  "activation_note": "Activated: bias.egger_test(ci_dist='norm') gives the dmetar::eggers.test normal-quantile intercept CI (t, df and p stay on t(k-2))."
+ },
+ {
+  "case_id": "jslhr_tutorial__trimfill_k22_fe_trimming",
+  "example_id": "jslhr_tutorial__trimfill_k22",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 12 R output box (meta::trimfill) and text; inputs p. 11 Figure 2",
+  "description": "Duval-Tweedie L0 trim-and-fill with trimming on the fixed-effect mean (meta default), left side: k0 = 6 and the model-independent heterogeneity block of the 28 filled studies.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Davis_2015(1)",
+    "yi": -1.36,
+    "sei": 0.4047
+   },
+   {
+    "study": "Davis_2015(2)",
+    "yi": 3.63,
+    "sei": 0.9258
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Shehata_2013",
+    "yi": 4.51,
+    "sei": 0.7014
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   }
+  ],
+  "call": "trimfill",
+  "call_args": {
+   "model": "fixed",
+   "tau2_method": "REML",
+   "estimator": "L0",
+   "side": "left",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "k0",
+    "value": 6,
+    "tol": 0,
+    "transform": null,
+    "note": "printed: 6 studies added (L0, trimming on the fixed-effect mean, left side)"
+   },
+   {
+    "path": "adjusted.k",
+    "value": 28,
+    "tol": 0,
+    "transform": null,
+    "note": "printed k = 28 after filling"
+   },
+   {
+    "path": "adjusted.Q",
+    "value": 152.5,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed Q = 152.50 (2 dp): tol 0.005 half-unit + 0.095 (rounded-input 152.44; CI-consistent MC range [152.27, 152.72]; verifier abs 0.1). Q does not depend on the pooling model"
+   },
+   {
+    "path": "adjusted.Q_df",
+    "value": 27,
+    "tol": 0,
+    "transform": null,
+    "note": "printed df = 27"
+   },
+   {
+    "path": "adjusted.p_Q",
+    "value": 5e-05,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed 'p < .0001': encoded as 0 <= p_Q <= 0.0001"
+   },
+   {
+    "path": "adjusted.I2",
+    "value": 82.3,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed I^2 = 82.3% (Q-based, model-independent); tol 0.05 + 0.05 (verifier abs 0.1)"
+   },
+   {
+    "path": "adjusted.heterogeneity.I2_ci_HT.0",
+    "value": 75.3,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed I^2 CI lower 75.3% (meta::calcH); verifier abs 0.1"
+   },
+   {
+    "path": "adjusted.heterogeneity.I2_ci_HT.1",
+    "value": 87.3,
+    "tol": 0.1,
+    "transform": null,
+    "note": "printed I^2 CI upper 87.3% (meta::calcH); verifier abs 0.1"
+   },
+   {
+    "path": "adjusted.H2",
+    "value": 2.38,
+    "tol": 0.01,
+    "transform": "sqrt",
+    "note": "printed H = 2.38 = sqrt(Q/df); verifier abs 0.01"
+   },
+   {
+    "path": "adjusted.heterogeneity.H_ci_HT.0",
+    "value": 2.01,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed H CI lower 2.01; verifier abs 0.01"
+   },
+   {
+    "path": "adjusted.heterogeneity.H_ci_HT.1",
+    "value": 2.81,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed H CI upper 2.81; verifier abs 0.01"
+   },
+   {
+    "path": "adjusted.heterogeneity.tau2_ci_QP.0",
+    "value": 1.1602,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed Q-profile tau^2 CI lower 1.1602 (model-independent): tol 0.00005 + 0.00195 input-rounding allowance (verifier abs 0.002)"
+   },
+   {
+    "path": "adjusted.heterogeneity.tau2_ci_QP.1",
+    "value": 4.5574,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed Q-profile tau^2 CI upper 4.5574; verifier abs 0.002"
+   },
+   {
+    "path": "adjusted.heterogeneity.tau2_ci_QP.0",
+    "value": 1.0771,
+    "tol": 0.002,
+    "transform": "sqrt",
+    "note": "printed tau CI lower 1.0771 (sqrt of Q-profile bound); verifier abs 0.002"
+   },
+   {
+    "path": "adjusted.heterogeneity.tau2_ci_QP.1",
+    "value": 2.1348,
+    "tol": 0.002,
+    "transform": "sqrt",
+    "note": "printed tau CI upper 2.1348 (sqrt of Q-profile bound); verifier abs 0.002"
+   },
+   {
+    "path": "adjusted.estimate",
+    "value": 0.077699,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source): FE mean of the 28 = trimmed FE mean 0.077699 (mirror pairs are symmetric about it)"
+   },
+   {
+    "path": "adjusted.Q",
+    "value": 152.442459,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.I2",
+    "value": 82.288399,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.H2",
+    "value": 2.376135,
+    "tol": 1e-06,
+    "transform": "sqrt",
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.heterogeneity.H_ci_HT.0",
+    "value": 2.011455,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.heterogeneity.H_ci_HT.1",
+    "value": 2.806932,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.heterogeneity.I2_ci_HT.0",
+    "value": 75.283932,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.heterogeneity.I2_ci_HT.1",
+    "value": 87.307819,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.heterogeneity.tau2_ci_QP.0",
+    "value": 1.15983,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "adjusted.heterogeneity.tau2_ci_QP.1",
+    "value": 4.556504,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "filled_yi.0",
+    "value": -0.494602,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source): mirror image 2*0.077699 - y of Uchihara_2022(1)"
+   },
+   {
+    "path": "filled_yi.1",
+    "value": -0.854602,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source): mirror image 2*0.077699 - y of Hardison_2003"
+   },
+   {
+    "path": "filled_yi.2",
+    "value": -1.034602,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source): mirror image 2*0.077699 - y of Silpachai_2020"
+   },
+   {
+    "path": "filled_yi.3",
+    "value": -1.124602,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source): mirror image 2*0.077699 - y of Perrachione_2011(1)"
+   },
+   {
+    "path": "filled_yi.4",
+    "value": -3.474602,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source): mirror image 2*0.077699 - y of Davis_2015(2)"
+   },
+   {
+    "path": "filled_yi.5",
+    "value": -4.354602,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source): mirror image 2*0.077699 - y of Shehata_2013"
+   },
+   {
+    "path": "filled_vi.0",
+    "value": 0.7687,
+    "tol": 1e-12,
+    "transform": "sqrt",
+    "note": "filled study keeps the sei of Uchihara_2022(1) (vi = sei^2)"
+   },
+   {
+    "path": "filled_vi.1",
+    "value": 0.5346,
+    "tol": 1e-12,
+    "transform": "sqrt",
+    "note": "filled study keeps the sei of Hardison_2003 (vi = sei^2)"
+   },
+   {
+    "path": "filled_vi.2",
+    "value": 1.096,
+    "tol": 1e-12,
+    "transform": "sqrt",
+    "note": "filled study keeps the sei of Silpachai_2020 (vi = sei^2)"
+   },
+   {
+    "path": "filled_vi.3",
+    "value": 0.4663,
+    "tol": 1e-12,
+    "transform": "sqrt",
+    "note": "filled study keeps the sei of Perrachione_2011(1) (vi = sei^2)"
+   },
+   {
+    "path": "filled_vi.4",
+    "value": 0.9258,
+    "tol": 1e-12,
+    "transform": "sqrt",
+    "note": "filled study keeps the sei of Davis_2015(2) (vi = sei^2)"
+   },
+   {
+    "path": "filled_vi.5",
+    "value": 0.7014,
+    "tol": 1e-12,
+    "transform": "sqrt",
+    "note": "filled study keeps the sei of Shehata_2013 (vi = sei^2)"
+   }
+  ],
+  "status": "active",
+  "notes": "meta::trimfill trims on the common-effect mean (ma.common = TRUE) but reports the REML random-effects pooled result of the filled data. The engine applies one model to both steps, so this case uses model = 'fixed' (reproducing the trimming: iterations k0 0 -> 3 -> 5 -> 6 -> 6) and checks only quantities that do not depend on the pooling model (k0, k, Q, I^2, H and their CIs, Q-profile tau^2 CI). The random-effects estimate of the filled data is tested in jslhr_tutorial__trimfill_k22_filled_re_reml. side = 'left' is passed explicitly: meta picks the side from the sign of the Egger intercept (positive -> left)."
+ },
+ {
+  "case_id": "jslhr_tutorial__trimfill_k22_filled_re_reml",
+  "example_id": "jslhr_tutorial__trimfill_k22",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 12 R output box (meta::trimfill, random-effects model of the filled data) and p. 12 text",
+  "description": "REML random-effects pooling of the 22 observed plus 6 trim-and-fill mirror studies (z-CI), i.e. the adjusted estimate meta::trimfill prints.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Davis_2015(1)",
+    "yi": -1.36,
+    "sei": 0.4047
+   },
+   {
+    "study": "Davis_2015(2)",
+    "yi": 3.63,
+    "sei": 0.9258
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Shehata_2013",
+    "yi": 4.51,
+    "sei": 0.7014
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   },
+   {
+    "study": "filled: Uchihara_2022(1)",
+    "yi": -0.49460245248316836,
+    "sei": 0.7687
+   },
+   {
+    "study": "filled: Hardison_2003",
+    "yi": -0.8546024524831684,
+    "sei": 0.5346
+   },
+   {
+    "study": "filled: Silpachai_2020",
+    "yi": -1.0346024524831683,
+    "sei": 1.096
+   },
+   {
+    "study": "filled: Perrachione_2011(1)",
+    "yi": -1.1246024524831684,
+    "sei": 0.4663
+   },
+   {
+    "study": "filled: Davis_2015(2)",
+    "yi": -3.4746024524831682,
+    "sei": 0.9258
+   },
+   {
+    "study": "filled: Shehata_2013",
+    "yi": -4.354602452483168,
+    "sei": 0.7014
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "REML",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "k",
+    "value": 28,
+    "tol": 0,
+    "transform": null,
+    "note": "printed k = 28"
+   },
+   {
+    "path": "estimate",
+    "value": 0.0634,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed 0.0634 (4 dp): tol 0.00005 + 0.00195 input-rounding allowance (CI-consistent MC range [0.0621, 0.0639] vs rounded-input 0.0621; verifier abs 0.002)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.4924,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed -0.4924; verifier abs 0.002"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6191,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed 0.6191; verifier abs 0.002"
+   },
+   {
+    "path": "stat",
+    "value": 0.22,
+    "tol": 0.01,
+    "transform": null,
+    "note": "printed z = 0.22 (2 dp): tol 0.005 + 0.005 (verifier abs 0.01)"
+   },
+   {
+    "path": "p",
+    "value": 0.8232,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed p = 0.8232: tol 0.00005 + 0.00495 (MC range [0.8216, 0.8267] vs rounded-input 0.8266; verifier abs 0.005)"
+   },
+   {
+    "path": "tau2",
+    "value": 1.9256,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed tau^2 = 1.9256 (REML): tol 0.00005 + 0.00195 (MC range [1.9212, 1.9286]; verifier abs 0.002)"
+   },
+   {
+    "path": "tau",
+    "value": 1.3877,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed tau = 1.3877; verifier abs 0.002"
+   },
+   {
+    "path": "estimate",
+    "value": 0.06,
+    "tol": 0.007,
+    "transform": null,
+    "note": "p. 12 text 0.06 (2 dp): tol 0.005 + 0.002"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.49,
+    "tol": 0.007,
+    "transform": null,
+    "note": "p. 12 text CI lower -0.49: tol 0.005 + 0.002"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.62,
+    "tol": 0.007,
+    "transform": null,
+    "note": "p. 12 text CI upper 0.62: tol 0.005 + 0.002"
+   },
+   {
+    "path": "p",
+    "value": 0.82,
+    "tol": 0.01,
+    "transform": null,
+    "note": "p. 12 text p = .82 (2 dp): tol 0.005 + 0.005"
+   },
+   {
+    "path": "estimate",
+    "value": 0.062124,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "se",
+    "value": 0.283521,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "ci_lower",
+    "value": -0.493566,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.617814,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "stat",
+    "value": 0.219116,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "p",
+    "value": 0.826559,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   },
+   {
+    "path": "tau2",
+    "value": 1.925041,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) (metafor rma(method='REML') on the same 28 rows: 1.9250)"
+   },
+   {
+    "path": "tau",
+    "value": 1.387459,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source)"
+   }
+  ],
+  "status": "active",
+  "notes": "Two-step reproduction of meta's default: rows 23-28 are the L0 trim-and-fill fills derived from the printed inputs, yi = 2*m - y_j with sei_j, where m = 0.0776987738 is the fixed-effect mean of the 16 untrimmed studies (k0 = 6; computed independently in the case generator and equal to the verifier's 0.077699, to metafor trimfill(rma(method='EE'), side='left') and to the engine's filled_yi). The single-call form is the known_gap case jslhr_tutorial__trimfill_k22_meta_default."
+ },
+ {
+  "case_id": "jslhr_tutorial__trimfill_k22_meta_default",
+  "example_id": "jslhr_tutorial__trimfill_k22",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 12 R output box (meta::trimfill)",
+  "description": "Single-call trim-and-fill with meta's defaults: trim on the fixed-effect mean, report the REML random-effects estimate of the filled data.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407
+   },
+   {
+    "study": "Davis_2015(1)",
+    "yi": -1.36,
+    "sei": 0.4047
+   },
+   {
+    "study": "Davis_2015(2)",
+    "yi": 3.63,
+    "sei": 0.9258
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466
+   },
+   {
+    "study": "Giannakopoulou_2017",
+    "yi": 0.29,
+    "sei": 0.2852
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253
+   },
+   {
+    "study": "Shehata_2013",
+    "yi": 4.51,
+    "sei": 0.7014
+   },
+   {
+    "study": "Silpachai_2020",
+    "yi": 1.19,
+    "sei": 1.096
+   },
+   {
+    "study": "Uchihara_2022(1)",
+    "yi": 0.65,
+    "sei": 0.7687
+   },
+   {
+    "study": "Uchihara_2022(2)",
+    "yi": -0.2,
+    "sei": 1.0563
+   },
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083
+   },
+   {
+    "study": "Wiener_2020(1)",
+    "yi": -0.03,
+    "sei": 0.2569
+   },
+   {
+    "study": "Wiener_2020(2)",
+    "yi": -0.12,
+    "sei": 0.2571
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487
+   }
+  ],
+  "call": "trimfill",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "REML",
+   "estimator": "L0",
+   "side": "left",
+   "ci_method": "z",
+   "trim_model": "fixed"
+  },
+  "expected": [
+   {
+    "path": "k0",
+    "value": 6,
+    "tol": 0,
+    "transform": null,
+    "note": "printed: 6 studies added"
+   },
+   {
+    "path": "adjusted.estimate",
+    "value": 0.0634,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed 0.0634; verifier abs 0.002"
+   },
+   {
+    "path": "adjusted.ci_lower",
+    "value": -0.4924,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed -0.4924; verifier abs 0.002"
+   },
+   {
+    "path": "adjusted.ci_upper",
+    "value": 0.6191,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed 0.6191; verifier abs 0.002"
+   },
+   {
+    "path": "adjusted.tau2",
+    "value": 1.9256,
+    "tol": 0.002,
+    "transform": null,
+    "note": "printed tau^2 = 1.9256; verifier abs 0.002"
+   }
+  ],
+  "status": "active",
+  "activation_note": "Activated: bias.trim_and_fill(trim_model='fixed') trims on the common-effect mean and pools the filled data with the reported random-effects model (meta::trimfill default, ma.common = TRUE)."
+ },
+ {
+  "case_id": "jslhr_tutorial__metareg_training_length_k13",
+  "example_id": "jslhr_tutorial__metareg_training_length_k13",
+  "source_id": "zhang2022_jslhr",
+  "location": "p. 14 R output box 'Mixed-Effects Model (k = 13; tau2 estimator: DL)' and p. 14 text; rows reconstructed from Figure 2 and Figure 5 (left panel)",
+  "description": "DL mixed-effects meta-regression (Knapp-Hartung t/F) of immediate perception effects on training length in hours.",
+  "measure": "GEN",
+  "options": {},
+  "rows": [
+   {
+    "study": "Van Hedger_2021",
+    "yi": 0.24,
+    "sei": 0.2083,
+    "training_length_hours": 0.2
+   },
+   {
+    "study": "Brosseau-Lapré_2013",
+    "yi": 0.12,
+    "sei": 0.4407,
+    "training_length_hours": 1.0
+   },
+   {
+    "study": "Zhang_2021(2)",
+    "yi": 0.46,
+    "sei": 0.3487,
+    "training_length_hours": 1.25
+   },
+   {
+    "study": "Zhang_2021(1)",
+    "yi": 0.0,
+    "sei": 0.2709,
+    "training_length_hours": 1.25
+   },
+   {
+    "study": "Wong_2013",
+    "yi": 0.14,
+    "sei": 0.8794,
+    "training_length_hours": 2.5
+   },
+   {
+    "study": "Dong_2019",
+    "yi": -0.18,
+    "sei": 0.2466,
+    "training_length_hours": 3.0
+   },
+   {
+    "study": "Lee_2007",
+    "yi": 0.26,
+    "sei": 0.293,
+    "training_length_hours": 4.0
+   },
+   {
+    "study": "Deng_2018",
+    "yi": 0.08,
+    "sei": 0.3537,
+    "training_length_hours": 4.5
+   },
+   {
+    "study": "Hardison_2003",
+    "yi": 1.01,
+    "sei": 0.5346,
+    "training_length_hours": 4.5
+   },
+   {
+    "study": "Brekelmans_2022",
+    "yi": 0.08,
+    "sei": 0.1513,
+    "training_length_hours": 5.0
+   },
+   {
+    "study": "Perrachione_2011(2)",
+    "yi": 0.38,
+    "sei": 0.4253,
+    "training_length_hours": 6.0
+   },
+   {
+    "study": "Perrachione_2011(1)",
+    "yi": 1.28,
+    "sei": 0.4663,
+    "training_length_hours": 8.0
+   },
+   {
+    "study": "Macdonald_2012",
+    "yi": 0.59,
+    "sei": 0.3127,
+    "training_length_hours": 8.0
+   }
+  ],
+  "call": "meta_regression",
+  "call_args": {
+   "moderators": [
+    "training_length_hours"
+   ],
+   "tau2_method": "DL",
+   "test": "knha"
+  },
+  "expected": [
+   {
+    "path": "k",
+    "value": 13,
+    "tol": 0,
+    "transform": null,
+    "note": "printed k = 13"
+   },
+   {
+    "path": "tau2",
+    "value": 0.008,
+    "tol": 0.0015,
+    "transform": null,
+    "note": "printed residual tau^2 0.008 (3 dp): tol 0.0005 + 0.001 reconstruction allowance (verifier)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.09,
+    "tol": 0.0035,
+    "transform": "sqrt",
+    "note": "printed tau 0.090: tol 0.0005 + 0.003 reconstruction allowance"
+   },
+   {
+    "path": "I2_res",
+    "value": 7.93,
+    "tol": 0.705,
+    "transform": null,
+    "note": "printed residual I^2 7.93%: tol 0.005 + 0.7 (verifier)"
+   },
+   {
+    "path": "R2",
+    "value": 39.14,
+    "tol": 3.505,
+    "transform": null,
+    "note": "printed R^2 39.14%: tol 0.005 + 3.5 (verifier)"
+   },
+   {
+    "path": "QE",
+    "value": 11.947,
+    "tol": 0.1005,
+    "transform": null,
+    "note": "printed QE 11.947: tol 0.0005 + 0.1 (verifier)"
+   },
+   {
+    "path": "QE_df",
+    "value": 11,
+    "tol": 0,
+    "transform": null,
+    "note": "printed df 11"
+   },
+   {
+    "path": "QE_p",
+    "value": 0.368,
+    "tol": 0.0055,
+    "transform": null,
+    "note": "printed p_QE .368: tol 0.0005 + 0.005"
+   },
+   {
+    "path": "QM",
+    "value": 2.055,
+    "tol": 0.0105,
+    "transform": null,
+    "note": "printed F(1, 11) = 2.055 (Knapp-Hartung): tol 0.0005 + 0.01"
+   },
+   {
+    "path": "QM_df",
+    "value": 1,
+    "tol": 0,
+    "transform": null,
+    "note": "printed df1 = 1"
+   },
+   {
+    "path": "QM_p",
+    "value": 0.179,
+    "tol": 0.0055,
+    "transform": null,
+    "note": "printed p = .179: tol 0.0005 + 0.005"
+   },
+   {
+    "path": "coefficients.0.estimate",
+    "value": 0.033,
+    "tol": 0.0035,
+    "transform": null,
+    "note": "printed intercept 0.033"
+   },
+   {
+    "path": "coefficients.0.se",
+    "value": 0.156,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "printed SE 0.156"
+   },
+   {
+    "path": "coefficients.0.stat",
+    "value": 0.212,
+    "tol": 0.0105,
+    "transform": null,
+    "note": "printed t 0.212"
+   },
+   {
+    "path": "coefficients.0.p",
+    "value": 0.836,
+    "tol": 0.0055,
+    "transform": null,
+    "note": "printed p .836"
+   },
+   {
+    "path": "coefficients.0.ci_lower",
+    "value": -0.309,
+    "tol": 0.0035,
+    "transform": null,
+    "note": "printed CI lower -0.309"
+   },
+   {
+    "path": "coefficients.0.ci_upper",
+    "value": 0.375,
+    "tol": 0.0035,
+    "transform": null,
+    "note": "printed CI upper 0.375"
+   },
+   {
+    "path": "coefficients.1.estimate",
+    "value": 0.052,
+    "tol": 0.0035,
+    "transform": null,
+    "note": "printed slope 0.052"
+   },
+   {
+    "path": "coefficients.1.se",
+    "value": 0.036,
+    "tol": 0.0025,
+    "transform": null,
+    "note": "printed SE 0.036"
+   },
+   {
+    "path": "coefficients.1.stat",
+    "value": 1.434,
+    "tol": 0.0105,
+    "transform": null,
+    "note": "printed t 1.434"
+   },
+   {
+    "path": "coefficients.1.p",
+    "value": 0.179,
+    "tol": 0.0055,
+    "transform": null,
+    "note": "printed p .179"
+   },
+   {
+    "path": "coefficients.1.ci_lower",
+    "value": -0.028,
+    "tol": 0.0035,
+    "transform": null,
+    "note": "printed CI lower -0.028"
+   },
+   {
+    "path": "coefficients.1.ci_upper",
+    "value": 0.132,
+    "tol": 0.0035,
+    "transform": null,
+    "note": "printed CI upper 0.132"
+   },
+   {
+    "path": "QM",
+    "value": 2.06,
+    "tol": 0.0155,
+    "transform": null,
+    "note": "p. 14 text F(1, 11) = 2.06: tol 0.005 + 0.01"
+   },
+   {
+    "path": "QM_p",
+    "value": 0.18,
+    "tol": 0.01,
+    "transform": null,
+    "note": "p. 14 text p = .18: tol 0.005 + 0.005"
+   },
+   {
+    "path": "tau2",
+    "value": 0.007498,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows (metafor rma DL + knha)"
+   },
+   {
+    "path": "QE",
+    "value": 11.872982,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows"
+   },
+   {
+    "path": "QM",
+    "value": 2.056862,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows"
+   },
+   {
+    "path": "coefficients.0.estimate",
+    "value": 0.031924,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows"
+   },
+   {
+    "path": "coefficients.0.se",
+    "value": 0.154852,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows"
+   },
+   {
+    "path": "coefficients.1.estimate",
+    "value": 0.051751,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows"
+   },
+   {
+    "path": "coefficients.1.se",
+    "value": 0.036084,
+    "tol": 1e-06,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows"
+   },
+   {
+    "path": "R2",
+    "value": 42.090054,
+    "tol": 1e-05,
+    "transform": null,
+    "note": "tight check vs the verifier's full-precision value (verification.computed; not printed in the source) on the reconstructed rows"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Inputs not printed in the source (verifier: usable_as_test_oracle = false). The 13 study-level g values and training hours are only on OSF (e9bkf); the rows here were reconstructed by the verifier from Figure 2 (g, SE) and pixel-digitized Figure 5 hours, with a partly inferred study-to-hour mapping (Deng = 4.5 h, Brekelmans = 5.0 h). With these rows the engine matches metafor (DL + knha) and the printed values within the reconstruction tolerances, but they are not a source oracle. Printed tau^2 SE (0.044) and H^2 (1.09) have no engine field."
+ }
+]

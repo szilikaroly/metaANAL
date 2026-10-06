@@ -1,0 +1,53 @@
+{
+  "schema": "szk.ma.project/v1",
+  "title": "GLP-1-agonisták és testsúly",
+  "question": {
+    "P": "2-es típusú diabétesz",
+    "I": "GLP-1-agonista",
+    "C": "placebo",
+    "O": "testsúly-változás"
+  },
+  "review_type": "intervention",
+  "data_class": "A",
+  "outcomes": [
+    {
+      "id": "o1",
+      "name": {
+        "hu": "Testsúly-változás",
+        "en": "Weight change"
+      },
+      "data": "03_adatok/o1.csv",
+      "measure": "MD",
+      "critical": true,
+      "primary_spec": "05_elemzes/specs/o1_primary.json",
+      "grade_start": "high"
+    },
+    {
+      "id": "o2",
+      "name": {
+        "hu": "Hányinger",
+        "en": "Nausea"
+      },
+      "data": null,
+      "measure": null,
+      "critical": false,
+      "primary_spec": null,
+      "grade_start": null
+    }
+  ],
+  "appraisal_tools": [
+    "rob2"
+  ],
+  "composer": {
+    "project": "glp1",
+    "outdir": "02_szures/composer"
+  },
+  "doc_roots": [
+    "01_irodalom"
+  ],
+  "locale": "hu",
+  "conventions": {
+    "amstar2_partial_yes_critical": "meets",
+    "grade_suspected": "unresolved"
+  }
+}

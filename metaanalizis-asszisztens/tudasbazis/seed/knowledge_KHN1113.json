@@ -1,0 +1,912 @@
+[
+ {
+  "k_id": "K-KHN1113-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A 11–13. fejezet hatóköre: meta-regresszió, publikációs torzítás, dózis–válasz metaanalízis",
+  "body": "Khan (2020) Ch 11–13 (pp. 243–283; Xu & Doi wrote Ch 11 and 13, Furuya-Kanamori & Doi wrote Ch 12) cover meta-regression (classical random-effects versus the authors' robust-error WLS, with continuous, categorical and multivariable covariates), publication bias (funnel, contour-enhanced funnel and Doi plots; Begg, Egger, Harbord and Peters tests; the LFK index) and dose-response meta-analysis (GLST and the authors' REMR with restricted cubic splines), all worked in Stata and MetaXL. They do not cover prediction intervals, Q-between formulas, permutation tests, leave-one-out or influence diagnostics, trim-and-fill, fail-safe N, selection models, named risk-of-bias or GRADE tools, or PRISMA items. [note: this author group developed IVhet, REMR and the Doi plot/LFK index and clearly favours them, so read its comparative claims as advocacy, not consensus; the DOCX conversion also lost the equations and the Stata output images, so every formula from these chapters is a reconstruction checked against recomputed numbers.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 243–254; Ch12 pp. 255–265; Ch13 pp. 267–283",
+  "tags": "scope hatókör meta-regression meta-regresszió publication bias publikációs torzítás dose-response dózis-válasz DRMA Stata MetaXL IVhet REMR LFK Doi plot Khan 2020"
+ },
+ {
+  "k_id": "K-KHN1113-002",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Regiszterek és a keresés szélessége a hiányzó evidencia ellen",
+  "body": "Trial registries such as ClinicalTrials.gov give direct evidence of publication bias. Search them for registered studies that were conducted but never published, or whose results were never released. The chapter also names three sources of missing evidence: language bias (English-only inclusion), time-lag bias (negative trials appear later) and outcome-reporting bias. These argue for searching without language limits, including grey literature, and comparing registered with reported outcomes. [note: the search advice is an inference, consistent with the Cochrane Handbook v6 (ch. 4) and PRISMA 2020 items 6–7; the book itself only names the biases and the registry route.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 255; 'Detection Methods' p. 256",
+  "tags": "trial registry vizsgálati regiszter ClinicalTrials.gov unpublished nem publikált direct evidence közvetlen bizonyíték language bias nyelvi torzítás time-lag bias késleltetési torzítás outcome reporting bias szelektív kimenetjelentés grey literature szürke irodalom search keresés"
+ },
+ {
+  "k_id": "K-KHN1113-003",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Ellenőrzés: történt-e regiszterkeresés nem publikált vizsgálatokra",
+  "body": "Reviewer check: confirm that trial registries (e.g. ClinicalTrials.gov) were searched for trials that were registered but never published or reported, and that the review states what the search found. Without a registry search, the only evidence on publication bias is indirect (funnel plots and asymmetry tests).",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 256",
+  "tags": "check ellenőrzés registry regiszter ClinicalTrials.gov unpublished trials nem publikált vizsgálatok publication bias publikációs torzítás search keresés reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-004",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Meta-regressziós kovariánsok: vizsgálati szintű aggregált értékek",
+  "body": "Meta-regression covariates are study-level characteristics such as mean age, region or mean BMI. They are study means or medians, not individual values, so code them for every study during data extraction. Because they are aggregates, any association they show is between studies, not within patients. [note: this is why meta-regression findings are observational and open to aggregation (ecological) bias, as the Cochrane Handbook v6 (ch. 10) stresses; see the evaluator criterion on heterogeneity explanation.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 244; §11.4 p. 253",
+  "tags": "covariate kovariáns moderator moderátor study-level vizsgálati szintű aggregate aggregált mean age átlagéletkor BMI region régió data extraction adatkinyerés meta-regression meta-regresszió ecological ökológiai"
+ },
+ {
+  "k_id": "K-KHN1113-005",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Dózis–válasz MA adatkinyerés kategóriánként",
+  "body": "For dose-response meta-analysis, extract for each study and each exposure category: the interval bounds and an assigned dose (midpoint, median or mean); the effect estimate (RR/OR/HR, or mean/MD/SMD) with its CI; the number of cases; the group size; the study type; and a flag for the reference category. The group size is person-years for cohorts reporting incidence rates, non-cases for cohorts reporting cumulative incidence, and controls for case-control studies. GLST needs the cases and group sizes to rebuild the within-study covariance.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 268–271, Tables 13.1–13.2",
+  "tags": "dose-response dózis-válasz DRMA data extraction adatkinyerés exposure category expozíciós kategória cases esetszám person-years személyév non-cases controls kontrollok study type vizsgálattípus reference category referencia-kategória GLST"
+ },
+ {
+  "k_id": "K-KHN1113-006",
+  "stage_id": "S05",
+  "kind": "convention",
+  "title": "glst adatformátum: vizsgálattípus-kódolás és sorrend",
+  "body": "Stata glst codes the study-type variable as 1 = case-control, 2 = cohort with incidence rate and 3 = cohort with cumulative incidence. Per-study fits use the options cc, ir or ci instead. glst takes the first row of each study as its reference, so that row must be the reference category and the rows must be sorted by dose.",
+  "source_id": "khan2020",
+  "locator": "Ch13 p. 271",
+  "tags": "glst Stata study type vizsgálattípus coding kódolás case-control eset-kontroll cohort kohorsz incidence rate incidenciaráta cumulative incidence kumulatív incidencia pfirst data layout adatszerkezet reference first referencia első sor sort by dose"
+ },
+ {
+  "k_id": "K-KHN1113-007",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Dózis hozzárendelése intervallumhoz",
+  "body": "Most studies report exposure in categories with differing cut-points, so each category is represented by an assigned dose. The usual choice is the interval midpoint; a median or mean reported by the study for that category can be used instead. The rule is nonparametric because usually only the two bounds are known (Bekkering 2008; Takahashi & Tango 2010). Document the rule in the protocol and methods.",
+  "source_id": "khan2020",
+  "locator": "Ch13 p. 268",
+  "tags": "dose assignment dózis hozzárendelés midpoint intervallum-középpont median medián mean átlag exposure interval expozíciós intervallum category kategória DRMA dózis-válasz nonparametric nemparaméteres"
+ },
+ {
+  "k_id": "K-KHN1113-008",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Hiányzó adatok kezelése dózis–válasz MA-ban",
+  "body": "Dose given only as an interval: use the interval's mean, median or midpoint. Only qualitative levels (low/moderate/high): these can be mapped onto doses from another study with a similar population, but the book calls this crude. Missing CI: frequency weights from the category sample sizes can be used, though they may bias the variance. Missing group sizes: GLST cannot be fitted because it needs them for the covariance, so use REMR. The book advises contacting authors but notes that this usually fails.",
+  "source_id": "khan2020",
+  "locator": "Ch13 'Missing Data' p. 279",
+  "tags": "missing data hiányzó adatok dose dózis interval intervallum qualitative levels kvalitatív szintek confidence interval konfidencia-intervallum frequency weights gyakorisági súlyok group size csoportméret GLST REMR contact authors szerzők megkeresése"
+ },
+ {
+  "k_id": "K-KHN1113-009",
+  "stage_id": "S05",
+  "kind": "formula",
+  "title": "SE számítása arány-mérték 95%-os CI-jéből",
+  "body": "For a ratio estimate (RR/OR/HR) reported with a 95% CI, se(ln estimate) = (ln UCI − ln LCI)/(2·1.959964) ≈ (ln UCI − ln LCI)/3.92, computed on the log scale. For the reference category (RR = 1, CI 1–1) this gives se = 0, which leaves the inverse-variance weight missing in Stata. REMR then gives that row the study's maximum weight.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 271–272",
+  "tags": "standard error standard hiba SE confidence interval konfidencia-intervallum CI conversion konverzió log scale log-skála ratio arány RR OR HR invnormal 0.975 reference category referencia-kategória weight súly"
+ },
+ {
+  "k_id": "K-KHN1113-010",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Log OR és log RR 2×2 táblából; nullcella-korrekció",
+  "body": "Let a and b be events and non-events in the intervention arm, and c and d the same in the control arm. ln OR = ln(ad/bc), with variance 1/a + 1/b + 1/c + 1/d. ln RR = ln[(a/n1)/(c/n2)], with variance 1/a − 1/n1 + 1/c − 1/n2. Ch 11 pools ln OR and Ch 12 plots ln RR. In the worked data, Stata admetan and MetaXL add 0.5 to all four cells, but only in studies with a zero cell. Trial T22 (2/94 vs 0/52) gives OR 2.8378378 = (2.5·52.5)/(92.5·0.5) with SE 1.5588003. [note: the note-taker added these standard formulas; the book shows only the resulting numbers.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 Table 11.1 p. 246; Fig. 11.2 p. 251; Ch12 p. 256",
+  "tags": "odds ratio esélyhányados log OR risk ratio relatív kockázat log RR 2x2 table 2x2 tábla variance variancia zero cell nulla cella continuity correction folytonossági korrekció 0.5 admetan MetaXL"
+ },
+ {
+  "k_id": "K-KHN1113-011",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Folytonos dózis–válasz: átlagkülönbség a referenciához képest",
+  "body": "For continuous outcomes, take within each study the difference between each non-reference category mean and the reference (dose 0) mean: d_ij = mean_ij − mean_0j, with Var(d_ij) = sd_ij²/n_ij + sd_0j²/n_0j. The reference row's variance is set to missing; REMR later gives it the maximum weight. GLST cannot use absolute means because it needs the reference effect and variance to be zero (1 on the ratio scale), so use mean differences or REMR. For an SMD the book points to Hedges' g or Cohen's d without giving formulas. [note: the d_ij within a study share the reference arm and are therefore correlated; REMR handles this with cluster-robust SEs.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 275–277",
+  "tags": "mean difference átlagkülönbség MD continuous outcome folytonos kimenet dose-response dózis-válasz reference group referenciacsoport variance variancia absolute mean abszolút átlag GLST REMR SMD Hedges g Cohen d"
+ },
+ {
+  "k_id": "K-KHN1113-012",
+  "stage_id": "S08",
+  "kind": "definition",
+  "title": "Fix és véletlen hatású modell definíciója",
+  "body": "Fixed-effect model: each estimate θ̂_j ~ N(μ, σ_j²). All studies estimate one common μ and there is no between-study heterogeneity. Random-effects model: θ̂_j ~ N(θ_j, σ_j²) with θ_j ~ N(μ, τ²). Here τ² describes how study-population characteristics (e.g. mean age) shift the true effect around μ (Thompson & Sharp 1999).",
+  "source_id": "khan2020",
+  "locator": "Ch11 §11.1.1 p. 243",
+  "tags": "fixed-effect model fix hatású modell random-effects model véletlen hatású modell tau2 tau-négyzet between-study variance vizsgálatok közötti variancia heterogeneity heterogenitás common effect közös hatás"
+ },
+ {
+  "k_id": "K-KHN1113-013",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "IVhet modell: a szerzők preferált modellje",
+  "body": "IVhet (Doi et al. 2015) keeps the fixed-effect inverse-variance point estimate and inflates its variance for heterogeneity: Var(μ̂) = Σ_j (w_j/Σw)²·(v_j + τ²_DL). For the 28 IHDChol trials, Stata admetan with ivhet gives OR 0.825 (0.719, 0.946), z = −2.750, p = 0.006, using the DerSimonian–Laird τ². [note: the note-taker added the variance formula, and it reproduces the printed CI and z exactly. IVhet is promoted mainly by its developers, who include these authors. The Cochrane Handbook v6 default is a random-effects model, preferably with REML or Paule–Mandel τ².]",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 247 (output image); §11.1.2 p. 245",
+  "tags": "IVhet inverse variance heterogeneity inverz variancia heterogenitás model modell Doi 2015 DerSimonian-Laird DL tau2 admetan pooled estimate összesített becslés IHDChol"
+ },
+ {
+  "k_id": "K-KHN1113-014",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "Robusztus hibájú (sandwich) WLS meta-regresszió",
+  "body": "The authors' preferred meta-regression is ordinary weighted least squares with fixed-effect (inverse-variance) weights and Huber–Eicker–White sandwich SEs (Hedges, Tipton & Johnson 2010), so the robust variance absorbs overdispersion instead of τ². Their rationale: fixed-effect meta-regression is overdispersed under heterogeneity, while random-effects weights become nearly equal as heterogeneity grows, leaving an almost unweighted and still overdispersed regression (Doi 2015). They present it as the regression analogue of IVhet, since the constant-only model returns the IVhet point estimate. [note: the standard recommendation (Cochrane Handbook v6, metafor) is random-effects meta-regression with REML τ² and Knapp–Hartung tests; robust-error WLS is a minority approach. HC-type sandwich SEs are biased downwards when there are few studies; if robust variance is wanted, use small-sample-corrected robust variance estimation (CR2 with Satterthwaite df; Tipton 2015).]",
+  "source_id": "khan2020",
+  "locator": "Ch11 §11.1.1–11.1.2 pp. 244–245; p. 247",
+  "tags": "robust error robusztus hiba sandwich variance szendvics variancia Huber-White WLS súlyozott legkisebb négyzetek meta-regression meta-regresszió overdispersion túlszóródás fixed-effect weights fix hatású súlyok IVhet random-effects véletlen hatás"
+ },
+ {
+  "k_id": "K-KHN1113-015",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Robusztus regresszió ≠ IVhet konfidencia-intervallum",
+  "body": "The robust-error regression with no covariate reproduces only the IVhet point estimate (OR 0.8246), not its CI. The robust CI is 0.760–0.895, narrower than the IVhet CI of 0.719–0.946. Do not report the robust no-covariate CI as the IVhet pooled CI; compute the pooled CI from the IVhet variance formula. [note: recomputation found this; the book implies the two analyses agree.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 247 (output images); recomputation",
+  "tags": "pitfall buktató robust regression robusztus regresszió IVhet confidence interval konfidencia-intervallum narrower szűkebb pooled estimate összesített becslés reproduce reprodukálás"
+ },
+ {
+  "k_id": "K-KHN1113-016",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "A fejezetekben használt CI- és tesztmódszerek",
+  "body": "IVhet pooled estimates and xblc dose-specific predictions use z-based CIs (±1.96·SE). Robust WLS meta-regression (Stata regress) uses t with k − p df. Classical metareg uses Knapp–Hartung t with k − p df. Cluster-robust REMR uses t with (number of clusters − 1) df, e.g. 4 df for 5 studies. These chapters do not discuss prediction intervals. [note: current guidance (Cochrane Handbook v6, ch. 10) notes that z-based random-effects CIs are too narrow when there are few studies and that the Hartung–Knapp–Sidik–Jonkman method has better coverage. It also encourages a prediction interval alongside the random-effects estimate.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 247–250; Ch13 pp. 273, 276",
+  "tags": "confidence interval konfidencia-intervallum CI method módszer z-test z-próba t-distribution t-eloszlás Knapp-Hartung degrees of freedom szabadsági fok cluster klaszter xblc prediction interval predikciós intervallum"
+ },
+ {
+  "k_id": "K-KHN1113-017",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Stata robusztus SE-k és súlyok számítási konvenciói",
+  "body": "In regress, Stata's robust SEs are HC1: the sandwich is multiplied by N/(N − k), and tests use t with N − k df. Cluster-robust SEs use the factor G/(G − 1)·(N − 1)/(N − k), with t on G − 1 df (5 clusters → 4 df; 4 clusters → 3 df). Analytic weights are rescaled internally to sum to N; the printed 'sum of wgt is 8.8607e+02' is the raw Σ(1/SE²). An engine that replicates the book's numbers must apply these factors.",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 247 (output image); Ch13 p. 276 (output); recomputation",
+  "tags": "Stata HC1 robust standard error robusztus standard hiba small-sample correction kismintás korrekció cluster-robust klaszter-robusztus aweight analitikus súly degrees of freedom szabadsági fok replication reprodukálás"
+ },
+ {
+  "k_id": "K-KHN1113-018",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "IHDChol heterogenitás: Q, I², H², τ²",
+  "body": "For the 28 cholesterol-lowering trials (IHDChol; Law, Wald & Thompson 1994), the admetan IVhet output reports Q = 49.69 (df 27, p = 0.005), I² = 45.7% ('moderate heterogeneity'), modified H² = 0.840 and τ² = 0.0294 (DerSimonian–Laird). Stata's modified H² is (Q − df)/df = I²/(1 − I²), i.e. the classical H² = Q/df minus 1; do not compare it with software that reports Q/df. The Stata line is labelled 'Mantel-Haenszel Q' and the text calls Q the 'total variance'. [note: Q is a weighted sum of squared deviations, Q = Σ w_j(θ̂_j − θ̂_FE)², not a variance.] [note: the 'moderate' label is the book's. I² is a relative measure that depends on study precision, and the Cochrane Handbook v6 gives only overlapping, non-absolute ranges (0–40% might not be important, 30–60% moderate, 50–90% substantial, 75–100% considerable). Report τ² (or τ) and a prediction interval as well, and do not choose fixed versus random effects from I² or from the Q test.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 247 (output image); p. 249; recomputation",
+  "tags": "heterogeneity heterogenitás Cochran Q I2 I-négyzet H2 modified H2 módosított H-négyzet tau2 DerSimonian-Laird IHDChol cholesterol koleszterin example példa Mantel-Haenszel admetan"
+ },
+ {
+  "k_id": "K-KHN1113-019",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "τ²-elírás a szövegben (0,0188 vs 0,0294)",
+  "body": "The text on p. 245 gives τ² = 0.0188 for IHDChol, but the output on p. 247 shows 0.0294 (DL). No common estimator gives 0.0188 (DL 0.0294, REML 0.0313, ML 0.0259, PM 0.0550, HE 0.0613, SJ 0.1594, HS 0.0245), so treat it as a typo. Catch such errors by comparing text with software output, and report the estimator name together with the value from the output.",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 245 vs p. 247; recomputation",
+  "tags": "pitfall buktató typo elírás tau2 estimator becslő DerSimonian-Laird REML ML Paule-Mandel PM Hedges HE Sidik-Jonkman SJ Hunter-Schmidt HS discrepancy eltérés IHDChol"
+ },
+ {
+  "k_id": "K-KHN1113-020",
+  "stage_id": "S10",
+  "kind": "formula",
+  "title": "Klasszikus meta-regressziós modell",
+  "body": "θ̂_j = μ + β_1·x_1j + … + β_i·x_ij + b_j + ε_j. Here x are study-level covariates, ε_j ~ (0, σ_j²) is within-study error and b_j ~ (0, τ²) is between-study error. The model is fitted by weighted least squares. With no covariates it reduces to θ̂_j = μ + b_j + ε_j: the constant is the pooled effect and the τ² is τ²_0.",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 243–244",
+  "tags": "meta-regression meta-regresszió model modell covariate kovariáns between-study error vizsgálatok közötti hiba within-study error vizsgálaton belüli hiba weighted least squares súlyozott legkisebb négyzetek tau2 random-effects véletlen hatás"
+ },
+ {
+  "k_id": "K-KHN1113-021",
+  "stage_id": "S10",
+  "kind": "formula",
+  "title": "R² analóg és a τ² változásának értelmezése",
+  "body": "Adding a covariate leaves the within-study variances unchanged, so any change appears in τ²: a fall means the covariate explains part of the heterogeneity, and a rise means a worse fit, so the variable should not be added and is not a source of heterogeneity. The proportion of between-study variance explained is R² = max[(τ²_0 − τ²_model)/τ²_0, 0], with τ²_0 from the model without covariates and τ²_model the residual τ²; it is truncated at 0 when τ²_model > τ²_0. The book then equates this with the ordinary regression R² = SS_model/SS_total, a different quantity (see the pitfall on mixing R² measures). [note: the R² analog is very imprecise with few studies, and its truncation at 0 hides negative values (López-López et al. 2014). A rise or fall in the estimated τ² within one dataset can be sampling noise, so do not use it as a covariate-selection rule; pre-specify the covariates in the protocol (Cochrane Handbook v6, ch. 10).]",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 244",
+  "tags": "R2 R-négyzet proportion explained magyarázott arány between-study variance vizsgálatok közötti variancia tau2 residual reziduális meta-regression meta-regresszió heterogeneity heterogenitás covariate kovariáns truncation csonkolás"
+ },
+ {
+  "k_id": "K-KHN1113-022",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Kétféle R² összekeverése",
+  "body": "The WLS R² from Stata regress (mss/(mss + rss) = 23.8% for cholesterol reduction) is not the τ²-based proportion of between-study variance explained; metareg's adjusted R² for the same covariate is 43.97%. The book nevertheless calls 23.8% the between-study variance explained. Detect this by checking which output produced the R². Fix it by labelling the R² explicitly and using (τ²_0 − τ²_res)/τ²_0 for heterogeneity explained.",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 244; pp. 248–249",
+  "tags": "pitfall buktató R2 R-négyzet WLS weighted regression súlyozott regresszió between-study variance explained magyarázott heterogenitás metareg adjusted R2 korrigált R-négyzet mislabel félrecímkézés"
+ },
+ {
+  "k_id": "K-KHN1113-023",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Nem standard 'I²_model' F-statisztikából",
+  "body": "The book computes I²_model = (F_model − df_r)/F_model = (30.23 − 26)/30.23 = 13.99% from the F statistic of the robust regression. This is not Higgins' I², and it disagrees with metareg's residual I² of 31.34%. Flag any I² computed from an F statistic; report I²_res = (Q_E − df_res)/Q_E from the residual-heterogeneity Q instead.",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 248",
+  "tags": "pitfall buktató I2 I-négyzet residual reziduális F statistic F-statisztika non-standard nem standard meta-regression meta-regresszió Higgins heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN1113-024",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Robusztus meta-regresszió: koleszterinszint-csökkentés (IHDChol)",
+  "body": "Robust WLS meta-regression of ln OR on cholesterol reduction (28 trials) gives OR per unit reduction 0.6217 (0.5205, 0.7426), p < 0.001; the book reads this as each unit of reduction lowering the odds of IHD by 38%. The constant is OR 1.128 (0.982, 1.297), p = 0.087, i.e. no effect when the reduction is zero. R² = 0.3736/(0.3736 + 1.1966) = 23.8%, adjusted R² 20.9%, F(1, 26) = 30.23. Every digit reproduces on recomputation.",
+  "source_id": "khan2020",
+  "locator": "Ch11 §11.2.2 p. 248 (output images)",
+  "tags": "example példa robust meta-regression robusztus meta-regresszió cholesterol koleszterin ischaemic heart disease iszkémiás szívbetegség odds ratio esélyhányados IHDChol constant konstans R2 Stata regress"
+ },
+ {
+  "k_id": "K-KHN1113-025",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Klasszikus (Knapp–Hartung) meta-regresszió ugyanarra az adatra",
+  "body": "Classical random-effects meta-regression (Stata metareg, method-of-moments τ², Knapp–Hartung) gives OR 0.594 (0.401, 0.881), p = 0.012, and a constant of 1.173. Residual τ² = 0.01647, I²_res = 31.34%, adjusted R² = 43.97% (Q_E = 37.87 on 26 df). The point estimates are close to the robust model; the CIs differ because of the Knapp–Hartung modification. [note: recomputation shows this equals metafor rma(yi, vi, mods = ~x, method = 'DL', test = 'knha').]",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 249–250 (output image)",
+  "tags": "example példa metareg classical meta-regression klasszikus meta-regresszió Knapp-Hartung method of moments momentumok módszere residual tau2 reziduális I2 adjusted R2 metafor DL knha"
+ },
+ {
+  "k_id": "K-KHN1113-026",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "A konstans és az együtthatók értelmezése, visszatranszformálás",
+  "body": "Ratio outcomes are regressed on the log scale and reported exponentiated (Stata eform), giving an OR per unit of the covariate with its CI and p. The constant is the predicted effect when the covariate equals 0; with indicator variables it is the effect in the reference category. In the cholesterol example the constant is OR 1.13 (0.98, 1.30) at zero reduction.",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 247–249; §11.3 p. 253",
+  "tags": "interpretation értelmezés coefficient együttható constant konstans intercept tengelymetszet back-transformation visszatranszformálás exponentiate exponenciális eform odds ratio esélyhányados reference category referencia-kategória"
+ },
+ {
+  "k_id": "K-KHN1113-027",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Folytonos moderátor kategorizálása információvesztéssel jár",
+  "body": "Recoding cholesterol reduction into three groups (<0.5, 0.5–0.99, ≥1) and fitting indicator variables (i.chol_grp) in the robust model drops the variance explained from 23.8% (continuous) to 18.6% (categorised). Keep a continuous moderator continuous unless there is a clinical reason to categorise it. With categories, the constant is the reference-group effect.",
+  "source_id": "khan2020",
+  "locator": "Ch11 §11.3 pp. 251–253",
+  "tags": "pitfall buktató categorisation kategorizálás dichotomisation dichotomizálás continuous moderator folytonos moderátor information loss információvesztés dummy variable indikátorváltozó meta-regression meta-regresszió"
+ },
+ {
+  "k_id": "K-KHN1113-028",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Többváltozós meta-regresszió",
+  "body": "One covariate rarely explains all heterogeneity (cholesterol reduction explained 23.8%). Several covariates, such as mean age, region or mean BMI, can be entered together in either the classical or the robust model, as in individual-level multivariable regression. Each added covariate raises the number of studies needed (see the 10-studies-per-covariate rule).",
+  "source_id": "khan2020",
+  "locator": "Ch11 §11.4 p. 253",
+  "tags": "multivariable meta-regression többváltozós meta-regresszió covariates kovariánsok mean age átlagéletkor region régió BMI heterogeneity heterogenitás number of studies vizsgálatszám"
+ },
+ {
+  "k_id": "K-KHN1113-029",
+  "stage_id": "S10",
+  "kind": "threshold",
+  "title": "Minimális vizsgálatszám meta-regresszióhoz",
+  "body": "Rule of thumb: each covariate needs at least 10 additional studies, so 2 covariates need at least 20. With fewer than 10 studies, do not run a meta-regression; use subgroup analysis instead. With fewer than 20, fit at most one covariate. [note: the Cochrane Handbook v6 (ch. 10) gives similar advice, about 10 studies per characteristic modelled, and treats it as a minimum: it is too few when the covariate is unevenly distributed. The book's advice to switch to subgroup analysis below 10 studies is contested. A subgroup analysis is itself a meta-regression on a categorical covariate, and the same few-study caution applies to it.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 §11.4 p. 253",
+  "tags": "threshold küszöb rule of thumb ökölszabály 10 studies per covariate 10 vizsgálat kovariánsonként minimum number of studies minimális vizsgálatszám meta-regression meta-regresszió subgroup analysis alcsoport-elemzés power erő"
+ },
+ {
+  "k_id": "K-KHN1113-030",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Mintanagyság nem lehet meta-regressziós kovariáns",
+  "body": "Do not use sample size, or any function of it, as a meta-regression covariate. It is highly correlated with the standard errors, which the book says breaks the orthogonality assumption and invalidates the model (Dobson & Barnett 2008). Small-study effects should be examined with funnel, Egger or Doi analyses instead. [note: the orthogonality rationale is the book's own. The standard concern is different: a size or precision moderator mixes small-study effects (including publication bias) with genuine effect modification. Regressing on SE or 1/N is exactly what the Egger and Peters tests do, so it is not inherently invalid, but it answers the small-study question, not a moderator question.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 254",
+  "tags": "pitfall buktató sample size mintanagyság covariate kovariáns standard error standard hiba orthogonality ortogonalitás small-study effects kis vizsgálatok hatása meta-regression meta-regresszió"
+ },
+ {
+  "k_id": "K-KHN1113-031",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "Alcsoport-elemzés mint kategorikus meta-regresszió",
+  "body": "Subgroup analysis is a special case of meta-regression with one categorical variable. It handles one variable at a time and gives no comparison against a reference group within the analysis, but it has no minimum number of studies. With 3 or more subgroups, the interaction test for differences between them is generally underpowered. These chapters do not cover Q-between formulas, permutation tests or multiple-testing control. [note: the claim that subgroup analysis has no minimum number of studies is contested. The Cochrane Handbook v6 (ch. 10) applies the same caution to subgroup analyses and meta-regression: pre-specify a few subgroups, compare them with a test for subgroup differences rather than with separate p-values, and treat findings from few studies per subgroup as exploratory (see also the ICEMAN credibility criteria).]",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 254",
+  "tags": "subgroup analysis alcsoport-elemzés categorical meta-regression kategorikus meta-regresszió interaction test interakciós teszt underpowered alacsony erő three subgroups három alcsoport minimum studies minimális vizsgálatszám"
+ },
+ {
+  "k_id": "K-KHN1113-032",
+  "stage_id": "S10",
+  "kind": "tool",
+  "title": "MetaXL meta-regressziós adatállomány (MARegresData)",
+  "body": "In MetaXL, linking MARegresData to MAInputTable produces a 'Meta-regression data' table that can be copied into Stata. Its fixed columns are ID; t_es, se_t_es and var_t_es (transformed effect, SE and variance); u_es, lci_u_es and uci_u_es (untransformed effect and CI); inv_var; and weight (normalised to sum to 1 under the chosen model). User-defined covariate columns follow. Regress t_es using weight. u_es is there only for convenience in back-transforming, e.g. after a double-arcsine transformation of prevalence. The example module is IHDCholMetaRegres.",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 250–251, Table 11.2, Fig. 11.2",
+  "tags": "MetaXL MARegresData MAInputTable meta-regression dataset meta-regressziós adatállomány transformed effect transzformált hatás weight súly Excel Stata export double arcsine prevalence prevalencia"
+ },
+ {
+  "k_id": "K-KHN1113-033",
+  "stage_id": "S10",
+  "kind": "tool",
+  "title": "Stata parancsok meta-regresszióhoz",
+  "body": "admetan cases1 noncases1 cases2 noncases2, or ivhet summaryonly runs IVhet and stores _ES and _seES. regress _ES chol_reduc [aw=1/(_seES^2)], vce(robust) eform(expb) fits the robust meta-regression; drop the covariate for the robust meta-analysis. ereturn list then shows mss, rss, r2, r2_a and F. metareg _ES chol_reduc, wsse(_seES) eform graph mm fits classical RE meta-regression with method-of-moments τ² and Knapp–Hartung. For a categorical covariate: recode chol_reduc (min/0.499=0)(0.5/0.999999=1)(1/max=2), gen(chol_grp), then regress t_es i.chol_grp [aw=weight], vce(robust).",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 247–253",
+  "tags": "Stata admetan regress vce robust metareg wsse eform mm ereturn recode command parancs meta-regression meta-regresszió IVhet Knapp-Hartung code kód"
+ },
+ {
+  "k_id": "K-KHN1113-034",
+  "stage_id": "S10",
+  "kind": "definition",
+  "title": "Dózis–válasz metaanalízis (DRMA) definíciója és kulcskérdései",
+  "body": "Dose-response meta-analysis combines dose-specific effects at several exposure levels from conceptually similar studies to estimate the exposure–outcome dose-response relationship. It must settle how to model the unknown relationship, how to pool it across studies, and how to handle the correlation among several estimates from one study. The relationship can be categorical (real differences across exposure categories) or continuous (smoothed as simple linear, piecewise linear or non-linear). Because category cut-points differ between studies, the usual route is to assign a dose to each category and pool the fitted curves through their regression coefficients.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 267–268, Table 13.1",
+  "tags": "dose-response meta-analysis dózis-válasz metaanalízis DRMA definition definíció exposure expozíció categorical kategorikus continuous folytonos linear lineáris piecewise szakaszos non-linear nemlineáris correlation korreláció"
+ },
+ {
+  "k_id": "K-KHN1113-035",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "Korrelált dózis-specifikus becslések és a GLS",
+  "body": "Dose-specific estimates within a study (RR/OR/HR, or RD/MD/SMD) share the same reference category and are therefore correlated. Generalised least squares (GLS) accounts for this but needs the within-study covariance to be known (Dobson & Barnett 2008); GLST reconstructs it from cases and group sizes. With confounder-adjusted RRs the variance of the adjusted reference risk is unavailable, so the reconstructed covariance for observational studies is somewhat biased.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 268–269",
+  "tags": "correlation korreláció covariance kovariancia generalized least squares általánosított legkisebb négyzetek GLS dose-specific dózis-specifikus reference category referencia-kategória adjusted relative risk korrigált relatív kockázat observational megfigyeléses bias torzítás"
+ },
+ {
+  "k_id": "K-KHN1113-036",
+  "stage_id": "S10",
+  "kind": "formula",
+  "title": "A referencia-kategória log-kockázatának varianciája",
+  "body": "To build the GLS covariance, the variance of the reference category's log risk is 1/r_0 − 1/n_0 for cohort studies and RCTs, and 1/r_0 + 1/(n_0 − r_0) for case-control studies. Here r_0 = events and n_0 = total in the reference category. [note: reconstructed from garbled fragments; it matches the binomial variance of a log risk and of a log odds.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 p. 269",
+  "tags": "variance variancia reference category referencia-kategória log risk log-kockázat cohort kohorsz RCT case-control eset-kontroll covariance kovariancia GLS GLST dose-response dózis-válasz"
+ },
+ {
+  "k_id": "K-KHN1113-037",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "GLST: kétlépcsős általánosított legkisebb négyzetek trendmódszer",
+  "body": "GLST (Greenland & Longnecker 1992; Orsini et al. 2006, 2012) works in two stages. First, within each study, it fits a GLS regression of the log effect on dose terms with no intercept, so the curve is forced through the origin, using a covariance reconstructed from cases and group sizes. Second, it pools the study coefficients with a fixed- or random-effects (multivariate) model. One-stage variants also exist. It needs effect estimates, variances, doses, group sizes and study type, and it cannot be used for absolute measures such as means or prevalences.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 269, 271–272, 280–282; Table 13.6",
+  "tags": "GLST generalized least squares for trend Greenland Longnecker Orsini two-stage kétlépcsős dose-response dózis-válasz no intercept tengelymetszet nélkül covariance kovariancia multivariate meta-analysis többváltozós metaanalízis fixed random"
+ },
+ {
+  "k_id": "K-KHN1113-038",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "REMR: robusztus hibájú meta-regresszió dózis–válaszhoz",
+  "body": "REMR (Xu & Doi 2018) is a one-stage inverse-variance WLS regression over all dose-specific estimates that treats each study as a cluster and uses cluster-robust SEs instead of an imputed covariance, so it needs only effect estimates, variances and doses. Reference rows get the study's maximum weight, and an intercept is estimated rather than forced to zero, which the authors say minimises bias. They call it a special case of the generalised linear mixed model with IVhet-type weighting and claim it gives trend estimates similar to GLST. [note: REMR is the authors' own method with limited independent validation; cluster-robust SEs are unstable with few studies (clusters), so add a GLST or one-stage mixed-model sensitivity analysis.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 269, 272, 280–282",
+  "tags": "REMR robust error meta-regression robusztus hibájú meta-regresszió Xu Doi 2018 one-stage egylépcsős cluster-robust klaszter-robusztus dose-response dózis-válasz intercept tengelymetszet maximum weight maximális súly IVhet"
+ },
+ {
+  "k_id": "K-KHN1113-039",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "GLST és REMR összehasonlítása (13.6. táblázat)",
+  "body": "Per Table 13.6, GLST is two-stage or one-stage and uses GLS with fixed- or random-effects weighting. It needs effect estimates, variances, doses, group sizes and study type, requires 2 dose categories per study (one-stage) or 3 (two-stage), cannot handle absolute estimators (mean, prevalence), and runs in Stata, R and SAS. REMR is one-stage with cluster-robust variance and IVhet weighting; it needs only effect estimates, variances and doses, requires 2 categories, handles absolute estimators, and runs in Stata and MLwiN. Both handle binary and continuous outcomes and IPD dose-response analysis. [note: the comparative claims are the REMR developers' own, and the book itself says GLST's features 'may not really be advantages'. The established alternative is a one-stage mixed-effects dose-response model (Crippa et al. 2019; R dosresmeta). It also uses studies with only two exposure categories and models the within-study covariance explicitly.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 Table 13.6 p. 280",
+  "tags": "GLST REMR comparison összehasonlítás dose categories dóziskategóriák absolute estimator abszolút becslő mean átlag prevalence prevalencia software szoftver Stata R SAS MLwiN IPD one-stage two-stage"
+ },
+ {
+  "k_id": "K-KHN1113-040",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Hagyományos meta-regresszió átlagdózisra nem ajánlott",
+  "body": "Traditional meta-regression (TMR) regresses each study's outcome on its mean dose and ignores the within-study correlation of dose-specific effects. The book calls it crude and does not recommend it for dose-response synthesis. Use GLST or REMR on the category-level estimates instead.",
+  "source_id": "khan2020",
+  "locator": "Ch13 p. 282",
+  "tags": "pitfall buktató traditional meta-regression hagyományos meta-regresszió mean dose átlagdózis within-study correlation vizsgálaton belüli korreláció dose-response dózis-válasz GLST REMR"
+ },
+ {
+  "k_id": "K-KHN1113-041",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Függvényforma választása az expozíció típusa szerint",
+  "body": "For a continuous exposure, simple linear, piecewise linear and non-linear functions are all reasonable: non-linear is preferred when there is no evidence of linearity, and piecewise linear can summarise the average trend in each segment of a U- or J-shaped curve. For a discrete exposure such as number of births, non-integer doses do not exist, so fit linear or piecewise linear models and report per-unit changes; a non-linear curve fitted anyway must be called 'quasi-nonlinearity' and explained in the report. Among non-linear functions, published DRMAs use restricted cubic splines (78.25%), fractional polynomials (16.18%) and conventional polynomials (<5%) (Xu 2019b). The book states there is no consensus on which non-linear function is best or least biased. Conventional polynomials may give misleading summary curves, and cubic splines capture sudden changes better than fractional polynomials (Durrleman & Simon 1989). For a continuous exposure, piecewise linear models are seldom used because a non-linear function usually fits better.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 280–281",
+  "tags": "exposure type expozíció típusa continuous folytonos discrete diszkrét linear lineáris piecewise linear szakaszosan lineáris non-linear nemlineáris quasi-nonlinearity kvázi-nemlinearitás restricted cubic spline fractional polynomial frakcionált polinom U-shaped J-shaped"
+ },
+ {
+  "k_id": "K-KHN1113-042",
+  "stage_id": "S10",
+  "kind": "definition",
+  "title": "Restricted cubic spline (korlátozott köbös spline)",
+  "body": "A restricted cubic spline is a set of cubic polynomial pieces joined smoothly at knots and constrained to be linear in the tail(s). n knots (empirically 3–7, placed between the minimum and maximum dose) give n − 1 regressors: the first is the linear term and the rest are the cubic terms. In Stata the splines are created with mkspline doses = dose, cubic nk(3) disp. [note: by Stata's documentation, not the book, the default 3 knots sit at the 10th, 50th and 90th percentiles.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 271, 281",
+  "tags": "restricted cubic spline korlátozott köbös spline knots csomópontok mkspline nk(3) dose-response dózis-válasz non-linear nemlineáris linear tail lineáris farok regressors regresszorok"
+ },
+ {
+  "k_id": "K-KHN1113-043",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Wald-tesztek: nemlinearitás és összefüggés",
+  "body": "With a restricted cubic spline, test non-linearity with a Wald test that the 2nd to (n−1)th spline coefficients are zero; with 3 knots this is test doses2. Test for any exposure–outcome association with a joint Wald test that all spline coefficients are zero (test doses1 doses2). Rejecting the first is evidence of non-linearity; rejecting the second is evidence of an association. [note: the book's general sentence (pp. 281–282) attributes the association test to spline coefficients 2…n−1 only. That is a slip: its own 3-knot example and Stata code test all coefficients for association and coefficient 2 for non-linearity, which is the standard approach used here.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 272, 281–282",
+  "tags": "Wald test Wald-próba non-linearity nemlinearitás association összefüggés spline coefficients spline-együtthatók test doses2 joint test együttes próba dose-response dózis-válasz"
+ },
+ {
+  "k_id": "K-KHN1113-044",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Alkohol és tüdőrák: REMR vs GLST (4 kohorsz)",
+  "body": "Four cohorts (doses 0–45.6 g/day, all with reference dose 0) were modelled with a 3-knot restricted cubic spline. Table 13.4 gives REMR β1 = −0.00561 (SE 0.008), β2 = 0.01223 (0.009); GLST fixed −0.00065 (0.008), 0.00702 (0.009); GLST random −0.00232 (0.040), 0.00878 (0.009); and P for non-linearity 0.438 (GLST fixed), 0.335 (GLST random) and 0.261 (REMR; see the typo pitfall). REMR dose-specific RRs run from 0.95 (0.86–1.04) at dose 0 to 1.20 (0.87–1.64) at 45.6 g/day, and the CI band covers RR = 1 throughout, so there is no significant association. Reproducing these numbers needs knots at 0.97, 9.40 and 22.86, which the book does not state.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 270–274, Tables 13.2–13.4, Fig. 13.1",
+  "tags": "example példa alcohol alkohol lung cancer tüdőrák cohort kohorsz REMR GLST spline dose-specific relative risk dózis-specifikus relatív kockázat non-linearity nemlinearitás knots csomópontok"
+ },
+ {
+  "k_id": "K-KHN1113-045",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Aripiprazol és PANSS: folytonos kimenet REMR-rel",
+  "body": "Five RCTs (Crippa & Orsini 2016; data from http://www.stats4life.se/data/aripanss) were analysed with REMR. On absolute mean scores: β1 = 1.017204, β2 = −0.7326656, constant 4.664162 (baseline mean 4.66, 95% CI 2.39–6.93); the mean peaks at 15 mg/day (14.20, 13.39–15.01). Using within-study mean differences against dose 0, the largest improvement is MD 10.55 (8.28–12.82) PANSS points at 15 mg/day, which the authors take as the best dose. Recomputation needs knots at 0, 10 and 20.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 274–277, Table 13.5, Figs 13.2–13.3",
+  "tags": "example példa aripiprazole aripiprazol PANSS schizoaffective skizoaffektív continuous outcome folytonos kimenet mean difference átlagkülönbség REMR dose-response dózis-válasz optimal dose optimális dózis"
+ },
+ {
+  "k_id": "K-KHN1113-046",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Hibásan megnevezett nemlinearitási teszt",
+  "body": "For aripiprazole the book reports P = 0.0011 as the non-linearity test, but 0.0011 is the overall model F test (F(2, 4) = 58.21). The command shown, test doses1 = doses2, gives p = 0.0050; the correct non-linearity test (doses2 = 0) gives p = 0.0093. Catch this by matching each stated test to its output line. Use test doses2 for non-linearity and test doses1 doses2 for association.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 275–276 (output); recomputation",
+  "tags": "pitfall buktató non-linearity test nemlinearitási teszt mislabelled félrecímkézett F test Wald test aripiprazole aripiprazol spline output kimenet"
+ },
+ {
+  "k_id": "K-KHN1113-047",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Nyomdahibák a 13.4. táblázatban",
+  "body": "The REMR 'P for non-linearity' is printed as 0.861 in Table 13.4 but 0.261 in the text; recomputation gives 0.2611. The GLST random-effects se(β1) = 0.040 is five times the fixed-effect SE while se(β2) is unchanged, so it is a suspected typo. Flag both, and do not use them as validation targets for the engine.",
+  "source_id": "khan2020",
+  "locator": "Ch13 Table 13.4 p. 273; text p. 273",
+  "tags": "pitfall buktató typo elírás Table 13.4 P for non-linearity nemlinearitási p-érték standard error standard hiba GLST REMR validation validálás"
+ },
+ {
+  "k_id": "K-KHN1113-048",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Nem dokumentált spline-csomópontok",
+  "body": "Stata's default nk(3) knots (10th/50th/90th percentiles) do not reproduce the printed DRMA results. Recomputation needed knots at (0.97, 9.40, 22.86) for alcohol and (0, 10, 20) for aripiprazole, which the book never states. Always report the number and location of knots. A reviewer should treat missing knot locations as a reproducibility failure.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 271, 275; recomputation",
+  "tags": "pitfall buktató knots csomópontok spline undocumented nem dokumentált reproducibility reprodukálhatóság mkspline percentiles percentilisek DRMA dózis-válasz"
+ },
+ {
+  "k_id": "K-KHN1113-049",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Tengelymetszet a dózis-specifikus predikciókban (REMR)",
+  "body": "In REMR the dose-specific predictions printed by xblc include the estimated intercept. So the RR at dose 0 is 0.95 rather than 1, and the aripiprazole MD at 15 mg/day is 10.55 rather than 10.06. An engine replicating the book must include b0. Clinically, a non-zero intercept means the fitted curve does not pass through the reference point, which should be checked and reported. [note: GLST forces the curve through the origin, so xblc needs ref(0) there.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 273, 277; recomputation",
+  "tags": "pitfall buktató intercept tengelymetszet constant konstans dose-specific prediction dózis-specifikus predikció xblc REMR reference point referenciapont GLST origin origó"
+ },
+ {
+  "k_id": "K-KHN1113-050",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Heterogén és nem a legalacsonyabb referenciadózisok kezelése",
+  "body": "Different reference doses across studies add substantial heterogeneity and uncertainty (in the extreme, one study's reference dose exceeds other studies' non-reference doses): if they are substantially heterogeneous overall, do not run a DRMA; if only a few studies differ greatly, exclude them; if differences are modest, centre the doses. One-stage centring subtracts each study's reference dose, giving a common reference of 0 (a 'dose increment'); two-stage centring then adds back the median reference dose across studies to keep the clinical scale (reference doses 1–3 with median 2: dosec = dose − dose[1] + 2). If some studies use a non-lowest category as reference, first re-express their risks against a common reference; the book suggests P. N. Lee's Excel macro RREst_trend.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 278–279",
+  "tags": "reference dose referenciadózis heterogeneity heterogenitás centering centrálás dose increment dózisnövekmény median medián exclusion kizárás RREst_trend reference category referencia-kategória DRMA dózis-válasz"
+ },
+ {
+  "k_id": "K-KHN1113-051",
+  "stage_id": "S06",
+  "kind": "guidance",
+  "title": "Vizsgálati elrendezések külön összesítése DRMA-ban",
+  "body": "In dose-response meta-analysis, pool cross-sectional studies separately: they describe correlation and cannot establish direction, so they risk reverse causality. Cohort and case-control studies are not immune either, because confounding and other biases can still produce reverse causation. Confounder-adjusted RRs also make the reconstructed covariance somewhat biased.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 269, 281",
+  "tags": "study design vizsgálati elrendezés cross-sectional keresztmetszeti reverse causality fordított okság cohort kohorsz case-control eset-kontroll confounding zavaró tényező DRMA dózis-válasz separate pooling külön összesítés"
+ },
+ {
+  "k_id": "K-KHN1113-052",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "A publikációs torzítás okai",
+  "body": "Studies with non-significant results (p > 0.05) are less likely to be published (Koren 1989). Rosenthal (1979) called this the 'file drawer problem': journals fill with false-positive results while null results stay unpublished. Other causes are suppression of results that are unfavourable to funders, language bias, time-lag bias and outcome-reporting bias (Thornton & Lee 2000).",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 255",
+  "tags": "publication bias publikációs torzítás causes okok file drawer problem fiókprobléma Rosenthal non-significant nem szignifikáns funding finanszírozó language bias nyelvi torzítás time-lag bias outcome reporting bias szelektív kimenetjelentés"
+ },
+ {
+  "k_id": "K-KHN1113-053",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Az indirekt módszerek logikája és korlátai",
+  "body": "Large trials tend to be published whatever their result, while small trials need large effects to reach significance and publication. Without publication bias, therefore, effect size should not be associated with precision. An association suggests that small negative trials are missing, but true between-study heterogeneity or chance can also produce it (Sterne et al. 2011). The chapter covers only funnel, contour-enhanced funnel and Doi plots, the Begg, Egger, Harbord and Peters tests, and the LFK index. Trim-and-fill, fail-safe N, selection models, p-curve and PET-PEESE must be taken from other sources. [note: Cochrane Handbook guidance advises against fail-safe N. The current Handbook (v6, ch. 13) treats trim-and-fill and selection models only as sensitivity analyses, not as corrections.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 255–256",
+  "tags": "indirect methods indirekt módszerek small-study effects kis vizsgálatok hatása precision pontosság effect size hatásméret heterogeneity heterogenitás chance véletlen Sterne 2011 trim-and-fill fail-safe N selection model szelekciós modell"
+ },
+ {
+  "k_id": "K-KHN1113-054",
+  "stage_id": "S11",
+  "kind": "convention",
+  "title": "Funnel plot szerkesztése: tengelyek és középvonal",
+  "body": "A funnel plot shows effect size (ln RR or ln OR for ratios) on the x-axis against a precision measure, usually the SE on an inverted axis, on the y-axis. Without bias it looks like an inverted funnel, with small studies scattered widely at the bottom. Its centre line is the fixed-effect pooled estimate, whatever model the meta-analysis used. MetaXL draws it this way even when the analysis used IVhet.",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 256–257, Fig. 12.1",
+  "tags": "funnel plot tölcsérdiagram centre line középvonal fixed-effect estimate fix hatású becslés standard error standard hiba axis tengely MetaXL IVhet convention konvenció"
+ },
+ {
+  "k_id": "K-KHN1113-055",
+  "stage_id": "S11",
+  "kind": "threshold",
+  "title": "Funnel plot és aszimmetria-tesztek: legalább 10 vizsgálat, aránynál nem",
+  "body": "Funnel plots, and the Begg, Egger, Harbord and Peters tests that formalise them, are not recommended with fewer than 10 studies (Cochrane 2011) or for meta-analyses of proportions (Hunter et al. 2014). The Begg test has moderate to little power below 25 studies. With k < 10 or proportion data, report these analyses as uninformative. The authors suggest the Doi plot and LFK index instead. [note: swapping to a Doi plot or LFK index when there are few studies or for proportions is the developers' recommendation and has no Cochrane endorsement. With k < 10, the consensus (Cochrane Handbook v6 ch. 13; Sterne et al. 2011) is to state that small-study effects cannot be assessed reliably, not to substitute another index.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 256, 259–260",
+  "tags": "threshold küszöb funnel plot tölcsérdiagram minimum 10 studies legalább 10 vizsgálat proportion arány prevalence prevalencia Egger Begg Harbord Peters power erő 25 studies"
+ },
+ {
+  "k_id": "K-KHN1113-056",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "Kontúrral kiegészített funnel plot értelmezése",
+  "body": "The contour-enhanced funnel plot (Peters et al. 2008) shades significance regions: p < 0.01, 0.01–0.05, 0.05–0.10 and > 0.10. Studies apparently missing from the non-significant (white) region point to publication bias; studies missing from significant regions point to other causes of asymmetry. Prefer the contour-enhanced version when interpreting funnel asymmetry. [note: by construction (Peters et al. 2008), the significance contours are centred on the null effect (0 on the log scale), not on the pooled estimate.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 257–258, Fig. 12.2",
+  "tags": "contour-enhanced funnel plot kontúros tölcsérdiagram significance contours szignifikancia-kontúrok Peters 2008 interpretation értelmezés publication bias publikációs torzítás asymmetry aszimmetria"
+ },
+ {
+  "k_id": "K-KHN1113-057",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Doi-diagram (Doi plot) felépítése és értelmezése",
+  "body": "The Doi plot (Furuya-Kanamori et al. 2018; Barendregt 2016) plots effect size on the x-axis against the absolute Z-score on the y-axis, the Z-score being, in the LFK algorithm (metasens lfkindex, not described in the book), the normal quantile of each study's precision-weighted rank; the points are joined, the tip is the study with |Z| closest to 0, and a symmetrical 'mountain' suggests no publication bias. Like the funnel plot, it does not depend on the meta-analytic model. The authors claim it is more sensitive than the funnel plot, works for proportion meta-analyses and is visually unaffected by the number of studies; Doi (2018) gives rendering guidance. [note: the book calls the tip the 'most precise study', but by construction it is the study with |Z| closest to 0, not necessarily the largest; the Doi plot is not part of Cochrane Handbook guidance.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 258–259, Fig. 12.3",
+  "tags": "Doi plot Doi-diagram Z-score Z-érték asymmetry aszimmetria publication bias publikációs torzítás Furuya-Kanamori Barendregt proportion meta-analysis arány-metaanalízis graphical method grafikus módszer"
+ },
+ {
+  "k_id": "K-KHN1113-058",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Begg–Mazumdar rangkorrelációs teszt",
+  "body": "Begg & Mazumdar (1994) test the rank correlation (Kendall's τ) between standardised effect sizes and their variances, i.e. study size. It has moderate to little power with fewer than 25 studies. [note: recomputation uses standardised deviates (θ̂_j − θ̂_FE)/√(v_j − 1/Σw). Fibrinolysis p = 0.63 reproduces with both the exact and the normal test. Magnesium p = 0.51 reproduces only on ln RR (0.5 zero-cell correction) with the normal approximation and no continuity correction (0.506); the exact Kendall distribution (metafor ranktest, the engine's begg_test) gives 0.534. The Cochrane Handbook v6 (ch. 13) does not recommend Begg's test because of its low power.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 259",
+  "tags": "Begg test Begg-teszt rank correlation rangkorreláció Kendall tau funnel asymmetry tölcsér-aszimmetria power erő 25 studies continuity correction folytonossági korrekció"
+ },
+ {
+  "k_id": "K-KHN1113-059",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Egger-féle regressziós teszt",
+  "body": "Egger et al. (1997) regress the standardised effect (θ̂_j/SE_j) on precision (1/SE_j) by ordinary linear regression. If the funnel is symmetrical, the intercept should not differ significantly from zero. It is the most commonly used asymmetry test. [note: for log odds ratios, Egger's test has an inflated false-positive rate because ln OR and its SE are mathematically correlated. The Cochrane Handbook v6 (ch. 13) prefers the Harbord, Peters or Rücker (arcsine) tests for binary outcomes and Egger's test for continuous outcomes.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 259",
+  "tags": "Egger test Egger-teszt regression regresszió intercept tengelymetszet precision pontosság standardized effect standardizált hatás funnel asymmetry tölcsér-aszimmetria small-study effects"
+ },
+ {
+  "k_id": "K-KHN1113-060",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Harbord-teszt bináris kimenetre",
+  "body": "Harbord, Egger & Sterne (2006) modify Egger's test for binary outcomes: they regress Z/√V on √V, where Z is the efficient score and V its variance, and test the intercept. In simulations it gives fewer false positives than Egger's test when between-study heterogeneity is small or absent. It needs each study's 2×2 counts.",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 260",
+  "tags": "Harbord test Harbord-teszt binary outcome bináris kimenet efficient score hatékony score false positive álpozitív Egger modification módosítás 2x2 counts cellaszámok"
+ },
+ {
+  "k_id": "K-KHN1113-061",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Peters-teszt",
+  "body": "Peters et al. (2006) fit a weighted linear regression of ln OR on the inverse of total sample size and interpret it like Egger's test. It needs each study's 2×2 counts. [note: the weights 1/(1/(a+c) + 1/(b+d)) and the test on the slope come from the original paper and Stata metabias, not from the book.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 260",
+  "tags": "Peters test Peters-teszt weighted regression súlyozott regresszió log odds ratio log esélyhányados inverse sample size inverz mintanagyság binary bináris 2x2 counts cellaszámok"
+ },
+ {
+  "k_id": "K-KHN1113-062",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "A p-érték alapú aszimmetria-tesztek közös korlátai",
+  "body": "All four tests (Begg, Egger, Harbord, Peters) inherit the funnel plot's limits: they need at least 10 studies and are not for proportion meta-analyses. Their power is little to moderate and depends on the number of studies (Furuya-Kanamori et al. 2020). A non-significant result is therefore weak reassurance, especially with few studies.",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 260",
+  "tags": "pitfall buktató low power alacsony erő asymmetry tests aszimmetria-tesztek Begg Egger Harbord Peters number of studies vizsgálatszám non-significant nem szignifikáns proportion arány"
+ },
+ {
+  "k_id": "K-KHN1113-063",
+  "stage_id": "S11",
+  "kind": "threshold",
+  "title": "Döntési küszöb aszimmetria-tesztekhez: p < 0,10",
+  "body": "The chapter declares funnel-plot asymmetry at p < 0.10 rather than 0.05; the conventional rationale is the tests' low power. State the threshold explicitly when reporting the tests. [note: the 0.10 level is conventional (Egger 1997; Sterne et al. 2011), but it is a heuristic, not a decision rule. Per the Cochrane Handbook v6 (ch. 13), use these tests only with at least 10 studies and when study sizes differ enough. A significant test does not prove publication bias, and a non-significant one does not exclude it.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 260",
+  "tags": "threshold küszöb p-value p-érték 0.10 asymmetry aszimmetria Egger Begg Harbord Peters significance level szignifikanciaszint decision rule döntési szabály"
+ },
+ {
+  "k_id": "K-KHN1113-064",
+  "stage_id": "S11",
+  "kind": "threshold",
+  "title": "LFK-index és kategóriái",
+  "body": "The LFK index (proposed 2016; Furuya-Kanamori et al. 2018) quantifies Doi-plot asymmetry as the difference between the two areas on either side of the study with |Z| closest to 0, weighted by the number of studies in each half. Thresholds: −1 to 1 = symmetry; −2 to −1 or 1 to 2 = minor asymmetry; below −2 or above 2 = major asymmetry. The authors claim better operating characteristics than Egger's test and no dependence on the number of studies; MetaXL and Stata lfk compute it automatically. [note: the index comes from the group that proposed it; its cut-offs are heuristic, it has no formal sampling distribution or p-value, and the Cochrane Handbook does not recommend it as a stand-alone test.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 260",
+  "tags": "LFK index LFK-index Doi plot asymmetry aszimmetria minor asymmetry kisebb aszimmetria major asymmetry jelentős aszimmetria threshold küszöb Furuya-Kanamori MetaXL lfk Stata"
+ },
+ {
+  "k_id": "K-KHN1113-065",
+  "stage_id": "S11",
+  "kind": "example",
+  "title": "Fibrinolízis vs magnézium: aszimmetria-eredmények (12.1. táblázat)",
+  "body": "Fibrinolysis after MI (Yusuf 1985): Begg p = 0.63, Egger p = 0.77, LFK −0.67 and symmetric funnel and Doi plots, so no evidence of bias (Harbord and Peters could not be computed without 2×2 counts). Intravenous magnesium after MI (Nüesch & Jüni 2008): Begg p = 0.51, Egger p < 0.001, Harbord p < 0.001, Peters p = 0.001, LFK −10.09. Its funnel is asymmetric (one medium and two large studies show null or harm, and there are no small negative studies), and the contour-enhanced plot lacks small and medium studies to the right of the non-significance region, so publication bias is likely. Both LFK values reproduce with the metasens lfkindex algorithm: fibrinolysis exactly, magnesium only with a 1.0 zero-cell correction (0.5 gives −10.27). Magnesium Begg p = 0.51 reproduces only on ln RR with the normal approximation, and Peters p = 0.001 with metabias-type weights (0.0005).",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 256–261, Table 12.1, Apps A12.1–A12.2",
+  "tags": "example példa fibrinolysis fibrinolízis magnesium magnézium myocardial infarction miokardiális infarktus Begg Egger Harbord Peters LFK funnel plot tölcsérdiagram publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-KHN1113-066",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Ne támaszkodj egyedül a Begg-tesztre",
+  "body": "For the magnesium data, Begg's test (p = 0.51) missed the clear asymmetry that Egger, Harbord and Peters detected. Never read a non-significant Begg test as 'no bias'. Use it at most alongside a regression test, and state the low power of all p-value-based tests.",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 259, 261",
+  "tags": "pitfall buktató Begg test Begg-teszt false negative álnegatív low power alacsony erő magnesium magnézium asymmetry aszimmetria regression test regressziós teszt"
+ },
+ {
+  "k_id": "K-KHN1113-067",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Aszimmetria ≠ publikációs torzítás",
+  "body": "Funnel or Doi plot asymmetry shows that effect size is associated with precision. Besides publication bias, true heterogeneity, chance or other small-study effects can cause this (Sterne et al. 2011). Discuss these alternatives, and use contour-enhanced funnel plots to help separate them, before concluding that publication bias is present.",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 256",
+  "tags": "pitfall buktató asymmetry aszimmetria publication bias publikációs torzítás heterogeneity heterogenitás chance véletlen small-study effects kis vizsgálatok hatása contour-enhanced funnel interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN1113-068",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Harbord és Peters csak 2×2 cellaszámokkal",
+  "body": "Harbord's and Peters' tests need the raw counts (events and non-events in each arm). Stata metabias cannot run them from effect sizes and SEs alone, which is why they are missing for fibrinolysis in Table 12.1. Supply the 2×2 cells, or report the tests as not estimable.",
+  "source_id": "khan2020",
+  "locator": "Ch12 p. 261; App. A12.6",
+  "tags": "pitfall buktató Harbord Peters 2x2 counts cellaszámok raw data nyers adatok metabias Stata not estimable nem becsülhető binary bináris"
+ },
+ {
+  "k_id": "K-KHN1113-069",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "A nullcella-korrekció érzékenyen változtatja az LFK-t",
+  "body": "For magnesium the LFK index is −10.09 with a 1.0 zero-cell correction but −10.27 with 0.5, so the book's value reproduces only with 1.0. Report the continuity correction used, and apply the same one in pooling, funnel plots and the LFK index. The book is itself inconsistent: magnesium Begg p = 0.51 (Stata) reproduces only with 0.5, while LFK = −10.09 (MetaXL/lfk) reproduces only with 1.0, so Table 12.1 mixes two corrections.",
+  "source_id": "khan2020",
+  "locator": "Ch12 Table 12.1 p. 261; recomputation",
+  "tags": "pitfall buktató zero cell nulla cella continuity correction folytonossági korrekció LFK index magnesium magnézium reproducibility reprodukálhatóság consistency következetesség"
+ },
+ {
+  "k_id": "K-KHN1113-070",
+  "stage_id": "S11",
+  "kind": "tool",
+  "title": "Stata parancsok publikációs torzításhoz",
+  "body": "Funnel plot: ssc install metafunnel, then metafunnel es se; contour-enhanced funnel: ssc install confunnel, then confunnel es se. For 2×2 data the book first runs admetan event_treat noevent_treat event_ctrl noevent_ctrl and passes the generated effect sizes and SEs to metafunnel or confunnel; it prints them as _ES _SE, although admetan names the SE variable _seES. Doi plot and LFK index: ssc install lfk, then lfk es se. Asymmetry tests: ssc install metabias, then metabias es se, begg or egger; harbord and peters need the counts (metabias event_treat noevent_treat event_ctrl noevent_ctrl, harbord or peters). [note: the note-taker verified these equivalents, which are not in the book: metafor regtest(model = 'lm', predictor = 'sei') for classical Egger, metafor ranktest(exact = FALSE) for Begg (normal approximation, no continuity correction; the default exact test does not reproduce magnesium p = 0.51), and metasens lfkindex for LFK.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 Apps A12.3–A12.6 pp. 262–263",
+  "tags": "Stata metafunnel confunnel lfk metabias command parancs funnel plot tölcsérdiagram Doi plot LFK Begg Egger Harbord Peters metafor metasens R code kód"
+ },
+ {
+  "k_id": "K-KHN1113-071",
+  "stage_id": "S10",
+  "kind": "tool",
+  "title": "Stata parancsok dózis–válasz MA-hoz (glst, REMR, xblc)",
+  "body": "Install with ssc install glst and net install st0215_1 (xblc), and create the splines with mkspline doses = dose, cubic nk(3) disp. GLST: glst logrr doses*, cov(person_years cases) se(se) pfirst(id studytype) r (f for fixed effect); for a single study use if id==1 with ir, ci or cc instead of pfirst. REMR: gen wt = 1/(se^2); bysort id: egen maxwt = max(wt); replace wt = maxwt if wt==.; regress logrr doses* [aweight=wt], vce(cluster id). Test with test doses2 (non-linearity) and test doses1 doses2 (association); get the curve and dose-specific effects with xblc doses*, covname(dose) at(levels) eform line, adding ref(0) for GLST because it has no constant.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 271–277",
+  "tags": "Stata glst xblc mkspline regress cluster REMR GLST command parancs dose-response dózis-válasz spline Wald test code kód"
+ },
+ {
+  "k_id": "K-KHN1113-072",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Alternatív modellek és több módszer párhuzamos jelentése",
+  "body": "The chapters routinely report several analyses side by side: robust and classical (Knapp–Hartung) meta-regression; REMR, GLST fixed and GLST random for the same dose-response data; and several asymmetry methods, which can disagree (Begg versus the others for magnesium). Present such comparisons as sensitivity analyses and explain any disagreement. For DRMA, excluding studies with very different reference doses is a further sensitivity option. These chapters do not cover leave-one-out, influence diagnostics or cumulative meta-analysis.",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 250; Ch12 p. 261; Ch13 Table 13.4 p. 273, p. 278",
+  "tags": "sensitivity analysis érzékenységi elemzés alternative models alternatív modellek robust robusztus Knapp-Hartung REMR GLST asymmetry methods aszimmetria-módszerek disagreement eltérés reference dose referenciadózis"
+ },
+ {
+  "k_id": "K-KHN1113-073",
+  "stage_id": "S06",
+  "kind": "concept",
+  "title": "Egyedi vizsgálati torzítások vs publikációs torzítás",
+  "body": "Weaknesses within trials (inadequate randomisation, no allocation concealment, incomplete outcome data) bias pooled estimates. Publication bias is a separate, additional threat that acts on the evidence base as a whole. The chapter assumes large trials are of better quality and more precise. No named risk-of-bias or certainty tool (RoB 2, ROBINS-I, NOS, GRADE, AMSTAR) is used in these chapters.",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 255–256",
+  "tags": "risk of bias torzítási kockázat randomisation randomizáció allocation concealment besorolás elrejtése incomplete outcome data hiányos kimeneti adatok publication bias publikációs torzítás large trials nagy vizsgálatok quality minőség"
+ },
+ {
+  "k_id": "K-KHN1113-074",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Publikációs torzítás bizonyosságának megítélése",
+  "body": "Lower the concern when the contour-enhanced funnel and the Doi plot are both symmetric and the LFK index lies within ±1. Raise it when small studies cluster on one side within the funnel's significance regions, or when |LFK| > 2. A non-significant Begg or Egger test with few studies is not reassurance, given their low power. [note: these LFK/Doi-plot cut-offs are the developers' heuristics. Under GRADE, publication bias is rated 'undetected' or 'strongly suspected' from the whole picture: search comprehensiveness and registry checks, small industry-funded trials, contour-enhanced funnel asymmetry, and, with at least 10 studies, an appropriate test. A symmetric plot with few studies does not by itself justify 'undetected'.]",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 257–261",
+  "tags": "criterion kritérium publication bias publikációs torzítás certainty bizonyosság GRADE LFK funnel plot tölcsérdiagram Doi plot contour-enhanced Egger Begg evaluator értékelő"
+ },
+ {
+  "k_id": "K-KHN1113-075",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Heterogenitás magyarázatának hitelessége (meta-regresszió)",
+  "body": "A covariate is credible as an effect modifier only if τ² falls when it is added and the model has enough studies per covariate (≥10). Meta-regression findings are observational associations between study-level characteristics and effects, so treat them as hypothesis-generating. The book presents the 28-trial cholesterol result as supporting a causal dose-response, not proving it. [note: the Cochrane Handbook v6 (ch. 10) and the ICEMAN tool rate a moderator more credible when it was pre-specified with a stated direction, is one of few tested, is supported by a within-study comparison, and is biologically plausible. Between-study associations are prone to confounding by other study characteristics and to ecological bias.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 244–245, 253",
+  "tags": "criterion kritérium meta-regression meta-regresszió effect modifier hatásmódosító heterogeneity heterogenitás tau2 observational megfigyeléses hypothesis-generating hipotézisgeneráló causality okság credibility hitelesség"
+ },
+ {
+  "k_id": "K-KHN1113-076",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Modellválasztás robusztussága",
+  "body": "Under high heterogeneity, classical random-effects weights become nearly equal and the model may stay overdispersed; the authors prefer robust or IVhet approaches. At minimum, check that conclusions agree between robust-error and Knapp–Hartung random-effects meta-regression, and flag any discrepancy. [note: the consensus default (Thompson & Higgins 2002; Cochrane Handbook v6, ch. 10) is random-effects meta-regression, typically with REML (or PM) τ² and Knapp–Hartung tests. The robust-error or IVhet preference is the author group's position, so use a robust-error fit only as a sensitivity analysis.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 244, 250",
+  "tags": "criterion kritérium model choice modellválasztás robustness robusztusság random-effects véletlen hatás IVhet robust error robusztus hiba Knapp-Hartung overdispersion túlszóródás meta-regression meta-regresszió"
+ },
+ {
+  "k_id": "K-KHN1113-077",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Dózis–válasz MA hitelessége",
+  "body": "A DRMA is credible when: reference doses are consistent or centred; each study has enough dose categories; the curve type suits the exposure scale; the non-linearity test actually tests the spline terms; cross-sectional studies are pooled separately; it does not rely on traditional meta-regression of study mean doses; and within-study correlation is handled (GLST covariance or REMR robust SEs). A CI band that covers the null (RR = 1) at all doses means there is no significant association.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 273, 278–282",
+  "tags": "criterion kritérium dose-response dózis-válasz DRMA credibility hitelesség reference dose referenciadózis spline non-linearity nemlinearitás cross-sectional keresztmetszeti GLST REMR confidence band konfidenciasáv"
+ },
+ {
+  "k_id": "K-KHN1113-078",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Dózis–válasz eredmény klinikai lefordítása",
+  "body": "Translate the curve into the dose at peak effect and the absolute effect at that dose; for example, aripiprazole improves PANSS by MD ≈ 10.55 points at 15 mg/day. Check that the curve includes the reference point, and that 'improvement versus no therapy' rests on mean differences against the reference, not on absolute means.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 276–277",
+  "tags": "criterion kritérium clinical interpretation klinikai értelmezés optimal dose optimális dózis absolute effect abszolút hatás mean difference átlagkülönbség aripiprazole aripiprazol PANSS reference point referenciapont"
+ },
+ {
+  "k_id": "K-KHN1113-079",
+  "stage_id": "S14",
+  "kind": "criterion",
+  "title": "Reprodukálhatóság",
+  "body": "The review should give code or settings sufficient to reproduce its numbers: the software, τ² estimator, CI method and continuity correction, plus the spline knots and reference dose for a DRMA. Undocumented knot locations or zero-cell handling count as reproducibility failures, as the book's own examples show.",
+  "source_id": "khan2020",
+  "locator": "Ch12 Table 12.1; Ch13 pp. 271, 275",
+  "tags": "criterion kritérium reproducibility reprodukálhatóság code kód settings beállítások software szoftver tau2 estimator continuity correction folytonossági korrekció knots csomópontok reporting jelentés"
+ },
+ {
+  "k_id": "K-KHN1113-080",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Ellenőrzés: meta-regresszió vizsgálatszám és kovariánsok",
+  "body": "Reviewer check: k ≥ 10 per covariate (k ≥ 20 for two covariates); if k < 10, no meta-regression is run and subgroup analysis is used instead. No covariate is sample size or a direct function of the SE or precision. A continuous moderator is not categorised without a clinical reason. [note: the 10-per-covariate rule is a heuristic minimum. Falling back on subgroup analysis does not remove the few-study problem, since the Cochrane Handbook v6 applies the same caution to both.]",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 253–254",
+  "tags": "check ellenőrzés meta-regression meta-regresszió number of studies vizsgálatszám covariates kovariánsok sample size mintanagyság categorisation kategorizálás subgroup alcsoport reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-081",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Ellenőrzés: meta-regressziós output teljessége",
+  "body": "Reviewer check: the meta-regression report states the method (robust/IVhet-type, or random-effects with a named τ² estimator), the CI method (Knapp–Hartung or t), τ²_0 and τ²_res, I²_res, and which R² definition is used. Recompute R² = max(0, (τ²_0 − τ²_res)/τ²_0) and confirm it matches. No WLS R² is described as between-study variance explained, and no I² is computed from an F statistic; I²_res should be (Q_E − df_res)/Q_E. Coefficients are reported on the ratio scale (exp(b)) with CI, the constant is interpreted as the effect at covariate 0 or in the reference category, and subgroup tests with ≥ 3 groups acknowledge their low power.",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 244, 248–254",
+  "tags": "check ellenőrzés meta-regression output meta-regressziós kimenet tau2 residual reziduális I2 R2 Knapp-Hartung coefficient együttható exponentiated constant konstans reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-082",
+  "stage_id": "S11",
+  "kind": "check",
+  "title": "Ellenőrzés: funnel- és aszimmetria-elemzés",
+  "body": "Reviewer check: the funnel centre line is at the fixed-effect estimate, and with k < 10 or proportion data, funnel and test results are flagged as unreliable. The asymmetry analysis includes a visual check (ideally a contour-enhanced funnel); at least one regression test (Egger, or Harbord or Peters for binary data with counts); the Doi plot with LFK if the protocol uses it; the p < 0.10 threshold; and the LFK category (≤1, 1–2, >2). Asymmetry is not equated with publication bias without discussing heterogeneity and chance. [note: the Doi plot and LFK index are optional supplements from their developers; they are not Cochrane-endorsed (see the LFK threshold unit).]",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 256–261",
+  "tags": "check ellenőrzés funnel plot tölcsérdiagram asymmetry aszimmetria Egger Harbord Peters Doi plot LFK threshold küszöb 10 studies proportion arány publication bias publikációs torzítás reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-083",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Ellenőrzés: nullcella-korrekció dokumentálása",
+  "body": "Reviewer check: the zero-cell continuity correction is stated (its value, and whether it is added to zero-cell studies only or to all studies), and it is applied consistently across pooling, funnel plots and the LFK index. Both admetan and MetaXL add 0.5 only to studies with a zero cell, and the LFK value changes noticeably with the correction.",
+  "source_id": "khan2020",
+  "locator": "Ch11 Fig. 11.2 p. 251; Ch12 Table 12.1",
+  "tags": "check ellenőrzés zero cell nulla cella continuity correction folytonossági korrekció 0.5 consistency következetesség admetan MetaXL LFK reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-084",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: DRMA adatszerkezet",
+  "body": "Reviewer check: each study has enough dose categories (Table 13.6: 2 for REMR and one-stage GLST, 3 for two-stage GLST). For GLST, the reference category is the first row within each study and rows are sorted by dose. The dose assignment rule (midpoint, median or mean) is documented. GLST is used only when cases, group sizes and study type are available; otherwise REMR is used. [note: the Table 13.6 counts are best read as including the reference category. A one-stage model can therefore use a study with a single non-referent category, while two-stage GLST with two spline terms needs at least two non-referent categories per study.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 268, 271, 279; Table 13.6 p. 280",
+  "tags": "check ellenőrzés DRMA dózis-válasz data structure adatszerkezet dose categories dóziskategóriák reference first referencia első sor dose assignment dózis hozzárendelés GLST REMR group size csoportméret reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-085",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Ellenőrzés: DRMA modellezés és jelentés",
+  "body": "Reviewer check: reference doses are homogeneous, or centred with the centring method stated; the knot count and locations are reported. The non-linearity test is a Wald test on spline coefficients 2…n−1, and the association test is a joint Wald test on all spline coefficients. GLST is not used for absolute means or prevalences. Cross-sectional studies are pooled separately from cohort and case-control studies. Discrete exposures use linear or piecewise models, or the curve is declared 'quasi-nonlinearity'.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 275, 278–282",
+  "tags": "check ellenőrzés DRMA dózis-válasz reference dose referenciadózis centering centrálás knots csomópontok Wald test non-linearity nemlinearitás GLST absolute mean cross-sectional keresztmetszeti quasi-nonlinearity reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-086",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: közölt számok újraszámolása",
+  "body": "Reviewer check: recompute key published numbers with the engine (pooled estimates, τ², I², test p-values, LFK, meta-regression coefficients, spline fits). Discrepancies such as the book's own typos (τ² 0.0188 vs 0.0294; P for non-linearity 0.861 vs 0.261) are flagged, not silently corrected.",
+  "source_id": "khan2020",
+  "locator": "Ch11 p. 245; Ch13 Table 13.4 p. 273",
+  "tags": "check ellenőrzés recomputation újraszámolás reproducibility reprodukálhatóság typo elírás engine motor validation validálás tau2 LFK spline reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN1113-087",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Meta-regresszió jelentése",
+  "body": "Report each coefficient on the exponentiated scale with CI and p; the constant and its meaning (effect at covariate 0); τ²_res and I²_res; the proportion of heterogeneity explained, saying which R² (τ²-based adjusted R² or WLS R²); the method (robust or classical, Knapp–Hartung); and the number of studies. Add a bubble plot: study effects against the covariate with bubbles proportional to 1/SE², the fitted WLS line, and a horizontal reference line at the pooled estimate without covariates (here ln 0.825 = −0.193). It shows why the weighted squared distances (Q) shrink once the covariate is added.",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 248–250, Fig. 11.1",
+  "tags": "reporting jelentés meta-regression meta-regresszió coefficient együttható R2 tau2 I2 Knapp-Hartung bubble plot buborékábra regression line regressziós egyenes number of studies vizsgálatszám"
+ },
+ {
+  "k_id": "K-KHN1113-088",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Publikációs torzítás vizsgálatának jelentése",
+  "body": "Show the funnel plot with SE on an inverted y-axis, ln RR or ln OR on the x-axis and the fixed-effect estimate as its centre, preferably contour-enhanced. If a Doi plot is used, show |Z| on the y-axis and give the LFK value with its category. Report several tests with their p-values against the 0.10 threshold, together with the LFK index, as in Table 12.1. [note: PRISMA 2020 items 14 and 21 require the reporting-bias assessment method and its result for each synthesis. The certainty judgement on publication bias belongs to the GRADE assessment (S13).]",
+  "source_id": "khan2020",
+  "locator": "Ch12 pp. 256–261, Table 12.1",
+  "tags": "reporting jelentés publication bias publikációs torzítás funnel plot tölcsérdiagram Doi plot LFK index p-value p-érték 0.10 contour-enhanced table táblázat"
+ },
+ {
+  "k_id": "K-KHN1113-089",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Dózis–válasz MA jelentése",
+  "body": "Report: the pooled spline coefficients with SEs; P for non-linearity and P for overall association, naming the tests used; a table of dose-specific effects (RR or MD with 95% CI) at each observed dose; the dose-response curve with CI bands and study points sized by weight; the method (REMR or GLST, fixed or random); the reference dose; and the knot locations. Label any curve fitted to a discrete exposure as 'quasi-nonlinearity' and explain it.",
+  "source_id": "khan2020",
+  "locator": "Ch13 pp. 272–277, 281–282",
+  "tags": "reporting jelentés dose-response dózis-válasz DRMA spline coefficients spline-együtthatók non-linearity nemlinearitás dose-specific effects dózis-specifikus hatások curve görbe knots csomópontok quasi-nonlinearity"
+ },
+ {
+  "k_id": "K-KHN1113-090",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Kerekítési és megjelenítési konvenciók",
+  "body": "In Stata eform output the printed SE is that of exp(b), i.e. exp(b)·SE(b) by the delta method, not SE(b). MetaXL screenshot cells are truncated rather than rounded, and the text sometimes truncates to 2 decimals (the baseline CI lower limit 2.398849 is printed as 2.39). Table 13.4 gives coefficients to 5 decimals and SEs to 3, while the text rounds coefficients to 3 decimals; Table 13.3 also has 5-decimal coefficients and 3-decimal SEs. Allow for this when comparing recomputed values with the book.",
+  "source_id": "khan2020",
+  "locator": "Ch11 pp. 247–248, Fig. 11.2; Ch13 pp. 272–273, 276",
+  "tags": "rounding kerekítés truncation csonkolás display megjelenítés eform delta method delta-módszer standard error standard hiba MetaXL decimals tizedesjegyek convention konvenció"
+ },
+ {
+  "k_id": "K-KHN1113-091",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "GLST nem alkalmazható abszolút átlagokra vagy prevalenciára",
+  "body": "GLST fits no intercept and assumes the effect and its variance at the reference are 0 (1 on the ratio scale). It therefore cannot model absolute measures such as arm means or prevalences, which Table 13.6 lists as REMR-only. Detect it when the outcome column holds raw category means or prevalences instead of log RR/OR or within-study differences against the reference. Fix: convert to differences against each study's reference (mean difference or log ratio) before using GLST, or use a model with an intercept, as the book does with REMR for the aripiprazole means. [note: for differences in means, the established alternative is the GLS/mixed-model approach of Crippa & Orsini (2016), the source of the book's aripiprazole data.]",
+  "source_id": "khan2020",
+  "locator": "Ch13 p. 275; Table 13.6 p. 280",
+  "tags": "pitfall buktató GLST absolute mean abszolút átlag prevalence prevalencia reference category referencia-kategória no intercept tengelymetszet nélkül mean difference átlagkülönbség REMR dose-response dózis-válasz aripiprazole aripiprazol"
+ }
+]

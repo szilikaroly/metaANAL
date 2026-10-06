@@ -1,0 +1,495 @@
+{
+ "description": "GET/PUT /api/studies — szk.ma.studies/v1 (4.10) a BCG-példa 13 vizsgálatával; az egyik címke szándékosan HTML-szerű (XSS-próba: szövegként kell megjelennie).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/studies",
+   "etag": "\"studies-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.studies/v1",
+    "data": {
+     "schema": "szk.ma.studies/v1",
+     "path": "03_adatok/studies.json",
+     "studies": [
+      {
+       "study_id": "ARONSON1948",
+       "label": "Aronson 1948",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:18874316",
+         "role": "primary",
+         "doc": "pmid:18874316"
+        }
+       ]
+      },
+      {
+       "study_id": "FERGUSON1949",
+       "label": "Ferguson & Simes 1949",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:18111983",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "ROSENTHAL1960",
+       "label": "Rosenthal et al 1960",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:13843893",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "HART1977",
+       "label": "Hart & Sutherland 1977",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:406977",
+         "role": "primary",
+         "doc": "pmid:406977"
+        },
+        {
+         "rec_id": "pmid:5434386",
+         "role": "secondary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "FRIMODT1973",
+       "label": "Frimodt-Moller et al 1973",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:4590547",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "STEIN1953",
+       "label": "Stein & Aronson 1953",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:13079297",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "VANDIVIERE1973",
+       "label": "Vandiviere et al 1973",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:4731427",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "TPT1980",
+       "label": "TPT Madras 1980",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:6993658",
+         "role": "primary",
+         "doc": null
+        },
+        {
+         "rec_id": "pmid:10343389",
+         "role": "secondary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COETZEE1968",
+       "label": "Coetzee & Berjak 1968",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:5690547",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "ROSENTHAL1961",
+       "label": "Rosenthal et al 1961",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:13691834",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COMSTOCK1974",
+       "label": "Comstock et al 1974",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:4814797",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COMSTOCK1969",
+       "label": "Comstock & Webster 1969",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:5367281",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COMSTOCK1976",
+       "label": "Comstock et al 1976 <img src=x onerror=alert(1)>",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:1052460",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      }
+     ],
+     "summary": {
+      "studies": 13,
+      "reports": 15
+     },
+     "problems": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr10"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/studies",
+   "etag": "\"studies-2\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.studies/v1",
+    "data": {
+     "schema": "szk.ma.studies/v1",
+     "path": "03_adatok/studies.json",
+     "studies": [
+      {
+       "study_id": "ARONSON1948",
+       "label": "Aronson 1948",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:18874316",
+         "role": "primary",
+         "doc": "pmid:18874316"
+        }
+       ]
+      },
+      {
+       "study_id": "FERGUSON1949",
+       "label": "Ferguson & Simes 1949",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:18111983",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "ROSENTHAL1960",
+       "label": "Rosenthal et al 1960",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:13843893",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "HART1977",
+       "label": "Hart & Sutherland 1977",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:406977",
+         "role": "primary",
+         "doc": "pmid:406977"
+        },
+        {
+         "rec_id": "pmid:5434386",
+         "role": "secondary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "FRIMODT1973",
+       "label": "Frimodt-Moller et al 1973",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:4590547",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "STEIN1953",
+       "label": "Stein & Aronson 1953",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:13079297",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "VANDIVIERE1973",
+       "label": "Vandiviere et al 1973",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:4731427",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "TPT1980",
+       "label": "TPT Madras 1980",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:6993658",
+         "role": "primary",
+         "doc": null
+        },
+        {
+         "rec_id": "pmid:10343389",
+         "role": "secondary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COETZEE1968",
+       "label": "Coetzee & Berjak 1968",
+       "registration": null,
+       "design": "rct_parallel",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:5690547",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "ROSENTHAL1961",
+       "label": "Rosenthal et al 1961",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:13691834",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COMSTOCK1974",
+       "label": "Comstock et al 1974",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:4814797",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COMSTOCK1969",
+       "label": "Comstock & Webster 1969",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:5367281",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      },
+      {
+       "study_id": "COMSTOCK1976",
+       "label": "Comstock et al 1976 <img src=x onerror=alert(1)>",
+       "registration": null,
+       "design": "nrsi",
+       "outcomes": [
+        "o1"
+       ],
+       "reports": [
+        {
+         "rec_id": "pmid:1052460",
+         "role": "primary",
+         "doc": null
+        }
+       ]
+      }
+     ],
+     "summary": {
+      "studies": 13,
+      "reports": 15
+     },
+     "problems": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr11"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,1042 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.plot:2",
+  "title": "szk.ma.plot/v2 — ábra-nézetmodell (plot_data.json; terv 4.6)",
+  "type": "object",
+  "required": [
+    "schema",
+    "meta",
+    "measure",
+    "scale",
+    "level",
+    "axis",
+    "studies",
+    "summaries"
+  ],
+  "$defs": {
+    "text": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      ],
+      "description": "a motor kész szövege {hu, en}, vagy null, ha nincs mit kiírni"
+    },
+    "axis": {
+      "type": "object",
+      "required": [
+        "domain",
+        "ticks"
+      ],
+      "description": "kiegészítő tengely (funnel, Doi, LOO, kumulatív, befolyás): tartomány, kész tickek, cím, referenciavonalak",
+      "properties": {
+        "domain": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "ticks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "at",
+              "text"
+            ],
+            "properties": {
+              "at": {
+                "type": "number"
+              },
+              "text": {
+                "type": "string"
+              },
+              "text_i18n": {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            }
+          }
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "at"
+            ],
+            "properties": {
+              "at": {
+                "type": "number"
+              },
+              "text": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "schema": {
+      "const": "szk.ma.plot/v2"
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "engine_version",
+        "data_sha256"
+      ],
+      "properties": {
+        "engine_version": {},
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data_sha256": {},
+        "spec_sha256": {}
+      }
+    },
+    "measure": {
+      "type": "string"
+    },
+    "scale": {
+      "type": "object",
+      "required": [
+        "analysis",
+        "ratio",
+        "null_analysis"
+      ],
+      "properties": {
+        "analysis": {
+          "enum": [
+            "identity",
+            "log",
+            "logit",
+            "atanh",
+            "asin_sqrt",
+            "pft"
+          ]
+        },
+        "ratio": {
+          "type": "boolean"
+        },
+        "null_analysis": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "null_display": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        }
+      }
+    },
+    "level": {
+      "type": "number"
+    },
+    "k": {
+      "type": "integer"
+    },
+    "display_locale": {
+      "enum": [
+        "hu",
+        "en"
+      ],
+      "description": "az axis.ticks[].text nyelve (mindkét nyelv: text_i18n)"
+    },
+    "axis": {
+      "type": "object",
+      "required": [
+        "domain",
+        "ticks",
+        "title"
+      ],
+      "properties": {
+        "domain": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "ticks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "at",
+              "text"
+            ],
+            "properties": {
+              "at": {
+                "type": "number",
+                "description": "elemzési skálán"
+              },
+              "text": {
+                "type": "string"
+              },
+              "text_i18n": {
+                "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+              }
+            }
+          }
+        },
+        "title": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "properties": {
+        "left": {},
+        "right": {},
+        "title": {},
+        "study": {
+          "$ref": "#/$defs/text"
+        },
+        "effect": {
+          "$ref": "#/$defs/text"
+        },
+        "weight": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ]
+      }
+    },
+    "studies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "row_uid",
+          "row_index",
+          "label",
+          "y",
+          "lo",
+          "hi",
+          "weight_pct",
+          "display",
+          "display_text"
+        ],
+        "properties": {
+          "row_uid": {
+            "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+          },
+          "row_index": {
+            "type": "integer"
+          },
+          "study_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "y": {
+            "type": "number"
+          },
+          "lo": {
+            "type": "number"
+          },
+          "hi": {
+            "type": "number"
+          },
+          "se": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "weight_pct": {
+            "type": "number"
+          },
+          "weight_fixed_pct": {
+            "$ref": "urn:szk:contract:common:1#/$defs/num"
+          },
+          "weight_text": {
+            "$ref": "#/$defs/text"
+          },
+          "cells": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "kész szövegek: 4/123, 12.4 (3.1)"
+          },
+          "display": {
+            "$ref": "urn:szk:contract:common:1#/$defs/display"
+          },
+          "display_text": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "analysis": {
+            "type": "object",
+            "description": "PFT: az eredeti Freeman–Tukey-értékek (y, lo, hi)"
+          },
+          "clip": {
+            "type": "object",
+            "properties": {
+              "left": {
+                "type": "boolean"
+              },
+              "right": {
+                "type": "boolean"
+              }
+            }
+          },
+          "flags": {
+            "type": "object",
+            "properties": {
+              "estimated": {
+                "type": "boolean"
+              },
+              "rob": {
+                "enum": [
+                  "low",
+                  "some",
+                  "high",
+                  "critical",
+                  null
+                ]
+              },
+              "zero_cell_corrected": {
+                "type": "boolean"
+              },
+              "influential": {
+                "type": "boolean"
+              },
+              "outlier": {
+                "type": "boolean"
+              }
+            }
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "doc": {},
+              "page": {},
+              "locator": {}
+            }
+          }
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "row_uids",
+          "summary"
+        ]
+      }
+    },
+    "summaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "label",
+          "estimate",
+          "ci_lower",
+          "ci_upper",
+          "display",
+          "display_text"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "overall",
+              "subgroup",
+              "sensitivity"
+            ]
+          },
+          "model": {
+            "enum": [
+              "random",
+              "fixed",
+              "ivhet",
+              "mh",
+              "peto"
+            ]
+          },
+          "label": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "pi_lower": {},
+          "pi_upper": {},
+          "display_text": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "pi_text": {},
+          "het_text": {},
+          "primary": {
+            "type": "boolean",
+            "description": "az elsődleges modell összesítése (ezt mutatja a felület kiemelve)"
+          },
+          "k": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "p_text": {
+            "$ref": "#/$defs/text"
+          },
+          "pi_label": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "subgroup_test": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "Q",
+            "df",
+            "p",
+            "text"
+          ]
+        }
+      ]
+    },
+    "heterogeneity": {
+      "type": "object",
+      "properties": {
+        "Q": {},
+        "df": {},
+        "p": {},
+        "I2": {},
+        "tau2": {},
+        "text": {},
+        "i2_text": {
+          "$ref": "#/$defs/text"
+        },
+        "tau2_text": {
+          "$ref": "#/$defs/text"
+        },
+        "q_text": {
+          "$ref": "#/$defs/text"
+        },
+        "p_text": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "funnel": {
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "row_uid",
+              "x",
+              "se"
+            ]
+          }
+        },
+        "filled": {
+          "type": "array"
+        },
+        "center": {
+          "type": "number"
+        },
+        "se_max": {
+          "type": "number"
+        },
+        "pseudo_ci": {
+          "type": "array",
+          "description": "[[x, se], …] töréspontok"
+        },
+        "contours": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "p",
+              "polygon"
+            ],
+            "description": "p = 0.10 / 0.05 / 0.01 sávok kész poligonként — a JS nem számol x = c ± z·se-t",
+            "properties": {
+              "band_text": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        },
+        "tests_text": {
+          "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+        },
+        "axis": {
+          "$ref": "#/$defs/axis"
+        },
+        "y_axis": {
+          "$ref": "#/$defs/axis"
+        },
+        "center_label": {
+          "$ref": "#/$defs/text"
+        },
+        "contour_center": {
+          "$ref": "urn:szk:contract:common:1#/$defs/num"
+        },
+        "outside_text": {
+          "$ref": "#/$defs/text"
+        },
+        "trimfill_text": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "doi": {
+      "type": "object",
+      "properties": {
+        "points": {},
+        "lfk": {},
+        "category": {},
+        "lfk_text": {},
+        "note": {
+          "$ref": "#/$defs/text"
+        },
+        "axis": {
+          "$ref": "#/$defs/axis"
+        },
+        "y_axis": {
+          "$ref": "#/$defs/axis"
+        }
+      }
+    },
+    "loo": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "omitted_row_uid",
+          "estimate",
+          "ci_lower",
+          "ci_upper",
+          "display_text"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "display_text": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "p_text": {
+            "$ref": "#/$defs/text"
+          },
+          "i2_text": {
+            "$ref": "#/$defs/text"
+          },
+          "tau2_text": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "loo_axis": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/axis"
+        }
+      ]
+    },
+    "influence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "row_uid"
+        ],
+        "properties": {
+          "rstudent": {},
+          "dffits": {},
+          "cook_d": {},
+          "cov_ratio": {},
+          "hat": {},
+          "dfbetas": {},
+          "influential": {
+            "type": "boolean"
+          },
+          "decimals": {
+            "type": "integer"
+          },
+          "label": {
+            "type": "string"
+          },
+          "outlier": {
+            "type": "boolean"
+          },
+          "rstudent_text": {
+            "$ref": "#/$defs/text"
+          },
+          "dffits_text": {
+            "$ref": "#/$defs/text"
+          },
+          "cook_d_text": {
+            "$ref": "#/$defs/text"
+          },
+          "cov_ratio_text": {
+            "$ref": "#/$defs/text"
+          },
+          "hat_text": {
+            "$ref": "#/$defs/text"
+          },
+          "dfbetas_text": {
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "influence_axes": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/axis"
+          }
+        }
+      ]
+    },
+    "influence_text": {
+      "$ref": "#/$defs/text"
+    },
+    "influence_note": {
+      "$ref": "#/$defs/text"
+    },
+    "cumulative": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "key_label",
+            "entries"
+          ],
+          "properties": {
+            "key_label": {
+              "$ref": "#/$defs/text"
+            },
+            "axis": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/axis"
+                }
+              ]
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "key_text": {
+                    "type": "string"
+                  },
+                  "display_text": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  },
+                  "i2_text": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "tau2_text": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "added_row_uid": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+                  },
+                  "row_index": {
+                    "type": "integer"
+                  },
+                  "k": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "estimate": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "ci_lower": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "ci_upper": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "display": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/display"
+                  },
+                  "analysis": {
+                    "type": "object",
+                    "description": "PFT: az eredeti Freeman–Tukey-értékek"
+                  }
+                }
+              },
+              "description": "a k-adik sor az első k (a rendezőkulcs szerint) vizsgálat összesítése; estimate / ci_* az elemzési skálán (PFT: a tengely n-jével elhelyezve), display_text kész szöveg"
+            },
+            "order": {
+              "type": "object",
+              "description": "E4c: a kumulatív sorrend leírása (sensitivity.cumulative_order): a rendező oszlop, növekvő irány, számként vagy természetes (szöveg szerinti) rendezés, a hiányzó kulcsú vizsgálatok a végén; row_uids = a bevonás sorrendje",
+              "properties": {
+                "column": {
+                  "type": "string"
+                },
+                "label": {
+                  "$ref": "#/$defs/text"
+                },
+                "direction": {
+                  "enum": [
+                    "ascending"
+                  ]
+                },
+                "sort": {
+                  "enum": [
+                    "numeric",
+                    "natural"
+                  ]
+                },
+                "missing_last": {
+                  "type": "boolean"
+                },
+                "n_missing": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "mixed_types": {
+                  "type": "boolean"
+                },
+                "row_uids": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+                  }
+                },
+                "text": {
+                  "$ref": "#/$defs/text"
+                }
+              }
+            },
+            "note": {
+              "$ref": "#/$defs/text",
+              "description": "kezdőbarát magyarázat (mit mutat a kumulatív ábra, mire nem alkalmas)"
+            }
+          }
+        }
+      ]
+    },
+    "bubble": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "moderator",
+            "points",
+            "line",
+            "band"
+          ],
+          "properties": {
+            "moderator": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "type"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "$ref": "#/$defs/text"
+                    },
+                    "type": {
+                      "enum": [
+                        "continuous",
+                        "categorical"
+                      ]
+                    },
+                    "coefficient": {
+                      "type": "string",
+                      "description": "a moderátor együtthatójának neve a meta-regresszióban"
+                    }
+                  }
+                }
+              ],
+              "description": "a moderátor leírása; a régebbi, szöveges (csak név) alak továbbra is érvényes"
+            },
+            "model": {
+              "type": "object",
+              "properties": {
+                "k": {
+                  "type": "integer"
+                },
+                "p": {
+                  "type": "integer"
+                },
+                "tau2": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                },
+                "tau2_method": {
+                  "type": "string"
+                },
+                "test": {
+                  "enum": [
+                    "z",
+                    "knha"
+                  ]
+                },
+                "df": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "crit": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num",
+                  "description": "a sávok kritikus értéke: t(k − p) (knha) vagy z"
+                },
+                "level": {
+                  "type": "number"
+                },
+                "R2": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                },
+                "QM": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                },
+                "QM_p": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              }
+            },
+            "coefficients": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "estimate"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "estimate": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "se": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "ci_lower": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "ci_upper": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "p": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  }
+                }
+              }
+            },
+            "vcov": {
+              "type": "array",
+              "description": "a próba szerinti együttható-kovariancia (Knapp–Hartungnál s²-tel skálázva) — ebből számolódik a sáv",
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              }
+            },
+            "points": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "row_uid",
+                  "x",
+                  "y",
+                  "weight_pct"
+                ],
+                "properties": {
+                  "row_uid": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/row_uid"
+                  },
+                  "row_index": {
+                    "type": "integer"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "x": {
+                    "type": "number",
+                    "description": "a moderátor értéke"
+                  },
+                  "y": {
+                    "type": "number",
+                    "description": "a hatás az elemzési skálán"
+                  },
+                  "se": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/num"
+                  },
+                  "weight_pct": {
+                    "type": "number",
+                    "description": "meta-regressziós súly 1/(v_i + τ²), %-ban (a buborék területe)"
+                  },
+                  "weight_text": {
+                    "$ref": "#/$defs/text"
+                  },
+                  "x_text": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  },
+                  "display": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/display"
+                  },
+                  "display_text": {
+                    "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+                  },
+                  "flags": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "line": {
+              "type": "array",
+              "description": "[[x, ŷ], …] — az illesztett egyenes a rácson",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              }
+            },
+            "band": {
+              "type": "array",
+              "description": "[[x, alsó, felső], …] — a motor számolja a koefficiens-kovarianciából (konfidenciasáv)",
+              "items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              }
+            },
+            "pi_band": {
+              "type": "array",
+              "description": "[[x, alsó, felső], …] — predikciós sáv (√(x0ᵀVx0 + τ²))",
+              "items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "$ref": "urn:szk:contract:common:1#/$defs/num"
+                }
+              }
+            },
+            "grid_n": {
+              "type": "integer",
+              "minimum": 2
+            },
+            "x_range": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            },
+            "x_axis": {
+              "$ref": "#/$defs/axis"
+            },
+            "y_axis": {
+              "$ref": "#/$defs/axis"
+            },
+            "coef_text": {
+              "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+            },
+            "line_label": {
+              "$ref": "#/$defs/text"
+            },
+            "band_label": {
+              "$ref": "#/$defs/text"
+            },
+            "pi_band_label": {
+              "$ref": "#/$defs/text"
+            },
+            "note": {
+              "$ref": "#/$defs/text",
+              "description": "kezdőbarát magyarázat (olvasás, a sávok jelentése, ökológiai torzítás, kis k)"
+            },
+            "groups": {
+              "type": "array",
+              "description": "kategóriás moderátornál a csoportok összesítői (a motor még nem írja)",
+              "items": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "E4c: buborékábra egyetlen folytonos moderátoros meta-regresszióhoz. A line / band / pi_band a motor rácsán (a moderátor megfigyelt tartományán) a moderators.predict értékei — metafor predict(rma(yi, vi, mods = ~x), newmods = …): CI = ŷ ± krit·√(x0ᵀVx0), PI = ŷ ± krit·√(x0ᵀVx0 + τ²), V = vcov, krit = model.crit. A felület és a figure-forge csak összeköti a pontokat."
+        }
+      ]
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      }
+    }
+  }
+}

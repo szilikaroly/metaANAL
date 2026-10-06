@@ -1,0 +1,156 @@
+[
+ {
+  "formula_id": "F-SIM24-001",
+  "name": "Weighted mean (pooled) effect size",
+  "expression": "M = sum_i (w_i * ES_i) / sum_i w_i",
+  "variables": "M = pooled weighted-mean effect size; ES_i = effect size of study i; w_i = weight of study i (1/VY_i under fixed effect, 1/(VY_i + T^2) under random effects); sums run over the k included studies",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 25",
+  "notes": "The source's four-step procedure (p. 24): compute weights, multiply each ES by its weight, sum, divide by the sum of weights. Identical for FE and RE; only the weights change. In the engine the computation is the internal helper models._wmean called by models.meta_analysis."
+ },
+ {
+  "formula_id": "F-SIM24-002",
+  "name": "Fixed-effect inverse-variance weight",
+  "expression": "W_i = 1 / VY_i",
+  "variables": "W_i = fixed-effect weight of study i; VY_i = within-study (sampling) variance of study i's effect size",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 25",
+  "notes": "The PDF prints 'Wi = 1 / VYi1'; the trailing '1' is a stray character (probably a footnote marker). Worked example: VY_i = 0.04 gives W_i = 1/0.04 = 25. Tau^2 is not used under fixed effect. Engine: models.meta_analysis(model='fixed')."
+ },
+ {
+  "formula_id": "F-SIM24-003",
+  "name": "Random-effects inverse-variance weight",
+  "expression": "W*_i = 1 / (VY_i + T^2)",
+  "variables": "W*_i = random-effects weight of study i; VY_i = within-study variance of study i; T^2 = estimated between-study variance (the estimate of the parameter tau^2)",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 27",
+  "notes": "The source uses T^2 and tau^2 interchangeably (Borenstein notation: T^2 is the estimate of tau^2). Engine: models.meta_analysis(model='random'), default tau2_method='REML'."
+ },
+ {
+  "formula_id": "F-SIM24-004",
+  "name": "DerSimonian-Laird (method-of-moments) between-study variance",
+  "expression": "T^2 = (Q - df) / C,  df = k - 1",
+  "variables": "T^2 = estimated between-study variance; Q = homogeneity statistic (Cochran's Q); df = degrees of freedom = k - 1; k = number of studies; C = scaling constant based on the study weights (not defined in the source; see F-SIM24-005)",
+  "engine_ref": "models.tau2_dl",
+  "stage_id": "S08",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 27",
+  "notes": "The source leaves C undefined and does not mention truncation at 0 (see F-SIM24-006); a literal implementation can yield a negative T^2. The source calls DL 'one common approach' and REML 'a common method' (p. 26). [note: Cochrane Handbook v6 and simulation evidence favour REML or Paule-Mandel over DL, which underestimates tau^2 with few studies or large heterogeneity; engine default is models.tau2_reml.]"
+ },
+ {
+  "formula_id": "F-SIM24-005",
+  "name": "DL scaling constant C",
+  "expression": "C = sum_i w_i - (sum_i w_i^2) / (sum_i w_i),  w_i = 1 / VY_i",
+  "variables": "C = DL scaling constant; w_i = fixed-effect (inverse within-study variance) weight of study i; VY_i = within-study variance of study i",
+  "engine_ref": "models.tau2_dl",
+  "stage_id": "S08",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 27 (C named but not defined; definition [supplement — not in source])",
+  "notes": "Supplement from the extraction notes (standard DL, Borenstein et al. 2021). Also returned as 'C' by models.heterogeneity."
+ },
+ {
+  "formula_id": "F-SIM24-006",
+  "name": "Truncated DL estimator",
+  "expression": "T^2 = max(0, (Q - df) / C)",
+  "variables": "T^2 = estimated between-study variance; Q = Cochran's Q; df = k - 1; C = DL scaling constant (F-SIM24-005)",
+  "engine_ref": "models.tau2_dl",
+  "stage_id": "S08",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 27 (truncation not mentioned in source; [supplement — not in source])",
+  "notes": "Fix for the source's omission: when Q < df the moment estimate is negative and must be set to 0. A negative T^2 in any output is a red flag for a literal implementation of the source's formula."
+ },
+ {
+  "formula_id": "F-SIM24-007",
+  "name": "Cochran's Q homogeneity statistic",
+  "expression": "Q = sum_i w_i * (ES_i - M_FE)^2,  df = k - 1",
+  "variables": "Q = homogeneity statistic (chi-square distributed with df = k - 1 under homogeneity); w_i = 1/VY_i fixed-effect weight; ES_i = effect size of study i; M_FE = fixed-effect weighted mean; k = number of studies",
+  "engine_ref": "models.cochran_q",
+  "stage_id": "S09",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21 (described in words only; formula [supplement — not in source])",
+  "notes": "The source describes Q only as a weighted sum of squares following a chi-square distribution, with a significant Q suggesting heterogeneity. Q and its p-value signal presence, not amount, of heterogeneity (Common Mistake 3, p. 30). p-value: models.heterogeneity ('p_Q')."
+ },
+ {
+  "formula_id": "F-SIM24-008",
+  "name": "I-squared as a variance ratio",
+  "expression": "I^2 = tau^2 / (tau^2 + s^2)",
+  "variables": "I^2 = proportion of total variance due to between-study variance; tau^2 = between-study variance; s^2 = within-study (sampling) variance, in practice the 'typical' within-study variance",
+  "engine_ref": "models.heterogeneity",
+  "stage_id": "S09",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21 (verbal definition only; no computational formula in source)",
+  "notes": "The source defines I^2 only in words (between-study variance over between- plus within-study variance) and gives no thresholds or CI. [note: the usual computational form is I^2 = max(0, (Q - df)/Q) x 100% (engine key 'I2'); the variance-ratio form with the Higgins-Thompson typical within-study variance is engine key 'I2_from_tau2'; CIs: 'I2_ci_HT', 'I2_ci_QP'.]"
+ },
+ {
+  "formula_id": "F-SIM24-009",
+  "name": "Standard error of the pooled estimate (Wald)",
+  "expression": "SE(M) = sqrt(1 / sum_i w_i)",
+  "variables": "SE(M) = standard error of the pooled weighted mean; w_i = FE or RE weight of study i",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "simplypsychology2024",
+  "locator": "not printed in the source [supplement — not in source]; context: pooling steps, pp. 25–27",
+  "notes": "The source gives no SE, z/t test or CI formula. Engine returns this as 'se_wald'; with ci_method='hksj' (default for random effects) the reported SE is the Hartung-Knapp-Sidik-Jonkman rescaled SE instead."
+ },
+ {
+  "formula_id": "F-SIM24-010",
+  "name": "Cohen's d to correlation r",
+  "expression": "r = d / sqrt(d^2 + a),  a = (n1 + n2)^2 / (n1 * n2)",
+  "variables": "r = correlation (point-biserial); d = standardised mean difference; n1, n2 = group sample sizes; a = correction factor for unequal group sizes (a = 4 when n1 = n2)",
+  "engine_ref": "conversions.d_to_r",
+  "stage_id": "S07",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 20 (conversion mentioned, no equation printed); formula [supplement — Borenstein et al. 2021, cited p. 31]",
+  "notes": "The source only says r and d can be approximately converted and refers to Rosenthal (1991). Variance (engine, Borenstein): V_r = a^2 * V_d / (d^2 + a)^3."
+ },
+ {
+  "formula_id": "F-SIM24-011",
+  "name": "Correlation r to Cohen's d",
+  "expression": "d = 2r / sqrt(1 - r^2)",
+  "variables": "d = standardised mean difference; r = correlation coefficient",
+  "engine_ref": "conversions.r_to_d",
+  "stage_id": "S07",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 20 (conversion mentioned, no equation printed); formula [supplement — Borenstein et al. 2021, cited p. 31]",
+  "notes": "Approximate; assumes the correlation arises from a two-group comparison. Variance (engine, Borenstein): V_d = 4 * V_r / (1 - r^2)^3."
+ },
+ {
+  "formula_id": "F-SIM24-012",
+  "name": "Log odds ratio to Cohen's d (Hasselblad-Hedges logit method)",
+  "expression": "d = ln(OR) * sqrt(3) / pi",
+  "variables": "d = standardised mean difference; ln(OR) = natural log of the odds ratio; pi = 3.14159...",
+  "engine_ref": "conversions.logor_to_d",
+  "stage_id": "S07",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 20 (OR-to-r conversion mentioned, no equation printed); formula [supplement — Borenstein et al. 2021, cited p. 31]",
+  "notes": "The source mentions deriving r from an OR; route: ln(OR) -> d with this formula, then d -> r with F-SIM24-010 (needs n1, n2). Assumes an underlying logistic distribution. Variance (engine, Borenstein): V_d = V_lnOR * 3 / pi^2; inverse: conversions.d_to_logor."
+ },
+ {
+  "formula_id": "F-SIM24-013",
+  "name": "I-squared from Cochran's Q (computational form)",
+  "expression": "I^2 = max(0, (Q - df) / Q) * 100%,  df = k - 1",
+  "variables": "I^2 = percentage of total variation across studies attributed to heterogeneity rather than chance; Q = Cochran's Q (F-SIM24-007); df = k - 1; k = number of studies",
+  "engine_ref": "models.heterogeneity",
+  "stage_id": "S09",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21 (I^2 described in words only; formula [supplement — not in source])",
+  "notes": "Higgins & Thompson (2002) form; engine key 'I2' (in percent), with Higgins-Thompson and Q-profile CIs ('I2_ci_HT', 'I2_ci_QP'). [note: I^2 is a relative measure that rises with study precision; the Cochrane Handbook bands (0-40%, 30-60%, 50-90%, 75-100%) overlap and are rough guides, not cut-offs; always report tau^2 and a prediction interval alongside it.]"
+ },
+ {
+  "formula_id": "F-SIM24-014",
+  "name": "Random-effects prediction interval",
+  "expression": "PI = M ± t_{k-2, 1-alpha/2} * sqrt(T^2 + SE(M)^2)",
+  "variables": "PI = prediction interval for the true effect in a new comparable study; M = random-effects pooled estimate; t_{k-2, 1-alpha/2} = Student t quantile with k - 2 degrees of freedom; T^2 = estimated between-study variance; SE(M) = standard error of M; k = number of studies (k >= 3)",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S09",
+  "source_id": "simplypsychology2024",
+  "locator": "p. 21 (prediction interval mentioned, no formula; formula [supplement — not in source])",
+  "notes": "Higgins, Thompson & Spiegelhalter (2009) form. Engine: models.meta_analysis(model='random', pi_method='t_k-2') returns pi_lower/pi_upper and warns when k < 3; it uses the reported SE, which is the HKSJ-rescaled SE when ci_method='hksj'. The source only says a wide PI signals substantial heterogeneity."
+ }
+]

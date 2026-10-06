@@ -1,0 +1,43 @@
+{
+ "description": "GET /api/log/grade — projekt.list_items('grades') (3.5.15).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/log/grade",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.log/v1",
+    "data": {
+     "kind": "grade",
+     "items": [
+      {
+       "id": 1,
+       "ts": "2026-10-04T22:00:00Z",
+       "outcome": "o1",
+       "k": 13,
+       "participants": 357347,
+       "effect": "RR 0,49 [0,33; 0,73]",
+       "risk_of_bias": "−1 serious: 41% súly magas RoB-ú vizsgálatokból",
+       "inconsistency": "−1 serious: I² 92%, a PI átlépi a nullát",
+       "indirectness": "0 not serious",
+       "imprecision": "0 not serious",
+       "publication_bias": "0 undetected (döntés #9)",
+       "upgrades": null,
+       "certainty": "low",
+       "rationale": "Kétszeres leminősítés (RoB, inkonzisztencia).",
+       "kb_refs": "D-S13-001",
+       "kb_unverified": null
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr34"
+    }
+   }
+  }
+ ]
+}

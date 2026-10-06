@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SZINTETIKUS tesztfixture / SYNTHETIC test fixture. Fictitious studies; identifiers use unassigned ranges
+     (PMID 9999xxxx) and the 10.5555 test DOI prefix - never use them outside tests.
+     Structure modelled on a BMJ review in PMC (cf. PMC4122754): "Characteristics of studies included" table
+     whose first column is "Author year" WITHOUT xref, references enriched by Europe PMC <ext-link> ids, and the
+     first-author trap: "Alfa" is first author of ref1 and co-author of ref2 (same year) -> only ref1 may match.
+     Also: suffix a/b disambiguation, an ambiguous first-author+year pair, a misspelt name (hint only), an xref
+     row, a superscript-number row, a footnote-marked participant count and a "No of participants" column. -->
+<article xmlns:xlink="http://www.w3.org/1999/xlink" article-type="research-article">
+<front>
+<journal-meta><journal-title-group><journal-title>Synthetic BMJ</journal-title></journal-title-group></journal-meta>
+<article-meta>
+<article-id pub-id-type="pmid">99990200</article-id>
+<article-id pub-id-type="doi">10.5555/hh.0200</article-id>
+<title-group><article-title>Effect of vaccine X on infection: systematic review and meta-analysis</article-title></title-group>
+<pub-date pub-type="epub"><day>5</day><month>8</month><year>2014</year></pub-date>
+<permissions><license license-type="open-access"><license-p>This is an Open Access article distributed in accordance with the Creative Commons Attribution Non Commercial (CC BY-NC 4.0) license.</license-p></license></permissions>
+<abstract>
+<sec><title>Data sources</title><p>We searched Embase (1980 until November 2013), Medline (1950 until November 2013), and the Cochrane Library.</p></sec>
+<sec><title>Results</title><p>The primary analysis included eight studies and 1855 participants.</p></sec>
+</abstract>
+</article-meta>
+</front>
+<body>
+<sec><title>Results</title>
+<table-wrap id="tbl1">
+<label>Table 1</label>
+<caption><title>Characteristics of studies included in systematic review of effect of vaccine X on infection</title></caption>
+<table>
+<thead><tr><th>Study</th><th>Setting</th><th>No of participants</th></tr></thead>
+<tbody>
+<tr><td>Alfa 2010</td><td>Contacts</td><td>236<sup>†</sup></td></tr>
+<tr><td>Bravo 2011</td><td>Outbreak</td><td>166</td></tr>
+<tr><td>Charlie 2009</td><td>Contacts</td><td>NS</td></tr>
+<tr><td>Delta 2008a</td><td>School</td><td>117</td></tr>
+<tr><td>Delta 2008b</td><td>School</td><td>98</td></tr>
+<tr><td>Echo 2012</td><td>Household</td><td>199</td></tr>
+<tr><td>Foxtrot 2013<xref ref-type="bibr" rid="ref9">9</xref></td><td>Household</td><td>1,234</td></tr>
+<tr><td>Hotel 2014<sup>10</sup></td><td>Contacts</td><td>45*</td></tr>
+</tbody>
+</table>
+<table-wrap-foot><fn><p><sup>†</sup>Participants with complete follow-up.</p></fn></table-wrap-foot>
+</table-wrap>
+</sec>
+</body>
+<back>
+<ref-list><title>References</title>
+<ref id="ref1"><label>1</label><mixed-citation publication-type="journal"><string-name><surname>Alfa</surname> <given-names>AB</given-names></string-name>, <string-name><surname>Bravo</surname> <given-names>C</given-names></string-name>. <article-title>Vaccine X and infection among household contacts</article-title>. <source>Synthetic Paediatric Infect Dis J</source> <year>2010</year>;<volume>29</volume>:<fpage>439</fpage>-<lpage>44</lpage>. <ext-link ext-link-type="pmid" xlink:href="99990011">99990011</ext-link> <ext-link ext-link-type="doi" xlink:href="https://doi.org/10.5555/hh.0011">10.5555/hh.0011</ext-link></mixed-citation></ref>
+<ref id="ref2"><label>2</label><mixed-citation publication-type="journal"><string-name><surname>Golf</surname> <given-names>H</given-names></string-name>, <string-name><surname>Alfa</surname> <given-names>AB</given-names></string-name>. <article-title>A different study with Alfa as co-author</article-title>. <source>Synthetic Pediatrics</source> <year>2010</year>;<volume>117</volume>:<fpage>1</fpage>-<lpage>8</lpage>.</mixed-citation></ref>
+<ref id="ref3"><label>3</label><mixed-citation publication-type="journal"><string-name><surname>Bravo</surname> <given-names>D</given-names></string-name>, <string-name><surname>India</surname> <given-names>E</given-names></string-name>. <article-title>Vaccine X during an outbreak</article-title>. <source>Synthetic Eur Respir J</source> <year>2011</year>;<volume>37</volume>:<fpage>1</fpage>-<lpage>7</lpage>. <ext-link ext-link-type="pmid" xlink:href="99990013">99990013</ext-link></mixed-citation></ref>
+<ref id="ref4"><label>4</label><mixed-citation publication-type="journal"><string-name><surname>Charlee</surname> <given-names>F</given-names></string-name>. <article-title>Vaccine X in contacts</article-title>. <source>Synthetic Thorax</source> <year>2009</year>;<volume>64</volume>:<fpage>9</fpage>-<lpage>15</lpage>.</mixed-citation></ref>
+<ref id="ref5"><label>5</label><mixed-citation publication-type="journal"><string-name><surname>Delta</surname> <given-names>G</given-names></string-name>. <article-title>Vaccine X in schools, part one</article-title>. <source>Synthetic Lancet</source> <year>2008a</year>;<volume>1</volume>:<fpage>1</fpage>-<lpage>5</lpage>.</mixed-citation></ref>
+<ref id="ref6"><label>6</label><mixed-citation publication-type="journal"><string-name><surname>Delta</surname> <given-names>G</given-names></string-name>. <article-title>Vaccine X in schools, part two</article-title>. <source>Synthetic Lancet</source> <year>2008b</year>;<volume>1</volume>:<fpage>6</fpage>-<lpage>9</lpage>.</mixed-citation></ref>
+<ref id="ref7"><label>7</label><mixed-citation publication-type="journal"><string-name><surname>Echo</surname> <given-names>H</given-names></string-name>. <article-title>Household transmission of infection A</article-title>. <source>Synthetic Vaccine</source> <year>2012</year>;<volume>30</volume>:<fpage>1</fpage>-<lpage>6</lpage>.</mixed-citation></ref>
+<ref id="ref8"><label>8</label><mixed-citation publication-type="journal"><string-name><surname>Echo</surname> <given-names>H</given-names></string-name>. <article-title>Household transmission of infection B</article-title>. <source>Synthetic Vaccine</source> <year>2012</year>;<volume>30</volume>:<fpage>7</fpage>-<lpage>12</lpage>.</mixed-citation></ref>
+<ref id="ref9"><label>9</label><mixed-citation publication-type="journal"><string-name><surname>Foxtrot</surname> <given-names>J</given-names></string-name>. <article-title>Vaccine X in households</article-title>. <source>Synthetic Thorax</source> <year>2013</year>;<volume>68</volume>:<fpage>1</fpage>-<lpage>9</lpage>. doi:10.5555/hh.0019</mixed-citation></ref>
+<ref id="ref10"><label>10</label><mixed-citation publication-type="journal"><string-name><surname>Hotel</surname> <given-names>K</given-names></string-name>. <article-title>Vaccine X among contacts</article-title>. <source>Synthetic Int J Tuberc</source> <year>2014</year>;<volume>18</volume>:<fpage>1</fpage>-<lpage>4</lpage>. PMID: 99990020</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

@@ -1,0 +1,53 @@
+{
+ "schema": "szk.appraisal/v1",
+ "tool": "probast-ai",
+ "scope": "development",
+ "instrument_sha256": "1f5978850999228a73640ccbc8a1b9423e2af2be5d38692a4be0ee25d76f375c",
+ "target": {
+  "unit": "LEE2023",
+  "study_id": "LEE2023",
+  "model": "XGB-PE",
+  "outcome": null,
+  "result": null,
+  "index_test": null,
+  "key": "XGB-PE"
+ },
+ "assessor": "ai",
+ "second_assessor": null,
+ "status": "draft",
+ "origin": "ai_draft",
+ "approved_by": null,
+ "approved_at": null,
+ "answers": {
+  "development/1.1": {
+   "value": "probably_yes",
+   "evidence": {
+    "text": "data were drawn from the national registry",
+    "doc": "pmid:2",
+    "page": 4,
+    "locator": "Methods"
+   },
+   "rationale": {
+    "asks": "Megfelelő volt-e az adatforrás?",
+    "because": "Regiszteradat, előre rögzített kritériumokkal.",
+    "change": "Ha a beválasztás nem lenne előre rögzítve.",
+    "uncertain": null
+   }
+  },
+  "development/4.1": {
+   "value": "no_information",
+   "evidence": null,
+   "rationale": {
+    "asks": "Elég nagy volt-e a minta?",
+    "because": "A cikk nem indokolja a mintanagyságot.",
+    "change": "Eseményszám / paraméter közlése.",
+    "uncertain": "A cikk nem közli az eseményszámot."
+   }
+  }
+ },
+ "domain_judgements": [],
+ "applicability": [],
+ "overall": null,
+ "created": "2026-10-05T10:00:00Z",
+ "updated": "2026-10-05T10:00:00Z"
+}

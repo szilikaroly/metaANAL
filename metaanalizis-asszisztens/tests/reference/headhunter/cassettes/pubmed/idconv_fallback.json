@@ -1,0 +1,193 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "pubmed-idconv_fallback",
+  "recorded_at": "2026-10-05T11:08:29Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "idconv tartalék-útja (az NCBI ID-konverter blokkolt): esearch [doi] + esummary",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=2&retmode=json&retstart=0&term=%2210.1002%2F14651858.cd012915.pub2%22%5Bdoi%5D",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "2"
+        },
+        "body_json": {
+          "header": {
+            "type": "esearch",
+            "version": "0.3"
+          },
+          "esearchresult": {
+            "count": "1",
+            "retmax": "1",
+            "retstart": "0",
+            "idlist": [
+              "31038197"
+            ],
+            "translationset": [],
+            "querytranslation": "\"10.1002/14651858.cd012915.pub2\"[Publisher ID]"
+          }
+        }
+      },
+      "delay_ms": null
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=31038197&retmode=json",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "1"
+        },
+        "body_json": {
+          "header": {
+            "type": "esummary",
+            "version": "0.3"
+          },
+          "result": {
+            "uids": [
+              "31038197"
+            ],
+            "31038197": {
+              "uid": "31038197",
+              "pubdate": "2019 Apr 30",
+              "epubdate": "2019 Apr 30",
+              "source": "Cochrane Database Syst Rev",
+              "authors": [
+                {
+                  "name": "Kashangura R",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Jullien S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Garner P",
+                  "authtype": "Author",
+                  "clusterid": ""
+                },
+                {
+                  "name": "Johnson S",
+                  "authtype": "Author",
+                  "clusterid": ""
+                }
+              ],
+              "lastauthor": "Johnson S",
+              "title": "MVA85A vaccine to enhance BCG for preventing tuberculosis.",
+              "sorttitle": "mva85a vaccine to enhance bcg for preventing tuberculosis",
+              "volume": "4",
+              "issue": "4",
+              "pages": "CD012915",
+              "lang": [
+                "eng"
+              ],
+              "nlmuniqueid": "100909747",
+              "issn": "1361-6137",
+              "essn": "1469-493X",
+              "pubtype": [
+                "Journal Article",
+                "Research Support, Non-U.S. Gov't",
+                "Systematic Review"
+              ],
+              "recordstatus": "PubMed - indexed for MEDLINE",
+              "pubstatus": "3",
+              "articleids": [
+                {
+                  "idtype": "pubmed",
+                  "idtypen": 1,
+                  "value": "31038197"
+                },
+                {
+                  "idtype": "pmc",
+                  "idtypen": 8,
+                  "value": "PMC6488980"
+                },
+                {
+                  "idtype": "pmcid",
+                  "idtypen": 5,
+                  "value": "pmc-id: PMC6488980;"
+                },
+                {
+                  "idtype": "doi",
+                  "idtypen": 3,
+                  "value": "10.1002/14651858.CD012915.pub2"
+                }
+              ],
+              "history": [
+                {
+                  "pubstatus": "pubmed",
+                  "date": "2019/05/01 06:00"
+                },
+                {
+                  "pubstatus": "medline",
+                  "date": "2019/05/29 06:00"
+                },
+                {
+                  "pubstatus": "entrez",
+                  "date": "2019/05/01 06:00"
+                },
+                {
+                  "pubstatus": "pmc-release",
+                  "date": "2019/04/30 00:00"
+                }
+              ],
+              "references": [
+                {
+                  "refsource": "doi: 10.1002/14651858.CD012915",
+                  "reftype": "Update of",
+                  "pmid": "",
+                  "note": ""
+                }
+              ],
+              "attributes": [
+                "Has Abstract"
+              ],
+              "pmcrefcount": 96,
+              "fulljournalname": "The Cochrane database of systematic reviews",
+              "elocationid": "doi: 10.1002/14651858.CD012915.pub2",
+              "doctype": "citation",
+              "srccontriblist": [],
+              "booktitle": "",
+              "medium": "",
+              "edition": "",
+              "publisherlocation": "",
+              "publishername": "",
+              "srcdate": "",
+              "reportnumber": "",
+              "availablefromurl": "",
+              "locationlabel": "",
+              "doccontriblist": [],
+              "docdate": "",
+              "bookname": "",
+              "chapter": "",
+              "sortpubdate": "2019/04/30 00:00",
+              "sortfirstauthor": "Kashangura R",
+              "vernaculartitle": ""
+            }
+          }
+        }
+      },
+      "delay_ms": null
+    }
+  ]
+}

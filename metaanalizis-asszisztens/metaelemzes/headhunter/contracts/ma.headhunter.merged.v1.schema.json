@@ -1,0 +1,494 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.merged:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.merged/v1 — az egyesített vizsgálatkészlet proveniencával (01_kereses/headhunter/merged.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "model",
+    "generated",
+    "counts",
+    "studies"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.merged/v1"
+    },
+    "model": {
+      "const": "szk.ma.headhunter/v1"
+    },
+    "generated": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "final": {
+      "type": "boolean",
+      "description": "true csak EP5 (végső bevonás) emberi lezárása után"
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "studies_included",
+        "reports_included"
+      ],
+      "properties": {
+        "reviews_selected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "citations_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "N — duplikációval együtt"
+        },
+        "studies_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "studies_included": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reports_included": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "studies_from_update": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending_decisions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "secondary_unverified": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "studies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "study_id",
+          "label",
+          "status",
+          "reports",
+          "provenance",
+          "found_by"
+        ],
+        "properties": {
+          "study_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/study_id"
+          },
+          "label": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "included",
+              "excluded",
+              "awaiting",
+              "pending"
+            ]
+          },
+          "registry_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/idval"
+            }
+          },
+          "reports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "rec_id",
+                "role"
+              ],
+              "properties": {
+                "rec_id": {
+                  "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "ids": {
+                  "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ids"
+                },
+                "citation": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "role_source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "year": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "branch": {
+                  "enum": [
+                    "other",
+                    "database",
+                    null
+                  ],
+                  "description": "PRISMA-ág: other = egyéb módszerek (áttekintések, hivatkozáskövetés), database = frissítő keresés"
+                },
+                "routes": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "review_extraction",
+                      "citation_search",
+                      "update_search",
+                      "manual"
+                    ]
+                  }
+                },
+                "resolution": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "screening_status": {
+                  "type": "object",
+                  "required": [],
+                  "properties": {
+                    "title_abstract": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "full_text": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "eligibility": {
+                  "type": "object",
+                  "required": []
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "provenance": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "review_id",
+                "cand_ids",
+                "evidence_ids"
+              ],
+              "properties": {
+                "review_id": {
+                  "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+                },
+                "cand_ids": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/cand_id"
+                  }
+                },
+                "label_in_review": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "evidence_ids": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+                  },
+                  "minItems": 1
+                },
+                "confidence": {
+                  "oneOf": [
+                    {
+                      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/confidence"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "found_by": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "previous_reviews",
+                "citation_search",
+                "update_search",
+                "manual"
+              ]
+            },
+            "minItems": 1
+          },
+          "eligibility": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "title_abstract": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "decision",
+                      "decision_id"
+                    ],
+                    "properties": {
+                      "decision": {
+                        "enum": [
+                          "include",
+                          "exclude",
+                          "unclear"
+                        ]
+                      },
+                      "decision_id": {
+                        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "full_text": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "decision",
+                      "decision_id"
+                    ],
+                    "properties": {
+                      "decision": {
+                        "enum": [
+                          "include",
+                          "exclude",
+                          "awaiting",
+                          "not_retrieved"
+                        ]
+                      },
+                      "reason_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "decision_id": {
+                        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "final": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "decision",
+                  "decision_id"
+                ],
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "include",
+                      "exclude"
+                    ]
+                  },
+                  "decision_id": {
+                    "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "secondary_data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "review_id",
+                "values"
+              ],
+              "properties": {
+                "review_id": {
+                  "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/secondary_value"
+                  }
+                }
+              }
+            },
+            "description": "MÁSODLAGOS adatok — elemzésbe csak az elsődleges közleménnyel ellenőrizve (H010)"
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "values"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "outcome": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "review_id",
+                      "value",
+                      "evidence_id"
+                    ],
+                    "properties": {
+                      "review_id": {
+                        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+                      },
+                      "value": {
+                        "type": [
+                          "number",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "evidence_id": {
+                        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+                      }
+                    }
+                  },
+                  "minItems": 2
+                },
+                "note": {
+                  "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/explain"
+                },
+                "arm": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "examples": [
+                "retracted",
+                "registry_only",
+                "conference_abstract"
+              ]
+            }
+          },
+          "n_reviews": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "prisma_flow": {
+      "oneOf": [
+        {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/relpath"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "exports": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/relpath"
+      }
+    },
+    "content_sha256": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/sha256",
+      "description": "a vizsgálatlista tartalmi ujjlenyomata (a final mezők nélkül) — az EP5 lezárás érvényességéhez"
+    },
+    "dropped": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "kimaradt vizsgálat-klaszterek (ki nem választott áttekintésből vagy elutasított jelöltből)"
+    },
+    "summary": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "pending_proposals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending_studies": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending_candidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "secondary_unverified_included": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conflicts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "signoff_decision": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

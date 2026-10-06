@@ -1,0 +1,756 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "amstar2",
+  "name": "AMSTAR 2",
+  "label": {
+    "hu": "AMSTAR 2 — szisztematikus áttekintések módszertani minősége",
+    "en": "AMSTAR 2 — methodological quality of systematic reviews"
+  },
+  "full_name": "A MeaSurement Tool to Assess systematic Reviews, version 2",
+  "family": "review",
+  "tool_version": "2017",
+  "definition_version": 2,
+  "validator_version": "1.0.0",
+  "reference_sha256": "5d537ced232d0fb404f515fa55bc0f8612e240133c3ac88d493351c4e84a2e80",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/amstar2.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Shea BJ, Reeves BC, Wells G, et al. AMSTAR 2: a critical appraisal tool for systematic reviews that include randomised or non-randomised studies of healthcare interventions, or both. BMJ 2017;358:j4008; amstar.ca.",
+  "licence": {
+    "instrument_licence": "CC BY-NC 4.0 (BMJ nyílt hozzáférés) — ellenőrizendő",
+    "verbatim_allowed": true,
+    "text_kind": "paraphrase",
+    "checked": false,
+    "note": {
+      "hu": "A BMJ-közlemény nyílt hozzáférésű (CC BY-NC 4.0, ellenőrizendő); a fájl mégis parafrázist és a projekt tudásbázisának (KB AMSTAR2-xx) magyar szövegét tartalmazza.",
+      "en": "The BMJ article is open access (CC BY-NC 4.0, to be verified); this file nevertheless holds paraphrases and the project knowledge base's Hungarian texts (KB AMSTAR2-xx)."
+    }
+  },
+  "intro": {
+    "hu": "Az AMSTAR 2 az áttekintés EREDMÉNYEIBE VETETT BIZALMAT minősíti — nem a bevont vizsgálatok minőségét (az RoB 2 / ROBINS) és nem a bizonyosságot (az a GRADE). Pontszáma nincs: 16 tétel, ebből 7 kritikus (2, 4, 7, 9, 11, 13, 15), és a besorolás a kritikus hibák és a nem kritikus gyengeségek számából következik (KB AMSTAR2-00).",
+    "en": "AMSTAR 2 rates CONFIDENCE IN THE RESULTS of the review — not the quality of the included studies and not the certainty of evidence. No score: 16 items, 7 critical; the rating follows from the counts of critical flaws and non-critical weaknesses."
+  },
+  "unit": "review",
+  "unit_label": {
+    "hu": "az áttekintésre",
+    "en": "per review"
+  },
+  "scopes": [
+    {
+      "id": "all",
+      "label": {
+        "hu": "A saját (vagy egy közölt) szisztematikus áttekintés",
+        "en": "The review"
+      },
+      "default": true
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "partial_yes",
+      "label": "PY",
+      "text": {
+        "hu": "Részben igen",
+        "en": "Partial yes"
+      },
+      "kind": "partial",
+      "aliases": [
+        "py",
+        "partial yes",
+        "partially yes",
+        "reszben igen",
+        "ri"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem volt metaanalízis",
+        "en": "No meta-analysis conducted"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato",
+        "no meta-analysis",
+        "no meta-analysis conducted",
+        "nem volt metaanalizis",
+        "nincs metaanalizis"
+      ]
+    }
+  ],
+  "default_answers": [
+    "yes",
+    "no"
+  ],
+  "verdicts": [
+    {
+      "value": "high",
+      "label": {
+        "hu": "Magas",
+        "en": "High"
+      },
+      "level": "low"
+    },
+    {
+      "value": "moderate",
+      "label": {
+        "hu": "Mérsékelt",
+        "en": "Moderate"
+      },
+      "level": "some"
+    },
+    {
+      "value": "low",
+      "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+      },
+      "level": "high"
+    },
+    {
+      "value": "critically_low",
+      "label": {
+        "hu": "Kritikusan alacsony",
+        "en": "Critically low"
+      },
+      "level": "critical"
+    }
+  ],
+  "domains": [
+    {
+      "id": "items",
+      "title": {
+        "hu": "AMSTAR 2 tételek",
+        "en": "AMSTAR 2 items"
+      },
+      "short": "AMSTAR 2",
+      "passes": null,
+      "applicability": false
+    }
+  ],
+  "items": [
+    {
+      "id": "1",
+      "key": "1",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Tartalmazták-e a kutatási kérdések és a beválasztási kritériumok a PICO elemeit?",
+        "en": "Did the research questions and inclusion criteria include the components of PICO?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-01",
+      "help": {
+        "hu": "A kutatási kérdés és a beválasztási kritériumok kifejezetten tartalmazzák a PICO minden elemét: populáció, beavatkozás, összehasonlító (kontroll) és kimenet. Ajánlott a követési időtartam megadása is.",
+        "en": "Population, Intervention, Comparator, Outcome. A timeframe and setting element counts toward this but is not required."
+      }
+    },
+    {
+      "id": "2",
+      "key": "2",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Kifejezetten kijelentette-e a jelentés, hogy az áttekintés módszereit a végrehajtás előtt rögzítették, és indokolta-e a protokolltól való lényeges eltéréseket?",
+        "en": "Did the report contain an explicit statement that the review methods were established prior to the conduct of the review, and did it justify any significant deviations from the protocol?"
+      },
+      "tags": [
+        "critical"
+      ],
+      "polarity": "normal",
+      "critical": true,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "partial_yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-02",
+      "help": {
+        "hu": "Az áttekintés kifejezetten kijelenti, hogy módszereit a végrehajtás előtt rögzítették, és minden lényeges eltérést indokol. Részben igen: létezik írásos protokoll, amely tartalmazza a kérdés(eke)t, a keresési stratégiát, a be- és kizárási kritériumokat és a torzításikockázat-értékelés módját. Igen: ezen felül a protokollt regisztrálták, és rögzítette a metaanalízis/szintézis tervét (ha releváns) és a heterogenitás okainak vizsgálati tervét, a jelentés pedig minden protokolleltérést indokol.",
+        "en": "*Partial yes*: the authors state they had a written protocol or registration. *Yes*: additionally, the protocol was registered and specified a meta-analysis plan, a risk-of-bias assessment plan, and a justification for any deviation. A PROSPERO number with no deviations discussed is usually Partial yes."
+      }
+    },
+    {
+      "id": "3",
+      "key": "3",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Megindokolták-e a szerzők a bevont vizsgálati elrendezések kiválasztását?",
+        "en": "Did the review authors explain their selection of the study designs for inclusion?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-03",
+      "help": {
+        "hu": "A szerzők megindokolják, miért éppen az adott vizsgálati elrendezéseket vonták be: csak randomizált kontrollált vizsgálatot (RCT), csak nem randomizált beavatkozásos vizsgálatot (NRSI), vagy mindkettőt.",
+        "en": ""
+      }
+    },
+    {
+      "id": "4",
+      "key": "4",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Átfogó irodalomkeresési stratégiát alkalmaztak-e a szerzők?",
+        "en": "Did the review authors use a comprehensive literature search strategy?"
+      },
+      "tags": [
+        "critical"
+      ],
+      "polarity": "normal",
+      "critical": true,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "partial_yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-04",
+      "help": {
+        "hu": "A keresési stratégia átfogó. Részben igen: legalább két, a kérdéshez illő bibliográfiai adatbázisban kerestek; közölték a kulcsszavakat és/vagy a keresési stratégiát; a közlési korlátozásokat (pl. nyelv) indokolták. Igen: ezen felül átnézték a bevont vizsgálatok irodalomjegyzékét, vizsgálati regisztereket is átkerestek, szakértőket vontak be vagy kerestek meg, ahol releváns, szürke irodalmat is kerestek, és a keresés az áttekintés befejezése előtti 24 hónapon belül történt.",
+        "en": "*Partial yes*: at least two databases, keywords and/or MeSH given, restrictions justified. *Yes*: additionally, reference lists or registries searched, grey literature considered, trial registries searched, experts consulted where appropriate, and the search run within 24 months of completion. This is the item where the composer plugin's search log pays for itself — the PRISMA-S appendix answers it directly."
+      }
+    },
+    {
+      "id": "5",
+      "key": "5",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Kettősen (két független bírálóval) végezték-e a vizsgálatok kiválasztását?",
+        "en": "Did the review authors perform study selection in duplicate?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-05",
+      "help": {
+        "hu": "A vizsgálatok kiválasztása kettős: legalább két bíráló egymástól függetlenül döntött a beválasztásról, és az eltéréseket konszenzussal rendezte; elfogadható az is, ha két bíráló egy mintán jó egyetértést (legalább 80%) ért el, és a maradékot egy bíráló szűrte.",
+        "en": ""
+      }
+    },
+    {
+      "id": "6",
+      "key": "6",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Kettősen végezték-e az adatkinyerést?",
+        "en": "Did the review authors perform data extraction in duplicate?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-06",
+      "help": {
+        "hu": "Az adatkinyerés kettős: legalább két bíráló konszenzusra jutott a kinyert adatokban; elfogadható az is, ha két bíráló egy mintán jó egyetértést (legalább 80%) ért el, és a maradékot egy bíráló nyerte ki.",
+        "en": ""
+      }
+    },
+    {
+      "id": "7",
+      "key": "7",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Közölték-e a kizárt vizsgálatok listáját, és indokolták-e a kizárásokat?",
+        "en": "Did the review authors provide a list of excluded studies and justify the exclusions?"
+      },
+      "tags": [
+        "critical"
+      ],
+      "polarity": "normal",
+      "critical": true,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "partial_yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-07",
+      "help": {
+        "hu": "A szerzők felsorolják a teljes szövegben értékelt, de kizárt, potenciálisan releváns vizsgálatokat (részben igen), és mindegyik kizárását konkrét okkal indokolják (igen).",
+        "en": "*Partial yes*: a list of potentially relevant studies excluded at full text. *Yes*: additionally, the reason for each exclusion. This item fails more often than any other, and it fails silently — a review without it cannot be checked for selective exclusion."
+      }
+    },
+    {
+      "id": "8",
+      "key": "8",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Kellő részletességgel leírták-e a bevont vizsgálatokat?",
+        "en": "Did the review authors describe the included studies in adequate detail?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "partial_yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-08",
+      "help": {
+        "hu": "A bevont vizsgálatok kellő részletességgel vannak leírva. Részben igen: megadták a populációt, a beavatkozást, az összehasonlítót, a kimeneteket és a vizsgálati elrendezést. Igen: ezen felül részletesen jellemezték a populációt, a beavatkozást (releváns esetben a dózist is) és az összehasonlítót, valamint a vizsgálat helyszínét/környezetét és a követési időt.",
+        "en": ""
+      }
+    },
+    {
+      "id": "9",
+      "key": "9",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Kielégítő módszerrel értékelték-e az egyes bevont vizsgálatok torzítási kockázatát?",
+        "en": "Did the review authors use a satisfactory technique for assessing risk of bias in the individual studies?"
+      },
+      "tags": [
+        "critical"
+      ],
+      "polarity": "normal",
+      "critical": true,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "partial_yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-09",
+      "help": {
+        "hu": "Kielégítő módszerrel értékelték az egyes bevont vizsgálatok torzítási kockázatát (RCT-re és NRSI-re külön ítélve). RCT — részben igen: a nem rejtett besorolás, valamint a betegek és a kimenetet értékelők vakításának hiánya (objektív kimenetnél, pl. összhalálozás, a vakítás nem szükséges); igen: ezen felül a nem valódi véletlen besorolási szekvencia és a közölt eredmény szelektív kiválasztása több mérés vagy elemzés közül. NRSI — részben igen: zavaró tényezők és szelekciós torzítás; igen: ezen felül az expozíció és a kimenetek megállapításának módszerei, valamint a közölt eredmény szelektív kiválasztása több mérés vagy elemzés közül.",
+        "en": "For RCTs: allocation concealment and blinding at minimum. For non-randomised studies: confounding and selection at minimum. A review that reports \"quality was assessed using the Jadad scale\" is No — a scale is not a risk-of-bias assessment."
+      },
+      "parts": [
+        {
+          "id": "RCT",
+          "label": {
+            "hu": "Randomizált vizsgálatok (RCT)",
+            "en": "Randomised controlled trials (RCT)"
+          },
+          "answers": [
+            "yes",
+            "partial_yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Csak NRSI-t von be",
+            "en": "Includes only NRSI"
+          }
+        },
+        {
+          "id": "NRSI",
+          "label": {
+            "hu": "Nem randomizált vizsgálatok (NRSI)",
+            "en": "Non-randomised studies of interventions (NRSI)"
+          },
+          "answers": [
+            "yes",
+            "partial_yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Csak RCT-t von be",
+            "en": "Includes only RCTs"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "key": "10",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Közölték-e a bevont vizsgálatok finanszírozási forrásait?",
+        "en": "Did the review authors report on the sources of funding for the studies included?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-10",
+      "help": {
+        "hu": "Az áttekintés közli a bevont vizsgálatok finanszírozási forrásait; az is megfelel, ha a szerzők jelzik, hogy keresték ezt az információt, de az eredeti közlemények nem tartalmazták.",
+        "en": ""
+      }
+    },
+    {
+      "id": "11",
+      "key": "11",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Ha volt metaanalízis, megfelelő módszerrel vonták-e össze statisztikailag az eredményeket?",
+        "en": "If meta-analysis was performed, did the review authors use appropriate methods for statistical combination of results?"
+      },
+      "tags": [
+        "critical"
+      ],
+      "polarity": "normal",
+      "critical": true,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no",
+        "not_applicable"
+      ],
+      "kb": "AMSTAR2-11",
+      "help": {
+        "hu": "Ha volt metaanalízis, az eredmények statisztikai összevonása megfelelő módszerrel történt. RCT-knél: indokolták az összevonást; megfelelő súlyozott módszert használtak, amely a heterogenitással is számol; vizsgálták a heterogenitás okait. NRSI-nél ezen felül: zavaró tényezőkre korrigált hatásbecsléseket vontak össze (nyers adatokat csak indoklással, ha korrigált becslés nincs), és RCT-re és NRSI-re külön összesített becslést adtak, ha mindkettő szerepelt.",
+        "en": "Justified the model, investigated heterogeneity, combined only combinable studies. Answer N/A — and say so — if no meta-analysis was done; N/A does not count as a flaw."
+      },
+      "condition": {
+        "hu": "Ha volt metaanalízis",
+        "en": "If meta-analysis was performed"
+      },
+      "parts": [
+        {
+          "id": "RCT",
+          "label": {
+            "hu": "Randomizált vizsgálatok (RCT)",
+            "en": "Randomised controlled trials (RCT)"
+          },
+          "answers": [
+            "yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Nem volt RCT-metaanalízis (vagy csak NRSI)",
+            "en": "No meta-analysis of RCTs (or only NRSI)"
+          }
+        },
+        {
+          "id": "NRSI",
+          "label": {
+            "hu": "Nem randomizált vizsgálatok (NRSI)",
+            "en": "Non-randomised studies of interventions (NRSI)"
+          },
+          "answers": [
+            "yes",
+            "no",
+            "not_applicable"
+          ],
+          "na_label": {
+            "hu": "Nem volt NRSI-metaanalízis (vagy csak RCT)",
+            "en": "No meta-analysis of NRSI (or only RCTs)"
+          }
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "key": "12",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Ha volt metaanalízis, vizsgálták-e, hogyan hat az egyes vizsgálatok torzítási kockázata az összesített eredményre?",
+        "en": "If meta-analysis was performed, did the review authors assess the potential impact of risk of bias in individual studies on the results?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no",
+        "not_applicable"
+      ],
+      "kb": "AMSTAR2-12",
+      "help": {
+        "hu": "Ha volt metaanalízis, a szerzők megvizsgálták, hogyan befolyásolja az egyes vizsgálatok torzítási kockázata az összesített eredményt: vagy csak alacsony kockázatú RCT-ket vontak be, vagy változó kockázatú RCT-k és/vagy NRSI-k esetén elemzéssel (pl. érzékenységi vagy alcsoport-elemzés a torzítási kockázat szerint) mutatták meg a hatást.",
+        "en": ""
+      },
+      "condition": {
+        "hu": "Ha volt metaanalízis",
+        "en": "If meta-analysis was performed"
+      }
+    },
+    {
+      "id": "13",
+      "key": "13",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Figyelembe vették-e az egyes vizsgálatok torzítási kockázatát az eredmények értelmezésekor és megvitatásakor?",
+        "en": "Did the review authors account for risk of bias in individual studies when interpreting or discussing the results?"
+      },
+      "tags": [
+        "critical"
+      ],
+      "polarity": "normal",
+      "critical": true,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-13",
+      "help": {
+        "hu": "Az eredmények értelmezésekor és megvitatásakor a szerzők számolnak az egyes vizsgálatok torzítási kockázatával: ha csak alacsony kockázatú RCT-k szerepeltek, ez teljesül; ha közepes vagy magas kockázatú RCT-k, illetve NRSI-k is, a megbeszélés kitér arra, hogyan befolyásolhatja ez az eredményeket.",
+        "en": "Assessing risk of bias (item 9) and then discussing the pooled estimate as though every study were sound is the specific failure this item catches, and it is extremely common."
+      }
+    },
+    {
+      "id": "14",
+      "key": "14",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Kielégítően magyarázták és megvitatták-e az eredmények heterogenitását?",
+        "en": "Did the review authors provide a satisfactory explanation for, and discussion of, any heterogeneity observed?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-14",
+      "help": {
+        "hu": "A szerzők kielégítően magyarázzák és megvitatják az eredmények heterogenitását: ha érdemi heterogenitás nem volt, ez teljesül; ha volt, megvizsgálták a lehetséges forrásait, és megvitatták, hogyan érinti az áttekintés eredményeit.",
+        "en": "Reporting I² and moving on is not a discussion of heterogeneity."
+      }
+    },
+    {
+      "id": "15",
+      "key": "15",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Ha volt kvantitatív szintézis, megfelelően vizsgálták-e a publikációs (kis-vizsgálat) torzítást, és megvitatták-e a valószínű hatását?",
+        "en": "If quantitative synthesis was performed, did the review authors carry out an adequate investigation of publication bias, and discuss its likely impact?"
+      },
+      "tags": [
+        "critical"
+      ],
+      "polarity": "normal",
+      "critical": true,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no",
+        "not_applicable"
+      ],
+      "kb": "AMSTAR2-15",
+      "help": {
+        "hu": "Ha volt kvantitatív szintézis, a szerzők megfelelően vizsgálták a publikációs (kis-vizsgálat) torzítást grafikus vagy statisztikai módszerrel, és megvitatták, mennyire valószínű és mekkora hatású lehet az eredményekre.",
+        "en": "Funnel plot plus a test where the number of studies supports one (conventionally ≥10). With fewer studies, saying that publication bias could not be assessed is the correct answer and scores better than an uninterpretable funnel plot."
+      },
+      "condition": {
+        "hu": "Ha volt kvantitatív szintézis",
+        "en": "If quantitative synthesis was performed"
+      }
+    },
+    {
+      "id": "16",
+      "key": "16",
+      "domain": "items",
+      "pass": null,
+      "text": {
+        "hu": "Beszámoltak-e a szerzők az összeférhetetlenség lehetséges forrásairól, az áttekintéshez kapott finanszírozást is beleértve?",
+        "en": "Did the review authors report any potential sources of conflict of interest, including funding received for conducting the review?"
+      },
+      "tags": [],
+      "polarity": "normal",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "yes",
+        "no"
+      ],
+      "kb": "AMSTAR2-16",
+      "help": {
+        "hu": "A szerzők beszámolnak minden lehetséges összeférhetetlenségről, az áttekintés elkészítéséhez kapott finanszírozást is beleértve: vagy kijelentik, hogy nincs versengő érdekeltségük, vagy leírják a finanszírozás forrásait és a lehetséges összeférhetetlenség kezelésének módját.",
+        "en": ""
+      }
+    }
+  ],
+  "rollup": {
+    "algorithm": "published",
+    "official": true,
+    "label": {
+      "hu": "Publikált algoritmus (kritikus hibák és gyengeségek száma)",
+      "en": "Published algorithm (counts of critical flaws and weaknesses)"
+    },
+    "note": {
+      "hu": "Magas: nincs kritikus hiba, legfeljebb 1 nem kritikus gyengeség; mérsékelt: nincs kritikus hiba, 1-nél több gyengeség; alacsony: 1 kritikus hiba; kritikusan alacsony: 1-nél több kritikus hiba. A „Részben igen” kritikus tételen a projekt konvenciója szerint (KB AMSTAR2-00: „meets”) nem hiba; ha a másik konvencióval („weakness”) más lenne a besorolás, azt is mutatjuk.",
+      "en": "High: no critical flaw, at most 1 non-critical weakness; moderate: no critical flaw, more than 1 weakness; low: 1 critical flaw; critically low: more than 1. A 'Partial yes' on a critical item meets the item under the project convention (KB AMSTAR2-00: 'meets'); the 'weakness' classification is shown too when it differs."
+    }
+  },
+  "conventions": {
+    "partial_yes_critical": {
+      "default": "meets",
+      "values": [
+        "meets",
+        "weakness"
+      ],
+      "kb": "AMSTAR2-00",
+      "label": {
+        "hu": "„Részben igen” kritikus tételen",
+        "en": "'Partial yes' on a critical item"
+      }
+    }
+  },
+  "rob_column": null,
+  "counts": {
+    "parsed": 16,
+    "published": 16,
+    "per_scope": {
+      "all": 16
+    },
+    "per_pass": null
+  },
+  "notes": [
+    {
+      "hu": "A „PY” itt a „Részben igen” (partial_yes) rövidítése — más eszközökben a „Valószínűleg igen”-é (H4).",
+      "en": "'PY' abbreviates 'Partial yes' here — in other tools 'Probably yes' (H4)."
+    },
+    {
+      "hu": "A „Részben igen” csak a 2., 4., 7., 8. és 9. tételnél, a „Nem volt metaanalízis” csak a 11., 12. és 15. tételnél adható (KB AMSTAR2-00).",
+      "en": "'Partial yes' only on items 2, 4, 7, 8, 9; 'No meta-analysis' only on items 11, 12, 15."
+    },
+    {
+      "hu": "A hivatalos AMSTAR 2 űrlap (Shea és mtsai, BMJ 2017;358:j4008) a 9. és a 11. tételt RCT-re és NRSI-re KÜLÖN ítélteti (résztételek: parts.RCT, parts.NRSI; „csak NRSI-t / csak RCT-t von be” = Nem alkalmazható). A tétel értéke a részekből adódik: bármelyik rész „Nem” → a tétel „Nem” (kritikus hiba); különben „Részben igen”, ha van ilyen rész; különben „Igen”.",
+      "en": "The official AMSTAR 2 form (Shea et al., BMJ 2017;358:j4008) rates items 9 and 11 SEPARATELY for RCTs and NRSI (parts.RCT, parts.NRSI; 'includes only NRSI / only RCTs' = Not applicable). The item value follows from the parts: 'No' on either part → the item is 'No' (critical flaw); otherwise 'Partial yes' if any part is; otherwise 'Yes'."
+    }
+  ],
+  "validator_differences": [
+    {
+      "item": "*",
+      "validator": "'PY' → probably yes; 'Partial yes' kritikus tételen = gyengeség",
+      "here": "'PY' → partial_yes; konvenció: meets (a weakness-besorolás is látszik)",
+      "reason": {
+        "hu": "H4: ugyanaz a válasz kétféle besorolást adott; a KB AMSTAR2-00 konvenciója „meets”.",
+        "en": "H4: the same answer gave two classifications; KB AMSTAR2-00 uses 'meets'."
+      }
+    }
+  ]
+}

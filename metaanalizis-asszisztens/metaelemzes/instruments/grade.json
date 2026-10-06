@@ -1,0 +1,692 @@
+{
+  "schema": "szk.instrument/v1",
+  "key": "grade",
+  "name": "GRADE",
+  "label": {
+    "hu": "GRADE — a bizonyosság kimenetenként",
+    "en": "GRADE — certainty of evidence per outcome"
+  },
+  "full_name": "Grading of Recommendations Assessment, Development and Evaluation",
+  "family": "certainty",
+  "tool_version": "GRADE Handbook 2013",
+  "definition_version": 1,
+  "validator_version": "1.0.0",
+  "reference_sha256": "5e720537aa9810abbba2132b053d5f381772f296e23bae49a0f827083283bdb7",
+  "source": {
+    "attribution": "forrás: szk-plugins validator 1.0.0",
+    "plugin": "validator",
+    "plugin_version": "1.0.0",
+    "file": "skills/validator/references/grade.md",
+    "licence": "MIT",
+    "copyright": "Copyright (c) 2026 Dr. Szili Károly",
+    "derived": {
+      "hu": "A tételek azonosítója, sorrendje, doménje, polaritás-címkéje és angol munkaszövege a validator referenciafájljából származik; a magyar szöveg és a súgó saját fordítás és összefoglaló.",
+      "en": "Item ids, order, domains, polarity tags and English working texts come from the validator reference file; the Hungarian texts and help are this project's own translation and summary."
+    }
+  },
+  "citation": "Schünemann H, Brożek J, Guyatt G, Oxman A (eds). GRADE Handbook (updated October 2013); GRADE series, J Clin Epidemiol 2011;64.",
+  "licence": {
+    "instrument_licence": "módszertani keretrendszer — a szöveg saját összefoglaló",
+    "verbatim_allowed": true,
+    "text_kind": "paraphrase",
+    "checked": true,
+    "note": {
+      "hu": "A domének nevei és a számolás a GRADE-forrásokat követik; a súgó a projekt tudásbázisának (KB GRADE-xx) magyar szövege. Közölt SoF-táblához a GRADEpro GDT-t használd.",
+      "en": "Domain names and arithmetic follow the GRADE sources; the help is the project knowledge base's Hungarian text (KB GRADE-xx)."
+    }
+  },
+  "intro": {
+    "hu": "A GRADE a bizonyosságot KIMENETENKÉNT minősíti (nem vizsgálatonként és nem az áttekintésre): mennyire bízhatunk abban, hogy a valódi hatás közel van a becsléshez. A randomizált bizonyíték magasról, a megfigyeléses alacsonyról indul; öt doménben leminősíthetsz, háromban felminősíthetsz. A publikációs torzítás „gyanított” ítélete FELOLDATLAN marad, amíg Te nem döntesz indoklással 0 és −1 között (projektdöntés); az „erősen gyanított” −1.",
+    "en": "GRADE rates certainty PER OUTCOME. Randomised evidence starts high, observational low; five domains downgrade and three upgrade. A 'suspected' publication bias stays UNRESOLVED until you decide 0 or −1 with a reason (project decision); 'strongly suspected' is −1."
+  },
+  "unit": "outcome",
+  "unit_label": {
+    "hu": "kimenetenként",
+    "en": "per outcome"
+  },
+  "scopes": [
+    {
+      "id": "all",
+      "label": {
+        "hu": "Egy kimenet teljes bizonyítéka",
+        "en": "Body of evidence for one outcome"
+      },
+      "default": true
+    }
+  ],
+  "passes": null,
+  "answers": [
+    {
+      "value": "high",
+      "label": "H",
+      "text": {
+        "hu": "Magas (randomizált)",
+        "en": "High (randomised)"
+      },
+      "kind": "start",
+      "aliases": [
+        "h",
+        "high",
+        "magas",
+        "rct",
+        "randomised"
+      ]
+    },
+    {
+      "value": "low",
+      "label": "L",
+      "text": {
+        "hu": "Alacsony (megfigyeléses)",
+        "en": "Low (observational)"
+      },
+      "kind": "start",
+      "aliases": [
+        "l",
+        "low",
+        "alacsony",
+        "observational",
+        "megfigyeleses",
+        "nrsi"
+      ]
+    },
+    {
+      "value": "not_serious",
+      "label": "NS",
+      "text": {
+        "hu": "Nem súlyos",
+        "en": "Not serious"
+      },
+      "kind": "rating",
+      "aliases": [
+        "ns",
+        "not serious",
+        "no serious",
+        "nem sulyos"
+      ]
+    },
+    {
+      "value": "serious",
+      "label": "S",
+      "text": {
+        "hu": "Súlyos",
+        "en": "Serious"
+      },
+      "kind": "rating",
+      "aliases": [
+        "s",
+        "serious",
+        "sulyos"
+      ]
+    },
+    {
+      "value": "very_serious",
+      "label": "VS",
+      "text": {
+        "hu": "Nagyon súlyos",
+        "en": "Very serious"
+      },
+      "kind": "rating",
+      "aliases": [
+        "vs",
+        "very serious",
+        "nagyon sulyos"
+      ]
+    },
+    {
+      "value": "undetected",
+      "label": "UD",
+      "text": {
+        "hu": "Nem észlelt",
+        "en": "Undetected"
+      },
+      "kind": "rating",
+      "aliases": [
+        "ud",
+        "undetected",
+        "not detected",
+        "nem eszlelt"
+      ]
+    },
+    {
+      "value": "suspected",
+      "label": "SU",
+      "text": {
+        "hu": "Gyanított",
+        "en": "Suspected"
+      },
+      "kind": "rating",
+      "aliases": [
+        "su",
+        "suspected",
+        "gyanitott"
+      ]
+    },
+    {
+      "value": "strongly_suspected",
+      "label": "SS",
+      "text": {
+        "hu": "Erősen gyanított",
+        "en": "Strongly suspected"
+      },
+      "kind": "rating",
+      "aliases": [
+        "ss",
+        "strongly suspected",
+        "erosen gyanitott"
+      ]
+    },
+    {
+      "value": "no",
+      "label": "N",
+      "text": {
+        "hu": "Nem",
+        "en": "No"
+      },
+      "kind": "negative",
+      "aliases": [
+        "n",
+        "no",
+        "nem"
+      ]
+    },
+    {
+      "value": "yes",
+      "label": "Y",
+      "text": {
+        "hu": "Igen",
+        "en": "Yes"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "y",
+        "yes",
+        "igen",
+        "i"
+      ]
+    },
+    {
+      "value": "very_large",
+      "label": "VL",
+      "text": {
+        "hu": "Nagyon nagy hatás (+2)",
+        "en": "Very large effect (+2)"
+      },
+      "kind": "affirmative",
+      "aliases": [
+        "vl",
+        "very large",
+        "very large effect",
+        "nagyon nagy",
+        "nagyon nagy hatas"
+      ]
+    }
+  ],
+  "default_answers": [
+    "no",
+    "yes"
+  ],
+  "verdicts": [
+    {
+      "value": "high",
+      "label": {
+        "hu": "Magas",
+        "en": "High"
+      },
+      "level": "low"
+    },
+    {
+      "value": "moderate",
+      "label": {
+        "hu": "Mérsékelt",
+        "en": "Moderate"
+      },
+      "level": "some"
+    },
+    {
+      "value": "low",
+      "label": {
+        "hu": "Alacsony",
+        "en": "Low"
+      },
+      "level": "high"
+    },
+    {
+      "value": "very_low",
+      "label": {
+        "hu": "Nagyon alacsony",
+        "en": "Very low"
+      },
+      "level": "critical"
+    }
+  ],
+  "domains": [
+    {
+      "id": "0",
+      "title": {
+        "hu": "Kiindulási szint",
+        "en": "Starting level"
+      },
+      "short": "0",
+      "passes": null,
+      "applicability": false,
+      "role": "start",
+      "grade_key": null
+    },
+    {
+      "id": "1",
+      "title": {
+        "hu": "Torzítási kockázat",
+        "en": "Risk of bias"
+      },
+      "short": "1",
+      "passes": null,
+      "applicability": false,
+      "role": "downgrade",
+      "grade_key": "risk_of_bias"
+    },
+    {
+      "id": "2",
+      "title": {
+        "hu": "Inkonzisztencia",
+        "en": "Inconsistency"
+      },
+      "short": "2",
+      "passes": null,
+      "applicability": false,
+      "role": "downgrade",
+      "grade_key": "inconsistency"
+    },
+    {
+      "id": "3",
+      "title": {
+        "hu": "Indirektség",
+        "en": "Indirectness"
+      },
+      "short": "3",
+      "passes": null,
+      "applicability": false,
+      "role": "downgrade",
+      "grade_key": "indirectness"
+    },
+    {
+      "id": "4",
+      "title": {
+        "hu": "Pontatlanság",
+        "en": "Imprecision"
+      },
+      "short": "4",
+      "passes": null,
+      "applicability": false,
+      "role": "downgrade",
+      "grade_key": "imprecision"
+    },
+    {
+      "id": "5",
+      "title": {
+        "hu": "Publikációs torzítás",
+        "en": "Publication bias"
+      },
+      "short": "5",
+      "passes": null,
+      "applicability": false,
+      "role": "downgrade",
+      "grade_key": "publication_bias"
+    },
+    {
+      "id": "6",
+      "title": {
+        "hu": "Nagy hatás",
+        "en": "Large effect"
+      },
+      "short": "6",
+      "passes": null,
+      "applicability": false,
+      "role": "upgrade",
+      "grade_key": "large_effect"
+    },
+    {
+      "id": "7",
+      "title": {
+        "hu": "Dózis–hatás összefüggés",
+        "en": "Dose-response"
+      },
+      "short": "7",
+      "passes": null,
+      "applicability": false,
+      "role": "upgrade",
+      "grade_key": "dose_response"
+    },
+    {
+      "id": "8",
+      "title": {
+        "hu": "Ellentétes irányú maradék zavaró tényezők",
+        "en": "Opposing plausible residual confounding"
+      },
+      "short": "8",
+      "passes": null,
+      "applicability": false,
+      "role": "upgrade",
+      "grade_key": "opposing_confounding"
+    }
+  ],
+  "items": [
+    {
+      "id": "0.1",
+      "key": "0.1",
+      "domain": "0",
+      "pass": null,
+      "text": {
+        "hu": "Vizsgálati elrendezés: a randomizált vizsgálatok magasról, a megfigyeléses vizsgálatok alacsonyról indulnak.",
+        "en": "Study design: randomised trials start High; observational studies start Low."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "high",
+        "low"
+      ],
+      "kb": "GRADE-02",
+      "help": {
+        "hu": "A kiinduló bizonyosságot a kimenethez tartozó vizsgálatok elrendezése adja: randomizált vizsgálatokból magasról, nem randomizált (megfigyeléses) vizsgálatokból alacsonyról indulsz. Ha a nem randomizált vizsgálatokat ROBINS-I-gyel értékelted, a kiindulás magas lehet, de ekkor a zavaró tényezők és a szelekció miatti torzítást a torzítási kockázat doménjében kell érvényesíteni. Randomizált és nem randomizált bizonyítékot ne vonj össze egy ítéletbe indoklás nélkül: értékeld külön, és indokold, melyik adja a kimenet bizonyosságát. Elrendezés szerinti evidenciaszint-hierarchia nem helyettesíti a GRADE-et.",
+        "en": "Record `High` for a body of RCTs or `Low` for observational evidence. Non-randomised studies appraised with ROBINS-I may start High in the ROBINS-I-based approach — if you do that, say so, because it changes every subsequent step."
+      }
+    },
+    {
+      "id": "1.1",
+      "key": "1.1",
+      "domain": "1",
+      "pass": null,
+      "text": {
+        "hu": "A hozzájáruló vizsgálatok torzítási kockázata: nem súlyos / súlyos / nagyon súlyos.",
+        "en": "Risk of bias across the contributing studies: not serious / serious / very serious."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "not_serious",
+        "serious",
+        "very_serious"
+      ],
+      "kb": "GRADE-03",
+      "help": {
+        "hu": "Ítéld meg, mennyire veszélyeztetik a becslést a kimenethez hozzájáruló vizsgálatok korlátai (randomizáció, allokáció-elrejtés, vakítás, hiányzó kimeneti adat, kimenetmérés, szelektív eredményközlés; nem randomizált vizsgálatnál zavaró tényezők és szelekció). Lépések: (1) határozd meg, a súly mekkora része jön magas vagy „some concerns” (RoB 2), illetve közepes, súlyos vagy kritikus (ROBINS-I) kockázatú vizsgálatokból, az adott kimenetre releváns doménekben (pl. szubjektív kimenet vakítás nélkül) — a ROBINS-I „alacsony” kategóriája a jól kivitelezett RCT-nek felel meg, ezért a „közepes” is érdemi korlát; (2) vesd össze az előre tervezett érzékenységi elemzéssel (magas kockázatú vizsgálatok nélkül, illetve csak alacsony kockázatúakkal): változik-e a becslés, illetve a CI viszonya a döntési küszöbhöz; (3) mérlegeld, torzíthat-e minden vizsgálat ugyanabba az irányba. Tájékoztató ítélet: 0, ha a súly túlnyomó része alacsony kockázatú vizsgálatból jön és a kizárás nem változtat a következtetésen; −1, ha a súly jelentős része (pl. többsége) érdemi korlátú vizsgálatból származik, vagy a kizárás megváltoztatja a következtetést; −2, ha gyakorlatilag minden információ több kulcsdoménben súlyosan korlátozott vizsgálatból jön.",
+        "en": "This is the *body*, weighted by contribution. One high-risk study contributing 3% of the weight does not downgrade a pooled estimate; the same study carrying 60% does. Use the per-study RoB 2 / ROBINS-I / ROBINS-E ratings as the input, and state which studies drove the decision."
+      }
+    },
+    {
+      "id": "2.1",
+      "key": "2.1",
+      "domain": "2",
+      "pass": null,
+      "text": {
+        "hu": "Megmagyarázatlan heterogenitás a vizsgálatok között: nem súlyos / súlyos / nagyon súlyos.",
+        "en": "Unexplained heterogeneity across studies: not serious / serious / very serious."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "not_serious",
+        "serious",
+        "very_serious"
+      ],
+      "kb": "GRADE-04",
+      "help": {
+        "hu": "Ítéld meg, mennyire térnek el a vizsgálatok eredményei egymástól olyan mértékben, hogy az a döntést befolyásolja. Együtt mérlegeld: (a) a pontbecslések a döntési küszöb (nullhatás vagy MCID) különböző oldalára esnek-e; (b) mennyire fedik át egymást a CI-k; (c) a 95%-os predikciós intervallum (PI) átlépi-e a küszöböt, miközben a CI nem; (d) τ nagysága a hatás nagyságához képest; (e) I² a CI-jével, csak kiegészítő jelzésként. Rögzített I²-határ nem leminősítési szabály, és kevés vizsgálatnál a nem szignifikáns Q nem bizonyítja a homogenitást. Ha az eltérést hiteles, előre tervezett alcsoport-elemzés magyarázza, a GRADE-04a szerint járj el. −1, ha a megmagyarázatlan eltérés bizonytalanná teszi a következtetést; −2 kivételesen, ha a vizsgálatok jelentős része egymással ellentétes irányú, klinikailag fontos hatást mutat.",
+        "en": "Judge the overlap of confidence intervals, the point estimates, and I² together — and only downgrade for heterogeneity that is *unexplained*. Heterogeneity fully accounted for by a pre-specified subgroup is a finding, not a limitation. A single study cannot be inconsistent; rate it not serious and say why."
+      }
+    },
+    {
+      "id": "3.1",
+      "key": "3.1",
+      "domain": "3",
+      "pass": null,
+      "text": {
+        "hu": "A populáció, a beavatkozás, az összehasonlító vagy a kimenet indirektsége: nem súlyos / súlyos / nagyon súlyos.",
+        "en": "Indirectness of population, intervention, comparator or outcome: not serious / serious / very serious."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "not_serious",
+        "serious",
+        "very_serious"
+      ],
+      "kb": "GRADE-05",
+      "help": {
+        "hu": "Vesd össze a bevont vizsgálatok populációját, beavatkozását (dózis, forma, időtartam), összehasonlító karját és kimenetét a protokoll PICO-jával. Leminősítési okok: eltérő populáció vagy környezet (súlyosság, életkor, ellátási szint, földrajzi vagy nemi koncentráció); eltérő beavatkozás vagy kontroll (pl. placebo, amikor a kérdés aktív kontrollra vonatkozik); helyettesítő (surrogate) vagy nem validált végpont a betegszempontból fontos kimenet helyett; túl rövid követés; csak közvetett összehasonlítás (A vs C és B vs C az A vs B kérdésre). −1, ha a súly jelentős részét adó vizsgálatoknál az eltérés valószínűleg módosítja a hatást; −2, ha több súlyos eltérés halmozódik (pl. helyettesítő végpont és eltérő populáció).",
+        "en": "Surrogate outcomes live here, and so does the indirect comparison. This is the domain most often skipped, and the one most likely to matter in a review whose PICO drifted from the question the clinician actually asked."
+      }
+    },
+    {
+      "id": "4.1",
+      "key": "4.1",
+      "domain": "4",
+      "pass": null,
+      "text": {
+        "hu": "Az összesített becslés pontatlansága: nem súlyos / súlyos / nagyon súlyos.",
+        "en": "Imprecision of the pooled estimate: not serious / serious / very serious."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "not_serious",
+        "serious",
+        "very_serious"
+      ],
+      "kb": "GRADE-06",
+      "help": {
+        "hu": "A pontatlanságot a CI és az előre rögzített döntési küszöb viszonyából ítéld meg, nem a statisztikai szignifikanciából. A küszöb a „van-e hatás” kérdésnél a nullhatás, egyébként a minimális klinikailag fontos különbség (MCID) vagy egy abszolút döntési határ (esemény /1000); ha kis / közepes / nagy hatás határaihoz mérsz, azokat is előre add meg. A küszöböt az eredmények ismerete előtt rögzítsd. Bináris kimenetnél a CI-t abszolút skálán is nézd. 0, ha a teljes CI a küszöb egyik oldalán van és az optimális információméret teljesül (GRADE-06a); −1, ha a CI átlépi a küszöböt (a hatás egyaránt lehet fontos és elhanyagolható); −2, ha a CI egyszerre tartalmaz jelentős előnyt és jelentős ártalmat, vagy nagyon kevés esemény, illetve résztvevő mellett lépi át a küszöböt. A nullát tartalmazó CI nem bizonyítja a hatás hiányát.",
+        "en": "Does the confidence interval cross a decision threshold? Is the optimal information size met? A wide interval that stays entirely on one side of the threshold may not warrant a downgrade; a narrow one that straddles it may."
+      }
+    },
+    {
+      "id": "5.1",
+      "key": "5.1",
+      "domain": "5",
+      "pass": null,
+      "text": {
+        "hu": "Publikációs torzítás: nem észlelt / gyanított / erősen gyanított.",
+        "en": "Publication bias: undetected / suspected / strongly suspected."
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "undetected",
+        "suspected",
+        "strongly_suspected"
+      ],
+      "kb": "GRADE-07",
+      "help": {
+        "hu": "Ítéld meg, valószínű-e, hogy vizsgálatok vagy eredmények szisztematikusan hiányoznak a szintézisből; az ítélet „nem észlelt” vagy „erősen gyanítható” (utóbbi rendszerint −1). Együtt mérlegeld: a keresés teljességét (regiszterek, szürke irodalom, nyelvi és közlési korlátozás nélkül), regisztrált, de nem közölt vizsgálatokat, a kis, ipar által finanszírozott vizsgálatok túlsúlyát, a kis vizsgálatok eltérő hatását, és k ≥ 10 esetén (ha a vizsgálatok mérete érdemben eltér) a kontúr-javított funnel plotot a kimenethez illő teszttel (MD: Egger; bináris: Harbord vagy Peters, mert a klasszikus Egger OR-nál álpozitív lehet; SMD-nél a klasszikus Egger szintén álpozitív lehet, mert az SMD és a standard hibája összefügg — a mintanagyság-alapú pontossággal végzett változat a motorban nincs, ezért a motor Egger-eredményét SMD-nél csak tájékoztatónak tekintsd). k < 10 esetén a tesztet ne értelmezd, de a többi jelet igen; kevés vizsgálattal a szimmetrikus plot nem igazolja a torzítás hiányát. Az aszimmetria heterogenitásból, véletlenből vagy a kis vizsgálatok magasabb torzítási kockázatából is eredhet, ezért önmagában nem bizonyít publikációs torzítást.",
+        "en": "Small positive studies only, industry funding across the board, an asymmetric funnel plot with enough studies to interpret one. With fewer than about ten studies, \"could not be assessed\" is the honest answer, and it is not the same as \"undetected\" — say which one you mean."
+      }
+    },
+    {
+      "id": "6.1",
+      "key": "6.1",
+      "domain": "6",
+      "pass": null,
+      "text": {
+        "hu": "Nagy hatás (tájékoztató érték: RR > 2 vagy < 0,5, konzisztensen, plauzibilis zavaró tényező nélkül)?",
+        "en": "Large magnitude of effect (RR > 2 or < 0.5, consistent, no plausible confounders)?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "no",
+        "yes",
+        "very_large"
+      ],
+      "kb": "GRADE-08a",
+      "help": {
+        "hu": "Nagy hatás miatt +1 akkor mérlegelhető, ha több vizsgálatból konzisztensen nagy relatív hatás adódik (a GRADE-útmutató tájékoztató értéke: RR > 2 vagy < 0,5), és nincs plauzibilis zavaró tényező, amely ezt teljesen megmagyarázná; +2 nagyon nagy hatásnál (tájékoztató érték: RR > 5 vagy < 0,2), közvetlen bizonyíték és a validitást fenyegető lényeges probléma hiánya mellett. A határ a CI-t is figyelembe vevő ítélet, nem gépies szabály.",
+        "en": ""
+      }
+    },
+    {
+      "id": "7.1",
+      "key": "7.1",
+      "domain": "7",
+      "pass": null,
+      "text": {
+        "hu": "Van-e dózis–hatás grádiens?",
+        "en": "Dose-response gradient present?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "no",
+        "yes"
+      ],
+      "kb": "GRADE-08b",
+      "help": {
+        "hu": "Dózis–hatás grádiens miatt +1 akkor indokolt, ha a hatás nagysága hihetően és konzisztensen változik a dózissal vagy az expozíció mértékével, és ezt megfelelő módszer mutatja. Dózis–hatás metaanalízisnél a hitelesség feltételei: következetes vagy centrált referenciadózis, vizsgálatonként elegendő dóziskategória, a vizsgálaton belüli korreláció kezelése, a nemlinearitás helyes tesztelése, a keresztmetszeti vizsgálatok külön kezelése. A vizsgálatok átlagdózisára épülő hagyományos meta-regresszió erre nem elegendő. Az eredményt klinikailag is fordítsd le (a legnagyobb hatású dózis és az ott várható abszolút hatás, a referenciaponthoz viszonyítva).",
+        "en": ""
+      }
+    },
+    {
+      "id": "8.1",
+      "key": "8.1",
+      "domain": "8",
+      "pass": null,
+      "text": {
+        "hu": "Minden plauzibilis maradék zavaró tényező csökkentette volna a megfigyelt hatást (vagy álhatást keltett volna, ahol nincs hatás)?",
+        "en": "Would all plausible residual confounding have reduced the observed effect, or created a spurious null?"
+      },
+      "tags": [
+        "all"
+      ],
+      "polarity": "none",
+      "critical": false,
+      "scopes": [
+        "all"
+      ],
+      "applies_to": null,
+      "answers": [
+        "no",
+        "yes"
+      ],
+      "kb": "GRADE-08c",
+      "help": {
+        "hu": "+1 akkor mérlegelhető, ha minden plauzibilis, nem kontrollált zavaró tényező vagy torzítás a megfigyelt hatás csökkentése irányába hatna (pl. a súlyosabb állapotú betegek kapták a mégis kedvezőnek bizonyult beavatkozást), vagy ha hatás hiányában álhatást keltene, mégsem látunk hatást. A zavaró tényezőt és a várható irányt konkrétan nevezd meg, ne általános feltételezésként.",
+        "en": ""
+      }
+    }
+  ],
+  "rollup": {
+    "algorithm": "published",
+    "official": true,
+    "label": {
+      "hu": "Publikált számolás (kiindulás − leminősítés + felminősítés)",
+      "en": "Published arithmetic (start − downgrades + upgrades)"
+    },
+    "note": {
+      "hu": "Kiindulás: magas (RCT) vagy alacsony (megfigyeléses); súlyos −1, nagyon súlyos −2; publikációs torzítás: nem észlelt 0, gyanított = feloldatlan (Te döntesz 0 vagy −1, indoklással), erősen gyanított −1 (indoklással −2). Felminősítés (+1, nagyon nagy hatás +2) csak leminősítés nélküli bizonyítéknál. Alsó határ: nagyon alacsony.",
+      "en": "Start high (RCT) or low (observational); serious −1, very serious −2; publication bias: undetected 0, suspected = unresolved (you decide 0 or −1 with a reason), strongly suspected −1 (−2 with a reason). Upgrades (+1, very large effect +2) only for evidence that was not downgraded. Floor: very low."
+    }
+  },
+  "conventions": {
+    "publication_bias_suspected": {
+      "default": "unresolved",
+      "values": [
+        "unresolved"
+      ],
+      "decision": "11/4",
+      "label": {
+        "hu": "Publikációs torzítás: „gyanított”",
+        "en": "Publication bias: 'suspected'"
+      }
+    }
+  },
+  "rob_column": null,
+  "counts": {
+    "parsed": 9,
+    "published": 9,
+    "per_scope": {
+      "all": 9
+    },
+    "per_pass": null
+  },
+  "notes": [
+    {
+      "hu": "A validator 1.0.0 a „gyanított” és az „erősen gyanított” publikációs torzítást sosem minősíti le (H3); itt a „gyanított” feloldatlan, az „erősen gyanított” −1.",
+      "en": "Validator 1.0.0 never downgrades 'suspected' or 'strongly suspected' publication bias (H3); here 'suspected' is unresolved and 'strongly suspected' is −1."
+    }
+  ],
+  "validator_differences": [
+    {
+      "item": "5.1",
+      "validator": "suspected / strongly suspected → 0",
+      "here": "suspected → feloldatlan; strongly suspected → −1",
+      "reason": {
+        "hu": "H3 és a 11. fejezet 4. döntése.",
+        "en": "H3 and decision 4 of chapter 11."
+      }
+    },
+    {
+      "item": "6.1",
+      "validator": "yes → +1",
+      "here": "yes → +1, very_large → +2",
+      "reason": {
+        "hu": "A GRADE a nagyon nagy hatásért +2-t enged (KB GRADE-08a).",
+        "en": "GRADE allows +2 for a very large effect (KB GRADE-08a)."
+      }
+    }
+  ]
+}

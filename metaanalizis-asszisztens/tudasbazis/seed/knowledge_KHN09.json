@@ -1,0 +1,732 @@
+[
+ {
+  "k_id": "K-KHN09-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A fejezet hatóköre: nyers átlagkülönbség (WMD) metaanalízise (Khan 2020, 9. fejezet)",
+  "body": "Khan (2020) Ch 9 (pp. 195–216) covers meta-analysis of a continuous outcome in two-arm studies using the raw (unstandardised) mean difference pooled by inverse variance, which the book calls the weighted mean difference (WMD). One blood-loss dataset (11 studies) is analysed under fixed effect, DerSimonian–Laird random effects and IVhet, then by subgroup (publication period); each step is a column-by-column hand calculation followed by a MetaXL forest plot, with Stata admetan code in Appendix 9. The chapter has no tau² estimator other than DL, no t-based/HKSJ CIs or prediction intervals, no meta-regression or test for subgroup differences, no computed publication-bias analysis (it defers to Ch 8), and nothing on risk of bias, GRADE or PRISMA. [note: the DOCX conversion lost the equation objects, so every formula from this chapter in the KB is a reconstruction checked against the book's worked numbers.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 abstract p. 195; §§9.1–9.9 pp. 195–215; Appendix 9 p. 215",
+  "tags": "scope hatókör weighted mean difference súlyozott átlagkülönbség WMD mean difference átlagkülönbség MD continuous outcome folytonos kimenet MetaXL Stata admetan IVhet Khan 2020"
+ },
+ {
+  "k_id": "K-KHN09-002",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "A fejezetben hivatkozott módszertani források",
+  "body": "Ch 9 bases its methods on Cochran (1973) for the Q statistic, Higgins et al. (2003) for I², DerSimonian & Laird (1986) for the random-effects model, Borenstein et al. (2010) as an introduction to fixed- and random-effects models, and Doi et al. (2015a) for the IVhet model. Doi et al. (2015b, 2015c) on the quality-effects model and its simulation comparison with random effects are cited only to criticise the RE model. [note: the reference list shows Khan as a co-author of all three Doi et al. 2015 papers, so the chapter's preference for IVhet reflects its developers' position.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 References p. 216; p. 204",
+  "tags": "references hivatkozások Cochran 1973 Higgins 2003 DerSimonian Laird 1986 Borenstein 2010 Doi 2015 IVhet quality effects minőségi hatás model modell sources források"
+ },
+ {
+  "k_id": "K-KHN09-003",
+  "stage_id": "S07",
+  "kind": "guidance",
+  "title": "Mikor használjunk nyers átlagkülönbséget (MD) SMD helyett",
+  "body": "Use the raw mean difference when the outcome is measured in the same unit in every study and in both arms; the pooled result then stays in the outcome's natural unit (here mL of blood loss), which the SMD does not. Standardising is needed only when units or instruments differ across studies (the SMD is covered in Ch 8).",
+  "source_id": "khan2020",
+  "locator": "Ch9 abstract p. 195; §9.1 p. 195",
+  "tags": "mean difference átlagkülönbség MD SMD standardized mean difference standardizált átlagkülönbség choice választás same unit azonos mértékegység natural unit természetes mértékegység continuous folytonos effect size hatásméret"
+ },
+ {
+  "k_id": "K-KHN09-004",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Adatkivonatolás MD-metaanalízishez",
+  "body": "For an MD meta-analysis extract, per arm, the sample size, mean and SD (here n_larr, mean_larr, sd_larr, n_orr, mean_orr, sd_orr), always with arm 1 = treatment and arm 2 = control. Code any moderator planned for subgroup analysis as its own column with explicit boundaries before the analysis; the book's study_period is 'recent' for 2011–2015 and 'old' for 2004–2009. The chapter assumes the k independent studies have already been selected and does not cover PICO, protocol, search or screening (see Ch 1).",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Table 9.1 p. 197; A9.1 p. 215",
+  "tags": "data extraction adatkivonatolás per-arm karonkénti n mean SD átlag szórás sample size mintanagyság moderator moderátor coding kódolás study period vizsgálati időszak subgroup alcsoport"
+ },
+ {
+  "k_id": "K-KHN09-005",
+  "stage_id": "S05",
+  "kind": "concept",
+  "title": "Elrendezési feltevések: független minták, normális eloszlás",
+  "body": "The chapter's MD formulas assume two independent samples, typically patients randomly divided into a treatment and a control arm, and a normally distributed outcome in each population. Paired or crossover data violate the independence assumption and need a variance that accounts for the within-person correlation. Change-from-baseline outcomes in parallel arms keep independent arms, but they need the SD of the change scores, which is often imputed with a correlation. The chapter covers neither case.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196",
+  "tags": "assumptions feltevések independent samples független minták randomization randomizálás normal distribution normális eloszlás two-arm kétkarú paired párosított change from baseline kiindulástól való változás"
+ },
+ {
+  "k_id": "K-KHN09-006",
+  "stage_id": "S05",
+  "kind": "convention",
+  "title": "A különbség irányának kódolása",
+  "body": "The book defines MD = mean(LARR) − mean(ORR), i.e. treatment minus control, so negative values mean less blood loss with LARR. Reversing the order (ORR − LARR, Fig. 9.2) flips every sign but leaves all magnitudes, confidence limits, Q, P and the conclusion unchanged. State the direction in plot labels and text, and apply the same order to every study during extraction.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.1 p. 197; Remark p. 203; Fig. 9.2 p. 204",
+  "tags": "direction irány sign előjel treatment minus control kezelt mínusz kontroll reversed fordított consistency következetesség forest plot label címke coding kódolás"
+ },
+ {
+  "k_id": "K-KHN09-007",
+  "stage_id": "S05",
+  "kind": "example",
+  "title": "Mintaadat: vérveszteség, LARR vs ORR (11 vizsgálat)",
+  "body": "The chapter's only dataset is blood loss (mL) in laparoscopic-assisted (LARR) vs open (ORR) rectal resection for carcinoma: 11 studies published 2004–2015 with n, mean and SD per arm, taken from Memon et al. (2018, Am J Surg 216(5):1004–1015). Example rows: Bonjer 2015 LARR 699/200/222 vs ORR 345/400/370; Zhou 2004 LARR 82/20/19 vs ORR 89/92/25. Appendix A9.1 repeats the data with a study_period code (6 recent, 5 old). It is a good engine test fixture: FE −73.2411 (SE 3.043199), Q = 59.17, DL τ² = 1355.03, RE −89.98 (SE 14.513), IVhet SE 30.1491.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Table 9.1 p. 197; Ex 9.1 p. 196; A9.1 p. 215",
+  "tags": "dataset adatkészlet blood loss vérveszteség laparoscopic laparoszkópos rectal resection rektumreszekció LARR ORR Memon 2018 worked example kidolgozott példa test fixture tesztadat"
+ },
+ {
+  "k_id": "K-KHN09-008",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Nyers átlagkülönbség egy vizsgálatban",
+  "body": "For study i, the estimator of the population difference δ = μ1 − μ2 is the difference of the arm means, δ̂_i = Ybar1_i − Ybar2_i, with arm 1 the treatment and arm 2 the control. This δ̂_i is the per-study effect size that is plotted and pooled.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196",
+  "tags": "raw mean difference nyers átlagkülönbség MD delta effect size hatásméret estimate becslés per-study vizsgálatonkénti sample mean mintaátlag"
+ },
+ {
+  "k_id": "K-KHN09-009",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Az MD varianciája nem egyenlő szórások mellett (alapértelmezés)",
+  "body": "When equality of the two population SDs is unknown, the book assumes they are unequal and uses v_i = S1_i²/n1_i + S2_i²/n2_i, with SE_i = sqrt(v_i); this is its default throughout the chapter. The same variance is used by MetaXL 'WMD', by R metafor escalc('MD') and by the engine's effect_sizes.md.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Ex 9.1 p. 197",
+  "tags": "variance variancia standard error standard hiba SE mean difference átlagkülönbség unequal variances nem egyenlő varianciák Welch default alapértelmezés MetaXL metafor escalc"
+ },
+ {
+  "k_id": "K-KHN09-010",
+  "stage_id": "S07",
+  "kind": "guidance",
+  "title": "Egyenlő szórás feltételezése: összevont variancia",
+  "body": "If the two population SDs can be assumed equal, Ch 9 only refers back to the previous chapter. The pooled-variance version, v = (n1 + n2)/(n1·n2) · Sp², is printed in Ch 8 (§8.1), and Ch 9 does not use it. Whichever variance formula is used must be stated, because it changes the weights and the CIs.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196 (pointer); formula printed in Ch8 §8.1 p. 161",
+  "tags": "pooled variance összevont variancia equal variances egyenlő varianciák pooled SD összevont szórás Sp variance formula varianciaképlet reporting közlés"
+ },
+ {
+  "k_id": "K-KHN09-011",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Vizsgálati szintű konfidenciaintervallum és inverz-variancia súly",
+  "body": "Each study's Wald CI is δ̂_i ± z_{α/2}·SE_i, with z = 1.96 for 95%, and its inverse-variance weight is w_i = 1/v_i. Larger and less variable studies therefore receive more weight in the pooled estimate.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Ex 9.1 p. 197",
+  "tags": "confidence interval konfidenciaintervallum Wald CI study-level vizsgálati szintű inverse variance weight inverz-variancia súly 1.96 z critical value kritikus érték"
+ },
+ {
+  "k_id": "K-KHN09-012",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Kidolgozott példa: Bonjer 2015",
+  "body": "For Bonjer 2015 (LARR 699/200/222 vs ORR 345/400/370), MD = 200 − 400 = −200, v = 222²/699 + 370²/345 = 467.318 and SE = 21.6175. The 95% CI is −200 ± 1.96 × 21.6175 = (−242.37, −157.63), the weight is w = 1/467.32 = 0.00214, and w × MD = −0.428.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.1 pp. 197–198; Table 9.2 p. 198",
+  "tags": "worked example kidolgozott példa Bonjer 2015 mean difference átlagkülönbség variance variancia SE confidence interval konfidenciaintervallum weight súly"
+ },
+ {
+  "k_id": "K-KHN09-013",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Félrevezető definíció: a vizsgálati „WMD” mint w·δ",
+  "body": "The book defines a population 'WMD' θ = ω·δ with ω = 1/σ², and a per-study sample 'WMD' θ̂_i = w_i·δ̂_i 'with SE_i = sqrt(v_i)'. That product is not an effect size, and its SE would be w_i·sqrt(v_i); the forest plots actually display δ̂_i, and weighting enters only the pooled average. Fix: treat the study effect as the MD and use 'WMD' only for the inverse-variance-weighted pooled MD. [note: the Cochrane Handbook simply calls this effect measure the mean difference (MD).]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196",
+  "tags": "WMD weighted mean difference súlyozott átlagkülönbség definition definíció terminology terminológia muddled zavaros per-study vizsgálatonkénti mean difference átlagkülönbség Cochrane MD"
+ },
+ {
+  "k_id": "K-KHN09-014",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "MD különböző mértékegységek vagy mérőeszközök között",
+  "body": "The MD is valid only if every study measures the outcome in the same unit. Detect: check and record the unit of each study during extraction. Fix: convert to a common unit, or switch to the SMD (Ch 8) when instruments differ. [note: the engine's validate.validate flags a suspected unit mismatch (rule V012) when an arm mean is 10× or more away from the median mean and its SD is scaled in the same direction.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 abstract p. 195; §9.1 p. 195",
+  "tags": "unit mismatch mértékegység-eltérés instrument mérőeszköz conversion átváltás SMD standardized mean difference standardizált átlagkülönbség validity érvényesség extraction adatkivonatolás"
+ },
+ {
+  "k_id": "K-KHN09-015",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Ferde eloszlású kimenet normálisnak feltételezve",
+  "body": "The chapter assumes normality, yet blood loss cannot be negative and in 19 of the 22 arms the SD exceeds half the mean (all except both Liu 2011 arms and the Zhou 2004 ORR arm); in Ng 2008 the SD is 750 against a mean of 321.7. For a strictly positive variable, mean < 2·SD signals skew (note-taker's check, not raised by the book). Fix: flag it and consider log-scale, ratio-of-means or median-based analyses as sensitivity analyses. [note: the engine's validate.validate raises rule V013 for this pattern, and effect_sizes.rom computes the ratio of means.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Table 9.1 p. 197",
+  "tags": "skewness ferdeség skewed ferde distribution eloszlás normality normalitás mean 2 SD átlag szórás strictly positive szigorúan pozitív ratio of means átlagok hányadosa log scale log skála sensitivity érzékenységi"
+ },
+ {
+  "k_id": "K-KHN09-016",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Valószínűtlenül kicsi SD a domináns vizsgálatban",
+  "body": "Zhou 2004 reports SDs of 19 and 25 mL whereas the other studies report 85–1188 mL; its tiny variance (11.42) gives it 81.1% of the FE and IVhet weight (note-taker's observation, not in the book). An outlying small SD may be an SE mislabelled as an SD. Detect: compare SD/mean ratios across studies. Fix: verify against the original paper and run leave-one-out. [note: run on Table 9.1, the engine's validate.validate flags both Zhou 2004 arms as suspected SE-for-SD reporting (rule V011) and its LARR mean of 20 mL as a suspected unit mismatch (rule V012).]",
+  "source_id": "khan2020",
+  "locator": "Ch9 Table 9.1 p. 197; Table 9.3 p. 202; Figs. 9.1, 9.4",
+  "tags": "implausible SD valószínűtlen szórás SE instead of SD SE szórás helyett dominant study domináns vizsgálat weight súly Zhou 2004 data check adatellenőrzés outlier kiugró"
+ },
+ {
+  "k_id": "K-KHN09-017",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Megjelenítéshez kerekített táblaértékek",
+  "body": "Tables 9.2–9.5 print some MDs rounded to integers (−219, −106, −234 for the true −219.3, −106.4, −233.9), and Table 9.2 also prints rounded limits (−466.9, −628, −261) and weights (0.003, 6E-05, 2E-05). When building test fixtures, always recompute from the raw inputs in Table 9.1 (or A9.1), never from the derived tables.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Tables 9.2–9.5 pp. 198–210",
+  "tags": "rounding kerekítés display megjelenítés table táblázat test fixture tesztadat recompute újraszámolás raw data nyers adat reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-KHN09-018",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Nem tárgyalt MD-változatok és konverziók",
+  "body": "The chapter does not cover SMD conversions (see Ch 8), the log ratio of means, change-from-baseline or paired MDs, imputing SDs from an SE, CI, median or IQR, or zero cells (irrelevant for continuous outcomes). Agents must take these methods from other sources rather than forcing such data through this chapter's formulas. [note: the engine offers effect_sizes.rom, conversions.sd_from_se, conversions.sd_from_ci, conversions.mean_from_median, conversions.sd_from_median and conversions.sd_change for these needs.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 pp. 195–197",
+  "tags": "not covered nem tárgyalt ratio of means átlagok hányadosa change score változás-pontszám paired párosított SD imputation szórás pótlás median IQR medián interkvartilis conversion konverzió"
+ },
+ {
+  "k_id": "K-KHN09-019",
+  "stage_id": "S07",
+  "kind": "convention",
+  "title": "Numerikus konvenciók a kézi számítási táblákban",
+  "body": "The hand-calculation tables use Excel 'General' format with mixed precision: some MDs are rounded to integers, small weights appear in scientific notation (6E-05, 2.5E-05), and sums are given to about 5 significant figures (0.10798, −7.9085, 0.00774, 638.392, 0.00475, −0.42723, 908.968). I² is given as the fraction 0.83098 and rounded to 83%. No continuity corrections arise because the outcome is continuous.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Tables 9.2–9.5; Ex 9.4 p. 202",
+  "tags": "numeric convention numerikus konvenció rounding kerekítés significant figures értékes jegyek scientific notation tudományos jelölés Excel table táblázat continuity correction folytonossági korrekció"
+ },
+ {
+  "k_id": "K-KHN09-020",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Fix hatású (inverz-variancia) összesített MD",
+  "body": "Under the fixed-effect model (MetaXL 'IV'), θ̂_FE = Σw_i δ̂_i / Σw_i with w_i = 1/v_i, Var(θ̂_FE) = 1/Σw_i and SE = sqrt(1/Σw_i). The (1 − α) CI is θ̂_FE ± z_{α/2}·SE. The book says FE is to be used when heterogeneity is not significant (see the model-choice pitfall). [note: the Cochrane Handbook v6 advises against choosing between FE and RE from a heterogeneity test. FE answers a different question: the effect common to these studies. Choose the model in advance, on conceptual grounds.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 pp. 199–200",
+  "tags": "fixed effect fix hatás common effect közös hatás inverse variance inverz variancia pooled estimate összesített becslés WMD standard error standard hiba confidence interval konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN09-021",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Kidolgozott példa: FE-modell",
+  "body": "From Table 9.2, Σw = 0.10798 and Σw·MD = −7.9085, so θ̂_FE = −7.9085/0.10798 = −73.2411 ≈ −73.24 and SE = sqrt(1/0.10798) = 3.043199. The 95% CI is −73.2411 ± 1.96 × 3.043199 = (−79.2058, −67.2764), i.e. (−79.21, −67.28), the diamond in Fig. 9.1. The engine's models.meta_analysis(model='fixed') reproduces these values.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.3 pp. 199–200; Table 9.2 p. 198; Fig. 9.1 p. 200",
+  "tags": "worked example kidolgozott példa fixed effect fix hatás blood loss vérveszteség pooled összesített confidence interval konfidenciaintervallum forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN09-022",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "z-próba az összesített hatásra",
+  "body": "Test H0: θ = 0 against HA: θ ≠ 0 with Z = θ̂/SE(θ̂) ~ N(0,1); reject at level α if |z0| ≥ z_{α/2}, with two-sided P = 2·P(Z > |z0|). For the FE blood-loss result z0 = −73.2411/3.043199 = −24.0671, which the book reports as 'P = 0'.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.3 p. 198; Ex 9.2 pp. 198–199",
+  "tags": "z test z-próba significance szignifikancia hypothesis test hipotézisvizsgálat two-sided kétoldali P value p-érték pooled effect összesített hatás"
+ },
+ {
+  "k_id": "K-KHN09-023",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Véletlen hatású modell (DerSimonian–Laird)",
+  "body": "The RE model adds the between-study variance τ² to each study's within-study variance: v_i* = v_i + τ̂², w_i* = 1/(v_i + τ̂²). Then θ̂_RE = Σw_i* δ̂_i / Σw_i*, SE = sqrt(1/Σw_i*), and the CI is the Wald z interval. The book says RE is to be used when heterogeneity is significant. [note: the Cochrane Handbook v6 does not tie the choice of RE to a significant Q test; pre-specify the model. Also, DL is no longer the preferred τ² estimator (see the τ² unit).] [note: the engine's models.meta_analysis defaults to REML with an HKSJ CI; pass tau2_method='DL' and ci_method='z' to reproduce the book.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.5 pp. 204–205",
+  "tags": "random effects véletlen hatás DerSimonian Laird DL between-study variance vizsgálatok közötti variancia tau2 weights súlyok pooled estimate összesített becslés Wald CI"
+ },
+ {
+  "k_id": "K-KHN09-024",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "τ² becslése: DerSimonian–Laird momentum-módszer",
+  "body": "The chapter's only τ² estimator is the DL method of moments: τ̂² = (Q − df)/C, with C = Σw_i − Σw_i²/Σw_i, df = k − 1 and FE weights w_i = 1/v_i. The book does not state truncation at 0; use τ̂² = max(0, (Q − df)/C), as models.tau2_dl does. [note: the Cochrane Handbook v6 now prefers REML or Paule–Mandel over DL; for these data REML gives τ² = 3097.9, more than twice the DL value.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.5 p. 205",
+  "tags": "tau2 tau-négyzet DerSimonian Laird DL method of moments momentum-módszer between-study variance vizsgálatok közötti variancia truncation csonkolás REML Paule-Mandel estimator becslő"
+ },
+ {
+  "k_id": "K-KHN09-025",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Kidolgozott példa: DL τ² és RE-modell",
+  "body": "With Q = 59.17, Σw = 0.10798 and Σw² = 0.007742, C = 0.10798 − 0.007742/0.10798 = 0.0363 and τ̂² = 1355.029 (df = 10). For Bonjer 2015, v* = 467.318 + 1355.03 = 1822.3 and w* = 0.00055; across studies Σw* = 0.00475 and Σw*·MD = −0.42723. The result is θ̂_RE = −89.98, SE = 14.513, 95% CI (−118.43, −61.54) (Fig. 9.3). The note-taker's metafor DL check gives −89.9837, SE 14.5127 and τ = 36.81.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.5–9.6 pp. 205–207; Table 9.4; Fig. 9.3",
+  "tags": "worked example kidolgozott példa random effects véletlen hatás tau2 DerSimonian Laird DL modified weight módosított súly blood loss vérveszteség"
+ },
+ {
+  "k_id": "K-KHN09-026",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "A könyv állítása: az RE-modell gyengébb az IVhet- és QE-modellnél",
+  "body": "The book notes that the RE model, though widely used, has been criticised and performed worse than the IVhet and quality-effects models in Doi et al. (2015). [note: this is the developers' own evaluation (Khan co-authored Doi et al. 2015a–c); the Cochrane Handbook v6 keeps the random-effects model as standard and instead recommends better τ² estimators (REML or Paule–Mandel) and allows HKSJ intervals, so IVhet is an option for sensitivity analysis rather than a consensus replacement.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.5 p. 204",
+  "tags": "random effects véletlen hatás criticism kritika IVhet quality effects minőségi hatás Doi 2015 debate vita Cochrane REML HKSJ model choice modellválasztás"
+ },
+ {
+  "k_id": "K-KHN09-027",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "IVhet-modell (Doi et al. 2015a)",
+  "body": "The IVhet point estimate equals the FE estimate, θ̂_IVhet = Σw_i δ̂_i / Σw_i with w_i = 1/v_i, but its variance allows for heterogeneity: Var(θ̂_IVhet) = Σ_i (w_i/Σ_j w_j)² · (v_i + τ̂²), with τ̂² the DL estimate. SE = sqrt(Var) and the CI is the Wald z interval, so the study % weights are identical to the FE weights. The engine implements it as models.meta_analysis(model='ivhet'), i.e. models._ivhet. [note: IVhet was developed by Doi, Barendregt, Khan et al. (2015a) and is promoted mainly by that group. It is not among the Cochrane Handbook v6 standard methods, so treat it as a sensitivity analysis next to a random-effects analysis (REML/PM, with HKSJ where appropriate), not as the default. Its point estimate keeps the FE weights, so a single dominant study, such as Zhou 2004 here, still drives it.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.6 pp. 208–209",
+  "tags": "IVhet inverse variance heterogeneity inverz-variancia heterogenitás Doi 2015 quasi-likelihood variance variancia fixed effect weights fix hatású súlyok DL tau2 robust robusztus"
+ },
+ {
+  "k_id": "K-KHN09-028",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Félrevezető oszlopnév a 9.5. táblában („W*”)",
+  "body": "Table 9.5 labels a column 'W*, the modified weight under IVhet', but it actually holds each study's variance contribution (w_i/Σw)²·(v_i + τ̂²) (Bonjer: (0.00214/0.10798)² × 1822.3 = 0.71569). Its sum, 908.968, is the IVhet variance, not a sum of weights. Do not use this column as weights; the IVhet weights are the FE weights.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Table 9.5 p. 210; Ex 9.7 pp. 209–210",
+  "tags": "IVhet mislabel félrecímkézés modified weight módosított súly variance contribution variancia-hozzájárulás table táblázat weights súlyok"
+ },
+ {
+  "k_id": "K-KHN09-029",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Kidolgozott példa: IVhet-modell",
+  "body": "With τ̂² = 1355.03 the per-study variance contributions sum to ΣW* = 908.968 (text: 908.96775), so SE = sqrt(908.96775) = 30.1491. The estimate is the FE value −73.24, with 95% CI −73.24 ± 1.96 × 30.1491 = (−132.33, −14.15) (Fig. 9.4). The forest-plot % weights are the same as under FE (Zhou 2004: 81.1%).",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.7 pp. 209–210; Fig. 9.4 p. 211",
+  "tags": "worked example kidolgozott példa IVhet inverse variance heterogeneity inverz-variancia heterogenitás standard error standard hiba confidence interval konfidenciaintervallum blood loss vérveszteség"
+ },
+ {
+  "k_id": "K-KHN09-030",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "A három modell összevetése a vérveszteség-adatokon",
+  "body": "For all 11 studies: FE −73.24 (−79.21, −67.28); RE (DL) −89.98 (−118.43, −61.54); IVhet −73.24 (−132.33, −14.15) mL. Point estimates and CIs vary across models, but all three are significant. Under FE and IVhet Zhou 2004 carries 81.1% of the weight; under RE the weights flatten to 0.5–15.4%, which pulls the pooled estimate toward the studies with larger effects.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.1, 9.3, 9.4; §9.9 p. 215",
+  "tags": "model comparison modell-összehasonlítás fixed effect fix hatás random effects véletlen hatás IVhet weights súlyok weight distribution súlyeloszlás large effect nagy hatás"
+ },
+ {
+  "k_id": "K-KHN09-031",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Modellválasztás a heterogenitás-próba alapján",
+  "body": "The book prescribes FE when heterogeneity is not significant and RE or IVhet when it is, while also warning that the Q test has low power. A non-significant Q therefore cannot justify FE. Fix: pre-specify the model and report a heterogeneity-robust model as the primary analysis. [note: the Cochrane Handbook v6 and Borenstein et al. (2009) also advise against choosing FE vs RE from a heterogeneity test.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 pp. 199, 201, 204, 208",
+  "tags": "model selection modellválasztás heterogeneity test heterogenitás-próba fixed effect fix hatás random effects véletlen hatás IVhet low power alacsony erő pre-specification előzetes rögzítés"
+ },
+ {
+  "k_id": "K-KHN09-032",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Normális kvantilisű CI erős heterogenitás mellett",
+  "body": "Every CI in the chapter uses the z critical value, even with k = 11 and I² = 83%. The note-taker's metafor check gives, for DL with the Hartung–Knapp–Sidik–Jonkman adjustment, a wider CI of (−131.32, −48.64) (p = 0.0007). The DL 95% prediction interval is (−167.5, −12.4) with the z quantile (metafor's default). With the t_{k−2} quantile, which the Cochrane Handbook and Higgins et al. (2009) use and the engine uses by default, it is (−179.5, −0.5), so a future setting could show almost no reduction. With REML, the estimate is −93.90 with a z CI of (−133.56, −54.24). The engine default, REML with HKSJ, gives (−137.14, −50.66). Fix: consider HKSJ or t-based CIs and report a prediction interval when heterogeneity is substantial. [note: none of these values are printed in the book.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §§9.4–9.6 (note-taker's metafor check; re-verified with the engine)",
+  "tags": "confidence interval konfidenciaintervallum z normal normális HKSJ Hartung-Knapp t distribution t-eloszlás prediction interval predikciós intervallum REML heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN09-033",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Kerekített közbenső értékek a kézi számításban",
+  "body": "Re-substituting the printed rounded numbers into the printed formulas does not give the printed results: (59.17 − 10)/0.0363 = 1354.5, not 1355.029; −0.42723/0.00475 = −89.94, not −89.98; sqrt(1/0.00475) = 14.510, not 14.513. The printed results come from full-precision sums. Fix: never round intermediates, and test engines against the printed final results rather than hand re-substitution.",
+  "source_id": "khan2020",
+  "locator": "Ch9 pp. 206–207",
+  "tags": "rounding kerekítés intermediate közbenső hand calculation kézi számítás precision pontosság test fixture tesztadat tau2 random effects véletlen hatás"
+ },
+ {
+  "k_id": "K-KHN09-034",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Kritikus z-érték: 1,96 vs 1,959964 (MetaXL)",
+  "body": "The hand calculations use z = 1.96, but MetaXL uses the exact 1.959964. This shows in Ng 2009, where the forest plot prints (−203.84, 89.84) while 1.96 gives (−203.85, 89.85), and in the Old-subgroup IVhet upper limit (−9.90 printed vs −9.89 with 1.96). When matching software output to the second decimal, use the exact quantile (distributions.norm_ppf).",
+  "source_id": "khan2020",
+  "locator": "Ch9 Table 9.2 p. 198; Figs. 9.1, 9.7",
+  "tags": "critical value kritikus érték 1.96 1.959964 normal quantile normális kvantilis MetaXL rounding kerekítés confidence limit konfidenciahatár reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-KHN09-035",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-féle Q és a homogenitási próba",
+  "body": "Q = Σw_i θ̂_i² − (Σw_i θ̂_i)²/Σw_i, computed with FE weights w_i = 1/v_i. Under H0: θ_1 = … = θ_k = θ, Q follows a χ² distribution with df = k − 1, so E(Q) = k − 1. Reject H0 if Q ≥ χ²_{k−1,1−α}, the upper-α critical value.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 p. 201",
+  "tags": "Cochran Q heterogeneity heterogenitás homogeneity test homogenitási próba chi-squared khi-négyzet degrees of freedom szabadsági fok fixed effect weights fix hatású súlyok"
+ },
+ {
+  "k_id": "K-KHN09-036",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "A Q-próba korlátai",
+  "body": "A small P for Q indicates true differences among study effects, but a non-significant P may just reflect the low power of the test, so it does not prove homogeneity. Nor is Q a measure of how large the true between-study dispersion is; use τ² or I² for that.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 p. 201",
+  "tags": "Cochran Q limitation korlát low power alacsony erő homogeneity homogenitás magnitude nagyság dispersion szóródás heterogeneity heterogenitás interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN09-037",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Az I² mutató (Higgins et al. 2003)",
+  "body": "I² = (Q − df)/Q × 100%, read as the share of the total variation (within plus between studies) that is due to between-study variation. The book does not state truncation at 0; when Q < df set I² = 0, as models.heterogeneity does.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 p. 201",
+  "tags": "I2 I-négyzet Higgins 2003 inconsistency inkonzisztencia heterogeneity heterogenitás proportion arány between-study vizsgálatok közötti truncation csonkolás"
+ },
+ {
+  "k_id": "K-KHN09-038",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Q és I² modellfüggetlen",
+  "body": "Q and I² are computed from the sample summary data with FE weights alone, so they are identical under FE, RE and IVhet; every forest plot in the chapter prints the same Q = 59.17, p = 0.00, I² = 83%. A different Q across model runs on the same data therefore signals a computation error. I² can legitimately differ in software that derives it from the τ² estimate (e.g. metafor reports τ²/(τ² + s²), which changes with the τ² estimator). The engine reports both versions: I2 based on Q, and I2_from_tau2.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Comment p. 201; p. 214",
+  "tags": "Cochran Q I2 model independence modellfüggetlenség fixed effect fix hatás random effects véletlen hatás IVhet forest plot erdődiagram consistency check konzisztencia-ellenőrzés"
+ },
+ {
+  "k_id": "K-KHN09-039",
+  "stage_id": "S09",
+  "kind": "example",
+  "title": "Kidolgozott példa: Q és I²",
+  "body": "From Table 9.3, Σw = 0.10798, Σw·MD = −7.9085 and Σw·MD² = 638.3923, so Q = 638.3923 − (−7.9085)²/0.10798 = 59.17 with df = 10. The book reads P from a chi-squared table and prints 'P = 0'; the exact value is 5.2×10⁻⁹ (note-taker's computation). I² = (59.17 − 10)/59.17 = 0.83098, i.e. 83%.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.4 pp. 201–202; Table 9.3",
+  "tags": "worked example kidolgozott példa Cochran Q I2 heterogeneity heterogenitás chi-squared khi-négyzet P value p-érték blood loss vérveszteség"
+ },
+ {
+  "k_id": "K-KHN09-040",
+  "stage_id": "S09",
+  "kind": "threshold",
+  "title": "Heterogenitás minősítése: nincsenek számszerű küszöbök",
+  "body": "The chapter gives no numeric thresholds for I² and calls 83%, 90% and even 64% (the Old subgroup) 'high' heterogeneity. [note: under the Cochrane Handbook's overlapping bands, 0–40% might not be important, 30–60% may represent moderate, 50–90% substantial and 75–100% considerable heterogeneity, so 64% is moderate-to-substantial; interpret I² together with τ², the number of studies and the CI of I².]",
+  "source_id": "khan2020",
+  "locator": "Ch9 pp. 203, 208, 211, 213",
+  "tags": "I2 threshold küszöbérték interpretation értelmezés high magas moderate mérsékelt substantial jelentős considerable számottevő Cochrane heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN09-041",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Hiányzó heterogenitási mutatók: H², τ és konfidenciaintervallumok",
+  "body": "The chapter reports Q, I² and (for RE) τ², but not H², τ itself, or confidence intervals for τ² and I². The note-taker's metafor check gives H² = 5.92, τ = 36.81 mL, and Q-profile 95% CIs of (943, 12131) for τ² and (77.4%, 97.8%) for I². Report τ in the outcome unit and the uncertainty of τ² and I²; the engine's models.heterogeneity (H², Q-profile CIs) and models.meta_analysis (τ) return these.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §§9.4–9.5 (note-taker's metafor check)",
+  "tags": "H2 tau tau2 confidence interval konfidenciaintervallum Q-profile I2 uncertainty bizonytalanság heterogeneity heterogenitás reporting közlés"
+ },
+ {
+  "k_id": "K-KHN09-042",
+  "stage_id": "S10",
+  "kind": "guidance",
+  "title": "Alcsoport-elemzés kialakítása publikációs időszak szerint",
+  "body": "Section 9.7 splits the studies by publication year into 'Recent' (after 2010; k = 6, 2011–2015) and 'Old' (before 2010; k = 5, 2004–2009) to see whether the effect differs by period, and runs FE, RE and IVhet within each subgroup. The split looks post hoc: no rationale is given and the 2010 boundary is ambiguous, though no study is from 2010. Pre-specify subgroups and their boundaries in the protocol.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.7 p. 212; A9.1 p. 215",
+  "tags": "subgroup analysis alcsoport-elemzés publication period publikációs időszak post hoc utólagos pre-specification előzetes rögzítés moderator moderátor boundary határ"
+ },
+ {
+  "k_id": "K-KHN09-043",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Alcsoport-eredmények: FE, RE, IVhet",
+  "body": "Recent vs Old: FE −70.91 (−85.83, −55.98) vs −73.68 (−80.19, −67.18), weights 16.0% vs 84.0%; RE −84.43 (−136.90, −31.96) vs −103.37 (−146.48, −60.26), displayed weights 62.0% vs 38.0%; IVhet −70.91 (−129.39, −12.42) vs −73.68 (−137.47, −9.90), weights 16.0% vs 84.0%. The overall row of each plot repeats the full-data FE, RE or IVhet result. The book concludes that both subgroups show significant effects under every model.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Fig. 9.5 p. 212; Fig. 9.6 p. 213; Fig. 9.7 p. 214",
+  "tags": "subgroup results alcsoport-eredmények fixed effect fix hatás random effects véletlen hatás IVhet recent újabb old régi blood loss vérveszteség forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN09-044",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Alcsoporton belüli heterogenitás",
+  "body": "Within subgroups, Recent has Q = 48.05, p = 0.00, I² = 90% and Old has Q = 11.01, p = 0.03, I² = 64%, the same under all three models. From this the book concludes that the Recent studies are more heterogeneous than the Old ones, without any formal comparison (see the subgroup-test pitfall).",
+  "source_id": "khan2020",
+  "locator": "Ch9 pp. 212–214; Figs. 9.5–9.7",
+  "tags": "within-subgroup heterogeneity alcsoporton belüli heterogenitás Cochran Q I2 subgroup alcsoport comparison összehasonlítás recent old"
+ },
+ {
+  "k_id": "K-KHN09-045",
+  "stage_id": "S10",
+  "kind": "convention",
+  "title": "Alcsoportonkénti τ² a szoftverben",
+  "body": "As verified by the note-taker, MetaXL's subgroup RE and IVhet estimates use a subgroup-specific DL τ²: 3328.10 for Recent and 1125.46 for Old, versus 1355.03 overall. The engine's moderators.subgroup_analysis does the same by default (common_tau2=False) and reproduces the RE subgroup results with tau2_method='DL' and ci_method='z'; common_tau2=True instead pools τ² across subgroups. Always state which τ² was used.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.6–9.7 pp. 213–214 (note-taker's verification)",
+  "tags": "subgroup alcsoport tau2 separate külön common közös DerSimonian Laird MetaXL random effects véletlen hatás IVhet engine motor reporting közlés"
+ },
+ {
+  "k_id": "K-KHN09-046",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Félrevezető RE-súlyok az alcsoport-ábrán",
+  "body": "In Fig. 9.6 the per-study and subgroup % weights are the overall-analysis RE weights (τ² = 1355.03): Recent = 11.6 + 9.4 + 13.6 + 12.5 + 1.2 + 13.8 = 62.0% and Old = 38.0%. The subgroup pools, however, use within-subgroup τ², so the displayed weights are not the weights used for the subgroup estimates. Fix: state which τ² each displayed weight comes from, and do not read the plotted weights as the subgroup pooling weights.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Fig. 9.6 p. 213",
+  "tags": "subgroup alcsoport weights súlyok random effects véletlen hatás tau2 forest plot erdődiagram misleading félrevezető MetaXL display megjelenítés"
+ },
+ {
+  "k_id": "K-KHN09-047",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Alcsoport-következtetés interakciós próba nélkül",
+  "body": "The book compares within-subgroup significance and I² to claim more heterogeneity among Recent studies, from k = 6 vs 5, a post hoc split and no test for subgroup differences. The note-taker's checks give FE Q_between = 59.165 − 48.046 − 11.008 = 0.112 (df 1, p = 0.74) a random-effects Q_between with subgroup-specific DL τ² = 0.30 (p = 0.58), and a mixed-effects (DL) moderator test QM = 0.41 (p = 0.52). There is no evidence that the effect differs by period. Fix: report Q_between or a meta-regression QM (moderators.subgroup_analysis, moderators.meta_regression), pre-specify subgroups and treat the findings as exploratory.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.7 pp. 212–214",
+  "tags": "subgroup difference alcsoport-különbség interaction test interakciós próba Q between meta-regression meta-regresszió QM post hoc utólagos exploratory feltáró"
+ },
+ {
+  "k_id": "K-KHN09-048",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "Nem tárgyalt: meta-regresszió",
+  "body": "Chapter 9 does not cover meta-regression, the R² analogue (proportion of τ² explained) or permutation tests, and offers no formal test for subgroup differences. Take these methods from other sources; the engine provides moderators.meta_regression.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.7",
+  "tags": "not covered nem tárgyalt meta-regression meta-regresszió R2 analog permutation test permutációs próba moderator moderátor subgroup alcsoport"
+ },
+ {
+  "k_id": "K-KHN09-049",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Publikációs torzítás: csak hivatkozás a 8. fejezetre",
+  "body": "Section 9.8 says publication-bias assessment for the WMD is very similar to the SMD case and refers readers to the previous chapter for funnel and Doi plots; its cross-reference 'Sect. 9.8.8 of the previous chapter' is wrong and should be §8.8 of Ch 8. No funnel plot, Doi plot, LFK index, Egger or other test is computed for the blood-loss data, although k = 11 would allow it. A reviewer should require a small-study-effects assessment whenever k ≥ 10 (engine: bias.egger_test, bias.doi_plot_data, bias.trim_and_fill). [note: the Doi plot and LFK index come from the same group that developed IVhet and are not part of the Cochrane Handbook v6 standard toolkit. That toolkit is a contour-enhanced funnel plot plus an Egger-type test (Peters or Harbord for binary outcomes), only with at least 10 studies of varying size, and read as evidence of small-study effects rather than proof of publication bias.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.8 p. 214",
+  "tags": "publication bias publikációs torzítás small-study effects kis vizsgálati hatás funnel plot tölcsérdiagram Doi plot LFK Egger cross-reference kereszthivatkozás missing hiányzó"
+ },
+ {
+  "k_id": "K-KHN09-050",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Implicit robusztussági ellenőrzések a fejezetben",
+  "body": "The chapter has no leave-one-out or influence diagnostics. Its only robustness checks are implicit: running FE, RE and IVhet on the same data, and reversing the direction of the difference, which gives identical magnitudes (Fig. 9.2). Add formal leave-one-out and influence analyses (sensitivity.leave_one_out, sensitivity.influence).",
+  "source_id": "khan2020",
+  "locator": "Ch9 §§9.4–9.6; p. 204; §9.9 p. 215",
+  "tags": "sensitivity analysis érzékenységi elemzés robustness robusztusság leave-one-out egyenkénti elhagyás influence befolyás model comparison modell-összehasonlítás"
+ },
+ {
+  "k_id": "K-KHN09-051",
+  "stage_id": "S12",
+  "kind": "example",
+  "title": "Elhagyásos (leave-one-out) elemzés: Zhou 2004 és Bonjer 2015",
+  "body": "The note-taker's metafor leave1out shows that Zhou 2004 dominates FE and IVhet (81.1% weight): dropping it gives FE −78.55 (−92.26, −64.85) and RE −97.06. Bonjer 2015 drives most of the heterogeneity: dropping it lowers Q from 59.17 to 24.09 and I² from 83% to 63%, and gives RE −70.98. The direction and significance of the effect survive every single omission under FE, DL-RE and IVhet. The narrowest margin is IVhet without Liu 2011, whose upper limit is −0.6 (engine re-check).",
+  "source_id": "khan2020",
+  "locator": "Ch9 §§9.4–9.6 (note-taker's metafor leave1out)",
+  "tags": "leave-one-out egyenkénti elhagyás sensitivity érzékenységi dominant study domináns vizsgálat heterogeneity source heterogenitás forrása Zhou 2004 Bonjer 2015 robustness robusztusság"
+ },
+ {
+  "k_id": "K-KHN09-052",
+  "stage_id": "S06",
+  "kind": "concept",
+  "title": "Torzítási kockázat: a fejezet nem tárgyalja",
+  "body": "Chapter 9 contains no risk-of-bias or quality appraisal; it only assumes random allocation and independent samples, and mentions the quality-effects model (Doi et al. 2015b, c) as a better-performing alternative to RE without computing it. Risk of bias of the included trials must therefore be assessed with other sources and tools. [note: e.g. RoB 2 for randomised trials. The quality-effects model is a proposal of the same author group (Doi et al. 2015b). It does not replace risk-of-bias assessment, sensitivity analyses by risk of bias, or GRADE.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 p. 196; p. 204",
+  "tags": "risk of bias torzítási kockázat quality appraisal minőségértékelés quality effects minőségi hatás RoB 2 randomization randomizálás not covered nem tárgyalt"
+ },
+ {
+  "k_id": "K-KHN09-053",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Robusztusság a modellek között",
+  "body": "Check whether direction and significance agree under FE, RE and IVhet. In the blood-loss example they do (a reduction of 73–90 mL, and every CI excludes 0), but the IVhet upper limit is only −14 mL, so the smallest plausible benefit is much smaller than the point estimates suggest.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.1, 9.3, 9.4",
+  "tags": "robustness robusztusság model comparison modell-összehasonlítás direction irány significance szignifikancia certainty bizonyosság evaluator értékelő IVhet"
+ },
+ {
+  "k_id": "K-KHN09-054",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Precizitás vs heterogenitás",
+  "body": "The FE CI (about ±6 mL) is falsely narrow given I² = 83%. Judge precision, and thus certainty, from a heterogeneity-robust interval rather than from the FE interval. That means a random-effects CI, preferably HKSJ (here (−131.3, −48.6)), together with the prediction interval. [note: IVhet (−132.3, −14.2) is the author group's alternative and can be shown as a sensitivity analysis. GRADE judges imprecision from the CI against decision thresholds.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.1, 9.3, 9.4",
+  "tags": "precision precizitás imprecision pontatlanság heterogeneity heterogenitás fixed effect fix hatás confidence interval konfidenciaintervallum certainty bizonyosság GRADE"
+ },
+ {
+  "k_id": "K-KHN09-055",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Egyetlen vizsgálat dominanciája",
+  "body": "When one study carries more than 50% of the weight (here Zhou 2004 with 81.1% under FE and IVhet), the pooled FE and IVhet result is essentially that study's result. Check that study's quality and data plausibility before relying on the pooled estimate (criterion derived by the note-taker from the data).",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.1, 9.4",
+  "tags": "dominant study domináns vizsgálat weight súly 50 percent influence befolyás plausibility hihetőség quality minőség evaluator értékelő"
+ },
+ {
+  "k_id": "K-KHN09-056",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Megmagyarázott vs megmagyarázatlan heterogenitás",
+  "body": "The period subgroups do not explain the heterogeneity: both remain heterogeneous (I² 90% and 64%) and there is no between-group difference. Treat the inconsistency as unexplained; in GRADE terms this would usually mean downgrading for inconsistency (note-taker's mapping; GRADE is not discussed in this chapter).",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.7 pp. 212–214",
+  "tags": "unexplained heterogeneity megmagyarázatlan heterogenitás inconsistency inkonzisztencia GRADE downgrading leminősítés subgroup alcsoport certainty bizonyosság"
+ },
+ {
+  "k_id": "K-KHN09-057",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Klinikai relevancia természetes mértékegységben",
+  "body": "Because the MD is in natural units (mL), the evaluator should judge the pooled difference and its CI against a clinically important difference for the outcome, which the chapter does not discuss. A statistically significant reduction whose CI limit lies near the null (e.g. the IVhet upper limit of −14 mL) may not be clinically important.",
+  "source_id": "khan2020",
+  "locator": "Ch9 p. 195; §9.9 p. 215",
+  "tags": "clinical relevance klinikai relevancia minimal important difference minimális fontos különbség natural unit természetes mértékegység mean difference átlagkülönbség interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN09-058",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Eloszlási érvényesség",
+  "body": "Skewed outcomes reported as mean ± SD, as most blood-loss arms are, weaken the validity of the MD and of its normal-theory CI. Lower confidence in the result, or require a sensitivity analysis on a log or ratio-of-means scale.",
+  "source_id": "khan2020",
+  "locator": "Ch9 p. 196; Table 9.1 p. 197",
+  "tags": "skewness ferdeség distributional validity eloszlási érvényesség normality normalitás mean SD átlag szórás ratio of means átlagok hányadosa certainty bizonyosság"
+ },
+ {
+  "k_id": "K-KHN09-059",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Az áttekintés teljessége",
+  "body": "The evaluator should expect a publication-bias or small-study-effects assessment, a risk-of-bias appraisal of the included RCTs, and a pre-specified model and subgroups. All three are missing from the chapter's worked example, so a review that copies its workflow is incomplete.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §§9.7–9.8 pp. 212–214",
+  "tags": "completeness teljesség publication bias publikációs torzítás risk of bias torzítási kockázat pre-specification előzetes rögzítés protocol protokoll evaluator értékelő"
+ },
+ {
+  "k_id": "K-KHN09-060",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "MetaXL erdődiagram (forest plot) felépítése",
+  "body": "MetaXL forest plots show the study label, the CI bar, 'WMD (95% CI)' to 2 decimals and '% Weight' to 1 decimal; the last row is 'Overall' with a diamond and 'Q=…, p=…, I2=…%' (Q and p to 2 decimals, I² as an integer). The x-axis is in the outcome unit with a null line at 0. Per-study rows are identical across models; only the weights and pooled rows change.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.1–9.7",
+  "tags": "forest plot erdődiagram MetaXL layout elrendezés decimals tizedesjegyek weight súly diamond rombusz null line nullvonal reporting közlés"
+ },
+ {
+  "k_id": "K-KHN09-061",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Alcsoportos erdődiagram (forest plot) felépítése",
+  "body": "In subgroup forest plots, studies are grouped under subgroup headers; each subgroup gets its own diamond, its own 'subgroup Q, p, I2' line and its total % weight, and the overall diamond comes last. Add the test for subgroup differences, which the chapter's MetaXL plots do not show.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.5–9.7 pp. 212–214",
+  "tags": "subgroup forest plot alcsoportos erdődiagram layout elrendezés diamond rombusz subgroup difference test alcsoport-különbség próba reporting közlés"
+ },
+ {
+  "k_id": "K-KHN09-062",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Mit közöljünk modellenként",
+  "body": "For each model report the pooled WMD with its SE and 95% CI, the z statistic and P, Q (df, P) and I², and for RE also τ². State the direction convention (which arm minus which) in the labels and text. [note: PRISMA 2020 (items 13d and 20b) also asks for the model, the heterogeneity methods and the software. Cochrane Handbook v6 practice adds the τ² estimator, the CI method and, for random effects, a prediction interval.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 Examples 9.3, 9.6, 9.7; Remark p. 203",
+  "tags": "reporting közlés pooled estimate összesített becslés standard error standard hiba confidence interval konfidenciaintervallum Cochran Q I2 tau2 direction irány"
+ },
+ {
+  "k_id": "K-KHN09-063",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "P-érték „0” vagy „0.00” formában",
+  "body": "The book prints P = 0 for the z test and the Q test, and the forest plots print p=0.00, but a P value is never exactly 0. Fix: report p < 0.001 or use scientific notation (here p_Q = 5.2×10⁻⁹).",
+  "source_id": "khan2020",
+  "locator": "Ch9 pp. 199, 202; Figs. 9.1–9.7",
+  "tags": "P value p-érték zero nulla reporting közlés p < 0.001 scientific notation tudományos jelölés rounding kerekítés"
+ },
+ {
+  "k_id": "K-KHN09-064",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Elírások a fejezetben (átíráskor figyelmen kívül hagyandó)",
+  "body": "Known slips: both study-CI limits labelled 'LL' (p. 196); 'meta-analysis of RR' in the FE section (p. 199); 'Doi et al. (2015c, b, c)' (p. 204); '(−0118.43, −61.54)' (p. 207); 'B6:D16' in the RE and IVhet remarks vs 'B6:H16' in the code (pp. 208, 211). Also '(−73,24, CI: −79.21, 67.28)' with a decimal comma and a missing minus (p. 212), 'Od Studies' (p. 213), 'Sect. 9.8.8 of the previous chapter' (p. 214), 'Bonjier' (p. 197), 'chi-squired' (p. 202) and \"Cochrane's Q\" for Cochran's Q (p. 211). When transcribing, use the correct values (FE −73.24 with CI −79.21 to −67.28; RE lower limit −118.43).",
+  "source_id": "khan2020",
+  "locator": "Ch9 pp. 196–214",
+  "tags": "typo elírás errata hibajegyzék transcription átírás MetaXL range tartomány cross-reference kereszthivatkozás confidence interval konfidenciaintervallum"
+ },
+ {
+  "k_id": "K-KHN09-065",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "MetaXL: WMD-metaanalízis szintaxisa",
+  "body": "MetaXL (EpiGear Excel add-in) runs the analyses with =MAInputTable(\"title\",\"WMD\",model,B6:H16), where model is \"IV\" (FE), \"RE\" (DerSimonian–Laird) or \"IVhet\". The arguments are a free-text plot title, the effect type (\"WMD\": raw arm data in, mean difference out), the model, and a 7-column range: study, then n, mean and SD for arm 1, then the same for arm 2. The RE and IVhet remarks print the range as \"B6:D16\", a typo for B6:H16, and the syntax for the subgroup plots is not shown.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Remarks pp. 203, 208, 211",
+  "tags": "MetaXL MAInputTable Excel add-in bővítmény syntax szintaxis WMD IV RE IVhet input range bemeneti tartomány software szoftver"
+ },
+ {
+  "k_id": "K-KHN09-066",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Stata admetan: WMD-metaanalízis és alcsoportok",
+  "body": "Appendix 9 installs the user-written command with 'ssc install admetan' and runs 'admetan n_larr mean_larr sd_larr n_orr mean_orr sd_orr, wmd' for FE, adding 're' or 'ivhet' for the other models. Subgroup analyses add by(study_period) to any of the three, e.g. ', wmd re by(study_period)'. [note: admetan has since been folded into metan v4, which keeps the wmd, re, ivhet and by() options.]",
+  "source_id": "khan2020",
+  "locator": "Ch9 Appendix 9 A9.2–A9.3 p. 215",
+  "tags": "Stata admetan metan wmd re ivhet by subgroup alcsoport code kód syntax szintaxis software szoftver SSC"
+ },
+ {
+  "k_id": "K-KHN09-067",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Ellenőrzés R metaforral és a motorral",
+  "body": "[note: R metafor is not used by the book; this is the note-taker's cross-check.] metafor's escalc('MD', m1i, sd1i, n1i, m2i, sd2i, n2i) uses the same variance S1²/n1 + S2²/n2, and rma(yi, vi, method='FE') or method='DL' reproduces Q = 59.1653, τ² = 1355.0291, FE −73.2411 and RE −89.9837 exactly. IVhet is not built into metafor; compute it as the FE estimate with variance Σ(w_i/Σw)²(v_i + τ̂²_DL). The engine reproduces all three models: effect_sizes.md, then models.meta_analysis with model='fixed', with model='random', tau2_method='DL', ci_method='z', or with model='ivhet'. The engine default (REML + HKSJ) deliberately differs from the book and gives τ² = 3097.9 and −93.90 (−137.14, −50.66).",
+  "source_id": "khan2020",
+  "locator": "Ch9 §§9.4–9.6 (note-taker's cross-check)",
+  "tags": "R metafor escalc rma cross-check keresztellenőrzés engine motor reproducibility reprodukálhatóság IVhet DerSimonian Laird fixed effect fix hatás validation validálás"
+ },
+ {
+  "k_id": "K-KHN09-068",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzőlista: adatkivonatolás (MD)",
+  "body": "Reviewer checks: (1) every study reports the outcome in the same unit, otherwise switch to the SMD; (2) n, mean and SD are extracted per arm, with arm 1 = treatment and arm 2 = control applied consistently; (3) SD plausibility: flag any study whose SD/mean ratio is an outlier against the others (possible SE-for-SD error, as with Zhou 2004) and strictly positive outcomes with mean < 2·SD (skew); (4) moderators for subgroups are coded before the analysis with explicit boundaries.",
+  "source_id": "khan2020",
+  "locator": "Ch9 p. 195; Table 9.1 p. 197; A9.1 p. 215",
+  "tags": "reviewer check ellenőrzés checklist ellenőrzőlista extraction adatkivonatolás unit mértékegység SD plausibility szórás hihetőség skewness ferdeség moderator moderátor"
+ },
+ {
+  "k_id": "K-KHN09-069",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Ellenőrzőlista: hatásméret újraszámolása",
+  "body": "Recompute MD = m1 − m2 and v = sd1²/n1 + sd2²/n2 from the raw inputs; they must match the per-study rows of the forest plot (test: Bonjer 2015 v = 467.318, SE = 21.6175, CI (−242.37, −157.63)). If the equal-variance (pooled) formula is used instead, it must be stated.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.1 pp. 197–198; Fig. 9.1",
+  "tags": "reviewer check ellenőrzés recompute újraszámolás mean difference átlagkülönbség variance variancia standard error standard hiba forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN09-070",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzőlista: modellek",
+  "body": "Recompute FE from Σw and Σw·MD (book data: −73.2411, SE 3.043199); DL τ² = max(0, (Q − df)/C) with C = Σw − Σw²/Σw (1355.03); RE with w* = 1/(v + τ²) (−89.98, SE 14.513); and IVhet as the FE estimate with variance Σ(w_i/Σw)²(v_i + τ²) (SE 30.1491). Check that the % weights sum to 100 and flag any study above 50% (here Zhou 81.1%). Document the CI critical value (1.96 by hand, 1.959964 in MetaXL).",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.3, 9.5–9.7 pp. 200–210",
+  "tags": "reviewer check ellenőrzés fixed effect fix hatás random effects véletlen hatás IVhet tau2 DerSimonian Laird weights súlyok critical value kritikus érték"
+ },
+ {
+  "k_id": "K-KHN09-071",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Ellenőrzőlista: heterogenitás",
+  "body": "Q, df, P and I² must be computed with FE weights and be identical across the FE, RE and IVhet output (book data: Q = 59.17, df = 10, I² = 83%). Report P exactly or as p < 0.001, never as 0, and report τ² (and τ) for random-effects analyses.",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.4 pp. 201–202; p. 214",
+  "tags": "reviewer check ellenőrzés Cochran Q I2 tau2 heterogeneity heterogenitás P value p-érték model independence modellfüggetlenség"
+ },
+ {
+  "k_id": "K-KHN09-072",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Ellenőrzőlista: alcsoport-elemzés",
+  "body": "Check that a between-subgroup test (Q_between or a meta-regression QM) is reported, not just separate subgroup CIs; that the subgroups were pre-specified and k per subgroup is reported; and that it is stated whether τ² was pooled across subgroups or estimated separately.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.7 pp. 212–214",
+  "tags": "reviewer check ellenőrzés subgroup alcsoport Q between interaction interakció pre-specification előzetes rögzítés tau2 common közös separate külön"
+ },
+ {
+  "k_id": "K-KHN09-073",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzőlista: közlés, publikációs torzítás, érzékenység",
+  "body": "Check that no P value is printed as 0 (use p < 0.001); that the direction of the MD is stated in labels and text; that publication bias is actually assessed when k ≥ 10 (a funnel plot with an Egger-type test; the Doi plot or LFK index only as the author group's supplement), which this chapter skipped; and that a leave-one-out sensitivity analysis is reported, especially omission of the dominant study.",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.8 p. 214; Remark p. 203; Figs. 9.1–9.7",
+  "tags": "reviewer check ellenőrzés reporting közlés P value p-érték direction irány publication bias publikációs torzítás funnel tölcsér leave-one-out egyenkénti elhagyás sensitivity érzékenységi"
+ }
+]

@@ -1,0 +1,570 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.state:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.state/v1 — a Metaheadhunter állapota (01_kereses/headhunter/state.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "model",
+    "created",
+    "updated",
+    "mode",
+    "pico",
+    "criteria",
+    "exclusion_reasons",
+    "sources",
+    "steps",
+    "checkpoints",
+    "searches",
+    "settings",
+    "counters"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.state/v1"
+    },
+    "model": {
+      "const": "szk.ma.headhunter/v1"
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "created": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "updated": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "mode": {
+      "enum": [
+        "harvest",
+        "own_update"
+      ],
+      "description": "harvest: más áttekintések bányászata (PRISMA 'egyéb módszerek' ág); own_update: a felhasználó SAJÁT korábbi áttekintésének frissítése (previous_studies dobozok)"
+    },
+    "pico": {
+      "type": "object",
+      "required": [
+        "question"
+      ],
+      "properties": {
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "population": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "intervention": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "comparator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "study_designs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "other": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "query_blocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "concept",
+              "terms"
+            ],
+            "properties": {
+              "concept": {
+                "enum": [
+                  "P",
+                  "I",
+                  "C",
+                  "O",
+                  "S",
+                  "other"
+                ]
+              },
+              "terms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "mesh": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "description": "a keresőkifejezések fogalomblokkjai (a felhasználó vagy a ma-tervezo vázlata)"
+        }
+      }
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "domain",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^E\\d{1,3}$"
+          },
+          "type": {
+            "enum": [
+              "include",
+              "exclude"
+            ]
+          },
+          "domain": {
+            "enum": [
+              "P",
+              "I",
+              "C",
+              "O",
+              "S",
+              "T",
+              "L",
+              "other"
+            ],
+            "description": "T: időszak, L: nyelv"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "machine_hint": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "gépi előszűrési javaslathoz (pl. {pub_types_exclude: [...], year_min: 1990}); javaslat, nem döntés"
+          }
+        }
+      }
+    },
+    "exclusion_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "label"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^X\\d{1,3}$"
+          },
+          "criterion": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^E\\d{1,3}$"
+          },
+          "label": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/i18n"
+          },
+          "domain": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "a PICO-terület, amelyhez az ok tartozik (P, I, C, O, S, L)"
+          }
+        }
+      },
+      "description": "a PRISMA 16a kizárási okok szótára; a döntések reason_code-ja erre mutat"
+    },
+    "sources": {
+      "type": "object",
+      "required": [
+        "pubmed",
+        "europepmc",
+        "openalex",
+        "scopus",
+        "ctgov"
+      ],
+      "properties": {
+        "pubmed": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source_cfg"
+        },
+        "europepmc": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source_cfg"
+        },
+        "openalex": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source_cfg"
+        },
+        "scopus": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source_cfg"
+        },
+        "ctgov": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source_cfg"
+        },
+        "crossref": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source_cfg"
+        }
+      }
+    },
+    "steps": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "sources": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "find_reviews": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "select_reviews": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "extract": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "resolve": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "dedupe": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "overlap": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "screen": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "update_search": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "merge": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "prisma": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        },
+        "export": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/step_status"
+        }
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "EP1",
+              "EP2",
+              "EP3",
+              "EP4",
+              "EP5",
+              "EP6"
+            ]
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "done",
+              "not_applicable"
+            ]
+          },
+          "decided_by": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/actor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "at": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decision_id": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "open_items": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "searches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "search_id",
+          "purpose",
+          "source",
+          "query",
+          "run_at",
+          "count_total"
+        ],
+        "properties": {
+          "search_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/search_id"
+          },
+          "purpose": {
+            "enum": [
+              "review_discovery",
+              "update_database",
+              "update_registry",
+              "citation_forward",
+              "citation_backward",
+              "resolution"
+            ]
+          },
+          "source": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source"
+          },
+          "platform": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "PubMed (E-utilities API)",
+              "Europe PMC REST API"
+            ]
+          },
+          "query": {
+            "type": "string",
+            "description": "a lekérdezés pontosan úgy, ahogy lefutott (PRISMA-S 8)"
+          },
+          "filters": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "date_field": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "date_from": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "date_to": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "run_at": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+          },
+          "count_total": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "count_retrieved": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "complete": {
+            "type": "boolean",
+            "description": "false: lapozás megszakadt (kvóta/hiba) — H012"
+          },
+          "export": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/relpath"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "settings": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "title_similarity_probable": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.9
+        },
+        "title_similarity_possible": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.8
+        },
+        "overlap_window_months": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60,
+          "default": 6
+        },
+        "max_reviews": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50
+        },
+        "quote_max_chars": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 300,
+          "default": 300
+        },
+        "secondary_tolerance_rel": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0
+        },
+        "reviewers": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/actor"
+          },
+          "description": "kettős szűrésnél a bírálók"
+        },
+        "contact_email_set": {
+          "type": "boolean",
+          "description": "csak igen/nem; az e-mail-cím nem kerül ide"
+        }
+      }
+    },
+    "counters": {
+      "type": "object",
+      "required": [
+        "decision_seq",
+        "study_seq"
+      ],
+      "properties": {
+        "decision_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "study_seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence_seq": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "project_link": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "project_title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "studies_json": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/relpath"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "prisma_flow": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/relpath"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

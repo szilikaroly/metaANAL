@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:common:1",
+  "title": "szk.common/v1 — közös definíciók (terv 4.0)",
+  "$defs": {
+    "i18n": {
+      "type": "object",
+      "required": [
+        "hu",
+        "en"
+      ],
+      "properties": {
+        "hu": {
+          "type": "string"
+        },
+        "en": {
+          "type": "string"
+        }
+      }
+    },
+    "num": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "relpath": {
+      "type": "string",
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\.\\.)[^\\\\:]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "severity": {
+      "enum": [
+        "error",
+        "warning",
+        "info"
+      ]
+    },
+    "kbid": {
+      "type": "string",
+      "pattern": "^([VPX]\\d{3}|[A-Z][A-Z0-9_]*-[A-Z0-9-]+)$"
+    },
+    "row_uid": {
+      "type": "string",
+      "pattern": "^r[0-9a-z]{4,12}$"
+    },
+    "display": {
+      "type": "object",
+      "required": [
+        "est",
+        "lo",
+        "hi"
+      ],
+      "properties": {
+        "est": {
+          "$ref": "#/$defs/num"
+        },
+        "lo": {
+          "$ref": "#/$defs/num"
+        },
+        "hi": {
+          "$ref": "#/$defs/num"
+        }
+      }
+    }
+  }
+}

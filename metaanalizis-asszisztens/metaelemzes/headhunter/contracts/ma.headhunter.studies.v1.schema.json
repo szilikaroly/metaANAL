@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.studies:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.studies/v1 — rekordok (közlemények), vizsgálat-klaszterek és duplikátum-javaslatok (01_kereses/headhunter/studies.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "model",
+    "generated",
+    "records",
+    "studies",
+    "proposals"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.studies/v1"
+    },
+    "model": {
+      "const": "szk.ma.headhunter/v1"
+    },
+    "generated": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rec_id",
+          "ids",
+          "bib",
+          "origins",
+          "status"
+        ],
+        "properties": {
+          "rec_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+          },
+          "ids": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ids"
+          },
+          "bib": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/bib"
+          },
+          "flags": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "retracted": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "erratum": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "protocol": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "conference_abstract": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "registry_record": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "preprint": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "secondary_analysis": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            }
+          },
+          "related": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "rec_id"
+              ],
+              "properties": {
+                "type": {
+                  "enum": [
+                    "retraction_in",
+                    "erratum_in",
+                    "update_in",
+                    "comment_in",
+                    "companion"
+                  ]
+                },
+                "rec_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "origins": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "route"
+              ],
+              "properties": {
+                "route": {
+                  "enum": [
+                    "review_extraction",
+                    "citation_search",
+                    "update_search",
+                    "manual"
+                  ]
+                },
+                "review_id": {
+                  "oneOf": [
+                    {
+                      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "cand_id": {
+                  "oneOf": [
+                    {
+                      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/cand_id"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "search_id": {
+                  "oneOf": [
+                    {
+                      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/search_id"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "retrievals": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/retrieval"
+            }
+          },
+          "resolution": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "status": {
+                "enum": [
+                  "resolved",
+                  "ambiguous",
+                  "unresolved",
+                  "not_attempted"
+                ]
+              },
+              "method": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "examples": [
+                  "pub-id",
+                  "ecitmatch",
+                  "esearch-title",
+                  "europepmc-title"
+                ]
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          },
+          "status": {
+            "enum": [
+              "active",
+              "merged_into"
+            ]
+          },
+          "merged_into": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "studies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "study_id",
+          "label",
+          "reports",
+          "reviews"
+        ],
+        "properties": {
+          "study_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/study_id"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "registry_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/idval"
+            }
+          },
+          "reports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "rec_id",
+                "role",
+                "role_source"
+              ],
+              "properties": {
+                "rec_id": {
+                  "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+                },
+                "role": {
+                  "enum": [
+                    "primary",
+                    "secondary",
+                    "companion",
+                    "protocol",
+                    "abstract",
+                    "registry_result",
+                    "erratum",
+                    "unknown"
+                  ]
+                },
+                "role_source": {
+                  "enum": [
+                    "review_grouping",
+                    "registry_link",
+                    "human",
+                    "rule"
+                  ]
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+            },
+            "description": "mely forrás-áttekintések vonták be (proveniencia)"
+          },
+          "decision_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+            }
+          }
+        }
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "proposal_id",
+          "kind",
+          "items",
+          "rule",
+          "status"
+        ],
+        "properties": {
+          "proposal_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/proposal_id"
+          },
+          "kind": {
+            "enum": [
+              "same_report",
+              "same_study",
+              "id_conflict",
+              "split_study",
+              "resolution"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "rec_id-k vagy '<review_id>#<cand_id>' hivatkozások"
+          },
+          "certainty": {
+            "enum": [
+              "certain",
+              "probable",
+              "possible"
+            ]
+          },
+          "score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "rule": {
+            "type": "string",
+            "examples": [
+              "L1-pmid",
+              "L1-doi",
+              "L2-title-author-year",
+              "L3-registry",
+              "L3-review-grouping",
+              "L4-author-sample"
+            ]
+          },
+          "features": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "title_sim": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "first_author_match": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "year_diff": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "journal_match": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "shared_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "shared_registry": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "conflicting_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected",
+              "superseded",
+              "auto_applied"
+            ],
+            "description": "auto_applied csak 'certain' (egyező azonosító) esetén; minden más emberi döntés"
+          },
+          "decision_id": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "explanation": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/explain"
+          }
+        }
+      }
+    }
+  }
+}

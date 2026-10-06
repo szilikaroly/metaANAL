@@ -1,0 +1,24 @@
+{
+ "description": "POST /api/fileurl — aláírt, 10 perces URL (7.1 T5): /f/<doc>/<lejárat>/<hmac>; a lap új fülön nyitja (#page=N).",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/fileurl",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.fileurl/v1",
+    "data": {
+     "url": "/f/file%3A_privat%2Fpdf%2Faronson1948.pdf/1791200000/7c1d9a5e0b2f4c3a8e6d1f0b9a7c5e3d",
+     "expires_at": 1791200000
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex14"
+    }
+   }
+  }
+ ]
+}

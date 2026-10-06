@@ -1,0 +1,812 @@
+[
+ {
+  "k_id": "K-KHN0304-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A forrás jellege: Khan 3–4. fejezet (RR, OR)",
+  "body": "Khan (2020), Meta-Analysis: Methods for Health and Experimental Studies (Springer, Statistics for Biology and Health), Chapter 3 'Introduction to Ratio Measures' (pp. 39–53) and Chapter 4 'Meta-analysis of Risk Ratio' (pp. 55–86, with Appendix 4 of Stata code). Ch3 is conceptual (ratio, proportion, odds, probability, RR, OR, their log-scale SEs, continuity correction, OR-to-RR conversion, misreadings of OR). Ch4 applies inverse-variance pooling of ln RR under fixed-effect, DerSimonian-Laird random-effects and IVhet models, plus Q, I2, a MetaXL subgroup analysis, funnel plot and Doi plot/LFK index. The audience is applied health researchers; everything is shown as spreadsheet-style hand calculations followed by MetaXL forest plots. Worked data: 7 thyroid-cancer radio-iodine ablation studies (high vs low dose) and 7 heartburn studies after laparoscopic anterior (LAF) vs posterior (LPF) fundoplication from Memon et al. 2015 (World J Surg 39:981–996).",
+  "source_id": "khan2020",
+  "locator": "Front matter; p. 39 footer; p. 55 footer; Ch4 Table 4.2, p. 61; Table 4.5, p. 68; ref. p. 86",
+  "tags": "source profile forrás jellege Khan 2020 risk ratio kockázati arány odds ratio esélyhányados MetaXL IVhet thyroid pajzsmirigy heartburn gyomorégés fundoplication textbook tankönyv"
+ },
+ {
+  "k_id": "K-KHN0304-002",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "Mit NEM tárgyal ez a fejezetpár",
+  "body": "This chunk uses only Wald/z intervals with 1.96 and only the DerSimonian-Laird tau2 estimator; it does not mention REML, PM, ML, HE, SJ, Hartung-Knapp-Sidik-Jonkman, t-based CIs or prediction intervals, nor H2, tau, or CIs for I2/tau2. It has no test for subgroup differences, no meta-regression formula (deferred to Ch11), no Egger, Begg, trim-and-fill, fail-safe N or p-curve (publication bias in depth is deferred to Ch12), no leave-one-out or influence analysis, no risk-of-bias or GRADE tool, and no PRISMA items. Double-zero studies and a corrected variance after continuity correction are not covered. [note: for those decisions rely on the Cochrane Handbook v6, PRISMA 2020 and dedicated methods sources; the engine implements REML/PM, HKSJ, prediction intervals and Q-between.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 55–86 (see notes: Statistical models, Heterogeneity, Subgroup, Publication bias, Sensitivity, Risk of bias, Reporting sections)",
+  "tags": "scope hatókör limitations korlátok gaps hiányok REML HKSJ prediction interval predikciós intervallum Egger trim-and-fill GRADE PRISMA risk of bias torzítási kockázat source selection forrásválasztás"
+ },
+ {
+  "k_id": "K-KHN0304-003",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Keresés: nem publikált és nem angol nyelvű források",
+  "body": "The source lists the causes of publication bias as non-significant results going unpublished (editorial choices or funder instructions) and the exclusion of non-English studies from reviews. The practical implication is that the search should deliberately cover unpublished (grey) literature and non-English sources rather than only English-language journal articles. The chapter cites Sterne et al. 2000, Elvik 2011/2013, Mathew & Charney 2009 and Uesawa et al. 2010 for this, and defers the full treatment to Ch12.",
+  "source_id": "khan2020",
+  "locator": "Ch4 Publication Bias, pp. 82–83",
+  "tags": "search keresés grey literature szürke irodalom unpublished nem publikált non-English nem angol nyelvű language bias nyelvi torzítás publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-KHN0304-004",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Adatkinyerési sablon bináris kimenethez (2×2)",
+  "body": "For each study record the arm sizes N1 and N2 and the numbers of cases (events) and non-cases in the treatment and in the control arm, as in the book's Tables 4.2/4.5 and Appendix A4.1/A4.3 (input column order N1, cases, non-cases, N2, cases, non-cases). Use the 2×2 notation a = events and b = non-events in the treatment/exposed arm, c = events and d = non-events in the control arm, with n1 = a + b and n2 = c + d. Explicitly record which arm is the 'treatment' (numerator) arm, because the book's own heartburn interpretation goes wrong on exactly this point.",
+  "source_id": "khan2020",
+  "locator": "Ch3 Table 3.2, p. 44; Ch4 Tables 4.2, 4.5; Appendix A4.1/A4.3, p. 85",
+  "tags": "data extraction adatkinyerés 2x2 table kétszer kettes tábla events események non-events cases esetek arm kar numerator számláló binary outcome bináris kimenet template sablon"
+ },
+ {
+  "k_id": "K-KHN0304-005",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Moderátorok kódolása alcsoport-elemzéshez",
+  "body": "For a subgroup analysis, build a study-level grouping table that assigns each study to exactly one category of the moderator, e.g. publication period 'Old studies 1999–2006' vs 'Recent studies 2010–2012' in the heartburn example. In MetaXL this is a two-column table (one column per subgroup listing the study names) whose cell range is passed to MASubGroups. [note: the coding rule and the grouping variable should be defined in the protocol before seeing the results.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.7, pp. 78–79",
+  "tags": "moderator moderátor coding kódolás subgroup alcsoport grouping table csoportosító tábla publication period publikációs időszak MetaXL MASubGroups pre-specification előzetes meghatározás"
+ },
+ {
+  "k_id": "K-KHN0304-006",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Folytonossági korrekció nulla cella nélkül",
+  "body": "The book illustrates the 0.5 continuity correction on a 2×2 table that has no zero cells, and the OR moves from 0.0833 to 0.0863: the added constant shifts the estimate even when no correction is needed. Detect: a correction applied to tables without any zero cell. Fix: add the constant only to studies with a zero cell (or use methods that need no correction), and report the value used and the studies affected. [note: the Cochrane Handbook v6 (10.4.4) warns that a fixed 0.5 correction can bias results, especially with unbalanced arms; Mantel-Haenszel methods handle single-zero studies, the Peto OR suits rare events with balanced arms and modest effects, and inverse-variance/DL pooling should be avoided for rare events.]",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 47–48",
+  "tags": "continuity correction folytonossági korrekció zero cell nulla cella 0.5 bias torzítás odds ratio esélyhányados Mantel-Haenszel Peto"
+ },
+ {
+  "k_id": "K-KHN0304-007",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Arány, hányad, esély és valószínűség",
+  "body": "A ratio compares two quantities of the same unit (10 men vs 20 women gives 10/20 = 0.5), whereas a proportion is one category over the total (10/30 = 0.3333). Probability is events over all trials, between 0 and 1, and equals the proportion; odds is events over non-events, ranging over (0, infinity), with 1 meaning one event per non-event. Odds and risk share the numerator but have different denominators, so they are on different scales and must not be used interchangeably. Odds(no event) = 1/Odds(event), whereas P(event) + P(no event) = 1. Example (Table 3.1): 20 diseased and 60 non-diseased out of 80 give P(disease) = 0.25 but odds of disease = 20/60 = 0.33.",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.2.1, pp. 40–43; Table 3.1, p. 43",
+  "tags": "ratio arány proportion hányad odds esély probability valószínűség risk kockázat definition definíció scale skála"
+ },
+ {
+  "k_id": "K-KHN0304-008",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Kockázati arány (RR) és a karok kockázata",
+  "body": "The risk in each arm is R_T = a/(a+b) and R_C = c/(c+d), and the risk ratio is RR = R_T/R_C = [a/(a+b)]/[c/(c+d)]. In the Ch3 example (a = 20, b = 60, c = 80, d = 20) R_T = 0.25, R_C = 0.8 and RR = 0.3125. RR is suited to cohort studies and clinical trials where incidence is observed. RR is not symmetric in the coding of outcome levels: the RR of 'no event' is not the reciprocal of the RR of 'event'.",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.3, pp. 44–45; §3.5, p. 49; Conclusions, p. 52; Ch4 p. 57",
+  "tags": "risk ratio kockázati arány relative risk relatív kockázat RR risk kockázat cohort kohorsz RCT 2x2 formula képlet"
+ },
+ {
+  "k_id": "K-KHN0304-009",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "ln RR varianciája (delta-módszer)",
+  "body": "The variance of the log risk ratio is Var[ln RR] = 1/a - 1/(a+b) + 1/c - 1/(c+d), and SE = sqrt(Var). For the Ch3 example, 1/20 - 1/80 + 1/80 - 1/100 = 0.04, so SE = 0.2. The formula was garbled in the conversion and reconstructed; it matches the printed SE.",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.3.1, p. 46; Ch4 §4.2, p. 56",
+  "tags": "variance variancia standard error standard hiba SE log risk ratio log kockázati arány delta method delta-módszer lnRR"
+ },
+ {
+  "k_id": "K-KHN0304-010",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Esélyhányados (OR) és Woolf-variancia",
+  "body": "The odds in each arm are OD_T = a/b and OD_C = c/d, and OR = OD_T/OD_C = (a·d)/(b·c). The Woolf variance is Var[ln OR] = 1/a + 1/b + 1/c + 1/d. In the Ch3 example OR = 1/12 = 0.0833, Var = 0.129167 and SE = 0.359398. OR is symmetric in the coding of outcome levels and is the only valid ratio for case-control studies.",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.4, p. 46; §3.4.1, p. 47; §3.5, p. 49",
+  "tags": "odds ratio esélyhányados OR Woolf variance variancia standard error case-control eset-kontroll formula képlet lnOR"
+ },
+ {
+  "k_id": "K-KHN0304-011",
+  "stage_id": "S07",
+  "kind": "convention",
+  "title": "Folytonossági korrekció 0,5 (nulla cellák)",
+  "body": "To avoid division by zero, 0.5 is added to every cell: OR* = [(a+0.5)/(b+0.5)]/[(c+0.5)/(d+0.5)] (Agresti 1996; 'Soukri' 1999). The book says all statistical packages offer this option and that MetaXL lets the user choose the value added to zero cells, 0.5 among others. The chapter does not cover double-zero studies or the corrected variance. [note: common practice (Cochrane Handbook v6, metafor default) applies the correction only to studies with a zero cell and excludes double-zero studies from OR/RR analyses; the engine follows this with cc_to='only0'.]",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 47–48",
+  "tags": "continuity correction folytonossági korrekció zero cell nulla cella 0.5 Agresti double zero kettős nulla MetaXL sparse data ritka események"
+ },
+ {
+  "k_id": "K-KHN0304-012",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Log-transzformáció és visszatranszformálás",
+  "body": "The sampling distribution of RR and OR is unknown, whereas ln RR and ln OR are approximately normal, so confidence intervals and tests are built on the log scale and the limits are back-transformed with exp(). Testing ln RR = 0 is the same hypothesis as RR = 1, so only the CI limits, not the test, need back-transforming. Pool on the log scale but report the forest-plot results back-transformed to the ratio scale. Never exponentiate an SE or variance and never average RRs directly. [note: the book says the log transformation does not affect the test; strictly, a Wald statistic built on the raw RR scale would differ, which is why the log-scale test is the standard one.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.2, p. 56; Ch3 Conclusions, p. 51",
+  "tags": "log transformation log-transzformáció back-transformation visszatranszformálás exp ratio scale arányskála normal approximation normál közelítés lnRR lnOR"
+ },
+ {
+  "k_id": "K-KHN0304-013",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Wald-féle konfidencia-intervallum arány-mértékre",
+  "body": "A (1 - alpha)·100% CI is theta-hat ± z_(alpha/2)·SE, with z_0.025 = 1.96. For a ratio measure compute LL* = ln theta-hat - z·SE and UL* = ln theta-hat + z·SE, then LL = exp(LL*) and UL = exp(UL*). For the Ch3/Ch4 vaccine example (ln RR = -1.1632, SE 0.2) this gives RR 0.3125 with 95% CI 0.2112 to 0.4625 (the book prints the lower limit truncated as 0.2111).",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.2, pp. 56–58; Example 4.1, pp. 57–58",
+  "tags": "confidence interval konfidencia-intervallum Wald z 1.96 log scale log-skála back-transform visszatranszformálás risk ratio kockázati arány"
+ },
+ {
+  "k_id": "K-KHN0304-014",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Egyedi vizsgálat z-próbája",
+  "body": "To test H0: ln theta = 0 (theta = 1), compute Z = ln theta-hat / SE(ln theta-hat), approximately N(0,1), with two-sided p = 2·P(Z > |z0|). In the vaccine example z = -5.8157 and the book prints p = 0 from the normal table (exact p is about 6e-9). Reject H0 if |z0| ≥ z_(alpha/2) or p ≤ alpha.",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.3, p. 58",
+  "tags": "z test z-próba hypothesis test hipotézisvizsgálat p-value p-érték null hypothesis nullhipotézis single study egyedi vizsgálat"
+ },
+ {
+  "k_id": "K-KHN0304-015",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Mikor közelíti az OR az RR-t",
+  "body": "OR and RR are similar only when events are rare in both arms; when events are common in either arm the OR lies further from 1 than the RR. Examples: 2/80 vs 5/100 gives RR 0.5 and OR 0.487 (printed '0.48'); 1/80 vs 1/100 gives RR 1.25 and OR 1.2532 (printed '125.31' as a percentage); but with 80% control risk (Table 3.2) RR = 0.3125 while OR = 0.0833. The book cites Schmidt & Kohlmann 2008 (Fig. 1) showing that the OR grows and the RR shrinks as incidence rises, with the lowest, almost diagonal line (incidence 0.01) representing near-equality of RR and OR. [note: the book's wording that the OR exceeds the RR when the event is common (p. 48) holds only for RR > 1; for RR < 1 the OR is smaller than the RR, so the general rule is that the OR lies further from 1.]",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.5, pp. 48–50; Table 3.3, p. 49",
+  "tags": "odds ratio esélyhányados risk ratio kockázati arány rare events ritka események baseline risk kiindulási kockázat common outcome gyakori kimenet Schmidt Kohlmann"
+ },
+ {
+  "k_id": "K-KHN0304-016",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "OR átváltása RR-re (Zhang–Yu)",
+  "body": "Greenland & Holland 1991 and Zhang & Yu 1998 give RR = OR/(1 - I_C + I_C·OR), where I_C = c/(c+d) is the risk in the control (unexposed) group and 1 - I_C = d/(c+d) is its non-incidence. Check: OR = 1/12 with I_C = 0.8 gives RR = 0.3125, the directly computed RR of Table 3.2. The author adds that conversion is unnecessary if the OR is interpreted properly. [note: McNutt et al. 2003 showed this conversion gives biased estimates and too-narrow CIs when applied to confounder-adjusted ORs; prefer direct RR estimation (e.g. log-binomial or Poisson models) where data allow.]",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.6, pp. 50–51",
+  "tags": "conversion átváltás odds ratio to risk ratio esélyhányados kockázati arány Zhang Yu Greenland Holland control risk kontroll kockázat baseline risk kiindulási kockázat"
+ },
+ {
+  "k_id": "K-KHN0304-017",
+  "stage_id": "S07",
+  "kind": "guidance",
+  "title": "Hatásmérték választása a vizsgálati elrendezés szerint",
+  "body": "Use RR for cohort studies and clinical trials, where incidence is observed (McNutt et al. 2003 used RR for cohort studies and trials of common outcomes); cross-sectional data can give RR from prevalence (Schmidt & Kohlmann 2008). For case-control studies, where meaningful incidence or prevalence is unavailable, the OR is the valid ratio (it approximates the RR only when the disease is uncommon), and it is also what logistic regression returns when adjusting for confounders. The choice depends on the design, the study objective and the researcher's priority.",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.5, p. 49; Conclusions, p. 52; p. 40",
+  "tags": "effect measure hatásmérték choice választás study design vizsgálati elrendezés cohort kohorsz case-control eset-kontroll RCT logistic regression logisztikus regresszió risk ratio odds ratio"
+ },
+ {
+  "k_id": "K-KHN0304-018",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "A szerző álláspontja: OR 'megfelelőbb' (vitatható)",
+  "body": "The author argues that the OR is more appropriate than the RR because the OR is constant with respect to the exposure X while the RR changes with baseline risk, and concludes that for the effect of an exposure on an outcome the OR is the best measure. This is the author's opinion and is contestable. [note: the Cochrane Handbook v6 (ch. 6 and 10) weighs consistency, mathematical properties and ease of interpretation; ratio measures (RR or OR) are usually more consistent across studies than RD, but the OR is easily misread as a risk ratio, so RR is often preferred for communication in trials.]",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 41–42; Conclusions, p. 52",
+  "tags": "odds ratio esélyhányados risk ratio kockázati arány author opinion szerzői vélemény controversy vita constant effect állandó hatás baseline risk kiindulási kockázat Cochrane"
+ },
+ {
+  "k_id": "K-KHN0304-019",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Incidencia és prevalencia",
+  "body": "Prevalence is the probability that a population member has the condition at a point in time (point prevalence) or during a period (period prevalence). Incidence is the occurrence of new cases during a span of time. Their relationship depends on the natural history of the disease: a condition with high incidence but fast spontaneous resolution (the book's example is a coronavirus pandemic) adds little to prevalence.",
+  "source_id": "khan2020",
+  "locator": "Ch3 p. 50",
+  "tags": "incidence incidencia prevalence prevalencia point prevalence pontprevalencia period prevalence időszakos prevalencia epidemiology epidemiológia new cases új esetek"
+ },
+ {
+  "k_id": "K-KHN0304-020",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "'Kisebb RR/OR = gyengébb kapcsolat' tévedés",
+  "body": "The book states that the smaller the RR the weaker the association and that OR = 0.50 shows more dependence than OR = 0.25; both are wrong for ratios below 1. Strength of association is |ln ratio|, so OR 0.25 is as strong as OR 4 and OR 0.5 as strong as OR 2. Detect: any ranking of ratios < 1 by their raw value. Fix: compare |ln(ratio)| or the reciprocal of ratios below 1.",
+  "source_id": "khan2020",
+  "locator": "Ch3 p. 46; p. 48",
+  "tags": "strength of association kapcsolat erőssége log scale log-skála ratio arány interpretation értelmezés risk ratio odds ratio below 1 reciprocal reciprok"
+ },
+ {
+  "k_id": "K-KHN0304-021",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Az OR kockázatként értelmezése gyakori eseménynél",
+  "body": "When events are common the OR overstates the RR (Ch3 example: RR 0.3125 vs OR 0.0833 with 80% control risk). The book criticises the rule of thumb of reading ORs as RRs when the outcome occurs in < 10% ('rare disease' assumption) and the common description of OR = 2 as 'double risk', and lists textbook and teaching examples that confuse odds with probability; yet on p. 48 it describes OR = 4 itself as the treated group being '4 times more likely' to have the event. Detect: check the baseline (control) risk and any 'times more likely' wording attached to an OR. Fix: report RR directly for cohorts and RCTs, or convert with the Zhang-Yu formula using the correct control risk I_C.",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 45–48; pp. 51–52",
+  "tags": "odds ratio esélyhányados misinterpretation félreértelmezés risk kockázat rare disease ritka betegség 10% double risk kétszeres kockázat baseline risk kiindulási kockázat"
+ },
+ {
+  "k_id": "K-KHN0304-022",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Fix hatású (inverz-variancia) modell",
+  "body": "The fixed-effect model assumes a single common true effect theta, each study's theta_i equalling theta when there is no study-specific systematic bias. With y_i = ln RR_i, v_i = Var(y_i) and w_i = 1/v_i, the pooled estimate is sum(w_i·y_i)/sum(w_i) with variance 1/sum(w_i); CI = estimate ± 1.96·SE, back-transformed with exp(), and Z = estimate/SE tested against N(0,1). MetaXL labels this model 'IV'. The book says FE is used when there is no significant heterogeneity or when I2 ≤ 25% (see the model-choice pitfall). [note: the Cochrane Handbook v6 (10.10.4) advises against choosing between fixed and random effects on the basis of a heterogeneity test; choose from the assumed model and the inference wanted, and show the other model as a sensitivity analysis.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.4, pp. 59–60, Eqs. 4.1–4.2; p. 66",
+  "tags": "fixed effect fix hatás common effect közös hatás inverse variance inverz variancia pooled estimate összesített becslés weights súlyok MetaXL IV Wald"
+ },
+ {
+  "k_id": "K-KHN0304-023",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Véletlen hatású modell (DerSimonian–Laird)",
+  "body": "The random-effects model lets each study have its own theta_i drawn around theta with between-study variance tau2. Weights become w*_i = 1/(v_i + tau2-hat), the pooled estimate is sum(w*_i·y_i)/sum(w*_i) with SE = sqrt(1/sum(w*_i)), and a Wald z CI and z-test with 1.96 are used as for FE. MetaXL's 'RE' model uses the DerSimonian-Laird moment estimator of tau2. [note: the Cochrane Handbook v6 recommends REML or Paule-Mandel over DL and suggests considering Hartung-Knapp-Sidik-Jonkman CIs; the engine's default is REML with HKSJ, so set tau2_method='DL', ci_method='z' to reproduce the book.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.5, pp. 66–67",
+  "tags": "random effects véletlen hatás DerSimonian-Laird DL tau2 between-study variance vizsgálatok közötti variancia weights súlyok MetaXL RE REML Paule-Mandel HKSJ"
+ },
+ {
+  "k_id": "K-KHN0304-024",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "DL tau² becslő (momentum-módszer)",
+  "body": "The DerSimonian-Laird estimate is tau2-hat = (Q - df)/C with C = sum(w_i) - sum(w_i^2)/sum(w_i), df = k - 1 and FE weights w_i = 1/v_i; truncation at 0 when Q < df is standard although not stated explicitly in this chunk. Heartburn data: Q = 6.7854, C = 19.6887, tau2 = 0.0399. Thyroid data: Q = 4.45 < df = 6, so tau2 = 0 and the RE result equals FE (derived; the book shows no thyroid RE output). DL is the only tau2 estimator in this chunk. [note: DL tends to underestimate tau2 when k is small or heterogeneity is large; Cochrane Handbook v6 prefers REML/PM.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 67; p. 69",
+  "tags": "tau2 tau-négyzet DerSimonian-Laird DL method of moments momentum-módszer between-study variance vizsgálatok közötti variancia truncation csonkolás heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0304-025",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "A szerző kritikája a véletlen hatású modellről",
+  "body": "The author and co-authors (Doi et al. 2015b) object to the RE model: it 'redistributes' weight towards small studies (heartburn: Hagedorn's weight falls from 39.7% under FE to 34.6% under RE), and its CI is too narrow, so its coverage falls short of the nominal 95%. They propose IVhet as the remedy. The book's further statement (p. 82) that under RE smaller studies get higher weights than larger ones is incorrect; see the separate RE-weight pitfall. [note: under-coverage of the Wald-type DL RE interval with few studies is well documented, but the mainstream remedy is HKSJ/t-based intervals and REML/PM; IVhet is one proposal, not a consensus standard, and the claimed nominal coverage of IVhet comes from its developers' simulations.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 66; p. 72; p. 82",
+  "tags": "random effects véletlen hatás criticism kritika weight redistribution súly-átrendeződés small studies kis vizsgálatok coverage lefedettség IVhet Doi HKSJ"
+ },
+ {
+  "k_id": "K-KHN0304-026",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "IVhet modell (inverz-variancia heterogenitás)",
+  "body": "The IVhet model (Doi et al. 2015a; MetaXL code 'IVhet') keeps the FE point estimate and FE weights w_i = 1/v_i, but inflates the variance for heterogeneity: Var = sum_i[(w_i/sum_j w_j)^2·(v_i + tau2)], with tau2 the DL estimate. The CI is estimate ± 1.96·SE back-transformed, with a z-test. Heartburn: ln RR 0.56366, Var 0.048241, SE 0.219638, RR 1.757 (1.1425, 2.7025 as printed; exact upper limit 2.7024), z = 2.5663, versus FE variance 0.03891. The book's column labelled 'W*(IVhet)' actually holds each study's variance contribution (w_i/sum w)^2(v_i + tau2), not a weight. Engine: meta_analysis(yi, vi, model='ivhet'). [note: IVhet comes from the author's own group and is not among the methods recommended by the Cochrane Handbook v6; its nominal-coverage claim rests on its developers' simulations, so use it, if at all, as a sensitivity analysis next to REML/PM with HKSJ and a prediction interval.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.6, p. 73; Tables 4.9–4.10, pp. 74–76; Example 4.9, pp. 74–77; p. 82",
+  "tags": "IVhet inverse variance heterogeneity inverz variancia heterogenitás Doi quasi-likelihood fixed weights fix súlyok variance inflation variancia-növelés MetaXL"
+ },
+ {
+  "k_id": "K-KHN0304-027",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "CI-módszer: mindenhol Wald z = 1,96",
+  "body": "All 95% CIs in this chunk, for single studies and for FE, RE and IVhet pooled estimates, use the Wald normal approximation with z = 1.96; tests are z-tests. No t-based, HKSJ or profile-likelihood intervals and no prediction interval are given. [note: for RE with few studies the Cochrane Handbook v6 suggests HKSJ and reporting a prediction interval; the engine provides ci_method='hksj' and pi_method='t_k-2'.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 57, 60, 70, 73",
+  "tags": "confidence interval konfidencia-intervallum Wald z 1.96 normal approximation normál közelítés HKSJ prediction interval predikciós intervallum convention konvenció"
+ },
+ {
+  "k_id": "K-KHN0304-028",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Minőségi hatás (quality-effects) modell csak említve",
+  "body": "The quality-effects (QE) model appears only through the citation of Doi et al. 2015b, a simulation comparison of QE and RE models; no formula or procedure is given in this chunk. [note: MetaXL implements a QE option, which is outside knowledge and not stated here.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 66",
+  "tags": "quality effects minőségi hatás QE Doi simulation szimuláció MetaXL model modell"
+ },
+ {
+  "k_id": "K-KHN0304-029",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Modellválasztás hatása a heartburn adatokon",
+  "body": "For the heartburn data (7 studies) the pooled RR (95% CI, width) is FE 1.76 (1.19, 2.59, 1.40), RE 1.72 (1.12, 2.63, 1.51) and IVhet 1.76 (1.14, 2.70, 1.56; the book prints '1.66'). FE and IVhet share the point estimate and weights; per-study estimates and CIs are identical under every model and only the pooled row changes. The result is significant under all three models. [note: recomputed with the engine, the Cochrane-preferred REML tau2 (0.081) with an HKSJ interval gives RR 1.69 (0.99, 2.88), p ≈ 0.052, and a 95% prediction interval of about 0.67 to 4.26 (t, k-2 df), so the 'significant under every model' verdict depends on the DL/Wald choices.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 72, 81–82",
+  "tags": "model comparison modell-összehasonlítás fixed effect fix hatás random effects véletlen hatás IVhet heartburn CI width CI-szélesség example példa sensitivity érzékenység"
+ },
+ {
+  "k_id": "K-KHN0304-030",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Modellválasztás heterogenitás-teszt vagy I² küszöb alapján",
+  "body": "The book recommends FE when heterogeneity is not significant or I2 ≤ 25%, but the Q test has low power with few studies (7 here) and a low I2 does not prove homogeneity. Detect: the model was chosen after inspecting Q or I2. Fix: pre-specify the model from assumptions about the studies, report a sensitivity analysis across models (the book itself compares FE, RE and IVhet) and state the tau2 estimator. [note: the Cochrane Handbook v6 explicitly discourages choosing between fixed and random effects on the basis of a heterogeneity test.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 59, 66",
+  "tags": "model choice modellválasztás heterogeneity test heterogenitás-teszt I2 threshold küszöb fixed effect fix hatás random effects véletlen hatás pre-specification előzetes meghatározás low power alacsony erő"
+ },
+ {
+  "k_id": "K-KHN0304-031",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Referenciaértékek: thyroid FE",
+  "body": "Thyroid radio-iodine ablation data (7 studies, FE inverse variance): ln RR -0.1377, SE 0.06787, RR 0.8714 (95% CI 0.7628 to 0.9954 as printed; exact lower limit 0.7629), z = -2.0289 printed from rounded inputs (exact -2.0282), p = 0.0424 printed from a normal table (exact 0.0425), Q = 4.4538 (df 6, p = 0.62), I2 = 0, DL tau2 = 0. Sums: sum(w·y) = -29.8827, sum(w) = 217.0852, sum(w·y^2) = 8.567264. FE % weights: Angelini 71.7, Doi 12.3, Liu 5.3, McCowen 4.5, Lin 2.7, Ramacciotti 1.8, Maxon 1.7. The engine's meta_analysis(model='fixed') reproduces these values within the last printed digit.",
+  "source_id": "khan2020",
+  "locator": "Ch4 Table 4.2, p. 61; Example 4.4, pp. 61–63; Example 4.5, pp. 65–66; Fig. 4.1, p. 64",
+  "tags": "worked example kidolgozott példa thyroid pajzsmirigy radio-iodine radiojód fixed effect fix hatás reference values referenciaértékek validation validálás"
+ },
+ {
+  "k_id": "K-KHN0304-032",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Referenciaértékek: heartburn FE, RE, IVhet",
+  "body": "Heartburn data (LAF vs LPF, 7 studies; RR = risk(LAF)/risk(LPF)): FE RR 1.76 (1.19, 2.59) with sum(w) = 25.7003, sum(w·y) = 14.4863, sum(w·y^2) = 14.9508; Q = 6.7854, p = 0.34, I2 about 12% (11.6%), C = 19.6887. RE (DL): tau2 = 0.0399, ln RR 0.54 (rounded in the book), SE 0.2182, RR 1.7162 (1.1189, 2.6322) as printed (exact 1.7161). IVhet: ln RR 0.56366, Var 0.048241, SE 0.219638, RR 1.757 (1.1425, 2.7025). FE % weights: Hagedorn 39.7, Cao 18.7, Spence 12.3, Watson 1999 10.7, Khan 9.5, Watson 2004 7.0, Raue 2.0; RE in the same order: 34.6, 19.2, 13.4, 11.8, 10.6, 8.0, 2.4. LFK index -2.70. The engine (tau2_method='DL', ci_method='z'; bias.doi_plot_data gives LFK -2.696) agrees to the printed precision.",
+  "source_id": "khan2020",
+  "locator": "Ch4 Tables 4.5–4.10, pp. 68–76; Figs. 4.2–4.4, pp. 71–77; p. 84",
+  "tags": "worked example kidolgozott példa heartburn gyomorégés fundoplication random effects véletlen hatás IVhet reference values referenciaértékek validation validálás"
+ },
+ {
+  "k_id": "K-KHN0304-033",
+  "stage_id": "S07",
+  "kind": "example",
+  "title": "Referenciaértékek: Ch3 Table 3.2",
+  "body": "Ch3 Table 3.2 (a = 20, b = 60, c = 80, d = 20): RR 0.3125, Var ln RR 0.04, SE ln RR 0.2, 95% CI 0.2112 to 0.4625; OR 1/12 = 0.0833, Var ln OR 0.129167, SE 0.359398; continuity-corrected OR* 0.0863. These are the reference values an engine should reproduce for single-study binary effect sizes.",
+  "source_id": "khan2020",
+  "locator": "Ch3 Table 3.2, p. 44; pp. 45–48; Ch4 Example 4.1, pp. 57–58",
+  "tags": "reference values referenciaértékek 2x2 risk ratio kockázati arány odds ratio esélyhányados validation validálás example példa"
+ },
+ {
+  "k_id": "K-KHN0304-034",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-féle Q (számítási alak)",
+  "body": "Q = sum(w_i·y_i^2) - (sum(w_i·y_i))^2/sum(w_i) with FE weights w_i = 1/v_i; under H0 (all theta_i equal) Q follows chi-square with k - 1 df. Thyroid: Q = 8.567264 - (-29.8827)^2/217.0852 = 4.4538, df 6, p = 0.62. Heartburn: Q = 14.9508 - 14.4863^2/25.7003 = 6.7854, p = 0.34.",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.4.1, p. 65; p. 66; p. 69",
+  "tags": "Cochran Q heterogeneity heterogenitás chi-square khi-négyzet test teszt computational formula számítási képlet fixed weights fix súlyok"
+ },
+ {
+  "k_id": "K-KHN0304-035",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "A Q próba korlátai",
+  "body": "The book notes that Q tends to increase with the number of studies k and offers I2 as the remedy. [note: Q also has low power when k is small, as in the 7-study examples, so a non-significant Q does not demonstrate homogeneity; and I2 itself depends on the precision of the studies, so tau2 should be reported alongside it.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 65",
+  "tags": "Cochran Q heterogeneity heterogenitás number of studies vizsgálatszám power erő I2 limitation korlát"
+ },
+ {
+  "k_id": "K-KHN0304-036",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "I² (Higgins 2003): számítás és csonkolás",
+  "body": "I2 = (Q - df)/Q × 100%, with negative values truncated to 0. It is interpreted as the percentage of variation across studies due to heterogeneity rather than chance. Thyroid: (4.45 - 6)/4.45 is negative, so I2 = 0; heartburn: I2 about 12%. [note: I2 is a relative measure that grows with study precision and is very uncertain when k is small; report tau2 (and, under RE, a prediction interval) alongside it (Cochrane Handbook v6, 10.10.2).]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 65–66",
+  "tags": "I2 I-négyzet heterogeneity heterogenitás Higgins truncation csonkolás percentage of variation variancia-arány"
+ },
+ {
+  "k_id": "K-KHN0304-037",
+  "stage_id": "S09",
+  "kind": "threshold",
+  "title": "I² küszöbök: 25 / 50 / 75%",
+  "body": "Following Higgins et al. 2003, I2 values of 25%, 50% and 75% indicate low, moderate and high heterogeneity. The author's operational rule is that I2 ≤ 25% means the studies are 'homogeneous' and a fixed-effect model can be used. [note: this is a weak rule; the Cochrane Handbook v6 uses overlapping bands (0–40% might not be important, 30–60% moderate, 50–90% substantial, 75–100% considerable) and stresses that I2 depends on study precision and is uncertain when k is small.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 66",
+  "tags": "I2 threshold küszöb low alacsony moderate mérsékelt high magas heterogeneity heterogenitás Higgins homogeneous homogén Cochrane"
+ },
+ {
+  "k_id": "K-KHN0304-038",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Q és I² modellfüggetlen",
+  "body": "Q and I2 are computed from FE weights and the summary data only, so they are identical whichever pooling model (FE, RE, IVhet) is chosen. MetaXL prints 'Q=..., p=..., I2=...%' in the Overall row of every forest plot.",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 66; p. 82; Figs. 4.1–4.9",
+  "tags": "Cochran Q I2 model independence modellfüggetlenség forest plot erdődiagram MetaXL fixed weights fix súlyok heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0304-039",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "I² számítási csúszás (×100 elmarad)",
+  "body": "For the thyroid data (4.45 - 6)/4.45 = -0.348, i.e. -34.8%, but the book prints '-0.35%' because the ×100 was dropped. The conclusion (truncate to 0) is unaffected. Detect: recompute I2 from Q and df.",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 66",
+  "tags": "I2 calculation error számítási hiba typo elírás heterogeneity heterogenitás truncation csonkolás recompute újraszámolás"
+ },
+ {
+  "k_id": "K-KHN0304-040",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "Alcsoport-elemzés: mikor és mire",
+  "body": "Subgroup analysis is a special case of meta-regression with a single categorical moderator. It is used to explore heterogeneity by splitting studies into more homogeneous groups, or to compare effects across regions, periods or study sizes, and is appropriate only when there is reason to suspect real differences between groups (Paget et al. 2011; Yusuf et al. 1991). The chunk gives no test for subgroup differences, no meta-regression formula and no R2 analogue; meta-regression is deferred to Ch11. [note: subgroup comparisons are observational; the Cochrane Handbook v6 (10.11) asks for few, pre-specified subgroups with a stated rationale, a formal test for subgroup differences, and caution when fewer than about 10 studies are available.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.7, p. 78; pp. 79–80",
+  "tags": "subgroup analysis alcsoport-elemzés meta-regression meta-regresszió categorical moderator kategorikus moderátor heterogeneity heterogenitás effect modification hatásmódosítás"
+ },
+ {
+  "k_id": "K-KHN0304-041",
+  "stage_id": "S10",
+  "kind": "tool",
+  "title": "Alcsoport-elemzés MetaXL-ben (lépések)",
+  "body": "Step 1: run the overall analysis in a cell, e.g. C16: =MAInputTable(\"Heartburn Subgroup RR RE\",\"NumRR\",\"re\",B5:H11). Step 2: build a two-column grouping table (Old studies | Recent studies). Step 3: run =MASubGroups(\"Study Period\",C16,I4:J8), where C16 holds the overall analysis and I4:J8 the grouping table. The output is one forest plot with each subgroup's pooled estimate, Q, p and I2, plus the overall pooled row.",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.7, pp. 78–79",
+  "tags": "MetaXL subgroup alcsoport MASubGroups MAInputTable Excel procedure eljárás forest plot erdődiagram grouping table csoportosító tábla"
+ },
+ {
+  "k_id": "K-KHN0304-042",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Heartburn alcsoportok publikációs időszak szerint",
+  "body": "Under RE: Old studies (4) RR 1.95 (1.07, 3.55), weight 67.8%, Q = 4.27, p = 0.23, I2 = 30%; Recent studies (3) RR 1.24 (0.61, 2.50), weight 32.2%, Q = 1.15, p = 0.56, I2 = 0%; Overall RR 1.72 (1.12, 2.63). Recomputation shows MetaXL estimates a separate DL tau2 within each subgroup (old about 0.1155, recent 0; the printed old-subgroup I2 of 30% is 29.7% unrounded), and the subgroup '% weight' is the sum of the member studies' weights from the overall RE analysis (11.8 + 34.6 + 8.0 + 13.4 = 67.8).",
+  "source_id": "khan2020",
+  "locator": "Ch4 Fig. 4.5, p. 79; Fig. 4.6, p. 80",
+  "tags": "subgroup alcsoport heartburn publication period publikációs időszak separate tau2 külön tau2 weights súlyok MetaXL example példa random effects"
+ },
+ {
+  "k_id": "K-KHN0304-043",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "'Szignifikáns vs nem szignifikáns' alcsoport-tévedés",
+  "body": "The book calls the old-studies subgroup significant and the recent-studies subgroup not significant and treats this as a difference, without any between-subgroup test; only 3–4 studies are in each subgroup. Detect: no Q-between or interaction p-value is reported. Fix: compute Q_between = Q_total - sum(Q_within) (or a meta-regression), pre-specify subgroups and use few of them. [note: recomputed with the engine (separate DL tau2, z), Q_between is about 0.92 (df 1, p about 0.34), i.e. no evidence of a period effect.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 80; §4.7",
+  "tags": "subgroup alcsoport significance szignifikancia fallacy tévkövetkeztetés Q between alcsoportok közötti teszt interaction kölcsönhatás effect modification hatásmódosítás pre-specification előzetes meghatározás"
+ },
+ {
+  "k_id": "K-KHN0304-044",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Tölcsérdiagram (funnel plot)",
+  "body": "A funnel plot is a scatter of each study's standard error (y-axis, inverted) against its effect size on the log scale (ln RR). The book reads a symmetric plot as no publication bias and an asymmetric one as publication bias. MetaXL produces it as part of the FE run, but the plot is model-independent. For the heartburn data the author takes the asymmetry (four studies left of the 'no effect' line) as evidence of publication bias. [note: funnel asymmetry indicates small-study effects, not publication bias as such; heterogeneity, chance, poorer small-trial quality or artefacts of the effect measure can produce it, and a symmetric plot does not exclude bias. Sterne et al. 2011 and the Cochrane Handbook v6 (ch. 13) advise against asymmetry tests with fewer than 10 studies.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 83; Fig. 4.10",
+  "tags": "funnel plot tölcsérdiagram publication bias publikációs torzítás small-study effects kis vizsgálatok hatása asymmetry aszimmetria standard error MetaXL"
+ },
+ {
+  "k_id": "K-KHN0304-045",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Doi-diagram (Doi plot)",
+  "body": "The Doi plot (Doi 2018; Furuya-Kanamori et al. 2018) plots the absolute Z-score (y-axis, 0 at the top) against the effect size (ln RR), joining the points with a line. Precise studies sit near the peak (|Z| about 0) and less precise ones spread to both sides, so without bias it looks like a symmetric 'mountain'. The book claims it is more sensitive than the funnel plot and, like the funnel plot, model-independent: FE, RE and IVhet runs give the same plot. [note: the Doi plot and LFK index come from the author's own research group; they are not part of the Cochrane Handbook v6 toolkit, and the claimed higher sensitivity rests mainly on their developers' simulations. Use them alongside, not instead of, the funnel plot and (with k ≥ 10) a regression test.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 83–84; Fig. 4.11",
+  "tags": "Doi plot Doi-diagram publication bias publikációs torzítás asymmetry aszimmetria Z-score Furuya-Kanamori small-study effects kis vizsgálatok hatása"
+ },
+ {
+  "k_id": "K-KHN0304-046",
+  "stage_id": "S11",
+  "kind": "threshold",
+  "title": "LFK-index: nincs / kisebb / jelentős aszimmetria",
+  "body": "MetaXL prints the LFK index, a quantitative measure of Doi-plot asymmetry, with a verdict of 'No', 'Minor' or 'Major' asymmetry; for the heartburn data LFK = -2.70, 'Major asymmetry'. This chunk gives no numeric cut-offs; Khan Ch12 (Furuya-Kanamori & Doi, p. 260) uses LFK within ±1 = no asymmetry, between ±1 and ±2 = minor, beyond ±2 = major. The engine implements it as bias.doi_plot_data (heartburn -2.696). [note: these cut-offs are heuristics proposed by the method's developers, not a significance test, and the LFK index is not in the Cochrane Handbook v6 toolkit; with k = 7 any asymmetry verdict is weak evidence.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 83–84; Fig. 4.11; cut-offs: Ch12 p. 260",
+  "tags": "LFK index LFK-index Doi plot asymmetry aszimmetria threshold küszöb publication bias publikációs torzítás MetaXL major minor"
+ },
+ {
+  "k_id": "K-KHN0304-047",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Publikációs torzítás kimondása 7 vizsgálatból",
+  "body": "The book concludes that publication bias is present from funnel and Doi asymmetry with only k = 7 studies. Detect: k < 10, or a bias claim based on visual asymmetry alone. Fix: describe the finding as small-study asymmetry, which can also arise from heterogeneity, chance or outcome definition, and treat it as a warning rather than proof. [note: Sterne et al. 2011 and the Cochrane Handbook v6 advise against funnel-asymmetry tests with fewer than 10 studies.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 83–84",
+  "tags": "publication bias publikációs torzítás small-study effects kis vizsgálatok hatása k<10 funnel plot tölcsérdiagram Doi plot asymmetry aszimmetria overinterpretation túlértelmezés"
+ },
+ {
+  "k_id": "K-KHN0304-048",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Modell-érzékenységi elemzés (FE / RE / IVhet)",
+  "body": "The chunk has no formal sensitivity or influence analysis (no leave-one-out); the related practice is re-analysing the same data under FE, RE and IVhet and comparing the pooled estimate, CI width and weight distribution, which is in effect a model-sensitivity check. The subgroup split by publication period also works as a crude robustness check. [note: a full sensitivity analysis should add leave-one-out/influence diagnostics and alternative tau2 estimators; the engine provides sensitivity.leave_one_out and sensitivity.influence.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.8, pp. 81–82; p. 72; §4.7",
+  "tags": "sensitivity analysis érzékenységi elemzés model comparison modell-összehasonlítás robustness robusztusság leave-one-out influence befolyás fixed random IVhet"
+ },
+ {
+  "k_id": "K-KHN0304-049",
+  "stage_id": "S06",
+  "kind": "concept",
+  "title": "Torzítási kockázat a modellben (csak utalás)",
+  "body": "The only risk-of-bias content is that the true study effect theta_i is said to include systematic bias specific to the study, and a citation of Doi et al. 2015b on the quality-effects model. No appraisal tool (RoB 2, ROBINS-I, NOS, GRADE, AMSTAR) is named in this chunk. [note: assess risk of bias with a validated tool and use it in sensitivity or subgroup analyses rather than relying on the pooling model.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 59; p. 66",
+  "tags": "risk of bias torzítási kockázat systematic bias szisztematikus torzítás quality effects minőségi hatás RoB 2 ROBINS-I appraisal értékelés"
+ },
+ {
+  "k_id": "K-KHN0304-050",
+  "stage_id": "S13",
+  "kind": "guidance",
+  "title": "RR szöveges értelmezése",
+  "body": "Express an RR as 'RR times the risk' or 'times as high as' in the numerator arm compared with the denominator arm, as a relative reduction of (1 - RR)×100% when RR < 1 (e.g. RR 0.87 means 13% lower risk), or as an increase of (RR - 1)×100% when RR > 1 (e.g. RR 1.72 means 72% higher risk). A diamond or CI touching or crossing RR = 1 means the result is not statistically significant. Always name the numerator arm in the sentence. [note: a CI that includes 1 shows the data are compatible with no effect, not that there is no effect; report the CI and judge clinical importance rather than relying on a significant/non-significant split (Cochrane Handbook v6, ch. 15).]",
+  "source_id": "khan2020",
+  "locator": "Ch3 §3.3.1, p. 45; Ch4 p. 64; pp. 72, 78",
+  "tags": "interpretation értelmezés risk ratio kockázati arány relative risk reduction relatív kockázatcsökkenés wording megfogalmazás times as high hányszoros numerator számláló"
+ },
+ {
+  "k_id": "K-KHN0304-051",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Az arány irányának téves értelmezése",
+  "body": "In the heartburn example the RR is computed as risk(LAF)/risk(LPF) (p. 68: RR = 0.0926/0.0943), so the pooled RR 1.72 > 1 means more heartburn after LAF, yet the book repeatedly says the risk is higher in the LPF group (pp. 71–72, 78, 80, 82). The subgroup text also mixes LAF, LPF and 'APF', and calls the non-significant recent-studies subgroup 'Old studies'. Detect: check which arm is the numerator (columns a and n1). Fix: phrase conclusions as 'risk in [numerator arm] is RR times that in [denominator arm]'.",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 68; pp. 71–72, 78, 80, 82",
+  "tags": "direction irány numerator számláló interpretation error értelmezési hiba risk ratio kockázati arány heartburn LAF LPF arm kar"
+ },
+ {
+  "k_id": "K-KHN0304-052",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Szignifikancia megítélése kerekített CI-ből",
+  "body": "Thyroid FE has p = 0.0424, but the text calls the result not significant because the CI prints as (0.76, 1.00); the unrounded upper limit is 0.9954 < 1. Detect: compare the CI-based verdict with the z-test p-value. Fix: decide on unrounded limits and report enough decimals (e.g. 0.995).",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 62–64",
+  "tags": "significance szignifikancia rounding kerekítés confidence interval konfidencia-intervallum p-value p-érték thyroid decimals tizedesjegyek"
+ },
+ {
+  "k_id": "K-KHN0304-053",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Nullhipotézis rossz skálán",
+  "body": "The book writes H0 as 'theta = 0' for the RR, whereas it should be RR = 1, i.e. ln RR = 0. Fix: always state the null on the scale actually being tested (ln RR = 0 for the test statistic, RR = 1 for interpretation).",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 60, 62",
+  "tags": "null hypothesis nullhipotézis scale skála risk ratio kockázati arány log scale log-skála notation jelölés"
+ },
+ {
+  "k_id": "K-KHN0304-054",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Rossz SE a modellek összevetésekor",
+  "body": "On p. 72 the heartburn RE SE (0.2181) is compared with '0.06787 for the FE model', but 0.06787 is the thyroid FE SE; the heartburn FE SE is sqrt(1/25.7003) = 0.1973 (recomputed). The text also calls these SEs 'variance'. Detect: recompute 1/sqrt(sum w) for the dataset at hand.",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 72",
+  "tags": "standard error standard hiba model comparison modell-összehasonlítás copy error másolási hiba variance variancia random effects fixed effect"
+ },
+ {
+  "k_id": "K-KHN0304-055",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "CI-szélesség elírása",
+  "body": "The IVhet CI width is printed as '2.70 - 1.44 = 1.66', but the correct value is 2.70 - 1.14 = 1.56. Detect: recompute widths. Better still, compare widths on the log scale (ln UL - ln LL), because widths on the ratio scale are asymmetric and scale-dependent.",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 81; p. 82",
+  "tags": "CI width CI-szélesség typo elírás log scale log-skála precision pontosság IVhet"
+ },
+ {
+  "k_id": "K-KHN0304-056",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Köztes értékek kerekítése",
+  "body": "The book rounds ln RR to 0.54 before computing CI limits and takes p-values from z rounded to 2 decimals via normal tables, so results differ from exact values in the 3rd–4th decimal (e.g. thyroid z printed -2.0289 vs exact -2.0282). Fix: keep full precision throughout and round only for display.",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 70; pp. 63, 71, 77",
+  "tags": "rounding kerekítés precision pontosság intermediate values köztes értékek p-value p-érték normal table normális táblázat reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-KHN0304-057",
+  "stage_id": "S14",
+  "kind": "concept",
+  "title": "Forest plot felépítése",
+  "body": "In a forest plot the centre of each square is the study estimate and the square's area its (model-specific) weight, the horizontal whiskers are the study's 95% CI, the solid vertical line marks no effect (RR = 1), and the diamond shows the pooled estimate (vertical centre, dashed through the plot in MetaXL) with its CI at the horizontal tips. For an adverse outcome points left of the null line favour the intervention; for a desirable outcome points right of it do.",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 63–64",
+  "tags": "forest plot erdődiagram square négyzet weight súly diamond rombusz confidence interval konfidencia-intervallum null line nullvonal adverse outcome nemkívánatos kimenet reading olvasás"
+ },
+ {
+  "k_id": "K-KHN0304-058",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "MetaXL forest plot oszlopok és tizedesjegyek",
+  "body": "MetaXL prints Study, the plot, RR (95% CI) to 2 decimals and % weight to 1 decimal, plus an 'Overall' row with Q (2 dp), p (2 dp) and I2 as an integer percentage; subgroup plots add each subgroup's Q, p, I2 and summed % weight. The LFK index is shown to 2 dp. Pooled results are reported back-transformed to the RR scale; the axis may be drawn on the ln RR scale for readability without changing the numeric columns.",
+  "source_id": "khan2020",
+  "locator": "Ch4 Figs. 4.1–4.9; Fig. 4.5; Fig. 4.11; p. 51; pp. 80–81, Figs. 4.6–4.9",
+  "tags": "MetaXL forest plot erdődiagram decimals tizedesjegyek reporting jelentés weight súly Q I2 log axis log-tengely display megjelenítés"
+ },
+ {
+  "k_id": "K-KHN0304-059",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "Félrecímkézett oszlopok és másolási hibák",
+  "body": "The book's 'W*(IVhet)' column is a variance contribution, not a weight (Table 4.9), and the Table 4.7 caption says 'W* × LnRR^2' although the column is W* × LnRR. Example numbers repeat ('Example 4.4' twice; Example 4.7 refers to 'Example 4.6'), the Fig. 4.2/4.3 captions mention 'ablation of heartburn', and 'Make XL' appears for MetaXL. Fix: label table columns by what they contain and check that figure and table labels match the data.",
+  "source_id": "khan2020",
+  "locator": "Ch4 Table 4.9, p. 74; Table 4.7, p. 69; pp. 61, 67, 70–72, 80",
+  "tags": "labelling címkézés column oszlop caption felirat copy-paste error másolási hiba IVhet weight súly variance contribution variancia-hozzájárulás reporting jelentés"
+ },
+ {
+  "k_id": "K-KHN0304-060",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "A könyv kerekítési és csonkolási szokásai",
+  "body": "Hand calculations show 4–6 decimals, but some intermediate values are rounded (ln RR 0.54; p from rounded z, e.g. 2 × 0.0212 = 0.0424 and 2 × 0.0066 = 0.0132) and some values are truncated rather than rounded (CI lower limit printed 0.2111 for exact 0.21116; OR '0.48' for 0.4872; '125.31' for 125.316). When validating against the book allow a tolerance of about 1 unit in the last printed digit. Negative I2 is truncated to 0 and a negative tau2 is set to 0.",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 57–58, 63, 66, 70, 71, 77; Ch3 pp. 48–50",
+  "tags": "rounding kerekítés truncation csonkolás tolerance tolerancia validation validálás decimals tizedesjegyek reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-KHN0304-061",
+  "stage_id": "S08",
+  "kind": "tool",
+  "title": "MetaXL MAInputTable szintaxis és modellkódok",
+  "body": "MetaXL (an Excel add-in) is called as =MAInputTable(\"<plot title>\",\"<effect type>\",\"<model>\",<cell range>). Effect type 'NumRR' means numeric 2×2 input with a risk-ratio effect (columns N1, cases, non-cases, N2, cases, non-cases); model 'IV' is fixed effect, 'RE' (or 're') random effects with DL tau2, and 'IVhet' the IVhet model. Examples: =MAInputTable(\"Thyroid RR FE\",\"NumRR\",\"IV\",B17:H23); =MAInputTable(\"Heartburn RR RE\",\"NumRR\",\"RE\",N5:T11); =MAInputTable(\"Heartburn RR IVhet\",\"NumRR\",\"IVhet\",N5:T11). The funnel and Doi plots with the LFK index come from the same run.",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 63, 71, 77",
+  "tags": "MetaXL Excel add-in bővítmény MAInputTable syntax szintaxis NumRR IV RE IVhet software szoftver forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN0304-062",
+  "stage_id": "S08",
+  "kind": "tool",
+  "title": "Stata admetan parancs (RR)",
+  "body": "After ssc install admetan, run admetan TrCases TrNoncases ConCases ConNoncases, rr model(fixed|random|ivhet) study(study_name) effect(Relative Risk); the input order is events and non-events of the treatment arm, then of the control arm. The appendix data tables name the columns 'TrNon-cases' and 'ConNon-cases', which are illegal Stata variable names and must be renamed TrNoncases/ConNoncases. The book prints no Stata output. [note: admetan's model(random) defaults to DerSimonian-Laird, and admetan has since been folded into metan v4; both are outside knowledge.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 Appendix A4.2/A4.4, pp. 85–86",
+  "tags": "Stata admetan metan ssc command parancs risk ratio kockázati arány fixed random IVhet variable names változónevek software szoftver"
+ },
+ {
+  "k_id": "K-KHN0304-063",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "2×2 adatok és RR újraszámolása",
+  "body": "For each study recompute RR = [a/(a+b)]/[c/(c+d)] and Var(ln RR) = 1/a - 1/(a+b) + 1/c - 1/(c+d) from the extracted counts, and confirm that cases + non-cases = N in each arm (Tables 4.2/4.5 layout).",
+  "source_id": "khan2020",
+  "locator": "Ch4 Tables 4.2, 4.5; Ch3 p. 46",
+  "tags": "reviewer check ellenőrzés 2x2 recompute újraszámolás risk ratio kockázati arány variance variancia data extraction adatkinyerés consistency konzisztencia"
+ },
+ {
+  "k_id": "K-KHN0304-064",
+  "stage_id": "S13",
+  "kind": "check",
+  "title": "Számláló kar és értelmezési irány",
+  "body": "Confirm that the numerator (treatment) arm is named, and that every sentence interpreting RR > 1 or RR < 1 refers to the numerator arm (cf. the heartburn direction error, pp. 68–80).",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 68–80",
+  "tags": "reviewer check ellenőrzés numerator számláló direction irány interpretation értelmezés risk ratio kockázati arány"
+ },
+ {
+  "k_id": "K-KHN0304-065",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Log-skálán összesítés, helyes visszatranszformálás",
+  "body": "Confirm that pooling is done on ln RR / ln OR and that the point estimate and both CI limits are exponentiated; SEs and variances must never be exponentiated, and RRs must never be averaged directly.",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.2, p. 56; Ch3 p. 51",
+  "tags": "reviewer check ellenőrzés log scale log-skála back-transformation visszatranszformálás pooling összesítés exp standard error"
+ },
+ {
+  "k_id": "K-KHN0304-066",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Q, I² és DL tau² újraszámolása",
+  "body": "Recompute sum(w), sum(w·y), sum(w·y^2), Q = sum(w·y^2) - (sum(w·y))^2/sum(w), df = k - 1, p from chi-square(df) and I2 = max(0, (Q - df)/Q)·100, and check them against the printed values (thyroid Q 4.4538; heartburn Q 6.7854, I2 about 12%). Recompute DL tau2 = max(0, (Q - df)/C) with C = sum(w) - sum(w^2)/sum(w) (heartburn tau2 0.0399, C 19.6887).",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 65–69",
+  "tags": "reviewer check ellenőrzés Cochran Q I2 tau2 DerSimonian-Laird recompute újraszámolás heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0304-067",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Súlyok és IVhet variancia ellenőrzése",
+  "body": "Check that FE % weights sum to 100, that IVhet % weights equal FE % weights, and that RE weights are flatter than FE weights (heartburn Hagedorn: 39.7% FE vs 34.6% RE). Verify that the IVhet variance equals sum((w_i/sum w)^2·(v_i + tau2)) and is at least the FE variance (heartburn 0.048241 vs 0.03891).",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 72–76; p. 82",
+  "tags": "reviewer check ellenőrzés weights súlyok IVhet variance variancia fixed effect random effects consistency konzisztencia"
+ },
+ {
+  "k_id": "K-KHN0304-068",
+  "stage_id": "S13",
+  "kind": "check",
+  "title": "CI és p-érték egyezése; helyes nullhipotézis",
+  "body": "Check that the CI-based and p-value-based significance verdicts agree when unrounded limits are used (thyroid p = 0.042 with upper limit 0.9954), and that H0 is stated as RR = 1 (ln RR = 0), not 'theta = 0'.",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 60, 62–64",
+  "tags": "reviewer check ellenőrzés significance szignifikancia confidence interval konfidencia-intervallum p-value p-érték null hypothesis nullhipotézis rounding kerekítés"
+ },
+ {
+  "k_id": "K-KHN0304-069",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Nulla cellák és folytonossági korrekció dokumentálása",
+  "body": "List every study with a zero cell, state the continuity-correction value used (0.5 or other), and confirm it was applied only where needed and identically in every software run.",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 47–48",
+  "tags": "reviewer check ellenőrzés zero cell nulla cella continuity correction folytonossági korrekció documentation dokumentálás software szoftver"
+ },
+ {
+  "k_id": "K-KHN0304-070",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "OR használatakor a kontroll-kockázat ellenőrzése",
+  "body": "If ORs are reported or interpreted, check the control-group event risk; if it exceeds about 10%, flag any 'risk' wording. If a conversion is done, verify that RR = OR/(1 - I_C + I_C·OR) uses the control (unexposed) risk.",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 49–52",
+  "tags": "reviewer check ellenőrzés odds ratio esélyhányados control risk kontroll kockázat conversion átváltás rare events ritka események wording megfogalmazás"
+ },
+ {
+  "k_id": "K-KHN0304-071",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Alcsoport-elemzés teljessége",
+  "body": "Check that each subgroup has its own pooled estimate with Q, p and I2, that a between-subgroup test is reported (the source omits it, so add it), that subgroup weights sum to the overall total, and that the grouping variable was pre-specified.",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.7, pp. 78–80",
+  "tags": "reviewer check ellenőrzés subgroup alcsoport Q between alcsoportok közötti teszt pre-specification előzetes meghatározás weights súlyok"
+ },
+ {
+  "k_id": "K-KHN0304-072",
+  "stage_id": "S11",
+  "kind": "check",
+  "title": "Publikációs torzítás jelentése",
+  "body": "Confirm that a funnel plot (SE vs ln RR) is reported (a Doi plot with the LFK index only if pre-specified, with k ≥ 10, as a supplement: D-S11-015), and flag any claim that publication bias is present made with k < 10 or without considering heterogeneity.",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 83–84",
+  "tags": "reviewer check ellenőrzés publication bias publikációs torzítás funnel plot tölcsérdiagram Doi plot LFK k<10 heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0304-073",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Szoftveres reprodukálhatóság",
+  "body": "Record the exact MetaXL MAInputTable / MASubGroups calls or the Stata admetan commands (model, rr option, variable names valid in Stata), and confirm that the model code (IV / RE / IVhet) matches the model claimed in the text. Cross-check reported numbers against figure and table labels, since copy-paste errors in captions and example numbering are common in this source.",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 63, 71, 77–79, 85–86",
+  "tags": "reviewer check ellenőrzés reproducibility reprodukálhatóság MetaXL Stata admetan model code modellkód labels címkék software szoftver"
+ },
+ {
+  "k_id": "K-KHN0304-074",
+  "stage_id": "S07",
+  "kind": "criterion",
+  "title": "A hatásmérték illeszkedik az elrendezéshez",
+  "body": "The effect measure should fit the design: RR for RCTs and cohorts (incidence available), OR for case-control or logistic-adjusted data. An OR must not be read as a risk unless events are rare in both arms.",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 49–52",
+  "tags": "evaluator criterion értékelési szempont effect measure hatásmérték study design vizsgálati elrendezés risk ratio odds ratio"
+ },
+ {
+  "k_id": "K-KHN0304-075",
+  "stage_id": "S08",
+  "kind": "criterion",
+  "title": "Indokolt modell és modell-érzékenység",
+  "body": "The review should state the model (FE, RE with its tau2 estimator, or IVhet) and show whether conclusions change across models. In the source, heartburn is significant under all three models, while thyroid FE is borderline (upper limit 0.995). Under-coverage of RE CIs with few studies should be acknowledged, and CI widths compared on the log scale; the source's claim favours IVhet. [note: the mainstream remedy for RE under-coverage is REML or Paule-Mandel tau2 with an HKSJ interval plus a prediction interval (Cochrane Handbook v6, 10.10.4); IVhet is a non-consensus alternative.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 81–82; pp. 62–64; p. 82",
+  "tags": "evaluator criterion értékelési szempont model choice modellválasztás sensitivity érzékenység tau2 estimator becslő coverage lefedettség precision pontosság"
+ },
+ {
+  "k_id": "K-KHN0304-076",
+  "stage_id": "S09",
+  "kind": "criterion",
+  "title": "Heterogenitás körültekintő értékelése",
+  "body": "Q, df, p, I2 and tau2 should all be reported. A low I2 with few studies is not proof of homogeneity, and the 25/50/75% I2 bands are descriptive only. [note: for a random-effects analysis also report the tau2 estimator and a prediction interval (Cochrane Handbook v6, 10.10.4).]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 65–66",
+  "tags": "evaluator criterion értékelési szempont heterogeneity heterogenitás I2 tau2 Cochran Q few studies kevés vizsgálat"
+ },
+ {
+  "k_id": "K-KHN0304-077",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Irány és nagyság helyes értelmezése",
+  "body": "Direction and magnitude should be interpreted correctly: RR expressed as 'x times the risk' or as '(1 - RR)·100% reduction', tied to the correct arm, with strength judged by |ln RR| rather than the raw RR.",
+  "source_id": "khan2020",
+  "locator": "Ch3 pp. 45–48; Ch4 p. 64",
+  "tags": "evaluator criterion értékelési szempont interpretation értelmezés direction irány magnitude nagyság strength erősség log scale"
+ },
+ {
+  "k_id": "K-KHN0304-078",
+  "stage_id": "S10",
+  "kind": "criterion",
+  "title": "Alcsoport-állítások hitelessége",
+  "body": "Subgroup claims are credible only if subgroups were pre-specified with a rationale and a between-group test is reported; few studies per subgroup (3 to 4 in the source) lowers credibility.",
+  "source_id": "khan2020",
+  "locator": "Ch4 §4.7",
+  "tags": "evaluator criterion értékelési szempont subgroup alcsoport credibility hitelesség pre-specification előzetes meghatározás interaction test kölcsönhatás-teszt"
+ },
+ {
+  "k_id": "K-KHN0304-079",
+  "stage_id": "S11",
+  "kind": "criterion",
+  "title": "Kis vizsgálatok hatása / publikációs torzítás súlyozása",
+  "body": "The funnel plot should be examined (the Doi plot/LFK only as a pre-specified supplement with k ≥ 10: D-S11-015). In the book's approach an LFK beyond ±2 ('major asymmetry', cut-off from Ch12 p. 260) is a warning sign about the pooled estimate, but with k < 10 it should not be interpreted (D-S11-001). [note: in GRADE, publication bias is rated 'undetected' or 'strongly suspected' by overall judgement; no funnel or LFK statistic is a mechanical downgrading rule, and asymmetry from heterogeneity or chance should not be counted as publication bias.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 pp. 83–84; Ch12 p. 260",
+  "tags": "evaluator criterion értékelési szempont publication bias publikációs torzítás LFK Doi plot funnel plot small-study effects GRADE downgrade leminősítés"
+ },
+ {
+  "k_id": "K-KHN0304-080",
+  "stage_id": "S14",
+  "kind": "criterion",
+  "title": "Jelentés teljessége",
+  "body": "A complete report includes a forest plot with per-study RR (95% CI) and % weight, a pooled row with Q, p and I2, and the back-transformed pooled RR with its CI, plus the funnel plot (the Doi plot with the LFK index only if pre-specified, with k ≥ 10, next to a contour-enhanced funnel and a suitable regression test; otherwise leave it out of the manuscript: D-S11-015, D-S11-019). [note: PRISMA 2020 (items 13d, 20b, 21, 22) also asks for the model and tau2 estimator used, heterogeneity estimates, the results of reporting-bias assessments and the certainty of the evidence.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 Figs. 4.1–4.9; pp. 83–84",
+  "tags": "evaluator criterion értékelési szempont reporting jelentés forest plot erdődiagram weights súlyok pooled estimate összesített becslés completeness teljesség"
+ },
+ {
+  "k_id": "K-KHN0304-081",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Téves állítás: véletlen hatású modellben a kis vizsgálatok kapnak nagyobb súlyt",
+  "body": "On p. 82 the book claims that RE gives small studies more weight than large ones. This is wrong: RE weights 1/(v_i + tau2) still fall as v_i rises; adding tau2 only makes the weights more equal, so small studies gain relative weight compared with FE (the book's own, correct wording on p. 72). Heartburn: Hagedorn keeps the largest weight under both models (39.7% FE, 34.6% RE) and Raue the smallest (2.0% FE, 2.4% RE). Detect: a claim that the weight ranking reverses under RE. Fix: describe RE weights as more balanced, not reversed. [note: the more balanced weighting matters when small studies differ systematically from large ones (small-study effects); the Cochrane Handbook v6 (ch. 10 and 13) suggests comparing the FE and RE estimates in that situation.]",
+  "source_id": "khan2020",
+  "locator": "Ch4 p. 72; p. 82; Figs. 4.2–4.3, pp. 71–72",
+  "tags": "random effects véletlen hatás weights súlyok small studies kis vizsgálatok weight ranking súlysorrend misstatement téves állítás fixed effect fix hatás tau2 heartburn gyomorégés"
+ }
+]

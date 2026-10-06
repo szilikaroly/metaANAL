@@ -1,0 +1,41 @@
+{
+  "schema": "szk.ma.project-audit/v1",
+  "project": "glp1",
+  "generated": "2026-10-04T21:12:00Z",
+  "summary": {
+    "error": 2,
+    "warning": 3,
+    "info": 0
+  },
+  "findings": [
+    {
+      "code": "X001",
+      "severity": "error",
+      "stage": "S08",
+      "outcome": "o1",
+      "title": "Az elsődleges commit-futás régebbi, mint az adattábla",
+      "detail": "run 20261003T180200Z-4c0d…: data 4c0d… ≠ 03_adatok/o1.csv 9f3a…",
+      "artifacts": [
+        "05_elemzes/o1/20261003T180200Z-4c0d1e/run.json",
+        "03_adatok/o1.csv"
+      ],
+      "suggested_command": [
+        "ma.py",
+        "analyze",
+        "--spec",
+        "05_elemzes/specs/o1_primary.json"
+      ],
+      "kb_refs": [
+        "D-S08-…"
+      ]
+    }
+  ],
+  "amstar2_hints": {
+    "4": {
+      "suggested": "partial_yes",
+      "evidence": [
+        "PRISMA-S: 4 adatbázis, regiszter 0"
+      ]
+    }
+  }
+}

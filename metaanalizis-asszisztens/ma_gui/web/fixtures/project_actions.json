@@ -1,0 +1,532 @@
+{
+ "description": "GET /api/project?include=recent és POST /api/project (3.5.2; ma_gui/routes/project.py): egy szerver = egy projekt — 'open' csak a sajátjára, 'init' a saját mappát inicializálja, 'data_class' a ma-projekt.json-t írja. A 'recent' lista opcionális (a felület megjeleníti, ha a szerver adja). A projekt itt a BCG-példa + o3 (Normand 1999, MD).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/project",
+   "query": {
+    "include": "recent"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.project/v1",
+    "data": {
+     "schema": "szk.ma.project/v1",
+     "title": "BCG-oltás és tuberkulózis",
+     "question": {
+      "P": "oltatlan személyek (13 vizsgálat, 1948–1980)",
+      "I": "BCG-oltás",
+      "C": "nem oltott kontroll",
+      "O": "TBC-incidencia"
+     },
+     "review_type": "intervention",
+     "data_class": "A",
+     "locale": "hu",
+     "outcomes": [
+      {
+       "id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "data": "03_adatok/o1.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": "o1_primary",
+       "grade_start": "high"
+      },
+      {
+       "id": "o2",
+       "name": {
+        "hu": "Mortalitás",
+        "en": "Mortality"
+       },
+       "data": "03_adatok/o2.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": null,
+       "grade_start": "high"
+      },
+      {
+       "id": "o3",
+       "name": {
+        "hu": "Kórházi tartózkodás (nap)",
+        "en": "Length of hospital stay (days)"
+       },
+       "data": "03_adatok/o3.csv",
+       "measure": "MD",
+       "critical": false,
+       "primary_spec": null,
+       "grade_start": "high"
+      }
+     ],
+     "appraisal_tools": [
+      "rob2"
+     ],
+     "composer": null,
+     "doc_roots": [
+      "_privat/pdf"
+     ],
+     "conventions": {
+      "amstar2_partial_yes_critical": "meets",
+      "grade_suspected": "unresolved"
+     },
+     "path": "reviews/bcg-oltas",
+     "user": {
+      "initials": "SzK"
+     },
+     "badges": {
+      "prisma": [
+       {
+        "kind": "warning",
+        "text": "1"
+       }
+      ],
+      "extraction": [
+       {
+        "kind": "error",
+        "text": "1"
+       },
+       {
+        "kind": "warning",
+        "text": "3"
+       }
+      ],
+      "analysis": [
+       {
+        "kind": "stale",
+        "text": "elavult"
+       }
+      ],
+      "appraisal": [
+       {
+        "kind": "progress",
+        "text": "12/13"
+       }
+      ],
+      "grade": [
+       {
+        "kind": "progress",
+        "text": "1/2 kész"
+       }
+      ],
+      "log": [
+       {
+        "kind": "blocker",
+        "text": "2"
+       }
+      ]
+     },
+     "data_class_source": "ma-projekt.json",
+     "data_class_label": "publikált aggregált",
+     "name": "bcg-oltas",
+     "initialized": true,
+     "has_project_json": true,
+     "open_blockers": 2,
+     "tables": [
+      {
+       "dataset": "03_adatok/o1.csv",
+       "etag": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333"
+      },
+      {
+       "dataset": "03_adatok/o2.csv",
+       "etag": "398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550"
+      },
+      {
+       "dataset": "03_adatok/o3.csv",
+       "etag": "4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7"
+      }
+     ],
+     "rev": 41,
+     "recent": [
+      {
+       "path": "reviews/bcg-oltas",
+       "title": "BCG-oltás és tuberkulózis",
+       "stage": "S04",
+       "blockers": 2
+      },
+      {
+       "path": "reviews/glp1-terhesseg",
+       "title": "GLP-1 RA terhesség előtt",
+       "stage": "S09",
+       "blockers": 2
+      },
+      {
+       "path": "reviews/endo-dieta",
+       "title": "Endometriózis és diéta",
+       "stage": "S05",
+       "blockers": 0
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_ex30"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/project",
+   "body": {
+    "action": "open"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.project/v1",
+    "data": {
+     "schema": "szk.ma.project/v1",
+     "title": "BCG-oltás és tuberkulózis",
+     "question": {
+      "P": "oltatlan személyek (13 vizsgálat, 1948–1980)",
+      "I": "BCG-oltás",
+      "C": "nem oltott kontroll",
+      "O": "TBC-incidencia"
+     },
+     "review_type": "intervention",
+     "data_class": "A",
+     "locale": "hu",
+     "outcomes": [
+      {
+       "id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "data": "03_adatok/o1.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": "o1_primary",
+       "grade_start": "high"
+      },
+      {
+       "id": "o2",
+       "name": {
+        "hu": "Mortalitás",
+        "en": "Mortality"
+       },
+       "data": "03_adatok/o2.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": null,
+       "grade_start": "high"
+      },
+      {
+       "id": "o3",
+       "name": {
+        "hu": "Kórházi tartózkodás (nap)",
+        "en": "Length of hospital stay (days)"
+       },
+       "data": "03_adatok/o3.csv",
+       "measure": "MD",
+       "critical": false,
+       "primary_spec": null,
+       "grade_start": "high"
+      }
+     ],
+     "appraisal_tools": [
+      "rob2"
+     ],
+     "composer": null,
+     "doc_roots": [
+      "_privat/pdf"
+     ],
+     "conventions": {
+      "amstar2_partial_yes_critical": "meets",
+      "grade_suspected": "unresolved"
+     },
+     "path": "reviews/bcg-oltas",
+     "user": {
+      "initials": "SzK"
+     },
+     "badges": {
+      "prisma": [
+       {
+        "kind": "warning",
+        "text": "1"
+       }
+      ],
+      "extraction": [
+       {
+        "kind": "error",
+        "text": "1"
+       },
+       {
+        "kind": "warning",
+        "text": "3"
+       }
+      ],
+      "analysis": [
+       {
+        "kind": "stale",
+        "text": "elavult"
+       }
+      ],
+      "appraisal": [
+       {
+        "kind": "progress",
+        "text": "12/13"
+       }
+      ],
+      "grade": [
+       {
+        "kind": "progress",
+        "text": "1/2 kész"
+       }
+      ],
+      "log": [
+       {
+        "kind": "blocker",
+        "text": "2"
+       }
+      ]
+     },
+     "data_class_source": "ma-projekt.json",
+     "data_class_label": "publikált aggregált",
+     "name": "bcg-oltas",
+     "initialized": true,
+     "has_project_json": true,
+     "open_blockers": 2,
+     "tables": [
+      {
+       "dataset": "03_adatok/o1.csv",
+       "etag": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333"
+      },
+      {
+       "dataset": "03_adatok/o2.csv",
+       "etag": "398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550"
+      },
+      {
+       "dataset": "03_adatok/o3.csv",
+       "etag": "4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7"
+      }
+     ],
+     "rev": 41
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex31"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/project",
+   "body": {
+    "action": "init"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.project/v1",
+    "data": {
+     "schema": "szk.ma.project/v1",
+     "title": "Új áttekintés",
+     "question": {
+      "P": "",
+      "I": "",
+      "C": "",
+      "O": ""
+     },
+     "review_type": "intervention",
+     "data_class": "A",
+     "locale": "hu",
+     "outcomes": [],
+     "appraisal_tools": [],
+     "composer": null,
+     "doc_roots": [],
+     "path": "reviews/bcg-oltas",
+     "name": "bcg-oltas",
+     "initialized": true,
+     "has_project_json": true,
+     "open_blockers": 0,
+     "tables": [],
+     "rev": 1,
+     "templates_copied": [],
+     "user": {
+      "initials": "SzK"
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 1,
+     "request_id": "q_ex32"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/project",
+   "body": {
+    "action": "data_class"
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.project/v1",
+    "data": {
+     "schema": "szk.ma.project/v1",
+     "title": "BCG-oltás és tuberkulózis",
+     "question": {
+      "P": "oltatlan személyek (13 vizsgálat, 1948–1980)",
+      "I": "BCG-oltás",
+      "C": "nem oltott kontroll",
+      "O": "TBC-incidencia"
+     },
+     "review_type": "intervention",
+     "data_class": "B",
+     "locale": "hu",
+     "outcomes": [
+      {
+       "id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "data": "03_adatok/o1.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": "o1_primary",
+       "grade_start": "high"
+      },
+      {
+       "id": "o2",
+       "name": {
+        "hu": "Mortalitás",
+        "en": "Mortality"
+       },
+       "data": "03_adatok/o2.csv",
+       "measure": "RR",
+       "critical": true,
+       "primary_spec": null,
+       "grade_start": "high"
+      },
+      {
+       "id": "o3",
+       "name": {
+        "hu": "Kórházi tartózkodás (nap)",
+        "en": "Length of hospital stay (days)"
+       },
+       "data": "03_adatok/o3.csv",
+       "measure": "MD",
+       "critical": false,
+       "primary_spec": null,
+       "grade_start": "high"
+      }
+     ],
+     "appraisal_tools": [
+      "rob2"
+     ],
+     "composer": null,
+     "doc_roots": [
+      "_privat/pdf"
+     ],
+     "conventions": {
+      "amstar2_partial_yes_critical": "meets",
+      "grade_suspected": "unresolved"
+     },
+     "path": "reviews/bcg-oltas",
+     "user": {
+      "initials": "SzK"
+     },
+     "badges": {
+      "prisma": [
+       {
+        "kind": "warning",
+        "text": "1"
+       }
+      ],
+      "extraction": [
+       {
+        "kind": "error",
+        "text": "1"
+       },
+       {
+        "kind": "warning",
+        "text": "3"
+       }
+      ],
+      "analysis": [
+       {
+        "kind": "stale",
+        "text": "elavult"
+       }
+      ],
+      "appraisal": [
+       {
+        "kind": "progress",
+        "text": "12/13"
+       }
+      ],
+      "grade": [
+       {
+        "kind": "progress",
+        "text": "1/2 kész"
+       }
+      ],
+      "log": [
+       {
+        "kind": "blocker",
+        "text": "2"
+       }
+      ]
+     },
+     "data_class_source": "ma-projekt.json",
+     "data_class_label": "publikált aggregált",
+     "name": "bcg-oltas",
+     "initialized": true,
+     "has_project_json": true,
+     "open_blockers": 2,
+     "tables": [
+      {
+       "dataset": "03_adatok/o1.csv",
+       "etag": "a5df5a9eb1597b3008791417a02d34dde886d06f7889904cc6c2320e7d81f333"
+      },
+      {
+       "dataset": "03_adatok/o2.csv",
+       "etag": "398119338ad16a8da3474423bcd92f3420ee47ce2e93cf295f16fabf0d253550"
+      },
+      {
+       "dataset": "03_adatok/o3.csv",
+       "etag": "4552152d620cc71cb76263f975bd056950354e4be5b0f4361106ddb4882bc6b7"
+      }
+     ],
+     "rev": 41
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 42,
+     "request_id": "q_ex33"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/project",
+   "body": {
+    "action": "open",
+    "path": "reviews/glp1-terhesseg"
+   },
+   "status": 400,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "BAD_REQUEST",
+     "http": 400,
+     "message": "Ez a munkapad a(z) „bcg-oltas” projekthez indult; másik projektmappához indíts új példányt: python ma.py gui --project <mappa> (Windowson: py -3 ma.py gui --project <mappa>).",
+     "details": {
+      "project": "reviews/bcg-oltas"
+     }
+    }
+   }
+  }
+ ]
+}

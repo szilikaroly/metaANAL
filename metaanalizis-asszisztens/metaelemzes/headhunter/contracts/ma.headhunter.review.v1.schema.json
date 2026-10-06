@@ -1,0 +1,512 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.review:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.review/v1 — egy forrás-áttekintés és a bevont vizsgálat-jelöltjei (01_kereses/headhunter/reviews/<review_id>.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "model",
+    "review_id",
+    "status",
+    "ids",
+    "bib",
+    "found_by",
+    "candidates",
+    "evidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.review/v1"
+    },
+    "model": {
+      "const": "szk.ma.headhunter/v1"
+    },
+    "review_id": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+    },
+    "status": {
+      "enum": [
+        "candidate",
+        "selected",
+        "excluded",
+        "superseded"
+      ]
+    },
+    "superseded_by": {
+      "oneOf": [
+        {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ids": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ids"
+    },
+    "bib": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/bib"
+    },
+    "retrievals": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/retrieval"
+      }
+    },
+    "is_cochrane": {
+      "type": "boolean"
+    },
+    "cochrane": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "cd_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^CD\\d{6}$"
+        },
+        "version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "found_by": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/search_id"
+      }
+    },
+    "rank": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "score": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "components": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "signals": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "meta_analysis": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "protocol_registered": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "registration_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "databases_searched_n": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "rob_assessed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "prisma_mentioned": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "retracted": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "open_fulltext": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "evidence_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+          }
+        }
+      },
+      "description": "AMSTAR 2-höz kapcsolódó JELZÉSEK — nem értékelés; az AMSTAR 2 értékelést ember végzi"
+    },
+    "search_date": {
+      "type": "object",
+      "required": [
+        "value",
+        "precision",
+        "fallback"
+      ],
+      "properties": {
+        "value": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "precision": {
+          "enum": [
+            "day",
+            "month",
+            "year",
+            "unknown"
+          ]
+        },
+        "fallback": {
+          "type": "boolean",
+          "description": "true: nem közölt, a megjelenés dátumából becsült (H008)"
+        },
+        "evidence_id": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "k_reported": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "unit": {
+          "enum": [
+            "studies",
+            "reports",
+            "trials",
+            "unknown"
+          ]
+        },
+        "evidence_id": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "fulltext": {
+      "type": "object",
+      "required": [
+        "available",
+        "route"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "route": {
+          "enum": [
+            "europepmc_oa",
+            "pmc_efetch",
+            "user_pdf",
+            "none"
+          ]
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "checked_at": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "user_pdf_sha256": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "csak a hash; a PDF a felhasználó mappájában marad"
+        }
+      }
+    },
+    "extraction_runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "run_id",
+          "strategy",
+          "status",
+          "at"
+        ],
+        "properties": {
+          "run_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/run_id"
+          },
+          "strategy": {
+            "enum": [
+              "jats",
+              "reflist_agent",
+              "reflist_api",
+              "user_pdf",
+              "manual"
+            ]
+          },
+          "status": {
+            "enum": [
+              "done",
+              "partial",
+              "failed",
+              "no_fulltext"
+            ]
+          },
+          "at": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+          },
+          "n_candidates": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "message": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/explain"
+          }
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "cand_id",
+          "cited_as",
+          "role_in_review",
+          "evidence_ids",
+          "confidence",
+          "status"
+        ],
+        "properties": {
+          "cand_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/cand_id"
+          },
+          "cited_as": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300,
+                "description": "a hivatkozás/sor szövege, ahogy az áttekintésben áll (rövid idézet)"
+              },
+              "first_author": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "journal": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "study_label_in_review": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "examples": [
+              "Tameris 2013",
+              "Aronson 1948"
+            ],
+            "description": "az áttekintés saját vizsgálat-azonosítója (Cochrane study ID)"
+          },
+          "group_key": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "az áttekintés csoportosítása: azonos kulcs = az áttekintés szerint ugyanaz a vizsgálat"
+          },
+          "ids": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ids"
+          },
+          "rec_id": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "a feloldás után kapott rekord"
+          },
+          "role_in_review": {
+            "enum": [
+              "included",
+              "included_companion",
+              "excluded",
+              "ongoing",
+              "awaiting",
+              "background",
+              "unknown"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+            },
+            "minItems": 1
+          },
+          "confidence": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/confidence"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "confirmed",
+              "rejected"
+            ],
+            "description": "high bizonyosságú gépi kinyerés 'confirmed' lehet; minden más emberi megerősítést kér (EP2)"
+          },
+          "secondary_data": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/secondary_value"
+            }
+          },
+          "decision_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence"
+      }
+    },
+    "excluded_by_review": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "cited_as",
+          "evidence_id"
+        ],
+        "properties": {
+          "cited_as": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "reason_quote": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 300
+          },
+          "evidence_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+          },
+          "ids": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ids"
+          }
+        }
+      },
+      "description": "az áttekintés által KIZÁRT vizsgálatok (csak tájékoztató; a saját PICO-döntést nem helyettesíti)"
+    },
+    "decision_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+      }
+    }
+  }
+}

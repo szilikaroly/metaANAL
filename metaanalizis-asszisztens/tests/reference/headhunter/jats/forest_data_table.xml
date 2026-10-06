@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SZINTETIKUS tesztfixture / SYNTHETIC test fixture. Fictitious studies and numbers; identifiers use the
+     10.5555 test DOI prefix - never use them outside tests.
+     Analysis/forest-plot style data tables (strategy a3): per-study numbers with UNAMBIGUOUS headers must be
+     captured as SECONDARY data (status: unverified) with a cell locator; ambiguous headers must NOT be captured.
+     Table 2: dichotomous (Events/Total per arm) + "Risk ratio (95% CI)" effect column.
+     Table 3: continuous (Mean, SD, N per arm), bare "g" effect column with a separate "95% CI" column,
+              "n/N" cells, thousands separator, footnote marks, NR, a superscript exponent cell (10<sup>7</sup>).
+     Table 4: ambiguous - three arms that cannot be mapped to experimental/control, and "Age (mean ± SD)". -->
+<article xmlns:xlink="http://www.w3.org/1999/xlink" article-type="review-article">
+<front>
+<journal-meta><journal-title-group><journal-title>Synthetic Journal of Evidence</journal-title></journal-title-group></journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.5555/hh.0500</article-id>
+<title-group><article-title>Treatment T versus placebo for disease D: a meta-analysis</article-title></title-group>
+<pub-date pub-type="ppub"><year>2021</year></pub-date>
+</article-meta>
+</front>
+<body>
+<sec><title>Methods</title>
+<p>We searched MEDLINE and CENTRAL between January 2000 and March 2020.</p>
+</sec>
+<sec><title>Results</title>
+<p>Three trials met the inclusion criteria [<xref ref-type="bibr" rid="b1">1</xref>–<xref ref-type="bibr" rid="b3">3</xref>].</p>
+<table-wrap id="t2">
+<label>Table 2</label>
+<caption><title>Analysis 1.1 Treatment T versus placebo, outcome: relapse</title></caption>
+<table>
+<thead>
+<tr><th rowspan="2">Study</th><th colspan="2">Treatment T</th><th colspan="2">Placebo</th><th rowspan="2">Risk ratio (95% CI)</th></tr>
+<tr><th>Events</th><th>Total</th><th>Events</th><th>Total</th></tr>
+</thead>
+<tbody>
+<tr><td>Yankee 2015 <xref ref-type="bibr" rid="b1">[1]</xref></td><td>12</td><td>100</td><td>20</td><td>101</td><td>0.61 (0.31 to 1.17)</td></tr>
+<tr><td>Zulu 2017 <xref ref-type="bibr" rid="b2">[2]</xref></td><td>NR</td><td>1,250</td><td>9*</td><td>1,248</td><td>0.85 [0.40, 1.80]</td></tr>
+</tbody>
+</table>
+</table-wrap>
+<table-wrap id="t3">
+<label>Table 3</label>
+<caption><title>Analysis 1.2 Treatment T versus placebo, outcome: symptom score</title></caption>
+<table>
+<thead>
+<tr><th rowspan="2">Study</th><th colspan="3">Experimental</th><th colspan="2">Control</th><th rowspan="2">g</th><th rowspan="2">95% CI</th></tr>
+<tr><th>Mean</th><th>SD</th><th>N</th><th>Mean (SD)</th><th>n/N</th></tr>
+</thead>
+<tbody>
+<tr><td>Yankee 2015 <xref ref-type="bibr" rid="b1">[1]</xref></td><td>−1.5</td><td>2.25</td><td>100</td><td>−0.5 (2.0)</td><td>3/101</td><td>−0.47</td><td>−0.75 to −0.19</td></tr>
+<tr><td>Alpha 2019 <xref ref-type="bibr" rid="b3">[3]</xref></td><td>3.2×10<sup>7</sup></td><td>1.1</td><td>48</td><td>NR</td><td>5/50 (10%)</td><td>0.12</td><td>−0.28–0.52</td></tr>
+</tbody>
+</table>
+</table-wrap>
+<table-wrap id="t4">
+<label>Table 4</label>
+<caption><title>Analysis 1.3 Three-arm comparison, outcome: response</title></caption>
+<table>
+<thead>
+<tr><th rowspan="2">Study</th><th rowspan="2">Age (mean ± SD)</th><th>Dose A</th><th>Dose B</th><th>Dose C</th></tr>
+<tr><th>n</th><th>n</th><th>n</th></tr>
+</thead>
+<tbody>
+<tr><td>Zulu 2017 <xref ref-type="bibr" rid="b2">[2]</xref></td><td>54 ± 9</td><td>30</td><td>31</td><td>29</td></tr>
+</tbody>
+</table>
+</table-wrap>
+</sec>
+</body>
+<back>
+<ref-list><title>References</title>
+<ref id="b1"><label>1.</label><mixed-citation publication-type="journal">Yankee A, Bravo B. Treatment T for disease D. Synthetic Med. 2015;1:1-9. doi:10.5555/hh.0501</mixed-citation></ref>
+<ref id="b2"><label>2.</label><mixed-citation publication-type="journal">Zulu C, et al. Treatment T in adults with disease D. Synthetic Med. 2017;3:10-19.</mixed-citation></ref>
+<ref id="b3"><label>3.</label><mixed-citation publication-type="journal">Alpha D. Treatment T, a pilot trial. Synthetic Med. 2019;5:20-29.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

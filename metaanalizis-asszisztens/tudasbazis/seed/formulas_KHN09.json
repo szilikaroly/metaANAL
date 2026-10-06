@@ -1,0 +1,233 @@
+[
+ {
+  "formula_id": "F-KHN09-001",
+  "name": "Raw mean difference (independent groups)",
+  "expression": "delta_hat_i = Ybar1_i - Ybar2_i",
+  "variables": "Ybar1_i = sample mean of arm 1 (treatment, LARR) in study i; Ybar2_i = sample mean of arm 2 (control, ORR); delta_hat_i = estimate of the population mean difference delta = mu1 - mu2.",
+  "engine_ref": "effect_sizes.md",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Ex 9.1 p. 197",
+  "notes": "Worked: Bonjer 2015 200 - 400 = -200. Direction is treatment minus control; reversing the order flips signs only (Fig. 9.2)."
+ },
+ {
+  "formula_id": "F-KHN09-002",
+  "name": "Variance and SE of the raw mean difference (unequal variances)",
+  "expression": "v_i = S1_i^2/n1_i + S2_i^2/n2_i ;  SE_i = sqrt(v_i)",
+  "variables": "S1_i, S2_i = sample SDs of arms 1 and 2; n1_i, n2_i = arm sample sizes; v_i = sampling variance of delta_hat_i; SE_i = its standard error.",
+  "engine_ref": "effect_sizes.md",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Ex 9.1 p. 197",
+  "notes": "The book's default whenever equality of the population SDs is unknown. Worked: Bonjer v = 222^2/699 + 370^2/345 = 467.318, SE = 21.6175. Matches MetaXL 'WMD' and metafor escalc('MD'). Reconstructed from scrambled DOCX fragments and verified against the worked numbers."
+ },
+ {
+  "formula_id": "F-KHN09-003",
+  "name": "Variance of the raw mean difference assuming equal variances (referenced, not used)",
+  "expression": "v = (n1 + n2)/(n1*n2) * Sp^2",
+  "variables": "n1, n2 = arm sample sizes; Sp^2 = pooled within-group variance [(n1-1)S1^2 + (n2-1)S2^2]/(n1+n2-2), as defined in Ch 8.",
+  "engine_ref": "effect_sizes.md",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196 (pointer); Ch8 §8.1 p. 161",
+  "notes": "Printed in Ch 8 §8.1 (p. 161). Ch 9 only refers back to it and does not use it. effect_sizes.md(vtype='pooled') (`--md-vtype pooled`) uses this variance; effect_sizes.pooled_sd returns Sp. State which variance formula was used."
+ },
+ {
+  "formula_id": "F-KHN09-004",
+  "name": "Wald confidence interval for a single study's mean difference",
+  "expression": "LL_i = delta_hat_i - z_{alpha/2}*SE_i ;  UL_i = delta_hat_i + z_{alpha/2}*SE_i",
+  "variables": "delta_hat_i = study MD; SE_i = sqrt(v_i); z_{alpha/2} = upper alpha/2 standard normal quantile (1.96 for 95%); LL_i, UL_i = lower and upper limits.",
+  "engine_ref": "effect_sizes.study_ci",
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Ex 9.1 p. 197",
+  "notes": "Worked: Bonjer -200 +/- 1.96*21.6175 = (-242.37, -157.63). Hand calculations use 1.96; MetaXL uses 1.959964 (Ng 2009: (-203.84, 89.84) vs (-203.85, 89.85) with 1.96). The book's typo labels both limits 'LL' (p. 196)."
+ },
+ {
+  "formula_id": "F-KHN09-005",
+  "name": "Inverse-variance weight",
+  "expression": "w_i = 1/v_i",
+  "variables": "v_i = within-study variance of study i's MD; w_i = fixed-effect (and IVhet) weight.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Ex 9.1 pp. 197–198",
+  "notes": "Worked: Bonjer w = 1/467.32 = 0.00214; sum over 11 studies = 0.10798 (Table 9.2)."
+ },
+ {
+  "formula_id": "F-KHN09-006",
+  "name": "Book's per-study 'WMD' (flawed definition)",
+  "expression": "theta = omega*delta, omega = 1/sigma^2 ;  theta_hat_i = w_i*delta_hat_i  (book states SE_i = sqrt(v_i))",
+  "variables": "delta = population MD; sigma^2 = population variance of delta_hat; omega = population inverse-variance weight; w_i = 1/v_i; delta_hat_i = study MD; theta_hat_i = the book's 'sample WMD' of study i.",
+  "engine_ref": null,
+  "stage_id": "S07",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196",
+  "notes": "Conceptually muddled: the product w_i*delta_hat_i is not an effect size, and its SE would be w_i*sqrt(v_i), not sqrt(v_i). The plotted and pooled per-study effect is delta_hat_i; the product appears only as the summand 'WxMD' of the pooled estimate (Bonjer -0.428). Kept to document the book's definition; do not implement."
+ },
+ {
+  "formula_id": "F-KHN09-007",
+  "name": "Fixed-effect (inverse-variance) pooled mean difference",
+  "expression": "theta_hat_FE = sum_i(w_i*delta_hat_i) / sum_i(w_i) ;  Var(theta_hat_FE) = 1/sum_i(w_i) ;  SE = sqrt(1/sum_i(w_i))",
+  "variables": "w_i = 1/v_i; delta_hat_i = study MD; k = number of studies (sums over i = 1..k); theta_hat_FE = pooled 'WMD'.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; §9.4 pp. 199–200; Ex 9.3 p. 200",
+  "notes": "Call with model='fixed'. MetaXL model 'IV'. Worked: -7.9085/0.10798 = -73.2411, SE = 3.043199. [R] reconstruction from fragments, verified against the worked numbers."
+ },
+ {
+  "formula_id": "F-KHN09-008",
+  "name": "Wald confidence interval for a pooled estimate",
+  "expression": "LL = theta_hat - z_{alpha/2}*SE(theta_hat) ;  UL = theta_hat + z_{alpha/2}*SE(theta_hat)",
+  "variables": "theta_hat = pooled estimate (FE, RE or IVhet); SE(theta_hat) = its standard error under that model; z_{alpha/2} = standard normal critical value (1.96 for 95%).",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 p. 199; §9.5 p. 205; §9.6 p. 209",
+  "notes": "Worked: FE (-79.2058, -67.2764); RE (-118.43, -61.54); IVhet (-132.33, -14.15). The engine's random-effects default is HKSJ; pass ci_method='z' to reproduce the book. The book prints the RE lower limit as '-0118.43' (typo)."
+ },
+ {
+  "formula_id": "F-KHN09-009",
+  "name": "z test for the pooled effect",
+  "expression": "Z = theta_hat / SE(theta_hat) ~ N(0,1) under H0: theta = 0 ;  reject if |z0| >= z_{alpha/2} ;  P = 2*P(Z > |z0|)",
+  "variables": "theta_hat = pooled estimate; SE(theta_hat) = its SE; z0 = observed statistic; z_{alpha/2} = two-sided critical value; P = two-sided P value.",
+  "engine_ref": "distributions.z_two_sided_p",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.3 p. 198; Ex 9.2 pp. 198–199",
+  "notes": "Worked: z0 = -73.2411/3.043199 = -24.0671; the book prints 'P = 0'. Report p < 0.001 instead."
+ },
+ {
+  "formula_id": "F-KHN09-010",
+  "name": "Cochran's Q statistic",
+  "expression": "Q = sum_i(w_i*theta_hat_i^2) - (sum_i(w_i*theta_hat_i))^2 / sum_i(w_i)",
+  "variables": "w_i = 1/v_i (fixed-effect weights); theta_hat_i = study effect (here the MD delta_hat_i); k = number of studies.",
+  "engine_ref": "models.cochran_q",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 p. 201; Ex 9.4 pp. 201–202",
+  "notes": "Computational form of sum_i w_i*(theta_hat_i - theta_hat_FE)^2. Worked: 638.3923 - (-7.9085)^2/0.10798 = 59.17 (full precision 59.1653). Model-independent: identical under FE, RE and IVhet."
+ },
+ {
+  "formula_id": "F-KHN09-011",
+  "name": "Q test of homogeneity",
+  "expression": "Under H0: theta_1 = ... = theta_k = theta, Q ~ chi2_{k-1}, E(Q) = k - 1 ;  reject H0 if Q >= chi2_{k-1,1-alpha} ;  P = P(chi2_{k-1} >= Q)",
+  "variables": "Q = Cochran's Q; k = number of studies; df = k - 1; chi2_{k-1,1-alpha} = upper-alpha critical value of the chi-squared distribution with k - 1 df; alpha = significance level.",
+  "engine_ref": "distributions.chi2_sf",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 p. 201; Ex 9.4 p. 202",
+  "notes": "The book reads P from a chi-squared table and prints 'P = 0' for Q = 59.17, df = 10; the exact value is 5.2e-9 (note-taker). The test has low power; a non-significant result does not prove homogeneity."
+ },
+ {
+  "formula_id": "F-KHN09-012",
+  "name": "I² statistic (Higgins et al. 2003)",
+  "expression": "I2 = (Q - df)/Q * 100%",
+  "variables": "Q = Cochran's Q; df = k - 1; I2 = percentage of total variation due to between-study variation.",
+  "engine_ref": "models.heterogeneity",
+  "stage_id": "S09",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.4 p. 201; Ex 9.4 p. 202",
+  "notes": "The book does not state truncation at 0; the engine uses max(0, ...). Worked: (59.17 - 10)/59.17 = 0.83098 -> 83%. [note: there are no fixed cut-offs. The Cochrane Handbook v6 uses overlapping bands (0-40, 30-60, 50-90, 75-100%), and I2 should be read with tau2, k and its CI (Q-profile here: 77.4-97.8%).]"
+ },
+ {
+  "formula_id": "F-KHN09-013",
+  "name": "DerSimonian–Laird scaling constant C",
+  "expression": "C = sum_i(w_i) - sum_i(w_i^2) / sum_i(w_i)",
+  "variables": "w_i = 1/v_i (fixed-effect weights); sums over the k studies.",
+  "engine_ref": "models.tau2_dl",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.5 p. 205; Ex 9.5 pp. 205–206",
+  "notes": "Worked: 0.10798 - 0.007742/0.10798 = 0.0363 (sum of w^2 = 0.00774 in Table 9.3). models.heterogeneity also returns C."
+ },
+ {
+  "formula_id": "F-KHN09-014",
+  "name": "DerSimonian–Laird between-study variance",
+  "expression": "tau2_hat = (Q - df)/C, df = k - 1 ;  truncated: tau2_hat = max(0, (Q - df)/C)",
+  "variables": "Q = Cochran's Q (FE weights); k = number of studies; C = sum w_i - sum w_i^2 / sum w_i; tau2_hat = estimated between-study variance.",
+  "engine_ref": "models.tau2_dl",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.5 p. 205; Ex 9.5 pp. 205–206",
+  "notes": "[R] reconstruction. The book does not state truncation at 0; the engine truncates. Worked: 1355.029 (from full precision; re-substituting the rounded (59.17 - 10)/0.0363 gives 1354.5). Used by both RE and IVhet in the chapter. Cochrane Handbook v6 prefers REML or PM; REML here gives 3097.9 (models.tau2_reml)."
+ },
+ {
+  "formula_id": "F-KHN09-015",
+  "name": "Random-effects total variance and weight",
+  "expression": "v_i* = v_i + tau2_hat ;  w_i* = 1/(v_i + tau2_hat)",
+  "variables": "v_i = within-study variance; tau2_hat = DL between-study variance; v_i* = total variance of study i; w_i* = random-effects weight.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.5 pp. 204–205; Ex 9.6 p. 206",
+  "notes": "Worked: Bonjer v* = 467.318 + 1355.03 = 1822.3, w* = 0.00055 (Table 9.4)."
+ },
+ {
+  "formula_id": "F-KHN09-016",
+  "name": "Random-effects (DerSimonian–Laird) pooled mean difference",
+  "expression": "theta_hat_RE = sum_i(w_i* * delta_hat_i) / sum_i(w_i*) ;  SE(theta_hat_RE) = sqrt(1/sum_i(w_i*))",
+  "variables": "w_i* = 1/(v_i + tau2_hat); delta_hat_i = study MD; theta_hat_RE = random-effects pooled estimate.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.5 p. 205; Ex 9.6 pp. 206–207; Fig. 9.3",
+  "notes": "[note: the book selects RE because Q is significant; the Cochrane Handbook v6 advises pre-specifying the model instead, and prefers REML/PM over DL.] Call with model='random', tau2_method='DL', ci_method='z' to reproduce the book (engine default is REML + HKSJ). Worked: sum w* = 0.00475, sum w*MD = -0.42723 -> -89.98, SE 14.513 (printed from full precision; rounded re-substitution gives -89.94 and 14.510). metafor DL: -89.9837, SE 14.5127."
+ },
+ {
+  "formula_id": "F-KHN09-017",
+  "name": "IVhet pooled estimate and variance (Doi et al. 2015a)",
+  "expression": "theta_hat_IVhet = sum_i(w_i*delta_hat_i) / sum_i(w_i) ;  Var(theta_hat_IVhet) = sum_i [ (w_i / sum_j w_j)^2 * (v_i + tau2_hat) ] ;  SE = sqrt(Var)",
+  "variables": "w_i = 1/v_i (fixed-effect weights); v_i = within-study variance; tau2_hat = DerSimonian–Laird between-study variance; delta_hat_i = study MD.",
+  "engine_ref": "models._ivhet",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.6 pp. 208–209; Ex 9.7 pp. 209–210; Fig. 9.4",
+  "notes": "Call via models.meta_analysis(model='ivhet'). [R] reconstruction from the fragments 'sum[(1/v_i)/sum(1/v_i)]^2 (v_i + tau2)' and '(w_i/sum w_i)^2 x v*'. Worked: Var = 908.968, SE = 30.1491, CI (-132.33, -14.15). The point estimate and % weights equal the FE ones. Not available in metafor. [note: IVhet is the author group's proposal (Doi, Barendregt, Khan et al. 2015a), not a Cochrane Handbook v6 standard method; use it as a sensitivity analysis next to a REML/PM random-effects analysis.]"
+ },
+ {
+  "formula_id": "F-KHN09-018",
+  "name": "IVhet per-study variance contribution (Table 9.5 column 'W*')",
+  "expression": "W_i* = (w_i / sum_j w_j)^2 * (v_i + tau2_hat) ;  sum_i W_i* = Var(theta_hat_IVhet)",
+  "variables": "w_i = 1/v_i; v_i = within-study variance; tau2_hat = DL estimate; W_i* = study i's contribution to the IVhet variance.",
+  "engine_ref": "models._ivhet",
+  "stage_id": "S08",
+  "source_id": "khan2020",
+  "locator": "Ch9 Ex 9.7 p. 209; Table 9.5 p. 210",
+  "notes": "The book mislabels this as the 'modified weight under IVhet'; it is a variance contribution, not a weight. Worked: Bonjer (0.00214/0.10798)^2 * 1822.3 = 0.71569; Zhou 897.864; sum 908.968."
+ },
+ {
+  "formula_id": "F-KHN09-019",
+  "name": "Percentage study weight",
+  "expression": "%W_i = 100 * w_i / sum_j w_j  (FE and IVhet: w_i = 1/v_i ; RE: w_i* = 1/(v_i + tau2_hat))",
+  "variables": "w_i = model-specific weight of study i; %W_i = weight shown in the forest plot.",
+  "engine_ref": "models.meta_analysis",
+  "stage_id": "S14",
+  "source_id": "khan2020",
+  "locator": "Ch9 Figs. 9.1–9.7",
+  "notes": "Not printed as a formula in the book; implied by the forest plots (1 decimal). FE/IVhet: Zhou 2004 81.1%; RE: 0.5–15.4%. In the RE subgroup plot (Fig. 9.6) the displayed weights use the overall tau2 (1355.03), not the within-subgroup tau2 used for the subgroup pools. Engine output field: weights_pct."
+ },
+ {
+  "formula_id": "F-KHN09-020",
+  "name": "Test for subgroup differences (fixed-effect Q partition)",
+  "expression": "Q_between = Q_total - sum_g Q_within,g ;  df = G - 1 ;  P = P(chi2_{G-1} >= Q_between)",
+  "variables": "Q_total = Cochran's Q over all studies; Q_within,g = Cochran's Q within subgroup g; G = number of subgroups.",
+  "engine_ref": "moderators.subgroup_analysis",
+  "stage_id": "S10",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.7 pp. 212–214 (note-taker's addition)",
+  "notes": "Not computed in the book. Standard method: Borenstein et al. 2009 ch. 19; Cochrane Handbook v6 §10.11.3. Random-effects variant with subgroup-specific DL tau2 (engine): Q_between = 0.30, p = 0.58. Note-taker: 59.165 - 48.046 - 11.008 = 0.112, df 1, p = 0.74; mixed-effects (DL) moderator test QM = 0.41, p = 0.52. The engine computes sum_g w_g*(mu_g - mu_bar)^2 with w_g = 1/se_g^2, which equals this partition under the fixed-effect model."
+ },
+ {
+  "formula_id": "F-KHN09-021",
+  "name": "Skewness rule of thumb for strictly positive outcomes",
+  "expression": "flag skew if mean < 2*SD  (equivalently SD > mean/2) for a variable that cannot be negative",
+  "variables": "mean, SD = arm-level summary statistics of a strictly positive outcome (e.g. blood loss in mL).",
+  "engine_ref": "validate.validate",
+  "stage_id": "S05",
+  "source_id": "khan2020",
+  "locator": "Ch9 §9.2 p. 196; Table 9.1 p. 197 (note-taker's check)",
+  "notes": "Not in the book (origin: Altman & Bland 1996, BMJ 313:1200; Cochrane Handbook v6 §10.5.3); it is the note-taker's check against the chapter's normality assumption. Flags 19 of the 22 arms (all except both Liu 2011 arms and the Zhou 2004 ORR arm); Ng 2008 SD 750 vs mean 321.7. The engine reports it as rule V013."
+ }
+]

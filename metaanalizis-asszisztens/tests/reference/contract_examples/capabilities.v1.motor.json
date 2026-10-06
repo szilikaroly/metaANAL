@@ -1,0 +1,59 @@
+{
+  "schema": "szk.capabilities/v1",
+  "plugin": "metaelemzes",
+  "version": "0.2.0",
+  "python": "3.11.4",
+  "ok": true,
+  "contracts": {
+    "szk.ma.plot/v2": {
+      "dir": [
+        "out"
+      ],
+      "sha256": "f131000000000000000000000000000000000000000000000000000000000000"
+    },
+    "szk.ma.analysis-spec/v1": {
+      "dir": [
+        "in"
+      ],
+      "sha256": "2b4e000000000000000000000000000000000000000000000000000000000000"
+    },
+    "szk.ma.activity/v1": {
+      "dir": [
+        "in",
+        "out"
+      ],
+      "sha256": "1b5b000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "commands": [
+    {
+      "name": "analyze",
+      "argv": [
+        "ma.py",
+        "analyze"
+      ],
+      "needs": [],
+      "available": true
+    },
+    {
+      "name": "validate",
+      "argv": [
+        "ma.py",
+        "validate"
+      ],
+      "in": [
+        "szk.ma.validate-request/v1"
+      ],
+      "out": [
+        "szk.ma.validation/v1"
+      ],
+      "needs": [],
+      "available": true
+    }
+  ],
+  "requires": {
+    "modules": [],
+    "missing": []
+  },
+  "known_issues": []
+}

@@ -1,0 +1,792 @@
+[
+ {
+  "k_id": "K-KHN0607-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A fejezetek hatóköre: egy arány és kockázatkülönbség (Khan 2020, 6–7. fejezet)",
+  "body": "Khan (2020) Ch 6 (pp. 119–137) pools a single proportion (prevalence or incidence) from single-group studies, and Ch 7 (pp. 139–155) pools the risk difference (RD) between two independent groups. Both chapters apply the same inverse-variance machinery (fixed effect, DerSimonian–Laird random effects, IVhet, Cochran's Q and I²), first as spreadsheet-style hand calculations and then in the MetaXL Excel add-in, with Stata code in the appendices; R is not used. They contain no Mantel–Haenszel or Peto pooling, no zero-cell handling, no tau² estimator other than DL, no t-based or HKSJ CIs, no prediction intervals, no meta-regression and no publication-bias analysis of their own. [note: the DOCX conversion garbled the formulas; every formula from these chapters in the KB was rebuilt and checked against the book's worked numbers.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 pp. 119–137; Ch7 pp. 139–155",
+  "tags": "scope hatókör proportion arány prevalence prevalencia incidence incidencia risk difference kockázatkülönbség RD single-arm egykarú MetaXL Stata hand calculation kézi számítás Khan 2020"
+ },
+ {
+  "k_id": "K-KHN0607-002",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "MetaXL MAInputTable-hívás: „Prev” és „NumRD”",
+  "body": "MetaXL analyses are run from an Excel cell as =MAInputTable(\"<plot title>\", \"<effect type>\", \"<model>\", <data range>). The chapters use effect type \"Prev\" (prevalence, i.e. a single proportion; 3 columns: study, N, cases; range B9:D14) and \"NumRD\" (risk difference from count data; 7 columns: study, then patients, deaths and alive per arm; range B20:H26), with models \"IV\" (fixed effect, inverse variance), \"RE\" (random effects) and \"IVhet\" (inverse-variance heterogeneity). The book does not say that \"Prev\" transforms the proportion, but its printed output is on a transformed scale (see the Freeman–Tukey units).",
+  "source_id": "khan2020",
+  "locator": "Ch6 pp. 125–126, 129, 132; Ch7 pp. 146, 150, 153",
+  "tags": "MetaXL MAInputTable Excel add-in bővítmény Prev NumRD IV RE IVhet syntax szintaxis software szoftver forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN0607-003",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "Stata: metaprop_one és admetan parancsok",
+  "body": "Appendix 6 pools proportions with the user-written Stata command metaprop_one (installed with ssc install metaprop_one): metaprop_one Cases N, ftt fixed lcols(Studyname), or the same with random; ftt requests the Freeman–Tukey double-arcsine transformation, and second(random) or second(fixed) adds the other model's pooled estimate as a second line. Appendix 7 pools the RD with admetan AsprDeath AsprAlive PlaceboDeath PlaceboAlive, rd fixed label(namevar = Study) counts, replacing fixed with random or ivhet; rd selects the risk difference and counts declares the four variables as event and non-event counts per arm. [note: Stata needs a paid licence while SSC packages are free; the source does not state access models.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 Appendix A6.2 p. 136; Ch7 Appendix A7.2 p. 155",
+  "tags": "Stata metaprop_one admetan ftt Freeman-Tukey rd counts ivhet random fixed second SSC command parancs code kód proportion arány risk difference kockázatkülönbség"
+ },
+ {
+  "k_id": "K-KHN0607-004",
+  "stage_id": "S08",
+  "kind": "tool",
+  "title": "Táblázatkezelős kézi számítási sablon",
+  "body": "Every analysis in the book is laid out as a spreadsheet: per-study columns for the estimate (p or RD), Var, SE, W = 1/Var, W·θ, W·θ² and W², plus Var* = Var + τ², W* = 1/Var* (RE) or the IVhet variance component, with column sums from which FE, Q, C, τ², RE and IVhet results follow. The layout is a useful audit trail for reviewers but invites rounding errors (rounded p, rounded column sums, rounded τ²).",
+  "source_id": "khan2020",
+  "locator": "Ch6 Tables 6.2–6.4 pp. 124–131; Ch7 Tables 7.2–7.4 pp. 144–152",
+  "tags": "spreadsheet táblázatkezelő Excel hand calculation kézi számítás column sums oszlopösszegek weights súlyok audit trail nyomonkövethetőség rounding kerekítés"
+ },
+ {
+  "k_id": "K-KHN0607-005",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Kinyerendő adatok: egy arány és kockázatkülönbség",
+  "body": "For a single-proportion meta-analysis extract, per study, the study label, the total sample size N and the number of cases x (Table 6.1). For a risk difference extract, per study and arm, the number of patients, events (deaths) and non-events (alive) (Table 7.1); Stata admetan with the counts option needs the four cells, i.e. events and non-events in each arm, not the arm totals. Having all three columns lets a reviewer confirm that events plus non-events equal the arm total.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Table 6.1 p. 123; App. A6.1 p. 136; Ch7 Table 7.1 p. 143; App. A7.1–A7.2 p. 155",
+  "tags": "data extraction adatkinyerés counts esetszám events események non-events sample size mintanagyság 2x2 table táblázat admetan counts proportion arány risk difference kockázatkülönbség"
+ },
+ {
+  "k_id": "K-KHN0607-006",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Kerekített vagy hibás arányok a súlyokban",
+  "body": "The p column of Table 6.2 is not always x/n: Fichter is entered as 0.75 although 5/7 = 0.714, Shen as 0.512 although 154/300 = 0.513, and Babigian and Keith are rounded to 2 dp. These values drive the variances, weights, Q and τ² (hand Q 81.44, versus 80.02 with exact x/n). Detect: recompute x/n from the counts. Fix: always compute effect sizes and variances from the raw counts at full precision. [note: verifier's reconstruction: MetaXL in the book was evidently also fed the rounded p column (effective events p·N, e.g. 5.25 for Fichter), which is why its output does not match the integer counts of Table 6.1.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 Table 6.1 p. 123; Table 6.2 p. 124; Fig. 6.1 p. 126",
+  "tags": "data extraction adatkinyerés rounding kerekítés proportion arány recompute újraszámolás counts esetszám precision pontosság weights súlyok Fichter Shen"
+ },
+ {
+  "k_id": "K-KHN0607-007",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Arányok újraszámolása a nyers számokból",
+  "body": "For each single-proportion study, recompute p = x/n from the extracted counts and flag any reported or extracted p that differs from x/n by more than 0.005 (Fichter's 0.75 against 5/7 = 0.714 would be flagged). Keep the counts, not rounded proportions, as the analysis input and carry full precision into all later computations.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Table 6.2 p. 124",
+  "tags": "check ellenőrzés reviewer bíráló proportion arány recompute újraszámolás counts esetszám tolerance tolerancia 0.005 extraction adatkinyerés"
+ },
+ {
+  "k_id": "K-KHN0607-008",
+  "stage_id": "S05",
+  "kind": "convention",
+  "title": "Moderátor kódolása: az ország jövedelmi szintje",
+  "body": "For the subgroup analysis each prevalence study is coded by country income level: High (Babigian 1980, Fichter 1996, Keith 1991) versus Low/middle (Bondestam 1990, Shen 1981, Zharikov 1968), three studies each. The book gives no rule or reference for the income classification. [note: a protocol should name the classification scheme and reference year before coding.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7 p. 133",
+  "tags": "moderator moderátor coding kódolás subgroup alcsoport income jövedelem country ország high low middle classification osztályozás"
+ },
+ {
+  "k_id": "K-KHN0607-009",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Nulla varianciájú vizsgálatok (p = 0 vagy 1)",
+  "body": "With the raw-proportion variance p(1 − p)/n, a study with p = 0 or p = 1 has variance 0 and therefore infinite weight; with the RD Wald variance the same happens when both arms are at 0 or both at 1. The source never mentions this: its datasets have no zero cells and no continuity correction is used. Detect: any v_i = 0. Fix: use the double-arcsine transformation, or the logit with a continuity correction (commonly 0.5), and never divide by zero. [note: external guidance; not in the source.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2 pp. 119–120; Ch7 §7.2 p. 140 (not discussed in the source)",
+  "tags": "zero cell nulla cella zero variance nulla variancia continuity correction folytonossági korrekció infinite weight végtelen súly proportion arány risk difference kockázatkülönbség double arcsine kettős arkuszszinusz"
+ },
+ {
+  "k_id": "K-KHN0607-010",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Nulla variancia és korrekció ellenőrzése",
+  "body": "Check that no study has v_i = 0 (p = 0 or 1 for a single proportion; both arms at 0 or both at 1 for an RD). If any does, verify that a transformation (e.g. double arcsine) or a continuity correction was applied, that its value is reported, and that the affected studies are listed.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2 pp. 119–120; Ch7 §7.2 p. 140",
+  "tags": "check ellenőrzés zero variance nulla variancia continuity correction folytonossági korrekció zero cell nulla cella proportion arány risk difference kockázatkülönbség reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN0607-011",
+  "stage_id": "S07",
+  "kind": "guidance",
+  "title": "Mikor egyetlen arány, és mikor kockázatkülönbség?",
+  "body": "A single proportion is the appropriate effect size when the question is the prevalence or incidence of a disease in one population; the book stresses that a proportion by itself does not measure association between exposure and control groups. When the difference in prevalence or risk between two groups is of interest, use the risk difference (RD = p1 − p2); the ratio measures (OR, RR) for the same data are treated in Chs 4–5. [note: Cochrane Handbook v6 (ch. 10.4.3) observes that risk differences are usually less consistent across studies than relative measures when baseline risks differ. Pooling RR or OR and converting the result to an absolute effect at an assumed baseline risk is therefore often preferred; RD remains useful for communicating absolute effects.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.1 p. 119; Ch7 intro p. 139; §7.1 pp. 139–140",
+  "tags": "effect measure choice hatásmérték választás proportion arány prevalence prevalencia incidence incidencia risk difference kockázatkülönbség association asszociáció"
+ },
+ {
+  "k_id": "K-KHN0607-012",
+  "stage_id": "S07",
+  "kind": "criterion",
+  "title": "A hatásmérték megfelelősége",
+  "body": "A pooled single proportion is appropriate only for frequency questions (prevalence or incidence); a comparison of two groups needs RD, OR or RR. The evaluator should check that the chosen measure matches the review question stated in the protocol.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.1 p. 119; Ch7 §7.1 p. 139",
+  "tags": "criterion értékelési szempont effect measure hatásmérték proportion arány risk difference kockázatkülönbség odds ratio relative risk review question kutatási kérdés"
+ },
+ {
+  "k_id": "K-KHN0607-013",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Egyetlen arány becslése és varianciája (nyers skála)",
+  "body": "For study i with x_i cases among n_i people, the prevalence estimate is p_i = x_i/n_i, with Var(p_i) = p_i(1 − p_i)/n_i, SE = sqrt(Var) and inverse-variance weight w_i = 1/Var(p_i). Worked example (48 of 80, adapted from Hartung et al. 2008): p = 0.60, Var = 0.003, SE = 0.054772.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2 pp. 119–120; Ex 6.1 p. 120",
+  "tags": "proportion arány variance variancia standard error standard hiba raw scale nyers skála prevalence prevalencia binomial binomiális weight súly"
+ },
+ {
+  "k_id": "K-KHN0607-014",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "A szerző indoklása a transzformáció elhagyására (vitatható)",
+  "body": "The book argues that p is approximately normal with mean π and variance π(1 − π)/n when n is large ('usually 30 or more'), so the proportion needs no transformation, and all its hand calculations pool raw proportions. The argument is weak: the normal approximation also depends on how close p is to 0 or 1, the raw variance depends on p itself, and Wald limits can fall outside [0, 1]. [note: methodological guidance on prevalence meta-analysis generally pools on the logit or Freeman–Tukey double-arcsine scale (or uses a binomial GLMM) and back-transforms; the software runs printed in the same chapter (MetaXL 'Prev', Stata ftt) are themselves on a transformed scale. The double-arcsine back-transformation has itself been criticised (Schwarzer et al. 2019), so a GLMM or the logit is now usually the first choice.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2 Remark p. 120",
+  "tags": "transformation transzformáció normal approximation normális közelítés n 30 raw proportion nyers arány logit double arcsine kettős arkuszszinusz GLMM debatable vitatható"
+ },
+ {
+  "k_id": "K-KHN0607-015",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "„n ≥ 30” mint normalitási kritérium",
+  "body": "The book's rule that n of 30 or more justifies the normal approximation ignores how close p is to 0 or 1; near the boundary even large studies have skewed sampling distributions and Wald CIs that can cross 0 or 1. Detect: small n·p or n·(1 − p) in any study. Fix: also require n·p and n·(1 − p) to be reasonably large (e.g. ≥ 5–10) and otherwise analyse on a transformed scale. [note: the n·p rule of thumb is external, not from the source.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2 Remark p. 120",
+  "tags": "normal approximation normális közelítés sample size mintanagyság n 30 rule of thumb ökölszabály np boundary határérték proportion arány skewness ferdeség"
+ },
+ {
+  "k_id": "K-KHN0607-016",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Wald-CI és z-próba egyetlen arányra",
+  "body": "The (1 − α)100% CI is p ± z_{α/2}·SE(p) with z_{0.025} = 1.96, and H0: π = 0 is tested with Z = (p − 0)/SE(p) against N(0, 1). Worked example: 48/80 gives 95% CI (0.49, 0.71) and z = 10.949, with P printed as 0; the book used SE rounded to 0.0548 (the unrounded z is 10.954).",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2–6.3 pp. 120–122; Ex 6.2–6.3",
+  "tags": "Wald confidence interval konfidencia-intervallum z test z-próba proportion arány normal normális 1.96 hypothesis test hipotézisvizsgálat"
+ },
+ {
+  "k_id": "K-KHN0607-017",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "H0: π = 0 tesztelése prevalenciára értelmetlen",
+  "body": "Every Ch 6 analysis (single study, FE, RE, IVhet) tests whether the prevalence equals 0 and calls it 'significant' (e.g. z = 88.27 under FE), which is trivially true whenever any case exists and is uninformative. Detect: tests of π = 0 or statements that a prevalence 'is significant'. Fix: interpret the pooled prevalence through its CI (and its heterogeneity or prediction interval); if a test is needed, test against a clinically meaningful reference value.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.3 p. 121; §6.4–6.6 pp. 122–132",
+  "tags": "hypothesis test hipotézisvizsgálat null zero nulla prevalence prevalencia uninformative semmitmondó confidence interval konfidencia-intervallum significance szignifikancia"
+ },
+ {
+  "k_id": "K-KHN0607-018",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "A Wald-CI kilóghat a [0, 1] tartományból",
+  "body": "On the raw scale the Wald CI can exceed the admissible range: for Fichter (p entered as 0.75, n = 7, SE 0.1637) the upper limit is 0.75 + 1.96 × 0.1637 ≈ 1.07, whereas MetaXL shows 1.00. Detect: any study-level or pooled limit below 0 or above 1. Fix: compute CIs on a transformed scale (logit or double arcsine) and back-transform, or use Wilson or exact (Clopper–Pearson) intervals for single studies. [note: Wilson and exact intervals are external suggestions.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 Table 6.2 p. 124; Fig. 6.1 p. 126",
+  "tags": "confidence interval konfidencia-intervallum boundary határ 0 1 Wald Wilson Clopper-Pearson exact egzakt proportion arány truncation csonkolás small sample kis minta"
+ },
+ {
+  "k_id": "K-KHN0607-019",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Arány-CI-k a [0, 1] tartományban",
+  "body": "Check that every study-level and pooled CI for a proportion lies within [0, 1]; if not, require transformed-scale CIs or an explicitly reported truncation, and state which method produced the displayed limits.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Table 6.2 p. 124; Fig. 6.1 p. 126",
+  "tags": "check ellenőrzés confidence interval konfidencia-intervallum proportion arány 0 1 boundary határ truncation csonkolás transformation transzformáció"
+ },
+ {
+  "k_id": "K-KHN0607-020",
+  "stage_id": "S07",
+  "kind": "concept",
+  "title": "Arány-transzformációk: a forrás nem vezeti le őket",
+  "body": "Neither chapter derives the logit or the Freeman–Tukey double-arcsine transformation; they appear only implicitly, through the ftt option of Stata metaprop_one and through MetaXL 'Prev' output that is on a transformed scale (its Q of 80.18 differs from the hand-calculated 81.44). Transformation formulas attached to this source in the KB are external reconstructions and are flagged as such. [note: logit y = ln(x/(n − x)) with v = 1/x + 1/(n − x); for the double arcsine see the next unit.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 App. A6.2 p. 136; p. 125 vs Fig. 6.1 p. 126",
+  "tags": "transformation transzformáció logit double arcsine kettős arkuszszinusz Freeman-Tukey ftt MetaXL Prev proportion arány external külső"
+ },
+ {
+  "k_id": "K-KHN0607-021",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Freeman–Tukey kettős arkuszszinusz (MetaXL-konvenció, külső rekonstrukció)",
+  "body": "[external reconstruction, not stated in the source] The MetaXL 'Prev' output is reproduced by t_i = asin(sqrt(x_i/(n_i + 1))) + asin(sqrt((x_i + 1)/(n_i + 1))) with v_i = 1/(n_i + 0.5), pooled on the t scale and back-transformed with Miller's (1978) inverse using m = n_i + 0.5 for a study and m = 1/Var(pooled t) for the pooled value and each CI limit. With x_i = printed p_i × N_i this reproduces every MetaXL number checked (study rows, FE and RE weights, Q, both subgroups and the pooled results), e.g. FE 0.59 (0.57, 0.60), RE 0.59 (0.51, 0.66), IVhet 0.59 (0.48, 0.69) and Q = 80.18; with m = the harmonic mean of n (a common R default, also the engine default) the FE CI becomes (0.58, 0.60). No continuity correction is needed for x = 0 or x = n. [note: metafor and the engine use half this scale: y = t/2, v = 1/(4n + 2).] [note: the Freeman–Tukey double arcsine is contested. Its back-transformation depends on the n chosen and can give misleading pooled proportions when study sizes differ widely (Schwarzer et al. 2019, Res Synth Methods). Current guidance prefers a binomial GLMM (random-intercept logistic model) or the logit scale, and keeps FT as a sensitivity analysis at most.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 Figs. 6.1–6.4 pp. 126–134 (reconstruction)",
+  "tags": "Freeman-Tukey double arcsine kettős arkuszszinusz transformation transzformáció back-transformation visszatranszformálás Miller harmonic mean harmonikus átlag MetaXL Prev proportion arány"
+ },
+ {
+  "k_id": "K-KHN0607-022",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "Kézi számítás és szoftver eltérő skálán",
+  "body": "The hand calculations pool raw proportions (Q = 81.44; FE weight of Babigian 62.6%; RE weights 5.0/21.3/23.5/23.9/4.6/21.7%), while MetaXL 'Prev' pools a transformed proportion (Q = 80.18; FE weights 0.2/5.6/26.6/61.8/0.1/5.7%; RE weights 5.2/21.5/23.7/24.0/4.0/21.6%), and the book presents both side by side without comment. Detect: Q, I² or weights differ between manual and software output. Fix: choose the scale (logit or double arcsine for proportions) before the analysis, state it, and use it consistently for pooling, Q/I², τ² and back-transformation.",
+  "source_id": "khan2020",
+  "locator": "Ch6 p. 125 vs Fig. 6.1 p. 126; Table 6.3 p. 128 vs Fig. 6.2 p. 130",
+  "tags": "scale skála transformation transzformáció raw nyers MetaXL hand calculation kézi számítás weights súlyok Q I2 heterogeneity heterogenitás consistency konzisztencia proportion arány"
+ },
+ {
+  "k_id": "K-KHN0607-023",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Az elemzési skála dokumentálása",
+  "body": "Check that the scale of analysis for proportions (raw, logit or double arcsine) is stated; that the same scale is used for pooling, Q, I² and τ²; and that the back-transformation method is reported, including the m (or n) used in the Freeman–Tukey inverse.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2–6.7 pp. 119–136",
+  "tags": "check ellenőrzés scale skála transformation transzformáció back-transformation visszatranszformálás logit double arcsine reporting jelentés proportion arány"
+ },
+ {
+  "k_id": "K-KHN0607-024",
+  "stage_id": "S07",
+  "kind": "criterion",
+  "title": "Az arány-transzformáció megítélése",
+  "body": "Penalise raw-scale pooling of proportions when some studies are small or have p near 0 or 1. Credit an explicit GLMM, logit or double-arcsine analysis with a stated back-transformation, because the back-transformation choice alone moves CI limits in the second decimal (FE lower limit 0.57 vs 0.58 in the schizophrenia data). [note: current guidance favours a binomial GLMM or the logit; a Freeman–Tukey analysis should report the n used in Miller's inverse and is best kept as a sensitivity analysis (Schwarzer et al. 2019).]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.2 p. 120; Figs. 6.1–6.4 pp. 126–134",
+  "tags": "criterion értékelési szempont transformation transzformáció raw scale nyers skála logit double arcsine back-transformation visszatranszformálás proportion arány small studies kis vizsgálatok"
+ },
+ {
+  "k_id": "K-KHN0607-025",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "RD, OR és RR két független arányból",
+  "body": "With population proportions π1 (treatment) and π2 (control), estimated by p1 and p2 from independent samples of sizes n1 and n2, the book defines three effect sizes: risk difference θ1 = π1 − π2, odds ratio θ2 = [π1/(1 − π1)]/[π2/(1 − π2)] and risk ratio θ3 = π1/π2. Each is estimated by plugging in p1 and p2, with the OR and RR usually analysed as ln OR and ln RR; Ch 7 analyses only the RD, as OR and RR are covered in Chs 4–5.",
+  "source_id": "khan2020",
+  "locator": "Ch7 §7.1 pp. 139–140",
+  "tags": "definition definíció risk difference kockázatkülönbség odds ratio esélyhányados risk ratio relatív kockázat RD OR RR two proportions két arány log scale log-skála"
+ },
+ {
+  "k_id": "K-KHN0607-026",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Kockázatkülönbség: becslés, variancia, CI és z-próba",
+  "body": "RD = p1 − p2 with Var(RD) = p1(1 − p1)/n1 + p2(1 − p2)/n2, SE = sqrt(Var), Wald CI RD ± z_{α/2}·SE and Z = RD/SE. Worked example (adapted from Hartung et al. 2008): p1 = 0.60 (n1 = 80) vs p2 = 0.80 (n2 = 70) gives RD = −0.20, Var = 0.0052857 (misprinted as 0.5285), SE = 0.0727, 95% CI (−0.34, −0.06), z = −2.75 and P = 0.006.",
+  "source_id": "khan2020",
+  "locator": "Ch7 §7.2–7.3 pp. 140–141; Ex 7.1–7.3",
+  "tags": "risk difference kockázatkülönbség RD variance variancia standard error standard hiba Wald confidence interval konfidencia-intervallum z test z-próba two proportions két arány"
+ },
+ {
+  "k_id": "K-KHN0607-027",
+  "stage_id": "S07",
+  "kind": "convention",
+  "title": "RD előjel-konvenció",
+  "body": "Group 1 is the treatment (aspirin) and group 2 the control (placebo), so RD = p1 − p2 < 0 means lower risk on treatment; Ex 7.3 accordingly concludes that the control group has the higher risk.",
+  "source_id": "khan2020",
+  "locator": "Ch7 Ex 7.3 p. 141; Table 7.2 p. 144",
+  "tags": "sign convention előjel-konvenció risk difference kockázatkülönbség treatment kezelés control kontroll direction irány negative negatív"
+ },
+ {
+  "k_id": "K-KHN0607-028",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Az RD előjelének és irányának ellenőrzése",
+  "body": "Confirm that the RD is computed as group 1 − group 2, which arm is group 1 (treatment), and that the narrative direction (benefit or harm) and the forest-plot axis labels agree with the sign.",
+  "source_id": "khan2020",
+  "locator": "Ch7 Ex 7.3 p. 141; Table 7.2 p. 144",
+  "tags": "check ellenőrzés sign előjel direction irány risk difference kockázatkülönbség treatment arm kezelt kar forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN0607-029",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Fix hatású (inverz-variancia) összesítés",
+  "body": "The FE model assumes one common effect size: θ̂_FE = Σw_iθ̂_i/Σw_i with w_i = 1/v_i, Var(θ̂_FE) = 1/Σw_i, SE = sqrt(1/Σw_i), CI θ̂_FE ± z_{α/2}·SE and Z = θ̂_FE/SE; reject H0: θ = 0 if |z| ≥ z_{α/2} or P ≤ α. Ch 6 applies it with θ̂_i = p_i and Ch 7 with θ̂_i = RD_i; MetaXL calls this model 'IV'.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.4 pp. 122–123; Ch7 §7.4 pp. 142–143",
+  "tags": "fixed effect fix hatás common effect közös hatás inverse variance inverz variancia pooled estimate összesített becslés weight súly z test z-próba MetaXL IV"
+ },
+ {
+  "k_id": "K-KHN0607-030",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Véletlen hatású modell (DL): súlyok és becslés",
+  "body": "Under RE each study's variance becomes v_i* = v_i + τ², with weights w_i* = 1/(v_i + τ̂²), pooled estimate θ̂_RE = Σw_i*θ̂_i/Σw_i* and SE = sqrt(1/Σw_i*); the CI and test use z. MetaXL calls this model 'RE'; for the RD data its weights match the DerSimonian–Laird hand calculation exactly. [note: DL is the classic estimator and MetaXL's default, but it is no longer the recommended default: Cochrane Handbook v6 favours REML or Paule–Mandel for τ² and suggests considering HKSJ CIs and a prediction interval for random effects.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.5 pp. 126–127; Ch7 §7.5 p. 147; Fig. 7.2 p. 150",
+  "tags": "random effects véletlen hatás DerSimonian Laird DL weights súlyok tau2 between-study variance vizsgálatok közötti variancia MetaXL RE pooled estimate összesített becslés"
+ },
+ {
+  "k_id": "K-KHN0607-031",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "DerSimonian–Laird τ² („skálázott többletvariáció”)",
+  "body": "τ̂² = (Q − df)/C with C = Σw_i − Σw_i²/Σw_i and df = k − 1; this method-of-moments estimator is the only one presented. The chapters do not state truncation at zero (τ̂² = 0 when Q < df), so implementations must apply max(0, ·). Worked values: 0.006325 for the schizophrenia data (raw scale, C = 12086.25) and 0.000111 for the aspirin RD (C = 39986.25). [note: Cochrane Handbook v6 now prefers REML or Paule–Mandel to DL, especially with few studies.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.5 p. 127; Ex 6.5 p. 128; Ch7 §7.5 p. 147; Ex 7.5 p. 148",
+  "tags": "tau2 tau-négyzet DerSimonian Laird DL method of moments momentumok módszere between-study variance vizsgálatok közötti variancia REML Paule-Mandel truncation csonkolás"
+ },
+ {
+  "k_id": "K-KHN0607-032",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "A τ² és az I² nullánál csonkolása nincs kimondva",
+  "body": "Neither chapter states that the DL τ² and I² are set to 0 when Q < df; a literal implementation of (Q − df)/C or (Q − df)/Q can return negative values. MetaXL prints I² = 0% in that case (Low/middle-income subgroup, Q = 0.48 on 2 df). Fix: apply max(0, ·) to both, as the engine does.",
+  "source_id": "khan2020",
+  "locator": "Ch6 p. 125, p. 127; Fig. 6.4 p. 134; Ch7 p. 145, p. 147",
+  "tags": "truncation csonkolás tau2 I2 negative negatív zero nulla DerSimonian Laird implementation implementáció heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0607-033",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Az IVhet modell (Doi és mtsai 2015a)",
+  "body": "The inverse-variance heterogeneity model keeps the FE point estimate and FE weights but widens the variance to Var(θ̂_IVhet) = Σ_i (w_i/Σw)²·(v_i + τ̂²), with w_i = 1/v_i and τ̂² from DL; the CI and test use z, and MetaXL calls it 'IVhet'. [note: IVhet is promoted mainly by its developers (Doi, Barendregt, Khan and colleagues); Cochrane Handbook v6 does not use it and recommends random effects with REML or Paule–Mandel τ², often with HKSJ CIs and a prediction interval.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.6 pp. 129–130; Ch7 §7.6 p. 151",
+  "tags": "IVhet inverse variance heterogeneity inverz-variancia heterogenitás Doi 2015 fixed effect weights fix hatású súlyok robust variance robusztus variancia MetaXL random effects véletlen hatás"
+ },
+ {
+  "k_id": "K-KHN0607-034",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Félrecímkézett IVhet-oszlopok (W*, V*)",
+  "body": "In Table 6.4 ('V*') and Table 7.4 ('W*') the column holds the per-study IVhet variance component (w_i/Σw)²(v_i + τ²), not a weight; its sum is Var(θ̂_IVhet) (0.002973 and 0.00005099). Fix: label such output as variance contributions; the IVhet weights are simply the FE weights.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Table 6.4 p. 131; Ch7 Table 7.4 p. 152",
+  "tags": "IVhet labelling címkézés variance component varianciakomponens weight súly table táblázat W* V* output kimenet"
+ },
+ {
+  "k_id": "K-KHN0607-035",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Minőségi hatások (quality-effects) modell: csak hivatkozás",
+  "body": "The quality-effects model (Doi et al. 2015b, 2015c) is cited as an alternative meta-analytic model, but no formula or application is given and no quality scores are used in these chapters. [note: Cochrane guidance discourages weighting by quality scores and prefers risk-of-bias-based sensitivity or subgroup analyses.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.4 p. 122; Ch7 §7.4 p. 142",
+  "tags": "quality effects minőségi hatások model modell Doi 2015 quality score minőségi pontszám risk of bias torzítási kockázat weighting súlyozás"
+ },
+ {
+  "k_id": "K-KHN0607-036",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Csak z-alapú CI; nincs HKSJ és predikciós intervallum",
+  "body": "Every CI and test in these chapters uses the standard normal (z_{0.025} = 1.96), for single studies and for FE, RE and IVhet alike; there is no t-based CI, no Hartung–Knapp–Sidik–Jonkman adjustment and no prediction interval, and heterogeneity is summarised only by Q and I² (no τ, H², or CIs for I² or τ²). [note: Cochrane Handbook v6 suggests considering HKSJ CIs for random effects and reporting prediction intervals; the engine's meta_analysis defaults random effects to HKSJ, so ci_method='z' and tau2_method='DL' are needed to reproduce the book.]",
+  "source_id": "khan2020",
+  "locator": "Ch6–7 throughout; e.g. Ch6 §6.4 p. 122; Ch7 §7.4 p. 142",
+  "tags": "confidence interval konfidencia-intervallum z normal normális HKSJ Hartung-Knapp prediction interval predikciós intervallum t distribution t-eloszlás reproduction reprodukálás"
+ },
+ {
+  "k_id": "K-KHN0607-037",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "MetaXL modell- és skála-alapértelmezések",
+  "body": "MetaXL 'RE' corresponds to DerSimonian–Laird (the book computes DL by hand next to it, and the RD weights match DL exactly). 'NumRD' pools the untransformed RD with the Wald variance, so its study CIs and FE/RE weights match the hand formulas. 'Prev' pools on a transformed scale, consistent with the Freeman–Tukey double arcsine with variance 1/(n + 0.5) [reconstructed, not stated]. No continuity correction is used anywhere, and none of the datasets has zero cells.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Figs. 6.1–6.4 pp. 126–134; Ch7 Figs. 7.1–7.3 pp. 146–153",
+  "tags": "MetaXL default alapértelmezés DerSimonian Laird RE NumRD Prev transformation transzformáció Freeman-Tukey continuity correction folytonossági korrekció software szoftver"
+ },
+ {
+  "k_id": "K-KHN0607-038",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Súlyok FE, IVhet és RE alatt",
+  "body": "FE and IVhet use identical study weights (w_i/Σw), while RE shifts weight toward smaller studies as τ² grows: in the schizophrenia data Babigian (n = 3319) has 61.8% of the weight under FE/IVhet but 24.0% under RE, and Bondestam (n = 10) rises from 0.2% to 5.2% (MetaXL). Study estimates and CIs are the same in every model; only the weights and the pooled row change.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7.1 pp. 134–136; Figs. 6.1–6.3 pp. 126–133; Ch7 §7.8 p. 155",
+  "tags": "weights súlyok fixed effect fix hatás random effects véletlen hatás IVhet small studies kis vizsgálatok redistribution újraelosztás forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN0607-039",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "FE választása nem szignifikáns Q alapján",
+  "body": "Ch 7 states that the FE model is used when between-study variation is insignificant and later reads the non-significant Q (10.42, P ≈ 0.11) as a reason to expect the models to agree, yet in the same data the significance of the RD changes between models. Q has low power with few studies (k = 7 here). Fix: pre-specify the model in the protocol on conceptual grounds and the expected heterogeneity, and report FE, RE and IVhet as a sensitivity analysis. [note: Cochrane Handbook v6 (10.10.4.1) advises against choosing between fixed and random effects on the basis of a heterogeneity test; the choice should reflect whether a single common effect is plausible.]",
+  "source_id": "khan2020",
+  "locator": "Ch7 §7.4 p. 142; §7.8 pp. 154–155",
+  "tags": "model choice modellválasztás fixed effect fix hatás Q test Q-próba low power alacsony erő pre-specification előzetes rögzítés protocol protokoll heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0607-040",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Modellválasztás előzetes rögzítése",
+  "body": "Check that the synthesis model was pre-specified rather than chosen after seeing the heterogeneity P value. If it was not, require a sensitivity analysis across FE, RE and IVhet and a statement of whether the conclusions change.",
+  "source_id": "khan2020",
+  "locator": "Ch7 §7.4 p. 142; §7.8 pp. 154–155",
+  "tags": "check ellenőrzés model choice modellválasztás pre-specified előre rögzített protocol protokoll sensitivity analysis érzékenységi elemzés fixed random IVhet"
+ },
+ {
+  "k_id": "K-KHN0607-041",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Összesített becslések újraszámolása (FE, DL-RE, IVhet)",
+  "body": "Recompute FE as Σwθ/Σw with SE = 1/sqrt(Σw); DL τ² = max(0, (Q − df)/C) with C = Σw − Σw²/Σw; the RE weights 1/(v_i + τ²), pooled estimate and SE; and, if IVhet is reported, confirm that its point estimate equals FE and that Var = Σ(w_i/Σw)²(v_i + τ²). In the engine: models.meta_analysis(model='fixed' | 'random' | 'ivhet', tau2_method='DL', ci_method='z').",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.4–6.6 pp. 122–132; Ch7 §7.4–7.6 pp. 142–153",
+  "tags": "check ellenőrzés recompute újraszámolás fixed effect fix hatás random effects véletlen hatás IVhet DerSimonian Laird tau2 pooled estimate összesített becslés engine motor"
+ },
+ {
+  "k_id": "K-KHN0607-042",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Skizofrénia-prevalencia, FE (kézi, nyers skála)",
+  "body": "Using the book's p column for the 6 studies, Σw = 22509, Σwp = 13244 and Σwp² = 7873.8 give θ̂_FE = 0.5884, SE = 0.006665, 95% CI (0.57, 0.60) and z = 88.27. The lower limit 0.5753 is printed as 0.57, i.e. truncated rather than rounded. With exact x/n the FE result is 0.5884 (0.5753, 0.6015).",
+  "source_id": "khan2020",
+  "locator": "Ch6 Ex 6.4 pp. 123–124; Table 6.2 p. 124",
+  "tags": "worked example kidolgozott példa schizophrenia skizofrénia prevalence prevalencia fixed effect fix hatás hand calculation kézi számítás test oracle tesztorákulum"
+ },
+ {
+  "k_id": "K-KHN0607-043",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Skizofrénia-prevalencia, DL-RE (kézi, nyers skála)",
+  "body": "Q = 81.44, C = 12086.25 and τ̂² = 0.006325 give Σw* = 655.4021, Σw*p = 386.0286, θ̂_RE = 0.58899, SE = 0.039061, 95% CI (0.51, 0.66) and z = 15.08. The book computes the CI from the rounded 0.5889 and 0.0390 and truncates 0.6653 to 0.66; with exact x/n the DL result would be 0.5869 (SE 0.0388).",
+  "source_id": "khan2020",
+  "locator": "Ch6 Ex 6.5 pp. 127–129; Table 6.3 p. 128",
+  "tags": "worked example kidolgozott példa schizophrenia skizofrénia random effects véletlen hatás DerSimonian Laird tau2 hand calculation kézi számítás test oracle tesztorákulum"
+ },
+ {
+  "k_id": "K-KHN0607-044",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Skizofrénia-prevalencia, IVhet (kézi, nyers skála)",
+  "body": "With the FE estimate 0.5884 and τ² = 0.006325, the per-study components (w_i/Σw)²(v_i + τ²) sum to Var = 0.002973, giving SE = 0.054527, 95% CI (0.4815, 0.6953), printed (0.48, 0.69), and z = 10.79. The estimate is misprinted once as 0.5889 (13243.84/22509 = 0.5884), and the Bondestam component appears in the text as 0.0000000104 instead of 1.04 × 10⁻⁷.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Ex 6.6 pp. 131–132; Table 6.4 p. 131",
+  "tags": "worked example kidolgozott példa schizophrenia skizofrénia IVhet variance variancia hand calculation kézi számítás typo sajtóhiba test oracle tesztorákulum"
+ },
+ {
+  "k_id": "K-KHN0607-045",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Aszpirin–placebo RD, FE (kézi és MetaXL)",
+  "body": "For the 7 aspirin-after-MI trials (Table 7.1), Σw = 57295 and Σw·RD = −769.624 give θ̂_FE = −0.01343, SE = 0.00418, 95% CI (−0.0216, −0.0052), printed (−0.02, −0.01), and z = −3.22; P is printed as 0 (exact 0.0013). MetaXL ('NumRD', 'IV') reproduces the study CIs and weights exactly, e.g. ISIS-2 48.5% and AMIS 21.4%.",
+  "source_id": "khan2020",
+  "locator": "Ch7 Ex 7.4–7.5 pp. 143–144; Table 7.2 p. 144; Fig. 7.1 p. 146",
+  "tags": "worked example kidolgozott példa aspirin aszpirin myocardial infarction szívinfarktus risk difference kockázatkülönbség fixed effect fix hatás MetaXL test oracle tesztorákulum"
+ },
+ {
+  "k_id": "K-KHN0607-046",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Aszpirin–placebo RD, DL-RE (kézi és MetaXL)",
+  "body": "C = 39986.25 and τ̂² = 0.000111 give Σw* = 24054, Σw*·RD = −359.393, θ̂_RE = −0.0149, SE = 0.006448, 95% CI (−0.02758, −0.0023), z = −2.32 and P = 0.0204 (= 2 × 0.0102 from a normal table). For the book's z = −2.31725 the exact P is 0.0205; full-precision recomputation gives z = −2.319, P = 0.0204 and CI (−0.02756, −0.00231). MetaXL prints −0.01 (−0.03, 0.00), with RE weights ranging from 5.6% (GASP) to 28.3% (ISIS-2).",
+  "source_id": "khan2020",
+  "locator": "Ch7 Ex 7.5–7.6 pp. 148–149; Table 7.3 p. 148; Fig. 7.2 p. 150",
+  "tags": "worked example kidolgozott példa aspirin aszpirin risk difference kockázatkülönbség random effects véletlen hatás DerSimonian Laird tau2 MetaXL test oracle tesztorákulum"
+ },
+ {
+  "k_id": "K-KHN0607-047",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Aszpirin–placebo RD, IVhet (kézi és MetaXL)",
+  "body": "The FE estimate −0.01343 with Var = Σ(w_i/Σw)²(v_i + τ²) = 0.00005099 gives SE = 0.00714, 95% CI (−0.02743, 0.000563), z = −1.88 and P = 0.0602 (normal table; exact 0.0599 for z = −1.88121, and 0.0596 at full precision with unrounded τ²), i.e. not significant at 5%. MetaXL shows −0.01 (−0.03, 0.00) with the FE weights.",
+  "source_id": "khan2020",
+  "locator": "Ch7 Ex 7.7 pp. 151–153; Table 7.4 p. 152; Fig. 7.3 p. 153",
+  "tags": "worked example kidolgozott példa aspirin aszpirin risk difference kockázatkülönbség IVhet variance variancia MetaXL test oracle tesztorákulum"
+ },
+ {
+  "k_id": "K-KHN0607-048",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Modellek összevetése: skizofrénia-prevalencia",
+  "body": "The MetaXL pooled prevalence of acute schizophrenia (6 studies) is 0.59 under all three models, but the 95% CI widens from FE (0.57, 0.60; width 0.03) to RE (0.51, 0.66; width 0.15) and IVhet (0.48, 0.69; width 0.21). The book notes that the point estimate is unchanged despite very high heterogeneity.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7.1 pp. 134–135; Fig. 6.5 p. 135",
+  "tags": "model comparison modellek összevetése fixed random IVhet confidence interval width konfidencia-intervallum szélessége prevalence prevalencia schizophrenia skizofrénia"
+ },
+ {
+  "k_id": "K-KHN0607-049",
+  "stage_id": "S08",
+  "kind": "example",
+  "title": "Modellek összevetése: aszpirin RD – a szignifikancia modellfüggő",
+  "body": "In the aspirin RD data the pooled RD is about −0.01 under every model, but FE gives (−0.0216, −0.0052) with P = 0.0013, DL RE gives (−0.0276, −0.0023) with P ≈ 0.020, and IVhet gives (−0.0274, 0.0006) with P ≈ 0.060. The benefit is thus significant under FE and RE but not under IVhet. Reading MetaXL's 2-dp output, the book calls both RE and IVhet non-significant and 'very similar', while p. 154 also says IVhet is very similar to FE.",
+  "source_id": "khan2020",
+  "locator": "Ch7 §7.8 pp. 154–155; Ex 7.4–7.7 pp. 143–153",
+  "tags": "model comparison modellek összevetése significance szignifikancia model dependence modellfüggés risk difference kockázatkülönbség aspirin aszpirin fixed random IVhet"
+ },
+ {
+  "k_id": "K-KHN0607-050",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Kerekített CI-ből levont következtetés",
+  "body": "The hand-calculated RE CI for the aspirin RD is (−0.02758, −0.0023) with P = 0.0204, so it excludes 0. Yet the interpretation of the MetaXL output '(−0.03, 0.00)' says the interval includes 0 and the RD is not significant, and §7.8 repeats this. Detect: a 2-dp limit printed as 0.00 or −0.00. Fix: decide significance from the unrounded limits or the P value, and report 3 or more decimals for small RDs.",
+  "source_id": "khan2020",
+  "locator": "Ch7 Ex 7.6 p. 149 vs p. 150; §7.8 pp. 154–155",
+  "tags": "rounding kerekítés confidence interval konfidencia-intervallum significance szignifikancia interpretation értelmezés risk difference kockázatkülönbség decimals tizedesjegyek"
+ },
+ {
+  "k_id": "K-KHN0607-051",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Szignifikancia-állítások egyezése a kerekítetlen értékekkel",
+  "body": "Verify every significance claim against the unrounded CI limits and the P value. Flag cases where a limit displayed as 0.00 or −0.00 drives the conclusion, and require the text, the forest-plot diamond and the P value to agree.",
+  "source_id": "khan2020",
+  "locator": "Ch7 pp. 149–150; §7.8 pp. 154–155",
+  "tags": "check ellenőrzés significance szignifikancia rounding kerekítés confidence interval konfidencia-intervallum P value P-érték consistency konzisztencia"
+ },
+ {
+  "k_id": "K-KHN0607-052",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "τ² kerekítése a súlyok számítása előtt",
+  "body": "The book rounds τ² (0.006325 and 0.000111) before computing W*, which shifts the 4th–5th significant digit of the RE and IVhet results (e.g. aspirin IVhet Var 5.099 × 10⁻⁵ with the rounded value vs 5.086 × 10⁻⁵ unrounded). Fix: carry τ² at full precision, and expect small deviations when matching the book.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Table 6.3 p. 128; Ch7 Tables 7.3–7.4 pp. 148, 152",
+  "tags": "rounding kerekítés tau2 precision pontosság random effects véletlen hatás IVhet reproduction reprodukálás weights súlyok"
+ },
+ {
+  "k_id": "K-KHN0607-053",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "Sajtóhibák a forrásban (reprodukáláshoz)",
+  "body": "Typos a reproducer will meet: Ex 7.1 variance 0.5285 (should be 0.005285, p. 141); the IVhet upper limit printed with '−1.96' for '+1.96' (the result 0.000563 is right, p. 153); '9% confidence interval' for 95% (Ex 7.6, p. 148); the IVhet interpretation says 'REs model' and 'Q statistic is 0.42' for IVhet and 10.42 (p. 154); the Ch 6 IVhet estimate 0.5889 for 0.5884 (p. 131); I² written as '93.86 × 100%' (p. 125); Example 7.5 numbered twice (pp. 144, 148); '≈ 0 − 0.01' (p. 152); and the heterogeneity null written 'H0 = θ1 = …' (pp. 125, 145). Rely on recomputed values.",
+  "source_id": "khan2020",
+  "locator": "Ch6 pp. 125, 131; Ch7 pp. 141, 144–154",
+  "tags": "typo sajtóhiba errata hibajegyzék reproduction reprodukálás source error forráshiba IVhet variance variancia Khan 2020"
+ },
+ {
+  "k_id": "K-KHN0607-054",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-féle Q (számítási alak) és χ²-próba",
+  "body": "Q = Σw_iθ̂_i² − (Σw_iθ̂_i)²/Σw_i tests H0: θ1 = … = θk against χ² with k − 1 df. The book reads P from a χ² table, using critical values 20.515 (df 5, α = 0.001) and 10.6446 (df 6, α = 0.10). Worked: schizophrenia (raw p) Q = 81.44, P < 0.001; aspirin RD Q = 10.42, P > 0.10 (exact 0.108; MetaXL 0.11).",
+  "source_id": "khan2020",
+  "locator": "Ch6 p. 125; Ch7 p. 145",
+  "tags": "Cochran Q heterogeneity test heterogenitás-próba chi-square khí-négyzet degrees of freedom szabadsági fok critical value kritikus érték P value P-érték"
+ },
+ {
+  "k_id": "K-KHN0607-055",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Az I² index (inkonzisztencia-mutató)",
+  "body": "I² = (Q − df)/Q × 100%; the chapters do not state truncation at 0, but MetaXL prints 0% when Q < df (Low/middle-income subgroup). Worked: 93.86% ≈ 94% for the schizophrenia data (printed as '93.86 × 100%') and 42.4% for the aspirin RD.",
+  "source_id": "khan2020",
+  "locator": "Ch6 p. 125; Ch7 p. 145; Fig. 6.4 p. 134",
+  "tags": "I2 I-négyzet Higgins heterogeneity heterogenitás inconsistency inkonzisztencia percentage százalék truncation csonkolás"
+ },
+ {
+  "k_id": "K-KHN0607-056",
+  "stage_id": "S09",
+  "kind": "convention",
+  "title": "Az I² szóbeli értelmezése, számszerű küszöbök nélkül",
+  "body": "The book interprets I² only verbally: 94% is 'very high', 68% 'high', and 42% 'some minor heterogeneity, but no real significant heterogeneity'. No numeric thresholds are given. [note: Cochrane Handbook v6 uses overlapping bands (0–40% might not be important, 30–60% moderate, 50–90% substantial, 75–100% considerable) and warns that I² depends on study precision and is not an absolute measure of heterogeneity.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 pp. 125, 133–134; Ch7 p. 145",
+  "tags": "I2 interpretation értelmezés threshold küszöb heterogeneity heterogenitás Cochrane bands sávok very high nagyon magas moderate mérsékelt"
+ },
+ {
+  "k_id": "K-KHN0607-057",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Nem szignifikáns Q ≠ homogenitás",
+  "body": "For the aspirin RD (k = 7) the book infers from Q = 10.42, P ≈ 0.11 and I² = 42% that there is no real heterogeneity and that the models should therefore agree, yet including τ² changes the significance of the result. Q has low power with few studies. Fix: report τ², I² (with a CI) and preferably a prediction interval, and judge heterogeneity by its magnitude and impact rather than by P(Q) > 0.10.",
+  "source_id": "khan2020",
+  "locator": "Ch7 p. 145; §7.8 p. 154",
+  "tags": "heterogeneity heterogenitás Q test Q-próba low power alacsony erő few studies kevés vizsgálat homogeneity homogenitás prediction interval predikciós intervallum"
+ },
+ {
+  "k_id": "K-KHN0607-058",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "Q számítása kerekített oszlopösszegekből",
+  "body": "The printed shortcut 7873.8 − 13244²/22509 gives 81.20, not the printed 81.44, which comes from unrounded sums; the computational form Σwθ² − (Σwθ)²/Σw is very sensitive to rounding of the column totals. Fix: compute Q as Σw_i(θ̂_i − θ̂_FE)² at full precision.",
+  "source_id": "khan2020",
+  "locator": "Ch6 p. 125",
+  "tags": "Cochran Q rounding kerekítés column sums oszlopösszegek numerical precision numerikus pontosság cancellation kiejtés heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0607-059",
+  "stage_id": "S09",
+  "kind": "check",
+  "title": "Q, df, P és I² ellenőrzése",
+  "body": "Recompute Q = Σw_i(θ̂_i − θ̂_FE)² from full-precision inputs, df = k − 1, the exact P from χ²_{k−1} (not a table bound) and I² = max(0, (Q − df)/Q)·100%, and check that the scale on which Q was computed (raw, logit or double arcsine) is stated.",
+  "source_id": "khan2020",
+  "locator": "Ch6 p. 125; Ch7 p. 145",
+  "tags": "check ellenőrzés Cochran Q I2 degrees of freedom szabadsági fok chi-square khí-négyzet recompute újraszámolás scale skála"
+ },
+ {
+  "k_id": "K-KHN0607-060",
+  "stage_id": "S10",
+  "kind": "example",
+  "title": "Alcsoport-elemzés jövedelmi szint szerint (MetaXL, FE)",
+  "body": "With MetaXL FE ('Schizophrenia Proportion FE by Income'), high-income studies give 0.63 (0.61, 0.64) with 67.6% of the weight and Q = 6.29, P = 0.04, I² = 68% ('high'); low/middle-income studies give 0.50 (0.48, 0.53) with 32.4%, Q = 0.48, P = 0.79, I² = 0% ('no heterogeneity'); overall 0.59 (0.57, 0.60) with Q = 80.18. The book concludes that prevalence is much higher in high-income countries and calls the overall value a compromise between the two groups. [note: with only three studies per subgroup I² is very imprecise, so I² = 0% with P = 0.79 does not show homogeneity, and 68% is not a reliable 'high'; Cochrane Handbook v6 (10.10.2) treats I² bands as rough guides and recommends reporting a CI for I².]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7 pp. 133–134; Fig. 6.4 p. 134",
+  "tags": "subgroup analysis alcsoport-elemzés income jövedelem prevalence prevalencia schizophrenia skizofrénia MetaXL fixed effect fix hatás heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0607-061",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "Alcsoport-különbség formális teszt nélkül",
+  "body": "The subgroup conclusion rests on comparing two pooled estimates; no test of subgroup differences is printed. Under FE it can be derived as Q_between = Q_total − ΣQ_within = 80.18 − 6.29 − 0.48 ≈ 73.4 on 1 df [derived, not in the source]. Fix: always report Q_between with its df and P, together with the within-subgroup heterogeneity.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7 pp. 133–134; Fig. 6.4 p. 134",
+  "tags": "subgroup alcsoport test of differences különbség-próba Q between interaction interakció heterogeneity heterogenitás fixed effect fix hatás"
+ },
+ {
+  "k_id": "K-KHN0607-062",
+  "stage_id": "S10",
+  "kind": "check",
+  "title": "Alcsoport-állítások ellenőrzése",
+  "body": "For each subgroup claim require a test of subgroup differences (Q_between, df = G − 1, P), the number of studies per subgroup and the within-subgroup Q and I², not just two separate pooled estimates. In the engine: moderators.subgroup_analysis.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7 pp. 133–134",
+  "tags": "check ellenőrzés subgroup alcsoport Q between test of differences különbség-próba number of studies vizsgálatszám heterogeneity heterogenitás"
+ },
+ {
+  "k_id": "K-KHN0607-063",
+  "stage_id": "S10",
+  "kind": "criterion",
+  "title": "Az alcsoport-eredmények hitelessége",
+  "body": "Judge subgroup findings by the number of studies per subgroup (here 3 vs 3), the presence of a formal interaction test and an a priori rationale, and possible confounding of a study-level ecological variable such as country income by era (studies from 1968 to 1996) and diagnostic criteria. Also check whether an FE subgroup analysis ignores residual heterogeneity (I² = 68% in the high-income group).",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7 pp. 133–134; Table 6.1 p. 123",
+  "tags": "criterion értékelési szempont subgroup credibility alcsoport hitelesség confounding zavaró tényező ecological ökológiai interaction test interakció-próba a priori előzetes"
+ },
+ {
+  "k_id": "K-KHN0607-064",
+  "stage_id": "S10",
+  "kind": "concept",
+  "title": "7. fejezet: nincs alcsoport; meta-regresszió egyik fejezetben sincs",
+  "body": "For the aspirin RD data the book states that there is not enough information to form realistic subgroups and refers to earlier chapters for the procedure. Neither chapter covers meta-regression, R² analogues or permutation tests.",
+  "source_id": "khan2020",
+  "locator": "Ch7 §7.7 p. 154",
+  "tags": "subgroup alcsoport meta-regression meta-regresszió not covered nem tárgyalt risk difference kockázatkülönbség aspirin aszpirin"
+ },
+ {
+  "k_id": "K-KHN0607-065",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Publikációs torzítás: csak hivatkozás az 5. fejezetre",
+  "body": "Both chapters say that assessing publication bias for a proportion or an RD is very similar to Ch 5 §5.9 (funnel plot or Doi plot) and do not repeat it; no formulas or decision thresholds are given here (the LFK index belongs to Ch 5). [note: the Doi plot and LFK index come from the book author's group and are not part of Cochrane guidance, which relies on funnel plots and Egger-type tests. Cochrane Handbook v6 (13.3.5.4) advises against asymmetry tests with fewer than 10 studies; both datasets here have only 6 and 7.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.8 p. 136; Ch7 §7.9 p. 155",
+  "tags": "publication bias publikációs torzítás funnel plot tölcsérdiagram Doi plot LFK index small-study effects kisvizsgálat-hatás proportion arány risk difference kockázatkülönbség"
+ },
+ {
+  "k_id": "K-KHN0607-066",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Tölcsér-aszimmetria prevalencia-metaanalízisben",
+  "body": "[external caveat] Funnel- and Doi-plot asymmetry methods are poorly suited to prevalence meta-analyses: a small prevalence study is not obviously less likely to be published when its result is 'null', and on the raw scale the SE depends on p itself, which can create artefactual asymmetry. Interpret funnel or Doi plots for proportions cautiously and preferably on a transformed scale. [note: not discussed in the source.]",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.8 p. 136 (not discussed in the source)",
+  "tags": "publication bias publikációs torzítás funnel asymmetry tölcsér-aszimmetria prevalence prevalencia Doi plot LFK proportion arány artefact műtermék"
+ },
+ {
+  "k_id": "K-KHN0607-067",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Érzékenységi elemzés: modellek összevetése és leave-one-out",
+  "body": "The only sensitivity-type analysis in these chapters is the side-by-side comparison of FE, RE and IVhet: the point estimate is stable, but CI width and, for the RD, significance change. When one study carries most of the FE/IVhet weight (Babigian 61.8% in Ch 6; ISIS-2 48.5% in Ch 7), a leave-one-out analysis is the natural additional check [extractor's inference, not in the source]; in the engine: sensitivity.leave_one_out.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.7.1 pp. 134–135; Fig. 6.1 p. 126; Ch7 §7.8 pp. 154–155; Fig. 7.1 p. 146",
+  "tags": "sensitivity analysis érzékenységi elemzés leave-one-out egy kihagyásos model comparison modellek összevetése influence befolyás dominant study domináns vizsgálat"
+ },
+ {
+  "k_id": "K-KHN0607-068",
+  "stage_id": "S12",
+  "kind": "criterion",
+  "title": "Súlykoncentráció",
+  "body": "Flag a review in which one study dominates the FE/IVhet weight (Babigian 61.8%; ISIS-2 48.5%), and expect a leave-one-out or influence analysis showing whether the conclusion depends on that study.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Fig. 6.1 p. 126; Ch7 Fig. 7.1 p. 146",
+  "tags": "criterion értékelési szempont weight concentration súlykoncentráció dominant study domináns vizsgálat leave-one-out influence befolyás"
+ },
+ {
+  "k_id": "K-KHN0607-069",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Robusztusság a modellek között",
+  "body": "Ask whether the conclusion holds under FE, RE and IVhet. When it does not, as in the aspirin RD data (FE P = 0.0013, RE P = 0.020, IVhet P = 0.060), downgrade the certainty of a 'significant benefit' claim and report the model dependence explicitly. [note: in GRADE this is mainly an imprecision judgement (the CI under plausible models crosses the null or a decision threshold), possibly with inconsistency. GRADE compares the CI with decision thresholds rather than relying on statistical significance.]",
+  "source_id": "khan2020",
+  "locator": "Ch7 §7.8 pp. 154–155",
+  "tags": "criterion értékelési szempont robustness robusztusság model dependence modellfüggés certainty bizonyosság GRADE significance szignifikancia fixed random IVhet"
+ },
+ {
+  "k_id": "K-KHN0607-070",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "A heterogenitás megítélése",
+  "body": "With I² ≈ 94% for prevalence, a single pooled prevalence means little on its own; expect the heterogeneity to be explored (subgroups, meta-regression) and quantified (τ², prediction interval). The source offers only subgroups. With I² ≈ 42% and k = 7, do not accept 'no heterogeneity' merely because P(Q) > 0.10.",
+  "source_id": "khan2020",
+  "locator": "Ch6 pp. 125, 133–134; Ch7 p. 145",
+  "tags": "criterion értékelési szempont heterogeneity heterogenitás inconsistency inkonzisztencia I2 prediction interval predikciós intervallum prevalence prevalencia GRADE"
+ },
+ {
+  "k_id": "K-KHN0607-071",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Abszolút hatás klinikai értelmezése",
+  "body": "An RD of about −0.013 (FE) to −0.015 (RE) means roughly 13–15 fewer deaths per 1000 treated and should be interpreted clinically with its CI, not only as 'significant'. The book's conclusion that aspirin significantly reduces the risk of death after a heart attack rests on the FE result alone. The FE CI (−0.0216, −0.0052) corresponds to about 5 to 22 fewer deaths per 1000. [note: GRADE and Cochrane Handbook v6 (14.1.5) usually derive absolute effects by applying a pooled relative effect (RR or OR) to an assumed baseline risk, because pooled RDs vary more with baseline risk.]",
+  "source_id": "khan2020",
+  "locator": "Ch7 p. 146; Ex 7.4–7.6 pp. 143–149",
+  "tags": "criterion értékelési szempont absolute effect abszolút hatás risk difference kockázatkülönbség per 1000 ezrelék clinical relevance klinikai jelentőség interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN0607-072",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Belső konzisztencia",
+  "body": "Numbers in the text, tables and forest plots must agree. This source has several discrepancies (misprinted variance and estimate, a wrong sign in a CI formula, mislabelled models and Q value), and a final review must not.",
+  "source_id": "khan2020",
+  "locator": "Ch6 pp. 125, 131; Ch7 pp. 141, 148–154",
+  "tags": "criterion értékelési szempont internal consistency belső konzisztencia reporting jelentés errors hibák tables táblázatok forest plot erdődiagram"
+ },
+ {
+  "k_id": "K-KHN0607-073",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "A MetaXL erdődiagram felépítése",
+  "body": "MetaXL forest plots list Study, effect (95% CI) and % Weight per row, end with an 'Overall' row whose diamond spans the CI limits, and print heterogeneity as 'Q=…, p=…, I2=…%'; the x-axis is labelled 'Prevalence' or 'RD'. Study estimates and CIs are identical across models; only the weights and the pooled row change.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Figs. 6.1–6.5 pp. 126–135; pp. 132, 136; Ch7 Figs. 7.1–7.3 pp. 146–153",
+  "tags": "forest plot erdődiagram MetaXL diamond rombusz weight súly reporting jelentés heterogeneity heterogenitás layout elrendezés"
+ },
+ {
+  "k_id": "K-KHN0607-074",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Modellenként jelentendő eredmények",
+  "body": "For each model the book reports the pooled estimate, its SE, the 95% CI, the z statistic with two-sided P, Cochran's Q (df, P), I² and the study weights, and gives the data table plus MetaXL and Stata code in the appendices so the analysis can be reproduced.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Ex 6.4–6.6 pp. 123–132; App. 6 p. 136; Ch7 Ex 7.4–7.7 pp. 143–153; App. 7 p. 155",
+  "tags": "reporting jelentés results eredmények pooled estimate összesített becslés standard error confidence interval konfidencia-intervallum Q I2 weights súlyok reproducibility reprodukálhatóság code kód"
+ },
+ {
+  "k_id": "K-KHN0607-075",
+  "stage_id": "S14",
+  "kind": "pitfall",
+  "title": "„p = 0.00” és „= 0” P-értékek",
+  "body": "MetaXL prints small P values as 'p=0.00', and the book writes results such as P(|Z| > 88.27) = 0. Fix: report P < 0.001 (or the exact small value), never 0.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Figs. 6.1–6.4 pp. 126–134; p. 124; Ch7 p. 144",
+  "tags": "P value P-érték reporting jelentés p=0.00 zero nulla format formátum less than 0.001"
+ },
+ {
+  "k_id": "K-KHN0607-076",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "P-értékek, skála és tizedesjegyek jelentése",
+  "body": "Check that P values are reported as '< 0.001' rather than '0.00' or '0', that the transformation used for proportions is stated, and that small RDs are reported with enough decimals (3 or more) for the CI limits to be unambiguous.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Figs. 6.1–6.4; Ch7 Figs. 7.1–7.3 pp. 146–153",
+  "tags": "check ellenőrzés reporting jelentés P value P-érték decimals tizedesjegyek transformation transzformáció risk difference kockázatkülönbség"
+ },
+ {
+  "k_id": "K-KHN0607-077",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Számformátum és kerekítési szokások",
+  "body": "MetaXL prints estimates, CIs, Q and P to 2 dp, I² as a whole percent and weights to 1 dp. The book's hand calculations round intermediates (τ² = 0.006325 and 0.000111; SE 0.0548; 0.5889 and 0.0390 for the RE CI), sometimes truncate CI limits (0.5753 → 0.57; 0.6653 → 0.66; 0.6953 → 0.69) and take P values from normal or χ² tables (0.0204 and 0.0602, against exact 0.0205 and 0.0599 for the book's own z values). Matching the book therefore needs a tolerance of about ±1 in the last printed digit.",
+  "source_id": "khan2020",
+  "locator": "Ch6 Ex 6.3–6.6 pp. 121–132; Ch7 Ex 7.6–7.7 pp. 148–153; Figs. 6.1–7.3",
+  "tags": "rounding kerekítés truncation csonkolás decimals tizedesjegyek tolerance tolerancia reproduction reprodukálás MetaXL P value P-érték"
+ },
+ {
+  "k_id": "K-KHN0607-078",
+  "stage_id": "S07",
+  "kind": "check",
+  "title": "Prevalencia nullhipotézis-tesztjeinek kiszűrése",
+  "body": "In a prevalence review, flag any hypothesis test of π = 0 (or a statement that a pooled prevalence 'is significant') as uninformative, as in every Ch 6 analysis. Require the pooled prevalence to be interpreted through its CI and its heterogeneity (τ², prediction interval), or tested against a stated, clinically meaningful reference value.",
+  "source_id": "khan2020",
+  "locator": "Ch6 §6.3 p. 121; §6.4–6.6 pp. 122–132",
+  "tags": "check ellenőrzés prevalence prevalencia hypothesis test hipotézisvizsgálat null nulla uninformative semmitmondó confidence interval konfidencia-intervallum reviewer bíráló"
+ },
+ {
+  "k_id": "K-KHN0607-079",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "A Freeman–Tukey visszatranszformálás buktatói",
+  "body": "[external; not discussed in the source] The double-arcsine scale used implicitly by MetaXL 'Prev' and by Stata metaprop_one with ftt needs Miller's inverse, whose result depends on the n plugged in: the harmonic mean of n_i, 1/Var of the pooled value or each study's n give different pooled CIs (here FE (0.58, 0.60) against (0.57, 0.60)). When study sizes differ greatly (here 7 to 3319) the back-transformed pooled value can be misleading. Detect: a FT analysis that does not state the n used, or results that change with it. Fix: report the inverse and its n, and run a binomial GLMM or a logit analysis as the main or a sensitivity analysis. [note: Schwarzer et al. (2019, Res Synth Methods) documented the problem; a GLMM is now commonly recommended for pooling proportions.]",
+  "source_id": "khan2020",
+  "locator": "Not in source; relates to Ch6 App. A6.2 p. 136 and Figs. 6.1–6.4 pp. 126–134",
+  "tags": "Freeman-Tukey double arcsine kettős arkuszszinusz back-transformation visszatranszformálás Miller harmonic mean harmonikus átlag GLMM logit proportion arány prevalence prevalencia external külső"
+ }
+]

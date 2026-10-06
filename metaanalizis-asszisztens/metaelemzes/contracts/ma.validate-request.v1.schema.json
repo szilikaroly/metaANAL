@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.validate-request:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.validate-request/v1 — validálási kérés, felület → motor (validate --request-json; terv 4.3)",
+  "type": "object",
+  "required": [
+    "schema",
+    "measure",
+    "table"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.validate-request/v1"
+    },
+    "measure": {
+      "type": "string"
+    },
+    "options": {
+      "type": "object",
+      "description": "a hatásméret-számítás opciói, az elemzési spec azonos nevű opcióival; a többi kulcsot a motor figyelmen kívül hagyja",
+      "properties": {
+        "label_col": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/label_col"
+        },
+        "smd_vtype": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/smd_vtype"
+        },
+        "j_method": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/j_method"
+        },
+        "cc": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/cc"
+        },
+        "cc_to": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/cc_to"
+        },
+        "drop00": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/drop00"
+        },
+        "md_vtype": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/md_vtype"
+        },
+        "glass_vtype": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/glass_vtype"
+        },
+        "gen_smd_vtype": {
+          "$ref": "urn:szk:contract:ma.analysis-spec:1#/properties/options/properties/gen_smd_vtype"
+        }
+      }
+    },
+    "table": {
+      "type": "object",
+      "required": [
+        "header",
+        "rows"
+      ],
+      "properties": {
+        "header": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "description": "nyers cellaszövegek ('12,3', '2,000', 'NR'); a tableio értelmezi őket (V003, V021, V023)"
+        },
+        "decimal_mark": {
+          "enum": [
+            ",",
+            ".",
+            null
+          ]
+        },
+        "delimiter": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "a forrásfájl elválasztója, ha ismert"
+        },
+        "lines": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "description": "soronként az 1-alapú fájlsor (a megállapítások 'line' mezőjéhez)"
+        }
+      }
+    },
+    "base_sha256": {
+      "$ref": "urn:szk:contract:common:1#/$defs/sha256"
+    }
+  }
+}

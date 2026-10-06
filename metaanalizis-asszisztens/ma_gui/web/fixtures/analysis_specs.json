@@ -1,0 +1,256 @@
+{
+ "description": "GET /api/specs/<név> — szk.ma.analysis-spec/v1 (4.4): a motor options_from_spec-jével teljessé tett, a motor validate_spec-je szerint érvényes spec-ek (options = a DEFAULTS kulcsai). PUT/új spec: dinamikus fixture (src/dev/analysis_fixtures.js). Ismeretlen név → 404.",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/specs/o1_primary",
+   "etag": "\"spec-o1_primary-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.analysis-spec/v1",
+    "data": {
+     "schema": "szk.ma.analysis-spec/v1",
+     "name": "o1_primary",
+     "outcome": "o1",
+     "purpose": "primary",
+     "prespecified": true,
+     "protocol_ref": "protokoll 9.2",
+     "parent": null,
+     "data": {
+      "path": "03_adatok/o1.csv"
+     },
+     "options": {
+      "measure": "RR",
+      "model": "random",
+      "tau2": null,
+      "ci": null,
+      "pi": "t_k-2",
+      "level": 0.95,
+      "smd_vtype": "LS",
+      "j_method": "exact",
+      "cc": 0.5,
+      "cc_to": "only0",
+      "drop00": null,
+      "mh": false,
+      "peto": false,
+      "rd_var": "sato",
+      "subgroup": "allokáció",
+      "common_tau2": false,
+      "moderators": [],
+      "metareg_test": "knha",
+      "cumulative": "év",
+      "title": null,
+      "left_label": null,
+      "right_label": null,
+      "label_col": "study",
+      "bias_min_k": 10,
+      "trimfill_estimator": "L0",
+      "md_vtype": "unequal",
+      "glass_vtype": "METAN",
+      "gen_smd_vtype": null,
+      "pft_backtransform": "harmonic",
+      "h_centre": "truncated",
+      "trimfill_trim_model": null,
+      "egger_ci_dist": "t",
+      "begg_method": "auto",
+      "begg_continuity": false,
+      "metareg_robust": false,
+      "outliers": false,
+      "metareg_tau2": null,
+      "subgroup_prespecified": false,
+      "plot_schema": "v2",
+      "plot_locale": "hu",
+      "svg_annotate": false
+     },
+     "filters": {
+      "include": [],
+      "exclude": []
+     },
+     "kb_refs": [
+      "D-S08-001",
+      "D-S09-007",
+      "D-S12-005"
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an23"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/specs/o1_primary_no_estim",
+   "etag": "\"spec-o1_primary_no_estim-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.analysis-spec/v1",
+    "data": {
+     "schema": "szk.ma.analysis-spec/v1",
+     "name": "o1_primary_no_estim",
+     "outcome": "o1",
+     "purpose": "sensitivity",
+     "prespecified": false,
+     "protocol_ref": null,
+     "parent": "o1_primary",
+     "data": {
+      "path": "03_adatok/o1.csv"
+     },
+     "options": {
+      "measure": "RR",
+      "model": "random",
+      "tau2": null,
+      "ci": null,
+      "pi": "t_k-2",
+      "level": 0.95,
+      "smd_vtype": "LS",
+      "j_method": "exact",
+      "cc": 0.5,
+      "cc_to": "only0",
+      "drop00": null,
+      "mh": false,
+      "peto": false,
+      "rd_var": "sato",
+      "subgroup": "allokáció",
+      "common_tau2": false,
+      "moderators": [],
+      "metareg_test": "knha",
+      "cumulative": "év",
+      "title": null,
+      "left_label": null,
+      "right_label": null,
+      "label_col": "study",
+      "bias_min_k": 10,
+      "trimfill_estimator": "L0",
+      "md_vtype": "unequal",
+      "glass_vtype": "METAN",
+      "gen_smd_vtype": null,
+      "pft_backtransform": "harmonic",
+      "h_centre": "truncated",
+      "trimfill_trim_model": null,
+      "egger_ci_dist": "t",
+      "begg_method": "auto",
+      "begg_continuity": false,
+      "metareg_robust": false,
+      "outliers": false,
+      "metareg_tau2": null,
+      "subgroup_prespecified": false,
+      "plot_schema": "v2",
+      "plot_locale": "hu",
+      "svg_annotate": false
+     },
+     "filters": {
+      "include": [],
+      "exclude": [
+       "estimated=igen"
+      ]
+     },
+     "kb_refs": [
+      "D-S12-003"
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an24"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/specs/o3_primary",
+   "etag": "\"spec-o3_primary-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.analysis-spec/v1",
+    "data": {
+     "schema": "szk.ma.analysis-spec/v1",
+     "name": "o3_primary",
+     "outcome": "o3",
+     "purpose": "primary",
+     "prespecified": true,
+     "protocol_ref": "protokoll 9.2",
+     "parent": null,
+     "data": {
+      "path": "03_adatok/o3.csv"
+     },
+     "options": {
+      "measure": "MD",
+      "model": "random",
+      "tau2": null,
+      "ci": null,
+      "pi": "t_k-2",
+      "level": 0.95,
+      "smd_vtype": "LS",
+      "j_method": "exact",
+      "cc": 0.5,
+      "cc_to": "only0",
+      "drop00": null,
+      "mh": false,
+      "peto": false,
+      "rd_var": "sato",
+      "subgroup": null,
+      "common_tau2": false,
+      "moderators": [],
+      "metareg_test": "knha",
+      "cumulative": null,
+      "title": null,
+      "left_label": null,
+      "right_label": null,
+      "label_col": "study",
+      "bias_min_k": 10,
+      "trimfill_estimator": "L0",
+      "md_vtype": "unequal",
+      "glass_vtype": "METAN",
+      "gen_smd_vtype": null,
+      "pft_backtransform": "harmonic",
+      "h_centre": "truncated",
+      "trimfill_trim_model": null,
+      "egger_ci_dist": "t",
+      "begg_method": "auto",
+      "begg_continuity": false,
+      "metareg_robust": false,
+      "outliers": false,
+      "metareg_tau2": null,
+      "subgroup_prespecified": false,
+      "plot_schema": "v2",
+      "plot_locale": "hu",
+      "svg_annotate": false
+     },
+     "filters": {
+      "include": [],
+      "exclude": []
+     },
+     "kb_refs": [
+      "D-S08-001"
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_an25"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/specs/*",
+   "status": 404,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "NOT_FOUND",
+     "http": 404,
+     "message": "Nincs ilyen elemzési spec (05_elemzes/specs/)."
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,1382 @@
+[
+ {
+  "item_id": "PREFLIGHT-01",
+  "checklist": "PREFLIGHT",
+  "section": "Helyi motor és tudásbázis",
+  "ord": 1,
+  "text": "A Python 3.8 vagy újabb elérhető (python vagy python3; a .claude/.venv is megfelel), és a metaanalízis-motor elindul. A motor csak a standard könyvtárat használja, külső csomag nem kell hozzá.",
+  "how_to_verify": "`python3 --version` (≥ 3.8); `python3 metaanalizis-asszisztens/ma.py --version` hiba nélkül kiírja a verziót (Windows-on `python`). Az eredményt ✅/⛔ jelöléssel rögzítsd a `00_protokoll/eszkozok_hozzaferesek.md`-ben.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-02",
+  "checklist": "PREFLIGHT",
+  "section": "Helyi motor és tudásbázis",
+  "ord": 2,
+  "text": "A motor önellenőrzése hibátlan: a metafor-referenciaértékekhez mért tesztek és a forráspéldák tesztjei lefutnak. Sikertelen önteszt mellett elemzés nem indulhat.",
+  "how_to_verify": "`python3 metaanalizis-asszisztens/ma.py selftest` kilépési kódja 0; a kimenetet (sikeres/sikertelen tesztek száma) mentsd a projekt `07_ellenorzes/` mappájába, és a projekt létrehozása után (PREFLIGHT-04) naplózd: `ma.py project log <mappa> --agent orchestrator --stage S00 --decision \"selftest OK\"`. A referenciaértékek a metafor csomagból, a forráspéldák a feltöltött könyvekből származnak (README: Validálás; pl. K-BOR07-072).",
+  "stage_id": "S00",
+  "source_ids": "engine,viechtbauer2010"
+ },
+ {
+  "item_id": "PREFLIGHT-03",
+  "checklist": "PREFLIGHT",
+  "section": "Helyi motor és tudásbázis",
+  "ord": 3,
+  "text": "A tudásbázis felépült: a döntési szabályok, tudásegységek, képletek, ellenőrzőlisták és eszközök lekérdezhetők; ha teljes szöveges keresésre is szükség lesz, a feltöltött könyvek és cikkek szövege helyben be van töltve.",
+  "how_to_verify": "`ma.py kb stats`: a knowledge, decision_rule, formula, checklist_item és tool darabszáma > 0; a `fulltext_by_source` a feltöltött forrásokra nem nulla. Ha nulla: a PDF-eket a gitignore-olt `tudasbazis/forrasok/` mappába kell tenni, majd `ma.py kb ingest metaanalizis-asszisztens/tudasbazis/forrasok`. Próba: `ma.py kb checklist PREFLIGHT` és `ma.py kb rules --stage S00` nem üres.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-04",
+  "checklist": "PREFLIGHT",
+  "section": "Helyi motor és tudásbázis",
+  "ord": 4,
+  "text": "A projektmappa és a projektnapló létrejött (00_protokoll … 07_ellenorzes almappák, sablonok, projekt.sqlite), illetve meglévő projektnél az állapot lekérdezhető.",
+  "how_to_verify": "Új projekt: `ma.py project init <mappa> --title \"…\" --question \"…\"`. Ellenőrzés: `ma.py project status <mappa>` hiba nélkül fut, és megvannak a `00_protokoll/protokoll.md`, `01_kereses/kereses_naplo.md`, `02_szures/prisma_folyamat.md`, `03_adatok/adatkinyeres.csv`, `04_torzitas_kockazat/rob.csv`, `06_kezirat/grade_sof.md` fájlok.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-05",
+  "checklist": "PREFLIGHT",
+  "section": "Helyi motor és tudásbázis",
+  "ord": 5,
+  "text": "A csapat áttekintette a tudásbázis forrásainak hatókörét és ismert hibáit, mielőtt döntést alapozna rájuk. A feltöltött könyvek és cikkek részlegesek, egyesek nem lektorált szürke irodalomnak számítanak, és a Khan 2020 a szerzők saját módszereit (IVhet, Doi-plot/LFK) ajánlja. Ahol egy forrás eltér a jelenlegi konszenzustól (Cochrane Handbook v6.5, GRADE, PRISMA 2020), a konszenzus az irányadó.",
+  "how_to_verify": "`ma.py kb search \"forrás hatóköre\"`, majd `ma.py kb show` a hatókör-egységekre: K-BOR09-001, K-BOR09-002, K-CHE16-001, K-KHA26-001, K-KHA26-002, K-SIM24-001, K-ZHA22-003, K-KHN0102-002; ismert forráshibák: K-KHN0102-004. Az `eszkozok_hozzaferesek.md` rögzítse, melyik forrás mire használható.",
+  "stage_id": "S00",
+  "source_ids": "borenstein2009,cheung2016,kharbach2026_tools,simplypsychology2024,zhang2022_jslhr,khan2020,cochrane_handbook"
+ },
+ {
+  "item_id": "PREFLIGHT-06",
+  "checklist": "PREFLIGHT",
+  "section": "Claude-konnektorok és webes hozzáférés",
+  "ord": 6,
+  "text": "A PubMed-konnektor (kötelező) működik: kell a felderítő kereséshez, a hivatkozások létezésének és bibliográfiai adatainak ellenőrzéséhez, valamint az absztrakt vagy teljes szöveg alapú szúrópróbához. Ha nem érhető el, az NCBI E-utilities vagy a DOI-feloldás a tartalék. Ha egyik sem működik, rögzíteni kell, hogy a hivatkozások ellenőrzése nem lehetséges.",
+  "how_to_verify": "Próbahívás egy ismert PMID-re: `mcp__PubMed__get_article_metadata` (helyben `mcp__claude_ai_PubMed…` néven is futhat), vagy `search_articles` egy ismert tárgyszóra: a válasz címet, szerzőket és DOI-t ad. Tartalék: WebFetch `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=<PMID>` vagy `https://api.crossref.org/works/<DOI>`. A konnektor kimenete csak kiinduló vagy kiegészítő forrás lehet, a dokumentált keresést nem helyettesíti (K-KHA26-008).",
+  "stage_id": "S00",
+  "source_ids": "engine,kharbach2026_tools"
+ },
+ {
+  "item_id": "PREFLIGHT-07",
+  "checklist": "PREFLIGHT",
+  "section": "Claude-konnektorok és webes hozzáférés",
+  "ord": 7,
+  "text": "A ClinicalTrials.gov-konnektor (ajánlott) és a WHO ICTRP webes felülete elérhető. Ezekkel lehet felkutatni a regisztrált, de nem közölt vizsgálatokat (publikációs és kimenet-közlési torzítás), és összevetni a regisztrált kimeneteket a közöltekkel.",
+  "how_to_verify": "Próbahívás: `mcp__Clinical_Trials__search_trials` egy ismert betegségre, vagy `get_trial_details` egy ismert NCT-azonosítóra. Tartalék: WebFetch `https://clinicaltrials.gov/api/v2/studies?query.term=<kifejezés>`. A WHO ICTRP-hez nincs konnektor: a keresést kézzel kell futtatni, és a `01_kereses/kereses_naplo.md`-ben dokumentálni. KB: K-KHN1113-002, K-KHN1113-003.",
+  "stage_id": "S00",
+  "source_ids": "cochrane_handbook,prisma2020,khan2020,engine"
+ },
+ {
+  "item_id": "PREFLIGHT-08",
+  "checklist": "PREFLIGHT",
+  "section": "Claude-konnektorok és webes hozzáférés",
+  "ord": 8,
+  "text": "A Claude Code előre engedélyezi a tudományos webes API-k lekérését (NCBI E-utilities, Europe PMC, Crossref, OpenAlex, ClinicalTrials.gov, PROSPERO, Unpaywall, Semantic Scholar), így az ellenőrző lépések nem akadnak el engedélykérésen.",
+  "how_to_verify": "A repó `.claude/settings.json` fájljának `permissions.allow` listájában szerepelnek a WebFetch-domainek (eutils.ncbi.nlm.nih.gov, europepmc.org, api.crossref.org, doi.org, api.openalex.org, clinicaltrials.gov, www.crd.york.ac.uk, api.unpaywall.org, api.semanticscholar.org) és a PubMed, illetve Clinical Trials MCP-eszközök. Próba: egy ismert DOI feloldása az `https://api.crossref.org/works/<DOI>` címen. Ha a felhasználó törölte a fájlt, minden ilyen lépés engedélyt kér; ezt jelezni kell.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-09",
+  "checklist": "PREFLIGHT",
+  "section": "Claude-konnektorok és webes hozzáférés",
+  "ord": 9,
+  "text": "A Consensus-konnektor (opcionális) csak a tervezés eleji tájékozódásra és a szókincs gyűjtésére használható. A dokumentált adatbázis-keresést nem helyettesíti, az MI-összefoglaló pedig nem bizonyíték.",
+  "how_to_verify": "Próbahívás: `mcp__Consensus__search` egy egyszerű kérdéssel. Ha a csapat használja, az `eszkozok_hozzaferesek.md` a szerepét „csak felderítés”-ként rögzíti. KB: K-KHA26-013, K-KHA26-032, K-KHA26-072.",
+  "stage_id": "S00",
+  "source_ids": "kharbach2026_tools"
+ },
+ {
+  "item_id": "PREFLIGHT-10",
+  "checklist": "PREFLIGHT",
+  "section": "Claude-konnektorok és webes hozzáférés",
+  "ord": 10,
+  "text": "Rögzített, hogyan kerülnek a teljes szövegű PDF-ek az ágensekhez: Google Drive-konnektoron át (opcionális) vagy helyi projektmappából. Szerzői jogvédett teljes szöveg nem kerülhet verziókövetésbe.",
+  "how_to_verify": "Drive esetén próbahívás: `mcp__Google_Drive__search_files` a projekt PDF-mappájára. Helyi mappánál a PDF-ek egy gitignore-olt almappában vagy a `tudasbazis/forrasok/` alatt vannak, és a `git check-ignore -v <fájl>` parancs találatot ad.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-11",
+  "checklist": "PREFLIGHT",
+  "section": "Bibliográfiai adatbázisok és teljes szöveg",
+  "ord": 11,
+  "text": "A végleges, reprodukálható MEDLINE-kereséshez rögzített a felület (PubMed webfelület vagy Ovid MEDLINE) és a találatok exportformátuma (RIS, nbib vagy MEDLINE). A PubMed-konnektor felderítésre és ellenőrzésre való, ezért a dokumentált keresés felületét és exportját külön kell rögzíteni.",
+  "how_to_verify": "Próbakeresés a kiválasztott felületen, majd egy kis export letöltése és importálása a hivatkozáskezelőbe. A felület neve a `01_kereses/kereses_naplo.md` 1. sorában szerepel. KB: K-CHE16-011, K-MOR20-011.",
+  "stage_id": "S00",
+  "source_ids": "cochrane_handbook,prisma_s,cheung2016,morvaridzadeh2020"
+ },
+ {
+  "item_id": "PREFLIGHT-12",
+  "checklist": "PREFLIGHT",
+  "section": "Bibliográfiai adatbázisok és teljes szöveg",
+  "ord": 12,
+  "text": "Az Embase elérhető intézményi előfizetésen át (Embase.com vagy Ovid). Orvosi, különösen gyógyszeres vagy más beavatkozásos áttekintésnél a Cochrane-elvárás szerint (Cochrane Handbook 4. fejezet) a MEDLINE és a CENTRAL mellett kötelező minimumforrás.",
+  "how_to_verify": "Bejelentkezés intézményi hálózatról vagy EZproxy-n át, próbakeresés és RIS-export. A felület a `kereses_naplo.md` 2. sorában szerepel. Ha nincs hozzáférés: ⛔, és meg kell keresni az intézményi könyvtárat. Ha a hozzáférés végleg hiányzik, a protokoll 5. pontjában és a PRISMA-S jelentésben keresési korlátként kell dokumentálni; Google Scholar vagy MI-kereső nem pótolja. KB: K-MOR20-011, K-CHE16-011.",
+  "stage_id": "S00",
+  "source_ids": "cochrane_handbook,prisma_s,amstar2,morvaridzadeh2020,cheung2016"
+ },
+ {
+  "item_id": "PREFLIGHT-13",
+  "checklist": "PREFLIGHT",
+  "section": "Bibliográfiai adatbázisok és teljes szöveg",
+  "ord": 13,
+  "text": "A Cochrane Library elérhető. Beavatkozásos áttekintésnél a CENTRAL (kontrollált vizsgálatok regisztere) kötelező forrás, a Cochrane Database of Systematic Reviews pedig a duplikáció-ellenőrzéshez kell.",
+  "how_to_verify": "Próbakeresés a Cochrane Library CENTRAL fülén és RIS-export. A teljes hozzáférés nemzeti vagy intézményi licenchez kötött, ezt az intézménynél kell ellenőrizni. A duplikáció-ellenőrzés eredménye (CDSR, PROSPERO, PubMed) a `protokoll.md` 2. pontjába kerül. KB: K-MOR20-011.",
+  "stage_id": "S00",
+  "source_ids": "cochrane_handbook,morvaridzadeh2020"
+ },
+ {
+  "item_id": "PREFLIGHT-14",
+  "checklist": "PREFLIGHT",
+  "section": "Bibliográfiai adatbázisok és teljes szöveg",
+  "ord": 14,
+  "text": "A Web of Science Core Collection vagy a Scopus elérhető (ajánlott) a multidiszciplináris lefedettséghez és az előre-hátra hivatkozáskövetéshez. Magyarországon jellemzően az EISZ-en keresztül érhető el; ezt az intézménynél kell ellenőrizni.",
+  "how_to_verify": "Bejelentkezés és próbakeresés; a hivatkozó közlemények listája („Cited by” / „Times cited”) megjelenik, és az export (RIS/CSV) működik. KB: K-MOR20-011, K-KHA26-014, K-KHA26-023.",
+  "stage_id": "S00",
+  "source_ids": "morvaridzadeh2020,kharbach2026_tools,cochrane_handbook,prisma_s"
+ },
+ {
+  "item_id": "PREFLIGHT-15",
+  "checklist": "PREFLIGHT",
+  "section": "Bibliográfiai adatbázisok és teljes szöveg",
+  "ord": 15,
+  "text": "Ha a protokoll előírja, a témához illő szakadatbázisok is elérhetők, például a PsycINFO pszichológiai vagy pszichiátriai, a CINAHL ápolástudományi kérdésnél.",
+  "how_to_verify": "A `protokoll.md` 5. pontjában felsorolt minden adatbázisban próbakeresés és export. A hiányzó hozzáférés ⛔, és keresési korlátként kell dokumentálni. KB: K-SIM24-014, K-ZHA22-015, K-CHE16-011.",
+  "stage_id": "S00",
+  "source_ids": "simplypsychology2024,zhang2022_jslhr,cheung2016,cochrane_handbook"
+ },
+ {
+  "item_id": "PREFLIGHT-16",
+  "checklist": "PREFLIGHT",
+  "section": "Bibliográfiai adatbázisok és teljes szöveg",
+  "ord": 16,
+  "text": "A teljes szövegek beszerzése biztosított: intézményi előfizetés, EZproxy/LibKey, könyvtárközi kérés, nyílt hozzáférésű változat (Unpaywall, Europe PMC, repozitórium) vagy szerzői megkeresés. A be nem szerezhető jelentéseket a PRISMA 2020 folyamatábra „nem elérhető” dobozában kell számolni, és jogosultságukról absztrakt vagy MI-összefoglaló alapján nem lehet dönteni.",
+  "how_to_verify": "Szúrópróba: 3–5 várhatóan releváns közlemény teljes szövegének letöltése. Unpaywall-próba: `https://api.unpaywall.org/v2/<DOI>?email=<e-mail-cím>`. A `02_szures/prisma_folyamat.md`-ben az F (nem elérhető) doboz kitöltve, és G = E − F. KB: K-KHA26-018, K-KHA26-054, K-KHA26-084.",
+  "stage_id": "S00",
+  "source_ids": "prisma2020,kharbach2026_tools,engine"
+ },
+ {
+  "item_id": "PREFLIGHT-17",
+  "checklist": "PREFLIGHT",
+  "section": "Fiókok, regisztráció és munkaeszközök",
+  "ord": 17,
+  "text": "Van ingyenes PROSPERO-fiók vagy OSF Registries-fiók a protokoll regisztrálásához, és a regisztráció a szűrés megkezdése előtt megtörténik. A PROSPERO-ban duplikáció-ellenőrzés is kell: fut-e már hasonló áttekintés.",
+  "how_to_verify": "A bejelentkezés sikerül a PROSPERO (www.crd.york.ac.uk/PROSPERO) vagy az OSF felületén. A PROSPERO-keresés eredménye a `protokoll.md` 2. pontjába, a tervezett regisztrációs dátum (a szűrés előtt) az 1. pontjába kerül. KB: K-ZHA22-012, K-MOR20-006, K-MOR20-007, K-KHN0102-010.",
+  "stage_id": "S00",
+  "source_ids": "prisma2020,prisma_p,amstar2,zhang2022_jslhr,morvaridzadeh2020,khan2020"
+ },
+ {
+  "item_id": "PREFLIGHT-18",
+  "checklist": "PREFLIGHT",
+  "section": "Fiókok, regisztráció és munkaeszközök",
+  "ord": 18,
+  "text": "Van szűrőplatform a kettős, vak, független szűréshez: Rayyan (ingyenes fiók) vagy Covidence (előfizetés vagy intézményi licenc). A projekt létrehozva, a vak mód bekapcsolva, a második bíráló meghívva, a kizárási okok listája előre rögzítve, a döntések és okok pedig exportálhatók.",
+  "how_to_verify": "A platform beállításaiban a vak mód be van kapcsolva, és legalább két bíráló szerepel. Próbaimport egy kis RIS-fájllal, majd a döntések CSV-exportja: ebből számolhatók a PRISMA-dobozok (C, illetve H okonként). Az eszköz neve, csomagja és a használat dátuma az `eszkozok_hozzaferesek.md`-be kerül. KB: K-KHA26-033, K-KHA26-034, K-KHA26-037, K-KHN0102-017.",
+  "stage_id": "S00",
+  "source_ids": "kharbach2026_tools,khan2020,prisma2020,cochrane_handbook"
+ },
+ {
+  "item_id": "PREFLIGHT-19",
+  "checklist": "PREFLIGHT",
+  "section": "Fiókok, regisztráció és munkaeszközök",
+  "ord": 19,
+  "text": "A hivatkozáskezelő (ajánlott: az ingyenes Zotero) az egyetlen fő (master) könyvtár. A rekordok RIS, BibTeX vagy CSV formátumban mozognak az eszközök között, és minden oda-vissza mozgatás után ellenőrizni kell, hogy a szükséges mezők megmaradtak: absztrakt, DOI/PMID, jegyzetek, kizárási okok, PDF.",
+  "how_to_verify": "Próbakör: 10 rekord exportja egy adatbázisból, majd Zotero → Rayyan/Covidence → vissza, végül a mezők összevetése. A nyers adatbázis-exportok változatlanul a `01_kereses/` mappában maradnak. KB: K-KHA26-006, K-KHA26-007, K-SIM24-023, K-ZHA22-017.",
+  "stage_id": "S00",
+  "source_ids": "kharbach2026_tools,simplypsychology2024,zhang2022_jslhr,prisma_s"
+ },
+ {
+  "item_id": "PREFLIGHT-20",
+  "checklist": "PREFLIGHT",
+  "section": "Fiókok, regisztráció és munkaeszközök",
+  "ord": 20,
+  "text": "A csapat és a szerepek rögzítettek: két független emberi bíráló a szűréshez, az adatkinyeréshez és a torzítási kockázat értékeléséhez, harmadik fél a vitás esetekre, továbbá tartalmi szakértő, keresési (információs) szakember és statisztikus, valamint – ha nem angol nyelvű közlemények várhatók – a nyelvet értő segítő, mert a kulcsadatok ellenőrzésére a gépi fordítás nem elég. Az asszisztens előkészít és jelzi az eltéréseket, de nem számít a két független bíráló egyikének.",
+  "how_to_verify": "A `protokoll.md` 1. pontja („Szerzők, szerepek”) név szerint kitöltve, és a szűrőplatformon mindkét bíráló fiókja aktív. KB: K-KHN0102-007, K-KHN0102-021, K-SIM24-028, K-KHA26-056.",
+  "stage_id": "S00",
+  "source_ids": "cochrane_handbook,prisma2020,amstar2,khan2020,simplypsychology2024,kharbach2026_tools"
+ },
+ {
+  "item_id": "PREFLIGHT-20a",
+  "checklist": "PREFLIGHT",
+  "section": "Fiókok, regisztráció és munkaeszközök",
+  "ord": 21,
+  "text": "A GRADE-értékeléshez és a Summary of Findings táblához a GRADEpro GDT (ingyenes fiók) opcionális, nem előfeltétel: a `06_kezirat/grade_sof.md` sablon és a `ma.py project grade` napló elegendő. Ha a csapat GRADEpro-t használ, az ottani ítéleteknek kimenetenként egyezniük kell a projektnaplóval.",
+  "how_to_verify": "Ha használják: bejelentkezés és egy próbaprojekt létrehozása; az `eszkozok_hozzaferesek.md` jelöli: ✅ / ⛔ / nem szükséges. Az S13-ban a GRADEpro-export és a `ma.py project list <mappa> grades` kimenetenként ugyanazt a bizonyossági szintet és leminősítési okot mutatja. Az eszköz adatai: `ma.py kb sql \"SELECT tool_id, name, access FROM tool WHERE name LIKE '%GRADEpro%'\"`.",
+  "stage_id": "S00",
+  "source_ids": "grade_handbook,engine"
+ },
+ {
+  "item_id": "PREFLIGHT-21",
+  "checklist": "PREFLIGHT",
+  "section": "Szoftverek",
+  "ord": 22,
+  "text": "Az R és a metafor csomag (ajánlott; mellette a meta csomag) telepítve van, a verziók rögzítve. Független keresztellenőrzésre szolgál, és kötelező, ha a projektnek olyan modell kell, amelyet a motor nem támogat: függő hatásméretek többszintű modellje (rma.mv), hálózati, dózis–hatás, diagnosztikus bivariáns, bayesi vagy IPD-metaanalízis.",
+  "how_to_verify": "`Rscript -e 'packageVersion(\"metafor\"); packageVersion(\"meta\")'` kiírja a verziókat, ezek az `eszkozok_hozzaferesek.md`-be kerülnek. Ha a fő elemzés a motor ismert korlátaiba ütközik (README: Ismert korlátok), és R nem érhető el: ⛔, és ezt a protokoll véglegesítése előtt jelezni kell a felhasználónak. KB: K-ZHA22-001, K-CHE16-003, K-CHE16-042, K-KHN09-067.",
+  "stage_id": "S00",
+  "source_ids": "viechtbauer2010,zhang2022_jslhr,cheung2016,khan2020,engine"
+ },
+ {
+  "item_id": "PREFLIGHT-22",
+  "checklist": "PREFLIGHT",
+  "section": "Szoftverek",
+  "ord": 23,
+  "text": "Elérhető egy PDF-szövegkinyerő eszköz (ajánlott): a `pypdf` Python-csomag vagy a poppler `pdftotext` programja. Ez kell a teljes szövegek tudásbázisba töltéséhez (`kb ingest`) és a forrásbeli szúrópróbákhoz.",
+  "how_to_verify": "`python3 -c \"import pypdf; print(pypdf.__version__)\"` vagy `pdftotext -v`; ezután a `ma.py kb ingest <fájl>` hiba nélkül fut, és a `ma.py kb stats` szerint a `fulltext_by_source` értéke nő.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-23",
+  "checklist": "PREFLIGHT",
+  "section": "Szoftverek",
+  "ord": 24,
+  "text": "A feltöltött források szoftvereinek (Comprehensive Meta-Analysis, MetaXL, Stata admetan/metan, RevMan, SPSS-makrók) beszerzése nem előfeltétel. A motor elvégzi a páronkénti közös, véletlen és IVhet hatású, MH/Peto, alcsoport-, meta-regressziós és torzítás-elemzéseket; ezek a programok legfeljebb a könyvi példák reprodukálásához kellenek.",
+  "how_to_verify": "Az elemzési tervben (`00_protokoll/elemzesi_terv.md`) a fő eszköz az `ma.py analyze`, a keresztellenőrzésé az R metafor. Könyvi számok reprodukálásakor a forrás beállításai dokumentáltak (`--tau2 DL --ci z`, illetve `--model ivhet`). KB: K-BOR09-004, K-BOR09-005, K-KHN0102-003, K-KHN0102-085, K-ZHA22-002, K-MOR20-002.",
+  "stage_id": "S00",
+  "source_ids": "borenstein2009,khan2020,zhang2022_jslhr,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "PREFLIGHT-24",
+  "checklist": "PREFLIGHT",
+  "section": "Szoftverek",
+  "ord": 25,
+  "text": "Ha várhatóan lesz olyan közlemény, amely az eredményt csak grafikonon adja meg, elérhető egy ábra-digitalizáló eszköz (pl. WebPlotDigitizer). Az így nyert értékeket becsültként kell jelölni.",
+  "how_to_verify": "Próbadigitalizálás egy ismert ábrán. A kinyerési sablonban az `estimated` oszlop „igen” értékű és a `megjegyzes` oszlop „digitalizált” bejegyzést kap az ilyen soroknál (a motor V018-cal jelzi őket). KB: K-ZHA22-022, K-ZHA22-027.",
+  "stage_id": "S00",
+  "source_ids": "zhang2022_jslhr,engine"
+ },
+ {
+  "item_id": "PREFLIGHT-25",
+  "checklist": "PREFLIGHT",
+  "section": "API-kulcsok és hitelesítő adatok",
+  "ord": 26,
+  "text": "NCBI E-utilities API-kulcs (opcionális; sok automatizált PubMed-lekérésnél vagy a composer plugin használatakor ajánlott): másodpercenként 3 helyett 10 lekérést enged. A kulcs a `~/.config/ncbi/env` fájlban van, soha nem a repóban vagy a projektmappában.",
+  "how_to_verify": "Kulcs igénylése: NCBI-fiók → API Key Management. Próba: egy E-utilities kérés `&api_key=<kulcs>` paraméterrel hibátlan választ ad. A `git grep -n api_key` a repóban nem talál kulcsot, a fájl a home-könyvtárban van.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-26",
+  "checklist": "PREFLIGHT",
+  "section": "API-kulcsok és hitelesítő adatok",
+  "ord": 27,
+  "text": "Egyéb opcionális kulcsok: Scopus/Elsevier API-kulcs (dev.elsevier.com, intézményi IP-címről) a Scopus-találatszámok programból való lekéréséhez, és Semantic Scholar API-kulcs a hivatkozás-hálózathoz. Az OpenAlex, a Crossref és az Unpaywall kulcs nélkül, e-mail-cím megadásával (polite pool) használható.",
+  "how_to_verify": "Csak akkor kell, ha a projekt használja: próbakérés a kulccsal. A kulcsok környezeti változóban vagy home-könyvtári fájlban vannak, nem verziókövetve; OpenAlex-, Crossref- és Unpaywall-kéréseknél a `mailto`/`email` paraméter meg van adva. Az `eszkozok_hozzaferesek.md` tételenként jelöli: ✅ / ⛔ / nem szükséges.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-27",
+  "checklist": "PREFLIGHT",
+  "section": "Pluginok (ha telepítve vannak)",
+  "ord": 28,
+  "text": "A composer plugin a PRISMA 2020 számokat (prisma-flow.json), a PRISMA-S keresési naplót, a PROSPERO-rekordot és a bibliográfiai validálást adja. Előfeltétele a biopython és a requests csomag, valamint NCBI-hitelesítés a `~/.config/ncbi/env` fájlban. Ha a csapat használja, a PRISMA-számok egyetlen forrása a composer, a `02_szures/prisma_folyamat.md` pedig csak ellenőrzésre szolgál.",
+  "how_to_verify": "`python3 -c \"import Bio, requests\"` hiba nélkül fut, és a `~/.config/ncbi/env` létezik. A composer-export után a `ma.py prisma check --composer prisma-flow.json` lefut; konzisztens számoknál a kilépési kód 0.",
+  "stage_id": "S00",
+  "source_ids": "engine,prisma2020,prisma_s"
+ },
+ {
+  "item_id": "PREFLIGHT-28",
+  "checklist": "PREFLIGHT",
+  "section": "Pluginok (ha telepítve vannak)",
+  "ord": 29,
+  "text": "A validator plugin a RoB-eszközt választja és ellenőrzi a kitöltést, összesíti a GRADE- és AMSTAR 2-értékelést, és kezeli a PROBAST+AI / TRIPOD+AI eszközöket. Ismert hibája, hogy a GRADE-összesítés a publikációs torzítás doménjén a „suspected” és a „strongly suspected” választ nem minősíti le; ezt a domént kézzel kell ellenőrizni.",
+  "how_to_verify": "A plugin szerepel a Claude Code pluginlistájában. Az ismert hibát az `eszkozok_hozzaferesek.md` rögzíti, és az S13-ban a ma-ertekelo kézzel ellenőrzi a publikációs torzítás doménjét (`ma.py project grade … --publication-bias …`). A motor saját GRADE-tára (v1: `ma.py grade save|record`, munkapad GRADE-lap) ezt a hibát nem örökli: a „suspected” feloldatlan, amíg 0-t vagy −1-et nem választasz indoklással (4. döntés; X019). A RoB-, PROBAST+AI-, TRIPOD+AI- és AMSTAR 2-értékelést a motor natív eszközeivel is végezheted (`ma.py appraisal instruments`).",
+  "stage_id": "S00",
+  "source_ids": "engine,grade_handbook"
+ },
+ {
+  "item_id": "PREFLIGHT-29",
+  "checklist": "PREFLIGHT",
+  "section": "Pluginok (ha telepítve vannak)",
+  "ord": 30,
+  "text": "A figure-forge és a presubmit plugin opcionális: az előbbi a motor SVG-ábráit auditálja, az utóbbi a kéziratot ellenőrzi beadás előtt. Előfeltételek: a figure-forge-hoz matplotlib, numpy, pandas, lxml, python-pptx és Pillow; a presubmithez python-docx, PDF-hez PyMuPDF vagy pdftotext.",
+  "how_to_verify": "`python3 -c \"import matplotlib, numpy, pandas, lxml, pptx, PIL\"` (figure-forge) és `python3 -c \"import docx\"` (presubmit) hiba nélkül fut. A forest és funnel ábrákat a motor rajzolja, a figure-forge csak auditálja őket.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-30",
+  "checklist": "PREFLIGHT",
+  "section": "MI- és felfedező eszközök",
+  "ord": 31,
+  "text": "Ha a projekt MI-alapú vagy hivatkozásgráf-eszközt használ (pl. Elicit, SciSpace, Scite, ResearchRabbit, Litmaps, Connected Papers, R Discovery, Consensus), mindegyiknél rögzített a név, a csomag vagy előfizetési szint, a verzió (ha van), a használat dátumai és a szerep (felderítés, hivatkozáskövetés vagy kiegészítő forrás). A gyártói lefedettségi számok nem bizonyítják a keresés teljességét; a funkciók és az árak változnak, ezért használat előtt újra ellenőrizni kell őket.",
+  "how_to_verify": "Az `00_protokoll/eszkozok_hozzaferesek.md` MI-eszköz-táblázata kitöltve (név, csomag, dátum, szerep), és a keresési napló ezeket kiegészítő forrásként jelöli. KB: K-KHA26-003, K-KHA26-004, K-KHA26-005, K-KHA26-013.",
+  "stage_id": "S00",
+  "source_ids": "kharbach2026_tools,prisma_s,prisma2020"
+ },
+ {
+  "item_id": "PREFLIGHT-31",
+  "checklist": "PREFLIGHT",
+  "section": "Adatvédelem és szerzői jog",
+  "ord": 32,
+  "text": "Betegszintű vagy személyazonosításra alkalmas adat, illetve szerzői jogvédett teljes szöveg nem kerülhet verziókövetésbe. Ezt a gyökér .gitignore mintái (`*_[Pp][Hh][Ii]`, `*_[Pp][Hh][Ii][._-]*`, `[Pp][Hh][Ii]_*`, `*.[Pp][Hh][Ii].*`, `*beteg_adat*`) biztosítják — a betegszintű fájl nevében a PHI (kis- vagy nagybetűvel) önálló tagként, elválasztóval (`_`, `.` vagy `-`) álljon, vagy a név tartalmazza a `beteg_adat` tagot; a más szó részeként álló „phi” (pl. `dengue_philippines`) nem számít —, a forrásdokumentumok pedig csak a gitignore-olt `tudasbazis/forrasok/` mappában lehetnek. Érzékeny adattal nem szabad a vault által GitHubra szinkronizált `~/Documents/claude` alatt dolgozni.",
+  "how_to_verify": "A `git check-ignore -v <érzékeny fájl>` találatot ad, a projekt rendes fájljaira (pl. `<mappa>/00_protokoll/protokoll.md`, `<mappa>/03_adatok/adatkinyeres.csv`, `<mappa>/projekt.sqlite`) viszont nem — a „phi” betűsort más szó részeként tartalmazó mappanévnél (pl. `dengue_philippines`) sem — (különben a projekt nem kerül verziókövetésbe), és a `git status --porcelain` nem mutat PDF-et, tudásbázis-sqlite-ot vagy betegadatot. A projektmappa nem a `~/Documents/claude` alatt van, vagy ott a .gitignore kizárja az érzékeny fájlokat.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-32",
+  "checklist": "PREFLIGHT",
+  "section": "Összegzés és kapu",
+  "ord": 33,
+  "text": "Elkészült a projektre szabott S00 eszköz- és hozzáféréslista (`00_protokoll/eszkozok_hozzaferesek.md`). Minden tétel jelölést kap (✅ elérhető, ⛔ hiányzik, vagy nem szükséges), a hiányzóknál pedig ott a teendő: hol és kinél kell engedélyezni.",
+  "how_to_verify": "A fájl létezik, és minden kötelező tételt lefed: PubMed vagy tartaléka, Embase és CENTRAL (beavatkozásos orvosi áttekintésnél), teljes szöveg, PROSPERO/OSF, Rayyan/Covidence, Python és selftest. A ma-tervezo a `ma.py kb checklist PREFLIGHT` és a `ma.py kb sql \"SELECT tool_id, name, access FROM tool\"` alapján állította össze.",
+  "stage_id": "S00",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "PREFLIGHT-33",
+  "checklist": "PREFLIGHT",
+  "section": "Összegzés és kapu",
+  "ord": 34,
+  "text": "Ha kötelező tétel hiányzik, az S03 keresés nem indulhat. A hiányt megállapításként kell rögzíteni, és vagy pótolni kell, vagy indoklással keresési korlátként elfogadni (a protokollban és a PRISMA-S jelentésben dokumentálva).",
+  "how_to_verify": "A `ma.py project list <mappa> findings --stage S00 --status open` eredménye üres, vagy minden nyitott tételhez tartozik döntés (`ma.py project log <mappa> --agent orchestrator --stage S00 --decision \"keresési korlát elfogadva: …\"`). A preflight lezárása: `ma.py project log <mappa> --agent orchestrator --stage S00 --decision \"preflight kész\"`.",
+  "stage_id": "S00",
+  "source_ids": "engine,amstar2,prisma_s"
+ },
+ {
+  "item_id": "REVIEWER-01",
+  "checklist": "REVIEWER",
+  "section": "Általános – minden checkpointnál",
+  "ord": 1,
+  "text": "Minden checkpoint elején újra kell ellenőrizni a korábbi, még nyitott megállapításokat: kijavították-e őket, és megvan-e a javítás bizonyítéka. Ezután be kell tölteni az adott szakasz ellenőrzői szabályait és ezt az ellenőrzőlistát.",
+  "how_to_verify": "`ma.py project status <mappa>`; `ma.py project list <mappa> findings --status open`; a részletek: `ma.py project show <mappa> finding <id>`. Szabályok: `ma.py kb rules --stage <S..> --agent reviewer`; lista: `ma.py kb checklist REVIEWER`. Javított tételnél az orkesztrátor megkapja a `project resolve`-hoz szükséges adatokat: mi változott, hol, és mi a bizonyíték.",
+  "stage_id": "S01",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "REVIEWER-02",
+  "checklist": "REVIEWER",
+  "section": "Általános – minden checkpointnál",
+  "ord": 2,
+  "text": "Minden megállapítás a súlyossági skála szerint besorolt. Blocker: hibás vagy nem reprodukálható eredmény, kitalált vagy ellenőrizetlen adat vagy hivatkozás, egységelemzési hiba, rossz irányú hatás, illetve dokumentálatlan protokolleltérés a fő elemzésben. Major: a következtetést vagy a PRISMA-megfelelést érdemben érintő hiány. Ezen felül minor és info. Minden megállapításhoz konkrét bizonyíték kell (fájl és sor, results.json-mező, forrás oldala vagy táblázata), és csak létező tudásbázis-azonosító adható meg.",
+  "how_to_verify": "`ma.py project finding <mappa> --agent reviewer --severity … --stage S.. --title \"…\" --evidence \"…\" --kb <ID> --strict` (a `--strict` ismeretlen azonosítónál hibát ad). Ítélet: `ma.py project checkpoint <mappa> --stage S.. --agent reviewer --verdict PASS|PASS_WITH_FIXES|FAIL`; nyitott blocker mellett a napló elutasítja a PASS-t. Ha a tudásbázis nem fedi le a kérdést, ezt ki kell mondani, és azonosító nélkül megadni a döntés alapját (forrás és oldal).",
+  "stage_id": "S01",
+  "source_ids": "engine"
+ },
+ {
+  "item_id": "REVIEWER-03",
+  "checklist": "REVIEWER",
+  "section": "S01 Kutatási kérdés",
+  "ord": 3,
+  "text": "A kérdés kifejezett PICO(S)/PECO-blokkban szerepel: populáció, beavatkozás vagy expozíció, összehasonlítás, kimenetek (definícióval, mérőeszközzel, időponttal) és vizsgálattípus. A be- és kizárási kritériumok ezzel ellentmondásmentesek.",
+  "how_to_verify": "`protokoll.md` 3. pont (a PICO-táblázat minden sora kitöltve) ↔ 4. pont (kritériumok). Ha a PICO hiányzik, vagy csak utólag rekonstruálható: major. KB: K-MOR20-004, K-ZHA22-013, K-KHN0102-008.",
+  "stage_id": "S01",
+  "source_ids": "prisma2020,prisma_p,amstar2,morvaridzadeh2020,zhang2022_jslhr,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-04",
+  "checklist": "REVIEWER",
+  "section": "S01 Kutatási kérdés",
+  "ord": 4,
+  "text": "A duplikáció-ellenőrzés és az indoklás dokumentált: a kérdést még nem válaszolta meg friss, megfelelő minőségű szisztematikus áttekintés (vagy indokolt a frissítés), és várhatóan elég vizsgálat áll rendelkezésre.",
+  "how_to_verify": "A `protokoll.md` 2. pontjában dátummal és eredménnyel szerepel a PROSPERO-, a Cochrane Library (CDSR) és a PubMed felderítő keresés. A talált korábbi áttekintések hivatkozásai PubMed vagy DOI alapján ellenőrzöttek. KB: K-KHN0102-011, K-KHN0102-008.",
+  "stage_id": "S01",
+  "source_ids": "prisma2020,cochrane_handbook,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-05",
+  "checklist": "REVIEWER",
+  "section": "S01 Kutatási kérdés",
+  "ord": 5,
+  "text": "Az összevonandó beavatkozások, kimenetek és populációk fogalmilag elég hasonlók (nem „almák és körték”). Ha nem, a terv külön szintéziseket vagy előre tervezett alcsoportokat ír elő, és a következtetés nem általánosít a meghatározott hatókörön túl. Objektíven mért és önbevallásos kimenet indoklás nélkül nem vonható össze.",
+  "how_to_verify": "`protokoll.md` 3–4. és 9. pont: a csoportosítás szabálya a szintézisekhez (PRISMA 2020 5. és 13a. tétel). KB: K-ZHA22-008, K-SIM24-069, K-KHN0102-071, K-KHA26-052, K-KHA26-053.",
+  "stage_id": "S01",
+  "source_ids": "zhang2022_jslhr,simplypsychology2024,khan2020,kharbach2026_tools,prisma2020"
+ },
+ {
+  "item_id": "REVIEWER-06",
+  "checklist": "REVIEWER",
+  "section": "S01 Kutatási kérdés",
+  "ord": 6,
+  "text": "A szintézis terve nem szavazatszámlálás, vagyis nem a szignifikáns és nem szignifikáns vizsgálatok megszámlálása. Ha metaanalízis nem végezhető, a narratív szintézist a SWiM-irányelv szerint kell felépíteni.",
+  "how_to_verify": "`protokoll.md` 9. pont („Narratív szintézis” sor); a kéziratban nincs „X vizsgálatból Y volt szignifikáns” típusú következtetés. KB: K-CHE16-009, K-BOR09-061, K-KHN0102-084.",
+  "stage_id": "S01",
+  "source_ids": "cheung2016,borenstein2009,khan2020,swim2020"
+ },
+ {
+  "item_id": "REVIEWER-07",
+  "checklist": "REVIEWER",
+  "section": "S02 Protokoll és regisztráció",
+  "ord": 7,
+  "text": "Van PRISMA-P szerinti, dátumozott protokoll, amelyet a csapat a keresés indítása előtt jóváhagyott. Tartalma: célok, beválasztási kritériumok minden dimenzióban, információforrások, legalább egy adatbázis keresőstringje, a kinyerendő adatok, a hatásmérték, a szintézismodell, a tervezett moderátorok és az érzékenységi elemzések.",
+  "how_to_verify": "Az `00_protokoll/protokoll.md` 1–10. pontja kitöltve, és a jóváhagyás korábbi a `kereses_naplo.md` első keresési dátumánál (`ma.py project list <mappa> decisions --stage S02`). Tételenként: `ma.py kb checklist PRISMA_P`. KB: K-SIM24-012, K-KHN0102-011, K-KHN0102-010.",
+  "stage_id": "S02",
+  "source_ids": "prisma_p,khan2020,simplypsychology2024"
+ },
+ {
+  "item_id": "REVIEWER-08",
+  "checklist": "REVIEWER",
+  "section": "S02 Protokoll és regisztráció",
+  "ord": 8,
+  "text": "A protokollt a szűrés megkezdése előtt regisztrálták (PROSPERO vagy OSF), az azonosító és a dátum szerepel. A regisztráció hiánya jelentési hiány (PRISMA 2020 24a), és az AMSTAR 2 2. tételén legfeljebb „részben igen”-t ad, ha van írott, előre rögzített protokoll; kritikus hiba („nem”) csak akkor, ha nincs előre rögzített protokoll (D-S02-019). Regisztráció nélkül az alcsoport- és érzékenységi döntéseket potenciálisan utólagosnak kell tekinteni, hacsak a dátumozott protokoll.md nem rögzítette őket előre.",
+  "how_to_verify": "`protokoll.md` 1. pont: regisztrációs azonosító és dátum. A PROSPERO/OSF-rekord nyilvános oldala (WebFetch) a címben és a kérdésben egyezik, a regisztráció dátuma pedig korábbi a szűrés kezdeténél (a szűrőplatform exportja szerint). Hiány esetén: major. KB: K-MOR20-006, K-MOR20-007, K-SIM24-008, K-ZHA22-013.",
+  "stage_id": "S02",
+  "source_ids": "prisma2020,amstar2,morvaridzadeh2020,simplypsychology2024,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-09",
+  "checklist": "REVIEWER",
+  "section": "S02 Protokoll és regisztráció",
+  "ord": 9,
+  "text": "Az elemzési terv előre és fogalmi alapon rögzíti a modellt: alapértelmezésben véletlen hatás; közös (fix) hatás csak funkcionálisan azonos vizsgálatoknál, szűkített következtetéssel. Rögzíti a τ²-becslőt (REML vagy PM), a CI-módszert (jellemzően HKSJ, a q < 1 esetére megnevezett kezeléssel), a predikciós intervallumot, és ritka eseménynél a módszert (MH vagy Peto; mindkettő közös hatású módszer, ezért a választást indokolni kell). A modellválasztás nem függhet a Q-próba p-értékétől vagy az I² nagyságától.",
+  "how_to_verify": "`00_protokoll/elemzesi_terv.md` és `protokoll.md` 9. pont; a választás döntésként naplózva (`ma.py project list <mappa> decisions --stage S08`). Konszenzus: a feltöltött források egy része (pl. Khan 2020) a Q-próba vagy az I² ≤ 25% alapján ajánl FE-t, és DL-t használ alapként; a Cochrane Handbook v6.5 (10. fejezet) szerint egyiket sem kell követni. KB: K-BOR07-062, K-BOR09-041, K-KHN0304-030, K-CHE16-039.",
+  "stage_id": "S02",
+  "source_ids": "cochrane_handbook,veroniki2016,borenstein2007_fe_re,borenstein2009,khan2020,cheung2016"
+ },
+ {
+  "item_id": "REVIEWER-10",
+  "checklist": "REVIEWER",
+  "section": "S02 Protokoll és regisztráció",
+  "ord": 10,
+  "text": "Az alcsoportok és moderátorok előre, indoklással és várt iránnyal rögzítettek, számuk korlátozott, és meta-regresszió csak elegendő vizsgálatszám mellett tervezett. Az érzékenységi elemzések is előre rögzítettek: magas torzítási kockázatú és becsült adatú vizsgálatok kizárása, közös vs véletlen hatás, másik τ²-becslő, leave-one-out.",
+  "how_to_verify": "`protokoll.md` 9. pont („Előre tervezett alcsoportok”, „Érzékenységi elemzések”). Minden később futtatott alcsoport- vagy érzékenységi elemzésnek itt kell szerepelnie; ami hiányzik, azt utólagosként kell jelölni. KB: K-ZHA22-055, K-KHN0304-043, K-KHN0102-082, K-MOR20-061.",
+  "stage_id": "S02",
+  "source_ids": "cochrane_handbook,prisma2020,zhang2022_jslhr,khan2020,morvaridzadeh2020"
+ },
+ {
+  "item_id": "REVIEWER-11",
+  "checklist": "REVIEWER",
+  "section": "S02 Protokoll és regisztráció",
+  "ord": 11,
+  "text": "A beválasztási kritériumok között nincsenek egymásnak ellentmondó feltételek (pl. a kiinduló és záró értékek elfogadása mellett a változás-SD nélküli vizsgálatok kizárása). A nyelv vagy a közlési státusz szerinti korlátozás indokolt, különben nyelvi és publikációs torzítást okoz.",
+  "how_to_verify": "A `protokoll.md` 4. pontjának soronkénti összeolvasása; nyelvi vagy közlési korlátozásnál a protokollban indoklás áll. KB: K-MOR20-013, K-SIM24-011, K-ZHA22-018, K-KHN0102-016.",
+  "stage_id": "S02",
+  "source_ids": "morvaridzadeh2020,simplypsychology2024,zhang2022_jslhr,khan2020,cochrane_handbook"
+ },
+ {
+  "item_id": "REVIEWER-12",
+  "checklist": "REVIEWER",
+  "section": "S02 Protokoll és regisztráció",
+  "ord": 12,
+  "text": "Ha a protokoll prospektív erőelemzést tartalmaz, a feltevések dokumentáltak: várt hatás, k, karonkénti n, α és heterogenitás. Az eredmény tervezési segédlet, nem beválasztási vagy döntési küszöb.",
+  "how_to_verify": "Az `elemzesi_terv.md` tartalmazza a `ma.py power --k … --effect … --n1 … --n2 … --heterogeneity …` parancsot és a kimenetét. KB: K-ZHA22-013, K-ZHA22-010.",
+  "stage_id": "S02",
+  "source_ids": "zhang2022_jslhr,engine"
+ },
+ {
+  "item_id": "REVIEWER-13",
+  "checklist": "REVIEWER",
+  "section": "S03 Irodalomkeresés",
+  "ord": 13,
+  "text": "Az információforrások köre megfelelő: legalább két releváns bibliográfiai adatbázis (beavatkozásos orvosi áttekintésnél MEDLINE, Embase és CENTRAL), vizsgálati regiszterek (ClinicalTrials.gov, WHO ICTRP), szürke irodalom és hivatkozáskövetés. Minden elhagyás indokolt.",
+  "how_to_verify": "A `01_kereses/kereses_naplo.md` forrástáblázata ↔ `protokoll.md` 5. pont. Ha kötelező forrás indoklás nélkül hiányzik: major. KB: K-CHE16-076, K-KHA26-022, K-SIM24-022, K-KHN1113-003, K-KHN0102-015, K-CHE16-011, K-ZHA22-020.",
+  "stage_id": "S03",
+  "source_ids": "cochrane_handbook,prisma_s,amstar2,cheung2016,kharbach2026_tools,simplypsychology2024,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-14",
+  "checklist": "REVIEWER",
+  "section": "S03 Irodalomkeresés",
+  "ord": 14,
+  "text": "Minden adatbázishoz külön, teljes keresőstring tartozik, pontosan a lefuttatott formában. Mellette rögzített a felület, a lefedett időszak, a keresés dátuma, a szűrők és korlátozások, valamint a találatszám; a stratégia módosításait dátummal és indoklással naplózzák.",
+  "how_to_verify": "A `kereses_naplo.md` minden sora kitöltve (dátum, találatszám, stratégiafájl), és a stratégiafájlok a `01_kereses/` mappában vannak. Tételenként: `ma.py kb checklist PRISMA_S`. KB: K-MOR20-010, K-SIM24-021.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s,prisma2020,morvaridzadeh2020,simplypsychology2024"
+ },
+ {
+  "item_id": "REVIEWER-15",
+  "checklist": "REVIEWER",
+  "section": "S03 Irodalomkeresés",
+  "ord": 15,
+  "text": "A keresőstringek szintaktikailag helyesek: a zárójelek és idézőjelek párosak, a koncepcióblokkonként zárójelezett OR-csoportokat AND köti össze, a csonkolás és a mezőkódok érvényesek, és a kontrollált szókincs (MeSH/Emtree) a szabadszavas tagokkal együtt szerepel. A felületek eltérő operátor-precedenciáját kezelni kell.",
+  "how_to_verify": "A `01_kereses/` stratégiafájljainak átnézése (a nyitó és csukó zárójelek, valamint az idézőjelek száma egyezik). A PubMed-stratégia próbafuttatása PubMed MCP-vel (`search_articles`), a találatszám összevetése a naplóval. KB: K-MOR20-009, K-SIM24-018, K-SIM24-021, K-ZHA22-014.",
+  "stage_id": "S03",
+  "source_ids": "prisma_s,morvaridzadeh2020,simplypsychology2024,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-16",
+  "checklist": "REVIEWER",
+  "section": "S03 Irodalomkeresés",
+  "ord": 16,
+  "text": "A stratégia megtalálja az előre megnevezett, ismert kulcsvizsgálatokat (legalább hármat), és ahol lehet, egy második keresési szakember is átnézte (PRESS-szemléletű ellenőrzés).",
+  "how_to_verify": "A `kereses_naplo.md` „Ellenőrzés” része: a kulcsvizsgálatok PMID-jei, és hogy a PubMed-stratégia visszaadja-e őket (próba PubMed MCP-vel). Ha nem, javítani kell a stratégiát. A legalább három kulcsvizsgálat projektkonvenció (keresési napló sablon).",
+  "stage_id": "S03",
+  "source_ids": "cochrane_handbook,prisma_s,engine"
+ },
+ {
+  "item_id": "REVIEWER-17",
+  "checklist": "REVIEWER",
+  "section": "S03 Irodalomkeresés",
+  "ord": 17,
+  "text": "Minden bevont rekord visszavezethető egy dokumentált keresésre (forrás, dátum, keresőstring vagy kiinduló cikk). Az MI-keresőkből és hivatkozásgráf-eszközökből származó rekordok kiegészítő forrásként jelöltek, és ezek az eszközök nem helyettesítik az adatbázis-keresést. A hivatkozáskövetés (előre és hátra) a kiinduló cikkek listájával dokumentált, és a kiinduló cikkek többféle kutatócsoportból és elrendezésből származnak.",
+  "how_to_verify": "A bevont vizsgálatok listája ↔ a hivatkozáskezelő vagy a szűrőplatform forráscímkéi; a `kereses_naplo.md` hivatkozáskövetési sora és az egyéb források külön sorai (eszköz, kiinduló cikkek, dátum). Térképbeli közelség nem jelent hivatkozást vagy egyetértést, és üres térképrész nem bizonyít kutatási rést. KB: K-KHA26-021, K-KHA26-013, K-KHA26-023, K-KHA26-024, K-KHA26-016, K-KHA26-015, K-KHA26-020.",
+  "stage_id": "S03",
+  "source_ids": "kharbach2026_tools,prisma_s,prisma2020"
+ },
+ {
+  "item_id": "REVIEWER-18",
+  "checklist": "REVIEWER",
+  "section": "S03 Irodalomkeresés",
+  "ord": 18,
+  "text": "A keresés friss: minden forrásnál rögzített az utolsó keresés dátuma, és a végső elemzés előtt frissítő keresés futott a dokumentált adatbázisokban (a Cochrane-elvárás szerint a közlés előtti 12 hónapon belül). Az új közleményekről küldött értesítések ezt nem helyettesítik. A frissítéssel talált vizsgálatokat be kell építeni, vagy besorolásra váróként jelezni.",
+  "how_to_verify": "A `kereses_naplo.md` dátumoszlopa; a kézirat Methods részében az utolsó keresés dátuma (PRISMA 2020 6. tétel); a besorolásra váró rekordok a `ma.py prisma check --awaiting` kapcsolóval (P013-jelzés). KB: K-KHA26-019 (a 12 hónapos Cochrane-elvárás a megjegyzésében).",
+  "stage_id": "S03",
+  "source_ids": "prisma2020,cochrane_handbook,kharbach2026_tools"
+ },
+ {
+  "item_id": "REVIEWER-19",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 19,
+  "text": "A PRISMA 2020 folyamatábra számai hibátlanul átmennek a motor automatikus ellenőrzésén. A P-kódú hibák (error súlyosság) blocker megállapítások.",
+  "how_to_verify": "`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (vagy `--composer prisma-flow.json`, illetve `--A1 … --I`), kilépési kód 0. Ha composer `prisma-flow.json` és `02_szures/prisma_folyamat.md` is van, együtt futtasd (`--md … --composer …`): a composer számai érvényesek, és minden P017 (a két forrás egy dobozának vagy okonkénti kizárási bontásának eltérése) blocker. Error súlyosságú kódok: P001–P007, P009, P010, P015, P017. A warningokat (P008 hiányzó kizárási okok, P013 lezáratlan szűrés, P014, P016) javítani vagy indokolni kell, és át kell nézni a P011 (levezetett érték) és a P012 (nem ellenőrizhető összefüggés) tételeit is. KB: K-KHN0102-019, K-KHN0102-020, K-SIM24-027.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020,khan2020,simplypsychology2024,engine"
+ },
+ {
+  "item_id": "REVIEWER-19a",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 20,
+  "text": "Azonosítás → szűrés: B = A1 + A2 − D1 − D2 − D3. Itt A1 az adatbázisokból, A2 a regiszterekből azonosított rekordok száma, D1 a duplikátumoké, D2 az automatizálással kizártaké, D3 a szűrés előtt egyéb okból eltávolítottaké. A duplikátumszűrés előtti és utáni szám, a módszer és az eszköz dokumentált.",
+  "how_to_verify": "A `prisma_folyamat.md` A1 és A2 értéke egyenlő a `kereses_naplo.md` adatbázisonkénti, illetve regiszterenkénti találatainak összegével, és nincs P002-hiba. A duplikátumszűrés eszköze (Zotero, Rayyan vagy Covidence) és szabálya a `02_szures/` mappában. KB: K-KHA26-035, K-KHA26-036.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020,kharbach2026_tools,engine"
+ },
+ {
+  "item_id": "REVIEWER-19b",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 21,
+  "text": "Szűrés → teljes szöveg: E = B − C (teljes szövegre keresett), G = E − F (értékelt, ahol F a be nem szerezhető jelentések száma), és J = G − H, ehhez hozzáadva az egyéb módszerek ágából bevont jelentéseket. H a teljes szöveg alapján kizárt jelentések száma, és az okonkénti bontás összege pontosan H.",
+  "how_to_verify": "A `ma.py prisma check` nem jelez P003-, P004-, P005-, P007-, P008- vagy (több forrásnál) P017-jelzést (egyéb módszerek ágánál P009- vagy P016-jelzést sem), és a `02_szures/` kizárási okainak okonkénti száma összesen H. KB: K-KHA26-041, K-KHA26-042, K-MOR20-076.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020,kharbach2026_tools,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-19c",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 22,
+  "text": "Vizsgálat és jelentés különbsége: a bevont vizsgálatok számát (I) külön kell számolni, és I ≤ J, mert egy vizsgálatnak több jelentése lehet. A metaanalízisbe kimenetenként bevont vizsgálatok száma legfeljebb I, és nincs nulla vagy ellentmondó doboz (pl. „kvalitatív szintézis: n = 0” bevont vizsgálatok mellett). A PRISMA 2020 sablont kell használni, nem a 2009-est.",
+  "how_to_verify": "A `ma.py prisma check` nem jelez P006- vagy P010-hibát (a metaanalízisbe vont vizsgálatok száma a `--meta` kapcsolóval adható meg). I = a bevont vizsgálatok listájának elemszáma, a csak narratívan szintetizált vizsgálatokkal együtt; ez legalább annyi, ahány különböző `study_id` az `03_adatok/adatkinyeres.csv`-ben szerepel. A results.json `totals.k` értéke kimenetenként ≤ I. KB: K-MOR20-075, K-SIM24-026, K-KHN0102-018.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020,morvaridzadeh2020,simplypsychology2024,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-20",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 23,
+  "text": "A szűrés mindkét szakaszban (cím/absztrakt és teljes szöveg) kettős, független és vak volt: minden rekordon két bíráló döntése szerepel, a döntések a szavazásig rejtve maradtak, az eltérések listázva vannak, és a feloldásuk módja (harmadik fél) dokumentált. A teljes kettős szűrés a mérce; az AMSTAR 2 5. tétele egyszemélyes szűrést csak akkor fogad el, ha egy mintán a két bíráló legalább 80%-os egyezést ért el, és ezt dokumentálták.",
+  "how_to_verify": "A Rayyan- vagy Covidence-export (bírálónkénti döntések, konfliktuslista) a `02_szures/` mappában. Egyetlen bíráló vagy dokumentálatlan egyeztetés: major. KB: K-KHA26-037, K-KHA26-038, K-SIM24-028, K-KHN0102-021.",
+  "stage_id": "S04",
+  "source_ids": "prisma2020,amstar2,cochrane_handbook,kharbach2026_tools,simplypsychology2024,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-21",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 24,
+  "text": "A csapat a teljes szűrés előtt próbaszűréssel tesztelte a beválasztási kritériumokat, és az ennek nyomán végzett pontosítások dokumentáltak.",
+  "how_to_verify": "A `02_szures/` próbaszűrési jegyzete (a minta mérete, az egyezés, a módosítások), és a módosítások a `protokoll.md` 11. pontjában. KB: K-KHA26-043.",
+  "stage_id": "S04",
+  "source_ids": "kharbach2026_tools,prisma2020"
+ },
+ {
+  "item_id": "REVIEWER-22",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 25,
+  "text": "Egyetlen rekordot sem zártak ki pusztán MI-összefoglaló, előnézet vagy relevancia-pontszám alapján. Ha rangsorolást vagy priorizálást használtak, minden rekordon van emberi döntés (nincs rangsor alapú korai leállás), és a módszertani rész leírja az automatizálás használatát.",
+  "how_to_verify": "A szűrőplatform exportjában minden rekordhoz tartozik döntés, és a Methods leírja a használt automatizálást (PRISMA 2020 8. tétel). KB: K-KHA26-039, K-KHA26-040, K-KHA26-084, K-KHA26-085.",
+  "stage_id": "S04",
+  "source_ids": "kharbach2026_tools,prisma2020"
+ },
+ {
+  "item_id": "REVIEWER-23",
+  "checklist": "REVIEWER",
+  "section": "S04 Szűrés és kiválasztás",
+  "ord": 26,
+  "text": "A teljes szöveg alapján kizárt jelentések okokkal ellátott listája elérhető, és minden kizárási ok konkrét, a protokoll valamelyik kritériumára visszavezethető.",
+  "how_to_verify": "A `02_szures/` mappában a kizárt teljes szövegek listája (szerző, év, ok), amely a kiegészítő anyagba is bekerül. Ez az AMSTAR 2 7. (kritikus) tétele. KB: K-KHA26-041, K-KHA26-042.",
+  "stage_id": "S04",
+  "source_ids": "amstar2,prisma2020,kharbach2026_tools"
+ },
+ {
+  "item_id": "REVIEWER-24",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 27,
+  "text": "A motor adatvalidálása lefutott, és minden tételét kezelték. Error (V001–V006, V010, V024, V026, V030) nem maradhat. A figyelmeztetéseket egyenként, forrás-visszaellenőrzéssel vagy indoklással kell lezárni: V007 ismétlődő azonosító, V008 kettős nulla esemény, V011 SE/SD-gyanú, V012 mértékegység, V014 szélsőséges hatás, V015 kevés vizsgálat, V017 közös kontroll, V020 nagyon kis minta, V021 nem szám érték nem kötelező oszlopban, V022 kizárt sor, V023 kétértelmű szám, V025 képletnek látszó szöveges cella, V027 fel nem ismert rob/estimated kategória, V028 ismétlődő oszlop, V029 hiányzó vizsgálat-címke. Az info-jelzéseket (V009, V013, V016, V018, V019) a későbbi ellenőrzéseknél kell felhasználni.",
+  "how_to_verify": "`ma.py validate --data <mappa>/03_adatok/adatkinyeres.csv --measure <M> --json`: a kimenet `summary.error` értéke 0 (az `analyze` results.json-jában ugyanez `validation.summary.error`), és minden warninghoz van megjegyzés az `adatkinyeres.csv` `megjegyzes` oszlopában vagy egy megállapításban. A szabályok: `ma.py kb rules --stage S05 --agent reviewer` (a motor V-szabályaival együtt). KB: K-KHN0102-028.",
+  "stage_id": "S05",
+  "source_ids": "engine,cochrane_handbook,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-25",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 28,
+  "text": "Szúrópróbás forrás-visszaellenőrzés: a vizsgálatok legalább 20%-ának, valamint minden, a validálás által jelzett (V011–V014), kiugró vagy befolyásos vizsgálatnak minden kinyert számát vissza kell keresni a forrásban, oldal vagy táblázat megjelölésével. Minden kinyert számnak van helymegjelölése, és minden MI-vel kinyert mezőhöz idézet és emberi ellenőrzés tartozik.",
+  "how_to_verify": "Az `adatkinyeres.csv` `forras_oldal` oszlopa minden sorban kitöltve. A szúrópróba eredménye a `07_ellenorzes/` mappában: vizsgálat, mező, CSV-érték, forrásérték, oldal vagy táblázat. A teljes szöveget a PubMed MCP `get_full_text_article` hívása vagy a PDF adja. A 20% projektkonvenció (ma-ellenorzo). Ha az eltérés az elsődleges eredményt érinti: blocker. Tesztadatként és összevetéshez mindig a nyers bemenetet kell használni, nem a forrás kerekített vagy elírt származtatott tábláit. KB: K-KHA26-048, K-KHA26-049, K-SIM24-032, K-ZHA22-026, K-KHN09-017, K-KHN08-006.",
+  "stage_id": "S05",
+  "source_ids": "engine,kharbach2026_tools,simplypsychology2024,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-26",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 29,
+  "text": "A kinyerés kettős és független volt, előzetesen kipróbált űrlappal; az eltéréseket tételenként egyeztették, a hiányzó adatok miatti szerzői megkereséseket pedig naplózták. A vizsgálati jellemzők (populáció, környezet, a beavatkozás időtartama, összehasonlító, kimenetek, korlátok) minden vizsgálatnál ki vannak töltve.",
+  "how_to_verify": "A két kinyerő külön CSV-je vagy az egyeztetési napló a `03_adatok/` mappában; `protokoll.md` 7. pont; a szerzői levelezés dátumokkal. KB: K-KHN0102-029, K-SIM24-032, K-ZHA22-027, K-KHA26-051.",
+  "stage_id": "S05",
+  "source_ids": "prisma2020,amstar2,cochrane_handbook,khan2020,simplypsychology2024,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-26a",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 30,
+  "text": "Vizsgálatonként rögzített az elemzési populáció (ITT, módosított ITT vagy per-protocol), a randomizált és az elemzett létszám, karonként a lemorzsolódás, valamint a vizsgálat finanszírozási forrása és a szerzők összeférhetetlensége. Az elemzési populáció a vizsgálatok között egységes, vagy az eltérés jelölt, és érzékenységi elemzés vizsgálja.",
+  "how_to_verify": "Az `adatkinyeres.csv` megjegyzései vagy egy külön jellemzőtábla a `03_adatok/` mappában (populáció, randomizált vs elemzett n, lemorzsolódás, finanszírozás); `protokoll.md` 7. pont. A vizsgálatok finanszírozásának közlését az AMSTAR 2 10. tétele kéri, a PRISMA 2020 10b tétele példaként említi. KB: K-SIM24-030, K-SIM24-036, K-KHA26-050, K-MOR20-077, K-MOR20-069.",
+  "stage_id": "S05",
+  "source_ids": "cochrane_handbook,amstar2,prisma2020,simplypsychology2024,kharbach2026_tools,morvaridzadeh2020"
+ },
+ {
+  "item_id": "REVIEWER-27",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 31,
+  "text": "Az SE és SD felcserélése kizárt: a „±” után álló értékről a forrás lábjegyzete igazolja, hogy SD vagy SE. A feltűnően kicsi SD (ha SD·√n közel esik a többi vizsgálat SD-jéhez, vagy kiugró az SD/átlag arány) SE-gyanús, és az ilyen vizsgálat aránytalanul nagy súlyt kaphat.",
+  "how_to_verify": "A V011-jelzések és az SD/átlag arány vizsgálatonként. A súlyok a results.json `primary.weights_pct` mezőjében: 50% feletti súlyú vizsgálatot vissza kell ellenőrizni (heurisztika). SE → SD konverzió: SD = SE·√n (F-MOR20-002, `ma.py convert se …`). KB: K-KHN09-016, K-KHN09-068.",
+  "stage_id": "S05",
+  "source_ids": "cochrane_handbook,khan2020,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-28",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 32,
+  "text": "A mértékegységek és skálák egységesek (V012), a dózis és a többi moderátor közös egységre hozva. A fiziológiailag lehetetlen értékeket (pl. irreális SD vagy dózis) a forrással kell egyeztetni, majd javítani vagy jelölni. MD csak azonos mértékegységnél használható, eltérő mérőeszközöknél SMD kell. A ferde eloszlás gyanúját (V013: nemnegatív változónál átlag < 2·SD) jelölni kell, és log-skálás vagy ROM-alapú érzékenységi elemzést kell mérlegelni.",
+  "how_to_verify": "A validálás V012-, V013- és V014-jelzései; az `adatkinyeres.csv` egység-megjegyzései. KB: K-KHN09-014, K-KHN09-015, K-MOR20-018, K-MOR20-019, K-KHN0102-027.",
+  "stage_id": "S05",
+  "source_ids": "cochrane_handbook,khan2020,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-29",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 33,
+  "text": "A hatásirány egységes: az 1. kar mindig a kísérleti vagy beavatkozási kar, a 2. a kontroll. Ahol a skála iránya eltér (a magasabb érték rosszabbat vagy jobbat jelent), a megfordítás dokumentált. A forest plot „favours” feliratai és a szöveges értelmezés ugyanezt az irányt követik. Rossz irányú hatás: blocker.",
+  "how_to_verify": "Az `adatkinyeres.csv` karcímkéit a forrással kell összevetni (szúrópróba és minden V014-jelzett sor), a results.json `effect_sizes` előjeleit is. A forest plot feliratai az `analyze --left-label/--right-label` beállításból jönnek. KB: K-CHE16-020, K-KHN08-007, K-KHN09-068, K-KHN0607-028, K-KHN10-007.",
+  "stage_id": "S05",
+  "source_ids": "cochrane_handbook,cheung2016,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-30",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 34,
+  "text": "A bináris és arány-adatok belsőleg konzisztensek: az eseményszám nem nagyobb n-nél, és események + nem-események = karlétszám. A motor az arányokat a nyers számokból számolja, nem kerekített arányokból. A résztvevők összlétszáma egyedi, randomizált résztvevőket számol.",
+  "how_to_verify": "Validálás V006; az `adatkinyeres.csv` e1/n1 és e2/n2 oszlopai ↔ forrás; a results.json `totals.participants` ↔ a kézirat résztvevőszáma. KB: K-KHN05-005, K-KHN0304-063, K-KHN0607-006, K-KHN0607-007, K-MOR20-020.",
+  "stage_id": "S05",
+  "source_ids": "khan2020,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-31",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 35,
+  "text": "Nincs egységelemzési (unit-of-analysis) hiba. Többkarú vizsgálatban a közös kontrollkar nem szerepelhet többször teljes létszámmal: vagy a kontroll n-jét kell felosztani, vagy a kísérleti karokat összevonni, `control_split=igen` jelöléssel. Keresztezett (crossover) vizsgálatnál párosított elemzés kell, vagy csak az első periódus adatai használhatók; a karok párhuzamos csoportként való kezelése egységelemzési hiba. A klaszter-randomizált vizsgálatot a klaszterhatásra korrigálni kell (hatékony mintanagyság vagy tervezési hatás). Ha a hiba az elsődleges eredményt érinti: blocker.",
+  "how_to_verify": "Validálás V007 és V017; az `adatkinyeres.csv` elrendezési megjegyzései (crossover, klaszter); a korrekció módja a `protokoll.md` 7. pontjában; crossover vizsgálatoknál érzékenységi elemzés nélkülük. Ellenőrzés: kimenetenként k ≤ a különböző vizsgálatok száma. KB: K-MOR20-021, K-ZHA22-024, K-MOR20-034, K-ZHA22-039, K-KHN0102-026.",
+  "stage_id": "S05",
+  "source_ids": "cochrane_handbook,morvaridzadeh2020,zhang2022_jslhr,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-32",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 36,
+  "text": "Nincs kettős számolás: egy vizsgálat egy elemzésbe csak egy hatásmérettel kerül, hacsak a függőséget megfelelő modell nem kezeli. Az ugyanarról a vizsgálatról szóló több közlemény (társközlemény, időközi elemzés, alcsoport-közlés) egy vizsgálat alá tartozik, és az átfedő mintákat (közös szerzők, helyszín, toborzási időszak) ellenőrizték.",
+  "how_to_verify": "Az `adatkinyeres.csv` `study_id` oszlopa: egy vizsgálat = egy azonosító (pl. NCT-szám); V007. A szerző- és helyszínátfedés táblázata a `03_adatok/` mappában. Hiba esetén: blocker. KB: K-CHE16-019, K-CHE16-021, K-SIM24-033, K-SIM24-054, K-KHA26-057, K-KHA26-058.",
+  "stage_id": "S05",
+  "source_ids": "cochrane_handbook,cheung2016,simplypsychology2024,kharbach2026_tools,engine"
+ },
+ {
+  "item_id": "REVIEWER-33",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 37,
+  "text": "Minden konverzió vizsgálatonként naplózott, módszerrel és helyes hivatkozással. Medián/IQR vagy tartomány → átlag/SD: Luo 2018 (átlag) és Wan 2014 (SD). A Hozo 2005 csak a medián és tartomány esetére vonatkozik, és ott is a Luo- és Wan-becslő a jobb, ezért legfeljebb forrás-reprodukcióhoz használható. Ide tartozik még az SE/CI/t/p → SD/SE átváltás, a csoportok összevonása és a változás-SD imputált korrelációval. A konverziók közel normális eloszlást feltételeznek. A becsült vagy imputált sorok `estimated=igen` jelölést kapnak (V018), és tervezett nélkülük egy érzékenységi elemzés.",
+  "how_to_verify": "Az `adatkinyeres.csv` `estimated` és `megjegyzes` oszlopa; a konverziók (`ma.py convert median|se|ci|se-from-ci|combine|change|paired-sums …`, t- vagy p-értékből `ma.py convert d-from-t|sd-from-t|se-from-p …`) és kimenetük a `03_adatok/` mappában; a V018-lista megegyezik a jelölt sorokkal. KB: K-MOR20-024, K-MOR20-026, K-SIM24-044, K-CHE16-016; F-MOR20-010, F-MOR20-002.",
+  "stage_id": "S05",
+  "source_ids": "wan2014,luo2018,cochrane_handbook,morvaridzadeh2020,simplypsychology2024,cheung2016,engine"
+ },
+ {
+  "item_id": "REVIEWER-34",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 38,
+  "text": "Folytonos kimenetnél végérték- és változás-pontszám alapú SMD nem keveredhet egy elemzésben. A változás-SD származtatása (imputált pre–post korreláció) megadott, és érzékenységi elemzés vizsgálja. Párosított elrendezést nem szabad független csoportos képlettel elemezni. Ha csak a teljes N ismert, az egyenlő karméret feltevését jelölni kell.",
+  "how_to_verify": "Az `adatkinyeres.csv` megjegyzései és a választott mérték (párosított elrendezésnél `--measure MC` vagy `SMCC`). KB: K-MOR20-032, K-MOR20-035, K-ZHA22-037, K-KHN08-005, K-KHN08-007.",
+  "stage_id": "S05",
+  "source_ids": "cochrane_handbook,morvaridzadeh2020,zhang2022_jslhr,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-35",
+  "checklist": "REVIEWER",
+  "section": "S05 Adatkinyerés",
+  "ord": 39,
+  "text": "A csak absztraktból kinyert sorok jelöltek, és a teljes szöveg beszerzésének kísérlete naplózott. A nem angol nyelvű vizsgálatok kulcsadatait hozzáértő olvasó ellenőrizte; a gépi fordítás ehhez nem elég.",
+  "how_to_verify": "Az `adatkinyeres.csv` `megjegyzes` oszlopa („csak absztrakt”); a beszerzési napló a `03_adatok/` mappában. KB: K-KHA26-054, K-KHA26-055, K-KHA26-056.",
+  "stage_id": "S05",
+  "source_ids": "kharbach2026_tools,cochrane_handbook"
+ },
+ {
+  "item_id": "REVIEWER-36",
+  "checklist": "REVIEWER",
+  "section": "S06 Torzítási kockázat",
+  "ord": 40,
+  "text": "A torzításikockázat-eszköz illik a vizsgálattípushoz: RoB 2 randomizált vizsgálatra, ROBINS-I nem randomizált beavatkozásos vizsgálatra, expozíciós megfigyeléses vizsgálatra ROBINS-E vagy a protokollban indokolt, doménalapú eszköz (a NOS összpontszáma önmagában nem megfelelő), QUADAS-2 diagnosztikus pontosságra, PROBAST(+AI) predikciós modellre. Új áttekintésben a régi RoB 1 doménjei csak indoklással fogadhatók el, az összpontszámos skálák (pl. Jadad) pedig nem megfelelők.",
+  "how_to_verify": "A `04_torzitas_kockazat/rob.csv` `eszkoz` oszlopa vizsgálatonként ↔ a vizsgálat elrendezése; `protokoll.md` 8. pont. Nem megfelelő eszköz: major. KB: K-SIM24-039, K-SIM24-034, K-SIM24-035, K-KHN0102-031, K-KHN0102-034.",
+  "stage_id": "S06",
+  "source_ids": "rob2,robins_i,cochrane_handbook,simplypsychology2024,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-37",
+  "checklist": "REVIEWER",
+  "section": "S06 Torzítási kockázat",
+  "ord": 41,
+  "text": "Minden bevont vizsgálatot értékeltek (RoB 2-nél kimenetenként, illetve eredményenként), doménenkénti ítélettel és szöveges indoklással. Két független értékelő dolgozott, és az egyeztetés dokumentált.",
+  "how_to_verify": "`rob.csv`: minden vizsgálat sorában a D1–D5 és az `osszesitett` oszlop kitöltve, `ertekelo1` ≠ `ertekelo2`, `egyeztetes` = igen; az indoklások és idézetek külön fájlban vagy megjegyzésben. Ha elérhető a validator plugin, a kitöltés-ellenőrzés kimenete is. KB: K-BOR09-020, K-SIM24-039. v1: az értékelések JSON-ként a 04_torzitas_kockazat/appraisals/ mappában (`ma.py appraisal list <mappa>`: teljesség és státusz); az egyezés `ma.py appraisal agreement` (κ CI-vel), a konszenzus `ma.py appraisal consensus`. Az AI-vázlat (origin: ai_draft) nem számít második értékelőnek (6. döntés).",
+  "stage_id": "S06",
+  "source_ids": "rob2,robins_i,cochrane_handbook,prisma2020,amstar2,borenstein2009,simplypsychology2024"
+ },
+ {
+  "item_id": "REVIEWER-38",
+  "checklist": "REVIEWER",
+  "section": "S06 Torzítási kockázat",
+  "ord": 42,
+  "text": "A torzítási kockázat ténylegesen beépül a szintézisbe: érzékenységi elemzés a magas kockázatú vizsgálatok nélkül (V019), szükség esetén alcsoport-bontás, és a GRADE torzítási doménje. Mérlegelni kell, hogy egy minden vizsgálatban azonos irányú torzítás megmagyarázhatja-e az összesített hatást. A RoB-eszköz használata önmagában nem biztosít jó minőséget.",
+  "how_to_verify": "`ma.py analyze … --exclude rob=high --out <mappa>/05_elemzes/sens_rob` kimenete; az `adatkinyeres.csv` `rob` oszlopa megegyezik a `rob.csv` `osszesitett` oszlopával; a `ma.py project grade … --rob` indoklása. KB: K-SIM24-037, K-SIM24-038, K-KHN0102-033, K-BOR09-018, K-MOR20-062, K-CHE16-022, K-ZHA22-028.",
+  "stage_id": "S06",
+  "source_ids": "cochrane_handbook,grade_handbook,simplypsychology2024,khan2020,borenstein2009,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-39",
+  "checklist": "REVIEWER",
+  "section": "S06 Torzítási kockázat",
+  "ord": 43,
+  "text": "A RoB-összesítő ábra és a doménenkénti százalékok a vizsgálatonkénti táblából újraszámolva egyeznek, és a jelmagyarázat a szokásos konvenciót követi (alacsony / némi aggály / magas).",
+  "how_to_verify": "A `rob.csv` doménenkénti gyakoriságai ↔ a kézirat RoB-ábrája vagy -táblázata. KB: K-MOR20-029.",
+  "stage_id": "S06",
+  "source_ids": "morvaridzadeh2020,rob2"
+ },
+ {
+  "item_id": "REVIEWER-40",
+  "checklist": "REVIEWER",
+  "section": "S06 Torzítási kockázat",
+  "ord": 44,
+  "text": "Minőségi vagy beválasztási ítélet nem épül hivatkozásszámra, a hivatkozási térképen elfoglalt központi helyre vagy MI-egyetértésmérőre. A bevont vizsgálatok visszavonás- és integritás-ellenőrzésen estek át; a visszavont vizsgálat alapesetben kizárandó.",
+  "how_to_verify": "Minden bevont vizsgálat PMID-jét vagy DOI-ját PubMed MCP-vel kell lekérdezni (visszavonási jelölés, kapcsolódó szerkesztői közlemény); az eredmény a `07_ellenorzes/` mappába kerül. KB: K-KHA26-062, K-KHA26-063, K-KHA26-065, K-KHA26-066, K-KHA26-070.",
+  "stage_id": "S06",
+  "source_ids": "kharbach2026_tools,cochrane_handbook"
+ },
+ {
+  "item_id": "REVIEWER-41",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 45,
+  "text": "A vizsgálatonkénti hatásméreteket és varianciákat függetlenül újra kell számolni, és egyezniük kell a riporttal és a forest plot soraival. A választott variancia-képletet meg kell nevezni.",
+  "how_to_verify": "`ma.py es --data … --measure <M>` vagy a `05_elemzes/<kimenet>/effect_sizes.csv` ↔ a kézirat táblázata. Néhány sor kézi újraszámolása, pl. ln OR = ln(ad/bc), Var = 1/a + 1/b + 1/c + 1/d. A results.json `options.smd_vtype` és `md_vtype` mezője adja a képletváltozatot. A 3–4. tizedesjegyben jelentkező eltérés jellemzően más képletváltozatra utal; nagyobb eltérés az elsődleges eredményt érintő vizsgálatnál blocker, egyébként major. KB: K-KHN05-067, K-KHN09-069, K-ZHA22-038, K-CHE16-077, K-KHN0304-063.",
+  "stage_id": "S07",
+  "source_ids": "engine,khan2020,zhang2022_jslhr,cheung2016"
+ },
+ {
+  "item_id": "REVIEWER-42",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 46,
+  "text": "Az arány-mértékeket (OR, RR, ROM) log-skálán kell összesíteni. A pontbecslést és a CI-határokat exponenciálni kell, az SE-t és a varianciát soha. A CI a log-skálán szimmetrikus, az arányskálán aszimmetrikus; a forest plot tengelye logaritmikus, a nullvonal 1-nél van.",
+  "how_to_verify": "A results.json `back_transformed.estimate_ci` mezője = exp(`primary.estimate`, `ci_lower`, `ci_upper`); az arányskálán szimmetrikus CI gyanús. KB: K-BOR09-023, K-KHN0102-040, K-KHN0304-065; F-KHN0102-011.",
+  "stage_id": "S07",
+  "source_ids": "cochrane_handbook,borenstein2009,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-43",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 47,
+  "text": "Irányított hatásmértéket kell használni (SMD, log OR, log RR, MD, r), nem R²-et, η²-et vagy ω²-et. A standardizált átlagkülönbség változata (Hedges g, Cohen d vagy Glass Δ) és a nevezője megnevezett; Glass Δ csak indokkal használható. Azonos mértékegységű kimenetnél az MD az elsődleges, nem az SMD.",
+  "how_to_verify": "A results.json `options.measure`, `options.smd_vtype` és `options.j_method` mezője; `protokoll.md` 9. pont. A forrásokban többféle Var(g)-képlet és d/g-definíció szerepel, ezért a ténylegesen használt változatot kell megnevezni. KB: K-CHE16-025, K-MOR20-035, K-KHN08-073, K-KHN08-030, K-KHN08-082, K-KHN08-014, K-KHN08-023, K-KHN08-024, K-KHN08-029, K-ZHA22-034, K-ZHA22-036, K-KHN09-013, K-KHN09-018.",
+  "stage_id": "S07",
+  "source_ids": "cochrane_handbook,cheung2016,khan2020,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-44",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 48,
+  "text": "Egy elemzésben egyetlen közös mérőszám szerepel. Az eltérő mérőszámot közlő vizsgálatokat nem szabad pusztán emiatt kizárni: dokumentált, közelítő konverzióval (d ↔ ln OR ↔ r, a varianciával együtt) bevonhatók. A konverzió feltevéseit rögzíteni kell (ln OR → d: logisztikus eloszlás; d ↔ r: kétcsoportos elrendezés), a konvertált vizsgálatokat jelölni, és érzékenységi elemzéssel vizsgálni.",
+  "how_to_verify": "A konverziók naplója a `03_adatok/` mappában. A konverzió parancsa: `ma.py convert logor-to-d|d-to-logor|r-to-d|d-to-r` (képletek: F-KHN0102-012, F-KHN0102-013, F-SIM24-010, F-SIM24-011). A konvertált sorokat a `megjegyzes` oszlop jelöli, és a kizárási okok között nincs „más hatásmértéket közölt”. KB: K-CHE16-018, K-SIM24-042, K-SIM24-044, K-KHN0102-027.",
+  "stage_id": "S07",
+  "source_ids": "cochrane_handbook,borenstein2009,cheung2016,simplypsychology2024,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-45",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 49,
+  "text": "A nulla cellák kezelése rögzített: a folytonossági korrekció értéke és alkalmazási köre (alapértelmezés: 0,5, csak a nulla cellás vizsgálatoknál), ugyanaz az összesítésben, a funnel plotban, az aszimmetria-tesztekben és az LFK-indexben (az LFK érzékeny a korrekció értékére). A kettős nulla vizsgálatok kezelése (V008) dokumentált, ritka eseménynél pedig mérlegelni kell a Mantel–Haenszel- vagy a Peto-módszert. A Peto-módszer csak kiegyensúlyozott karoknál és nem túl nagy hatásnál megbízható, és ritka eseménynél az inverz varianciás, DL-alapú összesítés kerülendő.",
+  "how_to_verify": "A results.json `options.cc`, `options.cc_to`, `options.drop00`, `options.mh` és `options.peto` mezője; az `effect_sizes.corrected` és `effect_sizes.double_zero_included` lista; validálás V008/V009. KB: K-KHN0304-006, K-KHN0304-069, K-KHN1113-083, K-KHN1113-069, K-CHE16-030.",
+  "stage_id": "S07",
+  "source_ids": "cochrane_handbook,khan2020,cheung2016,engine"
+ },
+ {
+  "item_id": "REVIEWER-46",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 50,
+  "text": "Arány- (prevalencia-) metaanalízisnél a transzformáció (logit vagy Freeman–Tukey) megadott, a Q, az I² és a τ² ugyanazon a skálán számolt, és közölt a visszatranszformálás módja (harmonikus n vagy variancia alapú). A Freeman–Tukey-visszatranszformálás eredménye a választott n-től függ, és nagyon eltérő mintanagyságoknál félrevezető lehet, ezért elsődleges vagy legalább érzékenységi elemzésként logit (a motoron kívül binomiális GLMM) is kell. Minden CI a [0, 1] tartományba esik, nincs értelmetlen H0: π = 0 teszt, és a nulla varianciájú vizsgálatokat (p = 0 vagy 1) kezelték.",
+  "how_to_verify": "A results.json `options.measure` (PLO, PFT stb.), `back_transformed.pft_backtransform` és `back_transformed.n_harmonic` mezője; a kéziratban nincs olyan állítás, hogy „a prevalencia szignifikáns”. GLMM-hez R (metafor vagy meta) kell. KB: K-KHN0607-019, K-KHN0607-023, K-KHN0607-078, K-KHN0607-079, K-KHN0607-010, K-KHN0607-009, K-KHN0607-015, K-KHN0607-017, K-KHN0607-018, K-KHN0607-022.",
+  "stage_id": "S07",
+  "source_ids": "khan2020,cochrane_handbook,engine"
+ },
+ {
+  "item_id": "REVIEWER-47",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 51,
+  "text": "Korrelációs metaanalízisnél az összesítés Fisher-z skálán történik, v = 1/(n − 3) varianciával, ahol n a páros megfigyelések száma. Csak a pontbecslés és a CI-határok tanh-visszatranszformáltak. Minden vizsgálat ugyanazt a korrelációtípust (Pearson) adja ugyanarra a változópárra, azonos előjeliránnyal; |r| = 1 vagy n ≤ 3 kizárt.",
+  "how_to_verify": "`--measure ZCOR`; validálás V010 és V004; a közös hatású súlyok = n_i − 3. Nem Pearson-féle együtthatót vagy erősen nem normális változókat közlő vizsgálatot jelölni kell. KB: K-KHN10-018, K-KHN10-064, K-KHN10-034, K-KHN10-006, K-KHN10-007, K-KHN10-008, K-KHN10-033, K-KHN10-066, K-KHN10-030; F-KHN10-002.",
+  "stage_id": "S07",
+  "source_ids": "khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-48",
+  "checklist": "REVIEWER",
+  "section": "S07 Hatásméret",
+  "ord": 52,
+  "text": "Esélyhányadosnál a szöveg esélyről szól, nem kockázatról. Ha a kontrollcsoport eseménykockázata kb. 10% fölött van (heurisztika), a „kockázat” megfogalmazás nem fogadható el, RR-re váltásnál pedig a kontrollkockázatot kell használni. Az 1 alatti arányok erősségét |ln arány| alapján kell összevetni (OR 0,25 ugyanolyan erős, mint OR 4).",
+  "how_to_verify": "A results.json `totals.control_risk` mezője; a kézirat Results és Discussion mondatai. KB: K-KHN0304-070, K-KHN05-038, K-KHN0304-021, K-KHN0304-020, K-KHN05-035.",
+  "stage_id": "S07",
+  "source_ids": "khan2020,cochrane_handbook"
+ },
+ {
+  "item_id": "REVIEWER-49",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 53,
+  "text": "Független újraszámolás: a `03_adatok` CSV-ből a protokoll szerinti beállításokkal a motorral újrafuttatott elsődleges elemzés egyezik a riporttal (becslés, CI, SE, p, k, τ², I², PI) a közölt tizedesjegyek kerekítési tűrésén belül. Nem reprodukálható eredmény: blocker.",
+  "how_to_verify": "`ma.py analyze --data <mappa>/03_adatok/adatkinyeres.csv --measure <M> [protokoll szerinti opciók] --out <mappa>/07_ellenorzes/rerun_S08 --no-plots`, majd a két results.json összevetése: `primary.estimate`, `ci_lower`, `ci_upper`, `se`, `p`, `tau2`, `tau2_method`, `ci_method`, `pi_lower`, `pi_upper`, `I2`, `totals.k`. A `ma.py project list <mappa> runs` szerint a `data_sha256` egyezik (ehhez az eredeti futást `--project <mappa>` kapcsolóval kellett naplózni; ha nem így történt, ez maga is megállapítás). KB: K-SIM24-055, K-ZHA22-045, K-BOR09-043, K-KHN1113-086.",
+  "stage_id": "S08",
+  "source_ids": "engine,simplypsychology2024,zhang2022_jslhr,borenstein2009,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-50",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 54,
+  "text": "A ténylegesen futtatott modellt a protokoll előre rögzítette, és nem a Q-próba vagy az I² alapján választották. Közös (fix) hatású modell csak kifejezett indoklással (funkcionálisan azonos vizsgálatok) és a bevont vizsgálatokra szűkített következtetéssel fogadható el; minden más esetben véletlen hatású modell kell.",
+  "how_to_verify": "A results.json `options.model` és `primary_model` mezője ↔ `elemzesi_terv.md`. A Methods-szövegben nincs „a heterogenitás szignifikáns volt, ezért RE” vagy „p_Q > 0,10, ezért FE” típusú indoklás. Konszenzus: a forrásokban szereplő Q-alapú választás (pl. Khan 2020) a Cochrane Handbook v6.5 szerint hibás. Indoklás nélküli eltérés a protokolltól: blocker. KB: K-BOR07-049, K-BOR09-035, K-CHE16-039, K-KHN0304-030, K-KHN0607-039, K-KHN08-033, K-KHN09-031, K-BOR07-063, K-BOR07-050, K-BOR09-036, K-BOR09-033, K-KHN0102-045, K-KHN0102-053, K-ZHA22-041, K-SIM24-051.",
+  "stage_id": "S08",
+  "source_ids": "cochrane_handbook,borenstein2007_fe_re,borenstein2009,cheung2016,khan2020,simplypsychology2024"
+ },
+ {
+  "item_id": "REVIEWER-51",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 55,
+  "text": "A τ²-becslő és a CI-módszer megnevezett és indokolt. Véletlen hatásnál a projekt (és a motor) alapértelmezése a REML (vagy PM) és a HKSJ-alapú CI. A DerSimonian–Laird becslő nem alapértelmezés: csak forrás-reprodukcióhoz vagy előre rögzített érzékenységi elemzésként használható. A HKSJ-CI szűkebb is lehet a z-CI-nél (q < 1), és ezt a riportnak kezelnie kell.",
+  "how_to_verify": "A results.json `primary.tau2_method`, `primary.ci_method` és `primary.q_hksj` mezője; ha q < 1, kell egy `--ci hksj_adhoc` érzékenységi futás is. A `report.md` angol Methods-bekezdése ugyanezeket nevezi meg. Konszenzus: a feltöltött könyvek többsége csak DL-t és z-CI-t használ; a Cochrane Handbook v6.5 és Veroniki 2016 szerint a DL alapértelmezésként nem ajánlott. KB: K-ZHA22-045, K-SIM24-055, K-KHN0607-036, K-KHN09-032, K-BOR07-067.",
+  "stage_id": "S08",
+  "source_ids": "cochrane_handbook,veroniki2016,rover2015,khan2020,zhang2022_jslhr,simplypsychology2024,borenstein2007_fe_re,engine"
+ },
+ {
+  "item_id": "REVIEWER-52",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 56,
+  "text": "Kevés vizsgálatnál (k < 5) a riport kimondja, hogy a τ² bizonytalan, és véletlen hatású modellt használ HKSJ-CI-vel és óvatosan értelmezett predikciós intervallummal (V015). A közös hatásra való csendes visszaváltás nem fogadható el, a választott lehetőséget (összesítés nélküli bemutatás, leíró FE vagy bayesi modell előzetes τ²-vel) pedig indokolni kell.",
+  "how_to_verify": "A results.json `primary.k` mezője és a `validation.findings` V015-tétele; a `report.md` figyelmeztetései; az S08 döntésnaplója. Konszenzus: a forrás tanácsa, hogy „kevés vizsgálatnál a fix hatású modell a megfelelőbb” (K-SIM24-052), nem követendő. KB: K-BOR09-044, K-BOR07-058, K-BOR09-038, K-SIM24-052, K-BOR09-037.",
+  "stage_id": "S08",
+  "source_ids": "cochrane_handbook,rover2015,borenstein2009,borenstein2007_fe_re,simplypsychology2024,engine"
+ },
+ {
+  "item_id": "REVIEWER-53",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 57,
+  "text": "A súlyok inverz varianciásak, nem mintanagyság szerintiek: FE-nél w = 1/v, RE-nél w = 1/(v + τ²). A százalékos súlyok összege 100, és RE-nél kiegyenlítettebbek, mint FE-nél. Az 50%-nál nagyobb súlyú (domináns) vizsgálatot meg kell jelölni, és érzékenységi elemzéssel vizsgálni (heurisztika).",
+  "how_to_verify": "A results.json `primary.weights_pct` mezője (összeg: 100 ± 0,1), valamint `fixed.weights_pct` vs `random.weights_pct` (a max/min arány RE-nél ≤ FE-nél). KB: K-BOR07-052, K-BOR07-064, K-BOR09-042, K-KHN05-068, K-KHN08-037, K-KHN08-074, K-KHN0304-081, K-BOR07-070, K-KHN09-070.",
+  "stage_id": "S08",
+  "source_ids": "borenstein2007_fe_re,borenstein2009,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-54",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 58,
+  "text": "Belső numerikus konzisztencia. Wald (z) CI-nél a becslés a CI közepén van, SE = (felső − alsó)/(2·1,96), z = becslés/SE, és a kétoldalú p = 2[1 − Φ(|z|)]; arány-mértéknél mindezt a log-skálán kell vizsgálni, t- vagy HKSJ-CI-nél a megfelelő kvantilissel. A Wald-SE RE-nél legalább akkora, mint FE-nél (τ² = 0 esetén azonos). Minden CI tartalmazza a pontbecslést, köztes kerekítés nincs, és a szignifikancia-állítások a kerekítetlen határokon és a p-értéken alapulnak. A p-érték kétoldalú, hacsak a protokoll előre nem rögzített egyoldalú hipotézist.",
+  "how_to_verify": "A results.json-ban `random.se_wald` ≥ `fixed.se` (inverz varianciás FE esetén; MH- vagy Peto-módszernél nem feltétlenül). SE-visszaszámolás a CI-ből: `ma.py convert se-from-ci --lower … --upper … [--log]` (F-CHE16-026, F-MOR20-030); z és p: F-MOR20-019. Forrásbeli számokkal való összevetésnél a közölt tizedesjegyekhez illő tűrés kell (K-BOR09-017). KB: K-BOR07-067, K-BOR07-068, K-BOR07-069, K-MOR20-041, K-CHE16-080, K-KHN0607-051, K-KHN0304-052, K-BOR07-060, K-BOR07-073, K-BOR07-054, K-BOR07-061, K-KHN05-034, K-KHN0607-052, K-KHN09-033, K-KHN10-032, K-KHN0304-056.",
+  "stage_id": "S08",
+  "source_ids": "borenstein2007_fe_re,borenstein2009,morvaridzadeh2020,cheung2016,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-55",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 59,
+  "text": "A függő hatásméreteket (egy vizsgálat több kimenete, karja vagy időpontja ugyanabban az elemzésben) nem szabad függetlenként kezelni. Vagy vizsgálatonként egy hatásméret kerül be előre rögzített kiválasztási vagy összevonási szabállyal, vagy validált többszintű, illetve többváltozós modell kell (R metafor rma.mv, robusztus varianciabecslés); ezt a motor nem tudja.",
+  "how_to_verify": "Az `adatkinyeres.csv`-ben ugyanabban az elemzésben a hatásméret-sorok száma nagyobb a különböző `study_id` értékek számánál → hiba (V007). A döntés és a használt R-kód a `05_elemzes/` mappában. KB: K-CHE16-042, K-CHE16-019, K-SIM24-054, K-ZHA22-039.",
+  "stage_id": "S08",
+  "source_ids": "cochrane_handbook,viechtbauer2010,cheung2016,simplypsychology2024,zhang2022_jslhr,engine"
+ },
+ {
+  "item_id": "REVIEWER-56",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 60,
+  "text": "Az IVhet (vagy quality effects) modellt a források szerzői (Doi és munkatársai) előnyben részesítik, de ez nem konszenzus. Elsődleges modell csak akkor lehet, ha a protokoll előre és indokolva rögzítette, egyébként legfeljebb érzékenységi elemzés. IVhet-nél a súlyok és a pontbecslés megegyeznek az FE-ével, a variancia pedig Σ(w_i/Σw)²(v_i + τ²).",
+  "how_to_verify": "Ha a results.json `options.model` értéke `ivhet`, az `elemzesi_terv.md`-ben indoklás áll, és a riport megnevezi a τ²-becslőt (alapból DL). A forrástáblák „W*” oszlopa IVhet-nél varianciahányad, nem súly, és a robusztus regresszió CI-je nem az IVhet-CI. KB: K-KHN0102-002, K-KHN0304-067, K-KHN05-069, K-KHN0607-041, K-KHN0607-034, K-KHN09-028, K-KHN10-028, K-KHN10-035, K-KHN1113-015.",
+  "stage_id": "S08",
+  "source_ids": "doi2015_ivhet,cochrane_handbook,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-57",
+  "checklist": "REVIEWER",
+  "section": "S08 Szintézis (modell)",
+  "ord": 61,
+  "text": "Ha külső szoftvert (R, Stata, MetaXL, RevMan) is használtak, a parancs vagy hívás a szándékolt modellt futtatja (pl. MetaXL „IV”/„RE”/„IVhet”, admetan model()), a változónevek és az adattartományok egyeznek az adatlappal, és a szoftver neve, verziója és becslési beállításai közöltek.",
+  "how_to_verify": "A `05_elemzes/` kódfájljai; a kézirat Methods része; a motor verziója a results.json `engine.version` mezőjében. KB: K-KHN10-036, K-KHN08-076, K-KHN05-071, K-CHE16-079, K-KHN0304-073, K-KHN05-008, K-KHN08-072.",
+  "stage_id": "S08",
+  "source_ids": "khan2020,cheung2016,prisma2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-58",
+  "checklist": "REVIEWER",
+  "section": "S09 Heterogenitás",
+  "ord": 62,
+  "text": "A heterogenitás teljes körűen közölt: Q (df = k − 1, p), I² a konfidenciaintervallumával, τ² és τ (a τ² CI-jével), a τ²-becslő neve, véletlen hatású modellnél pedig a 95%-os predikciós intervallum. Csak I² vagy csak Q közlése nem elég.",
+  "how_to_verify": "A results.json `primary.Q`, `primary.Q_df`, `primary.p_Q`, `primary.I2`, `primary.heterogeneity.I2_ci_QP` (vagy `I2_ci_HT`), `primary.tau2`, `primary.tau`, `primary.heterogeneity.tau2_ci_QP`, `primary.pi_lower`, `pi_upper` és `pi_method` mezője ↔ a kézirat Results része és a forest plot lábléce. KB: K-MOR20-047, K-MOR20-043, K-CHE16-050, K-SIM24-060, K-ZHA22-048, K-KHN09-041; F-ZHA22-027.",
+  "stage_id": "S09",
+  "source_ids": "cochrane_handbook,inthout2016,higgins2002,viechtbauer2007,morvaridzadeh2020,cheung2016,simplypsychology2024,zhang2022_jslhr,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-59",
+  "checklist": "REVIEWER",
+  "section": "S09 Heterogenitás",
+  "ord": 63,
+  "text": "A heterogenitási statisztikák újraszámolva helyesek: Q = Σw(y − ŷ_FE)² FE-súlyokkal, I² = max(0, (Q − df)/Q)·100%, DL τ² = max(0, (Q − df)/C), ahol C = Σw − Σw²/Σw, és H = √(Q/df). Negatív τ² vagy I² nem fordulhat elő, és a Q és az I² az FE-, RE- és IVhet-kimenetben azonos.",
+  "how_to_verify": "A results.json-ban `fixed.Q` = `random.Q`; `primary.heterogeneity.C` és `primary.heterogeneity.tau2_DL`; kézi ellenőrzés a `primary.yi` és `primary.vi` értékekből. KB: K-KHN0607-059, K-KHN05-070, K-BOR09-050, K-BOR07-053, K-BOR07-065, K-BOR07-066, K-SIM24-049, K-ZHA22-053, K-KHN0304-066, K-KHN0607-032, K-KHN0607-058, K-KHN08-051, K-KHN09-071, K-KHN10-046, K-KHN0304-039, K-KHN05-045, K-KHN1113-019; F-BOR07-010, F-KHN05-017.",
+  "stage_id": "S09",
+  "source_ids": "borenstein2007_fe_re,borenstein2009,khan2020,simplypsychology2024,zhang2022_jslhr,higgins2002,engine"
+ },
+ {
+  "item_id": "REVIEWER-60",
+  "checklist": "REVIEWER",
+  "section": "S09 Heterogenitás",
+  "ord": 64,
+  "text": "A heterogenitás értelmezése helyes. A nem szignifikáns Q nem bizonyít homogenitást (kevés vizsgálatnál alacsony a próba ereje), a szignifikáns Q sok vizsgálatnál triviális heterogenitást is jelezhet. Az I² relatív arány, nem abszolút mérték, és a 25/50/75%-os címkék nem szabályok; a Cochrane Handbook átfedő sávjai is csak tájékoztatók. A τ-t, a PI-t és a klinikai jelentőséget együtt kell értelmezni.",
+  "how_to_verify": "A kézirat heterogenitásról szóló mondatai; nincs „nincs heterogenitás (p > 0,05)” típusú állítás. Konszenzus: a forrásokban (pl. Khan 2020, SimplyPsychology) szereplő I²-küszöbök szabályként nem használhatók. KB: K-BOR09-081, K-CHE16-046, K-CHE16-051, K-CHE16-078, K-KHN05-046, K-KHN0607-057, K-KHN0102-086, K-KHN08-046, K-KHN10-040, K-ZHA22-048, K-BOR07-057.",
+  "stage_id": "S09",
+  "source_ids": "cochrane_handbook,higgins2002,borenstein2009,borenstein2007_fe_re,cheung2016,khan2020,zhang2022_jslhr,simplypsychology2024"
+ },
+ {
+  "item_id": "REVIEWER-61",
+  "checklist": "REVIEWER",
+  "section": "S09 Heterogenitás",
+  "ord": 65,
+  "text": "Jelentős heterogenitásnál (széles PI, a hatáshoz képest nagy τ, a döntési küszöböt átlépő PI) a riport nem csak az átlagot közli: értelmezi a szóródást, vizsgálja a lehetséges okokat (előre tervezett moderátorok, kiugró vizsgálatok), és ehhez igazítja a következtetést. A funnel- vagy Doi-ábra nem a heterogenitás mérőeszköze.",
+  "how_to_verify": "A results.json `primary.pi_lower` és `pi_upper` mezője vs a nullérték vagy az MCID; a Discussion szövege; az S10- és S12-elemzések megléte. KB: K-BOR09-048, K-BOR09-051, K-ZHA22-052, K-KHN08-056.",
+  "stage_id": "S09",
+  "source_ids": "cochrane_handbook,inthout2016,borenstein2009,zhang2022_jslhr,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-62",
+  "checklist": "REVIEWER",
+  "section": "S10 Alcsoport-elemzés és meta-regresszió",
+  "ord": 66,
+  "text": "Minden alcsoport-állítás formális alcsoport-különbség teszten alapul (Q_between, df = G − 1 és p, vagy meta-regressziós QM), nem azon, hogy az egyik alcsoportban szignifikáns a hatás, a másikban nem. Alcsoportonként közölt a k, a becslés, a CI, a Q és az I².",
+  "how_to_verify": "A results.json `subgroups.Q_between`, `df_between`, `p_between` és `groups` mezője; a szövegben nincs teszt nélküli „X-ben hatékonyabb” állítás. KB: K-SIM24-062, K-MOR20-050, K-KHN05-052, K-KHN0607-061, K-KHN0607-062, K-KHN09-047, K-KHN09-072, K-KHN0304-071, K-MOR20-054; F-KHN09-020.",
+  "stage_id": "S10",
+  "source_ids": "cochrane_handbook,simplypsychology2024,morvaridzadeh2020,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-63",
+  "checklist": "REVIEWER",
+  "section": "S10 Alcsoport-elemzés és meta-regresszió",
+  "ord": 67,
+  "text": "Az alcsoport-elemzések előre tervezettek (protokoll 9. pont), indokoltak és számuk korlátozott; az utólagosak ekként jelöltek. Kevés vizsgálatnál alacsony erejű, megfigyeléses és hipotézisgeneráló eredményként kell értelmezni őket, és a hatásmódosítás hitelességét strukturáltan (ICEMAN-szempontok) kell mérlegelni. Indoklás nélküli utólagos alcsoport: major.",
+  "how_to_verify": "A results.json `options.subgroup` és `options.moderators` mezője ↔ `protokoll.md` 9. pont; az S10 döntésnaplója. KB: K-ZHA22-055, K-BOR09-052, K-BOR09-056, K-KHN0102-061.",
+  "stage_id": "S10",
+  "source_ids": "cochrane_handbook,iceman2020,prisma2020,zhang2022_jslhr,borenstein2009,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-64",
+  "checklist": "REVIEWER",
+  "section": "S10 Alcsoport-elemzés és meta-regresszió",
+  "ord": 68,
+  "text": "Megadott, hogy az alcsoportok τ²-e külön vagy közös (`--common-tau2`), és hogy a forest plot súlyai melyik modellből származnak. A moderátor kódolása minden adatfájlban egységes, a vágópontok megfelelnek a definíciójuknak (a mediánvágás két csoportot ad).",
+  "how_to_verify": "A results.json `subgroups.common_tau2` és `subgroups.model` mezője; az `adatkinyeres.csv` `subgroup` oszlopának értékkészlete. KB: K-KHN09-046, K-KHN05-053, K-KHN05-007, K-MOR20-051.",
+  "stage_id": "S10",
+  "source_ids": "khan2020,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-65",
+  "checklist": "REVIEWER",
+  "section": "S10 Alcsoport-elemzés és meta-regresszió",
+  "ord": 69,
+  "text": "Meta-regresszió csak elegendő vizsgálatszámnál (heurisztika: kb. 10 vizsgálat moderátoronként) és előre tervezett moderátorokkal futhat. A heterogenitás magyarázatára szánt kovariáns ne a mintanagyság vagy a precizitás függvénye legyen: ez a kis-vizsgálat hatást keveri a valódi hatásmódosítással (annak vizsgálata az S11 feladata). Folytonos moderátort csak klinikai okkal szabad kategorizálni, és centrálni kell, vagy helyesen értelmezni a tengelymetszetet.",
+  "how_to_verify": "A results.json `metaregression.k` és `metaregression.coefficients` mezője; `options.moderators` ↔ `protokoll.md` 9. pont. KB: K-KHN1113-080, K-KHN1113-030, K-KHN1113-027, K-ZHA22-057, K-ZHA22-062.",
+  "stage_id": "S10",
+  "source_ids": "cochrane_handbook,khan2020,zhang2022_jslhr,engine"
+ },
+ {
+  "item_id": "REVIEWER-65a",
+  "checklist": "REVIEWER",
+  "section": "S10 Alcsoport-elemzés és meta-regresszió",
+  "ord": 70,
+  "text": "Ha dózis–hatás metaanalízis készül, azt validált eszközzel kell futtatni (pl. R dosresmeta), mert a motor nem támogatja. Hagyományos meta-regresszió az átlagdózisra nem elfogadható. A GLST nem alkalmazható abszolút átlagokra vagy prevalenciára. A referenciadózis, a dózis-hozzárendelés szabálya, a spline-csomópontok száma és helye közölt, a nemlinearitás tesztje pedig a megfelelő együtthatókra vonatkozik.",
+  "how_to_verify": "A `05_elemzes/` R-kódja és kimenete; a Methods-ban a csomópontok és a tesztek. Ha nincsenek megadva a csomópontok, a reprodukálhatóság hiányos (major). KB: K-KHN1113-040, K-KHN1113-046, K-KHN1113-048, K-KHN1113-049, K-KHN1113-084, K-KHN1113-085, K-KHN1113-091.",
+  "stage_id": "S10",
+  "source_ids": "khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-66",
+  "checklist": "REVIEWER",
+  "section": "S10 Alcsoport-elemzés és meta-regresszió",
+  "ord": 71,
+  "text": "A meta-regresszió kimenete teljes: módszer és τ²-becslő, Knapp–Hartung (t/F) teszt, QM (df, p), reziduális QE és I²_res, az R² definíciója ((τ²₀ − τ²_res)/τ²₀, nem WLS-R²), valamint az együtthatók CI-vel. F-statisztikából számolt „I²” nem fogadható el.",
+  "how_to_verify": "A results.json `metaregression.tau2_method`, `test`, `QM`, `QM_df`, `QM_p`, `QE`, `QE_df`, `QE_p`, `I2_res`, `R2` és `coefficients` mezője; `options.metareg_test` = knha; robusztus változatnál `metaregression.robust`. KB: K-KHN1113-081, K-KHN1113-022, K-KHN1113-023; F-KHN1113-016, F-KHN1113-017.",
+  "stage_id": "S10",
+  "source_ids": "khan2020,zhang2022_jslhr,viechtbauer2010,engine"
+ },
+ {
+  "item_id": "REVIEWER-67",
+  "checklist": "REVIEWER",
+  "section": "S10 Alcsoport-elemzés és meta-regresszió",
+  "ord": 72,
+  "text": "A moderátor-eredményeket vizsgálati szintű, megfigyeléses összefüggésként kell megfogalmazni (az ökológiai tévkövetkeztetés elkerülésére: „idősebb mintájú vizsgálatokban”, nem „idősebb betegeknél”). Nem szignifikáns moderátor nem jelenti az összefüggés hiányát.",
+  "how_to_verify": "A kézirat moderátorokról szóló mondatai. KB: K-CHE16-056, K-CHE16-058, K-KHN0102-061, K-ZHA22-061.",
+  "stage_id": "S10",
+  "source_ids": "cochrane_handbook,cheung2016,khan2020,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-68",
+  "checklist": "REVIEWER",
+  "section": "S11 Kis-vizsgálat hatások / publikációs torzítás",
+  "ord": 73,
+  "text": "Funnel-aszimmetria tesztet csak legalább 10 vizsgálatnál szabad értelmezni (V016). 10-nél kevesebb vizsgálatnál, illetve arány-metaanalízisnél a teszt eredménye legfeljebb tájékoztató, és publikációs torzításra nem lehet belőle következtetni. Akkor sem értelmezhető, ha a vizsgálatok mérete (pontossága) hasonló. Kevés vizsgálatnál értelmezett Egger-teszt: major.",
+  "how_to_verify": "A results.json `bias.k`, `bias.min_k_recommended` és `bias.note` mezője; validálás V016; a kézirat torzításról szóló mondatai. Ha k ≥ 10, a kis-vizsgálat hatás vizsgálatát meg kell követelni, nem lehet elhagyni. KB: K-MOR20-059, K-MOR20-056, K-KHN1113-062, K-KHN0304-047, K-KHN05-057, K-KHN0607-066, K-KHN09-049, K-KHN09-073, K-BOR09-058.",
+  "stage_id": "S11",
+  "source_ids": "sterne2011,cochrane_handbook,morvaridzadeh2020,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-69",
+  "checklist": "REVIEWER",
+  "section": "S11 Kis-vizsgálat hatások / publikációs torzítás",
+  "ord": 74,
+  "text": "Az aszimmetria-teszt illik a hatásmértékhez: folytonos kimenetnél Egger (SMD-nél álpozitív lehet, mert a hatás és az SE-je nem független), esélyhányadosnál (bináris kimenet) a Harbord- vagy a Peters-teszt az irányadó, a klasszikus Egger csak tájékoztató; ezekhez a 2×2 cellaszámok kellenek. Közölt a teszt minden statisztikája (metszéspont vagy meredekség, CI vagy SE, t, df, p) és a pontos módszer, és a Methods ugyanazokat a teszteket nevezi meg, mint a Results.",
+  "how_to_verify": "A results.json `bias.harbord` (intercept, t, df, p), `bias.peters` (slope, t, df, p), `bias.egger` és `bias.binary_note` mezője. KB: K-KHN1113-068, K-MOR20-059, K-ZHA22-070, K-KHN0304-072, K-KHN0102-081.",
+  "stage_id": "S11",
+  "source_ids": "harbord2006,peters2006,egger1997,sterne2011,cochrane_handbook,khan2020,morvaridzadeh2020,zhang2022_jslhr,engine"
+ },
+ {
+  "item_id": "REVIEWER-70",
+  "checklist": "REVIEWER",
+  "section": "S11 Kis-vizsgálat hatások / publikációs torzítás",
+  "ord": 75,
+  "text": "Kontúr-javított funnel plot készült, és a csapat értelmezte. Az aszimmetria nem azonos a publikációs torzítással: okozhatja heterogenitás, valódi kis-vizsgálat hatás, véletlen, SMD-nél műtermék is. A szöveg ezért kis-vizsgálat hatásról beszél, és mérlegeli a lehetséges okokat. A nem szignifikáns teszt nem bizonyítja a torzítás hiányát, és a Begg-teszt önmagában nem elég. Kis-vizsgálat hatás gyanújánál a véletlen hatású becslés a kis vizsgálatok felé tolódhat, ezért az FE- és RE-becslés eltérését is értelmezni kell.",
+  "how_to_verify": "`05_elemzes/<kimenet>/funnel.svg` (kontúrokkal); a kézirat torzítás-szakasza. KB: K-KHN1113-067, K-ZHA22-065, K-ZHA22-067, K-KHN1113-066, K-KHN1113-082, K-BOR07-041.",
+  "stage_id": "S11",
+  "source_ids": "peters2008,sterne2011,cochrane_handbook,khan2020,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-71",
+  "checklist": "REVIEWER",
+  "section": "S11 Kis-vizsgálat hatások / publikációs torzítás",
+  "ord": 76,
+  "text": "A trim-and-fill csak érzékenységi elemzésként szerepel, nem „korrigált valódi hatásként”, különösen jelentős heterogenitásnál. A Rosenthal-féle fail-safe N nem bizonyíték a torzítás ellen (legfeljebb tájékoztató). A Doi-plot és az LFK-index heurisztika, nem jobb a funnel-alapú módszereknél, és csak kiegészítésként, előre rögzítve használható.",
+  "how_to_verify": "A results.json `bias.trimfill` (k0, adjusted) és `bias.lfk` (lfk, category) mezője; a kézirat ezekről szóló megfogalmazása. Konszenzus: a források egy része (Khan 2020) az LFK-t a funnel-tesztek fölé helyezi, mások fail-safe N-t ajánlanak; a Cochrane Handbook v6.5 szerint egyik sem követendő. KB: K-ZHA22-069, K-BOR09-059, K-CHE16-061, K-CHE16-063, K-KHN05-059, K-KHN1113-074.",
+  "stage_id": "S11",
+  "source_ids": "duval2000,furuya2018_lfk,cochrane_handbook,sterne2011,zhang2022_jslhr,borenstein2009,cheung2016,khan2020"
+ },
+ {
+  "item_id": "REVIEWER-72",
+  "checklist": "REVIEWER",
+  "section": "S11 Kis-vizsgálat hatások / publikációs torzítás",
+  "ord": 77,
+  "text": "A hiányzó eredmények miatti torzítás közvetlen bizonyítékát is vizsgálni kell: regiszterkereséssel a regisztrált, de nem közölt vizsgálatokra, és a regisztrált kimenetek összevetésével a közöltekkel (kimenet-közlési torzítás).",
+  "how_to_verify": "A `kereses_naplo.md` regiszter-sorai; az összevetés a `07_ellenorzes/` mappában (NCT-szám → ClinicalTrials.gov `get_trial_details`: elsődleges kimenet ↔ közölt kimenet). KB: K-KHN1113-002, K-KHN1113-003, K-SIM24-063, K-KHN0102-063.",
+  "stage_id": "S11",
+  "source_ids": "cochrane_handbook,prisma2020,khan2020,simplypsychology2024"
+ },
+ {
+  "item_id": "REVIEWER-73",
+  "checklist": "REVIEWER",
+  "section": "S12 Érzékenységi elemzés",
+  "ord": 78,
+  "text": "A protokollban előre rögzített minden érzékenységi elemzés lefutott, külön kimeneti mappában, és közölték: magas torzítási kockázatú vizsgálatok kizárása, becsült vagy imputált adatú vizsgálatok kizárása, közös vs véletlen hatású modell, másik τ²-becslő (pl. DL vs REML), HKSJ vs z-CI. A riport kimondja, változik-e a következtetés. Bejelentett, de nem közölt érzékenységi elemzés: major.",
+  "how_to_verify": "`ma.py analyze …` a következő opciókkal: `--exclude rob=high`, `--exclude estimated=igen`, `--model fixed`, `--tau2 DL`, `--ci z`; a kimenetek a `05_elemzes/sens_*` mappákban, a futások a `ma.py project list <mappa> runs` listában. Összevetés a `protokoll.md` 9. pontjával. KB: K-SIM24-067, K-MOR20-060, K-MOR20-061, K-KHN0102-082, K-KHN0607-040.",
+  "stage_id": "S12",
+  "source_ids": "cochrane_handbook,prisma2020,simplypsychology2024,morvaridzadeh2020,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-74",
+  "checklist": "REVIEWER",
+  "section": "S12 Érzékenységi elemzés",
+  "ord": 79,
+  "text": "Leave-one-out és befolyás-diagnosztika készült; a befolyásos vizsgálatok meg vannak nevezve, és közölt, hogy a következtetés kiállja-e az eltávolításukat. A kiugró vizsgálat nem feltétlenül befolyásos. A kiugró-szűrés (`--outliers`) utólagos, heurisztikus döntés, eredménye csak a teljes elemzés mellett közölhető, nem helyette.",
+  "how_to_verify": "A results.json `sensitivity.leave_one_out`, `sensitivity.influence` (`rstudent`, `dffits`, `cook_d`, `hat`, `influential`) és `sensitivity.outliers` (flagged, refit) mezője. KB: K-ZHA22-072, K-ZHA22-075, K-ZHA22-071, K-KHN0102-082, K-BOR07-070.",
+  "stage_id": "S12",
+  "source_ids": "cochrane_handbook,viechtbauer2010,zhang2022_jslhr,khan2020,borenstein2007_fe_re,engine"
+ },
+ {
+  "item_id": "REVIEWER-75",
+  "checklist": "REVIEWER",
+  "section": "S12 Érzékenységi elemzés",
+  "ord": 80,
+  "text": "Nagyon kevés vizsgálatnál τ²-érzékenységi elemzés (több rögzített τ²-érték) vagy más, megnevezett alternatíva (HKSJ, bayesi előzetes eloszlás) szerepel. Indoklás nélküli visszaváltás közös hatású modellre nem elfogadható.",
+  "how_to_verify": "A `05_elemzes/` érzékenységi kimenetei: más τ²-becslővel a motorban (`--tau2 DL|PM|SJ …`); rögzített τ²-értékekkel vagy bayesi modellel csak külső eszközzel (pl. R metafor). Az S12 döntésnaplója. KB: K-BOR07-074, K-BOR07-039, K-BOR09-044.",
+  "stage_id": "S12",
+  "source_ids": "borenstein2007_fe_re,borenstein2009,cochrane_handbook"
+ },
+ {
+  "item_id": "REVIEWER-76",
+  "checklist": "REVIEWER",
+  "section": "S12 Érzékenységi elemzés",
+  "ord": 81,
+  "text": "A protokollon kívül, utólag futtatott érzékenységi elemzések utólagosként jelöltek, és protokolleltérésként naplózottak. Eredményük nem írhatja felül az előre rögzített elsődleges elemzést.",
+  "how_to_verify": "`protokoll.md` 11. pont (Módosítások) és `ma.py project list <mappa> decisions --stage S12`. KB: K-ZHA22-071, K-MOR20-007.",
+  "stage_id": "S12",
+  "source_ids": "cochrane_handbook,prisma2020,zhang2022_jslhr,morvaridzadeh2020"
+ },
+ {
+  "item_id": "REVIEWER-77",
+  "checklist": "REVIEWER",
+  "section": "S13 Bizonyosság (GRADE)",
+  "ord": 82,
+  "text": "A Summary of Findings minden kimenetéhez tartozik GRADE-ítélet, mind az öt leminősítési szemponttal (torzítási kockázat, inkonzisztencia, közvetettség, pontatlanság, publikációs torzítás), megfigyeléses vizsgálatoknál a felminősítési szempontokkal is. Minden ítélet indokolt, és a projektnaplóban rögzített.",
+  "how_to_verify": "`ma.py project list <mappa> grades`; `06_kezirat/grade_sof.md`; minden ítéletnél `--kb` hivatkozás. KB: K-MOR20-062, K-MOR20-069.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,guyatt2011,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-78",
+  "checklist": "REVIEWER",
+  "section": "S13 Bizonyosság (GRADE)",
+  "ord": 83,
+  "text": "A torzítási kockázat és a publikációs torzítás miatti leminősítés összhangban van az adatokkal: számít, hogy a súly mekkora része jön magas kockázatú vagy némi aggályt keltő vizsgálatokból. A publikációs torzítás ítélete a teljes képen alapul (a keresés teljessége, regiszterek, kis iparági vizsgálatok, kontúr-funnel, legalább 10 vizsgálatnál teszt), nem egyetlen nem szignifikáns teszten. Ha a validator plugin GRADE-összesítését használják, a publikációs torzítás doménjét kézzel kell ellenőrizni (ismert hiba).",
+  "how_to_verify": "A `rob.csv` és a results.json `primary.weights_pct` mezője (súlyarány RoB-kategóriánként); a results.json `bias` mezői; a `ma.py project grade … --rob` és `--publication-bias` indoklása. KB: K-MOR20-066, K-KHN1113-074, K-BOR09-069. v1: a magas RoB-ú súlyarányt és a gyermek-futás hatását a `ma.py grade advice` domains.risk_of_bias.advisory adja; a forgalmi lámpa súlyaránnyal: `ma.py appraisal rob-summary <mappa> --outcome <id> --plot <futás>`; a „gyanított” publikációs torzítás feloldatlan (X019).",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,morvaridzadeh2020,khan2020,borenstein2009,engine"
+ },
+ {
+  "item_id": "REVIEWER-79",
+  "checklist": "REVIEWER",
+  "section": "S13 Bizonyosság (GRADE)",
+  "ord": 84,
+  "text": "Az inkonzisztencia és a pontatlanság ítélete összhangban van a számokkal. Az inkonzisztenciát a PI, a τ, a CI-k átfedése és az I² CI-je alapján kell megítélni, rögzített I²-küszöb nélkül. A pontatlanságot a CI és a döntési küszöb vagy MCID viszonya, valamint az optimális információméret alapján kell megítélni. Kevés vizsgálatnál a szűk RE-CI nem fogadható el kritikátlanul.",
+  "how_to_verify": "A results.json `primary.ci_lower`, `ci_upper`, `pi_lower`, `pi_upper`, `primary.heterogeneity.I2_ci_QP` és `totals.participants` mezője ↔ a `ma.py project grade … --inconsistency … --imprecision …` indoklása; az MCID forrása a `protokoll.md` 10. pontjában. Konszenzus: a forrásbeli „I² > 75% → leminősítés” (K-MOR20-064) csak tájékoztató. KB: K-MOR20-064, K-MOR20-065, K-BOR09-068, K-BOR09-070, K-CHE16-066.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,guyatt2011,cochrane_handbook,morvaridzadeh2020,borenstein2009,cheung2016"
+ },
+ {
+  "item_id": "REVIEWER-80",
+  "checklist": "REVIEWER",
+  "section": "S13 Bizonyosság (GRADE)",
+  "ord": 85,
+  "text": "A közvetettséget (populáció, beavatkozás, összehasonlítás, kimenet, pl. helyettesítő végpont) értékelték. Az abszolút hatást a relatív hatásnak egy klinikailag releváns alapkockázatra való alkalmazásával kell számolni, nem az RD összesítéséből, az SMD-t pedig természetes egységre vagy az MCID-hez viszonyítva kell értelmezni.",
+  "how_to_verify": "A `06_kezirat/grade_sof.md` abszolút hatás oszlopa ↔ a results.json `totals.absolute_per_1000` mezője (ez csak illusztratív; a SoF-hoz klinikai alapkockázat kell); az MCID forrása. KB: K-MOR20-067, K-KHN0607-071, K-MOR20-073.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,morvaridzadeh2020,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-81",
+  "checklist": "REVIEWER",
+  "section": "S13 Bizonyosság (GRADE)",
+  "ord": 86,
+  "text": "Az értelmezés iránya és nagysága helyes. A számláló (kísérleti) kar és a referenciakar meg van nevezve, és minden „RR/OR > 1” vagy „< 1” mondat a helyes karra vonatkozik. Az 1 alatti OR-t százalékos esélycsökkenésként kell megfogalmazni, nem kockázatcsökkenésként, a nullhipotézist pedig a helyes skálán (RR = 1, vagyis ln RR = 0). Rossz irányú értelmezés: blocker.",
+  "how_to_verify": "A kézirat minden hatást értelmező mondata ↔ az `adatkinyeres.csv` karjai, valamint a results.json előjelei és `back_transformed` mezője. Korrelációnál r ≈ 0 csak lineáris összefüggés hiányát jelzi (K-KHN10-050). KB: K-KHN0304-064, K-KHN0304-051, K-KHN05-037, K-KHN0304-068, K-KHN0304-053, K-KHN0304-077, K-KHN05-076.",
+  "stage_id": "S13",
+  "source_ids": "khan2020,cochrane_handbook"
+ },
+ {
+  "item_id": "REVIEWER-82",
+  "checklist": "REVIEWER",
+  "section": "S13 Bizonyosság (GRADE)",
+  "ord": 87,
+  "text": "A következtetések erőssége arányos a bizonyítékkal (k, heterogenitás, RoB, GRADE-szint). A véletlen hatású becslés a valódi hatások eloszlásának átlaga, nem „a” hatás. A klinikai jelentőséget a hatásnagyság, a CI és a PI alapján kell megítélni, nem pusztán p < 0,05 alapján, az eredményeket pedig hatásmérettel és CI-vel kell összevetni, nem a szignifikancia egyezésével. MI-szintézis nem idézhető bizonyítékként, és „nincs hatás” helyett „nem igazolt hatás” vagy „pontatlan becslés” a helyes megfogalmazás.",
+  "how_to_verify": "A kézirat Discussion és Conclusions része ↔ a `grade_sof.md` bizonyossági szintjei; ha elérhető, a presubmit plugin `claims` ellenőrzése. KB: K-MOR20-068, K-BOR07-051, K-SIM24-070, K-BOR09-075, K-BOR09-061, K-BOR09-062, K-BOR09-064, K-CHE16-065, K-KHA26-072, K-SIM24-068.",
+  "stage_id": "S13",
+  "source_ids": "grade_handbook,cochrane_handbook,morvaridzadeh2020,borenstein2007_fe_re,simplypsychology2024,borenstein2009,kharbach2026_tools"
+ },
+ {
+  "item_id": "REVIEWER-83",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 88,
+  "text": "A kézirat szövegében, absztraktjában, táblázataiban és ábráin minden szám (becslés, CI, p, k, résztvevők, I², τ², PI, alcsoport- és érzékenységi eredmények) egyezik a results.json megfelelő mezőjével. Ha a fő eredményben bármi eltér: blocker.",
+  "how_to_verify": "Mezőnkénti összevetés: `primary.estimate`, `ci_lower`, `ci_upper` (arány-mértéknél `back_transformed.estimate_ci` és `back_transformed.pi`), `primary.p`, `totals.k`, `totals.participants`, `primary.I2`, `primary.heterogeneity.I2_ci_QP`, `primary.tau2`, `pi_lower`, `pi_upper`, `subgroups.*`, `metaregression.*`, `sensitivity.*`. Az eltéréseket táblázatba kell gyűjteni a `07_ellenorzes/` mappában. KB: K-KHN1113-086, K-KHN08-075.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-84",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 89,
+  "text": "Minden közölt CI tartalmazza a pontbecslést, és alsó határa kisebb a felsőnél. A p-érték soha nem „0” vagy „0,00”, hanem p < 0,001, a Q-próba p-értéke legalább három tizedesjeggyel szerepel. Kis különbségeknél annyi tizedesjegy kell, hogy a CI-határ egyértelmű legyen; a skála vagy transzformáció meg van nevezve, és a becslés mindig CI-vel szerepel (pl. „RR 0.49 (95% CI 0.33–0.73)”).",
+  "how_to_verify": "A kézirat számai; ha elérhető, a presubmit `claims` ellenőrzése (CI nélküli becslések). KB: K-BOR09-079, K-KHN0607-076, K-KHN09-063, K-KHN10-065, K-KHN0607-075, K-KHN10-061, K-KHN0607-050.",
+  "stage_id": "S14",
+  "source_ids": "borenstein2009,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-85",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 90,
+  "text": "A forest plot négyzetei a ténylegesen használt modell súlyai szerint méretezettek, és a gyémánt az összesített becslést és CI-t mutatja. A nullvonal 1-nél (arány) vagy 0-nál (különbség) van, arány-mértéknél logaritmikus a tengely, és a „favours” feliratok helyes irányúak. A felirat megnevezi a modellt és a mértéket; korrelációnál az ábra r-egységben van.",
+  "how_to_verify": "`05_elemzes/<kimenet>/forest.svg` és `plot_data.json` ↔ a results.json `primary.weights_pct` mezője; ha elérhető, a figure-forge plugin `audit`-ja. KB: K-BOR07-071, K-KHN0102-078, K-KHN10-060, K-BOR09-023.",
+  "stage_id": "S14",
+  "source_ids": "borenstein2007_fe_re,khan2020,borenstein2009,engine"
+ },
+ {
+  "item_id": "REVIEWER-86",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 91,
+  "text": "A hatásmérték neve (OR, RR vagy RD, illetve az SMD változata) egységes a szövegben, a táblázatokban, a tengelyfeliratokban és a szoftverbeállításokban, és a táblázatok oszlopai azt tartalmazzák, amit a fejlécük mond.",
+  "how_to_verify": "A kézirat ↔ a results.json `options.measure` és `effect_sizes.label` mezője. KB: K-KHN05-036, K-KHN05-071, K-KHN0304-059.",
+  "stage_id": "S14",
+  "source_ids": "khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-87",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 92,
+  "text": "A Methods megnevez minden ténylegesen használt opciót: szoftver és verzió, modell, τ²-becslő, CI-módszer, PI-módszer, folytonossági korrekció, konverziók, torzítás-tesztek. Szerepel az utolsó keresés dátuma, és minden használt eszköz (az MI-asszisztenciát is beleértve) verzióval vagy csomaggal és dátummal.",
+  "how_to_verify": "A `report.md` angol Methods-bekezdése ↔ a kézirat Methods része; a results.json `engine.version` és `options` mezői; `eszkozok_hozzaferesek.md`. KB: K-CHE16-079, K-KHA26-078, K-KHA26-003.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,cheung2016,kharbach2026_tools,engine"
+ },
+ {
+  "item_id": "REVIEWER-88",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 93,
+  "text": "A PRISMA 2020 tételei teljesülnek: tételenként megfelel, részben vagy hiányzik, helymegjelöléssel. Az absztrakt minden előre rögzített elsődleges kimenetet közöl, a nem szignifikánsakat is. Elérhetők a vizsgálatonkénti eredmények és a forest plot, a kiegészítő anyagban pedig minden adatbázis, regiszter és weboldal teljes keresési stratégiája (PRISMA 2020 7. tétel; a „legalább egy adatbázis” a PRISMA 2009 és a PRISMA-P mércéje).",
+  "how_to_verify": "`ma.py kb checklist PRISMA2020` és `ma.py kb checklist PRISMA_S` tételenként; az absztrakt kimenetei ↔ `protokoll.md` 3. pont. KB: K-MOR20-077, K-MOR20-078, K-ZHA22-090, K-SIM24-080, K-MOR20-005, K-BOR09-080, K-KHN09-073.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,prisma_s,morvaridzadeh2020,zhang2022_jslhr,simplypsychology2024"
+ },
+ {
+  "item_id": "REVIEWER-89",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 94,
+  "text": "Minden hivatkozás létezik, és bibliográfiai adatai (szerzők, év, cím, folyóirat, DOI/PMID) egyeznek a kiadói vagy PubMed-rekorddal. A vizsgálatoknak tulajdonított állításokat szúrópróbával (legalább 10 hivatkozás, vagy mind, ha kevesebb van) a teljes szöveggel kell összevetni. Emlékezetből vagy MI-formázott hivatkozásból semmi nem tekinthető ellenőrzöttnek. Kitalált vagy nem létező hivatkozás: blocker.",
+  "how_to_verify": "PubMed MCP: `get_article_metadata`, `lookup_article_by_citation`, `convert_article_ids`; tartalék: WebFetch eutils vagy `api.crossref.org/works/<DOI>`. Ha egyik sem érhető el, rögzíteni kell, hogy az ellenőrzés nem volt lehetséges. Az eredménytáblázat a `07_ellenorzes/` mappába kerül. KB: K-KHA26-079, K-KHA26-080, K-KHA26-081.",
+  "stage_id": "S14",
+  "source_ids": "kharbach2026_tools,prisma2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-90",
+  "checklist": "REVIEWER",
+  "section": "S14 Jelentés és kézirat",
+  "ord": 95,
+  "text": "A kinyert adatok (03_adatok CSV), az elemzési parancsok és beállítások, a results.json és a döntési napló (`project export`) betegszintű adat nélkül elérhetők a kiegészítő anyagban vagy nyilvános tárhelyen. A feltöltött forrásokból számot, képletet vagy folyamatábra-sablont csak a forrás ismert hibáinak ellenőrzése után szabad átvenni.",
+  "how_to_verify": "`ma.py project export <mappa>`; a kézirat adat-elérhetőségi része (PRISMA 2020 27. tétel); `git check-ignore`. Ismert forráshibák: `ma.py kb search \"hiba\"` (pl. K-KHN0102-004, K-ZHA22-089, K-BOR09-040, K-KHN0607-053, K-KHN08-071, K-KHN09-064, K-KHN1113-047). KB: K-ZHA22-090, K-KHN0102-004.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,zhang2022_jslhr,khan2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-91",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 96,
+  "text": "Teljes reprodukció: a `03_adatok` CSV-ből a protokoll szerinti beállításokkal újrafuttatott elsődleges elemzés minden kimenetre egyezik a kézirat minden számával (becslés, CI, p, k, résztvevők, I², τ², PI). Az eredményt „egyezik” vagy „eltér: mi és mennyivel” formában kell rögzíteni.",
+  "how_to_verify": "Kimenetenként `ma.py analyze --data <mappa>/03_adatok/<fájl>.csv --measure <M> [opciók] --out <mappa>/07_ellenorzes/final_rerun`, majd a results.json összevetése a kézirattal. A `ma.py project list <mappa> runs` szerint a kéziratban használt futás `data_sha256` értéke egyezik a jelenlegi CSV-ével (`sha256sum`). KB: K-KHN1113-086, K-SIM24-055, K-ZHA22-045.",
+  "stage_id": "S14",
+  "source_ids": "engine,prisma2020,khan2020,simplypsychology2024,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-92",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 97,
+  "text": "A PRISMA 2020 folyamatábra végső számait újra ellenőrizni kell: B = A1 + A2 − D1 − D2 − D3; E = B − C; G = E − F; J = G − H; I ≤ J; a metaanalízisbe bevont vizsgálatok száma ≤ I. A kéziratban szereplő folyamatábra ugyanezeket a számokat mutatja.",
+  "how_to_verify": "`ma.py prisma check --md <mappa>/02_szures/prisma_folyamat.md` (vagy `--composer prisma-flow.json`), kilépési kód 0; ábra ↔ táblázat. KB: K-MOR20-076, K-SIM24-027.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,morvaridzadeh2020,simplypsychology2024,engine"
+ },
+ {
+  "item_id": "REVIEWER-93",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 98,
+  "text": "A teljes kézirat PRISMA 2020 megfelelését tételenként kell rögzíteni (megfelel, részben vagy hiányzik, a hely megjelölésével), a PRISMA 2020 for Abstracts elemeivel együtt.",
+  "how_to_verify": "A `ma.py kb checklist PRISMA2020` minden tétele egy-egy sor a `07_ellenorzes/` mappában (tétel-ID, ítélet, hely). A PRISMA 2020 for Abstracts lista nincs a tudásbázisban: az absztraktot a PRISMA 2020 2. tétele szerint a hivatalos absztrakt-ellenőrzőlistával kell kézzel összevetni. Hiányzó lényeges tétel: major. KB: K-ZHA22-090, K-MOR20-077.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,zhang2022_jslhr,morvaridzadeh2020"
+ },
+ {
+  "item_id": "REVIEWER-94",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 99,
+  "text": "Protokoll ↔ megvalósítás: minden eltérés (kérdés, kritériumok, források, kimenetek, hatásmérték, modell, τ²-becslő, alcsoportok, érzékenységi elemzések) dátummal, indoklással és döntés-azonosítóval dokumentált, a kézirat közli, és a regisztrációs rekordot frissítették. Dokumentálatlan eltérés a fő elemzésben: blocker.",
+  "how_to_verify": "`protokoll.md` 11. pont ↔ `ma.py project list <mappa> decisions` ↔ a results.json `options` mezői ↔ a regisztrált PROSPERO/OSF-rekord (WebFetch); a kéziratban a PRISMA 2020 24c tétele. KB: K-MOR20-007, K-SIM24-012, K-ZHA22-013.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,amstar2,cochrane_handbook,morvaridzadeh2020,simplypsychology2024,zhang2022_jslhr"
+ },
+ {
+  "item_id": "REVIEWER-95",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 100,
+  "text": "Nincs szelektív közlés: minden előre rögzített kimenet szerepel az eredmények között (összesítve vagy narratívan), vagy az elhagyása indokolt. A kimenetenkénti k visszavezethető a vizsgálati jellemzők táblázatára.",
+  "how_to_verify": "A `protokoll.md` 3. pontjának kimenetei ↔ a kézirat Results-táblázata ↔ a `05_elemzes/` kimenetenkénti mappái (`totals.k`). KB: K-MOR20-005, K-MOR20-078, K-MOR20-081.",
+  "stage_id": "S14",
+  "source_ids": "prisma2020,amstar2,morvaridzadeh2020"
+ },
+ {
+  "item_id": "REVIEWER-96",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 101,
+  "text": "Végső ellenőrzés egységelemzési hibára és kettős számolásra: egyetlen elemzésben sem szerepel kétszer ugyanaz a vizsgálat vagy kontrollkar, és a résztvevők összlétszáma egyedi résztvevőket számol.",
+  "how_to_verify": "Minden `05_elemzes/*/results.json` `effect_sizes.labels` mezője ↔ az `adatkinyeres.csv` `study_id` oszlopa; a V007 és V017 validálás újrafuttatása; `totals.participants`. KB: K-MOR20-020, K-MOR20-021, K-ZHA22-039.",
+  "stage_id": "S14",
+  "source_ids": "cochrane_handbook,morvaridzadeh2020,zhang2022_jslhr,engine"
+ },
+ {
+  "item_id": "REVIEWER-97",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 102,
+  "text": "A hivatkozások végső ellenőrzése: minden hivatkozás létezése igazolt (PubMed vagy DOI), a tartalmi szúrópróba (legalább 10 hivatkozás, vagy mind) dokumentált, és a bevont vizsgálatok visszavonás-ellenőrzése megtörtént.",
+  "how_to_verify": "A `07_ellenorzes/` hivatkozás-ellenőrzési táblázata (hivatkozás, PMID/DOI, létezik-e, egyezik-e a metaadat, alátámasztja-e az állítást). Ha valamelyik nem volt ellenőrizhető, ezt ki kell mondani. KB: K-KHA26-080, K-KHA26-081, K-KHA26-066.",
+  "stage_id": "S14",
+  "source_ids": "kharbach2026_tools,prisma2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-98",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 103,
+  "text": "Az AMSTAR 2 önellenőrzés (ma-ertekelo) megtörtént, és a kritikus tételek (2, 4, 7, 9, 11, 13, 15) ítéletei összhangban vannak a reviewer megállapításaival.",
+  "how_to_verify": "`ma.py kb checklist AMSTAR2`; `ma.py project list <mappa> decisions --stage S13` (AMSTAR 2 besorolás). Eltérés esetén megállapítást kell rögzíteni. KB: K-MOR20-069, K-MOR20-070.",
+  "stage_id": "S14",
+  "source_ids": "amstar2,morvaridzadeh2020,engine"
+ },
+ {
+  "item_id": "REVIEWER-99",
+  "checklist": "REVIEWER",
+  "section": "FINAL – záró ellenőrzés",
+  "ord": 104,
+  "text": "Lezárás: nincs nyitott blocker, major csak indokolt wontfix státusszal maradhat. A FINAL ítélet rögzített, a döntési és ellenőrzési napló pedig kiegészítő anyagként exportált.",
+  "how_to_verify": "`ma.py project list <mappa> findings --status open` (nincs blocker); `ma.py project checkpoint <mappa> --stage FINAL --agent reviewer --verdict PASS|PASS_WITH_FIXES|FAIL --summary \"…\"` (nyitott blocker mellett a napló elutasítja a PASS-t); `ma.py project export <mappa>`.",
+  "stage_id": "S14",
+  "source_ids": "engine"
+ }
+]

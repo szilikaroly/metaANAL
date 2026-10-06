@@ -1,0 +1,862 @@
+[
+ {
+  "k_id": "K-KHN0102-001",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A forrás jellege: Khan 2020, 1–2. fejezet (bevezető alapok)",
+  "body": "Khan (2020), Meta-Analysis: Methods for Health and Experimental Studies (Springer, Statistics for Biology and Health), Ch 1 (systematic review, pp. 3–13) and Ch 2 (introduction to meta-analysis, pp. 15–36) form a conceptual and statistical primer for first-time, non-technical users such as students, health scientists and public-health workers. These chapters contain no worked numeric meta-analysis; the only numeric illustration is the PRISMA-style flow chart in Fig. 1.1. Measure-specific formulas (RR, OR, proportion, RD, SMD, WMD, correlation) are left to Ch 3–10 and publication bias with the LFK index to Ch 12; tau^2 estimator formulas, zero-cell handling and prediction intervals are not given in Ch 1–2.",
+  "source_id": "khan2020",
+  "locator": "Preface pp. vii–ix; Ch1 p. 3; Ch2 p. 15",
+  "tags": "scope hatókör Khan 2020 textbook tankönyv primer bevezető systematic review szisztematikus áttekintés meta-analysis metaanalízis MetaXL beginners kezdők"
+ },
+ {
+  "k_id": "K-KHN0102-002",
+  "stage_id": "S00",
+  "kind": "concept",
+  "title": "A szerzők módszertani álláspontja: IVhet/QE és Doi-plot/LFK",
+  "body": "The book takes an explicit methodological position: it favours the inverse-variance heterogeneity (IVhet) and quality-effects (QE) models of Doi et al. over DerSimonian–Laird random effects, and the Doi plot with LFK index over funnel-plot asymmetry tests. Agents should present this as the authors' view (the method developers are co-contributors to the book), not as consensus. [note: the Cochrane Handbook v6 still uses the random-effects model for heterogeneous data, preferring REML or Paule–Mandel tau^2 over DL and considering Hartung–Knapp–Sidik–Jonkman CIs; IVhet, QE and LFK are less widely adopted and validated mainly by their developers' simulations.]",
+  "source_id": "khan2020",
+  "locator": "Preface p. viii; Ch2 §2.6.3–2.6.5 pp. 27–30; §2.8.2 p. 33",
+  "tags": "authors' position szerzői álláspont IVhet quality effects minőségi hatás random effects véletlen hatás DerSimonian Laird Doi plot LFK index consensus konszenzus Cochrane REML"
+ },
+ {
+  "k_id": "K-KHN0102-003",
+  "stage_id": "S00",
+  "kind": "tool",
+  "title": "MetaXL és Stata a könyvben; a könyv munkafolyamata",
+  "body": "All analyses in the book are demonstrated in MetaXL, a free MS Excel add-in downloadable from the Internet with an instruction manual (forest plots, FE/RE/IVhet/QE models, Doi plot); Stata code is supplied for each effect measure in later chapters, and Ch 1–2 contain no code. The book's workflow is: identify the outcome type, choose the effect-size measure, choose the statistical model, run the analysis in software, then interpret the output, with one chapter per measure. [note: MetaXL's RE and IVhet use the DerSimonian–Laird tau^2 (external knowledge, not stated in Ch 1–2); the local engine reproduces IVhet via models.meta_analysis(model='ivhet') with tau^2_DL and computes the Doi plot and LFK index (bias.doi_plot_data: doi.svg, results.json bias.lfk), but does not implement the QE model.]",
+  "source_id": "khan2020",
+  "locator": "Preface pp. viii–ix",
+  "tags": "MetaXL Excel add-in bővítmény Stata software szoftver workflow munkafolyamat effect size hatásméret model choice modellválasztás IVhet engine motor"
+ },
+ {
+  "k_id": "K-KHN0102-004",
+  "stage_id": "S00",
+  "kind": "pitfall",
+  "title": "A forrás hibái, amelyeket nem szabad átvenni",
+  "body": "Known errors in Ch 1–2 that must not be copied into reports or code: p. 21 states that the two-tailed rejection probability P(|Z| >= z_{alpha/2}) equals 1 − alpha (it equals alpha) and writes the p-value as P(|Z| > z0) without the absolute value of z0; p. 23 uses pi = 22/7 (use exact pi); p. 26 prints I^2 without truncation at 0 and calls Q 'Cochrane's' (it is Cochran's, as the p. 21 Remark spells it). p. 10 attributes MOOSE to Moher et al. 2000 and PRISMA-P to Moher et al. 2009 'published in 2015' (correct: Stroup et al. 2000; Moher et al. 2015, as p. 11 gives them). p. 23 places SMD in 'Chap. 9' (it is Ch 8). Figure cross-references are shifted: the RE text on p. 27 cites Fig. 2.4 (should be Fig. 2.5), the IVhet text on p. 28 cites Fig. 2.5 (should be Fig. 2.6), and the weighting paragraph on p. 24 contains a stray pointer to Fig. 2.2 (the normal curve).",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 10; Ch2 pp. 21, 23, 24, 26–28",
+  "tags": "errata hibák source error forráshiba pi 22/7 I2 truncation csonkolás Cochran Q MOOSE PRISMA-P citation hivatkozás cross-reference kereszthivatkozás"
+ },
+ {
+  "k_id": "K-KHN0102-005",
+  "stage_id": "S01",
+  "kind": "concept",
+  "title": "Szisztematikus vs. narratív áttekintés; metaanalízis definíciója",
+  "body": "Narrative reviews, traditionally written by leaders in a field on broad topics, are informal, subjective, prone to personal bias even when the authors are experts, and not replicable. A systematic review searches, gathers and appraises the literature on a specific question with explicit criteria so that it is transparent, minimises bias and can be replicated; meta-analysis is the quantitative part that pools study summary results to estimate a common population effect size. The term meta-analysis was coined by Glass (1976) in educational research. Research synthesis underpins evidence-based decision-making, and its validity depends directly on the quality of the included studies and of the methods.",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.2 pp. 4–5; §1.3 p. 5; Ch2 p. 15; §2.9 p. 33",
+  "tags": "systematic review szisztematikus áttekintés narrative review narratív áttekintés meta-analysis metaanalízis definition definíció Glass 1976 evidence-based decision-making bizonyítékalapú döntéshozatal reproducibility reprodukálhatóság"
+ },
+ {
+  "k_id": "K-KHN0102-006",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "A szisztematikus áttekintés öt lépése",
+  "body": "Five steps of a systematic review (Khan KS et al. 2003): (1) frame the question; (2) identify all relevant published and unpublished work; (3) assess study quality; (4) extract and summarise the evidence; (5) interpret the findings. More detailed step guides are Yannascoli et al. 2013 and Memon et al. 2020; details differ between guides but the key steps are the same.",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.3.1 pp. 5–6",
+  "tags": "steps lépések systematic review szisztematikus áttekintés workflow munkafolyamat framing question kérdés quality minőség extraction adatkinyerés interpretation értelmezés"
+ },
+ {
+  "k_id": "K-KHN0102-007",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "Tervezés, multidiszciplináris csapat, az áttekintés indoklása",
+  "body": "First form a team whose expertise covers all relevant areas of the topic, then agree on the task list, who does what, how tasks are managed, timelines, back-up arrangements and how to handle foreseeable problems; monitor progress regularly and adjust. The team must also agree on why the review matters and what it adds to the existing literature: if the rationale is weak and the outcomes unimportant, the review may not be worth the resources. The plan should state how review bias will be minimised so the review is reproducible.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 6",
+  "tags": "planning tervezés team csapat multidisciplinary multidiszciplináris rationale indoklás timeline ütemterv roles szerepek resources erőforrások"
+ },
+ {
+  "k_id": "K-KHN0102-008",
+  "stage_id": "S01",
+  "kind": "guidance",
+  "title": "A kutatási kérdés megfogalmazása (PICO nélkül)",
+  "body": "Before committing to a question, run a preliminary literature check to see whether it has already been answered and whether enough accessible material exists to answer it. Once fixed, the research question drives all planning and activities, and the team should critically discuss its appropriateness, importance and validity. [note: the source does not mention PICO; structure the question as PICO(S), as the Cochrane Handbook and PRISMA 2020 expect.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 6",
+  "tags": "research question kutatási kérdés PICO preliminary search előzetes keresés scoping already answered feasibility megvalósíthatóság"
+ },
+ {
+  "k_id": "K-KHN0102-009",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Beválasztási és kizárási kritériumok előre rögzítve",
+  "body": "Set strict inclusion and exclusion criteria at the outset, stated explicitly before any database search, to avoid personal or selection bias in choosing studies. The most relevant dimensions are study period, study type/design (e.g. RCTs only), language and outcome measures. Apply the criteria consistently throughout the search and selection process.",
+  "source_id": "khan2020",
+  "locator": "Ch1 pp. 6–7",
+  "tags": "eligibility criteria beválasztási kritériumok inclusion exclusion kizárás a priori előre selection bias szelekciós torzítás study design vizsgálati elrendezés language nyelv"
+ },
+ {
+  "k_id": "K-KHN0102-010",
+  "stage_id": "S02",
+  "kind": "guidance",
+  "title": "Protokoll: PRISMA-P; a regisztrációt a forrás nem említi",
+  "body": "The source names PRISMA-P (Moher et al. 2015) as the guideline for developing and reporting systematic-review protocols. It does not mention PROSPERO or any other protocol registration. [note: current practice (PRISMA 2020 item 24, Cochrane Handbook) expects prospective registration, e.g. in PROSPERO, and reporting of any protocol amendments.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.6 p. 10; §1.6.1 p. 11",
+  "tags": "protocol protokoll PRISMA-P registration regisztráció PROSPERO amendments módosítások a priori"
+ },
+ {
+  "k_id": "K-KHN0102-011",
+  "stage_id": "S02",
+  "kind": "check",
+  "title": "Ellenőrzés: indoklás, kérdés, kritériumok és protokoll a keresés előtt",
+  "body": "Reviewer check: the review rationale and research question were written down before searching, and a preliminary literature check confirmed the question is not already answered and that enough material exists. Inclusion/exclusion criteria (period, design, language, outcome measures) were stated before the database search and applied unchanged. A protocol exists that follows PRISMA-P.",
+  "source_id": "khan2020",
+  "locator": "Ch1 pp. 6–7; p. 11",
+  "tags": "reviewer check ellenőrzés protocol protokoll eligibility criteria kritériumok PRISMA-P research question kutatási kérdés a priori"
+ },
+ {
+  "k_id": "K-KHN0102-012",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Keresési stratégia, adatbázisok, teljes körű keresés",
+  "body": "Before searching, write a search strategy, list the relevant databases and search engines, and create access accounts where needed; the health examples given are PubMed, Cochrane, EMBASE, Medline and ISI. Specify the study time window and use all combinations of key and technical words, phrases and terms. Include published and unpublished studies in any language and from any country, extending the search to all major languages so that non-English publications are covered. Primary sources to cover include peer-reviewed articles as well as preprints, theses, reports and conference proceedings (p. 9).",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.4 p. 7; §1.5 p. 9",
+  "tags": "search strategy keresési stratégia databases adatbázisok PubMed Cochrane EMBASE MEDLINE ISI Web of Science keywords kulcsszavak unpublished nem publikált grey literature szürke irodalom language nyelv preprint preprintek thesis disszertáció conference proceedings konferenciakiadvány"
+ },
+ {
+  "k_id": "K-KHN0102-013",
+  "stage_id": "S03",
+  "kind": "convention",
+  "title": "Keresési dátum rögzítése adatbázisonként",
+  "body": "Record the search date for each database: it is the cut-off up to which records from that database are included in the review. Reproducibility of the review is judged relative to this date.",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.4 p. 7; §1.4.1 p. 8",
+  "tags": "search date keresési dátum cut-off határidő database adatbázis reproducibility reprodukálhatóság documentation dokumentálás"
+ },
+ {
+  "k_id": "K-KHN0102-014",
+  "stage_id": "S03",
+  "kind": "guidance",
+  "title": "Független keresés két taggal; irodalomjegyzékek átnézése",
+  "body": "At least two team members search independently in all relevant databases and resources, covering both electronic and paper versions, then reconcile what they found; a third reviewer resolves disputed studies if needed. Document any limitations or weaknesses of the search in the review report. Hand-search the reference lists of the studies kept after full-text checking, and put any new studies through the same search, review and selection stages.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 7",
+  "tags": "independent search független keresés two reviewers két bíráló third reviewer harmadik bíráló reference list irodalomjegyzék hand search kézi keresés backward citation search limitations korlátok"
+ },
+ {
+  "k_id": "K-KHN0102-015",
+  "stage_id": "S03",
+  "kind": "check",
+  "title": "Ellenőrzés: keresés és szűrés dokumentálása",
+  "body": "Reviewer check: the search strategy lists all databases with the exact search date for each, includes unpublished and non-English sources, and reference lists were hand-searched; search limitations are documented. Screening was done in title, abstract and full-text stages by at least 2 independent reviewers, with disagreements logged and resolved by a third reviewer.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 7",
+  "tags": "reviewer check ellenőrzés search documentation keresés dokumentálása search date keresési dátum screening szűrés independent reviewers független bírálók disagreement nézeteltérés"
+ },
+ {
+  "k_id": "K-KHN0102-016",
+  "stage_id": "S03",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a keresés teljessége",
+  "body": "Evaluator criterion: rate the comprehensiveness of the search (multiple databases, unpublished and grey literature, all languages, reference lists). Score down English-only or published-only searches, because they invite language and publication bias.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 7; Ch2 p. 32",
+  "tags": "evaluator criterion értékelési szempont search comprehensiveness keresés teljessége grey literature szürke irodalom language bias nyelvi torzítás publication bias publikációs torzítás"
+ },
+ {
+  "k_id": "K-KHN0102-017",
+  "stage_id": "S04",
+  "kind": "guidance",
+  "title": "Háromlépcsős szűrés: cím, absztrakt, teljes szöveg",
+  "body": "Independent reviewers screen in three stages: title, then abstract, then full text, and studies can be excluded at each stage against the predefined criteria. The source suggests using Rayyan (rayyan.qcri.org) or EndNote to manage the inclusion/exclusion decisions.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 7",
+  "tags": "screening szűrés title cím abstract absztrakt full text teljes szöveg Rayyan EndNote selection kiválasztás stages szakaszok"
+ },
+ {
+  "k_id": "K-KHN0102-018",
+  "stage_id": "S04",
+  "kind": "example",
+  "title": "Példa folyamatábra: D1 vs. D2 gastrectomia (Memon et al. 2011)",
+  "body": "Fig. 1.1 is a PRISMA-2009-style flow chart for the review of D1 vs D2 gastrectomy for gastric adenocarcinoma (Memon et al. 2011): 28 database records plus 1 from other sources gave 29 after de-duplication; 29 were screened and 14 excluded; 15 full texts were assessed and 9 excluded with reasons (5 longitudinal reports of the same trial, 4 interim analyses); 6 studies entered the qualitative synthesis and 6 the meta-analysis. It is a ready test case for flow-chart arithmetic checks; the underlying effect data are not given in Ch 1–2. [note: Fig. 1.1 uses the PRISMA 2009 layout. The PRISMA 2020 diagram separates records, reports and studies and adds boxes for records removed before screening and for reports sought but not retrieved; if the 5 longitudinal reports concern trials that were already included, PRISMA 2020 counts them as additional reports of included studies rather than as exclusions.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.4.1 p. 8; Fig. 1.1 p. 9",
+  "tags": "PRISMA flow diagram folyamatábra example példa Memon 2011 gastrectomy gastrectomia counts számok duplicates duplikátumok full text teljes szöveg exclusion reasons kizárási okok PRISMA 2020 reports jelentések"
+ },
+ {
+  "k_id": "K-KHN0102-019",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Nem reprodukálható szelekció",
+  "body": "Every systematic review must be reproducible: an independent team running the same review up to the same search date should report exactly the same study-selection flow chart. Detect a failure when the flow-chart arithmetic does not reconcile or the search date or strategy is missing. Fix: document every selection stage with counts and exclusion reasons so that the numbers add up.",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.4.1 p. 8",
+  "tags": "reproducibility reprodukálhatóság flow chart folyamatábra selection kiválasztás search date keresési dátum documentation dokumentálás pitfall buktató"
+ },
+ {
+  "k_id": "K-KHN0102-020",
+  "stage_id": "S04",
+  "kind": "check",
+  "title": "Ellenőrzés: a folyamatábra számtana",
+  "body": "Reviewer check that the flow-chart counts reconcile: records identified (databases + other sources) − duplicates = records screened; screened − excluded = full texts assessed; full texts − excluded (sum of listed reasons) = studies included. In Fig. 1.1: 28 + 1 = 29 (no duplicates were removed), 29 − 14 = 15, 15 − 9 = 6 and 5 + 4 = 9.",
+  "source_id": "khan2020",
+  "locator": "Ch1 Fig. 1.1 p. 9",
+  "tags": "PRISMA flow diagram folyamatábra arithmetic számtan consistency konzisztencia counts számok reviewer check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHN0102-021",
+  "stage_id": "S04",
+  "kind": "pitfall",
+  "title": "Egyetlen bíráló a keresésben, szűrésben, adatkinyerésben",
+  "body": "Search, screening or data extraction done by a single person threatens objectivity and reproducibility. Fix: use at least two independent reviewers at each stage, reconcile item by item, and have a third reviewer or a field expert arbitrate disagreements.",
+  "source_id": "khan2020",
+  "locator": "Ch1 pp. 7–8",
+  "tags": "single reviewer egy bíráló duplicate screening kettős szűrés double extraction kettős adatkinyerés arbitration döntőbíró third reviewer harmadik bíráló pitfall buktató"
+ },
+ {
+  "k_id": "K-KHN0102-022",
+  "stage_id": "S04",
+  "kind": "criterion",
+  "title": "Értékelési szempont: reprodukálhatóság és függetlenség",
+  "body": "Evaluator criteria: could an independent team reproduce the flow chart and the dataset up to the search date? Were screening and extraction duplicated by independent reviewers, with a stated arbitration procedure?",
+  "source_id": "khan2020",
+  "locator": "Ch1 pp. 7–8",
+  "tags": "evaluator criterion értékelési szempont reproducibility reprodukálhatóság independence függetlenség duplicate kettős arbitration döntőbíráskodás"
+ },
+ {
+  "k_id": "K-KHN0102-023",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Adatkinyerő táblázat: előre rögzített forma, pilotálás, dokumentumkezelés",
+  "body": "Collect the full texts and keep a documented summary of key information for each included study. Extract into a spreadsheet with a predetermined format that is flexible enough for different reporting formats, scales and units, and pilot the sheet on a subset of studies to make sure it copes with this diversity. Store all documents in a dedicated folder with a backup on a separate device (reference managers such as EndNote help track them), and contact study authors about missing or confusing data.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 8",
+  "tags": "data extraction adatkinyerés extraction form adatkinyerő lap spreadsheet táblázat pilot pilotálás backup biztonsági mentés EndNote author contact szerző megkeresése missing data hiányzó adat"
+ },
+ {
+  "k_id": "K-KHN0102-024",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Kettős, független adatkinyerés",
+  "body": "At least two independent reviewers extract the data; they compare entries item by item and agree on the final figures before any analysis. A third reviewer or an expert in the field makes the final decision when they disagree.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 8",
+  "tags": "double extraction kettős adatkinyerés independent független item by item tételenként agreement egyezség third reviewer harmadik bíráló"
+ },
+ {
+  "k_id": "K-KHN0102-025",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Összesítő statisztikák harmonizálása (medián, IQR, tartomány)",
+  "body": "Studies may report median with IQR or median with minimum/maximum/range instead of mean and SD, or use different units or effect measures. Before meta-analysis, convert every study to one effect measure on the same scale and unit; the source points to Hozo et al. 2005 for estimating mean and variance from median, range and sample size. [note: Hozo 2005 has been superseded by Wan et al. 2014 (SD) and Luo et al. 2018 (mean), as in Cochrane Handbook v6; the engine's conversions.mean_from_median defaults to Luo (method='hozo' available) and conversions.sd_from_median implements Wan.] [note: both newer methods assume roughly normal data, so flag studies whose median/IQR suggest marked skewness.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.8.1 pp. 31–32",
+  "tags": "conversion átváltás median medián IQR interkvartilis range tartomány mean átlag SD szórás Hozo 2005 Wan Luo units mértékegységek harmonisation harmonizálás skewness ferdeség"
+ },
+ {
+  "k_id": "K-KHN0102-026",
+  "stage_id": "S05",
+  "kind": "concept",
+  "title": "Az elemzési egység a vizsgálat; IPD mega-analízis",
+  "body": "In a primary study the unit is the patient, but in meta-analysis the unit of analysis is the study, and the data are study-level summary statistics. If individual patient data (IPD) were available for all studies one could run a 'mega-analysis', but raw data from different authors are almost never accessible, so aggregate-data meta-analysis is the norm.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.1 pp. 16–17",
+  "tags": "unit of analysis elemzési egység study vizsgálat aggregate data aggregált adat IPD individual patient data egyéni betegadat mega-analysis mega-analízis"
+ },
+ {
+  "k_id": "K-KHN0102-027",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Almák és körték: eltérő mértékek és skálák keverése",
+  "body": "Mixing different effect measures, or the same measure on different scales or units, in one meta-analysis is invalid ('combining apples and oranges'). Detect: check that every study's measure, scale, unit and direction match. Fix: convert to one measure and scale before pooling (median/range conversions or the d/lnOR/r conversions) and document each conversion.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.9.2 p. 35; §2.8.1 p. 32",
+  "tags": "apples and oranges almák és körték effect measure hatásmérték scale skála units mértékegységek direction irány conversion átváltás pitfall buktató"
+ },
+ {
+  "k_id": "K-KHN0102-028",
+  "stage_id": "S05",
+  "kind": "pitfall",
+  "title": "Szemét be, szemét ki",
+  "body": "Meta-analysis software returns results for any input regardless of data quality, and inappropriate procedures or wrong input data never yield good evidence, so results must be verified before they inform decisions. Detect: double extraction with item-by-item reconciliation and range checks (engine: validate.validate). Fix: re-extract the data and contact the authors.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.9.2 p. 35",
+  "tags": "garbage in garbage out szemét be szemét ki data quality adatminőség validation validálás range check tartományellenőrzés extraction error kinyerési hiba"
+ },
+ {
+  "k_id": "K-KHN0102-029",
+  "stage_id": "S05",
+  "kind": "check",
+  "title": "Ellenőrzés: adatkinyerés és egységes mérték",
+  "body": "Reviewer check: the extraction form was piloted; extraction was done twice independently and reconciled item by item; author contacts for missing data are logged. All studies use the same effect measure, scale, units and direction, and every conversion (median/IQR to mean/SD, d/lnOR/r) is documented.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 8; Ch2 pp. 23, 32",
+  "tags": "reviewer check ellenőrzés data extraction adatkinyerés pilot pilotálás double extraction kettős kinyerés conversion átváltás units mértékegységek"
+ },
+ {
+  "k_id": "K-KHN0102-030",
+  "stage_id": "S06",
+  "kind": "definition",
+  "title": "Minőség = belső validitás",
+  "body": "Study quality means internal validity: the extent to which a study is free from systematic error, so that any difference between interventions is due only to the intervention of interest. It is threatened by methodological errors and by selection, information and confounding biases. More than 100 appraisal tools exist, some specific to study design, and the quality of the included studies directly limits the quality of the review's evidence.",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.6 p. 10",
+  "tags": "quality minőség internal validity belső validitás risk of bias torzításkockázat selection bias szelekciós torzítás information bias információs torzítás confounding zavaró tényező appraisal tools értékelő eszközök"
+ },
+ {
+  "k_id": "K-KHN0102-031",
+  "stage_id": "S06",
+  "kind": "tool",
+  "title": "Jadad-pontszám (Oxford Quality Scoring System)",
+  "body": "The Jadad score (Jadad et al. 1996) rates RCTs from 0 (lowest) to 5 (highest) quality based on the reported randomisation, blinding and withdrawals; the source calls it an old measure and gives no item-level scoring. [note: the Cochrane Handbook v6 advises against summary quality scales such as Jadad, which largely reflect reporting quality; use RoB 2 for RCTs.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.6 p. 10",
+  "tags": "Jadad score pontszám Oxford Quality Scoring System RCT randomisation randomizáció blinding vakítás withdrawals lemorzsolódás quality scale minőségi skála RoB 2"
+ },
+ {
+  "k_id": "K-KHN0102-032",
+  "stage_id": "S06",
+  "kind": "tool",
+  "title": "ROBINS-I nem randomizált beavatkozásos vizsgálatokhoz",
+  "body": "ROBINS-I (Sterne et al. 2016) assesses risk of bias in estimates of comparative effectiveness (benefit or harm) from studies that did not randomise individuals or clusters to comparison groups. It is particularly useful when a systematic review includes non-randomised studies of interventions.",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.6.1 p. 11",
+  "tags": "ROBINS-I risk of bias torzításkockázat non-randomised nem randomizált NRSI observational megfigyeléses intervention beavatkozás"
+ },
+ {
+  "k_id": "K-KHN0102-033",
+  "stage_id": "S06",
+  "kind": "pitfall",
+  "title": "Az inverz-variancia súly nem veszi figyelembe a szisztematikus hibát",
+  "body": "Inverse-variance weights reflect random error only, so large but low-quality (biased) studies can get more weight than appropriate and small high-quality ones less; including studies with significant bias leads to misleading results. Detect: cross-tabulate study weights against quality or risk-of-bias ratings. Fix: run a sensitivity analysis excluding high-risk studies, or (per the authors) use the quality-effects model, which weights by quality scores rescaled to the best study.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.4 p. 24; §2.6.5 p. 30; §2.9.2 p. 35",
+  "tags": "inverse variance inverz variancia weights súlyok systematic error szisztematikus hiba risk of bias torzításkockázat quality effects minőségi hatás sensitivity analysis érzékenységi elemzés large biased studies nagy torzított vizsgálatok"
+ },
+ {
+  "k_id": "K-KHN0102-034",
+  "stage_id": "S06",
+  "kind": "check",
+  "title": "Ellenőrzés: minőség/torzításkockázat értékelése",
+  "body": "Reviewer check: study quality or risk of bias was assessed with a design-appropriate tool (e.g. Jadad or a RoB tool for RCTs, ROBINS-I for non-randomised studies), and its influence on the pooled result was explored with a sensitivity analysis or the QE model.",
+  "source_id": "khan2020",
+  "locator": "Ch1 pp. 10–11; Ch2 p. 30",
+  "tags": "reviewer check ellenőrzés risk of bias torzításkockázat quality assessment minőségértékelés ROBINS-I Jadad RoB sensitivity analysis érzékenységi elemzés"
+ },
+ {
+  "k_id": "K-KHN0102-035",
+  "stage_id": "S06",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a bevont vizsgálatok belső validitása",
+  "body": "Evaluator criterion: the internal validity of the included studies (selection, information and confounding bias) was assessed with an appropriate tool. Downgrade conclusions that are driven by studies at high risk of bias.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 10; Ch2 p. 35",
+  "tags": "evaluator criterion értékelési szempont internal validity belső validitás risk of bias torzításkockázat downgrade leminősítés"
+ },
+ {
+  "k_id": "K-KHN0102-036",
+  "stage_id": "S07",
+  "kind": "definition",
+  "title": "Hatásméret-családok",
+  "body": "An effect size is a family of indices measuring the magnitude of an intervention effect, chosen by outcome type: binary outcomes use RR, OR, a single proportion or the difference of two proportions (RD); continuous outcomes use the SMD or the WMD (the book's name for the mean difference); a linear relationship between two quantitative variables uses Pearson's r. Named SMD estimators are Cohen's d (Cohen 1969), Hedges' g (Hedges 1981) and Glass' Delta (Glass et al. 1981). The effect size itself does not depend on sample size, while significance tests check whether it differs from the null or between groups. [note: the text says SMDs are detailed in 'Chap. 9', but SMD is Ch 8 and WMD is Ch 9.]",
+  "source_id": "khan2020",
+  "locator": "Preface p. viii; Ch2 §2.3 p. 23",
+  "tags": "effect size hatásméret RR relatív kockázat OR esélyhányados proportion arány risk difference kockázatkülönbség SMD standardizált átlagkülönbség WMD mean difference átlagkülönbség correlation korreláció Cohen d Hedges g Glass delta"
+ },
+ {
+  "k_id": "K-KHN0102-037",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Mintavételi eloszlás, standard hiba és konfidenciaintervallum",
+  "body": "A statistic is a random variable with a sampling distribution, and its observed value is an estimate; if Y ~ N(mu, sigma^2), the sample mean Ybar ~ N(mu, sigma^2/n) and its standard error is estimated by s/sqrt(n). A (1 − alpha)·100% CI for the mean is ybar ± z_{alpha/2}·s/sqrt(n), with margin of error ME = z_{alpha/2}·s/sqrt(n) and width 2·ME. The width grows with the confidence level (90%: z = 1.645; 95%: z = 1.96) and with the variance, and shrinks as n increases. Non-random samples give biased results that cannot support inference.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.2.1 p. 18; §2.2.2 pp. 18–20",
+  "tags": "sampling distribution mintavételi eloszlás standard error standard hiba confidence interval konfidenciaintervallum margin of error hibahatár width szélesség 1.96 1.645 sample size mintaméret"
+ },
+ {
+  "k_id": "K-KHN0102-038",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Hipotézisvizsgálat átlagra: Z és t statisztika, p-érték",
+  "body": "For H0: mu = mu0 (usually 0), Z* = (Ybar − mu0)/(sigma/sqrt(n)) ~ N(0,1) when sigma is known, and T = (Ybar − mu0)/(s/sqrt(n)) ~ t_{n−1} when sigma is estimated by s. For n >= 30 (df >= 29) the source, and per the source almost all meta-analyses, treat Z = (Ybar − mu0)/(s/sqrt(n)) as approximately standard normal. Reject H0 if |z0| >= z_{alpha/2}, or if the two-sided p-value P(|Z| >= |z0| given H0) <= alpha. The probability statement printed on p. 21, P(|Z| >= z_{alpha/2}) = 1 − alpha, is wrong: the correct value is alpha (equivalently P(|Z| <= z_{alpha/2}) = 1 − alpha). [note: for small studies use the t distribution, e.g. when deriving an SD from a reported CI with n < 60 (Cochrane Handbook v6 §6.5.2.2; conversions.sd_from_ci uses t by default).]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.2.3 pp. 20–21",
+  "tags": "hypothesis test hipotézisvizsgálat z-test z-próba t-test t-próba p-value p-érték critical value kritikus érték large sample nagy minta n>=30 source error forráshiba small sample kis minta"
+ },
+ {
+  "k_id": "K-KHN0102-039",
+  "stage_id": "S07",
+  "kind": "guidance",
+  "title": "Arányszámok (OR, RR) elemzése log-skálán",
+  "body": "OR and RR are right-skewed on (0, infinity) with the null at 1, whereas ln OR and ln RR are approximately normal on (−infinity, infinity) with the null at 0. Do all inference on the natural-log scale, z = ln(theta_hat)/SE(ln theta_hat) and CI = ln(theta_hat) ± 1.96·SE(ln theta_hat), then back-transform the estimate and limits with exp() for reporting. In the engine, effect_sizes.two_by_two returns log-scale yi/vi and effect_sizes.back_transform exponentiates them.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.2.4 p. 22; Fig. 2.3 p. 23",
+  "tags": "log scale log-skála natural log természetes logaritmus odds ratio esélyhányados risk ratio relatív kockázat back-transform visszatranszformálás exp skewed ferde normal approximation normális közelítés"
+ },
+ {
+  "k_id": "K-KHN0102-040",
+  "stage_id": "S07",
+  "kind": "pitfall",
+  "title": "CI vagy teszt közvetlenül az arányskálán",
+  "body": "Computing CIs or tests for OR/RR directly on the ratio scale gives invalid inference because the ratio's sampling distribution is skewed. Detect: a reported CI that is symmetric around the OR/RR point estimate, or no mention of the log transformation. Fix: compute on the ln scale and back-transform with exp(); reviewers should confirm this for every ratio measure.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.2.4 p. 22",
+  "tags": "ratio scale arányskála symmetric CI szimmetrikus CI log transformation log-transzformáció odds ratio esélyhányados risk ratio relatív kockázat pitfall buktató reviewer check ellenőrzés"
+ },
+ {
+  "k_id": "K-KHN0102-041",
+  "stage_id": "S07",
+  "kind": "formula",
+  "title": "Átváltás ln OR, d és r között",
+  "body": "Conversions between metrics: d = ln(OR)·sqrt(3)/pi; ln(OR) = d·pi/sqrt(3); d = 2r/sqrt(1 − r^2). The book writes pi = 22/7, a crude approximation (relative error about 0.04%), so converted values printed elsewhere in the book may differ in the 4th significant digit; use exact pi. The source gives no variance conversions and no d-to-r formula; the standard companions (e.g. V_d = V_lnOR·3/pi^2, Borenstein et al. 2009) are implemented in conversions.logor_to_d, conversions.d_to_logor, conversions.r_to_d and conversions.d_to_r. [note: the lnOR–d conversion assumes an underlying logistic distribution with equal variance in both groups, and d = 2r/sqrt(1 − r^2) corresponds to roughly equal group sizes; converted studies carry extra approximation error, so document every conversion and check robustness by excluding them (Cochrane Handbook v6 §10.6).]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.3.1 p. 23",
+  "tags": "conversion átváltás log odds ratio log esélyhányados SMD Cohen d correlation korreláció r Hasselblad Hedges pi 22/7 variance variancia Borenstein assumptions feltevések sensitivity analysis érzékenységi elemzés"
+ },
+ {
+  "k_id": "K-KHN0102-042",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "Kritikus érték: z = 1,96 minden CI-hez (csak Wald-típusú CI)",
+  "body": "The source sets alpha = 0.05 and uses z_{0.025} = 1.96 (some round it to 2.00), and z = 1.645 for 90% CIs. By convention it applies 1.96 to every confidence interval in meta-analysis, including ratio measures on the ln scale; Ch 1–2 present only z-based (Wald) CIs, with no t-based, Hartung–Knapp–Sidik–Jonkman or prediction intervals. [note: the Cochrane Handbook v6 recommends considering the HKSJ (t-based) CI for random effects and reporting a prediction interval; the engine's default for model='random' is ci_method='hksj', while its IVhet uses z.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 pp. 19–20, 22, 25",
+  "tags": "critical value kritikus érték 1.96 2.00 1.645 Wald CI z-based z-alapú HKSJ Hartung-Knapp prediction interval predikciós intervallum confidence level megbízhatósági szint convention konvenció"
+ },
+ {
+  "k_id": "K-KHN0102-043",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Súlyozás: természetes vs. inverz-variancia súly, illő varianciabecslés",
+  "body": "Pooling is a weighted average. Equal ('natural') weights 1/k give the arithmetic mean, which is unbiased but not minimum-variance, so it is not used; inverse-variance (IV) weights give the best bias–variance trade-off and more weight to larger studies, but they account only for random error, not systematic error. Any weighting model (IV, RE, IVhet, QE) must come with a variance estimator that keeps the CI at its nominal coverage, and not all models achieve this. Weight redistribution aims to minimise the squared error of the pooled estimator. [note: when the within-study variances are known, the equal-weight mean and the inverse-variance mean are both unbiased under the fixed-effect model, and the IV mean is the minimum-variance unbiased linear estimator, so the source's 'bias–variance trade-off' framing does not apply there; bias enters only through estimated variances that correlate with the effects (e.g. OR, SMD) or through systematic error in the studies.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.4 p. 24; §2.5 p. 24",
+  "tags": "weighting súlyozás inverse variance inverz variancia natural weights természetes súlyok arithmetic mean számtani átlag bias-variance torzítás-variancia coverage lefedettség squared error négyzetes hiba unbiased torzítatlan minimum variance minimális variancia"
+ },
+ {
+  "k_id": "K-KHN0102-044",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Fix hatás modell (FE)",
+  "body": "Fixed-effect model: theta_hat_i = theta + epsilon_i, with independent epsilon_i ~ N(0, sigma_i^2) and sigma_i^2 estimated by the within-study variance v_i, i = 1..k. Weights w_i = 1/v_i give theta_hat_FE = sum(w_i·theta_hat_i)/sum(w_i) with Var(theta_hat_FE) = (sum 1/v_i)^{-1}, and the CI and test use the standard normal. The model assumes one common true effect with only within-study random error (normally distributed). Engine: models.meta_analysis(model='fixed'). [note: the same model is also called the common-effect (or equal-effects) model; the engine accepts model='fixed' or model='common'.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.5 p. 25; Preface p. viii",
+  "tags": "fixed effect fix hatás common effect közös hatás inverse variance inverz variancia weights súlyok pooled estimate összesített becslés variance variancia homogeneous homogén common-effect közös hatású modell equal-effects"
+ },
+ {
+  "k_id": "K-KHN0102-045",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "FE modell heterogén vizsgálatoknál",
+  "body": "Under heterogeneity the FE variance 'grossly underestimates' the actual variance, inflating type I error and producing spurious significance, so the source restricts FE to homogeneous studies. Detect: FE was used although clinical or methodological diversity is expected, or Q, I^2 and tau^2 point to between-study variation. Fix: use a heterogeneity-aware model (random effects, or IVhet/QE per the authors) and investigate the sources of heterogeneity. [note: a non-significant Q or a small I^2 does not prove homogeneity, because the Q test has low power with few studies; the Cochrane Handbook v6 (§10.10.4.1) says the choice between fixed and random effects should not be made from a heterogeneity test but a priori, from the expected diversity of the studies.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.5 p. 25",
+  "tags": "fixed effect fix hatás heterogeneity heterogenitás underestimated variance alulbecsült variancia type I error elsőfajú hiba spurious significance hamis szignifikancia pitfall buktató a priori Cochran Q low power alacsony erő"
+ },
+ {
+  "k_id": "K-KHN0102-046",
+  "stage_id": "S08",
+  "kind": "guidance",
+  "title": "Modellválasztás a heterogenitás vizsgálata után (szerzői nézet)",
+  "body": "The source says to check heterogeneity first: if between-study variation is not significant, the FE model is appropriate, and under heterogeneity the authors prefer IVhet or QE over random effects. [note: the Cochrane Handbook v6 advises choosing the model a priori from the expected clinical and methodological diversity rather than from a significance test of Q, which has low power when there are few studies.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.5 pp. 24–25; §2.6",
+  "tags": "model choice modellválasztás fixed effect fix hatás random effects véletlen hatás IVhet heterogeneity test heterogenitás-próba a priori Cochrane"
+ },
+ {
+  "k_id": "K-KHN0102-047",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Véletlen hatás modell (DerSimonian–Laird)",
+  "body": "Random-effects model: theta_hat_i = theta + zeta_i + epsilon_i, where zeta_i = theta_i − theta ~ N(0, tau^2) and epsilon_i = theta_hat_i − theta_i ~ N(0, sigma_i^2). The total variance sigma_i^2 + tau^2 is estimated by v_i* = v_i + tau_hat^2, giving weights w_i* = 1/(v_i + tau_hat^2), theta_hat_RE = sum(w_i*·theta_hat_i)/sum(w_i*) and Var(theta_hat_RE) = (sum w_i*)^{-1}. Ch 1–2 give no tau^2 estimator formula; citing DerSimonian & Laird 1986 implies the DL moment estimator. [note: the Cochrane Handbook v6 prefers REML or Paule–Mandel over DL; engine: models.meta_analysis(model='random', tau2_method='REML'|'PM'|'DL').]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.2 p. 27",
+  "tags": "random effects véletlen hatás DerSimonian Laird DL tau2 between-study variance vizsgálatok közötti variancia weights súlyok REML Paule-Mandel"
+ },
+ {
+  "k_id": "K-KHN0102-048",
+  "stage_id": "S08",
+  "kind": "pitfall",
+  "title": "A véletlen hatás modell kritikája: nagy tau^2 mellett a számtani átlag felé sodródik",
+  "body": "The authors argue that as tau^2 grows RE shifts weight from large to small studies, so with gross heterogeneity the weights become nearly equal and the estimate drifts toward the arithmetic mean; that its assumption of studies being a random sample from a population of studies is 'unjustifiable' and rarely checked; and that its CI coverage falls below nominal (over-dispersion, faulty error estimation) despite aiming to be conservative. Detect: compare RE and FE weight distributions and check whether the RE estimate sits near the unweighted mean while large and small studies disagree. Fix: report IVhet (or another model with robust variance) as a sensitivity analysis and do not treat RE as automatically conservative. [note: this is the authors' position; the under-coverage mainly concerns DL with Wald CIs and is largely addressed by HKSJ CIs, and RE remains the standard model in Cochrane reviews.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.2 p. 27; §2.6.4 p. 29",
+  "tags": "random effects véletlen hatás criticism kritika weight redistribution súly-átrendeződés small-study kis vizsgálat arithmetic mean számtani átlag coverage lefedettség over-dispersion túlszóródás pitfall buktató IVhet sensitivity érzékenységi"
+ },
+ {
+  "k_id": "K-KHN0102-049",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Inverz-variancia heterogenitás (IVhet) modell",
+  "body": "IVhet (Doi et al. 2015a) keeps the FE inverse-variance point estimate (tau^2 = 0 for weighting) and inflates its variance for over-dispersion with a quasi-likelihood scale parameter. theta_hat_IVhet = sum(w_i·theta_hat_i) with normalised weights w_i = (1/v_i)/sum_j(1/v_j), so it equals theta_hat_FE, and Var(theta_hat_IVhet) = sum_i [(1/v_i)/sum_j(1/v_j)]^2·(v_i + tau_hat^2). The book does not say which tau_hat^2 is used; Doi 2015a/MetaXL and the engine (models.meta_analysis(model='ivhet') → models._ivhet) use the DL estimate. A z-based CI (estimate ± 1.96·SE) follows from the book's convention but is inferred, not stated.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.3 pp. 27–28",
+  "tags": "IVhet inverse variance heterogeneity inverz variancia heterogenitás Doi 2015 quasi-likelihood kvázi-likelihood over-dispersion túlszóródás variance inflation varianciafelfújás fixed effect estimate"
+ },
+ {
+  "k_id": "K-KHN0102-050",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "IVhet: ICC-alapú skálaparaméter és belső torzítások",
+  "body": "Following Kulinskaya & Olkin (2014), the IVhet inflation factor is interpreted through an intra-class correlation ICC_i = tau^2/(tau^2 + v_i), giving the scale parameter psi_i = (v_i + tau^2)/v_i = (1 − ICC_i)^{-1}. Each study's contribution to the variance of the weighted mean, w_i^2·var(theta_hat_i), is inflated to w_i^2·var(theta_hat_i)·psi_i, which relies on the variance-to-mean relationship rather than on distributional assumptions. The figure notes add phi_j^2, an extra variance contribution from internal study biases, and beta, a super-population systematic error, so the estimation target becomes theta + beta.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.3 p. 28; Fig. 2.6 p. 29",
+  "tags": "ICC intra-class correlation osztályon belüli korreláció scale parameter skálaparaméter psi Kulinskaya Olkin over-dispersion túlszóródás internal bias belső torzítás IVhet"
+ },
+ {
+  "k_id": "K-KHN0102-051",
+  "stage_id": "S08",
+  "kind": "concept",
+  "title": "Az IVhet állított előnyei (szerzői nézet)",
+  "body": "Claimed advantages of IVhet over RE: (1) CI coverage stays at the nominal level (usually 95%) as heterogeneity grows; (2) it keeps IV weights, so larger trials still dominate and the estimate does not regress to the arithmetic mean, giving a lower squared error; (3) it needs no distributional assumption on the effect estimates. The evidence is mainly the authors' own simulations (Doi et al. 2015c). [note: IVhet reports the FE point estimate with a widened CI and gives no prediction interval; present it as an alternative or sensitivity analysis rather than a consensus default.] IVhet's CI still uses the normal quantile z, so approximate normality of the pooled estimator is assumed after all.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.4 p. 29; Preface p. viii",
+  "tags": "IVhet advantages előnyök coverage lefedettség mean squared error átlagos négyzetes hiba distributional assumption eloszlási feltevés simulation szimuláció Doi 2015c random effects véletlen hatás normal approximation normális közelítés"
+ },
+ {
+  "k_id": "K-KHN0102-052",
+  "stage_id": "S08",
+  "kind": "formula",
+  "title": "Minőségi hatás (QE) modell",
+  "body": "The quality-effects model (Doi & Thalib 2008; updated by Doi et al. 2015b) adjusts weights by measured methodological quality instead of observed statistical heterogeneity; the update adds an ICC-based multiplicative over-dispersion correction and rescales quality scores to [0,1] relative to the best study (Q_i = score_i / max score). The pooled estimate is theta_hat_QE = sum(w'_i·theta_hat_i) with w'_i = (Q_i/v_i + tau_hat_i)/sum_j(Q_j/v_j + tau_hat_j), where tau_hat_i is a quality-based weight-redistribution term (not the between-study variance tau^2) defined only in Doi et al. 2015b Appendix A, which is also where the variance is given. With equal (uninformative) quality, QE reduces to IVhet. The engine does not implement QE. [note: the Cochrane Handbook v6 advises against weighting studies by quality or risk-of-bias scores, because such scores depend on the chosen scale and mix reporting quality with bias; prefer restricting the analysis to studies at low risk of bias, stratifying by risk of bias, or a sensitivity analysis. Treat QE as the authors' proposal, not as standard practice.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.5 p. 30",
+  "tags": "quality effects minőségi hatás QE Doi Thalib quality score minőségi pontszám rescaling átskálázás weights súlyok methodological heterogeneity módszertani heterogenitás IVhet risk of bias torzításkockázat quality scale minőségi skála Cochrane"
+ },
+ {
+  "k_id": "K-KHN0102-053",
+  "stage_id": "S08",
+  "kind": "check",
+  "title": "Ellenőrzés: heterogenitás jelentése és modellválasztás",
+  "body": "Reviewer check: Q, df = k − 1, its p-value, I^2 (floored at 0) and tau^2 are reported, and the choice of model is justified. If FE is used, the justification must rest on the expected absence of clinical and methodological diversity, not on a non-significant Q alone; if RE is used, the weight redistribution was inspected and an FE or IVhet sensitivity analysis is reported. Forest-plot weights match the model actually used, and the pooled estimate and CI can be recomputed from study-level yi/vi. [note: per the Cochrane Handbook v6 the model is pre-specified in the protocol; the source's 'test heterogeneity first, then choose the model' sequence is not current practice.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 pp. 25–29",
+  "tags": "reviewer check ellenőrzés model choice modellválasztás Q I2 heterogeneity heterogenitás weights súlyok recompute újraszámolás sensitivity analysis érzékenységi elemzés IVhet tau2 a priori protocol protokoll"
+ },
+ {
+  "k_id": "K-KHN0102-054",
+  "stage_id": "S08",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a modell megfelelősége",
+  "body": "Evaluator criterion: FE only under homogeneity; if RE is used, are the conclusions robust to IVhet and FE, and is the CI likely to have nominal coverage? Choosing the wrong model, especially for handling heterogeneity, makes results likely to be misleading. [note: choose the model a priori; 'FE only under homogeneity' must not be put into practice as 'FE whenever Q is non-significant'.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 pp. 25–29; §2.9.2 p. 35",
+  "tags": "evaluator criterion értékelési szempont model appropriateness modell megfelelősége fixed effect fix hatás random effects véletlen hatás IVhet robustness robusztusság coverage lefedettség a priori Cochran Q"
+ },
+ {
+  "k_id": "K-KHN0102-055",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Cochran-féle Q próba és függése a vizsgálatok számától",
+  "body": "Heterogeneity is tested as H0: theta_1 = ... = theta_k vs Ha: not all equal, using Cochran's Q (misspelled 'Cochrane's' in the source) with FE weights w_i = 1/v_i: Q = sum(w_i·theta_hat_i^2) − (sum w_i·theta_hat_i)^2/sum(w_i). Under H0, Q ~ chi^2 with k − 1 df; the chi-squared distribution is right-skewed with df as its only parameter. The source warns that Q grows as the number of studies grows. [note: more precisely, E(Q) = k − 1 under H0 and the power of the test depends on k, so a non-significant Q with few studies does not show homogeneity; report I^2 and tau^2 alongside Q. Engine: models.cochran_q, p-value in models.heterogeneity.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.1 p. 26; p. 21 Remark",
+  "tags": "Cochran Q heterogeneity test heterogenitás-próba chi-squared khi-négyzet degrees of freedom szabadsági fok k-1 number of studies vizsgálatok száma power erő"
+ },
+ {
+  "k_id": "K-KHN0102-056",
+  "stage_id": "S09",
+  "kind": "formula",
+  "title": "Az I² heterogenitási mutató",
+  "body": "I^2 = (Q − df)/Q × 100%, interpreted as the share of total variation (within plus between studies) that is due to between-study variation, expressed as a percentage. The source prints it without truncation; standard practice and the engine (models.heterogeneity) use I^2 = max(0, (Q − df)/Q) × 100%. [note: I^2 is a relative measure that rises with the precision of the included studies (Rücker et al. 2008), so it does not measure the absolute amount of heterogeneity, and it is very uncertain when k is small; report its CI together with tau^2 and, for random effects, a prediction interval.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.1 p. 26",
+  "tags": "I2 I-squared heterogeneity heterogenitás percentage százalék between-study variation vizsgálatok közötti variancia truncation csonkolás Q df relative measure relatív mérték tau2 uncertainty bizonytalanság"
+ },
+ {
+  "k_id": "K-KHN0102-057",
+  "stage_id": "S09",
+  "kind": "concept",
+  "title": "Hiányzó heterogenitási elemek az 1–2. fejezetben",
+  "body": "Ch 1–2 give tau^2 only as the RE variance component with estimate tau_hat^2: there is no estimator formula, no tau, no H^2, no confidence intervals for any heterogeneity statistic, no interpretation thresholds for I^2 and no prediction interval. [note: if I^2 is interpreted, use the Cochrane Handbook v6 bands (0–40% might not be important, 30–60% moderate, 50–90% substantial, 75–100% considerable) as overlapping rough guides, not absolute cut-offs, since the importance of I^2 also depends on the size and direction of the effects and the strength of evidence for heterogeneity. Report tau^2 with a CI (e.g. Q-profile) and a prediction interval; models.heterogeneity provides CIs for I^2 and tau^2.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 pp. 26–27",
+  "tags": "tau2 tau H2 confidence interval konfidenciaintervallum I2 thresholds küszöbértékek prediction interval predikciós intervallum Q-profile gaps hiányok"
+ },
+ {
+  "k_id": "K-KHN0102-058",
+  "stage_id": "S09",
+  "kind": "guidance",
+  "title": "Teendők heterogenitás esetén",
+  "body": "When heterogeneity is present, the options the source lists for handling and explaining it are a different statistical model, meta-regression, subgroup analysis and sensitivity analysis. Details and interpretation are given in later chapters (e.g. meta-regression in Ch 11).",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.6.1 Comment p. 26; §2.7 pp. 30–31",
+  "tags": "heterogeneity heterogenitás explanation magyarázat meta-regression metaregresszió subgroup alcsoport sensitivity analysis érzékenységi elemzés model choice modellválasztás"
+ },
+ {
+  "k_id": "K-KHN0102-059",
+  "stage_id": "S09",
+  "kind": "criterion",
+  "title": "Értékelési szempont: a heterogenitás kezelése és magyarázata",
+  "body": "Evaluator criterion: heterogeneity was handled and explored (subgroup analysis, meta-regression, sensitivity analysis), and the caveats of these methods, such as observational associations and scarce moderator data, are stated.",
+  "source_id": "khan2020",
+  "locator": "Ch2 pp. 30–31",
+  "tags": "evaluator criterion értékelési szempont heterogeneity heterogenitás subgroup alcsoport meta-regression metaregresszió sensitivity érzékenységi caveats korlátok"
+ },
+ {
+  "k_id": "K-KHN0102-060",
+  "stage_id": "S10",
+  "kind": "definition",
+  "title": "Metaregresszió",
+  "body": "Meta-regression is a moderator (covariate) analysis that regresses observed effect sizes on one or more study-level characteristics to find systematic differences in effect size and, where effects are heterogeneous, possibly explain the heterogeneity. It requires additional study-level data on related variables; details are in Ch 11 (engine: moderators.meta_regression). Ch 1–2 give no formulas for the R^2 analogue or permutation tests.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.7.1 pp. 30–31",
+  "tags": "meta-regression metaregresszió moderator moderátor covariate kovariáns study-level vizsgálati szintű heterogeneity heterogenitás explanation magyarázat"
+ },
+ {
+  "k_id": "K-KHN0102-061",
+  "stage_id": "S10",
+  "kind": "pitfall",
+  "title": "A metaregresszió túlértelmezése",
+  "body": "Moderator data are often unreported in primary studies; without good moderators meta-regression is impossible, ineffective or misleading, and the available moderators may not be the true causes of heterogeneity. Associations found by meta-regression are observational, not causal. Fix: treat results as hypothesis-generating and label them observational in the report. [note: the Cochrane Handbook v6 advises that meta-regression is generally not worth doing with fewer than about 10 studies (per covariate), that covariates be pre-specified in the protocol, and warns of ecological (aggregation) bias for study-level averages of patient characteristics such as mean age; use a random-effects (mixed-effects) meta-regression.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.7.1 p. 31",
+  "tags": "meta-regression metaregresszió observational megfigyeléses causal oki ecological ökológiai moderators moderátorok missing data hiányzó adat over-interpretation túlértelmezés pitfall buktató 10 studies 10 vizsgálat pre-specification előzetes rögzítés ecological bias ökológiai torzítás"
+ },
+ {
+  "k_id": "K-KHN0102-062",
+  "stage_id": "S10",
+  "kind": "definition",
+  "title": "Alcsoport-elemzés",
+  "body": "Subgroup analysis groups studies by the value of a categorical moderator and meta-analyses each subgroup separately, so within-subgroup results can be examined; the source calls it 'exactly the same as' meta-regression with a single categorical moderator (conceptually a special case). Subgroup results can be shown in the forest plot together with the overall result, and subgroup analysis can estimate the common effect for a subset sharing a characteristic or time period (examples in §§4.7, 5.7, 9.7). Ch 1–2 give no Q-between formula. [note: the equivalence is exact only when subgroups share a common tau^2; see moderators.subgroup_analysis(common_tau2=True) vs separate tau^2 per subgroup.] [note: test subgroup differences directly (Q-between or interaction test) rather than comparing within-subgroup p-values, treat subgroup findings as observational, and judge their credibility with ICEMAN (Schandelmaier et al. 2020).]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.7.2 p. 31; §2.8.3 p. 33; §2.9.1 p. 34",
+  "tags": "subgroup analysis alcsoport-elemzés categorical moderator kategorikus moderátor meta-regression metaregresszió forest plot Q-between common tau2 közös tau2 interaction test interakciós próba ICEMAN credibility hihetőség"
+ },
+ {
+  "k_id": "K-KHN0102-063",
+  "stage_id": "S11",
+  "kind": "pitfall",
+  "title": "Publikációs, közlési és nyelvi torzítás",
+  "body": "Publication/reporting bias arises because studies with negative or non-significant effects are less often accepted, and sponsors and authors may withhold results that do not support their intended outcome; the missing studies distort the pooled result, sometimes unnoticed. Language bias arises because non-English publications are overlooked. Detect with a (contour-enhanced) funnel plot and, when k ≥ 10, a test suited to the measure; a Doi plot/LFK index only if pre-specified in the protocol, with k ≥ 10, as a supplement from the authors' approach and never as a substitute for the funnel plot (D-S11-015, D-S11-001), acknowledging that funnel-plot tests have low power and that asymmetry has many causes. Fix: search unpublished and non-English sources and report the potential impact of the bias on the conclusions. [note: funnel-plot asymmetry signals small-study effects, of which publication bias is only one cause (others: true heterogeneity, weaker methods in small studies, chance); use asymmetry tests only with at least 10 studies (Cochrane Handbook v6 ch. 13).]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.8.2 p. 32; Ch1 §1.4 p. 7",
+  "tags": "publication bias publikációs torzítás reporting bias közlési torzítás language bias nyelvi torzítás unpublished nem publikált sponsor szponzor funnel plot tölcsérábra pitfall buktató small-study effects kis vizsgálatok hatása"
+ },
+ {
+  "k_id": "K-KHN0102-064",
+  "stage_id": "S11",
+  "kind": "guidance",
+  "title": "Tölcsérábra és korlátai",
+  "body": "A funnel plot is a scatterplot of treatment effect against a precision measure such as the standard error or sample size, used mainly as a visual aid for detecting small-study effects or systematic heterogeneity. Asymmetry may come from publication bias, chance or other causes, and its shape can be hard to judge; p-value-based asymmetry tests exist but have poor power (Egger and Begg are not named in Ch 2). For the choice of axes see Sterne & Egger 2001. Engine: plots.funnel_svg, bias.egger_test, bias.begg_test. [note: the Cochrane Handbook v6 advises asymmetry tests only with at least 10 studies.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.8.2 p. 32",
+  "tags": "funnel plot tölcsérábra asymmetry aszimmetria small-study effects kis vizsgálatok hatása standard error precision pontosság Egger Begg power erő Sterne Egger 2001"
+ },
+ {
+  "k_id": "K-KHN0102-065",
+  "stage_id": "S11",
+  "kind": "concept",
+  "title": "Doi-plot és LFK-index (szerzői nézet)",
+  "body": "The Doi plot is an alternative graph for detecting publication bias, and the LFK index quantifies its asymmetry. The authors claim the Doi plot is 'much less ambiguous' visually and the LFK index has 'much greater power' than funnel-plot tests; illustrations are in §§4.9, 5.9 and 8.8 and details in Ch 12. Ch 1–2 give no LFK formula or decision thresholds. The engine computes the LFK index and the Doi plot in every analyze run (bias.doi_plot_data: results.json bias.lfk, doi.svg); use them only as D-S11-015 allows. [note: these claims come from the method's developers; funnel plots with regression-based tests remain the mainstream approach in Cochrane guidance.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.8.2 p. 33",
+  "tags": "Doi plot LFK index publication bias publikációs torzítás asymmetry aszimmetria power erő Furuya-Kanamori authors' view szerzői nézet funnel plot tölcsérábra"
+ },
+ {
+  "k_id": "K-KHN0102-066",
+  "stage_id": "S11",
+  "kind": "criterion",
+  "title": "Értékelési szempont: publikációs és közlési torzítás",
+  "body": "Evaluator criterion: publication and reporting bias were assessed (a contour-enhanced funnel plot, with a test suited to the measure only when k ≥ 10; a Doi plot with LFK only as a pre-specified supplement from the authors' approach, never as a substitute), the low power of funnel-plot tests is acknowledged, and the potential impact on the conclusions is discussed. Significant publication bias or reporting anomalies make the results inaccurate. [note: D-S11-001, D-S11-015; AMSTAR 2 item 15: the Doi plot/LFK does not replace the funnel-based assessment.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 pp. 32–33; §2.9.2 p. 35",
+  "tags": "evaluator criterion értékelési szempont publication bias publikációs torzítás reporting bias közlési torzítás impact hatás conclusions következtetések"
+ },
+ {
+  "k_id": "K-KHN0102-067",
+  "stage_id": "S12",
+  "kind": "guidance",
+  "title": "Érzékenységi elemzés és kizárásos (leave-one-out) változata",
+  "body": "Sensitivity analysis checks how the pooled effect changes when the study-selection criteria change, showing how robust the result is to inclusion/exclusion decisions. Its exclusion variant checks whether any individual study unduly influences the result (leave-one-out; engine: sensitivity.leave_one_out), and reviewers should confirm that it was run. Ch 1–2 present no influence statistics such as Cook's distance, DFFITS, Baujat or GOSH plots.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.7.3 p. 31",
+  "tags": "sensitivity analysis érzékenységi elemzés leave-one-out egyenként kihagyás exclusion kizárás influence befolyás robustness robusztusság inclusion criteria beválasztási kritériumok"
+ },
+ {
+  "k_id": "K-KHN0102-068",
+  "stage_id": "S13",
+  "kind": "concept",
+  "title": "Evidenciaszintek vizsgálati elrendezés szerint",
+  "body": "Levels of evidence by primary-study design, highest to lowest: (1) experimental (randomised or non-randomised controlled trials); (2) quasi-experimental (before-and-after, interrupted time series); (3) observational analytic (cohort, case-control). The level of evidence of a systematic review depends on the designs of its primary studies, and a more detailed rating is given by Melnyk & Fineout-Overholt 2011. Meta-analyses of well-conducted RCTs are regarded as the highest level of evidence. [note: for rating certainty, GRADE has replaced design-only hierarchies: RCT evidence starts at high certainty and non-randomised evidence at low (or at high when assessed with ROBINS-I), then it is rated down for risk of bias, inconsistency, indirectness, imprecision and publication bias. Ranking non-randomised controlled trials level with RCTs, as the source's first tier does, is not consistent with GRADE.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.5 p. 9; §1.6 p. 10; Ch2 §2.9.1 p. 34",
+  "tags": "levels of evidence evidenciaszintek hierarchy hierarchia RCT randomizált quasi-experimental kvázi-kísérletes cohort kohorsz case-control eset-kontroll study design vizsgálati elrendezés GRADE certainty bizonyosság"
+ },
+ {
+  "k_id": "K-KHN0102-069",
+  "stage_id": "S13",
+  "kind": "concept",
+  "title": "A metaanalízis erősségei",
+  "body": "Per the source, meta-analysis rests on a sound mathematical basis and gives correct results when model assumptions hold, study selection is unbiased and data extraction is error-free. Pooling increases the effective sample size, which improves precision, narrows the CI and raises power, and it can produce a pooled estimate even when individual results are inconclusive or conflicting. It also supports subgroup estimates, and choosing the correct model yields accurate statistics and appropriate CIs. [note: greater precision does not remove bias; a pooled estimate from biased studies can be precise and wrong, so GRADE still rates certainty down for risk of bias, inconsistency, indirectness and publication bias.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.9.1 p. 34",
+  "tags": "strengths erősségek power statisztikai erő precision pontosság pooled estimate összesített becslés conflicting results ellentmondó eredmények objectivity objektivitás GRADE bias torzítás"
+ },
+ {
+  "k_id": "K-KHN0102-070",
+  "stage_id": "S13",
+  "kind": "concept",
+  "title": "A metaanalízis korlátai",
+  "body": "The quality of meta-analytic results depends on the quality of the included studies, on publication or reporting bias and on heterogeneity. Meta-analysis is inappropriate when there is no common underlying effect or when effect measures, scales or units differ, and including studies with significant bias, choosing the wrong model for heterogeneity or substantial publication bias all make results misleading. Software will output results from any input, so the appropriateness of the procedure and data must be verified.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.9.2 pp. 34–35",
+  "tags": "limitations korlátok bias torzítás heterogeneity heterogenitás wrong model rossz modell publication bias publikációs torzítás misleading félrevezető quality minőség"
+ },
+ {
+  "k_id": "K-KHN0102-071",
+  "stage_id": "S13",
+  "kind": "pitfall",
+  "title": "Nincs közös valódi hatás",
+  "body": "If the studies are estimating different effects there is no common effect size, and meta-analysis must not be attempted. Detect: clinical and methodological review of populations, interventions, comparators, outcomes and designs across studies. Fix: do not pool; use a narrative synthesis or subgroups.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.9.2 p. 35",
+  "tags": "common effect közös hatás pooling validity összevonhatóság clinical heterogeneity klinikai heterogenitás narrative synthesis narratív szintézis PICO pitfall buktató"
+ },
+ {
+  "k_id": "K-KHN0102-072",
+  "stage_id": "S13",
+  "kind": "guidance",
+  "title": "Értelmezés: szignifikancia a CI-ből; nem meggyőző metaanalízis",
+  "body": "Read statistical significance from the pooled CI: if the diamond touches or crosses the no-effect line, the effect is not significant at the 5% level. An inconclusive meta-analysis, for example one with conflicting studies, may reflect no significant effect or the need for further independent trials, so it should be framed that way rather than as proof of no effect. Evaluators should check both points. [note: a CI that includes the null is not evidence of no effect; judge the CI against the minimal clinically important difference (GRADE imprecision) and, under random effects, also show the prediction interval.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.1 p. 17; §2.9.1 p. 34; §2.9.2 p. 35",
+  "tags": "interpretation értelmezés significance szignifikancia confidence interval konfidenciaintervallum no-effect line nulla hatás vonala inconclusive nem meggyőző absence of evidence evidencia hiánya further trials további vizsgálatok minimal important difference minimális klinikailag fontos különbség prediction interval predikciós intervallum"
+ },
+ {
+  "k_id": "K-KHN0102-073",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: vizsgálati elrendezés szintje és bizonyosság",
+  "body": "Evaluator criterion: the certainty claimed for the conclusions should not exceed the design level of the included primary studies (RCT > quasi-experimental > observational analytic). [note: Ch 1–2 do not mention GRADE; use GRADE for a formal certainty-of-evidence rating.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.5 p. 9",
+  "tags": "evaluator criterion értékelési szempont certainty bizonyosság level of evidence evidenciaszint study design vizsgálati elrendezés GRADE"
+ },
+ {
+  "k_id": "K-KHN0102-074",
+  "stage_id": "S13",
+  "kind": "criterion",
+  "title": "Értékelési szempont: az összevonás érvényessége",
+  "body": "Evaluator criterion: is there a plausible common effect, and are effect measures, scales and units the same across the pooled studies? If not, the pooling is invalid ('apples and oranges') regardless of the statistical output.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.9.2 p. 35",
+  "tags": "evaluator criterion értékelési szempont pooling validity összevonhatóság common effect közös hatás effect measure hatásmérték units mértékegységek"
+ },
+ {
+  "k_id": "K-KHN0102-075",
+  "stage_id": "S13",
+  "kind": "guidance",
+  "title": "Minden lépést torzításra kell vizsgálni",
+  "body": "Every step of a systematic review and meta-analysis, from formulating the question to interpreting and discussing the results, must be scrutinised for potential bias (Bernard 2014). Meta-analysis yields high-quality evidence for decisions only if the underlying processes, protocols and methods are strictly followed.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.10 p. 35",
+  "tags": "bias torzítás scrutiny ellenőrzés every step minden lépés protocol adherence protokollkövetés quality evidence minőségi bizonyíték Bernard 2014"
+ },
+ {
+  "k_id": "K-KHN0102-076",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "Közlési irányelvek: QUOROM, CONSORT, PRISMA, PRISMA-P, MOOSE",
+  "body": "Reporting standards named in the source: QUOROM (Moher et al. 1999; statement, checklist and flow diagram for meta-analyses of RCTs, the predecessor of PRISMA); CONSORT (Moher et al. 2012, for reports of RCTs); PRISMA (Moher et al. 2009); PRISMA-P (Moher et al. 2015) for protocols; and MOOSE (Stroup et al. 2000) for meta-analyses of observational studies. [note: PRISMA 2020 (Page et al. 2021) supersedes PRISMA 2009 and should be used for new reviews; the source does not mention it.] [note: CONSORT 2010, whose explanation-and-elaboration paper is the 2012 reference cited here, has been superseded by CONSORT 2025.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.6 p. 10; §1.6.1 p. 11",
+  "tags": "reporting guidelines közlési irányelvek PRISMA 2009 PRISMA 2020 PRISMA-P QUOROM CONSORT MOOSE checklist ellenőrzőlista observational megfigyeléses CONSORT 2025"
+ },
+ {
+  "k_id": "K-KHN0102-077",
+  "stage_id": "S14",
+  "kind": "convention",
+  "title": "A forest plot konvenciói",
+  "body": "A forest plot shows each study's 95% CI as a horizontal line against the study identifier, with a square at the point estimate whose area is proportional to the study's weight, and a diamond whose centre is the pooled estimate and whose tips are its 95% CI. It has a solid vertical no-effect line (RR = 1 in Fig. 2.1) and a dotted line through the pooled estimate, and the x-axis is the effect scale, logarithmic for ratios (ticks 0.1, 0.5, 1, 2 in Fig. 2.1). Label the direction of effect: in the RR example values left of 1 favour treatment and right of 1 favour control. Subgroup results can be added to the same plot (engine: plots.forest_svg).",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.1 pp. 16–17; Fig. 2.1 p. 16; §2.8.3 p. 33",
+  "tags": "forest plot erdődiagram square négyzet weight súly diamond rombusz no-effect line nulla hatás vonala log scale log-skála favours treatment kezelés javára subgroup alcsoport"
+ },
+ {
+  "k_id": "K-KHN0102-078",
+  "stage_id": "S14",
+  "kind": "check",
+  "title": "Ellenőrzés: forest plot",
+  "body": "Reviewer check: square area is proportional to weight; the diamond shows the pooled estimate and CI; the no-effect line is at the correct null (1 for ratios, 0 for differences); ratio measures use a log axis; and the 'favours' labels point in the right direction.",
+  "source_id": "khan2020",
+  "locator": "Ch2 pp. 16–17",
+  "tags": "reviewer check ellenőrzés forest plot erdődiagram null line nullvonal log axis log-tengely favours labels irányfeliratok weights súlyok"
+ },
+ {
+  "k_id": "K-KHN0102-079",
+  "stage_id": "S14",
+  "kind": "guidance",
+  "title": "Mit kell közölni",
+  "body": "Report the search limitations, the search date for each database, the study-selection flow chart, CIs for ratio measures back-transformed from the log scale, and the statistical model used with its justification.",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 7; §1.4.1 p. 8; Ch2 p. 22; §2.9 pp. 34–35",
+  "tags": "reporting közlés search date keresési dátum flow chart folyamatábra back-transformation visszatranszformálás model justification modell indoklása limitations korlátok"
+ },
+ {
+  "k_id": "K-KHN0102-080",
+  "stage_id": "S14",
+  "kind": "criterion",
+  "title": "Értékelési szempont: átlátható közlés (PRISMA, PRISMA-P, MOOSE)",
+  "body": "Evaluator criterion and reviewer check: reporting follows PRISMA (and MOOSE when observational studies are pooled), and the protocol follows PRISMA-P, so that the review is transparent. [note: assess against the PRISMA 2020 checklist; the engine CLI offers a 'PRISMA2020' checklist.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 p. 11",
+  "tags": "evaluator criterion értékelési szempont transparency átláthatóság PRISMA MOOSE PRISMA-P reporting közlés checklist ellenőrzőlista"
+ },
+ {
+  "k_id": "K-KHN0102-081",
+  "stage_id": "S11",
+  "kind": "check",
+  "title": "Ellenőrzés: a publikációs torzítás vizsgálata",
+  "body": "Reviewer check: publication and small-study bias were assessed with a funnel plot (and, if the authors' approach is followed, a Doi plot with the LFK index); the low power of funnel-plot asymmetry tests is acknowledged; the search covered unpublished and non-English sources; and the potential impact of missing studies on the conclusions is discussed. [note: run asymmetry tests such as Egger's (bias.egger_test) only with at least 10 studies of varying size, do not equate asymmetry with publication bias (Cochrane Handbook v6 ch. 13), and do not accept Rosenthal's fail-safe N as evidence of robustness: it ignores effect sizes and between-study variance and has been widely discouraged (e.g. Becker 2005).]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.8.2 pp. 32–33; Ch1 §1.4 p. 7",
+  "tags": "reviewer check ellenőrzés publication bias publikációs torzítás funnel plot tölcsérábra Doi plot LFK index Egger fail-safe N small-study effects kis vizsgálatok hatása 10 studies"
+ },
+ {
+  "k_id": "K-KHN0102-082",
+  "stage_id": "S12",
+  "kind": "check",
+  "title": "Ellenőrzés: érzékenységi elemzések és a moderátorelemzések címkézése",
+  "body": "Reviewer check: an exclusion (leave-one-out) sensitivity analysis was run (sensitivity.leave_one_out) and any study whose removal changes the conclusion is reported; the effect of debatable inclusion decisions on the pooled result is shown; and meta-regression and subgroup findings are labelled as observational. [note: pre-specify the sensitivity analyses in the protocol, e.g. restricting to studies at low risk of bias, or re-running with another tau^2 estimator or CI method.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.7.1–2.7.3 pp. 30–31",
+  "tags": "reviewer check ellenőrzés sensitivity analysis érzékenységi elemzés leave-one-out egyenként kihagyás influential study befolyásos vizsgálat observational megfigyeléses subgroup alcsoport meta-regression metaregresszió"
+ },
+ {
+  "k_id": "K-KHN0102-083",
+  "stage_id": "S05",
+  "kind": "guidance",
+  "title": "Vizsgálatonként minimálisan kinyerendő adatok",
+  "body": "For every study, extract at least the point estimate of the effect, its standard deviation or standard error, and the sample size (per arm where relevant), since a CI for the population effect cannot be built without all three. The sampling distribution of the effect estimator also has to be known so that the right critical value is used. Typical summaries are mean and SD or a correlation for quantitative outcomes, and an odds or risk ratio or a difference for categorical ones.",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.8.1 p. 32",
+  "tags": "data extraction adatkinyerés minimum data minimális adatok point estimate pontbecslés standard deviation szórás standard error standard hiba sample size mintaméret"
+ },
+ {
+  "k_id": "K-KHN0102-084",
+  "stage_id": "S01",
+  "kind": "concept",
+  "title": "Kvalitatív és kvantitatív szintézis",
+  "body": "In a qualitative synthesis the work stops at the systematic-review stage and the findings of the selected studies are summarised without pooling; in a quantitative synthesis their numerical data are pooled by meta-analysis. In both cases the synthesis must rest on all eligible published and unpublished studies found by a comprehensive search. The source also repeats the common view that meta-analyses of independent RCTs give the highest-quality evidence. [note: when pooling is not appropriate, report the synthesis with the SWiM (Synthesis Without Meta-analysis) guideline (Campbell et al. 2020) rather than counting votes by statistical significance.]",
+  "source_id": "khan2020",
+  "locator": "Ch1 §1.6 p. 10",
+  "tags": "qualitative synthesis kvalitatív szintézis quantitative synthesis kvantitatív szintézis narrative synthesis narratív szintézis SWiM vote counting szavazatszámlálás meta-analysis metaanalízis"
+ },
+ {
+  "k_id": "K-KHN0102-085",
+  "stage_id": "S08",
+  "kind": "convention",
+  "title": "A könyv elemzéseinek reprodukálása a motorral",
+  "body": "To reproduce the book's analyses in the engine, match the source's settings. FE is models.meta_analysis(model='fixed') with a z-based CI. Classical RE is model='random' with tau2_method='DL' and ci_method='z'; the engine defaults (REML, HKSJ) will give different output from MetaXL and the book. IVhet is model='ivhet', which uses tau^2_DL and a z CI. The Doi plot and LFK index come from bias.doi_plot_data (results.json bias.lfk, doi.svg); QE is not implemented, so take QE results from MetaXL. [note: for a new review, report the pre-specified primary model with current methods (e.g. REML with HKSJ and a prediction interval) and use the book's settings only for verification or as a sensitivity analysis.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.2.4 p. 22; §2.5 p. 25; §2.6.2–2.6.3 pp. 27–28",
+  "tags": "engine motor reproduce reprodukálás MetaXL DerSimonian Laird DL REML HKSJ IVhet z-based z-alapú settings beállítások"
+ },
+ {
+  "k_id": "K-KHN0102-086",
+  "stage_id": "S09",
+  "kind": "pitfall",
+  "title": "A nem szignifikáns Q-próba homogenitásként értelmezése",
+  "body": "The source's sequence (test heterogeneity, then use FE if between-study variation is not significant) invites reading a non-significant Q as proof of homogeneity. With few studies the Q test has low power, while its value tends to grow with the number of studies, as the source itself notes. Detect: the model choice is justified only by the p-value of Q. Fix: pre-specify the model from the expected clinical and methodological diversity, and report Q with its p-value together with I^2 (with CI), tau^2 and, for random effects, a prediction interval. [note: the Cochrane Handbook v6 (§10.10.4.1) rejects choosing between fixed and random effects on the basis of a heterogeneity test.]",
+  "source_id": "khan2020",
+  "locator": "Ch2 §2.5 pp. 24–25; §2.6.1 p. 26",
+  "tags": "Cochran Q heterogeneity test heterogenitás-próba low power alacsony erő homogeneity homogenitás model choice modellválasztás a priori fixed effect fix hatás pitfall buktató"
+ }
+]

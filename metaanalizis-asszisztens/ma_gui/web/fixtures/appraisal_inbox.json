@@ -1,0 +1,43 @@
+{
+ "description": "A beérkezett mappa (04_torzitas_kockazat/appraisals/beerkezett/)",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/appraisals/inbox",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.appraisal-inbox/v1",
+    "data": {
+     "schema": "szk.ma.appraisal-inbox/v1",
+     "dir": "04_torzitas_kockazat/appraisals/beerkezett",
+     "files": [
+      {
+       "path": "04_torzitas_kockazat/appraisals/beerkezett/KP_rob2.json",
+       "name": "KP_rob2.json",
+       "bytes": 4810,
+       "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+       "kind": "bundle",
+       "items": 1,
+       "preview": [
+        {
+         "tool": "rob2",
+         "unit": "FERGUSON1949",
+         "assessor": "KP",
+         "origin": "human",
+         "status": "complete"
+        }
+       ]
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_api"
+    }
+   }
+  }
+ ]
+}

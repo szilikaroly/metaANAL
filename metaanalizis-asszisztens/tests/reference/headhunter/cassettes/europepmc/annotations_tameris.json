@@ -1,0 +1,71 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "europepmc-annotations_tameris",
+  "recorded_at": "2026-10-05T11:08:18Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "annotations API: Accession Numbers (NCT00953927 az absztraktban és a Methodsban)",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://www.ebi.ac.uk/europepmc/annotations_api/annotationsByArticleIds?articleIds=MED%3A23391465&format=JSON&type=Accession+Numbers",
+        "headers": {
+          "accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body_json": [
+          {
+            "source": "MED",
+            "extId": "23391465",
+            "pmcid": "PMC5424647",
+            "annotations": [
+              {
+                "prefix": "54) and with  on July 31, 2009, number ",
+                "exact": "NCT00953927",
+                "postfix": " ",
+                "tags": [
+                  {
+                    "name": "NCT00953927",
+                    "uri": "http://identifiers.org/clinicaltrials:NCT00953927"
+                  }
+                ],
+                "id": "http://europepmc.org/article/MED/23391465#europepmc-b553eae7773dd4ba92bef61587869503",
+                "type": "Accession Numbers",
+                "section": "Abstract (http://purl.org/dc/terms/abstract)",
+                "provider": "Europe PMC",
+                "subType": "NCT"
+              },
+              {
+                "prefix": "), and with  on July 31, 2009, number ",
+                "exact": "NCT00953927",
+                "postfix": ". ",
+                "tags": [
+                  {
+                    "name": "NCT00953927",
+                    "uri": "http://identifiers.org/clinicaltrials:NCT00953927"
+                  }
+                ],
+                "id": "http://europepmc.org/article/PMC/PMC5424647#europepmc-0319123d308ed074a82bcf9f62b7dec0",
+                "type": "Accession Numbers",
+                "section": "Methods (http://purl.org/orb/Methods)",
+                "provider": "Europe PMC",
+                "subType": "NCT"
+              }
+            ],
+            "fullTextIdList": [
+              "PMC5424647"
+            ]
+          }
+        ]
+      },
+      "delay_ms": null
+    }
+  ]
+}

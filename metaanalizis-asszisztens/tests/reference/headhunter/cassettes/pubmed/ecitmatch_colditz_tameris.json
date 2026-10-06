@@ -1,0 +1,30 @@
+{
+  "schema": "szk.ma.headhunter.cassette/v1",
+  "name": "pubmed-ecitmatch_colditz_tameris",
+  "recorded_at": "2026-10-05T11:08:28Z",
+  "origin": "recorded",
+  "unverified_live": false,
+  "license_note": null,
+  "notes": "ecitmatch: Colditz 1994 → 8309034, Tameris 2013 → 23391465, ismeretlen",
+  "interactions": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/ecitmatch.cgi?bdata=jama%7C1994%7C271%7C698%7Ccolditz+ga%7Cref1%7C%0Dlancet%7C2013%7C381%7C1021%7Ctameris+md%7Cref2%7C%0Dfoo%7C1999%7C1%7C1%7Cbar%7Cref3%7C&db=pubmed&retmode=xml",
+        "headers": {
+          "accept": "text/plain, */*;q=0.1"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/plain; charset=UTF-8",
+          "x-ratelimit-limit": "3",
+          "x-ratelimit-remaining": "2"
+        },
+        "body_text": "jama|1994|271|698|colditz ga|ref1|8309034\nlancet|2013|381|1021|tameris md|ref2|23391465\nfoo|1999|1|1||ref3|NOT_FOUND;INVALID_JOURNAL\n"
+      },
+      "delay_ms": null
+    }
+  ]
+}

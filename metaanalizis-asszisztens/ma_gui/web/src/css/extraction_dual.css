@@ -1,0 +1,123 @@
+/* extraction_dual.css — v1: kettős kinyerés és egyeztetés (terv 3.5.5), a rács virtualizációja (3.3) és a kettős
+ * kinyerés virtuális táblái (MA.vtable). Csak tokenekkel. A szín sosem egyedüli jelölés: minden állapot szimbólumot
+ * (✔ ≠ ⟳ = ⊕ ⊖) és szöveget is kap. */
+
+/* ---- a rács (components/grid.js) virtuális módja: rögzített sormagasság, térkitöltő sorok ---- */
+.mg.is-virtual .mg-table td, .mg.is-virtual .mg-table tbody th { height: 26px; max-height: 26px; overflow: hidden; }
+.mg-table tr.mg-spacer td { padding: 0; border: 0; background: transparent; }
+.mg-table:focus { outline: var(--focus-width) solid var(--focus); outline-offset: -2px; }
+.mg-selftest-host { position: absolute; left: -10000px; top: 0; width: 900px; }
+.mg-selftest-host .mg { max-height: 400px; }
+
+/* ---- MA.vtable (components/extraction_vtable.js) ---- */
+.vt { position: relative; overflow: auto; max-height: 56vh; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.vt-table { border-collapse: separate; border-spacing: 0; font-size: var(--fs-sm); min-width: 100%; }
+.vt-table th, .vt-table td { border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 2px 6px;
+  white-space: nowrap; height: 26px; max-height: 26px; overflow: hidden; text-overflow: ellipsis; text-align: left; max-width: 26em; }
+.vt-table thead th { position: sticky; top: 0; z-index: 2; background: var(--surface-2); font-weight: 650; border-bottom: 2px solid var(--line-strong); }
+.vt-table tbody tr { cursor: pointer; }
+.vt-table tbody tr:hover td { background: var(--surface-2); }
+.vt-table tbody tr[aria-selected="true"] td { background: var(--accent-soft); }
+.vt-table tbody tr:focus { outline: var(--focus-width) solid var(--focus); outline-offset: -3px; }
+.vt-table tr.vt-spacer td { padding: 0; border: 0; background: transparent; height: auto; max-height: none; }
+.vt-table td.vt-num { text-align: right; font-variant-numeric: tabular-nums; }
+.vt-table:focus { outline: var(--focus-width) solid var(--focus); outline-offset: -2px; }
+.vt-empty { padding: var(--sp-3); color: var(--muted); }
+
+/* ---- 3.5.5 Kettős kinyerés ---- */
+.dx-head .toolbar:last-child { margin-bottom: 0; }
+.dx-files { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: var(--sp-2) var(--sp-3); margin: var(--sp-2) 0; }
+.dx-file { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--sp-2); background: var(--surface); }
+.dx-file h3 { font-size: var(--fs-md); margin: 0 0 var(--sp-1); display: flex; align-items: center; gap: 6px; }
+.dx-file .dx-path { font-family: var(--mono); font-size: var(--fs-xs); color: var(--muted); word-break: break-all; }
+.dx-file .toolbar { margin: var(--sp-1) 0 0; }
+.dx-rater { width: 6em; }
+.dx-inbox { margin: var(--sp-2) 0 0; padding: 0; list-style: none; }
+.dx-inbox li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 3px 0; border-top: 1px dashed var(--line); }
+.dx-help { font-size: var(--fs-sm); color: var(--muted); margin: var(--sp-1) 0; max-width: 72rem; }
+
+.dx-summary-line { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; margin: 0 0 var(--sp-2); }
+.dx-summary-line strong { font-variant-numeric: tabular-nums; }
+.dx-fields { border-collapse: collapse; font-size: var(--fs-sm); margin: 0 0 var(--sp-2); }
+.dx-fields th, .dx-fields td { padding: 2px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+.dx-fields td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.dx-bar { display: block; }
+.dx-bar-bg { fill: var(--neutral-bg); stroke: var(--line); stroke-width: 1; }
+.dx-bar-fg { fill: var(--warn-mark); }
+
+.dx-gate { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: var(--sp-2); border-radius: var(--radius-sm); border: 1px solid var(--line); }
+.dx-gate.is-blocked { background: var(--warn-bg); border-color: var(--warn-mark); }
+.dx-gate.is-ok { background: var(--ok-bg); border-color: var(--ok-mark); }
+.dx-counter { font-weight: 650; font-variant-numeric: tabular-nums; }
+
+.dx-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: var(--sp-2) 0; }
+.dx-tools label { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-sm); }
+
+/* állapotjelek (szimbólum + szöveg + szín) */
+.dx-st { display: inline-flex; align-items: center; gap: 3px; font-weight: 600; }
+.dx-st-sym { font-weight: 700; min-width: 1em; display: inline-block; text-align: center; }
+.dx-st.is-open { color: var(--warn); }
+.dx-st.is-decided { color: var(--ok); }
+.dx-st.is-stale { color: var(--stale); }
+.dx-st.is-auto { color: var(--muted); }
+.dx-st.is-row { color: var(--info); }
+
+/* side-by-side cellák */
+.dx-cell { display: inline-flex; align-items: center; gap: 4px; }
+.dx-cell-sym { font-weight: 700; font-size: .95em; }
+.vt-table td.is-diff { background: var(--warn-bg); box-shadow: inset 0 0 0 1px var(--warn-mark); }
+.vt-table td.is-diff .dx-cell-sym { color: var(--warn); }
+.vt-table td.is-decided { background: var(--ok-bg); }
+.vt-table td.is-decided .dx-cell-sym { color: var(--ok); }
+.vt-table td.is-stale { background: var(--stale-bg); box-shadow: inset 0 0 0 1px var(--stale-mark); }
+.vt-table td.is-stale .dx-cell-sym { color: var(--stale); }
+.vt-table td.is-format { color: var(--muted); }
+.vt-table td.is-missing-side { color: var(--muted); background: var(--neutral-bg); font-style: italic; }
+.vt-table td.dx-side-b { border-right: 2px solid var(--line-strong); }
+.vt-table th.dx-side-b { border-right: 2px solid var(--line-strong); }
+.vt-table tr.is-only td { background: var(--info-bg); }
+.dx-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--fs-sm); color: var(--muted); margin: var(--sp-1) 0; }
+
+/* részletek és döntés */
+.dx-detail { margin-top: var(--sp-2); }
+.dx-ab { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--sp-2); margin: var(--sp-2) 0; }
+.dx-ab > div { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--sp-2); }
+.dx-ab .dx-val { font-family: var(--mono); font-size: var(--fs-lg); word-break: break-all; }
+.dx-hint { margin: var(--sp-1) 0; }
+.dx-impact { margin: var(--sp-1) 0; font-variant-numeric: tabular-nums; }
+.dx-choice { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; border: 0; padding: 0; margin: var(--sp-2) 0; }
+.dx-choice legend { font-weight: 650; padding: 0; margin-bottom: 4px; }
+.dx-choice label { display: inline-flex; align-items: center; gap: 4px; }
+.dx-reason { width: 100%; min-height: 3.2em; font: inherit; }
+.dx-msg-host:empty { display: none; }
+.dx-actions { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-top: var(--sp-2); }
+.dx-key { font-weight: 650; }
+.dx-methods { white-space: pre-wrap; font-size: var(--fs-sm); background: var(--surface-2); padding: var(--sp-2); border-radius: var(--radius-sm); }
+
+@media print {
+  .vt { max-height: none; overflow: visible; }
+  .dx-file .toolbar, .dx-tools, .dx-actions, .dx-choice, .dx-reason { display: none !important; }
+}
+
+/* ---- kumulatív forest és buborékábra (plots/cumulative.js, plots/bubble.js) ---- */
+.cu-svg { min-width: 820px; }
+.cu-final-line { stroke: var(--plot-summary); stroke-width: 1; stroke-dasharray: 4 3; }
+.cu-row.is-final .fp-label, .cu-row.is-final .fp-effect { font-weight: 700; }
+.cu-row:focus { outline: none; }
+.cu-row:focus .fp-rowbg { stroke: var(--focus); stroke-width: 2; }
+.cu-dash { color: var(--plot-summary); }
+.bu-svg { min-width: 560px; max-width: 900px; }
+.bu-band { fill: var(--plot-contour-2); fill-opacity: .55; stroke: var(--plot-ci); stroke-width: .5; stroke-dasharray: 3 2; }
+.bu-line { fill: none; stroke: var(--plot-summary); stroke-width: 2; }
+.bu-bubble { fill: var(--plot-marker); fill-opacity: .35; stroke: var(--plot-marker); stroke-width: 1.2; }
+.bu-center { fill: var(--plot-ink); }
+.bu-point.is-estimated .bu-bubble { stroke-dasharray: 3 2; }
+.bu-point:focus { outline: none; }
+.bu-point:focus .bu-bubble, .bu-point.is-highlight .bu-bubble, .bu-point.is-selected .bu-bubble { stroke: var(--focus); stroke-width: 3; fill-opacity: .55; }
+.bu-group .fp-ci { stroke: var(--plot-summary); stroke-width: 2; }
+.bu-sym-line { color: var(--plot-summary); }
+.bu-swatch { background: var(--plot-contour-2); }
+.cu-row.is-highlight .fp-rowbg { fill: var(--accent-soft); }
+.cu-row.is-selected .fp-rowbg { fill: var(--accent-soft); stroke: var(--plot-highlight); stroke-width: 2; }
+.bu-pi { fill: none; stroke: var(--plot-ci); stroke-width: 1.2; stroke-dasharray: 5 4; }
+.bu-sym-pi { color: var(--plot-ci); }

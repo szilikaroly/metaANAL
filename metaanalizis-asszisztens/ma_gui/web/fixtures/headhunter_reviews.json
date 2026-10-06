@@ -1,0 +1,1212 @@
+{
+ "description": "Szintetikus Metaheadhunter-projekt (a PMID-ek 99…-kezdetűek, a címek „(synthetic)” jelölésűek — NEM valós közlemények). Generálja: python3 tests/gui/test_headhunter_fixtures.py --write",
+ "routes": [
+  {
+   "envelope": {
+    "data": {
+     "counts": {
+      "candidate": 1,
+      "selected": 2
+     },
+     "items": [
+      {
+       "bib": {
+        "authors": [
+         "Author A"
+        ],
+        "authors_more": false,
+        "first_author": "Author A",
+        "issue": null,
+        "journal": "Synthetic J Rev",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Drug X for Y disease (synthetic Cochrane-style review)",
+        "volume": null,
+        "year": 2021
+       },
+       "candidates": {
+        "confirmed": 2,
+        "proposed": 1,
+        "rejected": 0
+       },
+       "cochrane": null,
+       "etag": "aaafc9c136562c2d63226ceb217be6fd9612d560897e1ffad87877f0f221e54c",
+       "extraction": null,
+       "found_by": [
+        "s-pubmed-20261005T090000Z"
+       ],
+       "fulltext": {
+        "available": true,
+        "checked_at": "2026-10-05T10:00:00Z",
+        "license": "cc by",
+        "route": "europepmc_oa"
+       },
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99000001",
+         "via": "pubmed.esearch"
+        }
+       },
+       "is_cochrane": true,
+       "k_reported": {
+        "evidence_id": "ev-rv-pmid-99000001-0005",
+        "unit": "studies",
+        "value": 3
+       },
+       "label": "Author 2021",
+       "n_candidates": 3,
+       "n_groups": 3,
+       "n_included_claims": 3,
+       "path": "01_kereses/headhunter/reviews/rv-pmid-99000001.json",
+       "problems": [],
+       "proposed_by_confidence": {
+        "high": 0,
+        "low": 0,
+        "medium": 1
+       },
+       "rank": {
+        "components": {
+         "cochrane": 1.0,
+         "open_fulltext": 1.0,
+         "recency": 0.6,
+         "relevance": 0.9,
+         "size": 0.4
+        },
+        "components_text": {
+         "cochrane": "1.00",
+         "open_fulltext": "1.00",
+         "recency": "0.60",
+         "relevance": "0.90",
+         "size": "0.40"
+        },
+        "score": 0.82,
+        "score_text": "0.82"
+       },
+       "review_id": "rv-pmid-99000001",
+       "search_date": {
+        "evidence_id": "ev-rv-pmid-99000001-0004",
+        "fallback": false,
+        "precision": "month",
+        "value": "2020-06"
+       },
+       "signals": {
+        "evidence_ids": [],
+        "meta_analysis": true,
+        "open_fulltext": true,
+        "prisma_mentioned": true,
+        "protocol_registered": true,
+        "retracted": false,
+        "rob_assessed": true
+       },
+       "status": "selected",
+       "superseded_by": null
+      },
+      {
+       "bib": {
+        "authors": [
+         "Author B"
+        ],
+        "authors_more": false,
+        "first_author": "Author B",
+        "issue": null,
+        "journal": "Synthetic J Rev",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Effect of drug X on mortality in Y: a systematic review and meta-analysis (synthetic)",
+        "volume": null,
+        "year": 2022
+       },
+       "candidates": {
+        "confirmed": 2,
+        "proposed": 1,
+        "rejected": 0
+       },
+       "cochrane": null,
+       "etag": "5e79e8a98813fab1d5b56685e96522b558432791cb3131d029297a577bde6768",
+       "extraction": null,
+       "found_by": [
+        "s-pubmed-20261005T090000Z"
+       ],
+       "fulltext": {
+        "available": true,
+        "checked_at": "2026-10-05T10:00:00Z",
+        "license": "cc by",
+        "route": "europepmc_oa"
+       },
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99000002",
+         "via": "pubmed.esearch"
+        }
+       },
+       "is_cochrane": false,
+       "k_reported": {
+        "evidence_id": "ev-rv-pmid-99000002-0005",
+        "unit": "studies",
+        "value": 4
+       },
+       "label": "Author 2022",
+       "n_candidates": 3,
+       "n_groups": 2,
+       "n_included_claims": 3,
+       "path": "01_kereses/headhunter/reviews/rv-pmid-99000002.json",
+       "problems": [],
+       "proposed_by_confidence": {
+        "high": 0,
+        "low": 1,
+        "medium": 0
+       },
+       "rank": {
+        "components": {
+         "recency": 0.5,
+         "relevance": 0.8
+        },
+        "components_text": {
+         "recency": "0.50",
+         "relevance": "0.80"
+        },
+        "score": 0.71,
+        "score_text": "0.71"
+       },
+       "review_id": "rv-pmid-99000002",
+       "search_date": {
+        "evidence_id": "ev-rv-pmid-99000002-0004",
+        "fallback": false,
+        "precision": "day",
+        "value": "2021-03-15"
+       },
+       "signals": {
+        "evidence_ids": [],
+        "meta_analysis": true,
+        "open_fulltext": true,
+        "prisma_mentioned": true,
+        "protocol_registered": false,
+        "retracted": false,
+        "rob_assessed": true
+       },
+       "status": "selected",
+       "superseded_by": null
+      },
+      {
+       "bib": {
+        "authors": [
+         "Author C"
+        ],
+        "authors_more": false,
+        "first_author": "Author C",
+        "issue": null,
+        "journal": "Synthetic J Rev",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Narrative overview of X (synthetic)",
+        "volume": null,
+        "year": 2012
+       },
+       "candidates": {
+        "confirmed": 0,
+        "proposed": 1,
+        "rejected": 0
+       },
+       "cochrane": null,
+       "etag": "728cd530385b5fac30f3df457973bfb3010602790bf296defff1f567ae09cde7",
+       "extraction": null,
+       "found_by": [
+        "s-pubmed-20261005T090000Z"
+       ],
+       "fulltext": {
+        "available": false,
+        "checked_at": "2026-10-05T10:00:00Z",
+        "license": null,
+        "route": "none"
+       },
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99000003",
+         "via": "pubmed.esearch"
+        }
+       },
+       "is_cochrane": false,
+       "k_reported": null,
+       "label": "Author 2012",
+       "n_candidates": 1,
+       "n_groups": 1,
+       "n_included_claims": 1,
+       "path": "01_kereses/headhunter/reviews/rv-pmid-99000003.json",
+       "problems": [],
+       "proposed_by_confidence": {
+        "high": 0,
+        "low": 0,
+        "medium": 1
+       },
+       "rank": {
+        "components": {
+         "recency": 0.1,
+         "relevance": 0.5
+        },
+        "components_text": {
+         "recency": "0.10",
+         "relevance": "0.50"
+        },
+        "score": 0.35,
+        "score_text": "0.35"
+       },
+       "review_id": "rv-pmid-99000003",
+       "search_date": {
+        "evidence_id": null,
+        "fallback": true,
+        "precision": "unknown",
+        "value": null
+       },
+       "signals": {
+        "evidence_ids": [],
+        "meta_analysis": true,
+        "open_fulltext": false,
+        "prisma_mentioned": true,
+        "protocol_registered": false,
+        "retracted": false,
+        "rob_assessed": true
+       },
+       "status": "candidate",
+       "superseded_by": null
+      }
+     ],
+     "path": "01_kereses/headhunter/reviews"
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-reviews/v1",
+    "warnings": []
+   },
+   "method": "GET",
+   "path": "/api/headhunter/reviews",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "counts": {
+      "candidate": 1,
+      "selected": 2
+     },
+     "items": [
+      {
+       "bib": {
+        "authors": [
+         "Author A"
+        ],
+        "authors_more": false,
+        "first_author": "Author A",
+        "issue": null,
+        "journal": "Synthetic J Rev",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Drug X for Y disease (synthetic Cochrane-style review)",
+        "volume": null,
+        "year": 2021
+       },
+       "candidates": {
+        "confirmed": 2,
+        "proposed": 1,
+        "rejected": 0
+       },
+       "cochrane": null,
+       "etag": "aaafc9c136562c2d63226ceb217be6fd9612d560897e1ffad87877f0f221e54c",
+       "extraction": null,
+       "found_by": [
+        "s-pubmed-20261005T090000Z"
+       ],
+       "fulltext": {
+        "available": true,
+        "checked_at": "2026-10-05T10:00:00Z",
+        "license": "cc by",
+        "route": "europepmc_oa"
+       },
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99000001",
+         "via": "pubmed.esearch"
+        }
+       },
+       "is_cochrane": true,
+       "k_reported": {
+        "evidence_id": "ev-rv-pmid-99000001-0005",
+        "unit": "studies",
+        "value": 3
+       },
+       "label": "Author 2021",
+       "n_candidates": 3,
+       "n_groups": 3,
+       "n_included_claims": 3,
+       "path": "01_kereses/headhunter/reviews/rv-pmid-99000001.json",
+       "problems": [],
+       "proposed_by_confidence": {
+        "high": 0,
+        "low": 0,
+        "medium": 1
+       },
+       "rank": {
+        "components": {
+         "cochrane": 1.0,
+         "open_fulltext": 1.0,
+         "recency": 0.6,
+         "relevance": 0.9,
+         "size": 0.4
+        },
+        "components_text": {
+         "cochrane": "1.00",
+         "open_fulltext": "1.00",
+         "recency": "0.60",
+         "relevance": "0.90",
+         "size": "0.40"
+        },
+        "score": 0.82,
+        "score_text": "0.82"
+       },
+       "review_id": "rv-pmid-99000001",
+       "search_date": {
+        "evidence_id": "ev-rv-pmid-99000001-0004",
+        "fallback": false,
+        "precision": "month",
+        "value": "2020-06"
+       },
+       "signals": {
+        "evidence_ids": [],
+        "meta_analysis": true,
+        "open_fulltext": true,
+        "prisma_mentioned": true,
+        "protocol_registered": true,
+        "retracted": false,
+        "rob_assessed": true
+       },
+       "status": "selected",
+       "superseded_by": null
+      },
+      {
+       "bib": {
+        "authors": [
+         "Author B"
+        ],
+        "authors_more": false,
+        "first_author": "Author B",
+        "issue": null,
+        "journal": "Synthetic J Rev",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Effect of drug X on mortality in Y: a systematic review and meta-analysis (synthetic)",
+        "volume": null,
+        "year": 2022
+       },
+       "candidates": {
+        "confirmed": 2,
+        "proposed": 1,
+        "rejected": 0
+       },
+       "cochrane": null,
+       "etag": "5e79e8a98813fab1d5b56685e96522b558432791cb3131d029297a577bde6768",
+       "extraction": null,
+       "found_by": [
+        "s-pubmed-20261005T090000Z"
+       ],
+       "fulltext": {
+        "available": true,
+        "checked_at": "2026-10-05T10:00:00Z",
+        "license": "cc by",
+        "route": "europepmc_oa"
+       },
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99000002",
+         "via": "pubmed.esearch"
+        }
+       },
+       "is_cochrane": false,
+       "k_reported": {
+        "evidence_id": "ev-rv-pmid-99000002-0005",
+        "unit": "studies",
+        "value": 4
+       },
+       "label": "Author 2022",
+       "n_candidates": 3,
+       "n_groups": 2,
+       "n_included_claims": 3,
+       "path": "01_kereses/headhunter/reviews/rv-pmid-99000002.json",
+       "problems": [],
+       "proposed_by_confidence": {
+        "high": 0,
+        "low": 1,
+        "medium": 0
+       },
+       "rank": {
+        "components": {
+         "recency": 0.5,
+         "relevance": 0.8
+        },
+        "components_text": {
+         "recency": "0.50",
+         "relevance": "0.80"
+        },
+        "score": 0.71,
+        "score_text": "0.71"
+       },
+       "review_id": "rv-pmid-99000002",
+       "search_date": {
+        "evidence_id": "ev-rv-pmid-99000002-0004",
+        "fallback": false,
+        "precision": "day",
+        "value": "2021-03-15"
+       },
+       "signals": {
+        "evidence_ids": [],
+        "meta_analysis": true,
+        "open_fulltext": true,
+        "prisma_mentioned": true,
+        "protocol_registered": false,
+        "retracted": false,
+        "rob_assessed": true
+       },
+       "status": "selected",
+       "superseded_by": null
+      }
+     ],
+     "path": "01_kereses/headhunter/reviews"
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-reviews/v1",
+    "warnings": []
+   },
+   "method": "GET",
+   "path": "/api/headhunter/reviews",
+   "query": {
+    "status": "selected"
+   },
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "candidates": [
+      {
+       "cand_id": "c0001",
+       "cited_as": {
+        "first_author": "Smith",
+        "text": "Smith A, et al. Drug X in Y. Synthetic Trials J 2015;1:1-9.",
+        "year": 2015
+       },
+       "confidence": "high",
+       "decision_ids": [],
+       "evidence": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "confidence": "high",
+         "evidence_id": "ev-rv-pmid-99000001-0001",
+         "extracted_by": "tool:headhunter",
+         "kind": "reference_section",
+         "locator": {
+          "container": "PMC9901",
+          "label": null,
+          "row": null,
+          "section": "References to studies included in this review"
+         },
+         "quote": "Smith 2015 {published data only}",
+         "review_id": "rv-pmid-99000001",
+         "strategy": "jats_cochrane_included"
+        }
+       ],
+       "evidence_ids": [
+        "ev-rv-pmid-99000001-0001"
+       ],
+       "evidence_missing": [],
+       "group_key": null,
+       "ids": {},
+       "rec_id": "rec-pmid-99100101",
+       "role_in_review": "included",
+       "secondary_data": [],
+       "status": "confirmed",
+       "study_label_in_review": "Smith 2015"
+      },
+      {
+       "cand_id": "c0002",
+       "cited_as": {
+        "first_author": "Jones",
+        "text": "Jones B. X therapy trial. Synthetic Trials J 2016;2:10-19.",
+        "year": 2016
+       },
+       "confidence": "high",
+       "decision_ids": [],
+       "evidence": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "confidence": "high",
+         "evidence_id": "ev-rv-pmid-99000001-0002",
+         "extracted_by": "tool:headhunter",
+         "kind": "reference_section",
+         "locator": {
+          "container": "PMC9901",
+          "label": null,
+          "row": null,
+          "section": "References to studies included in this review"
+         },
+         "quote": "Jones 2016 {published data only}",
+         "review_id": "rv-pmid-99000001",
+         "strategy": "jats_cochrane_included"
+        }
+       ],
+       "evidence_ids": [
+        "ev-rv-pmid-99000001-0002"
+       ],
+       "evidence_missing": [],
+       "group_key": null,
+       "ids": {},
+       "rec_id": "rec-pmid-99100102",
+       "role_in_review": "included",
+       "secondary_data": [],
+       "status": "confirmed",
+       "study_label_in_review": "Jones 2016"
+      },
+      {
+       "cand_id": "c0003",
+       "cited_as": {
+        "first_author": "Kim",
+        "text": "Kim C. X for Y. 2017.",
+        "year": 2017
+       },
+       "confidence": "medium",
+       "decision_ids": [],
+       "evidence": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "confidence": "medium",
+         "evidence_id": "ev-rv-pmid-99000001-0003",
+         "extracted_by": "tool:headhunter",
+         "kind": "table_row",
+         "locator": {
+          "container": "PMC9901",
+          "label": "Table 1",
+          "row": 3,
+          "section": null
+         },
+         "quote": "Kim 2017 | 40 | RCT | 12 weeks",
+         "review_id": "rv-pmid-99000001",
+         "strategy": "jats_table"
+        }
+       ],
+       "evidence_ids": [
+        "ev-rv-pmid-99000001-0003"
+       ],
+       "evidence_missing": [],
+       "group_key": null,
+       "ids": {},
+       "rec_id": "rec-pmid-99100105",
+       "role_in_review": "included",
+       "secondary_data": [],
+       "status": "proposed",
+       "study_label_in_review": "Kim 2017"
+      }
+     ],
+     "excluded_by_review": [],
+     "k_evidence": {
+      "at": "2026-10-05T10:00:00Z",
+      "confidence": "high",
+      "evidence_id": "ev-rv-pmid-99000001-0005",
+      "extracted_by": "tool:headhunter",
+      "kind": "text",
+      "locator": {
+       "container": "PMC9901",
+       "label": null,
+       "row": null,
+       "section": "Results"
+      },
+      "quote": "Three trials were included.",
+      "review_id": "rv-pmid-99000001",
+      "strategy": "jats_text"
+     },
+     "path": "01_kereses/headhunter/reviews/rv-pmid-99000001.json",
+     "problems": [],
+     "search_date_evidence": {
+      "at": "2026-10-05T10:00:00Z",
+      "confidence": "high",
+      "evidence_id": "ev-rv-pmid-99000001-0004",
+      "extracted_by": "tool:headhunter",
+      "kind": "text",
+      "locator": {
+       "container": "PMC9901",
+       "label": null,
+       "row": null,
+       "section": "Methods"
+      },
+      "quote": "We searched the databases up to June 2020.",
+      "review_id": "rv-pmid-99000001",
+      "strategy": "jats_text"
+     },
+     "signals_evidence": [],
+     "summary": {
+      "bib": {
+       "authors": [
+        "Author A"
+       ],
+       "authors_more": false,
+       "first_author": "Author A",
+       "issue": null,
+       "journal": "Synthetic J Rev",
+       "language": null,
+       "pages": null,
+       "pub_types": [],
+       "title": "Drug X for Y disease (synthetic Cochrane-style review)",
+       "volume": null,
+       "year": 2021
+      },
+      "candidates": {
+       "confirmed": 2,
+       "proposed": 1,
+       "rejected": 0
+      },
+      "cochrane": null,
+      "etag": "aaafc9c136562c2d63226ceb217be6fd9612d560897e1ffad87877f0f221e54c",
+      "extraction": null,
+      "found_by": [
+       "s-pubmed-20261005T090000Z"
+      ],
+      "fulltext": {
+       "available": true,
+       "checked_at": "2026-10-05T10:00:00Z",
+       "license": "cc by",
+       "route": "europepmc_oa"
+      },
+      "ids": {
+       "pmid": {
+        "api": true,
+        "confirmed_by": null,
+        "source": "pubmed",
+        "value": "99000001",
+        "via": "pubmed.esearch"
+       }
+      },
+      "is_cochrane": true,
+      "k_reported": {
+       "evidence_id": "ev-rv-pmid-99000001-0005",
+       "unit": "studies",
+       "value": 3
+      },
+      "label": "Author 2021",
+      "n_candidates": 3,
+      "n_groups": 3,
+      "n_included_claims": 3,
+      "path": "01_kereses/headhunter/reviews/rv-pmid-99000001.json",
+      "problems": [],
+      "proposed_by_confidence": {
+       "high": 0,
+       "low": 0,
+       "medium": 1
+      },
+      "rank": {
+       "components": {
+        "cochrane": 1.0,
+        "open_fulltext": 1.0,
+        "recency": 0.6,
+        "relevance": 0.9,
+        "size": 0.4
+       },
+       "components_text": {
+        "cochrane": "1.00",
+        "open_fulltext": "1.00",
+        "recency": "0.60",
+        "relevance": "0.90",
+        "size": "0.40"
+       },
+       "score": 0.82,
+       "score_text": "0.82"
+      },
+      "review_id": "rv-pmid-99000001",
+      "search_date": {
+       "evidence_id": "ev-rv-pmid-99000001-0004",
+       "fallback": false,
+       "precision": "month",
+       "value": "2020-06"
+      },
+      "signals": {
+       "evidence_ids": [],
+       "meta_analysis": true,
+       "open_fulltext": true,
+       "prisma_mentioned": true,
+       "protocol_registered": true,
+       "retracted": false,
+       "rob_assessed": true
+      },
+      "status": "selected",
+      "superseded_by": null
+     }
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-review/v1",
+    "warnings": []
+   },
+   "etag": "aaafc9c136562c2d63226ceb217be6fd9612d560897e1ffad87877f0f221e54c",
+   "method": "GET",
+   "path": "/api/headhunter/reviews/rv-pmid-99000001",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "candidates": [
+      {
+       "cand_id": "c0001",
+       "cited_as": {
+        "first_author": "Smith",
+        "text": "Smith A et al. 2015",
+        "year": 2015
+       },
+       "confidence": "high",
+       "decision_ids": [],
+       "evidence": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "confidence": "high",
+         "evidence_id": "ev-rv-pmid-99000002-0001",
+         "extracted_by": "tool:headhunter",
+         "kind": "table_row",
+         "locator": {
+          "container": "PMC9902",
+          "label": "Table 1",
+          "row": 1,
+          "section": null
+         },
+         "quote": "Smith 2015 | 52 | 48 | RCT",
+         "review_id": "rv-pmid-99000002",
+         "strategy": "jats_table"
+        }
+       ],
+       "evidence_ids": [
+        "ev-rv-pmid-99000002-0001"
+       ],
+       "evidence_missing": [],
+       "group_key": null,
+       "ids": {},
+       "rec_id": "rec-pmid-99100101",
+       "role_in_review": "included",
+       "secondary_data": [
+        {
+         "arm": null,
+         "evidence_id": "ev-rv-pmid-99000002-0001",
+         "field": "n1",
+         "outcome": "mortality",
+         "status": "unverified",
+         "unit": null,
+         "value": 52
+        }
+       ],
+       "status": "confirmed",
+       "study_label_in_review": "Smith 2015"
+      },
+      {
+       "cand_id": "c0002",
+       "cited_as": {
+        "first_author": "Brown",
+        "text": "Brown D. Large trial of X. 2018.",
+        "year": 2018
+       },
+       "confidence": "medium",
+       "decision_ids": [],
+       "evidence": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "confidence": "medium",
+         "evidence_id": "ev-rv-pmid-99000002-0002",
+         "extracted_by": "tool:headhunter",
+         "kind": "table_row",
+         "locator": {
+          "container": "PMC9902",
+          "label": "Table 1",
+          "row": 2,
+          "section": null
+         },
+         "quote": "Brown 2018 | 120 | 118 | pragmatic RCT",
+         "review_id": "rv-pmid-99000002",
+         "strategy": "jats_table"
+        }
+       ],
+       "evidence_ids": [
+        "ev-rv-pmid-99000002-0002"
+       ],
+       "evidence_missing": [],
+       "group_key": "g-brown",
+       "ids": {},
+       "rec_id": "rec-pmid-99100103",
+       "role_in_review": "included",
+       "secondary_data": [],
+       "status": "confirmed",
+       "study_label_in_review": "Brown 2018"
+      },
+      {
+       "cand_id": "c0003",
+       "cited_as": {
+        "first_author": "Brown",
+        "text": "Brown D. Long-term follow-up. 2019.",
+        "year": 2019
+       },
+       "confidence": "low",
+       "decision_ids": [],
+       "evidence": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "confidence": "low",
+         "evidence_id": "ev-rv-pmid-99000002-0003",
+         "extracted_by": "tool:headhunter",
+         "kind": "table_row",
+         "locator": {
+          "container": "PMC9902",
+          "label": "Table 1",
+          "row": 3,
+          "section": null
+         },
+         "quote": "Brown 2019 (follow-up of Brown 2018)",
+         "review_id": "rv-pmid-99000002",
+         "strategy": "jats_table"
+        }
+       ],
+       "evidence_ids": [
+        "ev-rv-pmid-99000002-0003"
+       ],
+       "evidence_missing": [],
+       "group_key": "g-brown",
+       "ids": {},
+       "rec_id": "rec-pmid-99100104",
+       "role_in_review": "included_companion",
+       "secondary_data": [],
+       "status": "proposed",
+       "study_label_in_review": "Brown 2019"
+      }
+     ],
+     "excluded_by_review": [],
+     "k_evidence": {
+      "at": "2026-10-05T10:00:00Z",
+      "confidence": "high",
+      "evidence_id": "ev-rv-pmid-99000002-0005",
+      "extracted_by": "tool:headhunter",
+      "kind": "text",
+      "locator": {
+       "container": "PMC9902",
+       "label": null,
+       "row": null,
+       "section": "Results"
+      },
+      "quote": "Four randomised trials were included.",
+      "review_id": "rv-pmid-99000002",
+      "strategy": "jats_text"
+     },
+     "path": "01_kereses/headhunter/reviews/rv-pmid-99000002.json",
+     "problems": [],
+     "search_date_evidence": {
+      "at": "2026-10-05T10:00:00Z",
+      "confidence": "high",
+      "evidence_id": "ev-rv-pmid-99000002-0004",
+      "extracted_by": "tool:headhunter",
+      "kind": "text",
+      "locator": {
+       "container": "PMC9902",
+       "label": null,
+       "row": null,
+       "section": "Methods"
+      },
+      "quote": "The last search was run on 15 March 2021.",
+      "review_id": "rv-pmid-99000002",
+      "strategy": "jats_text"
+     },
+     "signals_evidence": [],
+     "summary": {
+      "bib": {
+       "authors": [
+        "Author B"
+       ],
+       "authors_more": false,
+       "first_author": "Author B",
+       "issue": null,
+       "journal": "Synthetic J Rev",
+       "language": null,
+       "pages": null,
+       "pub_types": [],
+       "title": "Effect of drug X on mortality in Y: a systematic review and meta-analysis (synthetic)",
+       "volume": null,
+       "year": 2022
+      },
+      "candidates": {
+       "confirmed": 2,
+       "proposed": 1,
+       "rejected": 0
+      },
+      "cochrane": null,
+      "etag": "5e79e8a98813fab1d5b56685e96522b558432791cb3131d029297a577bde6768",
+      "extraction": null,
+      "found_by": [
+       "s-pubmed-20261005T090000Z"
+      ],
+      "fulltext": {
+       "available": true,
+       "checked_at": "2026-10-05T10:00:00Z",
+       "license": "cc by",
+       "route": "europepmc_oa"
+      },
+      "ids": {
+       "pmid": {
+        "api": true,
+        "confirmed_by": null,
+        "source": "pubmed",
+        "value": "99000002",
+        "via": "pubmed.esearch"
+       }
+      },
+      "is_cochrane": false,
+      "k_reported": {
+       "evidence_id": "ev-rv-pmid-99000002-0005",
+       "unit": "studies",
+       "value": 4
+      },
+      "label": "Author 2022",
+      "n_candidates": 3,
+      "n_groups": 2,
+      "n_included_claims": 3,
+      "path": "01_kereses/headhunter/reviews/rv-pmid-99000002.json",
+      "problems": [],
+      "proposed_by_confidence": {
+       "high": 0,
+       "low": 1,
+       "medium": 0
+      },
+      "rank": {
+       "components": {
+        "recency": 0.5,
+        "relevance": 0.8
+       },
+       "components_text": {
+        "recency": "0.50",
+        "relevance": "0.80"
+       },
+       "score": 0.71,
+       "score_text": "0.71"
+      },
+      "review_id": "rv-pmid-99000002",
+      "search_date": {
+       "evidence_id": "ev-rv-pmid-99000002-0004",
+       "fallback": false,
+       "precision": "day",
+       "value": "2021-03-15"
+      },
+      "signals": {
+       "evidence_ids": [],
+       "meta_analysis": true,
+       "open_fulltext": true,
+       "prisma_mentioned": true,
+       "protocol_registered": false,
+       "retracted": false,
+       "rob_assessed": true
+      },
+      "status": "selected",
+      "superseded_by": null
+     }
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-review/v1",
+    "warnings": []
+   },
+   "etag": "5e79e8a98813fab1d5b56685e96522b558432791cb3131d029297a577bde6768",
+   "method": "GET",
+   "path": "/api/headhunter/reviews/rv-pmid-99000002",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "candidates": [
+      {
+       "cand_id": "c0001",
+       "cited_as": {
+        "first_author": "Old",
+        "text": "Old E. 2001.",
+        "year": 2001
+       },
+       "confidence": "medium",
+       "decision_ids": [],
+       "evidence": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "confidence": "high",
+         "evidence_id": "ev-rv-pmid-99000003-0001",
+         "extracted_by": "tool:headhunter",
+         "kind": "table_row",
+         "locator": {
+          "container": "PMC9903",
+          "label": "Table 1",
+          "row": 1,
+          "section": null
+         },
+         "quote": "Old 2001 | 30",
+         "review_id": "rv-pmid-99000003",
+         "strategy": "jats_table"
+        }
+       ],
+       "evidence_ids": [
+        "ev-rv-pmid-99000003-0001"
+       ],
+       "evidence_missing": [],
+       "group_key": null,
+       "ids": {},
+       "rec_id": "rec-pmid-99100106",
+       "role_in_review": "included",
+       "secondary_data": [],
+       "status": "proposed",
+       "study_label_in_review": "Old 2001"
+      }
+     ],
+     "excluded_by_review": [],
+     "k_evidence": null,
+     "path": "01_kereses/headhunter/reviews/rv-pmid-99000003.json",
+     "problems": [],
+     "search_date_evidence": null,
+     "signals_evidence": [],
+     "summary": {
+      "bib": {
+       "authors": [
+        "Author C"
+       ],
+       "authors_more": false,
+       "first_author": "Author C",
+       "issue": null,
+       "journal": "Synthetic J Rev",
+       "language": null,
+       "pages": null,
+       "pub_types": [],
+       "title": "Narrative overview of X (synthetic)",
+       "volume": null,
+       "year": 2012
+      },
+      "candidates": {
+       "confirmed": 0,
+       "proposed": 1,
+       "rejected": 0
+      },
+      "cochrane": null,
+      "etag": "728cd530385b5fac30f3df457973bfb3010602790bf296defff1f567ae09cde7",
+      "extraction": null,
+      "found_by": [
+       "s-pubmed-20261005T090000Z"
+      ],
+      "fulltext": {
+       "available": false,
+       "checked_at": "2026-10-05T10:00:00Z",
+       "license": null,
+       "route": "none"
+      },
+      "ids": {
+       "pmid": {
+        "api": true,
+        "confirmed_by": null,
+        "source": "pubmed",
+        "value": "99000003",
+        "via": "pubmed.esearch"
+       }
+      },
+      "is_cochrane": false,
+      "k_reported": null,
+      "label": "Author 2012",
+      "n_candidates": 1,
+      "n_groups": 1,
+      "n_included_claims": 1,
+      "path": "01_kereses/headhunter/reviews/rv-pmid-99000003.json",
+      "problems": [],
+      "proposed_by_confidence": {
+       "high": 0,
+       "low": 0,
+       "medium": 1
+      },
+      "rank": {
+       "components": {
+        "recency": 0.1,
+        "relevance": 0.5
+       },
+       "components_text": {
+        "recency": "0.10",
+        "relevance": "0.50"
+       },
+       "score": 0.35,
+       "score_text": "0.35"
+      },
+      "review_id": "rv-pmid-99000003",
+      "search_date": {
+       "evidence_id": null,
+       "fallback": true,
+       "precision": "unknown",
+       "value": null
+      },
+      "signals": {
+       "evidence_ids": [],
+       "meta_analysis": true,
+       "open_fulltext": false,
+       "prisma_mentioned": true,
+       "protocol_registered": false,
+       "retracted": false,
+       "rob_assessed": true
+      },
+      "status": "candidate",
+      "superseded_by": null
+     }
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-review/v1",
+    "warnings": []
+   },
+   "etag": "728cd530385b5fac30f3df457973bfb3010602790bf296defff1f567ae09cde7",
+   "method": "GET",
+   "path": "/api/headhunter/reviews/rv-pmid-99000003",
+   "status": 200
+  }
+ ]
+}

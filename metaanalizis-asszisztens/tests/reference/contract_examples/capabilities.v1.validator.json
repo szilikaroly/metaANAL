@@ -1,0 +1,46 @@
+{
+  "schema": "szk.capabilities/v1",
+  "plugin": "validator",
+  "version": "1.1.0",
+  "ok": false,
+  "contracts": {
+    "szk.instrument/v1": {
+      "dir": [
+        "out"
+      ],
+      "sha256": "ab12000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "commands": [
+    {
+      "name": "appraise-json",
+      "argv": [
+        "scripts/appraise.py",
+        "--schema"
+      ],
+      "needs": [
+        "pyyaml"
+      ],
+      "available": false
+    }
+  ],
+  "requires": {
+    "modules": [
+      "yaml"
+    ],
+    "missing": [
+      "yaml"
+    ]
+  },
+  "known_issues": [
+    {
+      "id": "H2",
+      "summary": "PROBAST: a menetek közti számlálás",
+      "fixed_in": "1.1.0"
+    },
+    {
+      "id": "H4",
+      "summary": "AMSTAR 2: PY és Partial yes összemosása"
+    }
+  ]
+}

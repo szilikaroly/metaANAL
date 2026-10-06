@@ -1,0 +1,969 @@
+{
+ "description": "Szintetikus Metaheadhunter-projekt (a PMID-ek 99…-kezdetűek, a címek „(synthetic)” jelölésűek — NEM valós közlemények). Generálja: python3 tests/gui/test_headhunter_fixtures.py --write",
+ "routes": [
+  {
+   "envelope": {
+    "data": {
+     "counts": {
+      "citations_total": 6,
+      "pending_decisions": 9,
+      "reports_included": 0,
+      "reviews_selected": 2,
+      "secondary_unverified": 1,
+      "studies_from_update": 0,
+      "studies_included": 0,
+      "studies_total": 5
+     },
+     "dropped": 1,
+     "exclusion_reasons": [
+      {
+       "code": "X1",
+       "criterion": "E2",
+       "domain": "P",
+       "label": {
+        "en": "wrong population",
+        "hu": "nem megfelelő populáció"
+       }
+      },
+      {
+       "code": "X2",
+       "criterion": null,
+       "domain": "I",
+       "label": {
+        "en": "wrong intervention / exposure",
+        "hu": "nem megfelelő beavatkozás / expozíció"
+       }
+      },
+      {
+       "code": "X3",
+       "criterion": null,
+       "domain": "C",
+       "label": {
+        "en": "wrong comparator",
+        "hu": "nem megfelelő összehasonlítás (kontroll)"
+       }
+      },
+      {
+       "code": "X4",
+       "criterion": null,
+       "domain": "O",
+       "label": {
+        "en": "no relevant outcome reported",
+        "hu": "nem közöl releváns kimenetet"
+       }
+      },
+      {
+       "code": "X5",
+       "criterion": null,
+       "domain": "S",
+       "label": {
+        "en": "wrong study design",
+        "hu": "nem megfelelő vizsgálati elrendezés"
+       }
+      },
+      {
+       "code": "X6",
+       "criterion": "E1",
+       "domain": null,
+       "label": {
+        "en": "not a primary report (review, editorial, comment)",
+        "hu": "nem elsődleges közlemény (áttekintés, szerkesztőségi, kommentár)"
+       }
+      },
+      {
+       "code": "X7",
+       "criterion": null,
+       "domain": null,
+       "label": {
+        "en": "duplicate report / no new data",
+        "hu": "duplikált / új adatot nem tartalmazó közlemény"
+       }
+      },
+      {
+       "code": "X8",
+       "criterion": null,
+       "domain": null,
+       "label": {
+        "en": "retracted publication",
+        "hu": "visszavont közlemény"
+       }
+      },
+      {
+       "code": "X9",
+       "criterion": null,
+       "domain": "L",
+       "label": {
+        "en": "language (excluded per protocol)",
+        "hu": "nyelv (a protokoll szerint kizárva)"
+       }
+      },
+      {
+       "code": "X10",
+       "criterion": null,
+       "domain": null,
+       "label": {
+        "en": "other reason (detailed in the reason text)",
+        "hu": "egyéb ok (indoklásban részletezve)"
+       }
+      }
+     ],
+     "exists": true,
+     "exports": {},
+     "final": false,
+     "generated": "2026-10-05T19:10:21Z",
+     "path": "01_kereses/headhunter/merged.json",
+     "prisma_flow": "01_kereses/headhunter/prisma_flow.json",
+     "problems": [],
+     "review_meta": {
+      "rv-pmid-99000001": {
+       "is_cochrane": true,
+       "label": "Author 2021",
+       "status": "selected",
+       "title": "Drug X for Y disease (synthetic Cochrane-style review)"
+      },
+      "rv-pmid-99000002": {
+       "is_cochrane": false,
+       "label": "Author 2022",
+       "status": "selected",
+       "title": "Effect of drug X on mortality in Y: a systematic review and meta-analysis (synthetic)"
+      },
+      "rv-pmid-99000003": {
+       "is_cochrane": false,
+       "label": "Author 2012",
+       "status": "candidate",
+       "title": "Narrative overview of X (synthetic)"
+      }
+     },
+     "status_counts": {
+      "pending": 5
+     },
+     "studies": [
+      {
+       "conflicts": [],
+       "eligibility": {
+        "full_text": null,
+        "title_abstract": null
+       },
+       "final": null,
+       "flags": [],
+       "found_by": [
+        "previous_reviews"
+       ],
+       "label": "Smith 2015",
+       "n_reviews": 2,
+       "provenance": [
+        {
+         "cand_ids": [
+          "c0001"
+         ],
+         "confidence": "high",
+         "evidence_ids": [
+          "ev-rv-pmid-99000001-0001"
+         ],
+         "label_in_review": "Smith 2015",
+         "review_id": "rv-pmid-99000001"
+        },
+        {
+         "cand_ids": [
+          "c0001"
+         ],
+         "confidence": "high",
+         "evidence_ids": [
+          "ev-rv-pmid-99000002-0001"
+         ],
+         "label_in_review": "Smith 2015",
+         "review_id": "rv-pmid-99000002"
+        }
+       ],
+       "registry_ids": [],
+       "reports": [
+        {
+         "branch": "other",
+         "citation": "Smith A et al.. Drug X reduces mortality in adults with Y: a randomised trial (synthetic). Synthetic Trials J 2015",
+         "eligibility": {
+          "full_text": null,
+          "title_abstract": null
+         },
+         "ids": {
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100101",
+           "via": "pubmed.esummary"
+          }
+         },
+         "rec_id": "rec-pmid-99100101",
+         "resolution": "resolved",
+         "role": "primary",
+         "role_source": "rule",
+         "routes": [
+          "review_extraction"
+         ],
+         "screening_status": {
+          "full_text": "pending",
+          "title_abstract": "pending"
+         },
+         "year": 2015
+        }
+       ],
+       "secondary_data": [
+        {
+         "review_id": "rv-pmid-99000002",
+         "values": [
+          {
+           "arm": null,
+           "evidence_id": "ev-rv-pmid-99000002-0001",
+           "field": "n1",
+           "outcome": "mortality",
+           "status": "unverified",
+           "unit": null,
+           "value": 52
+          }
+         ]
+        }
+       ],
+       "status": "pending",
+       "study_id": "st-0001"
+      },
+      {
+       "conflicts": [],
+       "eligibility": {
+        "full_text": null,
+        "title_abstract": null
+       },
+       "final": null,
+       "flags": [],
+       "found_by": [
+        "previous_reviews"
+       ],
+       "label": "Jones 2016",
+       "n_reviews": 1,
+       "provenance": [
+        {
+         "cand_ids": [
+          "c0002"
+         ],
+         "confidence": "high",
+         "evidence_ids": [
+          "ev-rv-pmid-99000001-0002"
+         ],
+         "label_in_review": "Jones 2016",
+         "review_id": "rv-pmid-99000001"
+        }
+       ],
+       "registry_ids": [],
+       "reports": [
+        {
+         "branch": "other",
+         "citation": "Jones B et al.. X therapy versus placebo in Y (synthetic). Synthetic Trials J 2016",
+         "eligibility": {
+          "full_text": null,
+          "title_abstract": null
+         },
+         "ids": {
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100102",
+           "via": "pubmed.esummary"
+          }
+         },
+         "rec_id": "rec-pmid-99100102",
+         "resolution": "resolved",
+         "role": "primary",
+         "role_source": "rule",
+         "routes": [
+          "review_extraction"
+         ],
+         "screening_status": {
+          "full_text": "pending",
+          "title_abstract": "pending"
+         },
+         "year": 2016
+        }
+       ],
+       "secondary_data": [],
+       "status": "pending",
+       "study_id": "st-0002"
+      },
+      {
+       "conflicts": [],
+       "eligibility": {
+        "full_text": null,
+        "title_abstract": null
+       },
+       "final": null,
+       "flags": [],
+       "found_by": [
+        "previous_reviews"
+       ],
+       "label": "Brown 2018",
+       "n_reviews": 1,
+       "provenance": [
+        {
+         "cand_ids": [
+          "c0002"
+         ],
+         "confidence": "medium",
+         "evidence_ids": [
+          "ev-rv-pmid-99000002-0002"
+         ],
+         "label_in_review": "Brown 2018",
+         "review_id": "rv-pmid-99000002"
+        }
+       ],
+       "registry_ids": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "source": "pubmed",
+         "value": "NCT09000001",
+         "via": "pubmed.efetch.databank"
+        }
+       ],
+       "reports": [
+        {
+         "branch": "other",
+         "citation": "Brown D et al.. A large pragmatic trial of drug X (synthetic). Synthetic Trials J 2018",
+         "eligibility": {
+          "full_text": null,
+          "title_abstract": null
+         },
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100103",
+           "via": "pubmed.esummary"
+          }
+         },
+         "rec_id": "rec-pmid-99100103",
+         "resolution": "resolved",
+         "role": "primary",
+         "role_source": "rule",
+         "routes": [
+          "review_extraction"
+         ],
+         "screening_status": {
+          "full_text": "pending",
+          "title_abstract": "pending"
+         },
+         "year": 2018
+        }
+       ],
+       "secondary_data": [],
+       "status": "pending",
+       "study_id": "st-0003"
+      },
+      {
+       "conflicts": [],
+       "eligibility": {
+        "full_text": null,
+        "title_abstract": null
+       },
+       "final": null,
+       "flags": [
+        "candidate_unconfirmed"
+       ],
+       "found_by": [
+        "previous_reviews"
+       ],
+       "label": "Brown 2019",
+       "n_reviews": 1,
+       "provenance": [
+        {
+         "cand_ids": [
+          "c0003"
+         ],
+         "confidence": "low",
+         "evidence_ids": [
+          "ev-rv-pmid-99000002-0003"
+         ],
+         "label_in_review": "Brown 2019",
+         "review_id": "rv-pmid-99000002"
+        }
+       ],
+       "registry_ids": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "source": "pubmed",
+         "value": "NCT09000001",
+         "via": "pubmed.efetch.databank"
+        }
+       ],
+       "reports": [
+        {
+         "branch": "other",
+         "citation": "Brown D et al.. Long-term follow-up of the drug X pragmatic trial (synthetic). Synthetic Trials J 2019",
+         "eligibility": {
+          "full_text": null,
+          "title_abstract": null
+         },
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100104",
+           "via": "pubmed.esummary"
+          }
+         },
+         "rec_id": "rec-pmid-99100104",
+         "resolution": "resolved",
+         "role": "unknown",
+         "role_source": "rule",
+         "routes": [
+          "review_extraction"
+         ],
+         "screening_status": {
+          "full_text": "pending",
+          "title_abstract": "pending"
+         },
+         "year": 2019
+        }
+       ],
+       "secondary_data": [],
+       "status": "pending",
+       "study_id": "st-0004"
+      },
+      {
+       "conflicts": [],
+       "eligibility": {
+        "full_text": null,
+        "title_abstract": null
+       },
+       "final": null,
+       "flags": [
+        "candidate_unconfirmed"
+       ],
+       "found_by": [
+        "previous_reviews"
+       ],
+       "label": "Kim 2017",
+       "n_reviews": 1,
+       "provenance": [
+        {
+         "cand_ids": [
+          "c0003"
+         ],
+         "confidence": "medium",
+         "evidence_ids": [
+          "ev-rv-pmid-99000001-0003"
+         ],
+         "label_in_review": "Kim 2017",
+         "review_id": "rv-pmid-99000001"
+        }
+       ],
+       "registry_ids": [],
+       "reports": [
+        {
+         "branch": "other",
+         "citation": "Kim C et al.. Effect of X on Y outcomes (synthetic). Synthetic Trials J 2017",
+         "eligibility": {
+          "full_text": null,
+          "title_abstract": null
+         },
+         "ids": {
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100105",
+           "via": "pubmed.esummary"
+          }
+         },
+         "rec_id": "rec-pmid-99100105",
+         "resolution": "resolved",
+         "role": "primary",
+         "role_source": "rule",
+         "routes": [
+          "review_extraction"
+         ],
+         "screening_status": {
+          "full_text": "pending",
+          "title_abstract": "pending"
+         },
+         "year": 2017
+        }
+       ],
+       "secondary_data": [],
+       "status": "pending",
+       "study_id": "st-0005"
+      }
+     ],
+     "summary": {
+      "conflicts": 0,
+      "pending_candidates": 2,
+      "pending_proposals": 2,
+      "pending_studies": 5,
+      "secondary_unverified_included": 0,
+      "signoff_decision": null
+     },
+     "truncated": false
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-merged/v1",
+    "warnings": []
+   },
+   "etag": "50a4dc4b46b4f74ec6899acc677e58bed78a27e277e5375d31cf26eefa5139ca",
+   "method": "GET",
+   "path": "/api/headhunter/merged",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "check": {
+      "counts": {
+       "assessed": 0,
+       "automation_removed": 0,
+       "awaiting": 5,
+       "duplicates_removed": 0,
+       "excluded_eligibility": 0,
+       "excluded_screening": 0,
+       "identified_databases": 0,
+       "identified_registers": 0,
+       "included_reports": 0,
+       "included_studies": 0,
+       "not_retrieved": 0,
+       "other_methods_assessed": 5,
+       "other_methods_excluded": 0,
+       "other_methods_identified": 5,
+       "other_methods_not_retrieved": 0,
+       "other_methods_sought": 5,
+       "other_removed": 0,
+       "screened": 0,
+       "sought": 0
+      },
+      "derived": {
+       "identified_total": 0,
+       "included_reports_expected": 5,
+       "other_methods_included_reports": 5,
+       "removed_before_screening_total": 0,
+       "screened_expected": 0
+      },
+      "findings": [
+       {
+        "advice": "Vannak még elbírálásra váró rekordok/jelentések; a végleges folyamatábra előtt döntsd el őket (vagy tüntesd fel „folyamatban lévő” dobozként).",
+        "code": "P013",
+        "detail": "5 elbírálásra vár",
+        "fields": [
+         "awaiting"
+        ],
+        "severity": "warning",
+        "source": "PRISMA 2020 1. ábra",
+        "study": null,
+        "title": "A szűrés nem lezárt"
+       }
+      ],
+      "ok": true,
+      "reasons": {},
+      "summary": {
+       "error": 0,
+       "info": 0,
+       "warning": 1
+      },
+      "template": "PRISMA2020"
+     },
+     "exists": true,
+     "flow": {
+      "assessed": 0,
+      "automation_removed": 0,
+      "awaiting": 5,
+      "duplicates_removed": 0,
+      "excluded_eligibility": 0,
+      "excluded_screening": 0,
+      "identified_databases": 0,
+      "identified_registers": 0,
+      "included_reports": 0,
+      "included_studies": 0,
+      "not_retrieved": 0,
+      "other_methods_assessed": 5,
+      "other_methods_excluded": 0,
+      "other_methods_identified": 5,
+      "other_methods_not_retrieved": 0,
+      "other_methods_sought": 5,
+      "other_removed": 0,
+      "schema": "szk.prisma-flow/v1",
+      "screened": 0,
+      "sought": 0
+     },
+     "hh": {
+      "already_known": 0,
+      "citations_per_review": {
+       "rv-pmid-99000001": 3,
+       "rv-pmid-99000002": 3
+      },
+      "citations_total": 6,
+      "complete": false,
+      "counted_by": "headhunter.eligibility.branch_counts",
+      "engine_check": {
+       "codes": [
+        "P013"
+       ],
+       "ok": true,
+       "summary": {
+        "error": 0,
+        "info": 0,
+        "warning": 1
+       }
+      },
+      "included_rec_ids": [],
+      "mode": "harvest",
+      "no_database_branch": true,
+      "note": {
+       "en": "Computed by Metaheadhunter: other-methods branch = unique reports mined from the source reviews (and citation searching); database branch = the update search deduplicated against known records. Title/abstract exclusions in the other branch (0) are not a PRISMA box: report them in a footnote.",
+       "hu": "A Metaheadhunter számolta: egyéb módszerek ág = a forrás-áttekintésekből (és a hivatkozáskövetésből) bányászott egyedi közlemények; adatbázis-ág = a frissítő keresés, a már ismert rekordokkal szemben duplumszűrve. Az egyéb ágban a cím/absztrakt alapján kizártak (0) a PRISMA-ábrán nem doboz: lábjegyzetben közöld."
+      },
+      "other_methods_title_excluded": 0,
+      "pending": {
+       "database": {
+        "awaiting": 0,
+        "full_text": 0,
+        "title_abstract": 0
+       },
+       "other": {
+        "awaiting": 0,
+        "full_text": 0,
+        "title_abstract": 5
+       }
+      },
+      "pending_candidates": 0,
+      "reviews_selected": 2,
+      "source_reviews": [
+       {
+        "included_candidates": 3,
+        "label": "Author A 2021",
+        "pmid": "99000001",
+        "review_id": "rv-pmid-99000001",
+        "search_date": "2020-06"
+       },
+       {
+        "included_candidates": 3,
+        "label": "Author B 2022",
+        "pmid": "99000002",
+        "review_id": "rv-pmid-99000002",
+        "search_date": "2021-03-15"
+       }
+      ]
+     },
+     "path": "01_kereses/headhunter/prisma_flow.json",
+     "problems": [],
+     "project_copy": {
+      "exists": false,
+      "path": "02_szures/prisma_flow.json"
+     },
+     "source": {
+      "file": "01_kereses/headhunter/prisma_flow.json",
+      "generated": "2026-10-05T19:10:21Z",
+      "kind": "headhunter",
+      "tool_version": "metaelemzes-headhunter/1.0.0"
+     }
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-prisma/v1",
+    "warnings": []
+   },
+   "etag": "b1b912fd5e407afa8b56c04ccc85143c2c0a19e2233507c9b444fc9233bcfcc8",
+   "method": "GET",
+   "path": "/api/headhunter/prisma",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "cancelled": false,
+     "citation_search": [],
+     "exists": true,
+     "generated": "2026-10-05T19:10:21Z",
+     "model": "szk.ma.headhunter/v1",
+     "path": "01_kereses/headhunter/update_search.json",
+     "problems": [],
+     "queries": [
+      {
+       "count_retrieved": null,
+       "count_total": null,
+       "date_field": "edat",
+       "date_from": "2020-09-15",
+       "date_to": "2026-10-05",
+       "message": {
+        "en": "PubMed cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "A PubMed nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
+       },
+       "query": "(\"Y disease\"[tiab]) AND (\"drug X\"[tiab]) [edat 2020-09-15–2026-10-05]",
+       "search_id": "s-pubmed-20261005T191021Z",
+       "source": "pubmed",
+       "status": "skipped_source_unavailable"
+      },
+      {
+       "count_retrieved": null,
+       "count_total": null,
+       "date_field": "CREATION_DATE",
+       "date_from": "2020-09-15",
+       "date_to": "2026-10-05",
+       "message": {
+        "en": "Europe PMC cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "Az Europe PMC nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
+       },
+       "query": "(((TITLE:\"Y disease\" OR ABSTRACT:\"Y disease\" OR KW:\"Y disease\")) AND ((TITLE:\"drug X\" OR ABSTRACT:\"drug X\" OR KW:\"drug X\"))) AND CREATION_DATE:[2020-09-15 TO 2026-10-05]",
+       "search_id": "s-europepmc-20261005T191021Z",
+       "source": "europepmc",
+       "status": "skipped_source_unavailable"
+      },
+      {
+       "count_retrieved": null,
+       "count_total": null,
+       "date_field": "from_publication_date",
+       "date_from": "2020-09-15",
+       "date_to": "2026-10-05",
+       "message": {
+        "en": "OpenAlex cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "Az OpenAlex nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
+       },
+       "query": "search=(\"Y disease\") AND (\"drug X\"); filter=from_publication_date:2020-09-15,to_publication_date:2026-10-05",
+       "search_id": "s-openalex-20261005T191021Z",
+       "source": "openalex",
+       "status": "skipped_source_unavailable"
+      },
+      {
+       "count_retrieved": null,
+       "count_total": null,
+       "date_field": "StudyFirstPostDate",
+       "date_from": "2020-09-15",
+       "date_to": "2026-10-05",
+       "message": {
+        "en": "ClinicalTrials.gov cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+        "hu": "A ClinicalTrials.gov nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban."
+       },
+       "query": "query.term=(\"Y disease\") AND (\"drug X\"); filter.advanced=AREA[StudyFirstPostDate]RANGE[2020-09-15,2026-10-05]",
+       "search_id": "s-ctgov-20261005T191021Z",
+       "source": "ctgov",
+       "status": "skipped_source_unavailable"
+      }
+     ],
+     "results": {
+      "already_known": 0,
+      "by_source": {
+       "ctgov": {
+        "complete": false,
+        "count_retrieved": 0,
+        "count_total": 0
+       },
+       "europepmc": {
+        "complete": false,
+        "count_retrieved": 0,
+        "count_total": 0
+       },
+       "openalex": {
+        "complete": false,
+        "count_retrieved": 0,
+        "count_total": 0
+       },
+       "pubmed": {
+        "complete": false,
+        "count_retrieved": 0,
+        "count_total": 0
+       }
+      },
+      "databases_retrieved": 0,
+      "duplicates_within": 0,
+      "known_from_update": 0,
+      "new_records": [],
+      "registers_retrieved": 0,
+      "registry_records": [],
+      "retrieved_total": 0,
+      "unusable": 0
+     },
+     "schema": "szk.ma.headhunter.update-search/v1",
+     "sources": {
+      "ctgov": {
+       "reset_at": null,
+       "searched": false,
+       "status": "unreachable"
+      },
+      "europepmc": {
+       "reset_at": null,
+       "searched": false,
+       "status": "unreachable"
+      },
+      "openalex": {
+       "reset_at": null,
+       "searched": false,
+       "status": "unreachable"
+      },
+      "pubmed": {
+       "reset_at": null,
+       "searched": false,
+       "status": "unreachable"
+      }
+     },
+     "warnings": [
+      {
+       "code": "H014",
+       "en": "PubMed cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "A PubMed nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "source": "pubmed"
+      },
+      {
+       "code": "H014",
+       "en": "Europe PMC cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "Az Europe PMC nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "source": "europepmc"
+      },
+      {
+       "code": "H014",
+       "en": "OpenAlex cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "Az OpenAlex nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "source": "openalex"
+      },
+      {
+       "code": "H014",
+       "en": "ClinicalTrials.gov cannot be reached from here (network, proxy or firewall). We continue with the other sources; later press the “Check sources” button. Offline mode: this request is not in the cache.",
+       "hu": "A ClinicalTrials.gov nem érhető el innen (hálózat, proxy vagy tűzfal). A többi forrással folytatjuk; később nyomd meg a „Források ellenőrzése” gombot. Offline mód: ez a kérés nincs a gyorsítótárban.",
+       "source": "ctgov"
+      }
+     ],
+     "window": {
+      "anchor": "latest",
+      "decision_id": "d-20261005T191021Z-0002",
+      "earliest_source_search": "2020-06",
+      "end_date": "2026-10-05",
+      "latest_source_search": "2021-03-15",
+      "overlap_months": 6,
+      "per_review": [
+       {
+        "basis": "reported",
+        "evidence_id": "ev-rv-pmid-99000001-0004",
+        "fallback": false,
+        "review_id": "rv-pmid-99000001",
+        "search_date": "2020-06"
+       },
+       {
+        "basis": "reported",
+        "evidence_id": "ev-rv-pmid-99000002-0004",
+        "fallback": false,
+        "review_id": "rv-pmid-99000002",
+        "search_date": "2021-03-15"
+       }
+      ],
+      "start_date": "2020-09-15"
+     }
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-update/v1",
+    "warnings": []
+   },
+   "etag": "b0c7996585ec433b729711dbc06d92f774fd384e13efb28b8c66987a3d801a18",
+   "method": "GET",
+   "path": "/api/headhunter/update",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "bad_lines": 0,
+     "items": [
+      {
+       "actor": "user:user",
+       "batch": null,
+       "decision_id": "d-20261005T191021Z-0002",
+       "evidence_ids": [],
+       "kb_refs": [
+        "D-S03-104"
+       ],
+       "kind": "update_window",
+       "level": null,
+       "prev_sha256": "cc2f83b5a3be6c9f9d89e70afd8a68e47e08ccb19cbb8d4d682ac309045568ee",
+       "proposed_by": null,
+       "quote": null,
+       "reason": "Frissítő keresés ablaka: horgony=latest (2021-03-15), átfedés=6 hónap, 2020-09-15..2026-10-05.",
+       "reason_code": null,
+       "schema": "szk.ma.headhunter.decision/v1",
+       "sha256": "9291e6117ee051bef4185006c95ce9b5835f6f8c98b934cad1a9862b75ee27f1",
+       "supersedes": null,
+       "target": {
+        "id": "update",
+        "type": "window"
+       },
+       "ts": "2026-10-05T19:10:21Z",
+       "value": "2020-09-15..2026-10-05"
+      },
+      {
+       "actor": "user:SzK",
+       "batch": null,
+       "decision_id": "d-20261005T191021Z-0001",
+       "evidence_ids": [],
+       "kb_refs": [
+        "D-S03-101"
+       ],
+       "kind": "criteria_set",
+       "level": null,
+       "prev_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+       "proposed_by": null,
+       "quote": null,
+       "reason": "PICO és kritériumok jóváhagyva: Csökkenti-e a szintetikus X-szer a halálozást Y-betegségben? (szintetikus példa)",
+       "reason_code": null,
+       "schema": "szk.ma.headhunter.decision/v1",
+       "sha256": "cc2f83b5a3be6c9f9d89e70afd8a68e47e08ccb19cbb8d4d682ac309045568ee",
+       "supersedes": null,
+       "target": {
+        "id": "pico",
+        "type": "project"
+       },
+       "ts": "2026-10-05T19:10:21Z",
+       "value": "approved"
+      }
+     ],
+     "path": "01_kereses/headhunter/decisions.jsonl",
+     "total": 2
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-decisions/v1",
+    "warnings": []
+   },
+   "method": "GET",
+   "path": "/api/headhunter/decisions",
+   "status": 200
+  }
+ ]
+}

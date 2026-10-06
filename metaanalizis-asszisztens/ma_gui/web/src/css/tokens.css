@@ -1,0 +1,167 @@
+/* tokens.css — CSS-tokenek, világos és sötét téma (data-theme a <html>-en; terv 2.3, 3.5).
+ * Az Anamnézis-asszisztens tokenneveit követi (--bg, --surface, --ink, --muted, --line, --accent …).
+ * Ábra- és állapotszínek: Okabe–Ito paletta (színvak-biztos); a szín sosem egyedüli jelölés.
+ */
+:root {
+  /* Okabe–Ito */
+  --oi-black: #000000;
+  --oi-orange: #E69F00;
+  --oi-sky: #56B4E9;
+  --oi-green: #009E73;
+  --oi-yellow: #F0E442;
+  --oi-blue: #0072B2;
+  --oi-vermillion: #D55E00;
+  --oi-purple: #CC79A7;
+
+  /* tipográfia, méretek */
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --fs-xs: 11px;
+  --fs-sm: 12.5px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 20px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --focus-width: 3px;
+  --header-z: 20;
+  --toast-z: 60;
+  --modal-z: 50;
+}
+
+/* ---- világos (alap) ---- */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eaeff1;
+  --surface: #ffffff;
+  --surface-2: #f4f8f9;
+  --surface-3: #e8eef0;
+  --ink: #15212a;
+  --muted: #55656d;
+  --line: #d6dfe3;
+  --line-strong: #b9c6cc;
+  --accent: #0072B2;          /* Okabe–Ito kék */
+  --accent-ink: #005a8c;
+  --accent-soft: #e3f0f8;
+  --on-accent: #ffffff;
+  --focus: #0072B2;
+  --ok: #00704f;              /* szövegszín: a --oi-green sötétítve (AA kontraszt) */
+  --ok-mark: var(--oi-green);
+  --ok-bg: #e2f3ec;
+  --warn: #8a5a00;
+  --warn-mark: var(--oi-orange);
+  --warn-bg: #fbf1dc;
+  --crit: #a8430a;
+  --crit-mark: var(--oi-vermillion);
+  --crit-bg: #fbe9e0;
+  --info: #005a8c;
+  --info-mark: var(--oi-sky);
+  --info-bg: #e3f0f8;
+  --est: #8d3f6c;
+  --est-mark: var(--oi-purple);
+  --est-bg: #f7e8f0;
+  --stale: #6b6100;
+  --stale-mark: #c4b800;
+  --stale-bg: #faf7d6;
+  --neutral-bg: #eef2f4;
+  --shadow: 0 1px 2px rgba(20, 40, 50, .06), 0 8px 24px rgba(20, 40, 50, .08);
+  --backdrop: rgba(10, 20, 26, .45);
+
+  /* munkaterületek (fül-keret + címke; a név mindig ki van írva) */
+  --ws-extraction: var(--oi-orange);
+  --ws-analysis: var(--oi-green);
+  --ws-appraisal: var(--oi-purple);
+  --ws-process: var(--oi-blue);
+
+  /* ábrák (plots/*.js ezeket használja) */
+  --plot-ink: #15212a;
+  --plot-axis: #55656d;
+  --plot-grid: #e1e8eb;
+  --plot-null: #55656d;
+  --plot-marker: #0072B2;
+  --plot-ci: #15212a;
+  --plot-summary: #D55E00;
+  --plot-pi: #E69F00;
+  --plot-highlight: #CC79A7;
+  --plot-filled: #ffffff;
+  --plot-contour-1: #d9d9d9;   /* p < 0,01 */
+  --plot-contour-2: #ececec;   /* 0,01–0,05 */
+  --plot-contour-3: #f6f6f6;   /* 0,05–0,10 */
+  --plot-rob-low: #009E73;
+  --plot-rob-some: #E69F00;
+  --plot-rob-high: #D55E00;
+}
+
+/* ---- sötét ---- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d1316;
+  --surface: #141d21;
+  --surface-2: #0f1a1e;
+  --surface-3: #1b272c;
+  --ink: #e6eef0;
+  --muted: #9db0b6;
+  --line: #26363c;
+  --line-strong: #374c54;
+  --accent: #56B4E9;          /* Okabe–Ito égkék (sötét háttéren olvasható) */
+  --accent-ink: #8fd0f2;
+  --accent-soft: #10293a;
+  --on-accent: #06141c;
+  --focus: #56B4E9;
+  --ok: #4fd1a5;
+  --ok-mark: var(--oi-green);
+  --ok-bg: #0f2a22;
+  --warn: #f0c060;
+  --warn-mark: var(--oi-orange);
+  --warn-bg: #2a2213;
+  --crit: #f39a6b;
+  --crit-mark: var(--oi-vermillion);
+  --crit-bg: #2e1810;
+  --info: #8fd0f2;
+  --info-mark: var(--oi-sky);
+  --info-bg: #10293a;
+  --est: #e7a9cb;
+  --est-mark: var(--oi-purple);
+  --est-bg: #2c1724;
+  --stale: #ece27a;
+  --stale-mark: var(--oi-yellow);
+  --stale-bg: #29270f;
+  --neutral-bg: #1b272c;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .35);
+  --backdrop: rgba(0, 0, 0, .6);
+
+  --plot-ink: #e6eef0;
+  --plot-axis: #9db0b6;
+  --plot-grid: #26363c;
+  --plot-null: #9db0b6;
+  --plot-marker: #56B4E9;
+  --plot-ci: #e6eef0;
+  --plot-summary: #f08a4b;
+  --plot-pi: #E69F00;
+  --plot-highlight: #CC79A7;
+  --plot-filled: #141d21;
+  --plot-contour-1: #3a474c;
+  --plot-contour-2: #2c383d;
+  --plot-contour-3: #1f2b30;
+}
+
+/* JS nélkül / a téma beállítása előtt: a rendszer sötét témája */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: #0d1316;
+    --surface: #141d21;
+    --surface-2: #0f1a1e;
+    --ink: #e6eef0;
+    --muted: #9db0b6;
+    --line: #26363c;
+    --accent: #56B4E9;
+  }
+}

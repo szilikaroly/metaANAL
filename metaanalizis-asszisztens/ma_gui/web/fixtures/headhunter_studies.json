@@ -1,0 +1,1321 @@
+{
+ "description": "Szintetikus Metaheadhunter-projekt (a PMID-ek 99…-kezdetűek, a címek „(synthetic)” jelölésűek — NEM valós közlemények). Generálja: python3 tests/gui/test_headhunter_fixtures.py --write",
+ "routes": [
+  {
+   "envelope": {
+    "data": {
+     "auto_applied": [],
+     "counts": {
+      "same_study:pending": 3
+     },
+     "exists": true,
+     "items": [
+      {
+       "certainty": "probable",
+       "decision_id": null,
+       "explanation": {
+        "en": "Shared registration number (NCT09000001): at least one report states it itself (PubMed DataBank, abstract or Europe PMC annotation). Probably reports of the same study.",
+        "hu": "Közös regisztrációs szám (NCT09000001): legalább az egyik közlemény maga nevezi meg (PubMed DataBank, absztrakt vagy Europe PMC annotáció). Valószínűleg ugyanannak a vizsgálatnak a közleményei."
+       },
+       "features": {
+        "shared_ids": [],
+        "shared_registry": [
+         "NCT09000001"
+        ]
+       },
+       "items": [
+        "rec-pmid-99100103",
+        "rec-pmid-99100104"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l3-0002",
+       "records": [
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "A large pragmatic trial of drug X (synthetic)",
+          "volume": null,
+          "year": 2018
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100103",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100103",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        },
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "Long-term follow-up of the drug X pragmatic trial (synthetic)",
+          "volume": null,
+          "year": 2019
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100104",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0003",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100104",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        }
+       ],
+       "rule": "L3-registry",
+       "score": null,
+       "score_text": null,
+       "status": "pending"
+      },
+      {
+       "certainty": "probable",
+       "decision_id": null,
+       "explanation": {
+        "en": "The review lists these reports as one study (g-brown). If you agree, link them into one study (can be approved in bulk per review).",
+        "hu": "Az áttekintés ezeket a közleményeket egy vizsgálatként sorolja fel (g-brown). Ha egyetértesz, kapcsold őket egy vizsgálatba (áttekintésenként tömegesen is jóváhagyható)."
+       },
+       "features": {
+        "group_key": "g-brown",
+        "shared_ids": []
+       },
+       "items": [
+        "rec-pmid-99100103",
+        "rec-pmid-99100104"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l3-0003",
+       "records": [
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "A large pragmatic trial of drug X (synthetic)",
+          "volume": null,
+          "year": 2018
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100103",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100103",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        },
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "Long-term follow-up of the drug X pragmatic trial (synthetic)",
+          "volume": null,
+          "year": 2019
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100104",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0003",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100104",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        }
+       ],
+       "reviews": [
+        "rv-pmid-99000002"
+       ],
+       "rule": "L3-review-grouping",
+       "score": null,
+       "score_text": null,
+       "status": "pending"
+      },
+      {
+       "certainty": "possible",
+       "decision_id": null,
+       "explanation": {
+        "en": "Possible companion report: same first author and last author, 0 years apart, title overlap 0.71. Check whether it is the same study (watch for covert duplicate publication).",
+        "hu": "Lehetséges társközlemény: azonos első szerző és utolsó szerző, 0 év különbség, cím-átfedés 0.71. Nézd meg, ugyanaz a vizsgálat-e (rejtett kettős közlésre is figyelj)."
+       },
+       "features": {
+        "first_author_match": true,
+        "shared_ids": [],
+        "title_sim": 0.7436,
+        "title_sim_text": "0.74",
+        "year_diff": 0
+       },
+       "items": [
+        "rec-pmid-99100102",
+        "rec-x-0a1b2c3d4e"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l4-0001",
+       "records": [
+        {
+         "bib": {
+          "authors": [
+           "Jones B",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Jones B",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "X therapy versus placebo in Y (synthetic)",
+          "volume": null,
+          "year": 2016
+         },
+         "flags": {},
+         "ids": {
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100102",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000001",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100102",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        },
+        {
+         "bib": {
+          "authors": [
+           "Jones B",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Jones B",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "X-therapy versus placebo in Y (synthetic) [conference abstract]",
+          "volume": null,
+          "year": 2016
+         },
+         "flags": {},
+         "ids": {},
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000001",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-x-0a1b2c3d4e",
+         "related": [],
+         "resolution": {
+          "method": null,
+          "score": null,
+          "status": "unresolved"
+         },
+         "status": "active",
+         "type": "record"
+        }
+       ],
+       "rule": "L4-author",
+       "score": null,
+       "score_text": null,
+       "status": "pending"
+      }
+     ],
+     "path": "01_kereses/headhunter/studies.json",
+     "problems": [],
+     "truncated": false
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-proposals/v1",
+    "warnings": []
+   },
+   "etag": "b64d8f5ab189064b9d46a07a734fbc740c5b4144dde41254db5192b5fe18ea9d",
+   "method": "GET",
+   "path": "/api/headhunter/proposals",
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "auto_applied": [],
+     "counts": {
+      "same_study:pending": 3
+     },
+     "exists": true,
+     "items": [
+      {
+       "certainty": "probable",
+       "decision_id": null,
+       "explanation": {
+        "en": "Shared registration number (NCT09000001): at least one report states it itself (PubMed DataBank, abstract or Europe PMC annotation). Probably reports of the same study.",
+        "hu": "Közös regisztrációs szám (NCT09000001): legalább az egyik közlemény maga nevezi meg (PubMed DataBank, absztrakt vagy Europe PMC annotáció). Valószínűleg ugyanannak a vizsgálatnak a közleményei."
+       },
+       "features": {
+        "shared_ids": [],
+        "shared_registry": [
+         "NCT09000001"
+        ]
+       },
+       "items": [
+        "rec-pmid-99100103",
+        "rec-pmid-99100104"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l3-0002",
+       "records": [
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "A large pragmatic trial of drug X (synthetic)",
+          "volume": null,
+          "year": 2018
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100103",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100103",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        },
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "Long-term follow-up of the drug X pragmatic trial (synthetic)",
+          "volume": null,
+          "year": 2019
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100104",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0003",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100104",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        }
+       ],
+       "rule": "L3-registry",
+       "score": null,
+       "score_text": null,
+       "status": "pending"
+      },
+      {
+       "certainty": "probable",
+       "decision_id": null,
+       "explanation": {
+        "en": "The review lists these reports as one study (g-brown). If you agree, link them into one study (can be approved in bulk per review).",
+        "hu": "Az áttekintés ezeket a közleményeket egy vizsgálatként sorolja fel (g-brown). Ha egyetértesz, kapcsold őket egy vizsgálatba (áttekintésenként tömegesen is jóváhagyható)."
+       },
+       "features": {
+        "group_key": "g-brown",
+        "shared_ids": []
+       },
+       "items": [
+        "rec-pmid-99100103",
+        "rec-pmid-99100104"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l3-0003",
+       "records": [
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "A large pragmatic trial of drug X (synthetic)",
+          "volume": null,
+          "year": 2018
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100103",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100103",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        },
+        {
+         "bib": {
+          "authors": [
+           "Brown D",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Brown D",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "Long-term follow-up of the drug X pragmatic trial (synthetic)",
+          "volume": null,
+          "year": 2019
+         },
+         "flags": {},
+         "ids": {
+          "nct": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "NCT09000001",
+           "via": "pubmed.efetch.databank"
+          },
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100104",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0003",
+           "review_id": "rv-pmid-99000002",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100104",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        }
+       ],
+       "reviews": [
+        "rv-pmid-99000002"
+       ],
+       "rule": "L3-review-grouping",
+       "score": null,
+       "score_text": null,
+       "status": "pending"
+      },
+      {
+       "certainty": "possible",
+       "decision_id": null,
+       "explanation": {
+        "en": "Possible companion report: same first author and last author, 0 years apart, title overlap 0.71. Check whether it is the same study (watch for covert duplicate publication).",
+        "hu": "Lehetséges társközlemény: azonos első szerző és utolsó szerző, 0 év különbség, cím-átfedés 0.71. Nézd meg, ugyanaz a vizsgálat-e (rejtett kettős közlésre is figyelj)."
+       },
+       "features": {
+        "first_author_match": true,
+        "shared_ids": [],
+        "title_sim": 0.7436,
+        "title_sim_text": "0.74",
+        "year_diff": 0
+       },
+       "items": [
+        "rec-pmid-99100102",
+        "rec-x-0a1b2c3d4e"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l4-0001",
+       "records": [
+        {
+         "bib": {
+          "authors": [
+           "Jones B",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Jones B",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "X therapy versus placebo in Y (synthetic)",
+          "volume": null,
+          "year": 2016
+         },
+         "flags": {},
+         "ids": {
+          "pmid": {
+           "api": true,
+           "confirmed_by": null,
+           "source": "pubmed",
+           "value": "99100102",
+           "via": "pubmed.esummary"
+          }
+         },
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000001",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-pmid-99100102",
+         "related": [],
+         "resolution": {
+          "method": "pub-id",
+          "score": 1.0,
+          "status": "resolved"
+         },
+         "status": "active",
+         "type": "record"
+        },
+        {
+         "bib": {
+          "authors": [
+           "Jones B",
+           "Other B"
+          ],
+          "authors_more": false,
+          "first_author": "Jones B",
+          "issue": null,
+          "journal": "Synthetic Trials J",
+          "language": null,
+          "pages": null,
+          "pub_types": [],
+          "title": "X-therapy versus placebo in Y (synthetic) [conference abstract]",
+          "volume": null,
+          "year": 2016
+         },
+         "flags": {},
+         "ids": {},
+         "merged_into": null,
+         "origins": [
+          {
+           "cand_id": "c0002",
+           "review_id": "rv-pmid-99000001",
+           "route": "review_extraction",
+           "search_id": null
+          }
+         ],
+         "rec_id": "rec-x-0a1b2c3d4e",
+         "related": [],
+         "resolution": {
+          "method": null,
+          "score": null,
+          "status": "unresolved"
+         },
+         "status": "active",
+         "type": "record"
+        }
+       ],
+       "rule": "L4-author",
+       "score": null,
+       "score_text": null,
+       "status": "pending"
+      }
+     ],
+     "path": "01_kereses/headhunter/studies.json",
+     "problems": [],
+     "truncated": false
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-proposals/v1",
+    "warnings": []
+   },
+   "etag": "b64d8f5ab189064b9d46a07a734fbc740c5b4144dde41254db5192b5fe18ea9d",
+   "method": "GET",
+   "path": "/api/headhunter/proposals",
+   "query": {
+    "status": "pending"
+   },
+   "status": 200
+  },
+  {
+   "envelope": {
+    "data": {
+     "counts": {
+      "active": 6,
+      "proposals": 3,
+      "records": 6,
+      "studies": 6
+     },
+     "exists": true,
+     "generated": "2026-10-05T19:10:21Z",
+     "path": "01_kereses/headhunter/studies.json",
+     "problems": [],
+     "proposals": [
+      {
+       "certainty": "probable",
+       "decision_id": null,
+       "explanation": {
+        "en": "Shared registration number (NCT09000001): at least one report states it itself (PubMed DataBank, abstract or Europe PMC annotation). Probably reports of the same study.",
+        "hu": "Közös regisztrációs szám (NCT09000001): legalább az egyik közlemény maga nevezi meg (PubMed DataBank, absztrakt vagy Europe PMC annotáció). Valószínűleg ugyanannak a vizsgálatnak a közleményei."
+       },
+       "features": {
+        "shared_ids": [],
+        "shared_registry": [
+         "NCT09000001"
+        ]
+       },
+       "items": [
+        "rec-pmid-99100103",
+        "rec-pmid-99100104"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l3-0002",
+       "rule": "L3-registry",
+       "score": null,
+       "status": "pending"
+      },
+      {
+       "certainty": "probable",
+       "decision_id": null,
+       "explanation": {
+        "en": "The review lists these reports as one study (g-brown). If you agree, link them into one study (can be approved in bulk per review).",
+        "hu": "Az áttekintés ezeket a közleményeket egy vizsgálatként sorolja fel (g-brown). Ha egyetértesz, kapcsold őket egy vizsgálatba (áttekintésenként tömegesen is jóváhagyható)."
+       },
+       "features": {
+        "group_key": "g-brown",
+        "shared_ids": []
+       },
+       "items": [
+        "rec-pmid-99100103",
+        "rec-pmid-99100104"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l3-0003",
+       "reviews": [
+        "rv-pmid-99000002"
+       ],
+       "rule": "L3-review-grouping",
+       "score": null,
+       "status": "pending"
+      },
+      {
+       "certainty": "possible",
+       "decision_id": null,
+       "explanation": {
+        "en": "Possible companion report: same first author and last author, 0 years apart, title overlap 0.71. Check whether it is the same study (watch for covert duplicate publication).",
+        "hu": "Lehetséges társközlemény: azonos első szerző és utolsó szerző, 0 év különbség, cím-átfedés 0.71. Nézd meg, ugyanaz a vizsgálat-e (rejtett kettős közlésre is figyelj)."
+       },
+       "features": {
+        "first_author_match": true,
+        "shared_ids": [],
+        "title_sim": 0.7436,
+        "year_diff": 0
+       },
+       "items": [
+        "rec-pmid-99100102",
+        "rec-x-0a1b2c3d4e"
+       ],
+       "kind": "same_study",
+       "proposal_id": "p-l4-0001",
+       "rule": "L4-author",
+       "score": null,
+       "status": "pending"
+      }
+     ],
+     "records": [
+      {
+       "bib": {
+        "authors": [
+         "Smith A",
+         "Other B"
+        ],
+        "authors_more": false,
+        "first_author": "Smith A",
+        "issue": null,
+        "journal": "Synthetic Trials J",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Drug X reduces mortality in adults with Y: a randomised trial (synthetic)",
+        "volume": null,
+        "year": 2015
+       },
+       "flags": {},
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99100101",
+         "via": "pubmed.esummary"
+        }
+       },
+       "merged_into": null,
+       "origins": [
+        {
+         "cand_id": "c0001",
+         "review_id": "rv-pmid-99000001",
+         "route": "review_extraction",
+         "search_id": null
+        },
+        {
+         "cand_id": "c0001",
+         "review_id": "rv-pmid-99000002",
+         "route": "review_extraction",
+         "search_id": null
+        }
+       ],
+       "rec_id": "rec-pmid-99100101",
+       "related": [],
+       "resolution": {
+        "method": "pub-id",
+        "score": 1.0,
+        "status": "resolved"
+       },
+       "status": "active"
+      },
+      {
+       "bib": {
+        "authors": [
+         "Jones B",
+         "Other B"
+        ],
+        "authors_more": false,
+        "first_author": "Jones B",
+        "issue": null,
+        "journal": "Synthetic Trials J",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "X therapy versus placebo in Y (synthetic)",
+        "volume": null,
+        "year": 2016
+       },
+       "flags": {},
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99100102",
+         "via": "pubmed.esummary"
+        }
+       },
+       "merged_into": null,
+       "origins": [
+        {
+         "cand_id": "c0002",
+         "review_id": "rv-pmid-99000001",
+         "route": "review_extraction",
+         "search_id": null
+        }
+       ],
+       "rec_id": "rec-pmid-99100102",
+       "related": [],
+       "resolution": {
+        "method": "pub-id",
+        "score": 1.0,
+        "status": "resolved"
+       },
+       "status": "active"
+      },
+      {
+       "bib": {
+        "authors": [
+         "Brown D",
+         "Other B"
+        ],
+        "authors_more": false,
+        "first_author": "Brown D",
+        "issue": null,
+        "journal": "Synthetic Trials J",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "A large pragmatic trial of drug X (synthetic)",
+        "volume": null,
+        "year": 2018
+       },
+       "flags": {},
+       "ids": {
+        "nct": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "NCT09000001",
+         "via": "pubmed.efetch.databank"
+        },
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99100103",
+         "via": "pubmed.esummary"
+        }
+       },
+       "merged_into": null,
+       "origins": [
+        {
+         "cand_id": "c0002",
+         "review_id": "rv-pmid-99000002",
+         "route": "review_extraction",
+         "search_id": null
+        }
+       ],
+       "rec_id": "rec-pmid-99100103",
+       "related": [],
+       "resolution": {
+        "method": "pub-id",
+        "score": 1.0,
+        "status": "resolved"
+       },
+       "status": "active"
+      },
+      {
+       "bib": {
+        "authors": [
+         "Brown D",
+         "Other B"
+        ],
+        "authors_more": false,
+        "first_author": "Brown D",
+        "issue": null,
+        "journal": "Synthetic Trials J",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Long-term follow-up of the drug X pragmatic trial (synthetic)",
+        "volume": null,
+        "year": 2019
+       },
+       "flags": {},
+       "ids": {
+        "nct": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "NCT09000001",
+         "via": "pubmed.efetch.databank"
+        },
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99100104",
+         "via": "pubmed.esummary"
+        }
+       },
+       "merged_into": null,
+       "origins": [
+        {
+         "cand_id": "c0003",
+         "review_id": "rv-pmid-99000002",
+         "route": "review_extraction",
+         "search_id": null
+        }
+       ],
+       "rec_id": "rec-pmid-99100104",
+       "related": [],
+       "resolution": {
+        "method": "pub-id",
+        "score": 1.0,
+        "status": "resolved"
+       },
+       "status": "active"
+      },
+      {
+       "bib": {
+        "authors": [
+         "Kim C",
+         "Other B"
+        ],
+        "authors_more": false,
+        "first_author": "Kim C",
+        "issue": null,
+        "journal": "Synthetic Trials J",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "Effect of X on Y outcomes (synthetic)",
+        "volume": null,
+        "year": 2017
+       },
+       "flags": {},
+       "ids": {
+        "pmid": {
+         "api": true,
+         "confirmed_by": null,
+         "source": "pubmed",
+         "value": "99100105",
+         "via": "pubmed.esummary"
+        }
+       },
+       "merged_into": null,
+       "origins": [
+        {
+         "cand_id": "c0003",
+         "review_id": "rv-pmid-99000001",
+         "route": "review_extraction",
+         "search_id": null
+        }
+       ],
+       "rec_id": "rec-pmid-99100105",
+       "related": [],
+       "resolution": {
+        "method": "pub-id",
+        "score": 1.0,
+        "status": "resolved"
+       },
+       "status": "active"
+      },
+      {
+       "bib": {
+        "authors": [
+         "Jones B",
+         "Other B"
+        ],
+        "authors_more": false,
+        "first_author": "Jones B",
+        "issue": null,
+        "journal": "Synthetic Trials J",
+        "language": null,
+        "pages": null,
+        "pub_types": [],
+        "title": "X-therapy versus placebo in Y (synthetic) [conference abstract]",
+        "volume": null,
+        "year": 2016
+       },
+       "flags": {},
+       "ids": {},
+       "merged_into": null,
+       "origins": [
+        {
+         "cand_id": "c0002",
+         "review_id": "rv-pmid-99000001",
+         "route": "review_extraction",
+         "search_id": null
+        }
+       ],
+       "rec_id": "rec-x-0a1b2c3d4e",
+       "related": [],
+       "resolution": {
+        "method": null,
+        "score": null,
+        "status": "unresolved"
+       },
+       "status": "active"
+      }
+     ],
+     "records_truncated": false,
+     "studies": [
+      {
+       "decision_ids": [],
+       "label": "Smith 2015",
+       "primary_rec_id": "rec-pmid-99100101",
+       "registry_ids": [],
+       "reports": [
+        {
+         "rec_id": "rec-pmid-99100101",
+         "role": "primary",
+         "role_source": "rule"
+        }
+       ],
+       "reviews": [
+        "rv-pmid-99000001",
+        "rv-pmid-99000002"
+       ],
+       "study_id": "st-0001"
+      },
+      {
+       "decision_ids": [],
+       "label": "Jones 2016a",
+       "primary_rec_id": "rec-pmid-99100102",
+       "registry_ids": [],
+       "reports": [
+        {
+         "rec_id": "rec-pmid-99100102",
+         "role": "primary",
+         "role_source": "rule"
+        }
+       ],
+       "reviews": [
+        "rv-pmid-99000001"
+       ],
+       "study_id": "st-0002"
+      },
+      {
+       "decision_ids": [],
+       "label": "Brown 2018",
+       "primary_rec_id": "rec-pmid-99100103",
+       "registry_ids": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "source": "pubmed",
+         "value": "NCT09000001",
+         "via": "pubmed.efetch.databank"
+        }
+       ],
+       "reports": [
+        {
+         "rec_id": "rec-pmid-99100103",
+         "role": "primary",
+         "role_source": "rule"
+        }
+       ],
+       "reviews": [
+        "rv-pmid-99000002"
+       ],
+       "study_id": "st-0003"
+      },
+      {
+       "decision_ids": [],
+       "label": "Brown 2019",
+       "primary_rec_id": "rec-pmid-99100104",
+       "registry_ids": [
+        {
+         "at": "2026-10-05T10:00:00Z",
+         "source": "pubmed",
+         "value": "NCT09000001",
+         "via": "pubmed.efetch.databank"
+        }
+       ],
+       "reports": [
+        {
+         "rec_id": "rec-pmid-99100104",
+         "role": "companion",
+         "role_source": "review_grouping"
+        }
+       ],
+       "reviews": [
+        "rv-pmid-99000002"
+       ],
+       "study_id": "st-0004"
+      },
+      {
+       "decision_ids": [],
+       "label": "Kim 2017",
+       "primary_rec_id": "rec-pmid-99100105",
+       "registry_ids": [],
+       "reports": [
+        {
+         "rec_id": "rec-pmid-99100105",
+         "role": "primary",
+         "role_source": "rule"
+        }
+       ],
+       "reviews": [
+        "rv-pmid-99000001"
+       ],
+       "study_id": "st-0005"
+      },
+      {
+       "decision_ids": [],
+       "label": "Jones 2016b",
+       "primary_rec_id": "rec-x-0a1b2c3d4e",
+       "registry_ids": [],
+       "reports": [
+        {
+         "rec_id": "rec-x-0a1b2c3d4e",
+         "role": "primary",
+         "role_source": "rule"
+        }
+       ],
+       "reviews": [],
+       "study_id": "st-0006"
+      }
+     ]
+    },
+    "meta": {
+     "elapsed_ms": 0,
+     "engine": "fixture",
+     "project_rev": null,
+     "request_id": "fx-headhunter"
+    },
+    "ok": true,
+    "schema": "szk.ma.hh-studies/v1",
+    "warnings": []
+   },
+   "etag": "b64d8f5ab189064b9d46a07a734fbc740c5b4144dde41254db5192b5fe18ea9d",
+   "method": "GET",
+   "path": "/api/headhunter/studies",
+   "status": 200
+  }
+ ]
+}

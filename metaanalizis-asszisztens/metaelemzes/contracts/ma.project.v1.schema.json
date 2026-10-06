@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.project:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.project/v1 — projektleíró (ma-projekt.json; terv 4.17)",
+  "type": "object",
+  "required": [
+    "schema",
+    "title",
+    "data_class"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.project/v1"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question": {
+      "type": "object",
+      "properties": {
+        "P": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "I": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "C": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "O": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "review_type": {
+      "enum": [
+        "intervention",
+        "exposure",
+        "diagnostic",
+        "prognostic_factor",
+        "prediction_model"
+      ]
+    },
+    "data_class": {
+      "enum": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$"
+          },
+          "name": {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/relpath"
+              }
+            ]
+          },
+          "measure": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "primary_spec": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "urn:szk:contract:common:1#/$defs/relpath"
+              }
+            ]
+          },
+          "grade_start": {
+            "enum": [
+              "high",
+              "low",
+              null
+            ]
+          }
+        }
+      }
+    },
+    "appraisal_tools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "composer": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "outdir": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "doc_roots": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "locale": {
+      "enum": [
+        "hu",
+        "en"
+      ]
+    },
+    "conventions": {
+      "type": "object",
+      "properties": {
+        "amstar2_partial_yes_critical": {
+          "enum": [
+            "meets",
+            "weakness"
+          ]
+        },
+        "grade_suspected": {
+          "enum": [
+            "unresolved"
+          ]
+        }
+      }
+    }
+  }
+}

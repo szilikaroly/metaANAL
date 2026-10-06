@@ -1,0 +1,184 @@
+{
+  "schema": "szk.ff.flowchart/v1",
+  "kind": "prisma2020",
+  "title": null,
+  "lang": "en",
+  "direction": "TB",
+  "nodes": [
+    {
+      "id": "hdr_db",
+      "text": "Identification of studies via databases and registers",
+      "x": 50.0,
+      "y": 95.9,
+      "w": 96.0,
+      "h": 4.2,
+      "shape": "sharp",
+      "color": "#FDF1C7",
+      "box": null,
+      "phase": "identification"
+    },
+    {
+      "id": "identified",
+      "text": "Records identified from:\nDatabases (n = 1234)\nRegisters (n = 12)",
+      "x": 27.0,
+      "y": 78.6,
+      "w": 46.0,
+      "h": 6.9,
+      "box": "A1+A2",
+      "phase": "identification"
+    },
+    {
+      "id": "removed",
+      "text": "Records removed before screening:\nDuplicate records removed (n = 300)\nRecords marked as ineligible by automation\ntools (n = 0)\nRecords removed for other reasons (n = 0)",
+      "x": 75.0,
+      "y": 78.6,
+      "w": 42.0,
+      "h": 10.4,
+      "box": "D1-D3",
+      "phase": "identification"
+    },
+    {
+      "id": "screened",
+      "text": "Records screened (n = 946)",
+      "x": 27.0,
+      "y": 61.3,
+      "w": 46.0,
+      "h": 4.2,
+      "box": "B",
+      "phase": "screening"
+    },
+    {
+      "id": "excluded_screening",
+      "text": "Records excluded (n = 860)",
+      "x": 75.0,
+      "y": 61.3,
+      "w": 42.0,
+      "h": 4.2,
+      "box": "C",
+      "phase": "screening"
+    },
+    {
+      "id": "sought",
+      "text": "Reports sought for retrieval (n = 86)",
+      "x": 27.0,
+      "y": 47.1,
+      "w": 46.0,
+      "h": 4.2,
+      "box": "E",
+      "phase": "screening"
+    },
+    {
+      "id": "not_retrieved",
+      "text": "Reports not retrieved (n = 4)",
+      "x": 75.0,
+      "y": 47.1,
+      "w": 42.0,
+      "h": 4.2,
+      "box": "F",
+      "phase": "screening"
+    },
+    {
+      "id": "assessed",
+      "text": "Reports assessed for eligibility (n = 82)",
+      "x": 27.0,
+      "y": 30.65,
+      "w": 46.0,
+      "h": 4.2,
+      "box": "G",
+      "phase": "screening"
+    },
+    {
+      "id": "excluded_eligibility",
+      "text": "Reports excluded (n = 57):\nwrong population (n = 30)\nwrong comparator (n = 15)\nwrong outcome (n = 12)",
+      "x": 75.0,
+      "y": 30.65,
+      "w": 42.0,
+      "h": 8.7,
+      "box": "H",
+      "phase": "screening"
+    },
+    {
+      "id": "included",
+      "text": "Studies included in review (n = 18)\nReports of included studies (n = 25)",
+      "x": 27.0,
+      "y": 13.7,
+      "w": 46.0,
+      "h": 5.2,
+      "color": "#E3EEF9",
+      "box": "I+J",
+      "phase": "included"
+    }
+  ],
+  "edges": [
+    {
+      "from": "identified",
+      "to": "removed"
+    },
+    {
+      "from": "identified",
+      "to": "screened"
+    },
+    {
+      "from": "screened",
+      "to": "excluded_screening"
+    },
+    {
+      "from": "screened",
+      "to": "sought"
+    },
+    {
+      "from": "sought",
+      "to": "not_retrieved"
+    },
+    {
+      "from": "sought",
+      "to": "assessed"
+    },
+    {
+      "from": "assessed",
+      "to": "excluded_eligibility"
+    },
+    {
+      "from": "assessed",
+      "to": "included"
+    }
+  ],
+  "layout": {
+    "width": "double",
+    "arrangement": "main",
+    "canvas_height_mm": 180.0,
+    "updated_review": false,
+    "other_methods": false
+  },
+  "counts": {
+    "A1": 1234,
+    "A2": 12,
+    "D1": 300,
+    "D2": 0,
+    "D3": 0,
+    "B": 946,
+    "C": 860,
+    "E": 86,
+    "F": 4,
+    "G": 82,
+    "H": 57,
+    "I": 18,
+    "J": 25
+  },
+  "check": {
+    "ok": true,
+    "summary": {
+      "error": 0,
+      "warning": 0,
+      "info": 0
+    },
+    "codes": []
+  },
+  "source": {
+    "engine_version": "0.1.0",
+    "template": "PRISMA2020",
+    "studies_map": false
+  },
+  "render_hint": "python3 <figure-forge>/scripts/ff.py flowchart --spec <ez a fájl> --out prisma_flow --formats svg,pdf,tiff --width double",
+  "notes": []
+}

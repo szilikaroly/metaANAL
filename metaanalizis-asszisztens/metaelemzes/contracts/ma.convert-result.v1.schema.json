@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.convert-result:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.convert-result/v1 — átváltás eredménye, motor → felület (api.convert; terv 4.7)",
+  "type": "object",
+  "required": [
+    "schema",
+    "kind",
+    "engine_version",
+    "outputs",
+    "estimated",
+    "method"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.convert-result/v1"
+    },
+    "kind": {
+      "$ref": "urn:szk:contract:ma.convert-request:1#/properties/kind"
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "urn:szk:contract:common:1#/$defs/num"
+      },
+      "description": "a motor számai (elemzési pontossággal; a felület nem számol)"
+    },
+    "outputs_text": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "null"
+          },
+          {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        ]
+      },
+      "description": "kimenetenként a motor kijelzési szövege (a display_text konvenciója: tizedespont; hu: kötőjel-mínusz, en: U+2212) — a felület nem kerekít újra"
+    },
+    "cell_text": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "description": "kimenetenként a cellába írandó szöveg a cél tábla tizedesjelével (target.decimal_mark; ennek hiányában target.delimiter: ';' → ',', más → '.'; alapból ','), ASCII mínusszal"
+    },
+    "estimated": {
+      "type": "boolean",
+      "description": "mindig a motor döntése: becslés true, algebrai átalakítás false"
+    },
+    "method": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "citation": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "kb_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      },
+      "description": "a módszer feltevései kétnyelvű szövegként ({hu, en}, terv 4.0) — a felület a választott nyelvet mutatja"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+      },
+      "description": "figyelmeztetések kétnyelvű szövegként ({hu, en}); pl. ferde eloszlás gyanúja (V013), becsült érték"
+    }
+  }
+}

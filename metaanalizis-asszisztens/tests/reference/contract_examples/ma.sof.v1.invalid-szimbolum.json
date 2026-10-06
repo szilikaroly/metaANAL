@@ -1,0 +1,323 @@
+{
+  "schema": "szk.ma.sof/v1",
+  "outcome_id": "o1",
+  "run_id": "20261004T211200Z-a1f3c2",
+  "measure": "RR",
+  "title": {
+    "hu": "Az eredmények összefoglalása (SoF)",
+    "en": "Summary of findings"
+  },
+  "header": {
+    "intervention": {
+      "hu": "a BCG-oltás",
+      "en": "BCG vaccination"
+    }
+  },
+  "rows": [
+    {
+      "outcome_id": "o1",
+      "label": {
+        "hu": "Tbc-fertőzés",
+        "en": "Tuberculosis"
+      },
+      "importance": "critical",
+      "k": 13,
+      "participants": 357347,
+      "design": "RCT",
+      "studies_text": {
+        "hu": "357347 (13 RCT)",
+        "en": "357347 (13 RCTs)"
+      },
+      "relative": {
+        "measure": "RR",
+        "estimate": 0.4894209398260303,
+        "ci_lower": 0.3300722484835995,
+        "ci_upper": 0.7256982598223388,
+        "level": 0.95,
+        "display_text": {
+          "hu": "0.49 [0.33; 0.73]",
+          "en": "0.49 [0.33; 0.73]"
+        },
+        "text": {
+          "hu": "RR 0.49 (95% CI 0.33–0.73)",
+          "en": "RR 0.49 (95% CI 0.33 to 0.73)"
+        }
+      },
+      "effect": null,
+      "absolute": [
+        {
+          "label": {
+            "hu": "kontroll-pool",
+            "en": "control-arm pool"
+          },
+          "kind": "control_pool",
+          "source": "totals.control_risk (Σe2/Σn2)",
+          "assumed_risk_per_1000": 9.080904241564081,
+          "risk_per_1000": [
+            4.444384688376477,
+            2.997354481277312,
+            6.589996405716349
+          ],
+          "difference_per_1000": [
+            -4.636519553187603,
+            -6.083549760286768,
+            -2.490907835847732
+          ],
+          "incompatible": false,
+          "baseline_text": {
+            "hu": "1000 főre 9",
+            "en": "9 per 1,000"
+          },
+          "risk_text": {
+            "hu": "1000 főre 4 (3–7)",
+            "en": "4 per 1,000 (3 to 7)"
+          },
+          "text": {
+            "hu": "1000 főre 5 kevesebb (6 kevesebbtől 2 kevesebbig)",
+            "en": "5 fewer per 1,000 (from 6 fewer to 2 fewer)"
+          },
+          "footnotes": [
+            "c"
+          ]
+        },
+        {
+          "label": {
+            "hu": "magas kockázatú csoport",
+            "en": "high-risk group"
+          },
+          "kind": "external",
+          "source": "kohorsz (pmid:00000000)",
+          "assumed_risk_per_1000": 40.0,
+          "risk_per_1000": [
+            19.576837593041212,
+            13.20288993934398,
+            29.027930392893555
+          ],
+          "difference_per_1000": [
+            -20.423162406958788,
+            -26.79711006065602,
+            -10.972069607106446
+          ],
+          "incompatible": false,
+          "baseline_text": {
+            "hu": "1000 főre 40",
+            "en": "40 per 1,000"
+          },
+          "risk_text": {
+            "hu": "1000 főre 20 (13–29)",
+            "en": "20 per 1,000 (13 to 29)"
+          },
+          "text": {
+            "hu": "1000 főre 20 kevesebb (27 kevesebbtől 11 kevesebbig)",
+            "en": "20 fewer per 1,000 (from 27 fewer to 11 fewer)"
+          },
+          "footnotes": [
+            "d"
+          ]
+        }
+      ],
+      "certainty": "moderate",
+      "certainty_symbols": "+++o",
+      "certainty_text": {
+        "hu": "⊕⊕⊕◯ mérsékelt",
+        "en": "⊕⊕⊕◯ Moderate"
+      },
+      "statement": {
+        "hu": "Tbc-fertőzés: a BCG-oltás valószínűleg csökkenti.",
+        "en": "BCG vaccination probably reduces Tuberculosis."
+      },
+      "footnotes": [
+        {
+          "id": "a",
+          "text": {
+            "hu": "Inkonzisztencia: −1 (súlyos) — A PI (0.13–1.79) átnyúlik az 1-en; a súly 14%-a a másik oldalon.",
+            "en": "Inconsistency: −1 (serious) — A PI (0.13–1.79) átnyúlik az 1-en; a súly 14%-a a másik oldalon."
+          },
+          "domain": "inconsistency",
+          "kind": "grade"
+        },
+        {
+          "id": "b",
+          "text": {
+            "hu": "Publikációs torzítás: 0 (gyanított) — Harbord p 0.23, Peters p 0.20; a regiszterkeresés teljes — nem minősítünk le.",
+            "en": "Publication bias: 0 (suspected) — Harbord p 0.23, Peters p 0.20; a regiszterkeresés teljes — nem minősítünk le."
+          },
+          "domain": "publication_bias",
+          "kind": "grade"
+        },
+        {
+          "id": "c",
+          "text": {
+            "hu": "Alapkockázat (kontroll-pool): a kontrollkarok összesített kockázata (Σe2/Σn2 = 9.1/1000) — illusztratív; a klinikailag releváns alapkockázat forrással adható meg (GRADE-10a).",
+            "en": "Assumed risk (control-arm pool): pooled risk of the control arms (Σe2/Σn2 = 9.1 per 1,000) — illustrative; a clinically relevant baseline risk with a source can be added (GRADE-10a)."
+          },
+          "domain": null,
+          "kind": "baseline"
+        },
+        {
+          "id": "d",
+          "text": {
+            "hu": "Alapkockázat (magas kockázatú csoport): 40.0/1000 — forrás: kohorsz (pmid:00000000).",
+            "en": "Assumed risk (high-risk group): 40.0 per 1,000 — source: kohorsz (pmid:00000000)."
+          },
+          "domain": null,
+          "kind": "baseline"
+        }
+      ],
+      "footnote_refs": {
+        "certainty": [
+          "a",
+          "b"
+        ],
+        "absolute": [
+          "c",
+          "d"
+        ]
+      },
+      "sources": {
+        "participants": "totals.participants",
+        "k": "totals.k (primary.k)",
+        "relative": "back_transformed.estimate_ci",
+        "effect": "back_transformed.estimate_ci",
+        "absolute": "sof.absolute (grade_help.absolute_effect)",
+        "certainty": "szk.ma.grade/v1 certainty"
+      },
+      "warnings": [],
+      "outcome_text": {
+        "hu": "Tbc-fertőzés",
+        "en": "Tuberculosis"
+      },
+      "participants_text": {
+        "hu": "357347 (13 RCT)",
+        "en": "357347 (13 RCTs)"
+      },
+      "relative_text": {
+        "hu": "RR 0.49 (95% CI 0.33–0.73)",
+        "en": "RR 0.49 (95% CI 0.33 to 0.73)"
+      },
+      "assumed_risk_text": {
+        "hu": "kontroll-pool: 1000 főre 9 c; magas kockázatú csoport: 1000 főre 40 d",
+        "en": "control-arm pool: 9 per 1,000 c; high-risk group: 40 per 1,000 d"
+      },
+      "absolute_text": {
+        "hu": "1000 főre 5 kevesebb (6 kevesebbtől 2 kevesebbig); 1000 főre 20 kevesebb (27 kevesebbtől 11 kevesebbig)",
+        "en": "5 fewer per 1,000 (from 6 fewer to 2 fewer); 20 fewer per 1,000 (from 27 fewer to 11 fewer)"
+      },
+      "certainty_cell": {
+        "hu": "⊕⊕⊕◯ mérsékelt a,b",
+        "en": "⊕⊕⊕◯ Moderate a,b"
+      },
+      "comments_text": {
+        "hu": "Tbc-fertőzés: a BCG-oltás valószínűleg csökkenti.",
+        "en": "BCG vaccination probably reduces Tuberculosis."
+      }
+    }
+  ],
+  "columns": [
+    {
+      "key": "outcome_text",
+      "label": {
+        "hu": "Kimenet",
+        "en": "Outcome"
+      }
+    },
+    {
+      "key": "participants_text",
+      "label": {
+        "hu": "Résztvevők (vizsgálatok)",
+        "en": "No. of participants (studies)"
+      }
+    },
+    {
+      "key": "relative_text",
+      "label": {
+        "hu": "Relatív hatás (95% CI)",
+        "en": "Relative effect (95% CI)"
+      }
+    },
+    {
+      "key": "assumed_risk_text",
+      "label": {
+        "hu": "Alapkockázat",
+        "en": "Assumed risk"
+      }
+    },
+    {
+      "key": "absolute_text",
+      "label": {
+        "hu": "Abszolút hatás (95% CI)",
+        "en": "Absolute effect (95% CI)"
+      }
+    },
+    {
+      "key": "certainty_cell",
+      "label": {
+        "hu": "A bizonyíték bizonyossága (GRADE)",
+        "en": "Certainty of the evidence (GRADE)"
+      }
+    },
+    {
+      "key": "comments_text",
+      "label": {
+        "hu": "Megjegyzés",
+        "en": "Comments"
+      }
+    }
+  ],
+  "footnotes": [
+    {
+      "id": "a",
+      "text": {
+        "hu": "Inkonzisztencia: −1 (súlyos) — A PI (0.13–1.79) átnyúlik az 1-en; a súly 14%-a a másik oldalon.",
+        "en": "Inconsistency: −1 (serious) — A PI (0.13–1.79) átnyúlik az 1-en; a súly 14%-a a másik oldalon."
+      },
+      "domain": "inconsistency",
+      "kind": "grade"
+    },
+    {
+      "id": "b",
+      "text": {
+        "hu": "Publikációs torzítás: 0 (gyanított) — Harbord p 0.23, Peters p 0.20; a regiszterkeresés teljes — nem minősítünk le.",
+        "en": "Publication bias: 0 (suspected) — Harbord p 0.23, Peters p 0.20; a regiszterkeresés teljes — nem minősítünk le."
+      },
+      "domain": "publication_bias",
+      "kind": "grade"
+    },
+    {
+      "id": "c",
+      "text": {
+        "hu": "Alapkockázat (kontroll-pool): a kontrollkarok összesített kockázata (Σe2/Σn2 = 9.1/1000) — illusztratív; a klinikailag releváns alapkockázat forrással adható meg (GRADE-10a).",
+        "en": "Assumed risk (control-arm pool): pooled risk of the control arms (Σe2/Σn2 = 9.1 per 1,000) — illustrative; a clinically relevant baseline risk with a source can be added (GRADE-10a)."
+      },
+      "domain": null,
+      "kind": "baseline"
+    },
+    {
+      "id": "d",
+      "text": {
+        "hu": "Alapkockázat (magas kockázatú csoport): 40.0/1000 — forrás: kohorsz (pmid:00000000).",
+        "en": "Assumed risk (high-risk group): 40.0 per 1,000 — source: kohorsz (pmid:00000000)."
+      },
+      "domain": null,
+      "kind": "baseline"
+    }
+  ],
+  "statement": {
+    "hu": "Tbc-fertőzés: a BCG-oltás valószínűleg csökkenti.",
+    "en": "BCG vaccination probably reduces Tuberculosis."
+  },
+  "engine": {
+    "name": "metaelemzes",
+    "version": "0.1.0"
+  },
+  "notes": [],
+  "kb_refs": [
+    "GRADE-10",
+    "GRADE-10a",
+    "GRADE-10b",
+    "GRADE-11",
+    "D-S13-011",
+    "D-S13-012",
+    "D-S13-016"
+  ]
+}

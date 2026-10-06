@@ -1,0 +1,41 @@
+{
+ "description": "POST /api/session — indítókód → token (3.4, 7.1 T4). A 'expired' kód 403-at ad.",
+ "routes": [
+  {
+   "method": "POST",
+   "path": "/api/session",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.session/v1",
+    "data": {
+     "token": "fx-token-0001",
+     "expires_in_s": null,
+     "user": "SzK"
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_fx01"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/session",
+   "body": {
+    "launch_code": "expired"
+   },
+   "status": 403,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "FORBIDDEN",
+     "http": 403,
+     "message": "Az indítókód lejárt vagy már felhasználták."
+    }
+   }
+  }
+ ]
+}

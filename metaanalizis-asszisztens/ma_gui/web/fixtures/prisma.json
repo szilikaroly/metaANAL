@@ -1,0 +1,1157 @@
+{
+ "description": "GET /api/prisma, PUT /api/prisma/manual (dry_run előnézet és mentés) — 3.5.14. A check a valódi metaelemzes.prisma.check_flow kimenete a BCG-példa kitalált szűrési számaira; a body.flow a felület toFlow()-jának pontos kulcssorrendjében (generálta: tests/gui/ui/gen_process_fixtures.py).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/prisma",
+   "etag": "\"prisma-1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 1,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr01"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/prisma",
+   "query": {
+    "variant": "composer"
+   },
+   "etag": "\"prisma-c1\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "composer",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "composer",
+      "composer_version": "1.4.1",
+      "project": "bcg",
+      "generated": "2026-10-04T20:12:00Z",
+      "sha256": "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 1,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [
+      {
+       "hu": "5D-kapu: „függőben” rekord: 0 · retmax-figyelmeztetés: a PubMed-keresés 412 találata a retmax (500) alatt maradt",
+       "en": "5D gate: 'pending' records: 0 · retmax warning: the PubMed search returned 412 hits, below retmax (500)"
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr02"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/manual",
+   "note": "base — P007 (az okok összege 34 ≠ H 36)",
+   "body": {
+    "dry_run": true,
+    "flow": {
+     "schema": "szk.prisma-flow/v1",
+     "identified_databases": "412",
+     "identified_registers": "9",
+     "dedup_removed": "96",
+     "automation_removed": null,
+     "removed_before_screening_n": null,
+     "screened": "325",
+     "excluded_screening": "271",
+     "sought_for_retrieval": "54",
+     "not_retrieved": "3",
+     "assessed_eligibility": "51",
+     "excluded_eligibility": "36",
+     "included_reports": "15",
+     "included_studies": "13",
+     "excluded_eligibility_reasons": {
+      "nem RCT / kontrollált vizsgálat": "17",
+      "nincs TBC-kimenet": "11",
+      "nem BCG-oltás": "6"
+     }
+    }
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 1,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [],
+     "saved": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr03"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/manual",
+   "note": "javított okok — nincs megállapítás",
+   "body": {
+    "dry_run": true,
+    "flow": {
+     "schema": "szk.prisma-flow/v1",
+     "identified_databases": "412",
+     "identified_registers": "9",
+     "dedup_removed": "96",
+     "automation_removed": null,
+     "removed_before_screening_n": null,
+     "screened": "325",
+     "excluded_screening": "271",
+     "sought_for_retrieval": "54",
+     "not_retrieved": "3",
+     "assessed_eligibility": "51",
+     "excluded_eligibility": "36",
+     "included_reports": "15",
+     "included_studies": "13",
+     "excluded_eligibility_reasons": {
+      "nem RCT / kontrollált vizsgálat": "17",
+      "nincs TBC-kimenet": "13",
+      "nem BCG-oltás": "6"
+     }
+    }
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 13,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": true,
+      "summary": {
+       "error": 0,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "excluded_eligibility_reasons_sum": 36,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [],
+     "saved": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr04"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/manual",
+   "note": "E üres — a motor levezeti (P011) + P007",
+   "body": {
+    "dry_run": true,
+    "flow": {
+     "schema": "szk.prisma-flow/v1",
+     "identified_databases": "412",
+     "identified_registers": "9",
+     "dedup_removed": "96",
+     "automation_removed": null,
+     "removed_before_screening_n": null,
+     "screened": "325",
+     "excluded_screening": "271",
+     "sought_for_retrieval": null,
+     "not_retrieved": "3",
+     "assessed_eligibility": "51",
+     "excluded_eligibility": "36",
+     "included_reports": "15",
+     "included_studies": "13",
+     "excluded_eligibility_reasons": {
+      "nem RCT / kontrollált vizsgálat": "17",
+      "nincs TBC-kimenet": "11",
+      "nem BCG-oltás": "6"
+     }
+    }
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": null,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 1,
+       "warning": 0,
+       "info": 1
+      },
+      "findings": [
+       {
+        "code": "P011",
+        "severity": "info",
+        "title": "Levezetett (nem közölt) doboz-érték",
+        "study": null,
+        "detail": "Keresett jelentések (E) = B − C = 54",
+        "advice": "Az érték a többi dobozból adódik (pl. hiányzó duplikátum-doboz = 0); a folyamatábrán érdemes kifejezetten feltüntetni.",
+        "source": "PRISMA 2020 1. ábra",
+        "fields": [
+         "sought"
+        ]
+       },
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "sought": 54,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [],
+     "saved": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr05"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/manual",
+   "note": "I = 16 > J = 15 — P006 + P007",
+   "body": {
+    "dry_run": true,
+    "flow": {
+     "schema": "szk.prisma-flow/v1",
+     "identified_databases": "412",
+     "identified_registers": "9",
+     "dedup_removed": "96",
+     "automation_removed": null,
+     "removed_before_screening_n": null,
+     "screened": "325",
+     "excluded_screening": "271",
+     "sought_for_retrieval": "54",
+     "not_retrieved": "3",
+     "assessed_eligibility": "51",
+     "excluded_eligibility": "36",
+     "included_reports": "15",
+     "included_studies": "16",
+     "excluded_eligibility_reasons": {
+      "nem RCT / kontrollált vizsgálat": "17",
+      "nincs TBC-kimenet": "11",
+      "nem BCG-oltás": "6"
+     }
+    }
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 16,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 2,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       },
+       {
+        "code": "P006",
+        "severity": "error",
+        "title": "Több bevont vizsgálat, mint bevont jelentés",
+        "study": null,
+        "detail": "Bevont vizsgálatok (I) = 16 > Bevont jelentések (J) = 15",
+        "advice": "I ≤ J: egy vizsgálatnak több jelentése (közleménye) lehet, fordítva nem. A vizsgálatokat és a jelentéseket külön számold.",
+        "source": "PRISMA 2020 1. ábra; Cochrane Handbook 4.6.2",
+        "fields": [
+         "included_studies",
+         "included_reports"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [],
+     "saved": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr06"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/manual",
+   "note": "érvénytelen szám (12a) — P001",
+   "body": {
+    "dry_run": true,
+    "flow": {
+     "schema": "szk.prisma-flow/v1",
+     "identified_databases": "412",
+     "identified_registers": "9",
+     "dedup_removed": "96",
+     "automation_removed": null,
+     "removed_before_screening_n": null,
+     "screened": "12a",
+     "excluded_screening": "271",
+     "sought_for_retrieval": "54",
+     "not_retrieved": "3",
+     "assessed_eligibility": "51",
+     "excluded_eligibility": "36",
+     "included_reports": "15",
+     "included_studies": "13",
+     "excluded_eligibility_reasons": {
+      "nem RCT / kontrollált vizsgálat": "17",
+      "nincs TBC-kimenet": "11",
+      "nem BCG-oltás": "6"
+     }
+    }
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": "12a",
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 2,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [
+       {
+        "code": "P001",
+        "severity": "error",
+        "title": "Érvénytelen PRISMA-szám",
+        "study": null,
+        "detail": "Szűrt rekordok (B): nem szám: '12a'",
+        "advice": "Minden dobozérték nemnegatív egész szám (rekordok, jelentések, vizsgálatok darabszáma).",
+        "source": "PRISMA 2020 (Page et al. 2021) 1. ábra",
+        "fields": [
+         "screened"
+        ]
+       },
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [],
+     "saved": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr07"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/manual",
+   "body": {
+    "dry_run": true
+   },
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 1,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [],
+     "saved": false
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr08"
+    }
+   }
+  },
+  {
+   "method": "PUT",
+   "path": "/api/prisma/manual",
+   "etag": "\"prisma-2\"",
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.prisma/v1",
+    "data": {
+     "schema": "szk.ma.prisma/v1",
+     "mode": "manual",
+     "path": "02_szures/prisma_flow.json",
+     "source": {
+      "kind": "manual",
+      "updated": "2026-10-04T20:12:00Z",
+      "actor": "SzK"
+     },
+     "override": null,
+     "flow": {
+      "schema": "szk.prisma-flow/v1",
+      "identified_databases": 412,
+      "identified_registers": 9,
+      "dedup_removed": 96,
+      "automation_removed": null,
+      "removed_before_screening_n": null,
+      "screened": 325,
+      "excluded_screening": 271,
+      "sought_for_retrieval": 54,
+      "not_retrieved": 3,
+      "assessed_eligibility": 51,
+      "excluded_eligibility": 36,
+      "included_reports": 15,
+      "included_studies": 13,
+      "excluded_eligibility_reasons": {
+       "nem RCT / kontrollált vizsgálat": 17,
+       "nincs TBC-kimenet": 11,
+       "nem BCG-oltás": 6
+      }
+     },
+     "check": {
+      "template": "PRISMA2020",
+      "ok": false,
+      "summary": {
+       "error": 1,
+       "warning": 0,
+       "info": 0
+      },
+      "findings": [
+       {
+        "code": "P007",
+        "severity": "error",
+        "title": "A kizárási okok összege nem egyezik",
+        "study": null,
+        "detail": "Kizárt jelentések (H) = 36, de az okok összege nem RCT / kontrollált vizsgálat 17 + nincs TBC-kimenet 11 + nem BCG-oltás 6 = 34",
+        "advice": "A teljes szöveg szintű kizárások okonkénti számainak összege = a kizárt jelentések száma (H). Minden kizárt jelentéshez egy fő ok tartozzon.",
+        "source": "PRISMA 2020 16a tétel",
+        "fields": [
+         "excluded_eligibility",
+         "excluded_eligibility_reasons"
+        ]
+       }
+      ],
+      "derived": {
+       "identified_total": 421,
+       "removed_before_screening_total": 96,
+       "screened_expected": 325,
+       "excluded_eligibility_reasons_sum": 34,
+       "included_reports_expected": 15
+      }
+     },
+     "studies": {
+      "path": "03_adatok/studies.json",
+      "studies": 13,
+      "reports": 15
+     },
+     "meta": [
+      {
+       "outcome_id": "o1",
+       "name": {
+        "hu": "TBC-incidencia",
+        "en": "TB incidence"
+       },
+       "k": 13,
+       "run_id": "20261004T211200Z-a1f3c2"
+      }
+     ],
+     "cross": [
+      {
+       "code": "X014",
+       "severity": "info",
+       "title": "Elemzett k (13) ≤ bevont vizsgálatok (I = 13)",
+       "detail": "05_elemzes/o1/20261004T211200Z-a1f3c2/run.json: k = 13; studies.json: 13 vizsgálat"
+      },
+      {
+       "code": "X015",
+       "severity": "info",
+       "title": "o1: included_meta 13 = a commit-futás k-ja",
+       "detail": "PRISMA „metaanalízisben” = 13"
+      }
+     ],
+     "composer_status": [],
+     "saved": true
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.2.0",
+     "elapsed_ms": 1,
+     "project_rev": 41,
+     "request_id": "q_pr09"
+    }
+   }
+  }
+ ]
+}

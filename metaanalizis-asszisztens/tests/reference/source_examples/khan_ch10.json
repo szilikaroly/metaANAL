@@ -1,0 +1,3092 @@
+[
+ {
+  "case_id": "khan_ch10__fisher_z_per_study_es",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.1 p. 220 (inputs), Table 10.2 p. 220 (Z, Var, SE); Tables 10.4-10.6 (Var 4 dp); Appendix Table A10.1 pp. 236-237 (seZ 4 dp)",
+  "description": "Fisher z of r (atanh), variance 1/(n-3) and SE for the 8 MedCalc correlation studies.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "effect_sizes",
+  "call_args": {},
+  "expected": [
+   {
+    "path": "yi.0",
+    "value": 0.6328,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Moore (2006) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.00769,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Moore (2006) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.0077,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Moore (2006) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.08771,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Moore (2006) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.0877,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Moore (2006) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.4599,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Davis (2008) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.00685,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Davis (2008) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.0068,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Davis (2008) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.08276,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Davis (2008) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.0828,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Davis (2008) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.5901,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Thomas (1999) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.00781,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Thomas (1999) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0078,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Thomas (1999) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.08839,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Thomas (1999) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0884,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Thomas (1999) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.5627,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Miller (2012) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.00855,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Miller (2012) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.0085,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Miller (2012) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.09245,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Miller (2012) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.0925,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Miller (2012) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.7928,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Williams (2012) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.00926,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Williams (2012) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.0093,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Williams (2012) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.09623,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Williams (2012) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.0962,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Williams (2012) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.4973,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Young (2013) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.00671,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Young (2013) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.0067,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Young (2013) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.08192,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Young (2013) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.0819,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Young (2013) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.3428,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Baker (2009) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.01754,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Baker (2009) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.0175,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Baker (2009) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.13245,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Baker (2009) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.1325,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Baker (2009) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.7",
+    "value": 0.4001,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Adams (2006) printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "vi.7",
+    "value": 0.0084,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "Adams (2006) printed Var (5 dp; Excel drops trailing zeros), Table 10.2"
+   },
+   {
+    "path": "vi.7",
+    "value": 0.0084,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "Adams (2006) printed Var (4 dp), Tables 10.4-10.6"
+   },
+   {
+    "path": "vi.7",
+    "value": 0.09167,
+    "tol": 5e-06,
+    "transform": "sqrt",
+    "note": "Adams (2006) printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "vi.7",
+    "value": 0.0917,
+    "tol": 5e-05,
+    "transform": "sqrt",
+    "note": "Adams (2006) printed seZ (4 dp), Appendix Table A10.1"
+   },
+   {
+    "path": "yi.0",
+    "value": 0.632833186665638,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Moore (2006) atanh(r)"
+   },
+   {
+    "path": "vi.0",
+    "value": 0.007692307692307693,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Moore (2006) 1/(n-3)"
+   },
+   {
+    "path": "yi.1",
+    "value": 0.45989668121267857,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Davis (2008) atanh(r)"
+   },
+   {
+    "path": "vi.1",
+    "value": 0.00684931506849315,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Davis (2008) 1/(n-3)"
+   },
+   {
+    "path": "yi.2",
+    "value": 0.5901451598411884,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Thomas (1999) atanh(r)"
+   },
+   {
+    "path": "vi.2",
+    "value": 0.0078125,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Thomas (1999) 1/(n-3)"
+   },
+   {
+    "path": "yi.3",
+    "value": 0.5627297693521489,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Miller (2012) atanh(r)"
+   },
+   {
+    "path": "vi.3",
+    "value": 0.008547008547008548,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Miller (2012) 1/(n-3)"
+   },
+   {
+    "path": "yi.4",
+    "value": 0.7928136318701909,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Williams (2012) atanh(r)"
+   },
+   {
+    "path": "vi.4",
+    "value": 0.009259259259259259,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Williams (2012) 1/(n-3)"
+   },
+   {
+    "path": "yi.5",
+    "value": 0.4973112875720311,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Young (2013) atanh(r)"
+   },
+   {
+    "path": "vi.5",
+    "value": 0.006711409395973154,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Young (2013) 1/(n-3)"
+   },
+   {
+    "path": "yi.6",
+    "value": 0.3428282544153939,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Baker (2009) atanh(r)"
+   },
+   {
+    "path": "vi.6",
+    "value": 0.017543859649122806,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Baker (2009) 1/(n-3)"
+   },
+   {
+    "path": "yi.7",
+    "value": 0.4000596500560566,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Adams (2006) atanh(r)"
+   },
+   {
+    "path": "vi.7",
+    "value": 0.008403361344537815,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Adams (2006) 1/(n-3)"
+   }
+  ],
+  "note": "Measure ZCOR = Fisher z (yi = atanh r, vi = 1/(n-3)); n = number of pairs. Not checked (no engine path): Moore's intermediate chain (1+r)/(1-r) = 3.54545 and ln(.) = 1.26567 = 2*yi (p. 221).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_moore",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp); worked calculation pp. 220-221",
+  "description": "Moore (2006): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.6328,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.08771,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.46093,
+    "tol": 8.16e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.80474,
+    "tol": 8.16e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4308,
+    "tol": 5.26e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6667,
+    "tol": 5.18e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.56,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.43,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.67,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.43084,
+    "tol": 7.58e-06,
+    "transform": "tanh",
+    "note": "printed Moore LL = 1.51396/3.51396 = 0.43084 (5 dp), p. 221; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.66668,
+    "tol": 6.76e-06,
+    "transform": "tanh",
+    "note": "printed Moore UL = 4.00021/6.00021 = 0.66668 (5 dp), p. 221; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.46,
+    "tol": 0.00501,
+    "transform": null,
+    "note": "printed '0.46093 ~ 0.46' (2 dp), p. 221"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.8,
+    "tol": 0.00501,
+    "transform": null,
+    "note": "printed '0.80474 ~ 0.80' (2 dp), p. 221"
+   },
+   {
+    "path": "estimate",
+    "value": 0.632833186665638,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.08770580193070292,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.46092981488146034,
+    "tol": 3.16e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.8047365584498157,
+    "tol": 3.16e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (3.2e-06 here). Not checked (no engine path): exp(2*LL*) = 2.51396 and exp(2*UL*) = 5.00021 (p. 221). The Comment's '(0.34, 0.67)' (p. 221) is a source typo, encoded as known_gap khan_ch10__moore_ci_comment_typo.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_davis",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp)",
+  "description": "Davis (2008): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.4599,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.08276,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.29769,
+    "tol": 7.99e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.62211,
+    "tol": 7.99e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.2892,
+    "tol": 5.28e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5526,
+    "tol": 5.21e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.43,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.29,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.55,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.45989668121267857,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.0827605888602368,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.29768592704661445,
+    "tol": 2.982e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6221074353787427,
+    "tol": 2.982e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (3e-06 here).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_thomas",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp)",
+  "description": "Thomas (1999): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5901,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.08839,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4169,
+    "tol": 8.19e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.76339,
+    "tol": 8.19e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.3943,
+    "tol": 5.27e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6431,
+    "tol": 5.19e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.53,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.39,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.64,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5901451598411884,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.08838834764831845,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4169039984504843,
+    "tol": 3.185e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.7633863212318925,
+    "tol": 3.185e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (3.2e-06 here).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_miller",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp)",
+  "description": "Miller (2012): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5627,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.09245,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.38153,
+    "tol": 8.33e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.74393,
+    "tol": 8.33e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.364,
+    "tol": 5.29e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6315,
+    "tol": 5.21e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.51,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.36,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.63,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5627297693521489,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.09245003270420486,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.3815277052519074,
+    "tol": 3.331e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.7439318334523904,
+    "tol": 3.331e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (3.3e-06 here).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_williams",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp)",
+  "description": "Williams (2012): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.7928,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.09623,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.60421,
+    "tol": 8.47e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.98141,
+    "tol": 8.47e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.54,
+    "tol": 5.25e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.7537,
+    "tol": 5.15e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.66,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.54,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.75,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.7928136318701909,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.09622504486493763,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.6042125439349132,
+    "tol": 3.467e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.9814147198054687,
+    "tol": 3.467e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (3.5e-06 here).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_young",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp)",
+  "description": "Young (2013): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.4973,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.08192,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.33674,
+    "tol": 7.96e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.65788,
+    "tol": 7.96e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.3246,
+    "tol": 5.27e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.577,
+    "tol": 5.2e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.46,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.32,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.58,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.4973112875720311,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.08192319205190404,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.33674183115029915,
+    "tol": 2.952e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6578807439937631,
+    "tol": 2.952e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (3e-06 here).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_baker",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp)",
+  "description": "Baker (2009): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.3428,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.13245,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.08322,
+    "tol": 9.78e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.60244,
+    "tol": 9.78e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.083,
+    "tol": 5.48e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5388,
+    "tol": 5.34e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.33,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.08,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.54,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.3428282544153939,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.13245323570650439,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.0832199124306453,
+    "tol": 4.772e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6024365964001425,
+    "tol": 4.772e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (4.8e-06 here).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fisher_z_ci_adams",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1: Table 10.2 p. 220 (LL*, UL*, LL, UL); forest plot Fig. 10.1 p. 221 (r and 95% CI, 2 dp)",
+  "description": "Adams (2006): 95% CI of Fisher z (z +/- 1.96*SE) and back-transformed r CI (tanh) as a single-study fixed-effect fit.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.4001,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed Z (4 dp), Table 10.2"
+   },
+   {
+    "path": "se",
+    "value": 0.09167,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE (5 dp), Table 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.22039,
+    "tol": 8.31e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE (book uses 1.96)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.57973,
+    "tol": 8.31e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), Table 10.2; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.2169,
+    "tol": 5.32e-05,
+    "transform": "tanh",
+    "note": "printed LL on the r scale (4 dp; Excel drops trailing zeros), Table 10.2; tol = half unit + 1.96-vs-quantile allowance x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.5225,
+    "tol": 5.25e-05,
+    "transform": "tanh",
+    "note": "printed UL on the r scale (4 dp), Table 10.2; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "estimate",
+    "value": 0.38,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.22,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.52,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.4000596500560566,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(r)"
+   },
+   {
+    "path": "se",
+    "value": 0.09166984970282113,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/(n-3))"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.22038674463852717,
+    "tol": 3.303e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier LL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9 because the engine uses the exact quantile"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.579732555473586,
+    "tol": 3.303e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier UL* used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "Per-study Wald CI on the Fisher z scale reproduced as a k = 1 fixed-effect fit (estimate = yi, se = sqrt(vi)); r-scale limits via the tanh transform. The book uses z = 1.96 exactly; the engine uses the exact 0.975 quantile 1.959964, hence the |1.96 - z|*SE allowance (3.3e-06 here).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__moore_ci_comment_typo",
+  "example_id": "khan_ch10__fisher_z_per_study_ci",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.1, Comment p. 221",
+  "description": "Moore (2006): the Comment's printed r-scale CI lower limit 0.34 (typo for 0.43).",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "ci_lower",
+    "value": 0.34,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "printed '95% confidence interval (0.34, 0.67)', Comment p. 221"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (digit transposition, also in the original DOCX): the book's own calculation on p. 221 gives LL = 1.51396/3.51396 = 0.43084 ~ 0.43, and Fig. 10.1 prints 0.43; the Comment prints 0.34. The correct 0.43084 / 0.43 is tested in khan_ch10__fisher_z_ci_moore (engine 0.43084)."
+ },
+ {
+  "case_id": "khan_ch10__moore_z_test",
+  "example_id": "khan_ch10__moore_z_test_rho0",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.3 Example 10.2 p. 222",
+  "description": "Moore (2006): z test of H0 rho = 0 on the Fisher z scale, Z = atanh(r)*sqrt(n-3), two-sided p.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "stat",
+    "value": 7.215408,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed z0 = 7.215408 (6 dp), p. 222 (computed from unrounded Z and SE)"
+   },
+   {
+    "path": "stat",
+    "value": 7.22,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed z0 ~ 7.22 (2 dp), p. 222"
+   },
+   {
+    "path": "p",
+    "value": 0.0,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed p = '2 x 0 = 0' from a normal table, p. 222; tol = half a unit of the 4th decimal of a standard normal table"
+   },
+   {
+    "path": "stat",
+    "value": 7.21540847623336,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): atanh(0.56)*sqrt(130)"
+   },
+   {
+    "path": "p",
+    "value": 5.377231696368248e-13,
+    "tol": 1e-16,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): exact two-sided normal p = 5.377e-13 (tol 1e-16 ~ 2e-4 relative)"
+   }
+  ],
+  "note": "A single-study fixed-effect fit gives stat = yi/sqrt(vi). The printed chain '0.6328/0.08771' would give 7.214685; the book's 7.215408 uses the unrounded values.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fixed_effect_fisher_z",
+  "example_id": "khan_ch10__fixed_effect_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.4 Example 10.3: Table 10.3 p. 224, results pp. 224-225; forest plot Fig. 10.1 p. 221",
+  "description": "Fixed-effect inverse-variance pooling of 8 correlations on the Fisher z scale (w = n-3), back-transformed to r.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.542623,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed theta_FE = 517.663/954 (6 dp), p. 224"
+   },
+   {
+    "path": "estimate",
+    "value": 0.54,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed '0.542623 ~ 0.54' (2 dp), p. 224"
+   },
+   {
+    "path": "se",
+    "value": 0.03238,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed SE = sqrt(1/954) (5 dp), p. 224"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.47917,
+    "tol": 6.17e-06,
+    "transform": null,
+    "note": "printed LL* (5 dp), p. 224; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.60608,
+    "tol": 6.17e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), p. 224; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "estimate",
+    "value": 0.494971,
+    "tol": 5e-07,
+    "transform": "tanh",
+    "note": "printed rho_FE (6 dp), p. 225"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.44558,
+    "tol": 6.17e-06,
+    "transform": "tanh",
+    "note": "printed LL = (2.60736-1)/(2.60736+1) = 0.44558 (5 dp), p. 224; tol = half unit + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.54136,
+    "tol": 7.17e-06,
+    "transform": "tanh",
+    "note": "UL from the book's own printed intermediate exp(2*UL*) = 3.36074 (p. 225): (3.36074-1)/(3.36074+1) = 0.541362; the printed result '0.54236' is a typo (known_gap khan_ch10__fe_ci_upper_r_typo). tol = half unit + 1e-6 (3.36074 is itself rounded to 5 dp: 2/(4.36)^2 * 5e-6 = 5.3e-7) + 1.96-vs-quantile allowance"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.54,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "printed '~ 0.54' (2 dp), p. 225 and Fig. 10.1"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot overall r (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.45,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.1 and Interpretation p. 225"
+   },
+   {
+    "path": "Q",
+    "value": 14.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest plot Q (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest plot p (2 dp), Fig. 10.1"
+   },
+   {
+    "path": "I2",
+    "value": 51,
+    "tol": 0.5,
+    "transform": null,
+    "note": "forest plot I^2 (%, integer), Fig. 10.1"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 13.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Moore (2006) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 15.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Davis (2008) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Thomas (1999) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Miller (2012) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Williams (2012) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 15.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Young (2013) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 6.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Baker (2009) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 12.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Adams (2006) FE % weight (1 dp), Fig. 10.1 (= 100(n-3)/954)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5426234341153239,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sum(w y)/sum(w)"
+   },
+   {
+    "path": "se",
+    "value": 0.03237619541190881,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/954)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49497123931969983,
+    "tol": 1e-09,
+    "transform": "tanh",
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): tanh(theta_FE)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4791660911079826,
+    "tol": 1.168e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6060807771226652,
+    "tol": 1.168e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   },
+   {
+    "path": "Q",
+    "value": 14.15359957816446,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Cochran Q"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.048515910306821695,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): chi2(7) upper tail of Q"
+   },
+   {
+    "path": "I2",
+    "value": 50.54261665845565,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): 100 (Q-df)/Q"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 13.626834381551364,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Moore (2006) 100(n-3)/954"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 15.30398322851153,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Davis (2008) 100(n-3)/954"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.417190775681341,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Thomas (1999) 100(n-3)/954"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.264150943396224,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Miller (2012) 100(n-3)/954"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 11.320754716981131,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Williams (2012) 100(n-3)/954"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 15.618448637316561,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Young (2013) 100(n-3)/954"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 5.9748427672955975,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Baker (2009) 100(n-3)/954"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 12.473794549266247,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Adams (2006) 100(n-3)/954"
+   }
+  ],
+  "note": "Book: z_crit = 1.96 exactly; engine: exact quantile, hence the |1.96 - z|*SE = 1.2e-06 allowance on limits. Not checked (no engine path): sum w = 954, sum wZ = 517.663, per-study W and WZ (Table 10.3), exp(2*LL*) = 2.60736, exp(2*UL*) = 3.36074 - all covered through estimate/SE/limits. Source errors encoded as known_gap: UL r '0.54236' (khan_ch10__fe_ci_upper_r_typo) and the text's '0.44558 ~ 0.44' (khan_ch10__fe_ci_lower_r_text_rounding).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__fe_ci_upper_r_typo",
+  "example_id": "khan_ch10__fixed_effect_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.3 p. 225",
+  "description": "Fixed-effect r-scale CI upper limit as printed (0.54236, typo for 0.54136).",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "ci_upper",
+    "value": 0.54236,
+    "tol": 6.17e-06,
+    "transform": "tanh",
+    "note": "printed UL = 0.54236 (5 dp), p. 225"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (digit typo, also in the original DOCX): the book's own printed intermediate gives (3.36074-1)/(3.36074+1) = 0.541362 and tanh(0.6060808) = 0.5413624, so the printed 0.54236 is off by 1.0e-3 (200x the half-unit tolerance). The correct 0.54136 and the 2-dp 0.54 are tested in khan_ch10__fixed_effect_fisher_z (engine 0.541361)."
+ },
+ {
+  "case_id": "khan_ch10__fe_ci_lower_r_text_rounding",
+  "example_id": "khan_ch10__fixed_effect_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 Ex 10.3 p. 224 ('0.44558 ~ 0.44') and Comment p. 225 ('(0.44, 0.54)')",
+  "description": "Fixed-effect r-scale CI lower limit as rounded in the text (0.44; correct rounding 0.45).",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "ci_lower",
+    "value": 0.44,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "printed '0.44558 ~ 0.44', p. 224; '(0.44, 0.54)', p. 225"
+   }
+  ],
+  "status": "known_gap",
+  "gap_reason": "Source error (rounding/truncation): 0.44558 rounds to 0.45, not 0.44; |0.44558 - 0.44| = 0.0056 > the half-unit 0.005. Fig. 10.1, the Interpretation (p. 225) and §10.7 all print 0.45, which is tested in khan_ch10__fixed_effect_fisher_z together with the 5-dp 0.44558."
+ },
+ {
+  "case_id": "khan_ch10__heterogeneity_q_i2",
+  "example_id": "khan_ch10__heterogeneity_q_i2",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.4 'Measuring Heterogeneity', Example 10.4: Table 10.4 p. 227, results p. 227",
+  "description": "Cochran's Q (computational form), df, p-value bracket and I^2 for the 8 Fisher-z correlation studies.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "fixed",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 14.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q = 295.05 - 517.663^2/954 = 14.15 (2 dp), p. 227"
+   },
+   {
+    "path": "Q_df",
+    "value": 7,
+    "tol": 0.0,
+    "transform": null,
+    "note": "printed df = k - 1 = 7, p. 227"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.0375,
+    "tol": 0.0125,
+    "transform": null,
+    "note": "printed 'p-value is between 0.025 and 0.05' (Q = 14.15 lies between chi2_.05(7) = 14.067 and chi2_.025(7)), p. 227; encoded as the interval midpoint 0.0375 +/- 0.0125"
+   },
+   {
+    "path": "I2",
+    "value": 50.54,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed I^2 = 0.5054 (4 dp, as a fraction), p. 227; engine reports %, so tol = 100 x half a unit of the 4th decimal"
+   },
+   {
+    "path": "I2",
+    "value": 51,
+    "tol": 0.5,
+    "transform": null,
+    "note": "printed I^2 ~ 51% (integer), p. 227 and Fig. 10.1"
+   },
+   {
+    "path": "Q",
+    "value": 14.15359957816446,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sum(w y^2) - (sum w y)^2/sum w"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.048515910306821695,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): chi2(7) upper tail"
+   },
+   {
+    "path": "I2",
+    "value": 50.54261665845565,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): 100 (Q - df)/Q"
+   },
+   {
+    "path": "H2",
+    "value": 2.021942796880637,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Q/df (H^2 is not printed in the source)"
+   }
+  ],
+  "note": "The book's displayed arithmetic 7.15/14.15 = 0.5053 does not give its own printed 0.5054, which follows from the unrounded Q = 14.1536; the printed 0.5054 is the oracle. Not checked (no engine path): sums 954 / 517.663 / 119564 / 295.05, per-study W, WZ, W^2, WZ^2 (Table 10.4) and chi2_.05(7) = 14.067 - covered through Q. Example 10.4 refers to 'Table 8.1' (typo for Table 10.1).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__tau2_dersimonian_laird",
+  "example_id": "khan_ch10__tau2_dersimonian_laird",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.5 'Estimation of tau^2' pp. 228-229, Example 10.5 p. 229 (sums from Table 10.4 p. 227)",
+  "description": "DerSimonian-Laird tau^2 = (Q - df)/C with C = sum w - sum w^2/sum w for the 8 Fisher-z correlation studies.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "Q",
+    "value": 14.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed Q (2 dp), p. 229"
+   },
+   {
+    "path": "Q_df",
+    "value": 7,
+    "tol": 0.0,
+    "transform": null,
+    "note": "printed df, p. 229"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 828.6709,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed C = 954 - 119564/954 (4 dp), p. 229"
+   },
+   {
+    "path": "tau2",
+    "value": 0.008633,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed tau^2 = (Q - df)/C (6 dp), p. 229 (uses the unrounded Q)"
+   },
+   {
+    "path": "heterogeneity.tau2_DL",
+    "value": 0.008633,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed tau^2 (6 dp), p. 229; model-independent DL block"
+   },
+   {
+    "path": "tau2",
+    "value": 0.0086,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed tau^2 (4 dp), Tables 10.5-10.6"
+   },
+   {
+    "path": "heterogeneity.C",
+    "value": 828.670859538784,
+    "tol": 1e-08,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): C"
+   },
+   {
+    "path": "tau2",
+    "value": 0.008632618724092654,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): DL tau^2 (statsmodels and pymare agree)"
+   },
+   {
+    "path": "tau",
+    "value": 0.09291188688264088,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(tau^2) (tau is not printed in the source)"
+   }
+  ],
+  "note": "Computing from the rounded Q, (14.15 - 7)/828.6709 = 0.008628; the printed 0.008633 matches the full-precision Q = 14.1536, so no rounding allowance is needed. Truncation at 0 is irrelevant (Q > df).",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__random_effects_dl_fisher_z",
+  "example_id": "khan_ch10__random_effects_dl_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.5 Example 10.6: Table 10.5 p. 230, results pp. 230-231; forest plot Fig. 10.2 p. 231; interpretation p. 232",
+  "description": "DerSimonian-Laird random-effects pooling of 8 correlations on the Fisher z scale (z-based CI), back-transformed to r.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_method": "DL",
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "tau2",
+    "value": 0.0086,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed tau^2 column (4 dp), Table 10.5"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5411,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed theta_RE = 250.41/462.82 (4 dp), p. 230"
+   },
+   {
+    "path": "estimate",
+    "value": 0.54,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed '0.5411 ~ 0.54' (2 dp), p. 230"
+   },
+   {
+    "path": "se",
+    "value": 0.0465,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed SE = sqrt(1/462.82) (4 dp), p. 230"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.449943,
+    "tol": 3.62e-06,
+    "transform": null,
+    "note": "printed LL* (6 dp), p. 230; the book used tau^2 rounded to 0.008633: tol = half unit + max 6-dp tau^2-rounding shift (1.4e-06) + |1.96 - z_.975|*SE (1.7e-06)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.632157,
+    "tol": 3.43e-06,
+    "transform": null,
+    "note": "printed UL* (6 dp), p. 230; tol = half unit + tau^2-rounding shift (1.2e-06) + 1.96-vs-quantile (1.7e-06)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.45,
+    "tol": 0.00501,
+    "transform": null,
+    "note": "printed '0.449943 ~ 0.45' (2 dp), p. 230"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.63,
+    "tol": 0.00501,
+    "transform": null,
+    "note": "printed '0.632157 ~ 0.63' (2 dp), p. 230"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.42185,
+    "tol": 7.56e-06,
+    "transform": "tanh",
+    "note": "printed LL r = 1.45932/3.45932 (5 dp), p. 230; tol = half unit + (tau^2-rounding + 1.96-vs-quantile) x (1 - r^2)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.55954,
+    "tol": 7.01e-06,
+    "transform": "tanh",
+    "note": "printed UL r = 2.54066/4.54066 (5 dp), p. 231 (knife-edge: 0.5595350 with z = 1.96); tol = half unit + (tau^2-rounding + 1.96-vs-quantile) x (1 - r^2)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49382,
+    "tol": 4.29e-05,
+    "transform": "tanh",
+    "note": "printed rho_RE = tanh(0.5411) (5 dp), p. 231: the book applied tanh to the 4-dp theta, so tol = half unit + half a unit of the 4th decimal x (1 - rho^2) = 3.8e-05"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot overall r (2 dp), Fig. 10.2"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.42,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI lower (2 dp), Fig. 10.2"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.56,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "forest plot CI upper (2 dp), Fig. 10.2"
+   },
+   {
+    "path": "Q",
+    "value": 14.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest plot Q (2 dp), Fig. 10.2"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest plot p (2 dp), Fig. 10.2"
+   },
+   {
+    "path": "I2",
+    "value": 51,
+    "tol": 0.5,
+    "transform": null,
+    "note": "forest plot I^2 (%), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 13.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Moore (2006) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 14.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Davis (2008) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Thomas (1999) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Miller (2012) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 12.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Williams (2012) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 14.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Young (2013) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 8.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Baker (2009) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 12.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Adams (2006) RE % weight (1 dp), Fig. 10.2 (= 100 w*/sum w*)"
+   },
+   {
+    "path": "tau2",
+    "value": 0.008632618724092654,
+    "tol": 1e-12,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): DL tau^2"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5410502447600395,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): theta_RE (statsmodels/pymare agree)"
+   },
+   {
+    "path": "se",
+    "value": 0.04648252685051275,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(1/sum w*)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49378255126283827,
+    "tol": 1e-09,
+    "transform": "tanh",
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): tanh(theta_RE) = 0.49378 (the printed 0.49382 is tanh of the 4-dp theta)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4499444921330345,
+    "tol": 1.676e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6321559973870445,
+    "tol": 1.676e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 13.235130421402884,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Moore (2006) 100 w*/sum w*"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 13.955784408814273,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Davis (2008) 100 w*/sum w*"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.13839892954527,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Thomas (1999) 100 w*/sum w*"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.576671590792573,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Miller (2012) 100 w*/sum w*"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 12.076011832961655,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Williams (2012) 100 w*/sum w*"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 14.08121313061939,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Young (2013) 100 w*/sum w*"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 8.254071734185043,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Baker (2009) 100 w*/sum w*"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 12.682717951678914,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Adams (2006) 100 w*/sum w*"
+   }
+  ],
+  "note": "Full-precision DL; the book carried tau^2 = 0.008633 into the RE step (its book chain is tested exactly in khan_ch10__random_effects_tau2_rounded). Not checked (no engine path): per-study Var* (Moore 0.01633), W*, W*Z, sum W* = 462.82, sum W*Z = 250.41, exp(2*LL*) = 2.45932, exp(2*UL*) = 3.54066 - covered through estimate/SE/limits and % weights. The source gives no prediction interval.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__random_effects_tau2_rounded",
+  "example_id": "khan_ch10__random_effects_dl_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 Example 10.6: Table 10.5 p. 230, results pp. 230-231 (tau^2 = 0.008633 from Example 10.5 p. 229)",
+  "description": "Random-effects pooling with tau^2 fixed at the printed 0.008633 (the book's chain), Fisher z scale and r scale.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "random",
+   "tau2_fixed": 0.008633,
+   "ci_method": "z"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5411,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed theta_RE (4 dp), p. 230"
+   },
+   {
+    "path": "se",
+    "value": 0.0465,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed SE (4 dp), p. 230"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.449943,
+    "tol": 2.18e-06,
+    "transform": null,
+    "note": "printed LL* (6 dp), p. 230; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.632157,
+    "tol": 2.18e-06,
+    "transform": null,
+    "note": "printed UL* (6 dp), p. 230; tol = half unit + |1.96 - z_.975|*SE"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.42185,
+    "tol": 6.68e-06,
+    "transform": "tanh",
+    "note": "printed LL r (5 dp), p. 230"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.55954,
+    "tol": 6.68e-06,
+    "transform": "tanh",
+    "note": "printed UL r (5 dp), p. 231"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49382,
+    "tol": 4.29e-05,
+    "transform": "tanh",
+    "note": "printed rho_RE = tanh(0.5411) (5 dp), p. 231; tol = half unit + half a unit of the 4th decimal of theta x (1 - rho^2)"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 13.2,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Moore (2006) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 14.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Davis (2008) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Thomas (1999) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Miller (2012) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 12.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Williams (2012) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 14.1,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Young (2013) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 8.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Baker (2009) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 12.7,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Adams (2006) RE % weight (1 dp), Fig. 10.2"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5410501735705607,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): theta with tau^2 = 0.008633"
+   },
+   {
+    "path": "se",
+    "value": 0.046483049274651314,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): SE with tau^2 = 0.008633"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.44994339699224417,
+    "tol": 1.676e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6321569501488773,
+    "tol": 1.676e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "tau2_fixed reproduces the book's Table 10.5 intermediate chain (sum W* = 462.8186 -> printed 462.82, W* row 61.255/64.59/...); with it every printed z-scale decimal matches up to the 1.96-vs-quantile allowance. The exact DL tau^2 is tested in khan_ch10__tau2_dersimonian_laird and khan_ch10__random_effects_dl_fisher_z.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__ivhet_fisher_z",
+  "example_id": "khan_ch10__ivhet_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.6 Example 10.7: Table 10.6 p. 233, results pp. 233-234; forest plot Fig. 10.3 p. 235; interpretation p. 235",
+  "description": "IVhet (Doi 2015) pooling of 8 correlations on the Fisher z scale: FE point estimate, Var = sum (w/W)^2 (v + tau2_DL).",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet"
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5426,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed theta_IVhet = 517.66/954 (4 dp), p. 234"
+   },
+   {
+    "path": "estimate",
+    "value": 0.54,
+    "tol": 0.005,
+    "transform": null,
+    "note": "printed '0.5426 ~ 0.54' (2 dp), p. 234"
+   },
+   {
+    "path": "se",
+    "value": 0.0022,
+    "tol": 5e-05,
+    "transform": "square",
+    "note": "printed sum of the per-study variance contributions W* = Var_IVhet (4 dp), Table 10.6"
+   },
+   {
+    "path": "estimate",
+    "value": 0.495,
+    "tol": 0.0005,
+    "transform": "tanh",
+    "note": "printed rho_IVhet (3 dp), p. 234"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.42,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "printed '0.422771 ~ 0.42' (2 dp), p. 234; forest plot Fig. 10.3"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.56,
+    "tol": 0.00501,
+    "transform": "tanh",
+    "note": "printed '0.56093 ~ 0.56' (2 dp), p. 234; forest plot Fig. 10.3"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49,
+    "tol": 0.005,
+    "transform": "tanh",
+    "note": "forest plot overall r (2 dp), Fig. 10.3"
+   },
+   {
+    "path": "Q",
+    "value": 14.15,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest plot Q (2 dp), Fig. 10.3"
+   },
+   {
+    "path": "p_Q",
+    "value": 0.05,
+    "tol": 0.005,
+    "transform": null,
+    "note": "forest plot p (2 dp), Fig. 10.3"
+   },
+   {
+    "path": "I2",
+    "value": 51,
+    "tol": 0.5,
+    "transform": null,
+    "note": "forest plot I^2 (%), Fig. 10.3"
+   },
+   {
+    "path": "tau2",
+    "value": 0.0086,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed tau^2 column (4 dp), Table 10.6"
+   },
+   {
+    "path": "weights_pct.0",
+    "value": 13.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Moore (2006) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "weights_pct.1",
+    "value": 15.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Davis (2008) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "weights_pct.2",
+    "value": 13.4,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Thomas (1999) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "weights_pct.3",
+    "value": 12.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Miller (2012) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "weights_pct.4",
+    "value": 11.3,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Williams (2012) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "weights_pct.5",
+    "value": 15.6,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Young (2013) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "weights_pct.6",
+    "value": 6.0,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Baker (2009) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "weights_pct.7",
+    "value": 12.5,
+    "tol": 0.05,
+    "transform": null,
+    "note": "Adams (2006) IVhet % weight (1 dp) = FE weight, Fig. 10.3"
+   },
+   {
+    "path": "estimate",
+    "value": 0.5426234341153239,
+    "tol": 1e-09,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): FE estimate"
+   },
+   {
+    "path": "se",
+    "value": 0.04671514423459983,
+    "tol": 1e-10,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): sqrt(sum (w/W)^2 (v + tau2_DL))"
+   },
+   {
+    "path": "se",
+    "value": 0.0021823047008594663,
+    "tol": 1e-12,
+    "transform": "square",
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): Var_IVhet"
+   },
+   {
+    "path": "estimate",
+    "value": 0.49497123931969983,
+    "tol": 1e-09,
+    "transform": "tanh",
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): tanh(theta)"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.4510617514155082,
+    "tol": 1.684e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.6341851168151396,
+    "tol": 1.684e-06,
+    "transform": null,
+    "note": "TIGHT check vs the verifier's full-precision value (not printed in this precision): verifier used z = 1.96; tol = |1.96 - z_.975|*SE + 1e-9"
+   }
+  ],
+  "note": "The book's 6-dp SE 0.046716, LL* 0.451061 and UL* 0.63419 (and the r-scale limits derived from them) come from tau^2 rounded to 0.008633 and z = 1.96; they are checked at half-unit precision in khan_ch10__ivhet_tau2_rounded (tau2_fixed). This case runs the full-precision DL tau^2 chain. Not checked (no engine path): per-study variance contributions W* (Moore 0.0003, ..., Baker 9E-05), WZ, sum wZ = 517.66, exp(2*LL*) = 2.46483 and exp(2*UL*) printed 3.55506 (a typo for 3.55509 = exp(2*0.63419); the downstream UL r 0.56093 is unaffected). The text's claim that RE and IVhet give the same CI holds only at 2 dp.",
+  "status": "active"
+ },
+ {
+  "case_id": "khan_ch10__ivhet_tau2_rounded",
+  "example_id": "khan_ch10__ivhet_fisher_z",
+  "source_id": "khan2020",
+  "location": "Ch10 §10.6 Example 10.7: Table 10.6 p. 233, results pp. 233-234 (tau^2 = 0.008633 from Example 10.5 p. 229)",
+  "description": "IVhet pooling with tau^2 fixed at the printed 0.008633 and z = 1.96 (the book's chain): SE, CI on the Fisher z and r scales at the printed precision.",
+  "measure": "ZCOR",
+  "options": {},
+  "rows": [
+   {
+    "study": "Moore (2006)",
+    "r": 0.56,
+    "n": 133
+   },
+   {
+    "study": "Davis (2008)",
+    "r": 0.43,
+    "n": 149
+   },
+   {
+    "study": "Thomas (1999)",
+    "r": 0.53,
+    "n": 131
+   },
+   {
+    "study": "Miller (2012)",
+    "r": 0.51,
+    "n": 120
+   },
+   {
+    "study": "Williams (2012)",
+    "r": 0.66,
+    "n": 111
+   },
+   {
+    "study": "Young (2013)",
+    "r": 0.46,
+    "n": 152
+   },
+   {
+    "study": "Baker (2009)",
+    "r": 0.33,
+    "n": 60
+   },
+   {
+    "study": "Adams (2006)",
+    "r": 0.38,
+    "n": 122
+   }
+  ],
+  "call": "meta_analysis",
+  "call_args": {
+   "model": "ivhet",
+   "tau2_fixed": 0.008633,
+   "level": 0.950004209703559
+  },
+  "expected": [
+   {
+    "path": "estimate",
+    "value": 0.5426,
+    "tol": 5e-05,
+    "transform": null,
+    "note": "printed theta_IVhet = 517.66/954 (4 dp), p. 234 (FE estimate, tau^2-independent)"
+   },
+   {
+    "path": "se",
+    "value": 0.0022,
+    "tol": 5e-05,
+    "transform": "square",
+    "note": "printed sum of the per-study variance contributions W* = Var_IVhet (4 dp), Table 10.6"
+   },
+   {
+    "path": "se",
+    "value": 0.046716,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed SE (6 dp), p. 234; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.451061,
+    "tol": 5e-07,
+    "transform": null,
+    "note": "printed LL* (6 dp), p. 234; level = 2*Phi(1.96) - 1 = 0.950004209703559 reproduces the book's z = 1.96; tol = half unit"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.63419,
+    "tol": 5e-06,
+    "transform": null,
+    "note": "printed UL* (5 dp), p. 234; tol = half unit"
+   },
+   {
+    "path": "ci_lower",
+    "value": 0.422771,
+    "tol": 1.333e-06,
+    "transform": "tanh",
+    "note": "printed LL r = 1.46483/3.46483 (6 dp), p. 234: the book goes through the 5-dp intermediate exp(2*LL*) = 2.46483, so tol = half unit (5e-7) + its half unit x dr/dE = 5e-6 x 2/3.46483^2 (8.33e-7)"
+   },
+   {
+    "path": "ci_upper",
+    "value": 0.56093,
+    "tol": 5e-06,
+    "transform": "tanh",
+    "note": "printed UL r (5 dp), p. 234; tol = half unit (the 5-dp intermediate exp(2*UL*) shifts r by at most 4.8e-7)"
+   },
+   {
+    "path": "estimate",
+    "value": 0.495,
+    "tol": 0.0005,
+    "transform": "tanh",
+    "note": "printed rho_IVhet (3 dp), p. 234"
+   },
+   {
+    "path": "tau2",
+    "value": 0.008633,
+    "tol": 1e-15,
+    "transform": null,
+    "note": "the fixed tau^2 (Example 10.5, 6 dp) is used as given"
+   }
+  ],
+  "note": "Same data as khan_ch10__ivhet_fisher_z. tau2_fixed = 0.008633 and level = 2*Phi(1.96) - 1 = 0.950004209703559 (z = 1.96) reproduce the book's IVhet chain, so every printed tau^2-dependent decimal is checked at half-unit precision (no tau^2-rounding or 1.96-vs-quantile allowance); see also tests/test_backlog_Z.py test_ivhet_tau2_fixed_khan_ch10.",
+  "status": "active"
+ }
+]

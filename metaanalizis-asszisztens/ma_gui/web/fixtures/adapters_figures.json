@@ -1,0 +1,1555 @@
+{
+ "description": "GET /api/figures, POST /api/figures/export, POST /api/figures/audit — a valódi szerver válaszai a BCG VALÓDI commit-futásán (a számok és a számhűség-ellenőrzés a motor szövegeiből). fx: legacy (motor-SVG, PNG/PDF átalakító nélkül, TIFF figure-forge nélkül kimarad), conflict (409), h5 (a figure-forge audit H5 miatt nem fut — a QC a munkapad saját ellenőrzése), ff (figure-forge F2), issues (egy szám hiányzik az ábráról → nem zöld).",
+ "routes": [
+  {
+   "method": "GET",
+   "path": "/api/figures",
+   "query": {
+    "fx": "legacy-norun"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-options/v1",
+    "data": {
+     "schema": "szk.ma.figure-options/v1",
+     "run": null,
+     "runs": [
+      {
+       "run_id": "20261004T211200Z-a1f3c2",
+       "outcome_id": "o1",
+       "stale": false,
+       "purpose": "primary",
+       "started": "2026-10-05T10:00:00Z",
+       "k": 13
+      }
+     ],
+     "renderers": [
+      {
+       "id": "figure-forge",
+       "available": false,
+       "state": "legacy",
+       "version": "0.2.1",
+       "mode": null,
+       "remedy": {
+        "hu": "A figure-forge 0.2.1 nem rajzol meta-analitikus ábrát (H6: nincs gyémánt, predikciós intervallum, alcsoport); a publikációs ábra addig a motor SVG-je. A figure-forge F2-es (meta) változatával itt automatikusan elérhető lesz.",
+        "en": "figure-forge 0.2.1 does not draw meta-analytic figures (H6: no diamond, prediction interval, subgroups); the publication figure is the engine SVG until then. It becomes available here with the figure-forge F2 (meta) release."
+       }
+      },
+      {
+       "id": "engine",
+       "available": true,
+       "render_fn": null,
+       "remedy": {
+        "hu": "A motor rajzoló-függvénye (metaelemzes.api.render_figure) még nincs meg: a futás saját SVG-je készül (a futás nyelvén, rétegek nélkül). Frissítsd a motort az angol feliratú, rétegzett SVG-hez.",
+        "en": "The engine drawing function (metaelemzes.api.render_figure) is missing: the run's own SVG is used (in the run's language, without layers). Update the engine for the English, layered SVG."
+       }
+      },
+      {
+       "id": "browser_png",
+       "available": true,
+       "preview_only": true
+      }
+     ],
+     "formats": [
+      {
+       "id": "svg",
+       "available": true,
+       "via": [
+        "engine"
+       ]
+      },
+      {
+       "id": "pdf",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "png",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "tiff",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      },
+      {
+       "id": "pptx",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      }
+     ],
+     "converters": [],
+     "dpis": [
+      300,
+      600,
+      1200
+     ],
+     "widths": [
+      "single",
+      "1.5",
+      "double"
+     ],
+     "langs": [
+      "en",
+      "hu"
+     ],
+     "palettes": [
+      "okabe-ito"
+     ],
+     "audit": {
+      "figure_forge": {
+       "mode": "bridge",
+       "available": true,
+       "fallback": "stdlib",
+       "guard": null,
+       "remedy": null
+      },
+      "stdlib": true
+     },
+     "figure_forge": {
+      "state": "legacy",
+      "version": "0.2.1",
+      "guards": [
+       "H5",
+       "H6"
+      ]
+     },
+     "existing": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp002"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/figures",
+   "query": {
+    "run": "20261004T211200Z-a1f3c2",
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-options/v1",
+    "data": {
+     "schema": "szk.ma.figure-options/v1",
+     "run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "outcome_id": "o1",
+      "stale": false,
+      "measure": "RR",
+      "purpose": "primary",
+      "display_locale": "hu",
+      "kinds": [
+       {
+        "kind": "forest",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "funnel",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "doi",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "loo",
+        "available": false,
+        "source": null,
+        "reason": {
+         "hu": "Ehhez az ábrához a motor rajzoló-függvénye (metaelemzes.api.render_figure) kell — frissítsd a motort (git pull), majd indítsd újra a munkapadot.",
+         "en": "This figure needs the engine drawing function (metaelemzes.api.render_figure) — update the engine (git pull), then restart the workbench."
+        }
+       }
+      ]
+     },
+     "runs": [
+      {
+       "run_id": "20261004T211200Z-a1f3c2",
+       "outcome_id": "o1",
+       "stale": false,
+       "purpose": "primary",
+       "started": "2026-10-05T10:00:00Z",
+       "k": 13
+      }
+     ],
+     "renderers": [
+      {
+       "id": "figure-forge",
+       "available": false,
+       "state": "legacy",
+       "version": "0.2.1",
+       "mode": null,
+       "remedy": {
+        "hu": "A figure-forge 0.2.1 nem rajzol meta-analitikus ábrát (H6: nincs gyémánt, predikciós intervallum, alcsoport); a publikációs ábra addig a motor SVG-je. A figure-forge F2-es (meta) változatával itt automatikusan elérhető lesz.",
+        "en": "figure-forge 0.2.1 does not draw meta-analytic figures (H6: no diamond, prediction interval, subgroups); the publication figure is the engine SVG until then. It becomes available here with the figure-forge F2 (meta) release."
+       }
+      },
+      {
+       "id": "engine",
+       "available": true,
+       "render_fn": null,
+       "remedy": {
+        "hu": "A motor rajzoló-függvénye (metaelemzes.api.render_figure) még nincs meg: a futás saját SVG-je készül (a futás nyelvén, rétegek nélkül). Frissítsd a motort az angol feliratú, rétegzett SVG-hez.",
+        "en": "The engine drawing function (metaelemzes.api.render_figure) is missing: the run's own SVG is used (in the run's language, without layers). Update the engine for the English, layered SVG."
+       }
+      },
+      {
+       "id": "browser_png",
+       "available": true,
+       "preview_only": true
+      }
+     ],
+     "formats": [
+      {
+       "id": "svg",
+       "available": true,
+       "via": [
+        "engine"
+       ]
+      },
+      {
+       "id": "pdf",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "png",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "tiff",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      },
+      {
+       "id": "pptx",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      }
+     ],
+     "converters": [],
+     "dpis": [
+      300,
+      600,
+      1200
+     ],
+     "widths": [
+      "single",
+      "1.5",
+      "double"
+     ],
+     "langs": [
+      "en",
+      "hu"
+     ],
+     "palettes": [
+      "okabe-ito"
+     ],
+     "audit": {
+      "figure_forge": {
+       "mode": "bridge",
+       "available": true,
+       "fallback": "stdlib",
+       "guard": null,
+       "remedy": null
+      },
+      "stdlib": true
+     },
+     "figure_forge": {
+      "state": "legacy",
+      "version": "0.2.1",
+      "guards": [
+       "H5",
+       "H6"
+      ]
+     },
+     "existing": []
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp003"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/figures/export",
+   "query": {
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-export/v1",
+    "data": {
+     "schema": "szk.ma.figure-export/v1",
+     "run_id": "20261004T211200Z-a1f3c2",
+     "outcome_id": "o1",
+     "run_stale": false,
+     "kind": "forest",
+     "stem": "fig_forest_o1",
+     "dir": "06_kezirat/abrak",
+     "renderer": {
+      "requested": "auto",
+      "used": "engine",
+      "svg_source": "run_file",
+      "ff_version": null
+     },
+     "lang": {
+      "requested": "en",
+      "used": "hu"
+     },
+     "formats": {
+      "svg": {
+       "path": "06_kezirat/abrak/fig_forest_o1.svg",
+       "sha256": "5eea89a95352a38fef1bf300ac1c92ea734ad29a20e2378617f16f6645a872b2",
+       "bytes": 7269,
+       "via": "engine"
+      }
+     },
+     "downloads": {
+      "svg": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig_forest_o1.svg/1791200000/SIG",
+       "expires_at": 1791200000
+      }
+     },
+     "skipped": [
+      {
+       "format": "pdf",
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "format": "png",
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "format": "tiff",
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      }
+     ],
+     "result_path": "06_kezirat/abrak/fig_forest_o1.result.json",
+     "qc": {
+      "badge": "ok",
+      "stdlib": {
+       "source": "stdlib",
+       "text_elements": 56,
+       "outlined_text_groups": 0,
+       "editable": true,
+       "font_families": [
+        "Helvetica, Arial, sans-serif"
+       ],
+       "font_fallback_stack": true,
+       "named_layers": 0,
+       "typography": {
+        "suggestions_n": 0,
+        "suggestions": []
+       },
+       "glyphs": null
+      },
+      "figure_forge": {
+       "schema": "szk.ma.figure-audit/v1",
+       "source": "figure-forge",
+       "mode": "bridge",
+       "plugin_version": "0.2.1",
+       "typography": {
+        "suggestions_n": 0,
+        "suggestions": []
+       },
+       "glyphs": {
+        "ok": true,
+        "missing": []
+       },
+       "kind": "svg",
+       "editable": true,
+       "text_elements": 56,
+       "outlined_text_groups": 0,
+       "font_families": [
+        "Helvetica, Arial, sans-serif"
+       ],
+       "font_fallback_stack": true,
+       "named_layers": 0
+      },
+      "numbers": {
+       "kind": "forest",
+       "checked": 36,
+       "matched": 36,
+       "mismatches": [],
+       "unexplained": 0,
+       "ok": true
+      },
+      "ff_numbers": null,
+      "clean": null,
+      "editable": true,
+      "labels_checked": null,
+      "residual_violations": [],
+      "typography": null,
+      "glyphs": null
+     }
+    },
+    "warnings": [
+     "A futás saját SVG-je magyar feliratú; a kért (en) nyelvű, rétegzett motor-SVG-hez a motor render_figure függvénye kell (frissítsd a motort). Most a futás SVG-je készült."
+    ],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp004"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/figures/export",
+   "query": {
+    "fx": "conflict"
+   },
+   "status": 409,
+   "envelope": {
+    "ok": false,
+    "error": {
+     "code": "CONFLICT",
+     "http": 409,
+     "message": "Ilyen nevű ábra már van (06_kezirat/abrak/fig_forest_o1.result.json, 06_kezirat/abrak/fig_forest_o1.svg). Adj meg másik nevet, vagy kérd a felülírást.",
+     "details": {
+      "exists": [
+       "06_kezirat/abrak/fig_forest_o1.result.json",
+       "06_kezirat/abrak/fig_forest_o1.svg"
+      ],
+      "needs_overwrite": true
+     }
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/figures/audit",
+   "query": {
+    "fx": "legacy"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-audit-view/v1",
+    "data": {
+     "schema": "szk.ma.figure-audit-view/v1",
+     "path": "06_kezirat/abrak/fig_forest_o1.svg",
+     "kind": "forest",
+     "run_id": "20261004T211200Z-a1f3c2",
+     "figure_forge": {
+      "schema": "szk.ma.figure-audit/v1",
+      "source": "figure-forge",
+      "mode": "bridge",
+      "plugin_version": "0.2.1",
+      "typography": {
+       "suggestions_n": 0,
+       "suggestions": []
+      },
+      "glyphs": {
+       "ok": true,
+       "missing": []
+      },
+      "kind": "svg",
+      "editable": true,
+      "text_elements": 56,
+      "outlined_text_groups": 0,
+      "font_families": [
+       "Helvetica, Arial, sans-serif"
+      ],
+      "font_fallback_stack": true,
+      "named_layers": 0
+     },
+     "figure_forge_status": {
+      "mode": "bridge",
+      "available": true,
+      "fallback": "stdlib",
+      "guard": null,
+      "remedy": null
+     },
+     "stdlib": {
+      "source": "stdlib",
+      "text_elements": 56,
+      "outlined_text_groups": 0,
+      "editable": true,
+      "font_families": [
+       "Helvetica, Arial, sans-serif"
+      ],
+      "font_fallback_stack": true,
+      "named_layers": 0,
+      "typography": {
+       "suggestions_n": 0,
+       "suggestions": []
+      },
+      "glyphs": null
+     },
+     "numbers": {
+      "kind": "forest",
+      "checked": 36,
+      "matched": 36,
+      "mismatches": [],
+      "unexplained": 0,
+      "ok": true
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp006"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/figures",
+   "query": {
+    "run": "20261004T211200Z-a1f3c2",
+    "fx": "legacy-after"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-options/v1",
+    "data": {
+     "schema": "szk.ma.figure-options/v1",
+     "run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "outcome_id": "o1",
+      "stale": false,
+      "measure": "RR",
+      "purpose": "primary",
+      "display_locale": "hu",
+      "kinds": [
+       {
+        "kind": "forest",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "funnel",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "doi",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "loo",
+        "available": false,
+        "source": null,
+        "reason": {
+         "hu": "Ehhez az ábrához a motor rajzoló-függvénye (metaelemzes.api.render_figure) kell — frissítsd a motort (git pull), majd indítsd újra a munkapadot.",
+         "en": "This figure needs the engine drawing function (metaelemzes.api.render_figure) — update the engine (git pull), then restart the workbench."
+        }
+       }
+      ]
+     },
+     "runs": [
+      {
+       "run_id": "20261004T211200Z-a1f3c2",
+       "outcome_id": "o1",
+       "stale": false,
+       "purpose": "primary",
+       "started": "2026-10-05T10:00:00Z",
+       "k": 13
+      }
+     ],
+     "renderers": [
+      {
+       "id": "figure-forge",
+       "available": false,
+       "state": "legacy",
+       "version": "0.2.1",
+       "mode": null,
+       "remedy": {
+        "hu": "A figure-forge 0.2.1 nem rajzol meta-analitikus ábrát (H6: nincs gyémánt, predikciós intervallum, alcsoport); a publikációs ábra addig a motor SVG-je. A figure-forge F2-es (meta) változatával itt automatikusan elérhető lesz.",
+        "en": "figure-forge 0.2.1 does not draw meta-analytic figures (H6: no diamond, prediction interval, subgroups); the publication figure is the engine SVG until then. It becomes available here with the figure-forge F2 (meta) release."
+       }
+      },
+      {
+       "id": "engine",
+       "available": true,
+       "render_fn": null,
+       "remedy": {
+        "hu": "A motor rajzoló-függvénye (metaelemzes.api.render_figure) még nincs meg: a futás saját SVG-je készül (a futás nyelvén, rétegek nélkül). Frissítsd a motort az angol feliratú, rétegzett SVG-hez.",
+        "en": "The engine drawing function (metaelemzes.api.render_figure) is missing: the run's own SVG is used (in the run's language, without layers). Update the engine for the English, layered SVG."
+       }
+      },
+      {
+       "id": "browser_png",
+       "available": true,
+       "preview_only": true
+      }
+     ],
+     "formats": [
+      {
+       "id": "svg",
+       "available": true,
+       "via": [
+        "engine"
+       ]
+      },
+      {
+       "id": "pdf",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "png",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "tiff",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      },
+      {
+       "id": "pptx",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      }
+     ],
+     "converters": [],
+     "dpis": [
+      300,
+      600,
+      1200
+     ],
+     "widths": [
+      "single",
+      "1.5",
+      "double"
+     ],
+     "langs": [
+      "en",
+      "hu"
+     ],
+     "palettes": [
+      "okabe-ito"
+     ],
+     "audit": {
+      "figure_forge": {
+       "mode": "bridge",
+       "available": true,
+       "fallback": "stdlib",
+       "guard": null,
+       "remedy": null
+      },
+      "stdlib": true
+     },
+     "figure_forge": {
+      "state": "legacy",
+      "version": "0.2.1",
+      "guards": [
+       "H5",
+       "H6"
+      ]
+     },
+     "existing": [
+      {
+       "stem": "fig_forest_o1",
+       "kind": "forest",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "path": "06_kezirat/abrak/fig_forest_o1.result.json",
+       "formats": [
+        "svg"
+       ],
+       "renderer": "engine",
+       "generated": "2026-10-05T10:00:00Z",
+       "badge": "ok",
+       "stale": false
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp007"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/figures",
+   "query": {
+    "run": "20261004T211200Z-a1f3c2",
+    "fx": "h5"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-options/v1",
+    "data": {
+     "schema": "szk.ma.figure-options/v1",
+     "run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "outcome_id": "o1",
+      "stale": false,
+      "measure": "RR",
+      "purpose": "primary",
+      "display_locale": "hu",
+      "kinds": [
+       {
+        "kind": "forest",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "funnel",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "doi",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "loo",
+        "available": false,
+        "source": null,
+        "reason": {
+         "hu": "Ehhez az ábrához a motor rajzoló-függvénye (metaelemzes.api.render_figure) kell — frissítsd a motort (git pull), majd indítsd újra a munkapadot.",
+         "en": "This figure needs the engine drawing function (metaelemzes.api.render_figure) — update the engine (git pull), then restart the workbench."
+        }
+       }
+      ]
+     },
+     "runs": [
+      {
+       "run_id": "20261004T211200Z-a1f3c2",
+       "outcome_id": "o1",
+       "stale": false,
+       "purpose": "primary",
+       "started": "2026-10-05T10:00:00Z",
+       "k": 13
+      }
+     ],
+     "renderers": [
+      {
+       "id": "figure-forge",
+       "available": false,
+       "state": "unusable",
+       "version": "0.2.1",
+       "mode": null,
+       "remedy": {
+        "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+        "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+       }
+      },
+      {
+       "id": "engine",
+       "available": true,
+       "render_fn": null,
+       "remedy": {
+        "hu": "A motor rajzoló-függvénye (metaelemzes.api.render_figure) még nincs meg: a futás saját SVG-je készül (a futás nyelvén, rétegek nélkül). Frissítsd a motort az angol feliratú, rétegzett SVG-hez.",
+        "en": "The engine drawing function (metaelemzes.api.render_figure) is missing: the run's own SVG is used (in the run's language, without layers). Update the engine for the English, layered SVG."
+       }
+      },
+      {
+       "id": "browser_png",
+       "available": true,
+       "preview_only": true
+      }
+     ],
+     "formats": [
+      {
+       "id": "svg",
+       "available": true,
+       "via": [
+        "engine"
+       ]
+      },
+      {
+       "id": "pdf",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "png",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "PNG/PDF-hez nincs működő helyi SVG-átalakító (rsvg-convert, Inkscape, CairoSVG vagy ImageMagick). Telepítsd például a librsvg-t (rsvg-convert) vagy az Inkscape-et, vagy használd a figure-forge-ot az F2 után. Addig az SVG készül: ezt a folyóiratok és az ábraszerkesztők (Inkscape, Illustrator) is elfogadják.",
+        "en": "No working local SVG converter for PNG/PDF (rsvg-convert, Inkscape, CairoSVG or ImageMagick). Install e.g. librsvg (rsvg-convert) or Inkscape, or use figure-forge after F2. Until then the SVG is produced: journals and figure editors (Inkscape, Illustrator) accept it."
+       }
+      },
+      {
+       "id": "tiff",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      },
+      {
+       "id": "pptx",
+       "available": false,
+       "via": [],
+       "reason": {
+        "hu": "TIFF és PPTX csak a figure-forge meta-exportjával (F2) készül; a mostani figure-forge ezt még nem tudja.",
+        "en": "TIFF and PPTX are only produced by the figure-forge meta export (F2), which the installed figure-forge lacks."
+       }
+      }
+     ],
+     "converters": [],
+     "dpis": [
+      300,
+      600,
+      1200
+     ],
+     "widths": [
+      "single",
+      "1.5",
+      "double"
+     ],
+     "langs": [
+      "en",
+      "hu"
+     ],
+     "palettes": [
+      "okabe-ito"
+     ],
+     "audit": {
+      "figure_forge": {
+       "mode": null,
+       "available": false,
+       "fallback": "stdlib",
+       "guard": "H5",
+       "remedy": {
+        "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+        "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+       }
+      },
+      "stdlib": true
+     },
+     "figure_forge": {
+      "state": "unusable",
+      "version": "0.2.1",
+      "guards": []
+     },
+     "existing": [
+      {
+       "stem": "fig_forest_o1",
+       "kind": "forest",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "path": "06_kezirat/abrak/fig_forest_o1.result.json",
+       "formats": [
+        "svg"
+       ],
+       "renderer": "engine",
+       "generated": "2026-10-05T10:00:00Z",
+       "badge": "ok",
+       "stale": false
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp021"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/figures/export",
+   "query": {
+    "fx": "h5"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-export/v1",
+    "data": {
+     "schema": "szk.ma.figure-export/v1",
+     "run_id": "20261004T211200Z-a1f3c2",
+     "outcome_id": "o1",
+     "run_stale": false,
+     "kind": "doi",
+     "stem": "fig_doi_o1",
+     "dir": "06_kezirat/abrak",
+     "renderer": {
+      "requested": "auto",
+      "used": "engine",
+      "svg_source": "run_file",
+      "ff_version": null
+     },
+     "lang": {
+      "requested": "hu",
+      "used": "hu"
+     },
+     "formats": {
+      "svg": {
+       "path": "06_kezirat/abrak/fig_doi_o1.svg",
+       "sha256": "a9033c078e58708e5033464da40b8533d210816874c7bfd2d9df9699f6854898",
+       "bytes": 3932,
+       "via": "engine"
+      }
+     },
+     "downloads": {
+      "svg": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig_doi_o1.svg/1791200000/SIG",
+       "expires_at": 1791200000
+      }
+     },
+     "skipped": [],
+     "result_path": "06_kezirat/abrak/fig_doi_o1.result.json",
+     "qc": {
+      "badge": "ok",
+      "stdlib": {
+       "source": "stdlib",
+       "text_elements": 13,
+       "outlined_text_groups": 0,
+       "editable": true,
+       "font_families": [
+        "Helvetica, Arial, sans-serif"
+       ],
+       "font_fallback_stack": true,
+       "named_layers": 0,
+       "typography": {
+        "suggestions_n": 1,
+        "suggestions": [
+         {
+          "from": "LFK-index: -4.10 (jelentős aszimmetria)",
+          "to": "LFK-index: −4.10 (jelentős aszimmetria)"
+         }
+        ]
+       },
+       "glyphs": null
+      },
+      "figure_forge": {
+       "error": {
+        "code": "CAPABILITY_MISSING",
+        "message": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+        "message_i18n": {
+         "hu": "matplotlib nem importálható a(z) python3 értelmezőben. A figure-forge 0.2.1 az ff.py-ban modulszinten importálja a matplotlibet (H5), ezért az ábra-audit sem fut nélküle. Teendő: python3 -m pip install matplotlib — vagy állítsd a FIGURE_FORGE_PYTHON környezeti változót egy olyan Pythonra, amelyben ezek megvannak, majd kattints az Újraszondázásra. Addig a munkapad a saját (stdlib) ellenőrzésével auditálja a motor-SVG-t.",
+         "en": "matplotlib cannot be imported in python3. figure-forge 0.2.1 imports matplotlib at module level in ff.py (H5), so even the figure audit needs it. To fix: python3 -m pip install matplotlib — or set FIGURE_FORGE_PYTHON to a Python that has them, then click Re-probe. Until then the workbench audits the engine SVG with its own (stdlib) check."
+        },
+        "guard": "H5"
+       }
+      },
+      "numbers": {
+       "kind": "doi",
+       "checked": 8,
+       "matched": 8,
+       "mismatches": [],
+       "unexplained": 0,
+       "ok": true
+      },
+      "ff_numbers": null,
+      "clean": null,
+      "editable": true,
+      "labels_checked": null,
+      "residual_violations": [],
+      "typography": null,
+      "glyphs": null
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp022"
+    }
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/api/figures",
+   "query": {
+    "run": "20261004T211200Z-a1f3c2",
+    "fx": "ok"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-options/v1",
+    "data": {
+     "schema": "szk.ma.figure-options/v1",
+     "run": {
+      "run_id": "20261004T211200Z-a1f3c2",
+      "outcome_id": "o1",
+      "stale": false,
+      "measure": "RR",
+      "purpose": "primary",
+      "display_locale": "hu",
+      "kinds": [
+       {
+        "kind": "forest",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "funnel",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "doi",
+        "available": true,
+        "source": "run_file"
+       },
+       {
+        "kind": "loo",
+        "available": false,
+        "source": null,
+        "reason": {
+         "hu": "Ehhez az ábrához a motor rajzoló-függvénye (metaelemzes.api.render_figure) kell — frissítsd a motort (git pull), majd indítsd újra a munkapadot.",
+         "en": "This figure needs the engine drawing function (metaelemzes.api.render_figure) — update the engine (git pull), then restart the workbench."
+        }
+       }
+      ]
+     },
+     "runs": [
+      {
+       "run_id": "20261004T211200Z-a1f3c2",
+       "outcome_id": "o1",
+       "stale": false,
+       "purpose": "primary",
+       "started": "2026-10-05T10:00:00Z",
+       "k": 13
+      }
+     ],
+     "renderers": [
+      {
+       "id": "figure-forge",
+       "available": true,
+       "state": "ok",
+       "version": "0.3.0",
+       "mode": "json",
+       "remedy": null
+      },
+      {
+       "id": "engine",
+       "available": true,
+       "render_fn": null,
+       "remedy": {
+        "hu": "A motor rajzoló-függvénye (metaelemzes.api.render_figure) még nincs meg: a futás saját SVG-je készül (a futás nyelvén, rétegek nélkül). Frissítsd a motort az angol feliratú, rétegzett SVG-hez.",
+        "en": "The engine drawing function (metaelemzes.api.render_figure) is missing: the run's own SVG is used (in the run's language, without layers). Update the engine for the English, layered SVG."
+       }
+      },
+      {
+       "id": "browser_png",
+       "available": true,
+       "preview_only": true
+      }
+     ],
+     "formats": [
+      {
+       "id": "svg",
+       "available": true,
+       "via": [
+        "engine",
+        "figure-forge"
+       ]
+      },
+      {
+       "id": "pdf",
+       "available": true,
+       "via": [
+        "figure-forge"
+       ],
+       "reason": null
+      },
+      {
+       "id": "png",
+       "available": true,
+       "via": [
+        "figure-forge"
+       ],
+       "reason": null
+      },
+      {
+       "id": "tiff",
+       "available": true,
+       "via": [
+        "figure-forge"
+       ],
+       "reason": null
+      },
+      {
+       "id": "pptx",
+       "available": true,
+       "via": [
+        "figure-forge"
+       ],
+       "reason": null
+      }
+     ],
+     "converters": [],
+     "dpis": [
+      300,
+      600,
+      1200
+     ],
+     "widths": [
+      "single",
+      "1.5",
+      "double"
+     ],
+     "langs": [
+      "en",
+      "hu"
+     ],
+     "palettes": [
+      "okabe-ito"
+     ],
+     "audit": {
+      "figure_forge": {
+       "mode": "json",
+       "available": true,
+       "fallback": "stdlib",
+       "guard": null,
+       "remedy": null
+      },
+      "stdlib": true
+     },
+     "figure_forge": {
+      "state": "ok",
+      "version": "0.3.0",
+      "guards": []
+     },
+     "existing": [
+      {
+       "stem": "fig_doi_o1",
+       "kind": "doi",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "path": "06_kezirat/abrak/fig_doi_o1.result.json",
+       "formats": [
+        "svg"
+       ],
+       "renderer": "engine",
+       "generated": "2026-10-05T10:00:00Z",
+       "badge": "ok",
+       "stale": false
+      },
+      {
+       "stem": "fig_forest_o1",
+       "kind": "forest",
+       "run_id": "20261004T211200Z-a1f3c2",
+       "path": "06_kezirat/abrak/fig_forest_o1.result.json",
+       "formats": [
+        "svg"
+       ],
+       "renderer": "engine",
+       "generated": "2026-10-05T10:00:00Z",
+       "badge": "ok",
+       "stale": false
+      }
+     ]
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp026"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/figures/export",
+   "query": {
+    "fx": "ff"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-export/v1",
+    "data": {
+     "schema": "szk.ma.figure-export/v1",
+     "run_id": "20261004T211200Z-a1f3c2",
+     "outcome_id": "o1",
+     "run_stale": false,
+     "kind": "forest",
+     "stem": "fig2_forest",
+     "dir": "06_kezirat/abrak",
+     "renderer": {
+      "requested": "figure-forge",
+      "used": "figure-forge",
+      "svg_source": "figure-forge",
+      "ff_version": "0.3.0"
+     },
+     "lang": {
+      "requested": "hu",
+      "used": "hu"
+     },
+     "formats": {
+      "svg": {
+       "path": "06_kezirat/abrak/fig2_forest.svg",
+       "sha256": "b17ebf8a17e8883841470a526f719cc28924f4a151598629095b0e24b8d64a9c",
+       "bytes": 4198,
+       "via": "figure-forge"
+      },
+      "pdf": {
+       "path": "06_kezirat/abrak/fig2_forest.pdf",
+       "sha256": "ec71d014603ce28b110618027e38f979d4222ee57654979409373c448eff6e90",
+       "bytes": 15,
+       "via": "figure-forge"
+      },
+      "tiff": {
+       "path": "06_kezirat/abrak/fig2_forest.tiff",
+       "sha256": "b34bddc24a3374e7bf5c2dad32f1121c074f7a8f602e0c0fd62f417d91a785a6",
+       "bytes": 8,
+       "via": "figure-forge"
+      },
+      "pptx": {
+       "path": "06_kezirat/abrak/fig2_forest.pptx",
+       "sha256": "64986dcde50d8bc9f45cc29185e2a56f7284c8bc38acde9478488b6c819c0285",
+       "bytes": 8,
+       "via": "figure-forge"
+      }
+     },
+     "downloads": {
+      "svg": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig2_forest.svg/1791200000/SIG",
+       "expires_at": 1791200000
+      },
+      "pdf": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig2_forest.pdf/1791200000/SIG",
+       "expires_at": 1791200000
+      },
+      "tiff": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig2_forest.tiff/1791200000/SIG",
+       "expires_at": 1791200000
+      }
+     },
+     "skipped": [],
+     "result_path": "06_kezirat/abrak/fig2_forest.result.json",
+     "qc": {
+      "badge": "ok",
+      "stdlib": {
+       "source": "stdlib",
+       "text_elements": 49,
+       "outlined_text_groups": 0,
+       "editable": true,
+       "font_families": [
+        "Arial, Helvetica, sans-serif"
+       ],
+       "font_fallback_stack": true,
+       "named_layers": 1,
+       "typography": {
+        "suggestions_n": 0,
+        "suggestions": []
+       },
+       "glyphs": null
+      },
+      "figure_forge": {
+       "schema": "szk.ma.figure-audit/v1",
+       "source": "figure-forge",
+       "mode": "json",
+       "plugin_version": "0.3.0",
+       "typography": {
+        "suggestions_n": 0,
+        "suggestions": []
+       },
+       "glyphs": {
+        "ok": true,
+        "missing": []
+       },
+       "kind": "svg",
+       "editable": true,
+       "text_elements": 49,
+       "outlined_text_groups": 0,
+       "font_families": [
+        "Arial, Helvetica, sans-serif"
+       ],
+       "font_fallback_stack": true,
+       "named_layers": 1
+      },
+      "numbers": {
+       "kind": "forest",
+       "checked": 36,
+       "matched": 36,
+       "mismatches": [],
+       "unexplained": 0,
+       "ok": true
+      },
+      "ff_numbers": {
+       "ok": true,
+       "checked": 49,
+       "mismatches": []
+      },
+      "clean": true,
+      "editable": true,
+      "labels_checked": 49,
+      "residual_violations": [],
+      "typography": {
+       "enabled": true,
+       "substitutions": [
+        {
+         "from": "-",
+         "to": "−",
+         "n": 2
+        }
+       ]
+      },
+      "glyphs": {
+       "ok": true,
+       "missing": [],
+       "font": "Arial"
+      }
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp027"
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/figures/export",
+   "query": {
+    "fx": "issues"
+   },
+   "status": 200,
+   "envelope": {
+    "ok": true,
+    "schema": "szk.ma.figure-export/v1",
+    "data": {
+     "schema": "szk.ma.figure-export/v1",
+     "run_id": "20261004T211200Z-a1f3c2",
+     "outcome_id": "o1",
+     "run_stale": false,
+     "kind": "forest",
+     "stem": "fig2_forest_bad",
+     "dir": "06_kezirat/abrak",
+     "renderer": {
+      "requested": "figure-forge",
+      "used": "figure-forge",
+      "svg_source": "figure-forge",
+      "ff_version": "0.3.0"
+     },
+     "lang": {
+      "requested": "hu",
+      "used": "hu"
+     },
+     "formats": {
+      "svg": {
+       "path": "06_kezirat/abrak/fig2_forest_bad.svg",
+       "sha256": "67eaeb1d50a471f5b5be4dad894966bf94eedeab4686fc13debcbd73bb8735dd",
+       "bytes": 4112,
+       "via": "figure-forge"
+      },
+      "pdf": {
+       "path": "06_kezirat/abrak/fig2_forest_bad.pdf",
+       "sha256": "ec71d014603ce28b110618027e38f979d4222ee57654979409373c448eff6e90",
+       "bytes": 15,
+       "via": "figure-forge"
+      },
+      "tiff": {
+       "path": "06_kezirat/abrak/fig2_forest_bad.tiff",
+       "sha256": "b34bddc24a3374e7bf5c2dad32f1121c074f7a8f602e0c0fd62f417d91a785a6",
+       "bytes": 8,
+       "via": "figure-forge"
+      },
+      "pptx": {
+       "path": "06_kezirat/abrak/fig2_forest_bad.pptx",
+       "sha256": "64986dcde50d8bc9f45cc29185e2a56f7284c8bc38acde9478488b6c819c0285",
+       "bytes": 8,
+       "via": "figure-forge"
+      }
+     },
+     "downloads": {
+      "svg": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig2_forest_bad.svg/1791200000/SIG",
+       "expires_at": 1791200000
+      },
+      "pdf": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig2_forest_bad.pdf/1791200000/SIG",
+       "expires_at": 1791200000
+      },
+      "tiff": {
+       "url": "/f/_run%3A06_kezirat%2Fabrak%2Ffig2_forest_bad.tiff/1791200000/SIG",
+       "expires_at": 1791200000
+      }
+     },
+     "skipped": [],
+     "result_path": "06_kezirat/abrak/fig2_forest_bad.result.json",
+     "qc": {
+      "badge": "issues",
+      "stdlib": {
+       "source": "stdlib",
+       "text_elements": 48,
+       "outlined_text_groups": 0,
+       "editable": true,
+       "font_families": [
+        "Arial, Helvetica, sans-serif"
+       ],
+       "font_fallback_stack": true,
+       "named_layers": 1,
+       "typography": {
+        "suggestions_n": 0,
+        "suggestions": []
+       },
+       "glyphs": null
+      },
+      "figure_forge": {
+       "schema": "szk.ma.figure-audit/v1",
+       "source": "figure-forge",
+       "mode": "json",
+       "plugin_version": "0.3.0",
+       "typography": {
+        "suggestions_n": 0,
+        "suggestions": []
+       },
+       "glyphs": {
+        "ok": true,
+        "missing": []
+       },
+       "kind": "svg",
+       "editable": true,
+       "text_elements": 48,
+       "outlined_text_groups": 0,
+       "font_families": [
+        "Arial, Helvetica, sans-serif"
+       ],
+       "font_fallback_stack": true,
+       "named_layers": 1
+      },
+      "numbers": {
+       "kind": "forest",
+       "checked": 36,
+       "matched": 35,
+       "mismatches": [
+        {
+         "field": "studies[0].display_text",
+         "expected": "0.41 [0.13; 1.26]"
+        }
+       ],
+       "unexplained": 0,
+       "ok": false
+      },
+      "ff_numbers": {
+       "ok": false,
+       "checked": 48,
+       "mismatches": [
+        {
+         "text": "x"
+        }
+       ]
+      },
+      "clean": true,
+      "editable": true,
+      "labels_checked": 48,
+      "residual_violations": [],
+      "typography": {
+       "enabled": true,
+       "substitutions": [
+        {
+         "from": "-",
+         "to": "−",
+         "n": 2
+        }
+       ]
+      },
+      "glyphs": {
+       "ok": true,
+       "missing": [],
+       "font": "Arial"
+      }
+     }
+    },
+    "warnings": [],
+    "meta": {
+     "engine": "0.1.0",
+     "project_rev": 61,
+     "elapsed_ms": 1,
+     "request_id": "q_adp028"
+    }
+   }
+  }
+ ]
+}

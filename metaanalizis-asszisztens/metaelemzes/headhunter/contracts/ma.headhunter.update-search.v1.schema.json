@@ -1,0 +1,474 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.headhunter.update-search:1",
+  "$comment": "TERV_metaheadhunter.md 4. fejezet (v1 szerződés); bővítés csak additív, kötelező mező törlése új főverzió",
+  "title": "szk.ma.headhunter.update-search/v1 — frissítő keresés (01_kereses/headhunter/update_search.json)",
+  "type": "object",
+  "required": [
+    "schema",
+    "model",
+    "window",
+    "queries",
+    "results"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.headhunter.update-search/v1"
+    },
+    "model": {
+      "const": "szk.ma.headhunter/v1"
+    },
+    "window": {
+      "type": "object",
+      "required": [
+        "latest_source_search",
+        "overlap_months",
+        "start_date",
+        "end_date"
+      ],
+      "properties": {
+        "latest_source_search": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "per_review": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "review_id",
+              "search_date",
+              "fallback"
+            ],
+            "properties": {
+              "review_id": {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/review_id"
+              },
+              "search_date": {
+                "oneOf": [
+                  {
+                    "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fallback": {
+                "type": "boolean"
+              },
+              "evidence_id": {
+                "oneOf": [
+                  {
+                    "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/evidence_id"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "basis": {
+                "enum": [
+                  "reported",
+                  "fallback",
+                  "fallback_pubdate",
+                  "missing"
+                ],
+                "description": "reported: az áttekintés közölte (bizonyítékkal); fallback/fallback_pubdate: becsült (megjelenés − 12 hónap, H008); missing: nincs dátum"
+              }
+            }
+          }
+        },
+        "anchor": {
+          "enum": [
+            "latest",
+            "earliest",
+            "manual"
+          ],
+          "description": "latest: a legfrissebb forrás-keresés; earliest: a legkorábbi (érzékenyebb)"
+        },
+        "overlap_months": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "start_date": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+        },
+        "end_date": {
+          "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+        },
+        "decision_id": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/decision_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "earliest_source_search": {
+          "oneOf": [
+            {
+              "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "a legkorábbi forrás-keresés (a latest mellé írva; > 24 hónap szórásnál figyelmeztetés)"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "hu": {
+                "type": "string"
+              },
+              "en": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "search_id",
+          "source",
+          "query",
+          "date_field",
+          "status"
+        ],
+        "properties": {
+          "search_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/search_id"
+          },
+          "source": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source"
+          },
+          "query": {
+            "type": "string"
+          },
+          "date_field": {
+            "type": "string",
+            "examples": [
+              "edat",
+              "dp",
+              "FIRST_PDATE",
+              "CREATION_DATE",
+              "from_publication_date",
+              "ORIG-LOAD-DATE",
+              "PUBYEAR",
+              "StudyFirstPostDate"
+            ]
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "done",
+              "partial",
+              "failed",
+              "skipped_source_unavailable"
+            ]
+          },
+          "count_total": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "count_retrieved": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "message": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/explain"
+          },
+          "complete": {
+            "type": "boolean",
+            "description": "false: felső korlát vagy megszakadt lapozás (H012)"
+          },
+          "out_of_window": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "csak évre szűrő forrás (Scopus): a letöltött találatok közül ennyinek a borító-dátuma az ablakon kívül esett — nem kerültek a halmazba (PRISMA D3)"
+          },
+          "date_from": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "date_to": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "citation_search": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "search_id",
+          "direction",
+          "seeds",
+          "source",
+          "status"
+        ],
+        "properties": {
+          "search_id": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/search_id"
+          },
+          "direction": {
+            "enum": [
+              "forward",
+              "backward"
+            ]
+          },
+          "seeds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "done",
+              "partial",
+              "failed",
+              "skipped_source_unavailable"
+            ]
+          },
+          "count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "retrieved": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "letöltött tételek a dátumszűrés előtt"
+          },
+          "since_year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "előre irányban: csak az ennél nem korábbi év"
+          },
+          "iterations": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "TARCiS: iterációk száma"
+          },
+          "seed_kind": {
+            "enum": [
+              "reviews",
+              "included",
+              "both"
+            ]
+          },
+          "run_at": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+          }
+        }
+      }
+    },
+    "results": {
+      "type": "object",
+      "required": [
+        "retrieved_total",
+        "duplicates_within",
+        "already_known",
+        "new_records"
+      ],
+      "properties": {
+        "retrieved_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicates_within": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "already_known": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "már az egyéb-módszerek ágban ismert rekord (D1-be számít)"
+        },
+        "new_records": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+          }
+        },
+        "registry_records": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+          }
+        },
+        "unusable": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "letöltött, de azonosító és cím nélküli tétel (PRISMA D3)"
+        },
+        "known_from_update": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_source": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [],
+            "properties": {
+              "count_total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "count_retrieved": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "complete": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "databases_retrieved": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "PRISMA A1 (PubMed, Europe PMC, OpenAlex, Scopus)"
+        },
+        "registers_retrieved": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "PRISMA A2 (ClinicalTrials.gov)"
+        }
+      }
+    },
+    "generated": {
+      "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+    },
+    "citation_results": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "retrieved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicates_within": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "already_known": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "new_records": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/rec_id"
+          }
+        }
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/source_status"
+          },
+          "searched": {
+            "type": "boolean"
+          },
+          "reset_at": {
+            "oneOf": [
+              {
+                "$ref": "urn:szk:contract:ma.headhunter.common:1#/$defs/ts"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "hu": {
+            "type": "string"
+          },
+          "en": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "cancelled": {
+      "type": "boolean",
+      "description": "a futást a CANCEL fájl megszakította (részleges)"
+    }
+  }
+}

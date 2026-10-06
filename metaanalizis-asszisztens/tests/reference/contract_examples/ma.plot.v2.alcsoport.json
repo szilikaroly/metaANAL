@@ -1,0 +1,389 @@
+{
+  "schema": "szk.ma.plot/v2",
+  "meta": {
+    "engine_version": "0.2.0",
+    "run_id": null,
+    "data_sha256": "9f3a000000000000000000000000000000000000000000000000000000000000",
+    "spec_sha256": null
+  },
+  "measure": "SMD",
+  "scale": {
+    "analysis": "identity",
+    "ratio": false,
+    "null_analysis": 0.0,
+    "null_display": 0.0
+  },
+  "level": 0.9,
+  "axis": {
+    "domain": [
+      -1.5,
+      1.5
+    ],
+    "ticks": [
+      {
+        "at": -1.0,
+        "text": "-1"
+      },
+      {
+        "at": 0.0,
+        "text": "0"
+      },
+      {
+        "at": 1.0,
+        "text": "1"
+      }
+    ],
+    "title": {
+      "hu": "SMD (Hedges g)",
+      "en": "SMD (Hedges' g)"
+    }
+  },
+  "studies": [
+    {
+      "row_uid": "ra1b2",
+      "row_index": 0,
+      "study_id": "S0",
+      "label": "Vizsgálat 1",
+      "section": "A",
+      "y": 0.2,
+      "lo": -0.094,
+      "hi": 0.494,
+      "weight_pct": 25.0,
+      "display": {
+        "est": 0.2,
+        "lo": -0.094,
+        "hi": 0.494
+      },
+      "display_text": {
+        "hu": "0.20",
+        "en": "0.20"
+      },
+      "flags": {
+        "estimated": false,
+        "rob": null
+      }
+    },
+    {
+      "row_uid": "rc3d4",
+      "row_index": 1,
+      "study_id": "S1",
+      "label": "Vizsgálat 2",
+      "section": "A",
+      "y": 0.35,
+      "lo": -0.042,
+      "hi": 0.742,
+      "weight_pct": 25.0,
+      "display": {
+        "est": 0.35,
+        "lo": -0.042,
+        "hi": 0.742
+      },
+      "display_text": {
+        "hu": "0.35",
+        "en": "0.35"
+      },
+      "flags": {
+        "estimated": false,
+        "rob": null
+      }
+    },
+    {
+      "row_uid": "re5f6",
+      "row_index": 2,
+      "study_id": "S2",
+      "label": "Vizsgálat 3",
+      "section": "B",
+      "y": -0.1,
+      "lo": -0.59,
+      "hi": 0.39,
+      "weight_pct": 25.0,
+      "display": {
+        "est": -0.1,
+        "lo": -0.59,
+        "hi": 0.39
+      },
+      "display_text": {
+        "hu": "-0.10",
+        "en": "-0.10"
+      },
+      "flags": {
+        "estimated": true,
+        "rob": null
+      }
+    },
+    {
+      "row_uid": "rg7h8",
+      "row_index": 3,
+      "study_id": "S3",
+      "label": "Vizsgálat 4",
+      "section": "B",
+      "y": 0.05,
+      "lo": -0.538,
+      "hi": 0.638,
+      "weight_pct": 25.0,
+      "display": {
+        "est": 0.05,
+        "lo": -0.538,
+        "hi": 0.638
+      },
+      "display_text": {
+        "hu": "0.05",
+        "en": "0.05"
+      },
+      "flags": {
+        "estimated": false,
+        "rob": null
+      }
+    }
+  ],
+  "sections": [
+    {
+      "id": "A",
+      "title": "A",
+      "row_uids": [
+        "ra1b2",
+        "rc3d4"
+      ],
+      "summary": {
+        "id": "sub_A",
+        "kind": "subgroup",
+        "model": "fixed",
+        "label": {
+          "hu": "Alcsoport összesen",
+          "en": "Subtotal"
+        },
+        "estimate": 0.25,
+        "ci_lower": 0.04999999999999999,
+        "ci_upper": 0.45,
+        "display": {
+          "est": 0.25,
+          "lo": 0.04999999999999999,
+          "hi": 0.45
+        },
+        "display_text": {
+          "hu": "0.25",
+          "en": "0.25"
+        }
+      }
+    },
+    {
+      "id": "B",
+      "title": "B",
+      "row_uids": [
+        "re5f6",
+        "rg7h8"
+      ],
+      "summary": {
+        "id": "sub_B",
+        "kind": "subgroup",
+        "model": "fixed",
+        "label": {
+          "hu": "Alcsoport összesen",
+          "en": "Subtotal"
+        },
+        "estimate": -0.04,
+        "ci_lower": -0.24000000000000002,
+        "ci_upper": 0.16,
+        "display": {
+          "est": -0.04,
+          "lo": -0.24000000000000002,
+          "hi": 0.16
+        },
+        "display_text": {
+          "hu": "-0.04",
+          "en": "-0.04"
+        }
+      }
+    }
+  ],
+  "summaries": [
+    {
+      "id": "sub_A",
+      "kind": "subgroup",
+      "model": "fixed",
+      "label": {
+        "hu": "Alcsoport összesen",
+        "en": "Subtotal"
+      },
+      "estimate": 0.25,
+      "ci_lower": 0.04999999999999999,
+      "ci_upper": 0.45,
+      "display": {
+        "est": 0.25,
+        "lo": 0.04999999999999999,
+        "hi": 0.45
+      },
+      "display_text": {
+        "hu": "0.25",
+        "en": "0.25"
+      }
+    },
+    {
+      "id": "sub_B",
+      "kind": "subgroup",
+      "model": "fixed",
+      "label": {
+        "hu": "Alcsoport összesen",
+        "en": "Subtotal"
+      },
+      "estimate": -0.04,
+      "ci_lower": -0.24000000000000002,
+      "ci_upper": 0.16,
+      "display": {
+        "est": -0.04,
+        "lo": -0.24000000000000002,
+        "hi": 0.16
+      },
+      "display_text": {
+        "hu": "-0.04",
+        "en": "-0.04"
+      }
+    },
+    {
+      "id": "overall_fixed",
+      "kind": "overall",
+      "model": "fixed",
+      "label": {
+        "hu": "Alcsoport összesen",
+        "en": "Subtotal"
+      },
+      "estimate": 0.14,
+      "ci_lower": -0.06,
+      "ci_upper": 0.34,
+      "display": {
+        "est": 0.14,
+        "lo": -0.06,
+        "hi": 0.34
+      },
+      "display_text": {
+        "hu": "0.14",
+        "en": "0.14"
+      }
+    },
+    {
+      "id": "sens_no_estimated",
+      "kind": "sensitivity",
+      "model": "random",
+      "label": {
+        "hu": "Alcsoport összesen",
+        "en": "Subtotal"
+      },
+      "estimate": 0.18,
+      "ci_lower": -0.020000000000000018,
+      "ci_upper": 0.38,
+      "display": {
+        "est": 0.18,
+        "lo": -0.020000000000000018,
+        "hi": 0.38
+      },
+      "display_text": {
+        "hu": "0.18",
+        "en": "0.18"
+      }
+    }
+  ],
+  "subgroup_test": {
+    "Q": 1.21,
+    "df": 1,
+    "p": 0.271,
+    "text": {
+      "hu": "Alcsoport-különbség: Q_b = 1.21 (df = 1, p = 0.271)",
+      "en": "Test for subgroup differences: Q_b = 1.21 (df = 1, p = 0.271)"
+    }
+  },
+  "heterogeneity": {
+    "Q": 2.1,
+    "df": 3,
+    "p": 0.55,
+    "I2": 0.0,
+    "tau2": null,
+    "text": {
+      "hu": "I² = 0%",
+      "en": "I² = 0%"
+    }
+  },
+  "funnel": {
+    "points": [],
+    "filled": [
+      {
+        "x": 0.4,
+        "se": 0.2
+      }
+    ],
+    "center": 0.14,
+    "se_max": 0.3,
+    "pseudo_ci": [],
+    "contours": []
+  },
+  "doi": {
+    "points": [
+      [
+        0.2,
+        0.0
+      ],
+      [
+        0.35,
+        1.0
+      ]
+    ],
+    "lfk": 0.4,
+    "category": "no asymmetry",
+    "lfk_text": {
+      "hu": "LFK = 0.40",
+      "en": "LFK = 0.40"
+    }
+  },
+  "loo": [],
+  "influence": [],
+  "cumulative": {
+    "key_label": {
+      "hu": "év",
+      "en": "year"
+    },
+    "entries": [
+      {
+        "row_uid": "ra1b2",
+        "estimate": 0.2
+      }
+    ]
+  },
+  "bubble": {
+    "moderator": "dózis",
+    "points": [
+      {
+        "row_uid": "ra1b2",
+        "x": 10,
+        "y": 0.2,
+        "weight_pct": 100.0,
+        "size": 0.25
+      }
+    ],
+    "line": [
+      [
+        0,
+        0.1
+      ],
+      [
+        20,
+        0.3
+      ]
+    ],
+    "band": [
+      [
+        0,
+        0.0,
+        0.2
+      ],
+      [
+        20,
+        0.2,
+        0.4
+      ]
+    ],
+    "coef_text": {
+      "hu": "meredekség = 0.010 (p = 0.04)",
+      "en": "slope = 0.010 (p = 0.04)"
+    }
+  },
+  "notes": []
+}

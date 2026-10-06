@@ -1,0 +1,19 @@
+/* snapshot.css — a csak olvasható pillanatkép sávja és parancs-ablaka (terv 2.5, 7.6). A pillanatkép-buildben
+ * van rá szükség, de a termék-buildbe is bekerül (kicsi); a .snap-* elemek ott nem jelennek meg. */
+.snap-banner { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; margin: 0; padding: var(--sp-2) var(--sp-3);
+  border-bottom: 2px solid var(--warn-mark); background: var(--warn-bg); color: var(--ink); font-size: var(--fs-sm); }
+.snap-banner .snap-warn { font-weight: 650; }
+.snap-cmd { margin: var(--sp-2) 0; }
+.snap-cmd-head { display: flex; gap: var(--sp-2); align-items: center; justify-content: space-between; }
+.snap-cmd pre.cmd { white-space: pre-wrap; word-break: break-all; }
+.snap-cmd-unsafe { color: var(--warn); margin: var(--sp-1) 0; }
+.snap-note { font-weight: 600; }
+.snap-dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px var(--sp-3); }
+.snap-dl dt { font-weight: 600; }
+.snap-dl dd { margin: 0; word-break: break-all; }
+.snap-list { margin: 0 0 var(--sp-2); padding-left: 1.2em; }
+.exp-download { display: inline-block; margin-top: var(--sp-2); }
+@media print {
+  .snap-banner .btn { display: none; }
+  .snap-banner { border: 1px solid var(--line); }
+}

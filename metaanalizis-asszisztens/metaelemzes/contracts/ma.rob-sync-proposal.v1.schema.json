@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:szk:contract:ma.rob-sync-proposal:1",
+  "$comment": "a tervből (próza) — pontosítandó",
+  "title": "szk.ma.rob-sync-proposal/v1 — a kinyerési tábla rob oszlopának javasolt változásai a konszenzusos összítéletből (calculated eredet; X003)",
+  "type": "object",
+  "required": [
+    "schema",
+    "tool",
+    "column",
+    "changes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "szk.ma.rob-sync-proposal/v1"
+    },
+    "tool": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+    },
+    "column": {
+      "type": "string",
+      "minLength": 1
+    },
+    "column_exists": {
+      "type": "boolean"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "row",
+          "after"
+        ],
+        "properties": {
+          "row_uid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "row": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "study_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "before": {
+            "type": "string"
+          },
+          "after": {
+            "type": "string",
+            "minLength": 1
+          },
+          "judgement": {
+            "type": "string"
+          },
+          "basis": {
+            "enum": [
+              "consensus",
+              "agreeing",
+              "single",
+              "ai_approved"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provenance": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "const": "calculated"
+              }
+            }
+          }
+        }
+      }
+    },
+    "unchanged": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unmatched": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "urn:szk:contract:common:1#/$defs/i18n"
+          }
+        ]
+      }
+    },
+    "outcome": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "a tábla kimenete: csak az erre (vagy kimenet nélkül) szóló értékelések számítanak"
+    }
+  }
+}
