@@ -11,7 +11,9 @@
    és minden ``schema``-mezős fixture-objektum, amelyhez a motornak szerződése van (metaelemzes/contracts), annak
    megfelel (jsonschema, 2020-12). A validator vázával való összevetés verziófüggő: az 1.0.x régi ROBINS-I- és
    QUIPS-számozásával a ``validator_ids``-en át, a javított (≥ 2.0.0) validatoréval a motor saját — publikált —
-   azonosítóival.
+   azonosítóival, a változatos eszközöknél (RoB 2 / ROBINS-I betartási változat, NOS két űrlapja) hatókörönként; a
+   2.0.0 a NOS-nál ``--scope all``-ra 2-vel kilép, ezért ott „all” vázat nem kérünk, és minden váz-hívás kilépési
+   kódját ellenőrizzük.
 3. **Fixture-alak** (mindig): a ``web/fixtures/appraisal_*.json`` a 4.2 borítékot és a 4.11 szerződés kötelező mezőit
    követi; a mintaértékelések útja a 2.4 elrendezés."""
 import glob
@@ -53,11 +55,21 @@ def plugin_dir():
     return None
 
 
-def _run(vdir, script, *args):
+def _call(vdir, script, *args):
+    """→ (kilépési kód, stdout) — a plugint csak futtatjuk."""
     out = subprocess.run([sys.executable, os.path.join(vdir, "scripts", script)] + list(args), cwd=vdir,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=False,
                          env=dict(os.environ, PYTHONUTF8="1"))
-    return out.stdout.decode("utf-8", "replace")
+    return out.returncode, out.stdout.decode("utf-8", "replace")
+
+
+def _run(vdir, script, *args):
+    """A váz szövege; a nem nulla kilépés hiba (különben az üres váz csendben „nincs tétel” lenne — a 2.0.0 a
+    NOS-nál --scope all-ra 2-vel lép ki)."""
+    rc, text = _call(vdir, script, *args)
+    if rc != 0:
+        raise AssertionError("%s %s: kilépési kód %s" % (script, " ".join(args), rc))
+    return text
 
 
 def validator_version(vdir):
@@ -73,6 +85,7 @@ def validator_items(vdir):
     """{eszköz: [tétel-id …]} + {'probast-ai': {'development': [...], 'evaluation': [...]}, 'tripod-ai': [(id, D/E)]},
     és a '_version' kulcson a plugin verziója."""
     out = {"_version": validator_version(vdir), "_scoped": {}}
+    fixed = V.fixed_release({"version": out["_version"]})
 
     def skeleton_ids(tool, scope):
         ids = []
@@ -82,7 +95,10 @@ def validator_items(vdir):
                 ids.append(m.group(1))
         return ids
     for tool in APPRAISE_TOOLS:
-        out[tool] = skeleton_ids(tool, "all")
+        # a javított kiadás a hatókörhöz kötött eszköznél (NOS) „all” vázat nem ad (2-es kilépés): ott csak a
+        # hatókörönkénti váz létezik, és az összevetés is azzal megy (compare)
+        if not (fixed and tool in V.SCOPE_REQUIRED_FIXED):
+            out[tool] = skeleton_ids(tool, "all")
         for sc in SCOPED.get(tool, ()):
             out["_scoped"].setdefault(tool, {})[sc] = skeleton_ids(tool, sc)
     pb, cur = {"development": [], "evaluation": []}, None
@@ -169,6 +185,29 @@ class EngineDriftTests(unittest.TestCase):
                 insts[key] = get(key)
         self.assertTrue({"rob2", "probast-ai", "tripod-ai", "amstar2"} <= set(insts), sorted(insts))
         compare(self, insts, validator_items(vdir))
+
+
+class ValidatorScopeTests(unittest.TestCase):
+    def test_nos_needs_a_form_scope_on_the_fixed_release(self):
+        """A javított validator (≥ 2.0.0, szk-plugins#5 1b2c906) a NOS-nál űrlapot kér: ``--skeleton nos --scope all``
+        2-es kilépés (a két űrlap 16 helye nem vonható össze), a két űrlap egyenként 8 tétel; az 1.0.x az „all”-t még
+        elfogadja. A híd ezért a javított kiadásnak csak cohort / case-control hatókört küld
+        (``validator.SCOPE_REQUIRED_FIXED``)."""
+        vdir = plugin_dir()
+        if vdir is None:
+            self.skipTest("nincs validator plugin (MA_GUI_PLUGIN_DIRS)")
+        version = validator_version(vdir)
+        rc_all, _text = _call(vdir, "appraise.py", "--skeleton", "nos", "--scope", "all")
+        if V.fixed_release({"version": version}):
+            self.assertEqual(rc_all, 2, "validator %s: a NOS --scope all-t el kell utasítania" % version)
+            self.assertEqual(V.SCOPE_REQUIRED_FIXED["nos"], SCOPED["nos"])
+            for sc in SCOPED["nos"]:
+                rc, text = _call(vdir, "appraise.py", "--skeleton", "nos", "--scope", sc)
+                self.assertEqual(rc, 0, sc)
+                ids = [m.group(1) for m in map(ROW_RE.match, text.splitlines()) if m and m.group(1) != "#"]
+                self.assertEqual(len(ids), 8, "%s: %s" % (sc, ids))
+        else:
+            self.assertEqual(rc_all, 0, "validator %s (1.0.x): a régi viselkedés változatlan" % version)
 
 
 class FixtureDriftTests(unittest.TestCase):

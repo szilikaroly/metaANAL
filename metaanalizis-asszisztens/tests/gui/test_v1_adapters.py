@@ -549,6 +549,80 @@ class ValidatorBridgeMappingTests(unittest.TestCase):
         self.assertEqual(V.unexpressible("quips", True), ())
 
 
+class ValidatorFixedOutputTests(unittest.TestCase):
+    """A szk-plugins#5 későbbi kimenet-változásai (1b2c906, 84363b0, 5b7d862) a rögzített 2.0.0-s kimeneteken: a híd
+    olvasója minden új sort felismer, a régi mezők változatlanok."""
+
+    def test_rob2_algorithm_path(self):
+        doms, overall, _l = V.parse_rollup_signalling(_golden2("rob2.rollup.txt"))
+        by = {d["domain"]: d for d in doms}
+        self.assertEqual(by["1"]["algorithm_path"], [{"item": "1.2", "answer": "Yes"}, {"item": "1.3", "answer": "No"},
+                                                     {"item": "1.1", "answer": "Yes"}])
+        self.assertEqual(by["3"]["off_path"], ["3.3", "3.4"])
+        self.assertNotIn("algorithm_path", by["5"])                    # hiányos domén: nincs bejárt út
+        self.assertEqual(V.rollup_rob2_variant(_golden2("rob2.rollup.txt")), "assignment")
+        self.assertEqual(V.rollup_rob2_variant(_golden2("rob2_adherence.rollup.txt")), "adherence")
+        self.assertIsNone(V.rollup_rob2_variant(_golden("rob2.rollup.txt")))           # 1.0.0: nincs ilyen sor
+        # hiányos domén, amelynek útja már bejárható: „the answered questions already give HIGH / SERIOUS (…)”
+        d = V.parse_domain_reason("unanswered: 1.1; the answered questions already give HIGH / SERIOUS (1.2 'No')",
+                                  incomplete=True)
+        self.assertEqual((d["validator_missing"], d["path_level"], d["algorithm_path"]),
+                         (["1.1"], "high", [{"item": "1.2", "answer": "No"}]))
+
+    def test_na_where_asked(self):
+        v = V.parse_verify(_golden2("rob2_na_asked.verify.txt"))
+        self.assertEqual((v["answered"], v["na_where_asked"], v["complete"]), (22, ["2.5"], False))
+        doms, overall, _l = V.parse_rollup_signalling(_golden2("rob2_na_asked.rollup.txt"))
+        dom2 = {d["domain"]: d for d in doms}["2"]
+        self.assertEqual((dom2["level"], dom2["validator_na_asked"], dom2["forced_by"]), (None, ["2.5"], []))
+        self.assertIsNone(overall)
+        d = V.parse_domain_reason("N/A at 2.5, but its condition holds (If Y/PY to 2.4) — answer it", incomplete=True)
+        self.assertEqual(d["validator_na_asked"], ["2.5"])
+        self.assertNotIn("na_where_asked", V.parse_verify(_golden("rob2.verify.txt")))   # 1.0.0: változatlan
+        self.assertNotIn("complete", V.parse_verify(_golden("rob2.verify.txt")))
+
+    def test_not_reached_graded_and_joint(self):
+        by = {d["domain"]: d for d in V.parse_rollup_signalling(_golden2("robins_i_2016.rollup.txt"))[0]}
+        self.assertEqual((by["1"]["not_asked"], by["2"]["not_asked"], by["2"]["routers"]), (["1.3"], ["2.3"],
+                                                                                         ["2.1", "2.2"]))
+        by = {d["domain"]: d for d in V.parse_rollup_signalling(_golden2("robins_e_graded.rollup.txt"))[0]}
+        self.assertEqual(by["1"]["forced_by"], ["1.1"])                                   # „Weak no” at 1.1
+        self.assertEqual(V.parse_domain_reason("'Strong no' at 1.1")["forced_by"], ["1.1"])
+        by = {d["domain"]: d for d in V.parse_rollup_signalling(_golden2("robins_i_c2.rollup.txt"))[0]}
+        # a 6.1 „Igen” csak a 6.2-vel együtt számít, és a 6.2 NI: nem kiváltó, csak függő
+        self.assertEqual((by["6"]["level"], by["6"]["forced_by"], by["6"]["joint_pending"], by["6"]["unknown_at"]),
+                         ("some", [], ["6.1", "6.2"], ["6.2"]))
+        self.assertEqual((by["2"]["level"], by["2"]["forced_by"], by["2"]["unknown_at"], by["2"]["routers"]),
+                         ("some", ["2.4"], ["2.5"], ["2.1"]))
+
+    def test_quadas2_applicability_and_robis_source(self):
+        v = V.parse_verify(_golden2("quadas2_noapp.verify.txt"))
+        self.assertEqual((v["applicability"], v["complete"]), ({"judged": 0, "expected": 3}, False))
+        self.assertEqual(V.parse_verify(_golden2("quadas2_yes.verify.txt"))["complete"], True)
+        app = V.parse_rollup_applicability(_golden2("quadas2_noapp.rollup.txt"))
+        self.assertEqual(app, {"domains": {"1": None, "2": None, "3": None}, "overall": None, "missing": ["1", "2", "3"]})
+        self.assertTrue(V.rollup_not_final(_golden2("quadas2_noapp.rollup.txt")))
+        self.assertIsNone(V.parse_rollup_applicability(_golden2("robins_i_2016.rollup.txt")))
+        self.assertEqual(V.rollup_overall_from(_golden2("robis_phase3.rollup.txt")), "P3")
+        self.assertIsNone(V.rollup_overall_from(_golden2("quips_partly.rollup.txt")))
+
+    def test_amstar2_partial_yes_on_every_item(self):
+        am = V.parse_rollup_amstar2(_golden2("amstar2_py.rollup.txt"))
+        self.assertEqual((am["weaknesses"], am["partial_yes_weakness"]), (["2", "4"], ["2", "4"]))
+        self.assertNotIn("partial_yes_weakness", V.parse_rollup_amstar2(_golden("amstar2_py.rollup.txt")))
+
+    def test_tripod_abstracts_heading_never_written(self):
+        """A 2.0.0 az absztrakt-ellenőrzőlista címszava alatt semmit nem olvas: a híd címsorai ilyet nem tartalmaznak,
+        így mind az 52 válasz átmegy (a valódi plugin is 52/52-t mond — tripod_full golden)."""
+        slots = V.parse_skeleton(_golden2("tripod_full.skeleton.txt"), checklist=True)
+        md = V.bridge_markdown("tripod-ai", slots, V._values(DOCS["tripod_full"]), True)[0]
+        heads = [ln for ln in md.splitlines() if ln.startswith("#")]
+        self.assertTrue(heads)
+        for ln in heads:
+            self.assertNotRegex(ln, r"(?i)\bfor\s+abstracts?\b|\babstracts?\s+checklist\b")
+        self.assertEqual(V.parse_verify(_golden2("tripod_full.verify.txt"))["answered"], 52)
+
+
 class ValidatorFixedAdapterTests(_Tmp):
     """A javított validator (2.0.0) bridge-módban: egyik 5.0-s őr sem kapcsol be, minden válasz átmegy, az eredmény
     összevethető a motoréval — a stub a rögzített 2.0.0-s kimeneteket adja."""
@@ -655,6 +729,66 @@ class ValidatorFixedAdapterTests(_Tmp):
         d = ad.check(DOCS["robis_phase3"])["data"]
         self.assertEqual({x["domain"]: x["level"] for x in d["domains"]},
                          {"1": "high", "2": "high", "3": "low", "4": "low", "P3": "high"})
+        self.assertEqual(d["overall"]["from"], "P3")                       # a 3. fázis ítélete, nem a legrosszabb
+
+    def test_rob2_path_and_note(self):
+        """RoB 2 (1b2c906-tól): a domén a 2019-es algoritmus útját adja; a megjegyzés ezt mondja, nem a „konzervatív
+        egyszerűsítést”, és az algoritmus-címke marad (nem a hivatalos eszköz)."""
+        d = self.adapter().check(DOCS["rob2"], instrument=_instrument("rob2"))["data"]
+        by = {x["domain"]: x for x in d["domains"]}
+        self.assertEqual([s["item"] for s in by["3"]["algorithm_path"]], ["3.1", "3.2"])
+        self.assertEqual(by["3"]["off_path"], ["3.3", "3.4"])
+        self.assertIn(V.NOT_OFFICIAL_ROB2, d["notes"])
+        self.assertNotIn(V.NOT_OFFICIAL, d["notes"])
+        self.assertEqual((d["overall"]["algorithm"], d["overall"]["rule"], d["overall"]["variant"]),
+                         ("conservative", "rob2-2019", "assignment"))
+        d = self.adapter({"rob2": "rob2_adherence"}, "ra").check(DOCS["rob2_adherence"], instrument=_instrument("rob2"))
+        self.assertEqual((d["data"]["overall"]["variant"], d["data"]["overall"]["implied"]), ("adherence", "some_concerns"))
+
+    def test_rob2_na_on_the_walked_path_is_c1(self):
+        """N/A a bejárt úton (2.4 Igen után a 2.5): a validator a domént INCOMPLETE-nek, a --verify „N/A WHERE ASKED”-nek
+        jelzi; a motor NI-ként számol — a híd C1-megjegyzést ad, és az eredmény ideiglenes."""
+        d = self.adapter({"rob2": "rob2_na_asked"}, "rn").check(DOCS["rob2_na_asked"], instrument=_instrument("rob2"))
+        d = d["data"]
+        self.assertEqual((d["validator_reported"]["na_where_asked"], d["validator_reported"]["complete"]), (["2.5"], False))
+        dom2 = {x["domain"]: x for x in d["domains"]}["2"]
+        self.assertEqual((dom2["level"], dom2["flags"], dom2["validator_na_asked"]), (None, ["incomplete"], ["2.5"]))
+        self.assertEqual(d["rule_differences"], [{"item": "2.5", "domain": "2", "kind": "C1"}])
+        self.assertTrue(d["overall"]["provisional"] and d["overall"]["incomplete"])
+
+    def test_quadas2_applicability_read_back(self):
+        d = self.adapter().check(DOCS["quadas2_yes"], instrument=_instrument("quadas2"))["data"]
+        self.assertEqual(d["applicability"], {"domains": {"1": "low", "2": "low", "3": "unclear"}, "overall": "unclear",
+                                              "missing": []})
+        self.assertEqual(d["validator_reported"]["applicability"], {"judged": 3, "expected": 3})
+        self.assertFalse(d["overall"]["provisional"])
+        d = self.adapter({"quadas2": "quadas2_noapp"}, "qn").check(DOCS["quadas2_noapp"], instrument=_instrument("quadas2"))
+        d = d["data"]
+        self.assertEqual((d["applicability"]["missing"], d["applicability"]["overall"]), (["1", "2", "3"], None))
+        self.assertEqual(d["validator_reported"]["applicability"], {"judged": 0, "expected": 3})
+        self.assertTrue(d["overall"]["provisional"])
+        self.assertEqual(d["overall"]["implied"], "low")                         # a domének ítélete megvan
+        self.assertTrue(any("1, 2, 3" in n["hu"] for n in d["notes"] if isinstance(n, dict)))
+
+    def test_robins_e_graded_no_and_c2(self):
+        d = self.adapter({"robins-e": "robins_e_graded"}, "re").check(DOCS["robins_e_graded"],
+                                                                     instrument=_instrument("robins-e"))["data"]
+        by = {x["domain"]: x for x in d["domains"]}
+        self.assertEqual((by["1"]["level"], by["1"]["forced_by"]), ("some", ["1.1"]))     # „Weak no”: középső szint
+        self.assertEqual((by["3"]["level"], by["3"]["unknown_at"]), ("some", ["3.3"]))
+        self.assertEqual(d["rule_differences"], [{"item": "3.3", "domain": "3", "kind": "C2"}])
+
+    def test_nos_scope_must_be_a_form_on_the_fixed_release(self):
+        """A 2.0.0 a NOS-nál űrlapot kér (cohort | case-control): más hatókörre a híd érthető hibát ad, nem a plugin
+        2-es kilépését; az alapértelmezés (hatókör nélkül) a kohorsz-űrlap."""
+        ad = self.adapter()
+        doc = copy.deepcopy(DOCS["nos_partial"])
+        doc["scope"] = "all"
+        with self.assertRaises(ValueError) as cm:
+            ad.check(doc, instrument=_instrument("nos"))
+        self.assertIn("cohort | case-control", str(cm.exception))
+        doc.pop("scope")
+        self.assertEqual(ad.check(doc, instrument=_instrument("nos"))["data"]["scope"], "cohort")
 
 # ============================================================================ figure-forge
 class FigureForgeAdapterTests(_Tmp):

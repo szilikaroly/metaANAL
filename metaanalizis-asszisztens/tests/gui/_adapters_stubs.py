@@ -222,13 +222,19 @@ def validator(script, args, cfg, mode, version):
         res.setdefault("validator_version", version)
         _emit(res)
         return 0
+    scope = _arg(args, "--scope")
+    if tool == "nos" and scope not in ("cohort", "case-control") and version.split(".")[0] not in ("0", "1"):
+        # a javított kiadás (2.0.0, 1b2c906) a NOS-nál űrlapot kér — más hatókörre argparse-szerű hiba, 2-es kilépés
+        sys.stderr.write("appraise.py: error: nos needs --scope cohort or --scope case-control\n")
+        return 2
     if "--skeleton" in args:
         sys.stdout.write((gdir / ("%s.skeleton.txt" % case)).read_text(encoding="utf-8"))
         return 0
     if "--verify" in args:
         text = (gdir / ("%s.verify.txt" % case)).read_text(encoding="utf-8")
         sys.stdout.write(text)
-        return 1 if any(w in text for w in ("UNANSWERED", "INVALID", "UNRECOGNISED", "LEGACY NUMBERING")) else 0
+        return 1 if any(w in text for w in ("UNANSWERED", "INVALID", "UNRECOGNISED", "LEGACY NUMBERING",
+                                            "N/A WHERE ASKED", "APPLICABILITY NOT")) else 0
     if "--rollup" in args:
         text = (gdir / ("%s.rollup.txt" % case)).read_text(encoding="utf-8")
         sys.stdout.write(text)

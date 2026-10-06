@@ -53,11 +53,21 @@ szótárával és kimenetével —
 - QUIPS: „Nem alkalmazható” a 3f/5e-n ``N/A``-ként; ROBINS-E 1.1 „gyenge / erős nem” ``Weak no`` / ``Strong no``;
   RoB 2 betartási változat: a motor 2a.1–2a.6 kulcsai a validator 2.1–2.6-ján (``validator_id``, csak a hatókör
   tételei mennek át);
+- a szk-plugins#5 későbbi kimenet-változásai (1b2c906, 84363b0, 5b7d862): a RoB 2 domén-sora a 2019-es algoritmus
+  bejárt útját adja indoklás helyett (``algorithm_path``; az útról lemaradt megválaszolt tételek ``off_path``, a
+  hiányos doménnél a már bejárt út szintje ``path_level``); a többi eszköznél a nem kérdezett, mégis megválaszolt
+  tételek ``not_asked``; a kérdezett tételen adott N/A a --verify-ban (``na_where_asked``) és a doménnél
+  (``validator_na_asked``); ROBINS-E „Weak no” / „Strong no” kiváltóként; QUADAS-2 alkalmazhatóság a --verify-ból és
+  a --rollup-ból (``applicability``); ROBIS összítélet a 3. fázisból (``overall.from``); AMSTAR 2: a „részben igen”
+  minden kínáló tételen (2/4/7/8/9) gyengeség, a rollup meg is nevezi őket; NOS: a 2.0.0 űrlapot kér (``--scope
+  cohort|case-control``, más hatókörre 2-es kilépés), ezért a híd mást nem küld; a TRIPOD+AI absztrakt-ellenőrzőlistája
+  külön címszó alatt nem válasz (a híd címsorai ilyet nem tartalmaznak);
 - a teljes válaszkombináció-felsorolás után (2026-10) csak dokumentált konvenció-eltérések maradtak, ezeket
   megjegyzés mondja ki (``rule_differences``; nem őr, nem a plugin hibája): C1 — „Nem alkalmazható” kérdezett
   tételen (a motor NI-ként számol, a validator INCOMPLETE); C2 — ROBINS-I/-E, ahol a válaszok a köztes és a felső
   szint között nem döntenek (a motor a szigorúbbat adja, a validator a „legalább” szintet). A ROBINS-I 2.1 mindkettőben
-  irányító kérdés (a korábbi 2.1-megjegyzés megszűnt).
+  irányító kérdés: a korábbi 2.1-megjegyzés megszűnt, helyette regressziós teszt ellenőrzi, hogy a 2. domén ítélete a
+  két eszközben egyezik (``test_v1_adapters_real``).
 
 Az implikált ítélet a validator ``algorithm`` címkéjével jön (``conservative`` = NEM a hivatalos folyamatábra) —
 hivatalos eredményként soha nem jeleníthető meg (6.5). Statisztikát nem számol; a teljesség csak darabszám."""
@@ -372,6 +382,25 @@ NOT_OFFICIAL = {"hu": "Ez a validator implikált ítélete (konzervatív szabál
                       "az ítélet a Tiéd.",
                 "en": "This is the validator's implied judgement (conservative rule) — NOT the official flowchart "
                       "result; the judgement is yours."}
+# a 2.0.0 RoB 2-rollupja (1b2c906-tól) doménenként a 2019-es útmutató algoritmusát járja be, és kiírja az utat: ez
+# nem „konzervatív egyszerűsítés”, de nem is a hivatalos Excel-eszköz kimenete (a plugin maga is ezt mondja)
+NOT_OFFICIAL_ROB2 = {"hu": "A validator a RoB 2 2019-es útmutatójának doménenkénti algoritmusát járja be (az út "
+                           "doménenként a kimenetben) — ez nem a hivatalos Excel-eszköz eredménye; az indokolt eltérés "
+                           "megengedett, az ítélet a Tiéd.",
+                     "en": "The validator walks the per-domain algorithms of the 2019 RoB 2 guidance (the path is "
+                           "listed per domain) — this is not the output of the official Excel tool; a reasoned "
+                           "override is legitimate, the judgement is yours."}
+_ROB2_ALGO_RE = re.compile(r"Domain verdicts follow the RoB 2 algorithms of the 22 August 2019 guidance "
+                           r"\((effect of adhering|effect of assignment) variant")
+# QUADAS-2: az alkalmazhatóság doménenkénti emberi ítélet (1–3. domén); a 2.0.0 nélküle nem ad végleges eredményt
+APPLICABILITY_MISSING_NOTE = {
+    "hu": "QUADAS-2: a validator %s az 1–3. domén alkalmazhatósági ítéletét is kéri (nincs rögzítve: %s), addig az "
+          "eredménye nem végleges. Rögzítsd az alkalmazhatóságot az űrlapon.",
+    "en": "QUADAS-2: validator %s also needs the applicability judgement of domains 1–3 (not recorded: %s); until "
+          "then its result is not final. Record applicability in the form."}
+# a javított kiadás ezeknél az eszközöknél csak az itt felsorolt hatókört fogadja el (a NOS két űrlapja nem
+# vonható össze; más hatókörre 2-es kilépés — 1b2c906, meta scope_required)
+SCOPE_REQUIRED_FIXED = {"nos": ("cohort", "case-control")}
 
 _VERIFY_RE = re.compile(r"^\s*(\d+)/(\d+) answered", re.M)
 _UNANSWERED_RE = re.compile(r"UNANSWERED \((\d+)\):\s*(.*)$", re.M)
@@ -395,6 +424,35 @@ _WHY_UNKNOWN_RE = re.compile(r"no information at " + _IDLIST)
 _WHY_PARTLY_RE = re.compile(r"'Partly' at " + _IDLIST)
 _WHY_MISSING_RE = re.compile(r"unanswered: " + _IDLIST)
 _WHY_INVALID_RE = re.compile(r"answer not offered by the item at " + _IDLIST)
+# 2.0.0 (szk-plugins#5 utáni kimenet): ROBINS-E graded No (1.1), a kérdezett tételen adott N/A (mindkét rollup-alak:
+# „N/A at 2.5, but its condition holds (…)” és a RoB 2 „N/A at 2.5, but 2.4 'Yes' leads to it”), az együtt számoló
+# (joint) pár függő tagja, a RoB 2 bejárt útja („2019 algorithm: 1.2 'Yes' → 1.3 'No'”), a hiányos RoB 2-domén már
+# bejárt útja és szintje, és a hiányos domén már legfelső szintű jelzése
+_ID = r"[0-9A-Za-z][0-9A-Za-z.]*"
+_WHY_GRADED_RE = re.compile(r"'(?:Strong|Weak) no' at (" + _ID + r")")
+_WHY_NA_ASKED_RE = re.compile(r"N/A at (" + _ID + r"), but ")
+_WHY_JOINT_PENDING_RE = re.compile(r" counts only together with " + _IDLIST)
+_WHY_PATH_RE = re.compile(r"^2019 algorithm: (.*)$")
+_WHY_PATH_LEVEL_RE = re.compile(r"^the answered questions already give (HIGH / SERIOUS|SOME CONCERNS / UNCLEAR|LOW) "
+                                r"\((.*)\)$")
+_WHY_FLAGGED_RE = re.compile(r"^already flagged by ")
+_PATH_STEP_RE = re.compile(r"(" + _ID + r") '([^']*)'")
+_NOT_REACHED_RE = re.compile(r"answered, but the routing does not reach them — not scored:\s*(.*)$")
+_OFF_PATH_RE = re.compile(r"answered, but not on the algorithm's path for these answers:\s*(.*)$")
+_OVERALL_FROM_RE = re.compile(r"Implied overall: [A-Z /]+ — (Domain|Phase|Section|Item group) (\S+), the overall "
+                              r"judgement")
+# --verify: kérdezett tételen adott N/A, QUADAS-2 alkalmazhatóság, és a záró „complete” sor
+_NA_ASKED_RE = re.compile(r"N/A WHERE ASKED \((\d+)\):\s*(.*)$", re.M)
+_NA_ASKED_ID_RE = re.compile(r"(?:^|; )(" + _ID + r") — its condition holds")
+_APPLIC_RE = re.compile(r"^\s*applicability: (\d+)/(\d+) domains judged", re.M)
+_COMPLETE_RE = re.compile(r"^\s*complete\s*$", re.M)
+# --rollup: a QUADAS-2 alkalmazhatósági blokk sorai
+_APPLIC_ROW_RE = re.compile(r"^\s*domain (\S+) — .*?: (Low|High|Unclear|NOT RECORDED|not recognised \(.*\))\s*$")
+_APPLIC_OVERALL_RE = re.compile(r"^\s*overall applicability: (low|unclear|high) concern")
+# AMSTAR 2: „Convention used here: 'Partial yes' counts as a non-critical weakness on every item that offers it
+# (2, 4, 7, 8, 9) — here 2, 4.”
+_AM_PY_RE = re.compile(r"Convention used here: 'Partial yes' counts as a non-critical weakness on every item that "
+                       r"offers it \(([^)]*)\)(?: — here ([^.]*))?\.")
 _AM_CRIT_RE = re.compile(r"Critical flaws \((\d+)\):\s*(.*)$", re.M)
 _AM_WEAK_RE = re.compile(r"Non-critical weaknesses \((\d+)\):\s*(.*)$", re.M)
 _AM_NA_RE = re.compile(r"No meta-analysis conducted \(N/A[^)]*\):\s*(.*)$", re.M)
@@ -665,6 +723,21 @@ def parse_verify(text):
                 invalid.append(iid)
     if invalid:
         out["invalid"] = invalid
+    # 2.0.0 (84363b0-tól): „N/A WHERE ASKED” — a tétel megválaszoltnak számít, de a plugin szerint nem kész
+    na = []
+    for nm in _NA_ASKED_RE.finditer(text or ""):
+        for iid in _NA_ASKED_ID_RE.findall(nm.group(2)):
+            if iid not in na:
+                na.append(iid)
+    if na:
+        out["na_where_asked"] = na
+    am = _APPLIC_RE.search(text or "")
+    if am:
+        out["applicability"] = {"judged": int(am.group(1)), "expected": int(am.group(2))}
+    if am or na:
+        # a hiánytalan rekordot „complete” sor zárja; csak ott rögzítjük, ahol a számláláson túli hiány (N/A
+        # kérdezett tételen, alkalmazhatóság — csak a 2.0.0 kimenetében) is lehet: az 1.0.x eredménye változatlan
+        out["complete"] = bool(_COMPLETE_RE.search(text or ""))
     return out
 
 
@@ -692,29 +765,131 @@ def parse_rollup_signalling(text):
         m = _DOMAIN_RE.match(line)
         if m:
             verdict, why = m.group(4), m.group(5)
-            reverse = _why_ids(_WHY_REVERSE_RE, why)
-            forced = reverse + [i for i in _why_ids(_WHY_NORMAL_RE, why) if i not in reverse]
-            d = {"domain": group_key(m.group(1), m.group(2)), "level": LEVEL.get(verdict), "forced_by": forced,
-                 "unknown_at": _why_ids(_WHY_UNKNOWN_RE, why), "routers": []}
-            partly = _why_ids(_WHY_PARTLY_RE, why)
-            if partly:
-                d["partial_at"] = partly
-            if verdict == "INCOMPLETE":
-                d["incomplete"] = True
-                d["validator_missing"] = _why_ids(_WHY_MISSING_RE, why)
-                bad = _why_ids(_WHY_INVALID_RE, why)
-                if bad:
-                    d["validator_invalid"] = bad
+            d = parse_domain_reason(why, verdict == "INCOMPLETE")
+            d = dict({"domain": group_key(m.group(1), m.group(2)), "level": LEVEL.get(verdict)}, **d)
             domains.append(d)
             continue
         m = _ROUTERS_RE.search(line)
         if m and domains:
             domains[-1]["routers"] = _ids(m.group(1))
             continue
+        m = _NOT_REACHED_RE.search(line)
+        if m and domains:
+            domains[-1]["not_asked"] = [s[0] for s in _PATH_STEP_RE.findall(m.group(1))]
+            continue
+        m = _OFF_PATH_RE.search(line)
+        if m and domains:
+            domains[-1]["off_path"] = [s[0] for s in _PATH_STEP_RE.findall(m.group(1))]
+            continue
         m = _OVERALL_RE.search(line)
         if m:
             overall = LEVEL.get(m.group(1), None)
     return domains, overall, lines[:60]
+
+
+def parse_domain_reason(why, incomplete=False):
+    """Egy domén-sor indoklása → mezők. A részeket „; ” választja el (a RoB 2 útja „ → ”-vel, egy részben).
+
+    - ``forced_by``: a problémát jelző tételek (normál és fordított polaritás, 2.0.0-tól a középső szint és a ROBINS-E
+      „Weak no” / „Strong no” is); az együtt számoló pár még nem döntő tagja nem kiváltó (``joint_pending``);
+    - ``unknown_at``, ``partial_at``; INCOMPLETE-nél ``validator_missing``, ``validator_invalid``,
+      ``validator_na_asked`` (kérdezett tételen adott N/A), ``at_least`` („already flagged by …”: legalább magas);
+    - RoB 2 (1b2c906-tól): ``algorithm_path`` — a 2019-es algoritmus bejárt útja ``[{item, answer}]`` (a válasz a
+      plugin szavával); hiányos doménnél a már bejárt út és szintje (``path_level``)."""
+    parts = [p.strip() for p in (why or "").split("; ") if p.strip()]
+    reverse, normal, graded, pending = [], [], [], []
+    out = {"forced_by": [], "unknown_at": [], "routers": []}
+    for p in parts:
+        jm = _WHY_JOINT_PENDING_RE.search(p)
+        if jm:
+            # „'Yes' … at 6.1 (reverse-worded) counts only together with 6.2”: a pár problémás tagja, majd a még
+            # nem döntő társa — egyik sem kiváltó, amíg a társ nem dönt
+            head = p[:jm.start()]
+            for iid in _why_ids(_WHY_REVERSE_RE, head) + _why_ids(_WHY_NORMAL_RE, head) + _ids(jm.group(1)):
+                if iid not in pending:
+                    pending.append(iid)
+            continue
+        pm = _WHY_PATH_RE.match(p)
+        if pm:
+            out["algorithm_path"] = [{"item": a, "answer": b} for a, b in _PATH_STEP_RE.findall(pm.group(1))]
+            continue
+        lm = _WHY_PATH_LEVEL_RE.match(p)
+        if lm:
+            out["path_level"] = LEVEL.get(lm.group(1))
+            out["algorithm_path"] = [{"item": a, "answer": b} for a, b in _PATH_STEP_RE.findall(lm.group(2))]
+            continue
+        if _WHY_FLAGGED_RE.match(p):
+            out["at_least"] = "high"
+        if _WHY_NA_ASKED_RE.match(p):
+            out.setdefault("validator_na_asked", []).extend(
+                i for i in _WHY_NA_ASKED_RE.findall(p) if i not in out.get("validator_na_asked", []))
+            continue
+        for iid in _why_ids(_WHY_REVERSE_RE, p):
+            if iid not in reverse:
+                reverse.append(iid)
+        for iid in _why_ids(_WHY_NORMAL_RE, p):
+            if iid not in normal:
+                normal.append(iid)
+        for iid in _WHY_GRADED_RE.findall(p):
+            if iid not in graded:
+                graded.append(iid)
+        for iid in _why_ids(_WHY_UNKNOWN_RE, p):
+            if iid not in out["unknown_at"]:
+                out["unknown_at"].append(iid)
+        partly = _why_ids(_WHY_PARTLY_RE, p)
+        if partly:
+            out.setdefault("partial_at", []).extend(i for i in partly if i not in out.get("partial_at", []))
+        if incomplete:
+            for key, rx in (("validator_missing", _WHY_MISSING_RE), ("validator_invalid", _WHY_INVALID_RE)):
+                for iid in _why_ids(rx, p):
+                    out.setdefault(key, [])
+                    if iid not in out[key]:
+                        out[key].append(iid)
+    forced = []
+    for iid in reverse + normal + graded:
+        if iid not in forced:
+            forced.append(iid)
+    out["forced_by"] = forced
+    if pending:
+        out["joint_pending"] = pending
+    if incomplete:
+        out["incomplete"] = True
+        out.setdefault("validator_missing", [])
+    return out
+
+
+def parse_rollup_applicability(text):
+    """A 2.0.0 QUADAS-2-rollupjának alkalmazhatósági blokka → {domains: {domén: low|high|unclear|None}, overall,
+    missing[]} vagy None (nincs ilyen blokk, pl. 1.0.0). A „NOT RECORDED” / „not recognised” domén értéke None."""
+    domains, overall, seen = {}, None, False
+    for line in (text or "").splitlines():
+        m = _APPLIC_ROW_RE.match(line)
+        if m:
+            seen = True
+            word = m.group(2)
+            domains[m.group(1)] = word.lower() if word in ("Low", "High", "Unclear") else None
+            continue
+        m = _APPLIC_OVERALL_RE.match(line)
+        if m:
+            overall = m.group(1)
+    if not seen:
+        return None
+    return {"domains": domains, "overall": overall, "missing": [d for d, v in domains.items() if v is None]}
+
+
+def rollup_overall_from(text):
+    """Az összítélet forrása, ha a validator nem a legrosszabb doménből számol (ROBIS: „Phase 3, the overall
+    judgement” → „P3”), különben None."""
+    m = _OVERALL_FROM_RE.search(text or "")
+    return group_key(m.group(1), m.group(2)) if m else None
+
+
+def rollup_rob2_variant(text):
+    """A 2.0.0 RoB 2-rollupja a 2019-es algoritmussal fut-e: → 'assignment' | 'adherence' | None (1.0.0)."""
+    m = _ROB2_ALGO_RE.search(text or "")
+    if not m:
+        return None
+    return "adherence" if m.group(1) == "effect of adhering" else "assignment"
 
 
 def rollup_incomplete(text):
@@ -744,6 +919,11 @@ def parse_rollup_amstar2(text):
     na = _AM_NA_RE.search(text or "")
     if na:
         out["not_applicable"] = _ids(na.group(1))
+    py = _AM_PY_RE.search(text or "")
+    if py:
+        # 2.0.0 (1b2c906-tól): a „részben igen” minden kínáló tételen nem kritikus gyengeség — a plugin ki is mondja,
+        # mely tételeken (a motor „weakness” konvenciója ugyanez)
+        out["partial_yes_weakness"] = _ids(py.group(2)) if py.group(2) else []
     return out
 
 
@@ -893,6 +1073,11 @@ class ValidatorAdapter(Adapter):
             raise ValueError("Érvénytelen hatókör (scope).")
         if TOOLS[tool][0] == "checklist.py" and scope not in CHECKLIST_SCOPES:
             scope = "both"
+        need = SCOPE_REQUIRED_FIXED.get(tool)
+        if need and scope not in need and fixed_release(cap):
+            # a javított kiadás a NOS-nál űrlapot kér (--scope cohort|case-control); más hatókörre 2-es kilépés
+            raise ValueError("A validator %s a(z) %s eszköznél csak ezt a hatókört fogadja el: %s."
+                             % (cap.get("version") or FIXED_VERSION, tool, " | ".join(need)))
         # H13: az eltérő számozású tételek válaszai nem mennek át (a validatorban ugyanez az azonosító más kérdés)
         dropped = []
         if "H13" in self.active_guards(cap):
@@ -1157,13 +1342,32 @@ class ValidatorAdapter(Adapter):
                     # 2.0.0: üres vagy nem választható hely → a domén ítélet nélkül (nem a megválaszoltakból LOW)
                     d["flags"] = d.get("flags", []) + ["incomplete"]
             out["domains"] = doms
-            overall.update(level=level, implied=tiers.get(level) if level else None, label=NOT_OFFICIAL)
+            # 2.0.0 RoB 2: a 2019-es algoritmus doménenként (az út a doménekben) — a megjegyzés ezt mondja, nem a
+            # „konzervatív egyszerűsítést”; az algoritmus-címke marad (nem a hivatalos eszköz kimenete)
+            variant = rollup_rob2_variant(rollup_text) if tool == "rob2" else None
+            label = NOT_OFFICIAL_ROB2 if variant else NOT_OFFICIAL
+            overall.update(level=level, implied=tiers.get(level) if level else None, label=label)
+            if variant:
+                overall["rule"] = "rob2-2019"
+                overall["variant"] = variant
+            src = rollup_overall_from(rollup_text)
+            if src:
+                overall["from"] = src                       # ROBIS: a 3. fázis ítélete, nem a legrosszabb domén
             incomplete, at_least = rollup_incomplete(rollup_text)
             if incomplete:
                 overall.update(provisional=True, incomplete=True)
                 if at_least:
                     overall["at_least"] = at_least
-            notes.append(NOT_OFFICIAL)
+            notes.append(label)
+            app = parse_rollup_applicability(rollup_text) if tool in APPLICABILITY_TOOLS else None
+            if app is not None:
+                out["applicability"] = app
+                if app["missing"]:
+                    overall["provisional"] = True
+                    notes.append({k: v % (cap.get("version") or FIXED_VERSION, ", ".join(app["missing"]))
+                                  for k, v in APPLICABILITY_MISSING_NOTE.items()})
+            if reported.get("na_where_asked"):
+                overall["provisional"] = True               # a plugin a kérdezett tételen adott N/A-t nem fogadja el
         elif rollup_text and tool == "amstar2":
             am = parse_rollup_amstar2(rollup_text)
             if am is not None:

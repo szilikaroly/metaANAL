@@ -17,7 +17,8 @@
  *   1. értékelési munkafolyamatok: RoB 2, ROBINS-I, ROBINS-E, QUADAS-2, NOS, PROBAST+AI (34 hely, menetenkénti
  *      teljesség), TRIPOD+AI (52 tétel, D/E), AMSTAR 2 (mindkét konvenció) — a motor eszközeivel ÉS a validator
  *      keresztellenőrzésével (a doboz egyezik, vagy megmagyarázza az eltérést; az 1.0.x-en a H1–H4, H12, H13 őrökkel,
- *      a javított 2.0.0-n őr nélkül, egyezéssel); két emberi
+ *      a javított 2.0.0-n őr nélkül, egyezéssel: az összítélet = motor, vagy csak dokumentált C1/C2 konvenció
+ *      választja el; RoB 2-nél a 2019-es algoritmus címkéje, QUADAS-2-nél az alkalmazhatóság); két emberi
  *      értékelő → κ → konszenzus → forgalmi lámpa → rob-oszlop szinkron → „magas RoB nélkül” érzékenységi futás →
  *      X003/X006 tiszta; AI-vázlat (jelvény, kezdőbarát indoklás, jóváhagyás kell, kimarad a κ-ból);
  *   2. GRADE kimenetenként a motor tanácsával, „gyanított” publikációs torzítás → a rögzítés tiltva (X019), amíg ember
@@ -290,6 +291,11 @@ function validatorMajor(cc) {
   const m = /validator (\d+)\.\d+\.\d+/.exec(cc.mode || '');
   return m ? Number(m[1]) : 0;
 }
+/** A javított validatornál (≥ 2): az összítélet-sor (ha van) egyezik, vagy az oka dokumentált konvenció (C1/C2). */
+function fixedOverallOk(cc) {
+  const r = cc.rows.find((x) => x.k === 'overall');
+  return !r || r.agree || /konvenció-eltérés/.test(r.why);
+}
 /** A doboz „egyezik, vagy megmagyarázza” követelménye: minden sor egyezik, vagy van ismert oka. */
 function cmpOk(cc) {
   return cc.rows.length > 0 && cc.rows.every((r) => r.agree || (r.why && !/oka nem ismert/.test(r.why)));
@@ -348,6 +354,9 @@ async function appraisalRob2() {
           check(!cc.down && /\d+\.\d+\.\d+/.test(cc.mode) && /bridge|régi/i.test(cc.mode), 'validator: a valódi plugin bridge-módban (' + cc.mode.trim() + ')');
           if (validatorMajor(cc) >= 2) {
             check(/őr nem kell/.test(cc.mode) && cc.guards.length === 0, 'validator ' + validatorMajor(cc) + '.x: bridge-mód őrök nélkül (' + cc.mode.trim() + ')');
+            // a 2.0.0 RoB 2-je a 2019-es algoritmust járja be doménenként: a címke ezt mondja, és az összítélet a
+            // motoréval egyezik (vagy dokumentált konvencióval tér el)
+            check(/2019-es algoritmus/.test(cc.text) && fixedOverallOk(cc), 'RoB 2: validator ' + validatorMajor(cc) + '.x — 2019-es algoritmus, az összítélet = motor (vagy C1/C2): ' + JSON.stringify(cc.rows.map((r) => [r.k, r.agree, r.why.slice(0, 60)])));
           }
           check(cmpOk(cc), 'RoB 2: a keresztellenőrző doboz egyezik a motorral, vagy megmagyarázza az eltérést: ' + JSON.stringify(cc.rows));
           check(cc.rows.find((r) => r.k === 'completeness' && r.agree), 'RoB 2: a teljesség egyezik (validator = motor)');
@@ -562,6 +571,10 @@ async function appraisalOthers() {
           // a javított validator (2.0.0): az őrök nem kapcsolnak be, és a validator maga egyezik a motorral
           const g = { 'tripod-ai': ['H1', 'completeness'], amstar2: ['H4', 'amstar2'], quadas2: ['H12', 'overall'], 'robins-i': ['H13', 'completeness'] }[tool];
           if (g) { check(cc.guards.indexOf(g[0]) < 0 && agree(g[1]), tool + ': validator ' + validatorMajor(cc) + '.x — ' + g[0] + '-őr nélkül egyezik a motorral (' + g[1] + ')'); }
+          // a teljes válaszkombináció-felsorolás után: az összítélet (és a NOS-csillag) egyezik, vagy csak dokumentált
+          // konvenció (C1/C2) választja el — az 1.0.x „egyszerűsített szabály” magyarázata itt már nem elfogadható
+          check(fixedOverallOk(cc) && (tool !== 'nos' || agree('nos')), tool + ': validator ' + validatorMajor(cc) + '.x — az összítélet = motor (vagy dokumentált C1/C2): ' + JSON.stringify(cc.rows.map((r) => [r.k, r.agree, r.why.slice(0, 60)])));
+          if (tool === 'quadas2') { check(/alkalmazhatóság/i.test(cc.text), 'QUADAS-2: validator ' + validatorMajor(cc) + '.x — az alkalmazhatóság (ítélet vagy hiányzó ítélet) megjelenik'); }
         } else {
           if (tool === 'tripod-ai') { check(cc.guards.indexOf('H1') >= 0 && agree('completeness'), 'TRIPOD+AI: H1-őr — a munkapad számol, és egyezik a motorral'); }
           if (tool === 'amstar2') { check(cc.guards.indexOf('H4') >= 0 && agree('amstar2'), 'AMSTAR 2: H4-őr — a validator „weakness” besorolása = a motoré ugyanazzal a konvencióval'); }

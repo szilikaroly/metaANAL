@@ -9,7 +9,10 @@ Ha a változó nincs beállítva vagy a plugin hiányzik, a tesztek tiszta üzen
   ma is reprodukálható, és az őr megjelöli / kiszűri.
 - validator 2.0.0 (a javított kiadás, szk-plugins#5): a ``validator-2.0.0`` golden-kimenetek nem sodródtak; egyik
   5.0-s őr sem kapcsol be; a ROBINS-I és a QUIPS publikált azonosítói mind átmennek, és a validator teljessége és
-  ítélete a motoréval egyezik (a ROBINS-I 2.1 tudatos szabálybeli eltérése megjegyzésként).
+  ítélete a motoréval egyezik. A ROBINS-I 2.1 mindkét eszközben irányító kérdés: a korábbi megjegyzés helyett
+  regressziós teszt veti össze a 2. domén ítéletét a 2.1–2.5 válaszkombinációin (eltérés csak a dokumentált C1/C2
+  konvencióval lehet, és azt a híd megjegyzése mondja ki); a RoB 2 2019-es algoritmus-útja, a kérdezett tételen adott
+  N/A (C1), a ROBINS-I/-E C2-határesete, a QUADAS-2 alkalmazhatóság és a NOS űrlap-hatóköre a hídon át.
   A golden-kimeneteket a ``adapters_golden/record_validator.py`` rögzíti (ugyanazzal a függvénnyel, amellyel ez a
   teszt összeveti őket).
 - figure-forge 0.2.1: matplotlib nélküli interpreterrel ``unusable`` + pontos H5-teendő; matplotlibes
@@ -265,6 +268,96 @@ class RealValidatorFixed(_RealValidatorBase):
         # a 2.1 mindkét oldalon irányító kérdés (szk-plugins#5, 84363b0): a korábbi 2.1-megjegyzés megszűnt
         d = self.ad.check(docs["robins_i_2016"], instrument=self.instrument("robins-i"))["data"]
         self.assertNotIn("rule_differences", d)
+
+    def test_robins_i_21_gateway_agrees_with_engine(self):
+        """Regressziós ellenőrzés a megszűnt 2.1-megjegyzés helyett: a ROBINS-I 2.1 mindkét eszközben irányító kérdés
+        (84363b0). A 2. domén 2.1–2.5 válaszkombinációin (a nem kérdezett tétel „Nem alkalmazható”, ahogy az űrlap
+        rögzíti) a validator és a motor doménítélete egyezik; eltérés csak dokumentált konvencióval (C1/C2) lehet, és
+        azt a híd ``rule_differences``-e megnevezi."""
+        import itertools
+        inst = self.instrument("robins-i")
+        base = REC.load_docs()["robins_i_2016"]
+        route_inst = api.instrument_get("robins-i")
+        grid = (("2.1", ("yes", "probably_no", "no_information")), ("2.2", ("yes", "no", "no_information")),
+                ("2.3", ("yes", "no", "no_information")), ("2.4", ("yes", "no", "no_information")),
+                ("2.5", ("yes", "no", "no_information")))
+        seen, checked, gateway_low, explained = set(), 0, 0, 0
+        for combo in itertools.product(*[vals for _k, vals in grid]):
+            vals = dict(zip([k for k, _v in grid], combo))
+            # az űrlap logikája: a nem kérdezett tétel „Nem alkalmazható” (V._Route = a motor útválasztása)
+            route = V._Route(vals, route_inst, "assignment")
+            eff = {k: ("not_applicable" if route.asked(k) is False else v) for k, v in vals.items()}
+            key = tuple(sorted(eff.items()))
+            if key in seen:
+                continue
+            seen.add(key)
+            doc = json.loads(json.dumps(base))
+            doc["answers"].update({k: {"value": v} for k, v in eff.items()})
+            d = self.ad.check(doc, instrument=inst)["data"]
+            eng = api.appraisal_check(doc, instrument=route_inst)
+            mine = {x["domain"]: x.get("implied") for x in d["domains"]}["2"]
+            theirs = {x["domain"]: x.get("implied") for x in eng["domains"]}["2"]
+            documented = [r for r in d.get("rule_differences") or () if r["domain"] == "2"]
+            checked += 1
+            if mine != theirs:
+                self.assertTrue(documented, "2. domén: validator %s, motor %s, dokumentált konvenció nélkül — %s"
+                                % (mine, theirs, eff))
+                explained += 1
+            if eff["2.1"] == "yes" and eff["2.2"] == "no" and eff["2.4"] == "yes":
+                self.assertEqual((mine, theirs), ("low", "low"), eff)        # irányító 2.1: Igen + 2.2 Nem → alacsony
+                gateway_low += 1
+        # 2026-10, 5b7d862: 39 különböző rekord, 30 egyezik, 9 a C2 (2.5 NI a kérdezett 2.5-ön)
+        self.assertGreaterEqual(checked, 39)
+        self.assertGreater(gateway_low, 0)
+        self.assertLess(explained, checked)
+
+    def test_new_outputs_through_bridge(self):
+        """A szk-plugins#5 későbbi kimenetei a valódi pluginnal: RoB 2 út és C1, ROBINS-I/-E C2, QUADAS-2
+        alkalmazhatóság nélkül, TRIPOD+AI 52/52, és minden más ítélet = motor."""
+        docs = REC.load_docs()
+        cases = {"rob2_na_asked": ("rob2", "C1", "2"), "robins_i_c2": ("robins-i", "C2", "2"),
+                 "robins_e_graded": ("robins-e", "C2", "3")}
+        for name, (tool, kind, dom) in sorted(cases.items()):
+            inst = self.instrument(tool)
+            d = self.ad.check(docs[name], instrument=inst)["data"]
+            eng = api.appraisal_check(docs[name], instrument=api.instrument_get(tool))
+            self.assertEqual([(r["kind"], r["domain"]) for r in d["rule_differences"]], [(kind, dom)], name)
+            mine = {x["domain"]: x.get("implied") for x in d["domains"]}
+            theirs = {x["domain"]: x.get("implied") for x in eng["domains"]}
+            self.assertEqual({k for k in mine if mine[k] != theirs.get(k)}, {dom}, name)
+        d = self.ad.check(docs["rob2_na_asked"], instrument=self.instrument("rob2"))["data"]
+        self.assertEqual(d["validator_reported"]["na_where_asked"], ["2.5"])
+        self.assertEqual({x["domain"]: x.get("validator_na_asked") for x in d["domains"]}["2"], ["2.5"])
+        self.assertEqual(d["overall"]["rule"], "rob2-2019")
+        d = self.ad.check(docs["rob2_adherence"], instrument=self.instrument("rob2"))["data"]
+        self.assertEqual(d["overall"]["variant"], "adherence")
+        self.assertEqual([s["item"] for s in {x["domain"]: x for x in d["domains"]}["2"]["algorithm_path"]],
+                         ["2.1", "2.2", "2.3", "2.4", "2.5", "2.6"])
+        d = self.ad.check(docs["quadas2_noapp"], instrument=self.instrument("quadas2"))["data"]
+        self.assertEqual((d["applicability"]["missing"], d["overall"]["provisional"]), (["1", "2", "3"], True))
+        d = self.ad.check(docs["quadas2_yes"], instrument=self.instrument("quadas2"))["data"]
+        self.assertEqual((d["applicability"]["overall"], d["overall"]["provisional"]), ("unclear", False))
+        d = self.ad.check(docs["tripod_full"])["data"]
+        self.assertEqual((d["answered"], d["validator_reported"]["answered"], d["complete"]), (52, 52, True))
+
+    def test_nos_scope_is_a_form(self):
+        """A 2.0.0 a NOS-nál --scope all-ra 2-vel kilép: a híd ilyet nem küld, érthető hibát ad; az űrlap-hatókörrel
+        a csillagszám = motor."""
+        docs = REC.load_docs()
+        r = subprocess.run([sys.executable, os.path.join(self.scripts, "appraise.py"), "--skeleton", "nos", "--scope",
+                            "all"], capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2)
+        doc = json.loads(json.dumps(docs["nos_partial"]))
+        doc["scope"] = "all"
+        with self.assertRaises(ValueError):
+            self.ad.check(doc, instrument=self.instrument("nos"))
+        for sc in ("cohort", "case-control"):
+            doc = {"schema": "szk.appraisal/v1", "tool": "nos", "scope": sc,
+                   "answers": {it["id"]: {"value": "yes"} for it in self.instrument("nos")["items"]
+                               if sc in (it.get("scopes") or [sc])}}
+            d = self.ad.check(doc, instrument=self.instrument("nos"))["data"]
+            eng = api.appraisal_check(doc, instrument=api.instrument_get("nos"))
+            self.assertEqual((d["validator_reported"]["answered"], d["nos"]["total"]), (8, eng["nos"]["total"]), sc)
 
     def test_rob2_adherence_through_bridge(self):
         """RoB 2 betartási változat: a motor 2a.1–2a.6 kulcsai a validator 2.1–2.6-ján mennek át, és az ítélet = motor."""

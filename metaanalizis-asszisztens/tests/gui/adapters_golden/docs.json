@@ -312,6 +312,46 @@
   "scope": "both",
   "tool": "probast-ai"
  },
+ "quadas2_noapp": {
+  "answers": {
+   "1.1": {
+    "value": "yes"
+   },
+   "1.2": {
+    "value": "yes"
+   },
+   "1.3": {
+    "value": "yes"
+   },
+   "2.1": {
+    "value": "yes"
+   },
+   "2.2": {
+    "value": "yes"
+   },
+   "3.1": {
+    "value": "yes"
+   },
+   "3.2": {
+    "value": "yes"
+   },
+   "4.1": {
+    "value": "yes"
+   },
+   "4.2": {
+    "value": "yes"
+   },
+   "4.3": {
+    "value": "yes"
+   },
+   "4.4": {
+    "value": "yes"
+   }
+  },
+  "schema": "szk.appraisal/v1",
+  "scope": "all",
+  "tool": "quadas2"
+ },
  "quadas2_yes": {
   "answers": {
    "1.1": {
@@ -536,6 +576,228 @@
   "scope": "assignment",
   "tool": "rob2"
  },
+ "rob2_adherence": {
+  "answers": {
+   "1.1": {
+    "value": "yes"
+   },
+   "1.2": {
+    "value": "yes"
+   },
+   "1.3": {
+    "value": "no"
+   },
+   "2.3": {
+    "value": "no_information"
+   },
+   "2a.1": {
+    "value": "yes"
+   },
+   "2a.2": {
+    "value": "no"
+   },
+   "2a.3": {
+    "value": "yes"
+   },
+   "2a.4": {
+    "value": "yes"
+   },
+   "2a.5": {
+    "value": "no"
+   },
+   "2a.6": {
+    "value": "yes"
+   },
+   "3.1": {
+    "value": "yes"
+   },
+   "3.2": {
+    "value": "not_applicable"
+   },
+   "3.3": {
+    "value": "not_applicable"
+   },
+   "3.4": {
+    "value": "not_applicable"
+   },
+   "4.1": {
+    "value": "no"
+   },
+   "4.2": {
+    "value": "no"
+   },
+   "4.3": {
+    "value": "no"
+   },
+   "4.4": {
+    "value": "not_applicable"
+   },
+   "4.5": {
+    "value": "not_applicable"
+   },
+   "5.1": {
+    "value": "yes"
+   },
+   "5.2": {
+    "value": "no"
+   },
+   "5.3": {
+    "value": "no"
+   }
+  },
+  "schema": "szk.appraisal/v1",
+  "scope": "adherence",
+  "tool": "rob2"
+ },
+ "rob2_na_asked": {
+  "answers": {
+   "1.1": {
+    "value": "yes"
+   },
+   "1.2": {
+    "value": "yes"
+   },
+   "1.3": {
+    "value": "no"
+   },
+   "2.1": {
+    "value": "yes"
+   },
+   "2.2": {
+    "value": "yes"
+   },
+   "2.3": {
+    "value": "yes"
+   },
+   "2.4": {
+    "value": "yes"
+   },
+   "2.5": {
+    "value": "not_applicable"
+   },
+   "2.6": {
+    "value": "yes"
+   },
+   "2.7": {
+    "value": "not_applicable"
+   },
+   "3.1": {
+    "value": "yes"
+   },
+   "3.2": {
+    "value": "not_applicable"
+   },
+   "3.3": {
+    "value": "not_applicable"
+   },
+   "3.4": {
+    "value": "not_applicable"
+   },
+   "4.1": {
+    "value": "no"
+   },
+   "4.2": {
+    "value": "no"
+   },
+   "4.3": {
+    "value": "no"
+   },
+   "4.4": {
+    "value": "not_applicable"
+   },
+   "4.5": {
+    "value": "not_applicable"
+   },
+   "5.1": {
+    "value": "yes"
+   },
+   "5.2": {
+    "value": "no"
+   },
+   "5.3": {
+    "value": "no"
+   }
+  },
+  "schema": "szk.appraisal/v1",
+  "scope": "assignment",
+  "tool": "rob2"
+ },
+ "robins_e_graded": {
+  "answers": {
+   "1.1": {
+    "value": "weak_no"
+   },
+   "1.2": {
+    "value": "yes"
+   },
+   "1.3": {
+    "value": "no"
+   },
+   "1.4": {
+    "value": "no"
+   },
+   "1.5": {
+    "value": "not_applicable"
+   },
+   "2.1": {
+    "value": "yes"
+   },
+   "2.2": {
+    "value": "no"
+   },
+   "2.3": {
+    "value": "yes"
+   },
+   "3.1": {
+    "value": "yes"
+   },
+   "3.2": {
+    "value": "yes"
+   },
+   "3.3": {
+    "value": "no_information"
+   },
+   "4.1": {
+    "value": "no"
+   },
+   "4.2": {
+    "value": "not_applicable"
+   },
+   "5.1": {
+    "value": "yes"
+   },
+   "5.2": {
+    "value": "no"
+   },
+   "5.3": {
+    "value": "not_applicable"
+   },
+   "6.1": {
+    "value": "no"
+   },
+   "6.2": {
+    "value": "yes"
+   },
+   "6.3": {
+    "value": "yes"
+   },
+   "7.1": {
+    "value": "no"
+   },
+   "7.2": {
+    "value": "no"
+   },
+   "7.3": {
+    "value": "no"
+   },
+   "7.4": {
+    "value": "no"
+   }
+  },
+  "schema": "szk.appraisal/v1",
+  "scope": "all",
+  "tool": "robins-e"
+ },
  "robins_i_2016": {
   "answers": {
    "1.1": {
@@ -612,6 +874,103 @@
    },
    "6.2": {
     "value": "no"
+   },
+   "6.3": {
+    "value": "yes"
+   },
+   "6.4": {
+    "value": "no"
+   },
+   "7.1": {
+    "value": "no"
+   },
+   "7.2": {
+    "value": "no"
+   },
+   "7.3": {
+    "value": "no"
+   }
+  },
+  "schema": "szk.appraisal/v1",
+  "scope": "assignment",
+  "tool": "robins-i"
+ },
+ "robins_i_c2": {
+  "answers": {
+   "1.1": {
+    "value": "yes"
+   },
+   "1.2": {
+    "value": "no"
+   },
+   "1.3": {
+    "value": "no"
+   },
+   "1.4": {
+    "value": "yes"
+   },
+   "1.5": {
+    "value": "yes"
+   },
+   "1.6": {
+    "value": "no"
+   },
+   "1.7": {
+    "value": "not_applicable"
+   },
+   "1.8": {
+    "value": "not_applicable"
+   },
+   "2.1": {
+    "value": "no"
+   },
+   "2.2": {
+    "value": "not_applicable"
+   },
+   "2.3": {
+    "value": "not_applicable"
+   },
+   "2.4": {
+    "value": "no"
+   },
+   "2.5": {
+    "value": "no_information"
+   },
+   "3.1": {
+    "value": "yes"
+   },
+   "3.2": {
+    "value": "yes"
+   },
+   "3.3": {
+    "value": "no"
+   },
+   "4.1": {
+    "value": "no"
+   },
+   "4.2": {
+    "value": "not_applicable"
+   },
+   "5.1": {
+    "value": "yes"
+   },
+   "5.2": {
+    "value": "no"
+   },
+   "5.3": {
+    "value": "no"
+   },
+   "5.4": {
+    "value": "not_applicable"
+   },
+   "5.5": {
+    "value": "not_applicable"
+   },
+   "6.1": {
+    "value": "yes"
+   },
+   "6.2": {
+    "value": "no_information"
    },
    "6.3": {
     "value": "yes"
@@ -714,6 +1073,169 @@
  },
  "tripod_empty": {
   "answers": {},
+  "schema": "szk.appraisal/v1",
+  "scope": "both",
+  "tool": "tripod-ai"
+ },
+ "tripod_full": {
+  "answers": {
+   "1": {
+    "value": "present"
+   },
+   "10": {
+    "value": "present"
+   },
+   "11": {
+    "value": "present"
+   },
+   "12a": {
+    "value": "present"
+   },
+   "12b": {
+    "value": "present"
+   },
+   "12c": {
+    "value": "present"
+   },
+   "12d": {
+    "value": "present"
+   },
+   "12e": {
+    "value": "present"
+   },
+   "12f": {
+    "value": "present"
+   },
+   "12g": {
+    "value": "present"
+   },
+   "13": {
+    "value": "present"
+   },
+   "14": {
+    "value": "present"
+   },
+   "15": {
+    "value": "present"
+   },
+   "16": {
+    "value": "present"
+   },
+   "17": {
+    "value": "present"
+   },
+   "18a": {
+    "value": "present"
+   },
+   "18b": {
+    "value": "present"
+   },
+   "18c": {
+    "value": "present"
+   },
+   "18d": {
+    "value": "present"
+   },
+   "18e": {
+    "value": "present"
+   },
+   "18f": {
+    "value": "present"
+   },
+   "19": {
+    "value": "present"
+   },
+   "2": {
+    "value": "present"
+   },
+   "20a": {
+    "value": "present"
+   },
+   "20b": {
+    "value": "present"
+   },
+   "20c": {
+    "value": "present"
+   },
+   "21": {
+    "value": "present"
+   },
+   "22": {
+    "value": "present"
+   },
+   "23a": {
+    "value": "present"
+   },
+   "23b": {
+    "value": "present"
+   },
+   "24": {
+    "value": "present"
+   },
+   "25": {
+    "value": "present"
+   },
+   "26": {
+    "value": "present"
+   },
+   "27a": {
+    "value": "present"
+   },
+   "27b": {
+    "value": "present"
+   },
+   "27c": {
+    "value": "present"
+   },
+   "3a": {
+    "value": "present"
+   },
+   "3b": {
+    "value": "present"
+   },
+   "3c": {
+    "value": "present"
+   },
+   "4": {
+    "value": "present"
+   },
+   "5a": {
+    "value": "present"
+   },
+   "5b": {
+    "value": "present"
+   },
+   "6a": {
+    "value": "present"
+   },
+   "6b": {
+    "value": "present"
+   },
+   "6c": {
+    "value": "present"
+   },
+   "7": {
+    "value": "present"
+   },
+   "8a": {
+    "value": "present"
+   },
+   "8b": {
+    "value": "present"
+   },
+   "8c": {
+    "value": "present"
+   },
+   "9a": {
+    "value": "present"
+   },
+   "9b": {
+    "value": "present"
+   },
+   "9c": {
+    "value": "present"
+   }
+  },
   "schema": "szk.appraisal/v1",
   "scope": "both",
   "tool": "tripod-ai"

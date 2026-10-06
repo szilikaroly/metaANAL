@@ -21,6 +21,7 @@ import json
 import os
 import re
 import shutil
+import site
 import subprocess
 import sys
 import tempfile
@@ -162,6 +163,10 @@ class TemplateAndCspTests(_ProjectCase):
         out = os.path.join(self.tmp, "kulso.snapshot.html")
         env = dict(os.environ, HOME=self.home, VAULT_HOME=os.path.join(self.home, "nincs-vault"))
         env.pop("SOURCE_DATE_EPOCH", None)
+        # a HOME-csere a Python felhasználói site-könyvtárát is elvinné (~/.local/…): a valódi pluginok
+        # (MA_GUI_PLUGIN_DIRS) képesség-próbája ott más csomagkészletet látna (pl. a figure-forge dateutil-ja), és a
+        # beágyazott képesség-rekord eltérne — a csomagkészlet a két folyamatban ugyanaz legyen
+        env.setdefault("PYTHONUSERBASE", site.getuserbase())
         r = subprocess.run([sys.executable, "-m", "ma_gui.snapshot", "--project", self.root, "--out", out],
                            cwd=ROOT, capture_output=True, text=True, env=env, timeout=120)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
