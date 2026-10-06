@@ -30,6 +30,12 @@ Claude Code-pluginként (ez a repó a marketplace):
 - A módszertani könyvek és cikkek teljes szövege nem része a repónak: a saját példányaidból helyben töltöd be
   (`ma.py kb ingest`). A felépített tudásbázis-adatbázis (`*.sqlite`) szintén csak helyben él.
 
+## Licenc
+
+A kód MIT-licenc alatt áll (lásd [LICENSE](LICENSE)). A tudásbázis módszertani tartalma saját szavas
+összefoglalás oldal- és fejezethivatkozással; a hivatkozott könyvek, cikkek és értékelőeszközök a szerzőik
+jogvédett művei, és nem részei a repónak.
+
 ## Eredet
 
 A kód az `szilikaroly/anamnezis-asszisztens` repóban indult; ide a teljes előzményével került át.
