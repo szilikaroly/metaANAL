@@ -7,6 +7,14 @@ Ha a változó nincs beállítva vagy a plugin hiányzik, a tesztek tiszta üzen
 - validator 1.0.0 (stdlib): a golden-kimenetek nem sodródtak (a rögzített H1–H4 reprodukció ma is így fut), és a
   bridge-mód az őrökkel helyes eredményt ad a hibás plugin mellett is; a H12 (polaritás) és a H13 (számozás) hibája
   ma is reprodukálható, és az őr megjelöli / kiszűri.
+- validator 2.0.0 (a javított kiadás, szk-plugins#5): a ``validator-2.0.0`` golden-kimenetek nem sodródtak; egyik
+  5.0-s őr sem kapcsol be; a ROBINS-I és a QUIPS publikált azonosítói mind átmennek, és a validator teljessége és
+  ítélete a motoréval egyezik. A ROBINS-I 2.1 mindkét eszközben irányító kérdés: a korábbi megjegyzés helyett
+  regressziós teszt veti össze a 2. domén ítéletét a 2.1–2.5 válaszkombinációin (eltérés csak a dokumentált C1/C2
+  konvencióval lehet, és azt a híd megjegyzése mondja ki); a RoB 2 2019-es algoritmus-útja, a kérdezett tételen adott
+  N/A (C1), a ROBINS-I/-E C2-határesete, a QUADAS-2 alkalmazhatóság és a NOS űrlap-hatóköre a hídon át.
+  A golden-kimeneteket a ``adapters_golden/record_validator.py`` rögzíti (ugyanazzal a függvénnyel, amellyel ez a
+  teszt összeveti őket).
 - figure-forge 0.2.1: matplotlib nélküli interpreterrel ``unusable`` + pontos H5-teendő; matplotlibes
   interpreterrel (``MA_GUI_TEST_FF_PYTHON`` vagy ``FIGURE_FORGE_PYTHON``; ennek hiányában a PATH ``python3``-ja, ha
   van benne matplotlib) ``legacy``, és az ``ff.py audit`` a motor valódi SVG-jén fut — a tmp-ben, a projektbe nem ír.
@@ -37,6 +45,8 @@ from ma_gui.adapters import figureforge as F  # noqa: E402
 from ma_gui.adapters import validator as V  # noqa: E402
 
 GOLDEN = os.path.join(HERE, "adapters_golden", "validator-1.0.0")
+sys.path.insert(0, os.path.join(HERE, "adapters_golden"))
+import record_validator as REC  # noqa: E402
 SKIP_DIRS = "MA_GUI_PLUGIN_DIRS nincs beállítva (a valódi szk-plugins plugins/ mappája) — a valódi-plugin teszt kimarad"
 
 
@@ -110,38 +120,50 @@ class _Tmp(unittest.TestCase):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
 
-class RealValidator(_Tmp):
+def _validator_scripts(base):
+    return os.path.join(base, "validator", "scripts") if os.path.isdir(os.path.join(base, "validator")) \
+        else os.path.join(base, "plugins", "validator", "scripts")
+
+
+class _RealValidatorBase(_Tmp):
+    VERSION = None                                  # None: bármely rögzített verzió (a golden-teszthez)
+
     def setUp(self):
         super().setUp()
         self.base = _plugin_base("validator")
         if self.base is None:
             self.skipTest(SKIP_DIRS)
-        self.scripts = os.path.join(self.base, "validator", "scripts") if os.path.isdir(
-            os.path.join(self.base, "validator")) else os.path.join(self.base, "plugins", "validator", "scripts")
+        self.scripts = _validator_scripts(self.base)
         self.ad = V.ValidatorAdapter(_caps(self.tmp, self.base, "v"))
-        if self.ad.detect().get("state") != "legacy" or self.ad.detect().get("version") != "1.0.0":
-            self.skipTest("nem a validator 1.0.0 (legacy) — a golden-teszt erre a verzióra szól")
+        cap = self.ad.detect()
+        self.version = cap.get("version")
+        if cap.get("state") != "legacy":
+            self.skipTest("a validator nem legacy (bridge) állapotú (%s)" % cap.get("state"))
+        if self.VERSION == "fixed" and not V.fixed_release(cap):
+            self.skipTest("nem a javított validator (≥ %s), hanem %s" % (V.FIXED_VERSION, self.version))
+        if self.VERSION not in (None, "fixed") and self.version != self.VERSION:
+            self.skipTest("nem a validator %s (legacy) — a teszt erre a verzióra szól (telepítve: %s)"
+                          % (self.VERSION, self.version))
 
+
+class RealValidatorGoldens(_RealValidatorBase):
     def test_goldens_have_not_drifted(self):
-        docs = json.loads(_read(os.path.join(HERE, "adapters_golden", "docs.json")))
-        for name, doc in sorted(docs.items()):
-            tool = doc["tool"]
-            script, vtool, _f = V.TOOLS[tool]
-            scope = V._scope(doc, tool, None)
-            run = lambda args: subprocess.run([sys.executable, os.path.join(self.scripts, script)] + args,  # noqa: E731
-                                              capture_output=True, text=True, cwd=self.tmp).stdout
-            skel = run(["--skeleton", vtool, "--scope", scope])
-            self.assertEqual(skel, _read(os.path.join(GOLDEN, name + ".skeleton.txt")), name)
-            slots = V.parse_skeleton(skel, checklist=(script == "checklist.py"))
-            md = V.bridge_markdown(tool, slots, V._values(doc))[0] if name != "tripod_empty" else skel
-            p = os.path.join(self.tmp, name + ".md")
-            with open(p, "w", encoding="utf-8") as fh:
-                fh.write(md)
-            self.assertEqual(run(["--verify", p, "--tool", vtool, "--scope", scope]),
-                             _read(os.path.join(GOLDEN, name + ".verify.txt")), name)
-            if script == "appraise.py":
-                self.assertEqual(run(["--rollup", p, "--tool", vtool, "--scope", scope]),
-                                 _read(os.path.join(GOLDEN, name + ".rollup.txt")), name)
+        """A rögzített kimenetek (validator-<verzió>/) a telepített pluginnal ma is így jönnek — 1.0.0-n és 2.0.0-n."""
+        if self.version not in REC.NAMES:
+            self.skipTest("a validator %s kimenetei nincsenek rögzítve (van: %s)" % (self.version, ", ".join(REC.NAMES)))
+        gdir = REC.golden_dir(self.version)
+        docs = REC.load_docs()
+        for name in REC.NAMES[self.version]:
+            got = REC.outputs(self.scripts, name, docs[name], self.version, self.tmp)
+            for kind, text in sorted(got.items()):
+                self.assertEqual(text, _read(os.path.join(gdir, "%s.%s.txt" % (name, kind))), "%s.%s" % (name, kind))
+        # minden rögzített fájl a listában szereplő dokumentumé (nem maradt elárvult golden)
+        names = {f.split(".")[0] for f in os.listdir(gdir) if f.endswith(".skeleton.txt")}
+        self.assertEqual(names, set(REC.NAMES[self.version]))
+
+
+class RealValidator(_RealValidatorBase):
+    VERSION = "1.0.0"
 
     def test_bridge_with_guards_on_real_plugin(self):
         docs = json.loads(_read(os.path.join(HERE, "adapters_golden", "docs.json")))
@@ -189,6 +211,185 @@ class RealValidator(_Tmp):
         self.assertIn("2", d["unreliable_domains"])
         if isinstance(d.get("overall"), dict):
             self.assertFalse(d["overall"]["reliable"])
+
+
+class RealValidatorFixed(_RealValidatorBase):
+    """A javított validator (≥ 2.0.0): az 1.0.0 H1–H4, H12, H13 hibái eltűntek, az őrök nem kapcsolnak be, és a
+    bridge eredménye a motoréval összevethető."""
+    VERSION = "fixed"
+
+    @staticmethod
+    def instrument(tool):
+        return json.loads(_read(os.path.join(H.ROOT, "metaelemzes", "instruments", tool + ".json")))
+
+    def test_no_guards_and_bugs_gone(self):
+        cap = self.ad.detect()
+        self.assertEqual(cap["guards"], [])
+        self.assertNotIn("bridge_untested_version", [p["code"] for p in cap["problems"]])
+        docs = REC.load_docs()
+        d = self.ad.check(docs["probast_dev"])["data"]
+        self.assertEqual((d["answered"], d["validator_reported"]["answered"], d["validator_reported"]["trusted"]),
+                         (16, 16, True))                                                     # H2 javítva
+        self.assertEqual(d["guards"], [])
+        d = self.ad.check(docs["tripod_empty"])["data"]
+        self.assertEqual((d["answered"], d["validator_reported"]["answered"], d["guards"]), (0, 0, []))   # H1
+        d = self.ad.check(docs["grade_strong"])["data"]
+        self.assertEqual((d["grade"]["certainty"], d["guards"]), ("moderate", []))           # H3: −1
+        d = self.ad.check(docs["amstar2_py"])["data"]
+        self.assertEqual((d["amstar2"]["rating"], d["amstar2"]["convention"], d["guards"]),
+                         ("moderate", "weakness", []))                                       # H4: nincs PY-csapda
+        self.assertTrue(d["complete"] and d["validator_reported"]["agrees"])                # N/A a 11-en: válasz
+
+    def test_polarity_and_numbering_fixed(self):
+        """Az 1.0.0-n H12-t és H13-at kiváltó esetek: itt nincs őr, minden válasz átmegy."""
+        doc = {"schema": "szk.appraisal/v1", "tool": "quadas2",
+               "answers": {k: {"value": "yes"} for k in ("1.1", "1.2", "1.3")}}
+        d = self.ad.check(doc, instrument=self.instrument("quadas2"))["data"]
+        dom1 = [x for x in d["domains"] if x["domain"] == "1"][0]
+        self.assertEqual((dom1["level"], dom1["forced_by"], d["guards"]), ("low", [], []))
+        self.assertNotIn("unreliable_domains", d)
+        doc = {"schema": "szk.appraisal/v1", "tool": "robins-i", "scope": "assignment",
+               "answers": {k: {"value": "no"} for k in ("4.1", "5.1", "5.2", "5.4", "6.4")}}
+        d = self.ad.check(doc, instrument=self.instrument("robins-i"))["data"]
+        self.assertEqual((d["guards"], d["validator_reported"]["answered"], d["answered"]), ([], 5, 5))
+        self.assertNotIn("comparable", d)
+
+    def test_engine_and_validator_agree(self):
+        """Teljes ROBINS-I- és QUIPS-értékelés a publikált azonosítókkal: teljesség és implikált összítélet = motor."""
+        docs = REC.load_docs()
+        for name, tool in (("robins_i_2016", "robins-i"), ("quips_partly", "quips"), ("quadas2_yes", "quadas2")):
+            inst = self.instrument(tool)
+            d = self.ad.check(docs[name], instrument=inst)["data"]
+            eng = api.appraisal_check(docs[name], instrument=api.instrument_get(tool))
+            self.assertEqual((d["answered"], d["expected"]), (eng["answered"], eng["expected"]), name)
+            self.assertEqual(d["validator_reported"]["answered"], eng["answered"], name)
+            self.assertEqual(d["overall"]["implied"], eng["overall"]["implied"], name)
+            self.assertEqual(d["guards"], [], name)
+        # a 2.1 mindkét oldalon irányító kérdés (szk-plugins#5, 84363b0): a korábbi 2.1-megjegyzés megszűnt
+        d = self.ad.check(docs["robins_i_2016"], instrument=self.instrument("robins-i"))["data"]
+        self.assertNotIn("rule_differences", d)
+
+    def test_robins_i_21_gateway_agrees_with_engine(self):
+        """Regressziós ellenőrzés a megszűnt 2.1-megjegyzés helyett: a ROBINS-I 2.1 mindkét eszközben irányító kérdés
+        (84363b0). A 2. domén 2.1–2.5 válaszkombinációin (a nem kérdezett tétel „Nem alkalmazható”, ahogy az űrlap
+        rögzíti) a validator és a motor doménítélete egyezik; eltérés csak dokumentált konvencióval (C1/C2) lehet, és
+        azt a híd ``rule_differences``-e megnevezi."""
+        import itertools
+        inst = self.instrument("robins-i")
+        base = REC.load_docs()["robins_i_2016"]
+        route_inst = api.instrument_get("robins-i")
+        grid = (("2.1", ("yes", "probably_no", "no_information")), ("2.2", ("yes", "no", "no_information")),
+                ("2.3", ("yes", "no", "no_information")), ("2.4", ("yes", "no", "no_information")),
+                ("2.5", ("yes", "no", "no_information")))
+        seen, checked, gateway_low, explained = set(), 0, 0, 0
+        for combo in itertools.product(*[vals for _k, vals in grid]):
+            vals = dict(zip([k for k, _v in grid], combo))
+            # az űrlap logikája: a nem kérdezett tétel „Nem alkalmazható” (V._Route = a motor útválasztása)
+            route = V._Route(vals, route_inst, "assignment")
+            eff = {k: ("not_applicable" if route.asked(k) is False else v) for k, v in vals.items()}
+            key = tuple(sorted(eff.items()))
+            if key in seen:
+                continue
+            seen.add(key)
+            doc = json.loads(json.dumps(base))
+            doc["answers"].update({k: {"value": v} for k, v in eff.items()})
+            d = self.ad.check(doc, instrument=inst)["data"]
+            eng = api.appraisal_check(doc, instrument=route_inst)
+            mine = {x["domain"]: x.get("implied") for x in d["domains"]}["2"]
+            theirs = {x["domain"]: x.get("implied") for x in eng["domains"]}["2"]
+            documented = [r for r in d.get("rule_differences") or () if r["domain"] == "2"]
+            checked += 1
+            if mine != theirs:
+                self.assertTrue(documented, "2. domén: validator %s, motor %s, dokumentált konvenció nélkül — %s"
+                                % (mine, theirs, eff))
+                explained += 1
+            if eff["2.1"] == "yes" and eff["2.2"] == "no" and eff["2.4"] == "yes":
+                self.assertEqual((mine, theirs), ("low", "low"), eff)        # irányító 2.1: Igen + 2.2 Nem → alacsony
+                gateway_low += 1
+        # 2026-10, 5b7d862: 39 különböző rekord, 30 egyezik, 9 a C2 (2.5 NI a kérdezett 2.5-ön)
+        self.assertGreaterEqual(checked, 39)
+        self.assertGreater(gateway_low, 0)
+        self.assertLess(explained, checked)
+
+    def test_new_outputs_through_bridge(self):
+        """A szk-plugins#5 későbbi kimenetei a valódi pluginnal: RoB 2 út és C1, ROBINS-I/-E C2, QUADAS-2
+        alkalmazhatóság nélkül, TRIPOD+AI 52/52, és minden más ítélet = motor."""
+        docs = REC.load_docs()
+        cases = {"rob2_na_asked": ("rob2", "C1", "2"), "robins_i_c2": ("robins-i", "C2", "2"),
+                 "robins_e_graded": ("robins-e", "C2", "3")}
+        for name, (tool, kind, dom) in sorted(cases.items()):
+            inst = self.instrument(tool)
+            d = self.ad.check(docs[name], instrument=inst)["data"]
+            eng = api.appraisal_check(docs[name], instrument=api.instrument_get(tool))
+            self.assertEqual([(r["kind"], r["domain"]) for r in d["rule_differences"]], [(kind, dom)], name)
+            mine = {x["domain"]: x.get("implied") for x in d["domains"]}
+            theirs = {x["domain"]: x.get("implied") for x in eng["domains"]}
+            self.assertEqual({k for k in mine if mine[k] != theirs.get(k)}, {dom}, name)
+        d = self.ad.check(docs["rob2_na_asked"], instrument=self.instrument("rob2"))["data"]
+        self.assertEqual(d["validator_reported"]["na_where_asked"], ["2.5"])
+        self.assertEqual({x["domain"]: x.get("validator_na_asked") for x in d["domains"]}["2"], ["2.5"])
+        self.assertEqual(d["overall"]["rule"], "rob2-2019")
+        d = self.ad.check(docs["rob2_adherence"], instrument=self.instrument("rob2"))["data"]
+        self.assertEqual(d["overall"]["variant"], "adherence")
+        self.assertEqual([s["item"] for s in {x["domain"]: x for x in d["domains"]}["2"]["algorithm_path"]],
+                         ["2.1", "2.2", "2.3", "2.4", "2.5", "2.6"])
+        d = self.ad.check(docs["quadas2_noapp"], instrument=self.instrument("quadas2"))["data"]
+        self.assertEqual((d["applicability"]["missing"], d["overall"]["provisional"]), (["1", "2", "3"], True))
+        d = self.ad.check(docs["quadas2_yes"], instrument=self.instrument("quadas2"))["data"]
+        self.assertEqual((d["applicability"]["overall"], d["overall"]["provisional"]), ("unclear", False))
+        d = self.ad.check(docs["tripod_full"])["data"]
+        self.assertEqual((d["answered"], d["validator_reported"]["answered"], d["complete"]), (52, 52, True))
+
+    def test_nos_scope_is_a_form(self):
+        """A 2.0.0 a NOS-nál --scope all-ra 2-vel kilép: a híd ilyet nem küld, érthető hibát ad; az űrlap-hatókörrel
+        a csillagszám = motor."""
+        docs = REC.load_docs()
+        r = subprocess.run([sys.executable, os.path.join(self.scripts, "appraise.py"), "--skeleton", "nos", "--scope",
+                            "all"], capture_output=True, text=True)
+        self.assertEqual(r.returncode, 2)
+        doc = json.loads(json.dumps(docs["nos_partial"]))
+        doc["scope"] = "all"
+        with self.assertRaises(ValueError):
+            self.ad.check(doc, instrument=self.instrument("nos"))
+        for sc in ("cohort", "case-control"):
+            doc = {"schema": "szk.appraisal/v1", "tool": "nos", "scope": sc,
+                   "answers": {it["id"]: {"value": "yes"} for it in self.instrument("nos")["items"]
+                               if sc in (it.get("scopes") or [sc])}}
+            d = self.ad.check(doc, instrument=self.instrument("nos"))["data"]
+            eng = api.appraisal_check(doc, instrument=api.instrument_get("nos"))
+            self.assertEqual((d["validator_reported"]["answered"], d["nos"]["total"]), (8, eng["nos"]["total"]), sc)
+
+    def test_rob2_adherence_through_bridge(self):
+        """RoB 2 betartási változat: a motor 2a.1–2a.6 kulcsai a validator 2.1–2.6-ján mennek át, és az ítélet = motor."""
+        inst = self.instrument("rob2")
+        if not any(it.get("validator_id") for it in inst["items"]):
+            self.skipTest("a motor-definícióban nincs betartási változat")
+        ans = {"1.1": "yes", "1.2": "yes", "1.3": "no", "2a.1": "yes", "2a.2": "no", "2a.3": "yes",
+               "2a.4": "yes", "2a.5": "no", "2a.6": "yes", "3.1": "yes", "3.2": "not_applicable",
+               "3.3": "not_applicable", "3.4": "not_applicable", "4.1": "no", "4.2": "no", "4.3": "no",
+               "4.4": "not_applicable", "4.5": "not_applicable", "5.1": "yes", "5.2": "no", "5.3": "no",
+               "2.3": "no_information"}                       # kóbor besorolási válasz: nem mehet át
+        doc = {"schema": "szk.appraisal/v1", "tool": "rob2", "scope": "adherence",
+               "target": {"unit": "S1", "study_id": "S1", "key": "o1"}, "assessor": "SzK",
+               "answers": {k: {"value": v} for k, v in ans.items()}}
+        d = self.ad.check(doc, instrument=inst)["data"]
+        eng = api.appraisal_check(doc, instrument=api.instrument_get("rob2"))
+        self.assertEqual((d["validator_reported"]["answered"], d["validator_reported"]["expected"]), (21, 21))
+        self.assertEqual({x["domain"]: x["implied"] for x in d["domains"]}["2"], "some_concerns")
+        self.assertEqual(d["overall"]["implied"], eng["overall"]["implied"])
+        self.assertEqual(eng["overall"]["implied"], "some_concerns")
+
+    def test_grade_resolution_through_bridge(self):
+        docs = REC.load_docs()
+        d = self.ad.check(docs["grade_suspected"])["data"]
+        self.assertEqual((d["grade"]["certainty"], d["grade"]["unresolved"], d["grade"]["range"]),
+                         (None, ["publication_bias"], ["high", "moderate"]))
+        d = self.ad.check(docs["grade_resolved"])["data"]
+        self.assertEqual((d["grade"]["certainty"], d["grade"]["unresolved"]), ("moderate", []))
+        eng = api.appraisal_check(docs["grade_resolved"], instrument=api.instrument_get("grade"))
+        self.assertEqual(d["grade"]["certainty"], eng["grade"]["certainty"])
+        d = self.ad.check(docs["grade_pb2"])["data"]
+        self.assertEqual(([g["id"] for g in d["guards"]], d["grade"]["certainty"]), (["PB2"], None))
 
 
 class RealFigureForge(_Tmp):

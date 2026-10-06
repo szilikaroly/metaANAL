@@ -12,8 +12,9 @@
  *                                    opts.engine() → a motor ellenőrzése (szk.appraisal-result/v1, pl. az űrlap
  *                                    check-je): ekkor „Összevetés a motorral” — teljesség, implikált ítélet, AMSTAR 2,
  *                                    GRADE, NOS soronként EGYEZIK, vagy ELTÉR az okkal (H12/H13 őr, más algoritmus,
- *                                    a validator egyszerűsített szabálya, ideiglenes eredmény). Csak címkék és
- *                                    darabszámok összevetése — számítás nincs.
+ *                                    a validator egyszerűsített szabálya, ideiglenes eredmény; a javított
+ *                                    validatornál — ≥ 2.0.0 — a dokumentált C1/C2 konvenció-eltérés, más eltérés
+ *                                    ott nem várt). Csak címkék és darabszámok összevetése — számítás nincs.
  *   render(result, engine?) → DOM     (a fenti eredmény-nézet; tesztekhez és más képernyőknek)
  *   minimal(doc) → a küldendő, szöveg nélküli dokumentum
  * Az ítélet a felhasználóé: a doboz csak a plugin véleményét mutatja, semmit nem ír vissza.
@@ -51,6 +52,21 @@
     return '—';
   }
 
+  /** a validator főverziója (a javított kiadás ≥ 2: szk-plugins#5) */
+  function major(res) {
+    var m = /^(\d+)\./.exec(String(res.validator_version || ''));
+    return m ? Number(m[1]) : 0;
+  }
+
+  /** a dokumentált konvenció-eltérések (rule_differences: C1 / C2) rövid felsorolása, vagy '' */
+  function convWhy(res) {
+    var rd = Array.isArray(res.rule_differences) ? res.rule_differences : [];
+    if (!rd.length) { return ''; }
+    return t('adp.val.cmp.conventionWhy', { list: rd.map(function (d) {
+      return String(d.kind || '?') + ': ' + String(d.item || '?') + ' (' + t('adp.val.cmp.domain', { d: String(d.domain || '?') }) + ')';
+    }).join('; ') });
+  }
+
   function gmsg(res, effects) {
     return (Array.isArray(res.guards) ? res.guards : []).filter(function (g) { return effects.indexOf(g.effect) >= 0; })
       .map(function (g) { return pick(g.message); }).join(' ');
@@ -69,10 +85,14 @@
       t('adp.val.cmp.completeness', { v: String(res.answered) + '/' + String(res.expected), e: String(eng.answered) + '/' + String(eng.expected) }),
       num || t('adp.val.cmp.compWhy'));
     var vo = res.overall || {}, eo = eng.overall || {};
+    var fixed = major(res) >= 2;
+    var ver = { v: String(res.validator_version || '?') };
     if ((vo.implied || eo.implied) && !res.amstar2 && !res.grade) {
-      var why = gmsg(res, ['numbering_differs', 'polarity_differs', 'rollup_unreliable']) ||
+      // a javított validatornál (≥ 2.0.0) a motorral való eltérés oka csak dokumentált konvenció (C1/C2) vagy
+      // ideiglenes eredmény lehet; az 1.0.x egyszerűsített szabálya ott már nem magyarázat
+      var why = gmsg(res, ['numbering_differs', 'polarity_differs', 'rollup_unreliable']) || convWhy(res) ||
         (vo.algorithm !== eo.algorithm ? t('adp.val.cmp.algWhy', { v: t('adp.val.alg.' + (vo.algorithm || 'none')), e: t('adp.val.alg.' + (eo.algorithm || 'none')) })
-          : (vo.provisional ? t('adp.val.cmp.provisional') : t('adp.val.cmp.ruleWhy')));
+          : (vo.provisional ? t('adp.val.cmp.provisional') : t(fixed ? 'adp.val.cmp.ruleWhyFixed' : 'adp.val.cmp.ruleWhy', ver)));
       row('overall', vo.implied || null, eo.implied || null,
         t('adp.val.cmp.overall', { v: vo.implied ? val(vo.implied) : '—', e: eo.implied ? val(eo.implied) : '—' }), why);
     }
@@ -88,7 +108,8 @@
         gmsg(res, ['rollup_unreliable']) || null);
     }
     if (res.nos && eng.nos && typeof res.nos.total === 'number') {
-      row('nos', res.nos.total, eng.nos.total, t('adp.val.cmp.nos', { v: String(res.nos.total), e: String(eng.nos.total) }), t('adp.val.cmp.nosWhy'));
+      row('nos', res.nos.total, eng.nos.total, t('adp.val.cmp.nos', { v: String(res.nos.total), e: String(eng.nos.total) }),
+        res.nos.provisional ? t('adp.val.cmp.provisional') : t(fixed ? 'adp.val.cmp.nosWhyFixed' : 'adp.val.cmp.nosWhy', ver));
     }
     return rows;
   }
@@ -112,10 +133,13 @@
     var notComparable = res.comparable === false || guards.some(function (g) { return g.effect === 'numbering_differs'; });
     var notes = (Array.isArray(res.notes) ? res.notes : []);
     var notesText = notes.map(pick);
-    var noteSaysOfficial = notesText.some(function (x) { return /hivatalos folyamatábra|official flowchart/i.test(x); });
+    var noteSaysOfficial = notesText.some(function (x) { return /hivatalos folyamatábra|official flowchart|hivatalos Excel|official Excel/i.test(x); });
     var rows = [];
-    rows.push(h('li', { 'class': 'item', dataset: { k: 'mode' } }, MA.ui.badge(res.legacy ? 'warning' : 'ok', null), ' ',
-      t('adp.val.modeLine', { version: res.validator_version || '?', mode: MA.adaptersCaps ? MA.adaptersCaps.modeText(res.mode) : String(res.mode || '') })));
+    // a javított validator (2.0.0) is bridge-módban fut (nincs kézfogás), de őr nélkül: ott nem „régi, őrökkel”
+    var plain = res.mode === 'bridge' && Array.isArray(res.guards_active) && !res.guards_active.length;
+    var modeTxt = plain ? t('adp.mode.bridgePlain') : (MA.adaptersCaps ? MA.adaptersCaps.modeText(res.mode) : String(res.mode || ''));
+    rows.push(h('li', { 'class': 'item', dataset: { k: 'mode' } }, MA.ui.badge(res.legacy && !plain ? 'warning' : 'ok', null), ' ',
+      t('adp.val.modeLine', { version: res.validator_version || '?', mode: modeTxt })));
     if (notComparable) {
       rows.push(h('li', { 'class': 'item', dataset: { k: 'completeness', comparable: '0' } }, MA.ui.badge('neutral', null), ' ',
         t('adp.val.completenessSent', { text: res.completeness_text || '—' })));
@@ -126,10 +150,17 @@
           rep.trusted === false ? ' — ' + t('adp.val.untrusted', { guards: untrusted.join(', ') || '—' }) : null) : null));
     }
     if (o.algorithm && (o.implied || o.level)) {
-      // a „nem hivatalos” mondat egyszer: ha a validator megjegyzése már kimondja, itt nem ismételjük (UX-9)
+      // a „nem hivatalos” mondat egyszer: ha a validator megjegyzése már kimondja, itt nem ismételjük (UX-9); a 2.0.0
+      // RoB 2-je a 2019-es algoritmust járja be (o.rule) — a címke ezt mondja, nem a „konzervatív szabályt”
+      var algKey = o.rule && MA.i18n.has('adp.val.alg.' + o.rule) ? 'adp.val.alg.' + o.rule : 'adp.val.alg.' + o.algorithm;
       rows.push(h('li', { 'class': 'item', dataset: { k: 'implied' } }, MA.ui.badge('info', null), ' ',
-        t('adp.val.implied', { alg: t('adp.val.alg.' + o.algorithm), verdict: verdictText(res, o) }),
+        t('adp.val.implied', { alg: t(algKey), verdict: verdictText(res, o) }),
         o.official || noteSaysOfficial ? null : h('span', { 'class': 'item-detail adp-notofficial' }, t('adp.val.notOfficial'))));
+    }
+    if (res.applicability && res.applicability.overall) {
+      // QUADAS-2 (validator ≥ 2.0.0): az 1–3. domén alkalmazhatósága; hiányzó ítéletnél a megjegyzés szól
+      rows.push(h('li', { 'class': 'item', dataset: { k: 'applicability' } }, MA.ui.badge('info', null), ' ',
+        t('adp.val.applic', { v: val(res.applicability.overall) })));
     }
     if (res.amstar2) {
       rows.push(h('li', { 'class': 'item', dataset: { k: 'amstar2' } }, MA.ui.badge('info', null), ' ',

@@ -11,8 +11,10 @@
   ``f1`` (kézfogás + ``audit --json``), ``f2`` (+ ``meta --request … --json``: SVG a plot_data.json motorszövegeivel,
   és PDF/PNG/TIFF/PPTX helyes fejléccel; ``drop_number: true`` → egy szám hiányzik az SVG-ből), ``unusable``.
 - **validator**: ``legacy`` (1.0.0: a ``--skeleton/--verify/--rollup`` a RÖGZÍTETT golden kimeneteket adja —
-  ``tests/gui/adapters_golden/validator-1.0.0/``), ``json`` (V1: a ``--rollup/--verify … --json`` a ``stub.json``
-  ``result``-ját adja; a kapott bemenetet a ``capture`` útra írja — adatvédelmi teszthez), ``unusable``.
+  ``tests/gui/adapters_golden/validator-1.0.0/``; ``version: "2.0.0"`` mellett a javított kiadás goldenjeit —
+  ``validator-2.0.0/``, a kilépési kód is az övé: a nem végleges rollup 1), ``json`` (V1: a
+  ``--rollup/--verify … --json`` a ``stub.json`` ``result``-ját adja; a kapott bemenetet a ``capture`` útra írja —
+  adatvédelmi teszthez), ``unusable``.
 - **composer**: ``legacy`` (1.4.1: ``--outdir D --project P export --format flow-json --out O`` / ``status``; az
   állapot ``D/prisma/P.json``: a ``flow`` kulcsa a flow-json, a ``status_text`` a status szövege; ``truncated_times``
   → az első N futás JSONDecodeError-ral hal el, mint egy félig írt állapotnál — H7), ``json`` (C1), ``unusable``.
@@ -24,6 +26,16 @@ import shutil
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 GOLDEN = os.path.join(HERE, "adapters_golden", "validator-1.0.0")
+GOLDEN_FIXED = os.path.join(HERE, "adapters_golden", "validator-2.0.0")
+# verziónként: a golden-mappa és az alapértelmezett eszköz → eset leképezés
+GOLDENS = {"1.0.0": GOLDEN, "2.0.0": GOLDEN_FIXED}
+GOLDEN_CASES = {
+    "1.0.0": {"rob2": "rob2", "probast": "probast_dev", "tripod": "tripod_empty", "grade": "grade_strong",
+              "amstar2": "amstar2_py"},
+    "2.0.0": {"rob2": "rob2", "probast": "probast_dev", "tripod": "tripod_empty", "grade": "grade_strong",
+              "amstar2": "amstar2_py", "robins-i": "robins_i_2016", "quips": "quips_partly", "quadas2": "quadas2_yes",
+              "nos": "nos_partial", "robis": "robis_phase3"},
+}
 BAD_SHEBANG = "#!/Users/szili/anaconda3/bin/python3\n"
 
 SCRIPTS = {"figure-forge": ("ff.py",), "validator": ("appraise.py", "checklist.py"), "composer": ("prisma",)}
@@ -210,16 +222,23 @@ def validator(script, args, cfg, mode, version):
         res.setdefault("validator_version", version)
         _emit(res)
         return 0
+    scope = _arg(args, "--scope")
+    if tool == "nos" and scope not in ("cohort", "case-control") and version.split(".")[0] not in ("0", "1"):
+        # a javított kiadás (2.0.0, 1b2c906) a NOS-nál űrlapot kér — más hatókörre argparse-szerű hiba, 2-es kilépés
+        sys.stderr.write("appraise.py: error: nos needs --scope cohort or --scope case-control\n")
+        return 2
     if "--skeleton" in args:
         sys.stdout.write((gdir / ("%s.skeleton.txt" % case)).read_text(encoding="utf-8"))
         return 0
     if "--verify" in args:
         text = (gdir / ("%s.verify.txt" % case)).read_text(encoding="utf-8")
         sys.stdout.write(text)
-        return 1 if "UNANSWERED" in text else 0
+        return 1 if any(w in text for w in ("UNANSWERED", "INVALID", "UNRECOGNISED", "LEGACY NUMBERING",
+                                            "N/A WHERE ASKED", "APPLICABILITY NOT")) else 0
     if "--rollup" in args:
-        sys.stdout.write((gdir / ("%s.rollup.txt" % case)).read_text(encoding="utf-8"))
-        return 0
+        text = (gdir / ("%s.rollup.txt" % case)).read_text(encoding="utf-8")
+        sys.stdout.write(text)
+        return 1 if "(exit 1: this verdict is not final" in text else 0
     return 2
 
 
@@ -290,9 +309,9 @@ def make_plugin(base, name, cfg):
                 {"name": name, "version": cfg.get("version") or VERSIONS[name], "description": "adapter-stub"})
     cfg = dict(cfg)
     if name == "validator":
-        cfg.setdefault("golden_dir", GOLDEN)
-        cfg.setdefault("golden", {"rob2": "rob2", "probast": "probast_dev", "tripod": "tripod_empty",
-                                  "grade": "grade_strong", "amstar2": "amstar2_py"})
+        version = cfg.get("version") or VERSIONS[name]
+        cfg.setdefault("golden_dir", GOLDENS.get(version, GOLDEN))
+        cfg.setdefault("golden", dict(GOLDEN_CASES.get(version, GOLDEN_CASES["1.0.0"])))
     _write_json(os.path.join(pdir, "stub.json"), cfg)
     with open(os.path.join(pdir, "scripts", "_adpstub.py"), "w", encoding="utf-8") as fh:
         fh.write(CORE)

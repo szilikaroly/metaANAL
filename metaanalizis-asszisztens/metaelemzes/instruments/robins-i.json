@@ -250,8 +250,7 @@
                     "item": "1.3",
                     "in": [
                       "yes",
-                      "probably_yes",
-                      "no_information"
+                      "probably_yes"
                     ]
                   }
                 ]
@@ -291,8 +290,7 @@
                     "item": "1.3",
                     "in": [
                       "yes",
-                      "probably_yes",
-                      "no_information"
+                      "probably_yes"
                     ]
                   }
                 ]
@@ -325,16 +323,14 @@
                     "item": "1.2",
                     "in": [
                       "no",
-                      "probably_no",
-                      "no_information"
+                      "probably_no"
                     ]
                   },
                   {
                     "item": "1.3",
                     "in": [
                       "no",
-                      "probably_no",
-                      "no_information"
+                      "probably_no"
                     ]
                   }
                 ]
@@ -367,16 +363,14 @@
                     "item": "1.2",
                     "in": [
                       "no",
-                      "probably_no",
-                      "no_information"
+                      "probably_no"
                     ]
                   },
                   {
                     "item": "1.3",
                     "in": [
                       "no",
-                      "probably_no",
-                      "no_information"
+                      "probably_no"
                     ]
                   }
                 ]
@@ -409,16 +403,14 @@
                     "item": "1.2",
                     "in": [
                       "no",
-                      "probably_no",
-                      "no_information"
+                      "probably_no"
                     ]
                   },
                   {
                     "item": "1.3",
                     "in": [
                       "no",
-                      "probably_no",
-                      "no_information"
+                      "probably_no"
                     ]
                   }
                 ]
@@ -442,6 +434,46 @@
           }
         },
         {
+          "id": "1-r",
+          "if": {
+            "any": [
+              {
+                "item": "1.2",
+                "in": [
+                  "no_information"
+                ]
+              },
+              {
+                "all": [
+                  {
+                    "item": "1.2",
+                    "in": [
+                      "yes",
+                      "probably_yes"
+                    ]
+                  },
+                  {
+                    "item": "1.3",
+                    "in": [
+                      "no_information"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "tier": "some",
+          "because": [
+            "1.2",
+            "1.3"
+          ],
+          "kind": "unknown",
+          "text": {
+            "hu": "Nincs információ az 1.2 vagy az 1.3 kérdésnél: a 2016-os Table A csak az I/VI és az N/VN választ irányítja tovább, így sem a kiinduló (1.4–1.6), sem az idővel változó (1.7–1.8) zavarás kérdései nem következnek → mérsékelt (konzervatív; hogy rosszabb-e, emberi ítélet).",
+            "en": "No information at 1.2 or 1.3: the 2016 Table A routes only Y/PY and N/PN onwards, so neither the baseline (1.4–1.6) nor the time-varying (1.7–1.8) confounding questions follow → moderate (conservative; whether it is worse is a human judgement)."
+          }
+        },
+        {
           "id": "1-g",
           "if": {
             "any": [
@@ -460,8 +492,7 @@
                         "item": "1.3",
                         "in": [
                           "yes",
-                          "probably_yes",
-                          "no_information"
+                          "probably_yes"
                         ]
                       }
                     ]
@@ -492,16 +523,14 @@
                         "item": "1.2",
                         "in": [
                           "no",
-                          "probably_no",
-                          "no_information"
+                          "probably_no"
                         ]
                       },
                       {
                         "item": "1.3",
                         "in": [
                           "no",
-                          "probably_no",
-                          "no_information"
+                          "probably_no"
                         ]
                       }
                     ]
@@ -1639,16 +1668,14 @@
                 "item": "1.2",
                 "in": [
                   "no",
-                  "probably_no",
-                  "no_information"
+                  "probably_no"
                 ]
               },
               {
                 "item": "1.3",
                 "in": [
                   "no",
-                  "probably_no",
-                  "no_information"
+                  "probably_no"
                 ]
               }
             ]
@@ -1706,16 +1733,14 @@
                 "item": "1.2",
                 "in": [
                   "no",
-                  "probably_no",
-                  "no_information"
+                  "probably_no"
                 ]
               },
               {
                 "item": "1.3",
                 "in": [
                   "no",
-                  "probably_no",
-                  "no_information"
+                  "probably_no"
                 ]
               }
             ]
@@ -1781,16 +1806,14 @@
                 "item": "1.2",
                 "in": [
                   "no",
-                  "probably_no",
-                  "no_information"
+                  "probably_no"
                 ]
               },
               {
                 "item": "1.3",
                 "in": [
                   "no",
-                  "probably_no",
-                  "no_information"
+                  "probably_no"
                 ]
               }
             ]
@@ -1855,8 +1878,7 @@
                 "item": "1.3",
                 "in": [
                   "yes",
-                  "probably_yes",
-                  "no_information"
+                  "probably_yes"
                 ]
               }
             ]
@@ -1917,8 +1939,7 @@
                 "item": "1.3",
                 "in": [
                   "yes",
-                  "probably_yes",
-                  "no_information"
+                  "probably_yes"
                 ]
               }
             ]
@@ -2195,7 +2216,12 @@
         "assignment",
         "adherence"
       ],
-      "applies_to": null
+      "applies_to": null,
+      "severity": "some",
+      "help": {
+        "hu": "A 2016-os Table B szerint a jól definiált csoportok mellett utólag (nem a beavatkozás kezdetén) rögzített besorolási információ mérsékelt kockázat; súlyos csak akkor, ha a besorolást a kimenet ismerete befolyásolhatta (3.3). A „Nem” ezért legalább mérsékelt, önmagában nem súlyos.",
+        "en": "Per the 2016 Table B, intervention status recorded retrospectively (not at the start of intervention) with well-defined groups is moderate risk; serious only if knowledge of the outcome could have affected the classification (3.3). A 'No' here is therefore at least moderate, not serious on its own."
+      }
     },
     {
       "id": "3.3",
@@ -2780,8 +2806,8 @@
       "en": "Conservative rule following the ROBINS-I (2016) criteria — NOT the official ROBINS-I algorithm"
     },
     "note": {
-      "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). A 3. és 7. domén a polaritás-alapú szabályt használja. A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
-      "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Domains 3 and 7 use the polarity rule. The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
+      "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). Az útválasztás a Table A szerinti: a „Nincs információ” egyetlen feltételes kérdést sem nyit meg (az 1.2 / 1.3 NI esetén sem az 1.4–1.6, sem az 1.7–1.8 ág nem következik), és a nem kérdezett tétel válasza nem számít. A 3. és 7. domén a polaritás-alapú szabályt használja (a 3.2 „Nem” a Table B szerint legalább mérsékelt, nem súlyos). A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
+      "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Routing follows Table A: 'No information' opens no conditional question (with NI at 1.2 / 1.3 neither the 1.4–1.6 nor the 1.7–1.8 branch follows), and an answer at a question that is not asked does not count. Domains 3 and 7 use the polarity rule (a 'No' at 3.2 is at least moderate per Table B, not serious). The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
     },
     "differences_from_validator": [
       {

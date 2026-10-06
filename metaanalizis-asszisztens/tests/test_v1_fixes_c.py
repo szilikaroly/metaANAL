@@ -207,8 +207,8 @@ def ref_d1(a):
         return "high"
     if a["1.2"] == NI:
         return "high" if a["1.3"] in YES else "some_concerns"
-    if a["1.1"] in NO:                     # a folyamatábra ága; a szöveges kritérium itt „némi aggály” is lehet
-        return "high" if a["1.3"] in YES else "some_concerns"
+    if a["1.1"] in NO:                     # a 2019-es kritériumtábla (PMC8191126, 2. táblázat): „némi aggály”, akkor
+        return "some_concerns"             # is, ha az 1.3 is problémára utal (rejtett szekvencia mellett nincs „magas”)
     return "some_concerns" if a["1.3"] in YES else "low"
 
 

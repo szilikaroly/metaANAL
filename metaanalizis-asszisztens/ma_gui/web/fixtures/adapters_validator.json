@@ -146,6 +146,14 @@
       }
      },
      "guards": [],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
+     ],
      "notes": [
       {
        "hu": "Ez a validator implikált ítélete (konzervatív szabály) — NEM a hivatalos folyamatábra eredménye; az ítélet a Tiéd.",
@@ -333,6 +341,14 @@
        },
        "effect": "completeness_recomputed"
       }
+     ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
      ],
      "notes": []
     },
@@ -727,6 +743,14 @@
        "effect": "completeness_recomputed"
       }
      ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
+     ],
      "notes": [
       {
        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
@@ -817,6 +841,14 @@
        "effect": "rollup_unreliable"
       }
      ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
+     ],
      "notes": []
     },
     "warnings": [
@@ -904,11 +936,19 @@
       {
        "id": "H4",
        "message": {
-        "hu": "H4: a „Részben igen” kanonikusan ment át („Partial yes”, nem „PY”); a validator 1.0.0 besorolása a „weakness” konvenció szerinti (a projekt konvenciója „meets”, KB AMSTAR2-00).",
-        "en": "H4: 'Partial yes' was sent canonically ('Partial yes', never 'PY'); the validator 1.0.0 rating follows the 'weakness' convention (the project convention is 'meets', KB AMSTAR2-00)."
+        "hu": "H4: a „Részben igen” kanonikusan ment át („Partial yes”, nem „PY”); a validator 1.0.0 besorolása a „weakness” konvenció szerinti, kivéve, hogy a 8. tétel „Részben igen”-jét teljesültnek veszi (a projekt konvenciója „meets”, KB AMSTAR2-00).",
+        "en": "H4: 'Partial yes' was sent canonically ('Partial yes', never 'PY'); the validator 1.0.0 rating follows the 'weakness' convention, except that it counts a 'Partial yes' on item 8 as met (the project convention is 'meets', KB AMSTAR2-00)."
        },
        "effect": "convention_weakness"
       }
+     ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
      ],
      "notes": [
       {
@@ -1009,7 +1049,8 @@
      "schema": "szk.appraisal-result/v1",
      "validator_version": "1.1.0",
      "mode": "json",
-     "scope": "assignment"
+     "scope": "assignment",
+     "guards_active": []
     },
     "warnings": [],
     "meta": {

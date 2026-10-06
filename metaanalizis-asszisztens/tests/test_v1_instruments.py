@@ -122,7 +122,9 @@ class TestDefinitions(unittest.TestCase):
 
     def test_published_counts(self):
         c = {k: I.load(k) for k in I.available()}
-        self.assertEqual(len(c["rob2"].items), 22)
+        # RoB 2 (2019): a besorolás hatására 22, a betartásra 21 tétel (a 2. domén hat kérdése más; 2a.1–2a.6)
+        self.assertEqual((len(c["rob2"].items), len(c["rob2"].slots("assignment")), len(c["rob2"].slots("adherence"))),
+                         (28, 22, 21))
         p = c["probast-ai"]
         self.assertEqual(len(p.items), 34)
         self.assertEqual(len(p.slots("development")), 16)
@@ -218,11 +220,15 @@ class TestDefinitions(unittest.TestCase):
 
     def test_polarity_and_validator_differences(self):
         rob = I.load("rob2")
-        pol = {it["id"]: it["polarity"] for it in rob.items}
+        pol = {it["id"]: it["polarity"] for it in rob.slots("assignment")}
         self.assertEqual(sorted(k for k, v in pol.items() if v == "reverse"),
                          ["1.3", "2.7", "3.4", "4.1", "4.2", "4.5", "5.2", "5.3"])
         self.assertEqual(sorted(k for k, v in pol.items() if v == "router"),
                          ["2.1", "2.2", "2.3", "2.4", "3.3", "4.3", "4.4"])
+        # a betartási változat 2. doménje (a sablon 2.1–2.6-a, itt 2a.1–2a.6): 2.1–2.2 irányít, 2.4–2.5 fordított
+        adh = {rob.display_id(it): it["polarity"] for it in rob.slots("adherence") if it["key"].startswith("2a.")}
+        self.assertEqual(adh, {"2.1": "router", "2.2": "router", "2.3": "normal", "2.4": "reverse",
+                               "2.5": "reverse", "2.6": "normal"})
         q = {it["id"]: it["polarity"] for it in I.load("quadas2").items}
         self.assertEqual((q["1.2"], q["1.3"]), ("normal", "normal"))
         ri = {it["id"]: it for it in I.load("robins-i").items}
@@ -272,14 +278,28 @@ class TestValidatorDrift(unittest.TestCase):
         with open(os.path.join(VALIDATOR, "skills", "validator", "references", name), encoding="utf-8") as fh:
             return fh.read()
 
+    def version(self):
+        try:
+            with open(os.path.join(VALIDATOR, ".claude-plugin", "plugin.json"), encoding="utf-8") as fh:
+                v = json.load(fh).get("version") or "0"
+        except (OSError, ValueError):
+            return (0,)
+        return tuple(int(x) for x in re.findall(r"\d+", v)[:3])
+
     def test_generic_ids_match(self):
-        # ahol a definíció a publikált eszközt követi a validator helyett (ROBINS-I 2016, QUIPS a–g; v1 javítás A),
-        # a validator akkori azonosítói a 'validator_ids' mezőben vannak: a sodródás-őr azzal vet össze
+        # A javított validator (≥ 2.0.0, szk-plugins#5) a publikált számozást használja: a motor SAJÁT azonosítói
+        # (validator_id-vel, ahol a kulcs eltér — RoB 2 betartási 2a.1–2a.6 → 2.1–2.6) a referenciafájl sorrendjében.
+        # Az 1.0.x-szel: ahol a definíció a publikált eszközt követi a validator helyett (ROBINS-I 2016, QUIPS a–g;
+        # v1 javítás A), a validator akkori azonosítói a 'validator_ids' mezőben vannak; a csak 2.0.0-tól létező
+        # (validator_id-s) tételek kimaradnak.
+        fixed = self.version() >= (2, 0, 0)
         for tool in ("rob2", "robins-i", "robins-e", "quadas2", "nos", "quips", "jbi", "amstar2", "grade"):
             ids = [m.group("id") for m in map(self.ITEM_RE.match, self.ref(tool + ".md").splitlines()) if m]
             doc = I.load(tool).doc
+            own = [it.get("validator_id") or it["id"] for it in doc["items"]]
+            old = doc.get("validator_ids") or [it["id"] for it in doc["items"] if not it.get("validator_id")]
             with self.subTest(tool=tool):
-                self.assertEqual(doc.get("validator_ids") or [it["id"] for it in doc["items"]], ids)
+                self.assertEqual(own if fixed else old, ids)
 
     def test_probast_and_tripod_ids_match(self):
         text = self.ref("probast-ai.md")
@@ -421,7 +441,7 @@ class TestCompleteness(unittest.TestCase):
         self.assertEqual(r["invalid"][0]["key"], "1.1")
         self.assertFalse(r["complete"])
         d = base_doc("rob2", {})
-        d["scope"] = "adherence"
+        d["scope"] = "cluster"                  # a klaszter-változat nincs benne (a betartási hatókör már igen)
         r = A.check(d)
         self.assertEqual(r["expected"], 0)
         self.assertFalse(r["complete"])

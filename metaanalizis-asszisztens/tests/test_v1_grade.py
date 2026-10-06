@@ -21,6 +21,7 @@ import importlib.util
 import json
 import math
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -33,7 +34,8 @@ from metaelemzes.distributions import norm_ppf
 BCG = os.path.join(ROOT, "peldak", "bcg_oltas_RR.csv")
 NORMAND = os.path.join(ROOT, "peldak", "normand1999_folytonos.csv")
 EXAMPLES = os.path.join(ROOT, "tests", "reference", "contract_examples")
-VALIDATOR = "/home/user/szilikaroly/szk-plugins/plugins/validator/scripts/appraise.py"
+VALIDATOR = os.path.join(os.environ.get("SZK_VALIDATOR_DIR") or "/home/user/szilikaroly/szk-plugins/plugins/validator",
+                         "scripts", "appraise.py")
 ALLOC_ROB = {"random": "low", "alternate": "high", "systematic": "high"}
 RID = "20261004T211200Z-a1f3c2"
 
@@ -864,7 +866,9 @@ class TestAmstar2(unittest.TestCase):
         (amstar(q2="partial_yes"), "high", "high"),
         (amstar(q2="partial_yes", q4="partial_yes"), "high", "moderate"),
         (amstar(q2="partial_yes", q10="no"), "high", "moderate"),
-        (amstar(q8="partial_yes", q10="no"), "high", "high"),
+        # 'weakness': a „részben igen” a 8. tételen is nem kritikus gyengeség (a validator 2.0.0 szabálya; az 1.0.0
+        # csak a kritikus tételeken számolta annak)
+        (amstar(q8="partial_yes", q10="no"), "high", "moderate"),
         (amstar(q11="no_meta_analysis", q12="no_meta_analysis", q15="no_meta_analysis"), "high", "high"),
         (amstar(q9="partial_yes", q13="no"), "low", "low"),
     ]
@@ -918,8 +922,8 @@ class TestAmstar2(unittest.TestCase):
         a = amstar(q2="partial_yes", q4="partial_yes")
         r = G.amstar2_consistency(a, claimed="HIGH")
         self.assertIsNone(r["consistency_warning"])
-        r = G.amstar2_consistency(a, claimed="Moderate")                     # a validator 1.0.0 'weakness'-e
-        self.assertIn("validator 1.0.0", r["consistency_warning"])
+        r = G.amstar2_consistency(a, claimed="Moderate")                     # a validator 'weakness'-e
+        self.assertIn("a validator szabálya", r["consistency_warning"])
         r = G.amstar2_consistency(amstar(q10="no", q16="no"), claimed="alacsony")
         self.assertIsNone(r["consistency_warning"])                           # mérsékelt → alacsony megengedett
         self.assertTrue(any("indokold" in n["hu"] for n in r["notes"]))
@@ -929,7 +933,10 @@ class TestAmstar2(unittest.TestCase):
         self.assertIn("nem egyezik", r["consistency_warning"])
 
     @unittest.skipUnless(os.path.isfile(VALIDATOR), "nincs meg a validator plugin (csak olvasva használjuk)")
-    def test_weakness_convention_equals_validator_1_0_0(self):
+    def test_weakness_convention_equals_validator(self):
+        """A 'weakness' konvenció = a validator AMSTAR 2-rollupja. A 2.0.0-tól (szk-plugins#5) a „részben igen” minden
+        tételen gyengeség, a 8.-on is — ott minden sor egyezik; az 1.0.x a 8. tétel „részben igen”-jét teljesültnek
+        vette, ezért annál ezek a sorok kimaradnak (ismert, javított 1.0.x-eltérés)."""
         spec = importlib.util.spec_from_file_location("szk_validator_appraise_ro", VALIDATOR)
         mod = importlib.util.module_from_spec(spec)
         sys.dont_write_bytecode, old = True, sys.dont_write_bytecode
@@ -943,11 +950,24 @@ class TestAmstar2(unittest.TestCase):
         class Inst(object):
             meta = {"critical": "2, 4, 7, 9, 11, 13, 15"}
         items = [{"id": str(i)} for i in range(1, 17)]
+        inst = Inst()
         words = {"yes": "Yes", "partial_yes": "Partial yes", "no": "No"}
+        try:
+            with open(os.path.join(os.path.dirname(os.path.dirname(VALIDATOR)), ".claude-plugin", "plugin.json"),
+                      encoding="utf-8") as fh:
+                ver = tuple(int(x) for x in re.findall(r"\d+", json.load(fh).get("version") or "0")[:3])
+        except (OSError, ValueError):
+            ver = (0,)
+        fixed = ver >= (2, 0, 0)
+        if fixed:                                    # 2.0.0: tételenkénti szótár, N/A a 11/12/15-ön
+            inst = mod.load_all()["amstar2"]
+            items = inst.scoped("all")
+            words["no_meta_analysis"] = "N/A"
         for answers, _meets, weak in self.TABLE:
-            if "no_meta_analysis" in answers.values():                      # a validator 1.0.0 ezt hibának veszi
+            if not fixed and ("no_meta_analysis" in answers.values()          # az 1.0.0 ezt hibának veszi
+                              or answers.get("8") == "partial_yes"):         # … és a 8. tétel PY-ját teljesültnek
                 continue
-            lines = mod.rollup_amstar2(Inst(), {k: words[v] for k, v in answers.items()}, items)
+            lines = mod.rollup_amstar2(inst, {k: words[v] for k, v in answers.items()}, items)
             got = [x for x in lines if "OVERALL CONFIDENCE" in x][0].split(":")[1].strip().lower().replace(" ", "_")
             with self.subTest(answers={k: v for k, v in answers.items() if v != "yes"}):
                 self.assertEqual(got, weak)

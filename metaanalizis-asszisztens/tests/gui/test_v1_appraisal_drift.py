@@ -9,7 +9,11 @@
 2. **Fixture ↔ motor** (FID-7): a fejlesztői fixture-ök a MOTOR kimenetei (``gen_appraisal_fixtures.py`` alapból a
    ``metaelemzes.api``-val fut; ``--check`` ezzel vet össze), az eszköz-definíciók azonosak az ``api.instrument_get``-tel,
    és minden ``schema``-mezős fixture-objektum, amelyhez a motornak szerződése van (metaelemzes/contracts), annak
-   megfelel (jsonschema, 2020-12). A validator vázával való összevetés a ``validator_ids``-en át marad.
+   megfelel (jsonschema, 2020-12). A validator vázával való összevetés verziófüggő: az 1.0.x régi ROBINS-I- és
+   QUIPS-számozásával a ``validator_ids``-en át, a javított (≥ 2.0.0) validatoréval a motor saját — publikált —
+   azonosítóival, a változatos eszközöknél (RoB 2 / ROBINS-I betartási változat, NOS két űrlapja) hatókörönként; a
+   2.0.0 a NOS-nál ``--scope all``-ra 2-vel kilép, ezért ott „all” vázat nem kérünk, és minden váz-hívás kilépési
+   kódját ellenőrizzük.
 3. **Fixture-alak** (mindig): a ``web/fixtures/appraisal_*.json`` a 4.2 borítékot és a 4.11 szerződés kötelező mezőit
    követi; a mintaértékelések útja a 2.4 elrendezés."""
 import glob
@@ -29,11 +33,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, ROOT)
 
+from ma_gui.adapters import validator as V  # noqa: E402
 from ma_gui.routes import appraisal_common as C  # noqa: E402
 
 FIX = os.path.join(ROOT, "ma_gui", "web", "fixtures")
 DEFAULT_PLUGINS = "/home/user/szilikaroly/szk-plugins/plugins"
 APPRAISE_TOOLS = ("rob2", "robins-i", "robins-e", "quadas2", "nos", "quips", "jbi", "amstar2")
+# ahol az eszköz változatai alternatívák (egy értékelés az egyiket használja), a javított validator (≥ 2.0.0) váza
+# hatókörönként vethető össze: a RoB 2 / ROBINS-I betartási változata, a NOS két űrlapja (a 2.0.0 a NOS-nál
+# --scope nélkül nem ad vázat)
+SCOPED = {"rob2": ("assignment", "adherence"), "robins-i": ("assignment", "adherence"), "nos": ("cohort", "case-control")}
 ROW_RE = re.compile(r"^\|\s*([0-9A-Za-z][0-9A-Za-z.\-]*)\s*\|")
 ALGORITHMS = ("published", "count", "conservative", "none", "validator-compatible")
 
@@ -46,23 +55,52 @@ def plugin_dir():
     return None
 
 
-def _run(vdir, script, *args):
+def _call(vdir, script, *args):
+    """→ (kilépési kód, stdout) — a plugint csak futtatjuk."""
     out = subprocess.run([sys.executable, os.path.join(vdir, "scripts", script)] + list(args), cwd=vdir,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=False,
                          env=dict(os.environ, PYTHONUTF8="1"))
-    return out.stdout.decode("utf-8", "replace")
+    return out.returncode, out.stdout.decode("utf-8", "replace")
+
+
+def _run(vdir, script, *args):
+    """A váz szövege; a nem nulla kilépés hiba (különben az üres váz csendben „nincs tétel” lenne — a 2.0.0 a
+    NOS-nál --scope all-ra 2-vel lép ki)."""
+    rc, text = _call(vdir, script, *args)
+    if rc != 0:
+        raise AssertionError("%s %s: kilépési kód %s" % (script, " ".join(args), rc))
+    return text
+
+
+def validator_version(vdir):
+    """A plugin.json verziója, vagy None."""
+    try:
+        v = _load_json(os.path.join(vdir, ".claude-plugin", "plugin.json")).get("version")
+    except (OSError, ValueError):
+        return None
+    return v if isinstance(v, str) else None
 
 
 def validator_items(vdir):
-    """{eszköz: [tétel-id …]} + {'probast-ai': {'development': [...], 'evaluation': [...]}, 'tripod-ai': [(id, D/E)]}."""
-    out = {}
-    for tool in APPRAISE_TOOLS:
+    """{eszköz: [tétel-id …]} + {'probast-ai': {'development': [...], 'evaluation': [...]}, 'tripod-ai': [(id, D/E)]},
+    és a '_version' kulcson a plugin verziója."""
+    out = {"_version": validator_version(vdir), "_scoped": {}}
+    fixed = V.fixed_release({"version": out["_version"]})
+
+    def skeleton_ids(tool, scope):
         ids = []
-        for line in _run(vdir, "appraise.py", "--skeleton", tool, "--scope", "all").splitlines():
+        for line in _run(vdir, "appraise.py", "--skeleton", tool, "--scope", scope).splitlines():
             m = ROW_RE.match(line)
             if m and m.group(1) not in ("#",):
                 ids.append(m.group(1))
-        out[tool] = ids
+        return ids
+    for tool in APPRAISE_TOOLS:
+        # a javított kiadás a hatókörhöz kötött eszköznél (NOS) „all” vázat nem ad (2-es kilépés): ott csak a
+        # hatókörönkénti váz létezik, és az összevetés is azzal megy (compare)
+        if not (fixed and tool in V.SCOPE_REQUIRED_FIXED):
+            out[tool] = skeleton_ids(tool, "all")
+        for sc in SCOPED.get(tool, ()):
+            out["_scoped"].setdefault(tool, {})[sc] = skeleton_ids(tool, sc)
     pb, cur = {"development": [], "evaluation": []}, None
     for line in _run(vdir, "checklist.py", "--skeleton", "probast", "--scope", "both").splitlines():
         if line.startswith("### Quality (development)"):
@@ -84,14 +122,29 @@ def validator_items(vdir):
 
 def compare(testcase, insts, vitems):
     """Az eszköz-definíciók (motor vagy fixture) összevetése a validator vázával."""
+    fixed = V.fixed_release({"version": vitems.get("_version")})
     for tool in APPRAISE_TOOLS:
         if tool not in insts:
             continue
-        # ahol a motor a publikált eszközt követi a validator helyett (ROBINS-I 2016, QUIPS 1a–6d; v1 javítás A),
-        # a validator akkori azonosítói a 'validator_ids' mezőben vannak — a sodródás-őr azzal vet össze (mint a
-        # motor saját test_v1_instruments.test_generic_ids_match-e)
-        mine = insts[tool].get("validator_ids") or [it["id"] for it in insts[tool]["items"]]
-        testcase.assertEqual(sorted(mine), sorted(vitems[tool]), "%s: a tétel-azonosítók eltérnek" % tool)
+        # ahol a motor a publikált eszközt követi a validator 1.0.x helyett (ROBINS-I 2016, QUIPS 1a–6d; v1 javítás
+        # A), az 1.0.x azonosítói a 'validator_ids' mezőben vannak — a régi pluginnal a sodródás-őr azzal vet össze
+        # (mint a motor saját test_v1_instruments.test_generic_ids_match-e). A javított validator (≥ 2.0.0) a
+        # publikált számozást használja: ott a motor SAJÁT azonosítóinak kell egyezniük (H13 nélkül).
+        # a validator azonosítója: validator_id, ha a motor kulcsa eltér (RoB 2 betartási 2a.1–2a.6 → 2.1–2.6)
+        items = insts[tool]["items"]
+        if fixed and tool in SCOPED:
+            for sc in SCOPED[tool]:
+                mine = [it.get("validator_id") or it["id"] for it in items if sc in (it.get("scopes") or [sc])]
+                testcase.assertEqual(sorted(mine), sorted(vitems["_scoped"][tool][sc]),
+                                     "%s/%s: a tétel-azonosítók eltérnek (validator %s)" % (tool, sc,
+                                                                                          vitems.get("_version")))
+            continue
+        own = [it.get("validator_id") or it["id"] for it in items]
+        # az 1.0.x-ben nincs RoB 2 betartási változat: a validator_id-s (csak 2.0.0-tól létező) tételek kimaradnak
+        old = [it["id"] for it in items if not it.get("validator_id")]
+        mine = own if fixed else (insts[tool].get("validator_ids") or old)
+        testcase.assertEqual(sorted(mine), sorted(vitems[tool]), "%s: a tétel-azonosítók eltérnek (validator %s)"
+                             % (tool, vitems.get("_version")))
     if "probast-ai" in insts:
         inst = insts["probast-ai"]
         for p in ("development", "evaluation"):
@@ -132,6 +185,29 @@ class EngineDriftTests(unittest.TestCase):
                 insts[key] = get(key)
         self.assertTrue({"rob2", "probast-ai", "tripod-ai", "amstar2"} <= set(insts), sorted(insts))
         compare(self, insts, validator_items(vdir))
+
+
+class ValidatorScopeTests(unittest.TestCase):
+    def test_nos_needs_a_form_scope_on_the_fixed_release(self):
+        """A javított validator (≥ 2.0.0, szk-plugins#5 1b2c906) a NOS-nál űrlapot kér: ``--skeleton nos --scope all``
+        2-es kilépés (a két űrlap 16 helye nem vonható össze), a két űrlap egyenként 8 tétel; az 1.0.x az „all”-t még
+        elfogadja. A híd ezért a javított kiadásnak csak cohort / case-control hatókört küld
+        (``validator.SCOPE_REQUIRED_FIXED``)."""
+        vdir = plugin_dir()
+        if vdir is None:
+            self.skipTest("nincs validator plugin (MA_GUI_PLUGIN_DIRS)")
+        version = validator_version(vdir)
+        rc_all, _text = _call(vdir, "appraise.py", "--skeleton", "nos", "--scope", "all")
+        if V.fixed_release({"version": version}):
+            self.assertEqual(rc_all, 2, "validator %s: a NOS --scope all-t el kell utasítania" % version)
+            self.assertEqual(V.SCOPE_REQUIRED_FIXED["nos"], SCOPED["nos"])
+            for sc in SCOPED["nos"]:
+                rc, text = _call(vdir, "appraise.py", "--skeleton", "nos", "--scope", sc)
+                self.assertEqual(rc, 0, sc)
+                ids = [m.group(1) for m in map(ROW_RE.match, text.splitlines()) if m and m.group(1) != "#"]
+                self.assertEqual(len(ids), 8, "%s: %s" % (sc, ids))
+        else:
+            self.assertEqual(rc_all, 0, "validator %s (1.0.x): a régi viselkedés változatlan" % version)
 
 
 class FixtureDriftTests(unittest.TestCase):

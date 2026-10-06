@@ -117,6 +117,21 @@
         "bizonytalan",
         "?"
       ]
+    },
+    {
+      "value": "not_applicable",
+      "label": "NA",
+      "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+      },
+      "kind": "na",
+      "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+      ]
     }
   ],
   "default_answers": [
@@ -576,7 +591,14 @@
         "all"
       ],
       "applies_to": null,
-      "official_id": "3f"
+      "official_id": "3f",
+      "answers": [
+        "yes",
+        "partly",
+        "no",
+        "unclear",
+        "not_applicable"
+      ]
     },
     {
       "id": "4a",
@@ -748,7 +770,14 @@
         "all"
       ],
       "applies_to": null,
-      "official_id": "5e"
+      "official_id": "5e",
+      "answers": [
+        "yes",
+        "partly",
+        "no",
+        "unclear",
+        "not_applicable"
+      ]
     },
     {
       "id": "5f",
@@ -921,7 +950,12 @@
     },
     "per_pass": null
   },
-  "notes": [],
+  "notes": [
+    {
+      "hu": "A 3f és az 5e (imputálás) csak akkor kérdés, ha volt hiányzó, imputált adat: különben „Nem alkalmazható” — ugyanígy a validator 2.0.0-ban; más tételen a „Nem alkalmazható” nem adható.",
+      "en": "Items 3f and 5e (imputation) only apply when data were missing and imputed: otherwise 'Not applicable' — as in validator 2.0.0; no other item takes 'Not applicable'."
+    }
+  ],
   "validator_differences": [
     {
       "item": "*",

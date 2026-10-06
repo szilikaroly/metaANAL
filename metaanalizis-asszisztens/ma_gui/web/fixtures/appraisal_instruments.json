@@ -357,7 +357,7 @@
        "default_scope": "all",
        "items": 31,
        "reference_sha256": "0eaa166f1bd1ccb792b48d19735efaf4f42bef1740e9f772be54b6e68ea78f53",
-       "sha256": "fbc6fbf693bdc6d5565d80ca33d67877d58110d46e0e08f3ff9daa996b1323fd",
+       "sha256": "3c2bda760ac931e8d0d510f1307470e98b5092c38d3baa1ea614f07d747a632f",
        "validator_version": "1.0.0",
        "attribution": "forrás: szk-plugins validator 1.0.0",
        "rob_column": true,
@@ -381,30 +381,32 @@
         "official": false,
         "basis": "rob2-2019-flowchart-conservative",
         "label": {
-         "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-         "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+         "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+         "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
         },
         "note": {
-         "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
-         "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+         "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti algoritmusait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve, a betartási változat 2. doménjével együtt; az 1., 3–5. domént és a betartási 2. domént összevetettük a 2019-es kritériumtáblával (újraközölve: PMC8191126, 2. táblázat), a besorolási 2. domént a sablon útválasztásával, és mindet a validator 2.0.0 algoritmusával — a válaszkombinációk teljes felsorolásán eltérés nélkül. A szabály „konzervatív” címkéjű, nem „publikált”: nem a hivatalos eszköz, és a kérdezendő tételen adott „Nem alkalmazható” választ „Nincs információ”-ként számolja (a validator az ilyen domént hiányosnak, INCOMPLETE-nek jelzi). A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+         "en": "The domain rules follow the per-domain algorithms of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4) and the domain 2 of the effect-of-adhering variant; domains 1 and 3–5 and the adhering domain 2 were checked against the 2019 criteria table (reproduced in PMC8191126, Table 2), the assignment domain 2 against the template's routing, and all of them against the validator 2.0.0 algorithm — no disagreement over the full enumeration of answer combinations. The rule is labelled 'conservative', not 'published': it is not the official tool, and it counts 'Not applicable' on a question the routing asks as 'No information' (the validator marks such a domain INCOMPLETE instead). The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
         }
        },
        "counts": {
-        "parsed": 22,
-        "published": 22,
+        "parsed": 28,
+        "published": 28,
         "per_scope": {
-         "assignment": 22
+         "assignment": 22,
+         "adherence": 21
         },
         "per_pass": null
        },
        "passes": [],
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "default_scope": "assignment",
-       "items": 22,
+       "items": 28,
        "reference_sha256": "7257e53a2eea9dc7ec8efa9911481afb76f2014f7b18055631da79e0ea6ab804",
-       "sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+       "sha256": "19d6aaaacb0a418b4a797d35b569167805f6b790409c7c90bce8432cdc980244",
        "validator_version": "1.0.0",
        "attribution": "forrás: szk-plugins validator 1.0.0",
        "rob_column": true,
@@ -479,8 +481,8 @@
          "en": "Conservative rule following the ROBINS-I (2016) criteria — NOT the official ROBINS-I algorithm"
         },
         "note": {
-         "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). A 3. és 7. domén a polaritás-alapú szabályt használja. A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
-         "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Domains 3 and 7 use the polarity rule. The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
+         "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). Az útválasztás a Table A szerinti: a „Nincs információ” egyetlen feltételes kérdést sem nyit meg (az 1.2 / 1.3 NI esetén sem az 1.4–1.6, sem az 1.7–1.8 ág nem következik), és a nem kérdezett tétel válasza nem számít. A 3. és 7. domén a polaritás-alapú szabályt használja (a 3.2 „Nem” a Table B szerint legalább mérsékelt, nem súlyos). A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
+         "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Routing follows Table A: 'No information' opens no conditional question (with NI at 1.2 / 1.3 neither the 1.4–1.6 nor the 1.7–1.8 branch follows), and an answer at a question that is not asked does not count. Domains 3 and 7 use the polarity rule (a 'No' at 3.2 is at least moderate per Table B, not serious). The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
         }
        },
        "counts": {
@@ -500,7 +502,7 @@
        "default_scope": "assignment",
        "items": 34,
        "reference_sha256": "e88d43342973571e2040b91f9fca7401e1f6cc5a5971abb41f6219b54452397e",
-       "sha256": "d740a69ec4189babbacce0160f46625fe758c623c5f54de62d0604e727a84252",
+       "sha256": "817dc8bd38ce622b65179ef7ad07954be439ea3cc603ccd5e0637cea9f1ef3da",
        "validator_version": "1.0.0",
        "attribution": "forrás: szk-plugins validator 1.0.0",
        "rob_column": true,
@@ -6748,6 +6750,21 @@
         "bizonytalan",
         "?"
        ]
+      },
+      {
+       "value": "not_applicable",
+       "label": "NA",
+       "text": {
+        "hu": "Nem alkalmazható",
+        "en": "Not applicable"
+       },
+       "kind": "na",
+       "aliases": [
+        "na",
+        "n/a",
+        "not applicable",
+        "nem alkalmazhato"
+       ]
       }
      ],
      "default_answers": [
@@ -7256,6 +7273,13 @@
        ],
        "applies_to": null,
        "official_id": "3f",
+       "answers": [
+        "yes",
+        "partly",
+        "no",
+        "unclear",
+        "not_applicable"
+       ],
        "scope": [
         "all"
        ]
@@ -7452,6 +7476,13 @@
        ],
        "applies_to": null,
        "official_id": "5e",
+       "answers": [
+        "yes",
+        "partly",
+        "no",
+        "unclear",
+        "not_applicable"
+       ],
        "scope": [
         "all"
        ]
@@ -7645,7 +7676,12 @@
       },
       "per_pass": null
      },
-     "notes": [],
+     "notes": [
+      {
+       "hu": "A 3f és az 5e (imputálás) csak akkor kérdés, ha volt hiányzó, imputált adat: különben „Nem alkalmazható” — ugyanígy a validator 2.0.0-ban; más tételen a „Nem alkalmazható” nem adható.",
+       "en": "Items 3f and 5e (imputation) only apply when data were missing and imputed: otherwise 'Not applicable' — as in validator 2.0.0; no other item takes 'Not applicable'."
+      }
+     ],
      "validator_differences": [
       {
        "item": "*",
@@ -7691,7 +7727,7 @@
       "6.4",
       "6.5"
      ],
-     "sha256": "fbc6fbf693bdc6d5565d80ca33d67877d58110d46e0e08f3ff9daa996b1323fd"
+     "sha256": "3c2bda760ac931e8d0d510f1307470e98b5092c38d3baa1ea614f07d747a632f"
     },
     "warnings": [],
     "meta": {
@@ -7716,7 +7752,7 @@
       "hu": "RoB 2 — randomizált vizsgálatok torzítási kockázata",
       "en": "RoB 2 — risk of bias in randomised trials"
      },
-     "full_name": "Cochrane risk-of-bias tool for randomised trials, version 2 (individually randomised, parallel-group; effect of assignment)",
+     "full_name": "Cochrane risk-of-bias tool for randomised trials, version 2 (individually randomised, parallel-group; effect of assignment or effect of adhering)",
      "family": "rob",
      "tool_version": "2019-08-22",
      "definition_version": 2,
@@ -7746,8 +7782,8 @@
       }
      },
      "intro": {
-      "hu": "A RoB 2 egy randomizált vizsgálat EGY eredményének (egy kimenet, egy elemzés) torzítási kockázatát méri — nem a vizsgálatét egészében. Öt doménben jelző-kérdésekre válaszolsz (Igen / Valószínűleg igen / Valószínűleg nem / Nem / Nincs információ); a „valószínűleg” nem bizonytalankodás, hanem közvetett bizonyítékon alapuló ítélet. Az irányító kérdések csak a további kérdéseket jelölik ki. Ez a változat a besorolás hatására (ITT) vonatkozik.",
-      "en": "RoB 2 rates the risk of bias in ONE result (one outcome, one analysis) of a randomised trial — not the trial as a whole. Answer the signalling questions in five domains (Yes / Probably yes / Probably no / No / No information); 'probably' marks a judgement from indirect evidence. Routing questions only decide which question comes next. This variant rates the effect of assignment (ITT)."
+      "hu": "A RoB 2 egy randomizált vizsgálat EGY eredményének (egy kimenet, egy elemzés) torzítási kockázatát méri — nem a vizsgálatét egészében. Öt doménben jelző-kérdésekre válaszolsz (Igen / Valószínűleg igen / Valószínűleg nem / Nem / Nincs információ); a „valószínűleg” nem bizonytalankodás, hanem közvetett bizonyítékon alapuló ítélet. Az irányító kérdések csak a további kérdéseket jelölik ki. Két változata van: a besorolás hatása (ITT, alapértelmezett) és a betartás hatása (per-protocol, „adherence” hatókör) — a 2. domén kérdései eltérnek; egy értékelés az egyiket használja.",
+      "en": "RoB 2 rates the risk of bias in ONE result (one outcome, one analysis) of a randomised trial — not the trial as a whole. Answer the signalling questions in five domains (Yes / Probably yes / Probably no / No / No information); 'probably' marks a judgement from indirect evidence. Routing questions only decide which question comes next. It has two variants: the effect of assignment (ITT, the default) and the effect of adhering (per-protocol, scope 'adherence') — their domain 2 questions differ; an assessment uses one of them."
      },
      "unit": "result",
      "unit_label": {
@@ -7762,6 +7798,14 @@
         "en": "Effect of assignment (ITT)"
        },
        "default": true
+      },
+      {
+       "id": "adherence",
+       "label": {
+        "hu": "A betartás hatása (per-protocol)",
+        "en": "Effect of adhering (per-protocol)"
+       },
+       "default": false
       }
      ],
      "passes": null,
@@ -7968,43 +8012,6 @@
          }
         },
         {
-         "id": "1-d",
-         "if": {
-          "all": [
-           {
-            "item": "1.2",
-            "in": [
-             "yes",
-             "probably_yes"
-            ]
-           },
-           {
-            "item": "1.1",
-            "in": [
-             "no",
-             "probably_no"
-            ]
-           },
-           {
-            "item": "1.3",
-            "in": [
-             "yes",
-             "probably_yes"
-            ]
-           }
-          ]
-         },
-         "tier": "high",
-         "because": [
-          "1.1",
-          "1.3"
-         ],
-         "text": {
-          "hu": "Nem véletlen szekvencia (1.1 N/VN) ÉS problémára utaló kiinduló különbség (1.3 I/VI): a forrással nem ellenőrizhető ág — a konzervatív szabály a szigorúbb „magas” ítéletet adja (a hivatalos lehet „némi aggály”).",
-          "en": "Non-random sequence (1.1 N/PN) AND baseline differences suggesting a problem (1.3 Y/PY): a branch that could not be checked against the source — the conservative rule takes the stricter 'high' (the official result may be 'some concerns')."
-         }
-        },
-        {
          "id": "1-e",
          "if": {
           "all": [
@@ -8026,11 +8033,12 @@
          },
          "tier": "some",
          "because": [
-          "1.1"
+          "1.1",
+          "1.3"
          ],
          "text": {
-          "hu": "Rejtett, de nem véletlen szekvencia (1.1 N/VN) → némi aggály.",
-          "en": "Concealed but non-random sequence (1.1 N/PN) → some concerns."
+          "hu": "Rejtett, de nem véletlen szekvencia (1.1 N/VN) → némi aggály — akkor is, ha a kiinduló különbségek is problémára utalnak (1.3 I/VI): a 2019-es kritériumtábla ezt is a „némi aggály” szintre teszi.",
+          "en": "Concealed but non-random sequence (1.1 N/PN) → some concerns — also when baseline differences suggest a problem (1.3 Y/PY): the 2019 criteria table places that at 'some concerns' too."
          }
         },
         {
@@ -8112,7 +8120,10 @@
          "text": {
           "hu": "Résztvevők és nyújtók vakok (2.1, 2.2 N/VN).",
           "en": "Participants and carers blinded (2.1, 2.2 N/PN)."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-b",
@@ -8129,7 +8140,10 @@
          "text": {
           "hu": "Nem volt a vizsgálati helyzetből fakadó eltérés (2.3 N/VN).",
           "en": "No deviations arising from the trial context (2.3 N/PN)."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-c",
@@ -8148,7 +8162,10 @@
          "text": {
           "hu": "Nincs információ az eltérésekről (2.3 NI) → némi aggály.",
           "en": "No information on deviations (2.3 NI) → some concerns."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-d",
@@ -8178,7 +8195,10 @@
          "text": {
           "hu": "Voltak eltérések (2.3 I/VI), de valószínűleg nem befolyásolták a kimenetet (2.4 N/VN) → némi aggály.",
           "en": "Deviations (2.3 Y/PY) unlikely to have affected the outcome (2.4 N/PN) → some concerns."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-e",
@@ -8209,7 +8229,10 @@
          "text": {
           "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések kiegyensúlyozottak (2.5 I/VI) → némi aggály.",
           "en": "Deviations affecting the outcome (or of unknown effect) were balanced (2.5 Y/PY) → some concerns."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-f",
@@ -8226,7 +8249,10 @@
          "text": {
           "hu": "A kimenetet befolyásoló (vagy nem ismert hatású) eltérések nem kiegyensúlyozottak vagy nincs róluk információ (2.5 N/VN/NI) → magas.",
           "en": "Deviations affecting the outcome (or of unknown effect) unbalanced or no information (2.5 N/PN/NI) → high."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-g",
@@ -8243,7 +8269,10 @@
          "text": {
           "hu": "Megfelelő elemzés a besorolás hatására (2.6 I/VI).",
           "en": "Appropriate analysis of the effect of assignment (2.6 Y/PY)."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-h",
@@ -8262,7 +8291,10 @@
          "text": {
           "hu": "Nem megfelelő (vagy nem ismert) elemzés (2.6 N/VN/NI), számottevő hatás nélkül (2.7 N/VN) → némi aggály.",
           "en": "Inappropriate (or unknown) analysis (2.6 N/PN/NI) without substantial impact (2.7 N/PN) → some concerns."
-         }
+         },
+         "scopes": [
+          "assignment"
+         ]
         },
         {
          "id": "2-i",
@@ -8278,6 +8310,136 @@
          "text": {
           "hu": "Nem megfelelő (vagy nem ismert) elemzés (2.6 N/VN/NI), számottevő vagy nem ismert hatással (2.7 I/VI/NI) → magas.",
           "en": "Inappropriate (or unknown) analysis (2.6 N/PN/NI) with substantial or unknown impact (2.7 Y/PY/NI) → high."
+         },
+         "scopes": [
+          "assignment"
+         ]
+        },
+        {
+         "id": "2A-a",
+         "scopes": [
+          "adherence"
+         ],
+         "if": {
+          "all": [
+           {
+            "any": [
+             {
+              "item": "2a.3",
+              "in": [
+               "no",
+               "probably_no",
+               "no_information"
+              ]
+             },
+             {
+              "item": "2a.4",
+              "in": [
+               "yes",
+               "probably_yes",
+               "no_information"
+              ]
+             },
+             {
+              "item": "2a.5",
+              "in": [
+               "yes",
+               "probably_yes",
+               "no_information"
+              ]
+             }
+            ]
+           },
+           {
+            "item": "2a.6",
+            "in": [
+             "no",
+             "probably_no",
+             "no_information"
+            ]
+           }
+          ]
+         },
+         "tier": "high",
+         "because": [
+          "2a.3",
+          "2a.4",
+          "2a.5",
+          "2a.6"
+         ],
+         "text": {
+          "hu": "Kiegyensúlyozatlan protokollon kívüli beavatkozás, végrehajtási hiba vagy nem-adherencia (2.3 N/VN/NI, 2.4 vagy 2.5 I/VI/NI), és nem volt megfelelő elemzés a betartás hatására (2.6 N/VN/NI) → magas.",
+          "en": "Unbalanced non-protocol interventions, implementation failures or non-adherence (2.3 N/PN/NI, 2.4 or 2.5 Y/PY/NI) without an appropriate analysis of the effect of adhering (2.6 N/PN/NI) → high."
+         }
+        },
+        {
+         "id": "2A-b",
+         "scopes": [
+          "adherence"
+         ],
+         "if": {
+          "all": [
+           {
+            "any": [
+             {
+              "item": "2a.3",
+              "in": [
+               "no",
+               "probably_no",
+               "no_information"
+              ]
+             },
+             {
+              "item": "2a.4",
+              "in": [
+               "yes",
+               "probably_yes",
+               "no_information"
+              ]
+             },
+             {
+              "item": "2a.5",
+              "in": [
+               "yes",
+               "probably_yes",
+               "no_information"
+              ]
+             }
+            ]
+           },
+           {
+            "item": "2a.6",
+            "in": [
+             "yes",
+             "probably_yes"
+            ]
+           }
+          ]
+         },
+         "tier": "some",
+         "because": [
+          "2a.3",
+          "2a.4",
+          "2a.5"
+         ],
+         "text": {
+          "hu": "Probléma a betartással (2.3 N/VN/NI, 2.4 vagy 2.5 I/VI/NI), de megfelelő elemzéssel becsülték a betartás hatását (2.6 I/VI) → némi aggály.",
+          "en": "Problems with adherence (2.3 N/PN/NI, 2.4 or 2.5 Y/PY/NI), but an appropriate analysis of the effect of adhering (2.6 Y/PY) → some concerns."
+         }
+        },
+        {
+         "id": "2A-c",
+         "scopes": [
+          "adherence"
+         ],
+         "if": {
+          "always": true
+         },
+         "tier": "low",
+         "because": [],
+         "text": {
+          "hu": "Senki sem tudott a besorolásról vagy a protokollon kívüli beavatkozások kiegyensúlyozottak (2.3 I/VI/NA), és nem volt végrehajtási hiba vagy nem-adherencia (2.4, 2.5 N/VN/NA) → alacsony.",
+          "en": "Nobody aware of the assignment or non-protocol interventions balanced (2.3 Y/PY/NA), and no implementation failures or non-adherence (2.4, 2.5 N/PN/NA) → low."
          }
         }
        ]
@@ -8698,7 +8860,8 @@
        "polarity": "normal",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -8706,7 +8869,8 @@
         "en": "Look for the generation method: computer random number generator, random number table, shuffling, coin toss, drawing lots. Alternation, date of birth, day of admission or record number are *not* random — answer No. A bare \"patients were randomised\" with no method is No information, not Probably yes."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -8724,7 +8888,8 @@
        "polarity": "normal",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -8732,7 +8897,8 @@
         "en": "Central randomisation, sequentially numbered opaque sealed envelopes, or identical pre-numbered containers support Yes. An open list or envelopes that are not both opaque and sequentially numbered support No. This is the item most predictive of exaggerated effect estimates in meta-epidemiological studies; do not treat it as a formality."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -8751,7 +8917,8 @@
        "polarity": "reverse",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -8759,7 +8926,8 @@
         "en": "Reverse-polarity: **Yes is the problem.** Judge the *pattern*, not any single imbalance — some imbalance is expected by chance. A striking imbalance in a strong prognostic factor, or imbalance across many variables in the same direction, suggests a compromised process. Baseline significance testing is not evidence of a problem and its absence is not reassurance."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9048,6 +9216,273 @@
        ]
       },
       {
+       "id": "2a.1",
+       "key": "2a.1",
+       "domain": "2",
+       "pass": null,
+       "text": {
+        "hu": "Tudtak-e a résztvevők a vizsgálat alatt arról, melyik beavatkozásba sorolták őket?",
+        "en": "Were participants aware of their assigned intervention during the trial?"
+       },
+       "tags": [
+        "adherence",
+        "router"
+       ],
+       "polarity": "router",
+       "critical": false,
+       "scopes": [
+        "adherence"
+       ],
+       "applies_to": null,
+       "help": {
+        "hu": "Irányító kérdés (mint a besorolási változat 2.1-e): önmagában nem probléma, csak azt dönti el, kell-e a 2.3 (protokollon kívüli beavatkozások).",
+        "en": "Routing question (as 2.1 of the assignment variant): not a problem by itself; it decides whether 2.3 (non-protocol interventions) is asked."
+       },
+       "official_id": "2.1",
+       "validator_id": "2.1",
+       "scope": [
+        "adherence"
+       ]
+      },
+      {
+       "id": "2a.2",
+       "key": "2a.2",
+       "domain": "2",
+       "pass": null,
+       "text": {
+        "hu": "Tudtak-e a gondozók és a beavatkozást nyújtók arról, ki melyik beavatkozást kapja?",
+        "en": "Were carers and people delivering the interventions aware of participants' assigned intervention during the trial?"
+       },
+       "tags": [
+        "adherence",
+        "router"
+       ],
+       "polarity": "router",
+       "critical": false,
+       "scopes": [
+        "adherence"
+       ],
+       "applies_to": null,
+       "official_id": "2.2",
+       "validator_id": "2.2",
+       "scope": [
+        "adherence"
+       ]
+      },
+      {
+       "id": "2a.3",
+       "key": "2a.3",
+       "domain": "2",
+       "pass": null,
+       "text": {
+        "hu": "Ha alkalmazható, és ha a 2.1 vagy a 2.2 válasza I/VI/NI: kiegyensúlyozottak voltak-e a fontos, protokollon kívüli beavatkozások a csoportok között?",
+        "en": "If applicable, and if Y/PY/NI to 2.1 or 2.2: were important non-protocol interventions balanced across intervention groups?"
+       },
+       "tags": [
+        "adherence"
+       ],
+       "polarity": "normal",
+       "critical": false,
+       "scopes": [
+        "adherence"
+       ],
+       "applies_to": null,
+       "help": {
+        "hu": "„Nem alkalmazható”, ha senki sem tudott a besorolásról, vagy ha a protokollon kívüli beavatkozások nem részei a kérdésnek — ez a kérdezett tételen is érvényes válasz.",
+        "en": "'Not applicable' when nobody was aware of the assignment, or when non-protocol interventions are not part of the question — a valid answer even where the question is asked."
+       },
+       "condition": {
+        "hu": "Ha alkalmazható, és ha a 2.1 vagy a 2.2 válasza I/VI/NI",
+        "en": "If applicable, and if Y/PY/NI to 2.1 or 2.2"
+       },
+       "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+       ],
+       "ask_if": {
+        "any": [
+         {
+          "item": "2a.1",
+          "in": [
+           "yes",
+           "probably_yes",
+           "no_information"
+          ]
+         },
+         {
+          "item": "2a.2",
+          "in": [
+           "yes",
+           "probably_yes",
+           "no_information"
+          ]
+         }
+        ]
+       },
+       "if_applicable": true,
+       "official_id": "2.3",
+       "validator_id": "2.3",
+       "scope": [
+        "adherence"
+       ]
+      },
+      {
+       "id": "2a.4",
+       "key": "2a.4",
+       "domain": "2",
+       "pass": null,
+       "text": {
+        "hu": "Ha alkalmazható: volt-e a beavatkozás végrehajtásában olyan hiba, amely befolyásolhatta a kimenetet?",
+        "en": "If applicable: were there failures in implementing the intervention that could have affected the outcome?"
+       },
+       "tags": [
+        "adherence",
+        "reverse"
+       ],
+       "polarity": "reverse",
+       "critical": false,
+       "scopes": [
+        "adherence"
+       ],
+       "applies_to": null,
+       "help": {
+        "hu": "Fordított kérdés: az „Igen” a probléma.",
+        "en": "Reverse question: 'Yes' is the problem."
+       },
+       "condition": {
+        "hu": "Ha alkalmazható",
+        "en": "If applicable"
+       },
+       "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+       ],
+       "if_applicable": true,
+       "official_id": "2.4",
+       "validator_id": "2.4",
+       "scope": [
+        "adherence"
+       ]
+      },
+      {
+       "id": "2a.5",
+       "key": "2a.5",
+       "domain": "2",
+       "pass": null,
+       "text": {
+        "hu": "Ha alkalmazható: volt-e olyan nem-adherencia a kijelölt beavatkozási rendhez, amely befolyásolhatta a résztvevők kimenetét?",
+        "en": "If applicable: was there non-adherence to the assigned intervention regimen that could have affected participants' outcomes?"
+       },
+       "tags": [
+        "adherence",
+        "reverse"
+       ],
+       "polarity": "reverse",
+       "critical": false,
+       "scopes": [
+        "adherence"
+       ],
+       "applies_to": null,
+       "help": {
+        "hu": "Fordított kérdés: az „Igen” a probléma.",
+        "en": "Reverse question: 'Yes' is the problem."
+       },
+       "condition": {
+        "hu": "Ha alkalmazható",
+        "en": "If applicable"
+       },
+       "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+       ],
+       "if_applicable": true,
+       "official_id": "2.5",
+       "validator_id": "2.5",
+       "scope": [
+        "adherence"
+       ]
+      },
+      {
+       "id": "2a.6",
+       "key": "2a.6",
+       "domain": "2",
+       "pass": null,
+       "text": {
+        "hu": "Ha a 2.3 válasza N/VN/NI, vagy a 2.4 vagy 2.5 válasza I/VI/NI: megfelelő elemzéssel becsülték-e a beavatkozás betartásának hatását?",
+        "en": "If N/PN/NI to 2.3, or Y/PY/NI to 2.4 or 2.5: was an appropriate analysis used to estimate the effect of adhering to the intervention?"
+       },
+       "tags": [
+        "adherence"
+       ],
+       "polarity": "normal",
+       "critical": false,
+       "scopes": [
+        "adherence"
+       ],
+       "applies_to": null,
+       "help": {
+        "hu": "A nem-adherenciát figyelembe vevő módszer (instrumentális változó, inverz valószínűségi súlyozás) megfelelő; a naiv per-protocol vagy as-treated elemzés „Nem”.",
+        "en": "Methods that allow for non-adherence (instrumental variables, inverse probability weighting) are appropriate; a naive per-protocol or as-treated analysis is No."
+       },
+       "condition": {
+        "hu": "Ha a 2.3 válasza N/VN/NI, vagy a 2.4 vagy 2.5 válasza I/VI/NI",
+        "en": "If N/PN/NI to 2.3, or Y/PY/NI to 2.4 or 2.5"
+       },
+       "answers": [
+        "yes",
+        "probably_yes",
+        "probably_no",
+        "no",
+        "no_information",
+        "not_applicable"
+       ],
+       "ask_if": {
+        "any": [
+         {
+          "item": "2a.3",
+          "in": [
+           "no",
+           "probably_no",
+           "no_information"
+          ]
+         },
+         {
+          "item": "2a.4",
+          "in": [
+           "yes",
+           "probably_yes",
+           "no_information"
+          ]
+         },
+         {
+          "item": "2a.5",
+          "in": [
+           "yes",
+           "probably_yes",
+           "no_information"
+          ]
+         }
+        ]
+       },
+       "official_id": "2.6",
+       "validator_id": "2.6",
+       "scope": [
+        "adherence"
+       ]
+      },
+      {
        "id": "3.1",
        "key": "3.1",
        "domain": "3",
@@ -9062,7 +9497,8 @@
        "polarity": "normal",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9070,7 +9506,8 @@
         "en": "\"Nearly all\" is not a fixed percentage. Judge against the event rate: 5% missing with a 3% event rate can reverse a result, while 10% missing with a 50% event rate may not."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9088,7 +9525,8 @@
        "polarity": "normal",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9115,7 +9553,8 @@
         ]
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9134,7 +9573,8 @@
        "polarity": "router",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9173,7 +9613,8 @@
         ]
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9192,7 +9633,8 @@
        "polarity": "reverse",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9239,7 +9681,8 @@
         ]
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9258,7 +9701,8 @@
        "polarity": "reverse",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9266,7 +9710,8 @@
         "en": "Reverse-polarity: Yes is the problem. This is rarely Yes — it means the measurement does not capture the outcome at all, not that a better instrument exists."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9285,7 +9730,8 @@
        "polarity": "reverse",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9293,7 +9739,8 @@
         "en": "Reverse-polarity. Different follow-up intensity, different diagnostic workup, or a detection-biased outcome (more tests in the treated arm finds more disease)."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9312,7 +9759,8 @@
        "polarity": "router",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9352,7 +9800,8 @@
         ]
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9371,7 +9820,8 @@
        "polarity": "router",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9419,7 +9869,8 @@
         ]
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9438,7 +9889,8 @@
        "polarity": "reverse",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9494,7 +9946,8 @@
         ]
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9512,7 +9965,8 @@
        "polarity": "normal",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9520,7 +9974,8 @@
         "en": "A registry entry or published protocol is what makes Yes answerable. Registration *after* recruitment started, or a registry entry with no analysis detail, is at best Probably no — and a trial with no registration at all is No information, which is a real finding worth stating rather than a gap to smooth over."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9539,7 +9994,8 @@
        "polarity": "reverse",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9547,7 +10003,8 @@
         "en": "Reverse-polarity. Multiple scales, multiple definitions of \"response\", multiple time points — and only the favourable one reported."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       },
       {
@@ -9566,7 +10023,8 @@
        "polarity": "reverse",
        "critical": false,
        "scopes": [
-        "assignment"
+        "assignment",
+        "adherence"
        ],
        "applies_to": null,
        "help": {
@@ -9574,7 +10032,8 @@
         "en": "Reverse-polarity. Adjusted versus unadjusted, different subsets, different cut-points for a continuous variable."
        },
        "scope": [
-        "assignment"
+        "assignment",
+        "adherence"
        ]
       }
      ],
@@ -9589,12 +10048,12 @@
        "high": "high"
       },
       "label": {
-       "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-       "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+       "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+       "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
       },
       "note": {
-       "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
-       "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+       "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti algoritmusait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve, a betartási változat 2. doménjével együtt; az 1., 3–5. domént és a betartási 2. domént összevetettük a 2019-es kritériumtáblával (újraközölve: PMC8191126, 2. táblázat), a besorolási 2. domént a sablon útválasztásával, és mindet a validator 2.0.0 algoritmusával — a válaszkombinációk teljes felsorolásán eltérés nélkül. A szabály „konzervatív” címkéjű, nem „publikált”: nem a hivatalos eszköz, és a kérdezendő tételen adott „Nem alkalmazható” választ „Nincs információ”-ként számolja (a validator az ilyen domént hiányosnak, INCOMPLETE-nek jelzi). A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+       "en": "The domain rules follow the per-domain algorithms of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4) and the domain 2 of the effect-of-adhering variant; domains 1 and 3–5 and the adhering domain 2 were checked against the 2019 criteria table (reproduced in PMC8191126, Table 2), the assignment domain 2 against the template's routing, and all of them against the validator 2.0.0 algorithm — no disagreement over the full enumeration of answer combinations. The rule is labelled 'conservative', not 'published': it is not the official tool, and it counts 'Not applicable' on a question the routing asks as 'No information' (the validator marks such a domain INCOMPLETE instead). The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
       },
       "differences_from_validator": [
        {
@@ -9613,17 +10072,18 @@
       "high": "high"
      },
      "counts": {
-      "parsed": 22,
-      "published": 22,
+      "parsed": 28,
+      "published": 28,
       "per_scope": {
-       "assignment": 22
+       "assignment": 22,
+       "adherence": 21
       },
       "per_pass": null
      },
      "notes": [
       {
-       "hu": "A klaszter-randomizált és a keresztezett (crossover) változat, valamint a betartás hatására (per-protocol) vonatkozó 2. domén nincs benne — a validator 1.0.0 sem tartalmazza. Ezekhez a hivatalos RoB 2 sablont használd.",
-       "en": "The cluster-randomised and crossover variants and the effect-of-adhering domain 2 are not included — validator 1.0.0 does not have them either. Use the official RoB 2 templates."
+       "hu": "A betartás hatására (per-protocol) vonatkozó 2. domén az „adherence” hatókör: hat kérdés, a sablonban 2.1–2.6, itt a kulcsuk 2a.1–2a.6 (a hivatalos szám official_id-ként látszik). A klaszter-randomizált és a keresztezett (crossover) változat nincs benne — ezekhez a hivatalos RoB 2 sablont használd.",
+       "en": "The effect-of-adhering (per-protocol) domain 2 is the 'adherence' scope: six questions, 2.1–2.6 in the template, keyed 2a.1–2a.6 here (the published number shows as official_id). The cluster-randomised and crossover variants are not included — use the official RoB 2 templates for those."
       },
       {
        "hu": "Összítélet (útmutató): alacsony csak akkor, ha minden domén alacsony; magas, ha bármely domén magas, vagy ha több „némi aggály” együtt érdemben csökkenti a bizalmat — ez utóbbi ítélet, amelyet ki kell mondani.",
@@ -9650,7 +10110,7 @@
        }
       }
      ],
-     "sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03"
+     "sha256": "19d6aaaacb0a418b4a797d35b569167805f6b790409c7c90bce8432cdc980244"
     },
     "warnings": [],
     "meta": {
@@ -11381,8 +11841,7 @@
               "item": "1.3",
               "in": [
                "yes",
-               "probably_yes",
-               "no_information"
+               "probably_yes"
               ]
              }
             ]
@@ -11422,8 +11881,7 @@
               "item": "1.3",
               "in": [
                "yes",
-               "probably_yes",
-               "no_information"
+               "probably_yes"
               ]
              }
             ]
@@ -11456,16 +11914,14 @@
               "item": "1.2",
               "in": [
                "no",
-               "probably_no",
-               "no_information"
+               "probably_no"
               ]
              },
              {
               "item": "1.3",
               "in": [
                "no",
-               "probably_no",
-               "no_information"
+               "probably_no"
               ]
              }
             ]
@@ -11498,16 +11954,14 @@
               "item": "1.2",
               "in": [
                "no",
-               "probably_no",
-               "no_information"
+               "probably_no"
               ]
              },
              {
               "item": "1.3",
               "in": [
                "no",
-               "probably_no",
-               "no_information"
+               "probably_no"
               ]
              }
             ]
@@ -11540,16 +11994,14 @@
               "item": "1.2",
               "in": [
                "no",
-               "probably_no",
-               "no_information"
+               "probably_no"
               ]
              },
              {
               "item": "1.3",
               "in": [
                "no",
-               "probably_no",
-               "no_information"
+               "probably_no"
               ]
              }
             ]
@@ -11573,6 +12025,46 @@
          }
         },
         {
+         "id": "1-r",
+         "if": {
+          "any": [
+           {
+            "item": "1.2",
+            "in": [
+             "no_information"
+            ]
+           },
+           {
+            "all": [
+             {
+              "item": "1.2",
+              "in": [
+               "yes",
+               "probably_yes"
+              ]
+             },
+             {
+              "item": "1.3",
+              "in": [
+               "no_information"
+              ]
+             }
+            ]
+           }
+          ]
+         },
+         "tier": "some",
+         "because": [
+          "1.2",
+          "1.3"
+         ],
+         "kind": "unknown",
+         "text": {
+          "hu": "Nincs információ az 1.2 vagy az 1.3 kérdésnél: a 2016-os Table A csak az I/VI és az N/VN választ irányítja tovább, így sem a kiinduló (1.4–1.6), sem az idővel változó (1.7–1.8) zavarás kérdései nem következnek → mérsékelt (konzervatív; hogy rosszabb-e, emberi ítélet).",
+          "en": "No information at 1.2 or 1.3: the 2016 Table A routes only Y/PY and N/PN onwards, so neither the baseline (1.4–1.6) nor the time-varying (1.7–1.8) confounding questions follow → moderate (conservative; whether it is worse is a human judgement)."
+         }
+        },
+        {
          "id": "1-g",
          "if": {
           "any": [
@@ -11591,8 +12083,7 @@
                 "item": "1.3",
                 "in": [
                  "yes",
-                 "probably_yes",
-                 "no_information"
+                 "probably_yes"
                 ]
                }
               ]
@@ -11623,16 +12114,14 @@
                 "item": "1.2",
                 "in": [
                  "no",
-                 "probably_no",
-                 "no_information"
+                 "probably_no"
                 ]
                },
                {
                 "item": "1.3",
                 "in": [
                  "no",
-                 "probably_no",
-                 "no_information"
+                 "probably_no"
                 ]
                }
               ]
@@ -12782,16 +13271,14 @@
             "item": "1.2",
             "in": [
              "no",
-             "probably_no",
-             "no_information"
+             "probably_no"
             ]
            },
            {
             "item": "1.3",
             "in": [
              "no",
-             "probably_no",
-             "no_information"
+             "probably_no"
             ]
            }
           ]
@@ -12853,16 +13340,14 @@
             "item": "1.2",
             "in": [
              "no",
-             "probably_no",
-             "no_information"
+             "probably_no"
             ]
            },
            {
             "item": "1.3",
             "in": [
              "no",
-             "probably_no",
-             "no_information"
+             "probably_no"
             ]
            }
           ]
@@ -12932,16 +13417,14 @@
             "item": "1.2",
             "in": [
              "no",
-             "probably_no",
-             "no_information"
+             "probably_no"
             ]
            },
            {
             "item": "1.3",
             "in": [
              "no",
-             "probably_no",
-             "no_information"
+             "probably_no"
             ]
            }
           ]
@@ -13010,8 +13493,7 @@
             "item": "1.3",
             "in": [
              "yes",
-             "probably_yes",
-             "no_information"
+             "probably_yes"
             ]
            }
           ]
@@ -13076,8 +13558,7 @@
             "item": "1.3",
             "in": [
              "yes",
-             "probably_yes",
-             "no_information"
+             "probably_yes"
             ]
            }
           ]
@@ -13383,6 +13864,11 @@
         "adherence"
        ],
        "applies_to": null,
+       "severity": "some",
+       "help": {
+        "hu": "A 2016-os Table B szerint a jól definiált csoportok mellett utólag (nem a beavatkozás kezdetén) rögzített besorolási információ mérsékelt kockázat; súlyos csak akkor, ha a besorolást a kimenet ismerete befolyásolhatta (3.3). A „Nem” ezért legalább mérsékelt, önmagában nem súlyos.",
+        "en": "Per the 2016 Table B, intervention status recorded retrospectively (not at the start of intervention) with well-defined groups is moderate risk; serious only if knowledge of the outcome could have affected the classification (3.3). A 'No' here is therefore at least moderate, not serious on its own."
+       },
        "scope": [
         "assignment",
         "adherence"
@@ -14041,8 +14527,8 @@
        "en": "Conservative rule following the ROBINS-I (2016) criteria — NOT the official ROBINS-I algorithm"
       },
       "note": {
-       "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). A 3. és 7. domén a polaritás-alapú szabályt használja. A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
-       "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Domains 3 and 7 use the polarity rule. The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
+       "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). Az útválasztás a Table A szerinti: a „Nincs információ” egyetlen feltételes kérdést sem nyit meg (az 1.2 / 1.3 NI esetén sem az 1.4–1.6, sem az 1.7–1.8 ág nem következik), és a nem kérdezett tétel válasza nem számít. A 3. és 7. domén a polaritás-alapú szabályt használja (a 3.2 „Nem” a Table B szerint legalább mérsékelt, nem súlyos). A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
+       "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Routing follows Table A: 'No information' opens no conditional question (with NI at 1.2 / 1.3 neither the 1.4–1.6 nor the 1.7–1.8 branch follows), and an answer at a question that is not asked does not count. Domains 3 and 7 use the polarity rule (a 'No' at 3.2 is at least moderate per Table B, not serious). The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
       },
       "differences_from_validator": [
        {
@@ -14220,7 +14706,7 @@
        "en": "Validator 1.0.0 (and the engine definition before the v1 fixes) used these ids for DIFFERENT questions: 4.3 = appropriate analysis for the effect of starting and adhering (assignment scope), 4.4–4.6 = co-interventions / implementation / adherence, 5.2 = missing intervention status OR other variables, 5.3 = similar proportions and reasons. In the 2016 numbering: 4.3–4.5 co-interventions / implementation / adherence, 4.6 the conditional analysis question, 5.2 / 5.3 split, 5.4 similar proportions and reasons, 5.5 robustness, 6.4 systematic measurement error."
       }
      },
-     "sha256": "d740a69ec4189babbacce0160f46625fe758c623c5f54de62d0604e727a84252"
+     "sha256": "817dc8bd38ce622b65179ef7ad07954be439ea3cc603ccd5e0637cea9f1ef3da"
     },
     "warnings": [],
     "meta": {

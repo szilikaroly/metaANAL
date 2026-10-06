@@ -46,6 +46,7 @@ from pathlib import Path
 
 from .adapters import base as _base
 from .adapters.base import Capability
+from .adapters.validator import FIXED_VERSION as VALIDATOR_FIXED_IN
 
 ROOT = Path(__file__).resolve().parent.parent            # a motor repója
 ENGINE_CONTRACTS_DIR = ROOT / "metaelemzes" / "contracts"
@@ -111,33 +112,35 @@ PIP_NAMES = {
     "Bio": "biopython", "yaml": "PyYAML", "sklearn": "scikit-learn", "cv2": "opencv-python",
 }
 
-# 5.0: a tervezés közben igazolt hibák → legacy módban bekapcsolt őrök (fixed_in: None = nincs kiadott javítás)
+# 5.0: a tervezés közben igazolt hibák → legacy módban bekapcsolt őrök (fixed_in: az első javított verzió, attól
+# kezdve az őr kikapcsol; None = nincs kiadott javítás). A validator H1–H4, H12 és H13 hibáját a 2.0.0
+# (szk-plugins#5; VALIDATOR_FIXED_IN) javítja; az 1.0.x-en mind a hat őr él.
 BUILTIN_ISSUES = {
     "validator": (
-        {"id": "H1", "fixed_in": None, "features": ("tripod",),
+        {"id": "H1", "fixed_in": VALIDATOR_FIXED_IN, "features": ("tripod",),
          "summary": "checklist.py --verify reports an empty TRIPOD+AI template as 1/52 answered",
          "guard": {"hu": "H1: a teljességet a munkapad számolja",
                    "en": "H1: completeness is computed by the workbench"}},
-        {"id": "H2", "fixed_in": None, "features": ("probast",),
+        {"id": "H2", "fixed_in": VALIDATOR_FIXED_IN, "features": ("probast",),
          "summary": "checklist.py --verify (PROBAST+AI): the two passes satisfy each other; "
                     "'no' in evidence text counts as an answer",
          "guard": {"hu": "H2: menettel minősített kulcs, cella-alapú olvasás",
                    "en": "H2: pass-qualified keys, cell-based reading"}},
-        {"id": "H3", "fixed_in": None, "features": ("grade",),
+        {"id": "H3", "fixed_in": VALIDATOR_FIXED_IN, "features": ("grade",),
          "summary": "appraise.py rollup_grade never downgrades publication bias 'Suspected/Strongly suspected'",
          "guard": {"hu": "H3: a „Suspected” publikációs torzítás feloldatlan, amíg ember nem dönt",
                    "en": "H3: publication bias 'Suspected' stays unresolved until a human decides"}},
-        {"id": "H4", "fixed_in": None, "features": ("amstar2",),
+        {"id": "H4", "fixed_in": VALIDATOR_FIXED_IN, "features": ("amstar2",),
          "summary": "appraise.py _norm reads 'py' as 'probably yes'; 'Partial yes' on a critical "
                     "AMSTAR 2 item becomes a non-critical weakness",
          "guard": {"hu": "H4: kanonikus partial_yes, a besorolás „weakness” konvencióként címkézve",
                    "en": "H4: canonical partial_yes, rating labelled as the 'weakness' convention"}},
-        {"id": "H12", "fixed_in": None, "features": ("rob",),
+        {"id": "H12", "fixed_in": VALIDATOR_FIXED_IN, "features": ("rob",),
          "summary": "reference polarity tags differ from the published tools: QUADAS-2 1.2/1.3, ROBINS-E 2.3/6.2 "
                     "and ROBINS-I 6.3 are tagged reverse, ROBINS-E 5.2 is not",
          "guard": {"hu": "H12: az érintett domének validator-ítélete nem megbízható (eltérő polaritás)",
                    "en": "H12: the validator's verdict for the affected domains is unreliable (polarity differs)"}},
-        {"id": "H13", "fixed_in": None, "features": ("rob",),
+        {"id": "H13", "fixed_in": VALIDATOR_FIXED_IN, "features": ("rob",),
          "summary": "old item numbering: ROBINS-I 4.3–4.6, 5.2, 5.3 and every QUIPS item differ from the published "
                     "numbering the engine uses",
          "guard": {"hu": "H13: az eltérő számozású tételek nem mennek át; a validator eredménye nem összevethető",
@@ -162,8 +165,8 @@ BUILTIN_ISSUES = {
     "presubmit": (),
 }
 
-# a bridge-adapterek ezekhez a verziókhoz készültek (4.19)
-BRIDGE_TESTED = {"validator": "1.0.0", "figure-forge": "0.2.1", "composer": "1.4.1"}
+# a bridge-adapterek ezekhez a verziókhoz készültek (4.19); a validatoré a régi és a javított kiadásra is
+BRIDGE_TESTED = {"validator": ("1.0.0", VALIDATOR_FIXED_IN), "figure-forge": ("0.2.1",), "composer": ("1.4.1",)}
 
 
 def _i18n(hu, en):
@@ -1268,12 +1271,13 @@ class Caps:
             cap["problems"].append(_problem("help_probe_timeout", "warning",
                                             "A --help-szonda nem válaszolt időben.",
                                             "The --help probe did not answer in time."))
-        tested = BRIDGE_TESTED.get(name)
-        if tested and version and version != tested:
+        tested = BRIDGE_TESTED.get(name) or ()
+        if tested and version and version not in tested:
             cap["problems"].append(_problem(
                 "bridge_untested_version", "info",
-                "A bridge-adapter a %s verzióhoz készült; a telepített %s ezzel nem tesztelt." % (tested, version),
-                "The bridge adapter targets %s; installed %s is untested." % (tested, version)))
+                "A bridge-adapter a %s verzióhoz készült; a telepített %s ezzel nem tesztelt." % (" / ".join(tested),
+                                                                                                version),
+                "The bridge adapter targets %s; installed %s is untested." % (" / ".join(tested), version)))
         if probe is not None:
             for module, label in spec.get("optional_imports") or ():
                 if module in probe["missing"]:

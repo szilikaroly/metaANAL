@@ -137,6 +137,20 @@ class TestStates(StubCase):
         self.assertEqual(cap["state"], "legacy")
         self.assertEqual(cap["version"], "1.0.3")
         self.assertIn("bridge_untested_version", self.codes(cap, "info"))
+        self.assertEqual(cap["guards"], ["H1", "H2", "H3", "H4", "H12", "H13"])      # 1.0.x: a régi viselkedés
+
+    def test_legacy_fixed_validator_has_no_guards(self):
+        """A validator 2.0.0 (szk-plugins#5) javítja a H1–H4, H12, H13 hibát: a fixed_in verziótól egyik őr sem él,
+        és a bridge erre a verzióra is tesztelt (nincs „nem tesztelt” figyelmeztetés); újabb verzión sem él őr."""
+        dest = self.install("validator", "legacy")
+        manifest = dest / ".claude-plugin" / "plugin.json"
+        for version, untested in (("2.0.0", False), ("2.1.0", True)):
+            manifest.write_text(json.dumps({"name": "validator", "version": version}), encoding="utf-8")
+            cap = self.make_caps().get("validator")
+            self.assertEqual((cap["state"], cap["version"], cap["guards"]), ("legacy", version, []))
+            self.assertEqual({i["id"]: i["fixed_in"] for i in cap["known_issues"]},
+                             {g: "2.0.0" for g in ("H1", "H2", "H3", "H4", "H12", "H13")})
+            self.assertEqual("bridge_untested_version" in self.codes(cap, "info"), untested, version)
 
     def test_all_unusable(self):
         for p in PLUGINS:
