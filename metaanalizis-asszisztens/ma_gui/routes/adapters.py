@@ -7,7 +7,8 @@
   (PNG/PDF a motor-SVG-ből). A képesség-képernyő „Funkciók a pluginokkal” táblája ebből készül.
 - ``POST /api/validator/check`` ← ``{doc: szk.appraisal/v1}`` → ``szk.appraisal-result/v1`` a validator
   véleményével (``mode``, ``legacy``, ``guards``, ``validator_reported``). Az ítélet és a teljesség elsődleges
-  forrása a motor (``/api/appraisals/…/check``); ez a validator keresztellenőrzése, a H1–H4 őrökkel. Plugin
+  forrása a motor (``/api/appraisals/…/check``); ez a validator keresztellenőrzése, a telepített verzióra aktív
+  őrökkel (1.0.x: H1–H4, H12, H13; a javított 2.0.0: egyik sem — ott a bridge-figyelmeztetés is elmarad). Plugin
   nélkül 424 CAPABILITY_MISSING a teendővel. Az értékelés szövegei (idézet, indoklás) nem mennek át a pluginnak.
 
 Statisztikát nem számol; értékelés-szöveget, argv-t nem naplóz (T10)."""
@@ -163,7 +164,8 @@ def post_validator_check(req):
     raise_for(res)
     warnings = []
     data = res["data"]
-    if data.get("legacy"):
+    if data.get("legacy") and adapter.active_guards(adapter.detect()):
+        # a javított validatornál (2.0.0) egyik 5.0-s őr sem aktív — ott nincs mit kijavítani vagy megjelölni
         warnings.append("A validator régi (bridge) módban fut; az ismert hibáit az őrök (5.0: H1–H4, H12, H13) "
                         "kijavítják, vagy megjelölik, ahol az eredménye nem megbízható.")
     return Result(data, RESULT_SCHEMA, warnings=warnings)

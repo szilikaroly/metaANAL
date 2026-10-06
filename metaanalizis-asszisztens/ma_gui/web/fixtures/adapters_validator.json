@@ -146,6 +146,14 @@
       }
      },
      "guards": [],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
+     ],
      "notes": [
       {
        "hu": "Ez a validator implikált ítélete (konzervatív szabály) — NEM a hivatalos folyamatábra eredménye; az ítélet a Tiéd.",
@@ -333,6 +341,14 @@
        },
        "effect": "completeness_recomputed"
       }
+     ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
      ],
      "notes": []
     },
@@ -727,6 +743,14 @@
        "effect": "completeness_recomputed"
       }
      ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
+     ],
      "notes": [
       {
        "hu": "A TRIPOD+AI a jelentés teljességét méri, nem a módszertan helyességét.",
@@ -816,6 +840,14 @@
        },
        "effect": "rollup_unreliable"
       }
+     ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
      ],
      "notes": []
     },
@@ -909,6 +941,14 @@
        },
        "effect": "convention_weakness"
       }
+     ],
+     "guards_active": [
+      "H1",
+      "H2",
+      "H3",
+      "H4",
+      "H12",
+      "H13"
      ],
      "notes": [
       {
@@ -1009,7 +1049,8 @@
      "schema": "szk.appraisal-result/v1",
      "validator_version": "1.1.0",
      "mode": "json",
-     "scope": "assignment"
+     "scope": "assignment",
+     "guards_active": []
     },
     "warnings": [],
     "meta": {

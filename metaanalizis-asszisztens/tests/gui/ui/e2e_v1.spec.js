@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* tests/gui/ui/e2e_v1.spec.js — a v1 elfogadási teszt (terv 9.3 „Elfogadás”, 8.6 2. réteg): végponttól végpontig a
  * VALÓDI munkapad-szerverrel (ma_gui.server, port 0) ideiglenes projekteken, a termék-builddel, a valódi motorral és —
- * ha elérhető — a valódi szk-plugins pluginokkal (validator 1.0.x bridge-módban, figure-forge).
+ * ha elérhető — a valódi szk-plugins pluginokkal (validator 1.0.x vagy a javított 2.0.0 bridge-módban, figure-forge).
  *
  * Futtatás:  node tests/gui/ui/e2e_v1.spec.js            (kilépési kód 1, ha bármi elbukik)
  *   E2E_V1_ONLY=appraisal,grade,dual,plots,figures,composer,hh,xrules,final,replay   — csak a megnevezett részek
@@ -16,7 +16,8 @@
  * Elfogadási lépések (a végén ellenőrzőlista ✔/✖):
  *   1. értékelési munkafolyamatok: RoB 2, ROBINS-I, ROBINS-E, QUADAS-2, NOS, PROBAST+AI (34 hely, menetenkénti
  *      teljesség), TRIPOD+AI (52 tétel, D/E), AMSTAR 2 (mindkét konvenció) — a motor eszközeivel ÉS a validator
- *      keresztellenőrzésével (a doboz egyezik, vagy megmagyarázza az eltérést; H1–H4, H12, H13 őrök); két emberi
+ *      keresztellenőrzésével (a doboz egyezik, vagy megmagyarázza az eltérést; az 1.0.x-en a H1–H4, H12, H13 őrökkel,
+ *      a javított 2.0.0-n őr nélkül, egyezéssel); két emberi
  *      értékelő → κ → konszenzus → forgalmi lámpa → rob-oszlop szinkron → „magas RoB nélkül” érzékenységi futás →
  *      X003/X006 tiszta; AI-vázlat (jelvény, kezdőbarát indoklás, jóváhagyás kell, kimarad a κ-ból);
  *   2. GRADE kimenetenként a motor tanácsával, „gyanított” publikációs torzítás → a rögzítés tiltva (X019), amíg ember
@@ -283,6 +284,12 @@ async function shot(p, name) {
   fs.mkdirSync(dir, { recursive: true });
   await p.screenshot({ path: path.join(dir, String(++SHOT).padStart(3, '0') + '_' + name.replace(/[^A-Za-z0-9_-]+/g, '_').slice(0, 40) + '.png'), fullPage: true }).catch(() => null);
 }
+/** A doboz mode-sorából a validator főverziója: a javított kiadás (≥ 2, szk-plugins#5) az 5.0-s őrök (H1–H4, H12,
+ *  H13) nélkül fut, és ott a validator maga egyezik a motorral; az 1.0.x-en az őrök javítanak vagy magyaráznak. */
+function validatorMajor(cc) {
+  const m = /validator (\d+)\.\d+\.\d+/.exec(cc.mode || '');
+  return m ? Number(m[1]) : 0;
+}
 /** A doboz „egyezik, vagy megmagyarázza” követelménye: minden sor egyezik, vagy van ismert oka. */
 function cmpOk(cc) {
   return cc.rows.length > 0 && cc.rows.every((r) => r.agree || (r.why && !/oka nem ismert/.test(r.why)));
@@ -338,7 +345,10 @@ async function appraisalRob2() {
       if (unit === 'S01' && rater === 'KP') {
         const cc = await crossCheck(p);
         if (validatorReal()) {
-          check(!cc.down && /1\.0/.test(cc.mode) && /bridge|régi/i.test(cc.mode), 'validator: a valódi plugin bridge-módban (' + cc.mode.trim() + ')');
+          check(!cc.down && /\d+\.\d+\.\d+/.test(cc.mode) && /bridge|régi/i.test(cc.mode), 'validator: a valódi plugin bridge-módban (' + cc.mode.trim() + ')');
+          if (validatorMajor(cc) >= 2) {
+            check(/őr nem kell/.test(cc.mode) && cc.guards.length === 0, 'validator ' + validatorMajor(cc) + '.x: bridge-mód őrök nélkül (' + cc.mode.trim() + ')');
+          }
           check(cmpOk(cc), 'RoB 2: a keresztellenőrző doboz egyezik a motorral, vagy megmagyarázza az eltérést: ' + JSON.stringify(cc.rows));
           check(cc.rows.find((r) => r.k === 'completeness' && r.agree), 'RoB 2: a teljesség egyezik (validator = motor)');
         } else {
@@ -547,10 +557,17 @@ async function appraisalOthers() {
       const cc = await crossCheck(p);
       if (validatorReal()) {
         check(cmpOk(cc), tool + ': a validator-doboz egyezik a motorral, vagy megmagyarázza az eltérést: ' + JSON.stringify(cc.rows.map((r) => [r.k, r.agree, r.why.slice(0, 50)])));
-        if (tool === 'tripod-ai') { check(cc.guards.indexOf('H1') >= 0 && cc.rows.find((r) => r.k === 'completeness' && r.agree), 'TRIPOD+AI: H1-őr — a munkapad számol, és egyezik a motorral'); }
-        if (tool === 'amstar2') { check(cc.guards.indexOf('H4') >= 0 && cc.rows.find((r) => r.k === 'amstar2' && r.agree), 'AMSTAR 2: H4-őr — a validator „weakness” besorolása = a motoré ugyanazzal a konvencióval'); }
-        if (tool === 'quadas2') { check(cc.guards.indexOf('H12') >= 0 && cc.rows.find((r) => r.k === 'overall' && !r.agree && /H12/.test(r.why)), 'QUADAS-2: H12 — a validator polaritás-hibája megmagyarázza az eltérő ítéletet'); }
-        if (tool === 'robins-i') { check(cc.guards.indexOf('H13') >= 0 && cc.rows.find((r) => r.k === 'completeness' && !r.agree && /H13/.test(r.why)), 'ROBINS-I: H13 — az eltérő számozás megmagyarázza a teljesség-eltérést'); }
+        const agree = (k) => !!cc.rows.find((r) => r.k === k && r.agree);
+        if (validatorMajor(cc) >= 2) {
+          // a javított validator (2.0.0): az őrök nem kapcsolnak be, és a validator maga egyezik a motorral
+          const g = { 'tripod-ai': ['H1', 'completeness'], amstar2: ['H4', 'amstar2'], quadas2: ['H12', 'overall'], 'robins-i': ['H13', 'completeness'] }[tool];
+          if (g) { check(cc.guards.indexOf(g[0]) < 0 && agree(g[1]), tool + ': validator ' + validatorMajor(cc) + '.x — ' + g[0] + '-őr nélkül egyezik a motorral (' + g[1] + ')'); }
+        } else {
+          if (tool === 'tripod-ai') { check(cc.guards.indexOf('H1') >= 0 && agree('completeness'), 'TRIPOD+AI: H1-őr — a munkapad számol, és egyezik a motorral'); }
+          if (tool === 'amstar2') { check(cc.guards.indexOf('H4') >= 0 && agree('amstar2'), 'AMSTAR 2: H4-őr — a validator „weakness” besorolása = a motoré ugyanazzal a konvencióval'); }
+          if (tool === 'quadas2') { check(cc.guards.indexOf('H12') >= 0 && cc.rows.find((r) => r.k === 'overall' && !r.agree && /H12/.test(r.why)), 'QUADAS-2: H12 — a validator polaritás-hibája megmagyarázza az eltérő ítéletet'); }
+          if (tool === 'robins-i') { check(cc.guards.indexOf('H13') >= 0 && cc.rows.find((r) => r.k === 'completeness' && !r.agree && /H13/.test(r.why)), 'ROBINS-I: H13 — az eltérő számozás megmagyarázza a teljesség-eltérést'); }
+        }
       } else {
         check(!!cc.down, tool + ': validator nélkül érthető üzenet');
       }
@@ -575,9 +592,15 @@ async function appraisalOthers() {
     check((await pass()).join(',') === 'development:16/16,evaluation:0/18', 'csak a fejlesztési menet: 16/16 és 0/18 (' + (await pass()).join(',') + ')');
     if (validatorReal()) {
       const cc = await crossCheck(p);
-      check(cc.guards.indexOf('H2') >= 0 && cmpOk(cc) && cc.rows.find((r) => r.k === 'completeness' && r.agree),
-        'PROBAST+AI: H2 — a validator 32/34-et mondana, a munkapad 16/34-et számol (= a motor): ' + JSON.stringify(cc.rows.map((r) => [r.k, r.agree])));
-      check(/32\/34/.test(cc.text), 'a validator saját (nem megbízható) számlálása is látszik (32/34)');
+      if (validatorMajor(cc) >= 2) {
+        check(cc.guards.indexOf('H2') < 0 && cmpOk(cc) && cc.rows.find((r) => r.k === 'completeness' && r.agree),
+          'PROBAST+AI: validator ' + validatorMajor(cc) + '.x — H2 nélkül, menetenként számol (16/34 = a motor): ' + JSON.stringify(cc.rows.map((r) => [r.k, r.agree])));
+        check(/16\/34/.test(cc.text) && !/32\/34/.test(cc.text), 'a validator saját számlálása is 16/34 (a két menet nem teljesíti egymást)');
+      } else {
+        check(cc.guards.indexOf('H2') >= 0 && cmpOk(cc) && cc.rows.find((r) => r.k === 'completeness' && r.agree),
+          'PROBAST+AI: H2 — a validator 32/34-et mondana, a munkapad 16/34-et számol (= a motor): ' + JSON.stringify(cc.rows.map((r) => [r.k, r.agree])));
+        check(/32\/34/.test(cc.text), 'a validator saját (nem megbízható) számlálása is látszik (32/34)');
+      }
     }
     await fillAnswers(p, ev);
     await waitComp(p, '34/34');

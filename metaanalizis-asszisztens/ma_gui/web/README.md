@@ -505,6 +505,13 @@ A validator 1.0.0 rögzített kimenetei (H1–H4 reprodukció): `tests/gui/adapt
 két további 1.0.0-hibát talált: **H12** (eltérő polaritás-címke: QUADAS-2 1.2/1.3, ROBINS-E 2.3/5.2/6.2, ROBINS-I 6.3 → az érintett
 domének és az összítélet `reliable: false`, `unreliable_domains`) és **H13** (régi tételszámozás: ROBINS-I 4.3–4.6/5.2/5.3, QUIPS →
 ezek a válaszok nem mennek át, `comparable: false`); mindkettő módtól független utófeldolgozás (`ValidatorAdapter._numbering_polarity`).
+A javított validator 2.0.0 (szk-plugins#5) mind a hat hibát javítja: a `caps.BUILTIN_ISSUES` `fixed_in` értéke
+(`VALIDATOR_FIXED_IN` = `ma_gui.adapters.validator.FIXED_VERSION`) miatt ott egyik őr sem kapcsol be (az 1.0.x-en mind él), a
+bridge a javított szótárral (AMSTAR 2 `N/A`, GRADE `Very large`, a feloldott „suspected” a plugin szavaival) és a váz
+`numbering:` jelölőjével megy, és az új kimenetet (INCOMPLETE, UNRESOLVED, fordított polaritás, „Partly”, „Phase 3”,
+INVALID) olvassa; a ROBINS-I 2.1 tudatos szabálybeli eltérése (`rule_differences`) megjegyzés, nem őr. A 2.0.0 rögzített
+kimenetei: `tests/gui/adapters_golden/validator-2.0.0/`; mindkét verzió goldenjeit a
+`python3 tests/gui/adapters_golden/record_validator.py <szk-plugins>/plugins` rögzíti (a valódi-plugin teszt ugyanezzel veti össze).
 
 Képernyők: `figures` (4 Elemzés › Ábra-export; `?run=&kind=`), `prisma-composer` (2 PRISMA › Composer-forrás). A Képességek képernyő
 (`screens/capabilities.js`) egy sorral illeszti be az `MA.adaptersCaps.panel(ctx)`-et.

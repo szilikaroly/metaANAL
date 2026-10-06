@@ -40,6 +40,7 @@ from ma_gui.routes import adapters_figures as RF  # noqa: E402
 from metaelemzes import api  # noqa: E402
 
 GOLDEN = STUBS.GOLDEN
+GOLDEN_FIXED = STUBS.GOLDEN_FIXED
 INSTR = os.path.join(H.ROOT, "metaelemzes", "instruments")
 
 
@@ -67,6 +68,12 @@ def _instrument(tool):
 
 def _golden(name):
     with open(os.path.join(GOLDEN, name), encoding="utf-8") as fh:
+        return fh.read()
+
+
+def _golden2(name):
+    """A javított validator (2.0.0) rögzített kimenete."""
+    with open(os.path.join(GOLDEN_FIXED, name), encoding="utf-8") as fh:
         return fh.read()
 
 
@@ -383,6 +390,220 @@ class ValidatorAdapterTests(_Tmp):
             self.assertEqual(res["error"]["code"], "CAPABILITY_MISSING")
             self.assertIsNotNone(ad.status()["remedy"])
 
+
+
+# ============================================================================ validator 2.0.0 (golden, bridge)
+class ValidatorFixedGoldenTests(unittest.TestCase):
+    """A javított validator (2.0.0, szk-plugins#5) rögzített kimenetei: a hibák eltűntek, és az adapter az új szavakat
+    (INCOMPLETE, UNRESOLVED, fordított polaritás, középső szint, Partly, Phase 3, INVALID) helyesen olvassa."""
+
+    def test_published_numbering_in_skeleton(self):
+        ri = V.parse_skeleton(_golden2("robins_i_2016.skeleton.txt"))
+        engine = [it["id"] for it in _instrument("robins-i")["items"] if "assignment" in (it.get("scopes") or
+                                                                                        ["assignment"])]
+        self.assertEqual(len(ri), 30)
+        self.assertTrue({"4.1", "4.2", "5.4", "5.5", "6.4"} <= {s["id"] for s in ri})
+        self.assertFalse({"4.3", "4.4", "4.5", "4.6"} & {s["id"] for s in ri})       # csak a betartás hatókörében
+        self.assertTrue({s["id"] for s in ri} <= set(engine) | {"4.3", "4.4", "4.5", "4.6"})
+        qu = V.parse_skeleton(_golden2("quips_partly.skeleton.txt"))
+        self.assertEqual([s["id"] for s in qu], [it["id"] for it in _instrument("quips")["items"]])
+        self.assertEqual(V.skeleton_numbering(_golden2("robins_i_2016.skeleton.txt")),
+                         "numbering: robins-i 2016 Table A")
+        self.assertEqual(V.skeleton_numbering(_golden2("quips_partly.skeleton.txt")),
+                         "numbering: quips Hayden 2013 prompting items 1a-6d")
+        self.assertIsNone(V.skeleton_numbering(_golden2("rob2.skeleton.txt")))
+        self.assertIsNone(V.skeleton_numbering(_golden("rob2.skeleton.txt")))           # 1.0.0: nincs jelölő
+        # ROBIS: a „Phase 3” külön csoport, nem a 3. domén
+        rb = V.parse_skeleton(_golden2("robis_phase3.skeleton.txt"))
+        self.assertEqual({s["id"]: s["domain"] for s in rb if s["id"] in ("3.1", "3A", "3C")},
+                         {"3.1": "3", "3A": "P3", "3C": "P3"})
+
+    def test_h1_to_h4_fixed_in_golden(self):
+        self.assertEqual(V.parse_verify(_golden2("tripod_empty.verify.txt"))["answered"], 0)    # H1 javítva
+        p = V.parse_verify(_golden2("probast_dev.verify.txt"))
+        self.assertEqual((p["answered"], p["expected"]), (16, 34))                              # H2 javítva
+        self.assertEqual(V.parse_rollup_grade(_golden2("grade_strong.rollup.txt"))["certainty"], "moderate")  # H3
+        am = V.parse_rollup_amstar2(_golden2("amstar2_py.rollup.txt"))
+        self.assertEqual((am["rating"], am["weaknesses"], am["provisional"]), ("moderate", ["2", "4"], False))
+        self.assertEqual(am["not_applicable"], ["11"])                    # N/A: se hiba, se gyengeség
+
+    def test_incomplete_domain_and_overall(self):
+        text = _golden2("rob2.rollup.txt")
+        doms, overall, _lines = V.parse_rollup_signalling(text)
+        by = {d["domain"]: d for d in doms}
+        self.assertEqual(sorted(by), ["1", "2", "3", "4", "5"])           # az INCOMPLETE domén nem esik ki
+        self.assertEqual((by["5"]["level"], by["5"]["incomplete"], by["5"]["validator_missing"]), (None, True, ["5.3"]))
+        self.assertEqual((by["2"]["level"], by["2"]["forced_by"]), ("high", ["2.6"]))
+        self.assertIsNone(overall)
+        self.assertEqual(V.rollup_incomplete(text), (True, "high"))
+        self.assertTrue(V.rollup_not_final(text))
+        self.assertEqual(V.rollup_incomplete(_golden("rob2.rollup.txt")), (False, None))   # 1.0.0
+        self.assertFalse(V.rollup_not_final(_golden("rob2.rollup.txt")))
+
+    def test_reverse_middle_partly_phase(self):
+        doms, overall, _l = V.parse_rollup_signalling(_golden2("robins_i_2016.rollup.txt"))
+        by = {d["domain"]: d for d in doms}
+        self.assertEqual((by["1"]["level"], by["1"]["forced_by"]), ("some", ["1.1"]))   # fordított, középső szint
+        self.assertEqual((by["2"]["level"], by["2"]["forced_by"]), ("some", ["2.1"]))
+        self.assertEqual(overall, "some")
+        doms, overall, _l = V.parse_rollup_signalling(_golden2("quips_partly.rollup.txt"))
+        by = {d["domain"]: d for d in doms}
+        self.assertEqual((by["1"]["level"], by["1"]["partial_at"]), ("some", ["1b"]))     # „Partly” ≠ rendben
+        self.assertEqual(by["3"]["unknown_at"], ["3a"])
+        doms, overall, _l = V.parse_rollup_signalling(_golden2("robis_phase3.rollup.txt"))
+        by = {d["domain"]: d for d in doms}
+        self.assertEqual((by["P3"]["level"], by["P3"]["forced_by"]), ("high", ["3A"]))
+        self.assertEqual((by["3"]["level"], by["1"]["forced_by"]), ("low", ["1.4", "1.5"]))
+        self.assertEqual(overall, "high")
+        doms, overall, _l = V.parse_rollup_signalling(_golden2("quadas2_yes.rollup.txt"))
+        self.assertEqual(({d["level"] for d in doms}, overall), ({"low"}, "low"))          # H12 javítva
+
+    def test_grade_unresolved_and_vocabulary(self):
+        g = V.parse_rollup_grade(_golden2("grade_suspected.rollup.txt"))
+        self.assertEqual(g, {"certainty": None, "start": "high", "unresolved": ["publication_bias"],
+                             "range": ["high", "moderate"]})
+        self.assertEqual(V.parse_rollup_grade(_golden2("grade_resolved.rollup.txt"))["certainty"], "moderate")
+        self.assertEqual(V.parse_rollup_grade(_golden2("grade_very_large.rollup.txt"))["certainty"], "high")  # +2
+        inc = V.parse_rollup_grade("  Start: NOT RECORDED — 0.1 must say High\n  CERTAINTY: INCOMPLETE — unanswered: 0.1.")
+        self.assertEqual(inc, {"certainty": None, "start": None, "incomplete": True})
+
+    def test_nos_invalid_and_partial_star(self):
+        v = V.parse_verify(_golden2("nos_partial.verify.txt"))
+        self.assertEqual((v["answered"], v["expected"], v["invalid"]), (7, 8, ["S2"]))
+        n = V.parse_rollup_nos(_golden2("nos_partial.rollup.txt"))
+        self.assertEqual((n["total"], n["max"], n["provisional"]), (7, 9, True))
+        self.assertNotIn("invalid", V.parse_verify(_golden("rob2.verify.txt")))          # 1.0.0: változatlan
+
+    def test_fixed_vocabulary_and_marker_in_markdown(self):
+        slots = V.parse_skeleton(_golden2("amstar2_py.skeleton.txt"))
+        md, sent, invalid, skipped = V.bridge_markdown("amstar2", slots, V._values(DOCS["amstar2_py"]), True)
+        self.assertEqual((sent["11"], skipped, invalid), ("N/A", [], []))                # 2.0.0: N/A válasz
+        self.assertIn("| Partial yes |", md)
+        self.assertNotIn("| PY |", md)
+        old = V.bridge_markdown("amstar2", slots, V._values(DOCS["amstar2_py"]))
+        self.assertEqual(old[3], ["11"])                                                  # 1.0.0: üresen
+        skel = _golden2("robins_i_2016.skeleton.txt")
+        md = V.bridge_markdown("robins-i", V.parse_skeleton(skel), V._values(DOCS["robins_i_2016"]), True,
+                               V.skeleton_numbering(skel))[0]
+        self.assertIn("<!-- numbering: robins-i 2016 Table A -->", md.splitlines()[2])
+        gr = V.bridge_markdown("grade", V.parse_skeleton(_golden2("grade_very_large.skeleton.txt")),
+                               V._values(DOCS["grade_very_large"]), True)[1]
+        self.assertEqual(gr["6.1"], "Very large")
+        self.assertEqual(V.answer_tokens("grade")["very_large"], "Yes")                   # 1.0.0: +1-ként megy
+
+    def test_grade_resolution_translated(self):
+        doc = DOCS["grade_resolved"]
+        self.assertEqual(V.bridge_values(doc, "grade", True)["5.1"], "strongly_suspected")
+        self.assertEqual(V.bridge_values(doc, "grade", False)["5.1"], "suspected")        # 1.0.0: a H3 dönt
+        zero = copy.deepcopy(doc)
+        zero["answers"]["5.1"]["resolution"]["step"] = 0
+        self.assertEqual(V.bridge_values(zero, "grade", True)["5.1"], "undetected")
+        bare = copy.deepcopy(doc)
+        bare["answers"]["5.1"]["resolution"]["rationale"] = "  "
+        self.assertEqual(V.bridge_values(bare, "grade", True)["5.1"], "suspected")       # indoklás nélkül nem döntés
+        self.assertEqual(V.bridge_values(DOCS["grade_pb2"], "grade", True)["5.1"], "strongly_suspected")
+
+    def test_fixed_release(self):
+        self.assertEqual(V.FIXED_VERSION, caps_mod.VALIDATOR_FIXED_IN)
+        for v, want in (("1.0.0", False), ("1.0.3", False), ("1.9.9", False), ("2.0.0", True), ("2.1.0", True),
+                        ("10.0.0", True), (None, False), ("x", False)):
+            self.assertEqual(V.fixed_release({"version": v}), want, v)
+
+
+# ============================================================================ validator 2.0.0 (stub-futtatással)
+class ValidatorFixedAdapterTests(_Tmp):
+    """A javított validator (2.0.0) bridge-módban: egyik 5.0-s őr sem kapcsol be, minden válasz átmegy, az eredmény
+    összevethető a motoréval — a stub a rögzített 2.0.0-s kimeneteket adja."""
+
+    def adapter(self, golden=None, name="v2"):
+        cfg = {"mode": "legacy", "version": "2.0.0"}
+        if golden:
+            cfg["golden"] = dict(STUBS.GOLDEN_CASES["2.0.0"], **golden)
+        base = STUBS.make_plugins(os.path.join(self.tmp, "plugins_" + name), validator=cfg)
+        return V.ValidatorAdapter(_caps(self.tmp, base, name))
+
+    def test_no_guards_and_remedy(self):
+        ad = self.adapter()
+        cap = ad.detect()
+        self.assertEqual((cap["state"], cap["version"], cap["guards"]), ("legacy", "2.0.0", []))
+        self.assertEqual({i["id"]: i["fixed_in"] for i in cap["known_issues"]},
+                         {g: "2.0.0" for g in ("H1", "H2", "H3", "H4", "H12", "H13")})
+        self.assertNotIn("bridge_untested_version", [p["code"] for p in cap["problems"]])
+        st = ad.status()
+        self.assertEqual(st["guards"], [])
+        self.assertEqual({t: v["guards"] for t, v in st["tools"].items() if v["guards"]}, {})
+        self.assertIn("nem kellenek", st["remedy"]["hu"])
+        self.assertNotIn("V1", st["remedy"]["hu"])
+
+    def test_rob2_incomplete(self):
+        d = self.adapter().check(DOCS["rob2"], instrument=_instrument("rob2"))["data"]
+        self.assertEqual((d["validator_version"], d["guards"]), ("2.0.0", []))
+        dom5 = {x["domain"]: x for x in d["domains"]}["5"]
+        self.assertEqual((dom5["implied"], dom5["flags"], dom5["missing"]), (None, ["incomplete"], ["5.3"]))
+        o = d["overall"]
+        self.assertEqual((o["implied"], o["provisional"], o["incomplete"], o["at_least"]), (None, True, True, "high"))
+
+    def test_robins_i_and_quips_comparable(self):
+        ad = self.adapter()
+        d = ad.check(DOCS["robins_i_2016"], instrument=_instrument("robins-i"))["data"]
+        self.assertEqual(d["guards"], [])
+        self.assertNotIn("comparable", d)                                      # H13 nélkül összevethető
+        self.assertNotIn("unreliable_domains", d)
+        self.assertEqual((d["answered"], d["validator_reported"]["answered"]), (30, 30))
+        self.assertTrue(d["validator_reported"]["agrees"])
+        self.assertEqual(d["overall"]["implied"], "moderate")
+        self.assertEqual(d["rule_differences"], [{"item": "2.1", "domain": "2"}])   # tudatos eltérés: megjegyzés
+        self.assertTrue(any("2.1" in n["hu"] and "Table A" in n["hu"] for n in d["notes"] if isinstance(n, dict)))
+        no21 = copy.deepcopy(DOCS["robins_i_2016"])
+        no21["answers"]["2.1"] = {"value": "no"}
+        d = ad.check(no21, instrument=_instrument("robins-i"))["data"]
+        self.assertNotIn("rule_differences", d)
+        d = ad.check(DOCS["quips_partly"], instrument=_instrument("quips"))["data"]
+        self.assertEqual((d["guards"], d["answered"], d["validator_reported"]["answered"]), ([], 31, 31))
+        self.assertNotIn("comparable", d)
+        self.assertEqual(d["overall"]["implied"], "moderate")
+        self.assertEqual({x["domain"]: x.get("partial_at") for x in d["domains"]}["1"], ["1b"])
+
+    def test_quadas2_and_amstar2(self):
+        ad = self.adapter()
+        d = ad.check(DOCS["quadas2_yes"], instrument=_instrument("quadas2"))["data"]
+        self.assertEqual((d["guards"], d["overall"]["implied"]), ([], "low"))
+        self.assertNotIn("reliable", d["overall"])
+        d = ad.check(DOCS["amstar2_py"], instrument=_instrument("amstar2"))["data"]
+        self.assertEqual(d["guards"], [])
+        self.assertEqual((d["amstar2"]["rating"], d["amstar2"]["convention"], d["amstar2"]["provisional"]),
+                         ("moderate", "weakness", False))
+        self.assertEqual(d["conventions"]["amstar2.partial_yes_critical"], "weakness")
+        self.assertFalse(d["overall"]["provisional"])
+        self.assertNotIn(V.AMSTAR_NA_NOTE, d["notes"])
+
+    def test_grade_variants(self):
+        d = self.adapter().check(DOCS["grade_strong"])["data"]
+        self.assertEqual((d["grade"]["certainty"], d["guards"]), ("moderate", []))         # H3 javítva: −1
+        d = self.adapter({"grade": "grade_suspected"}, "gs").check(DOCS["grade_suspected"])["data"]
+        g = d["grade"]
+        self.assertEqual((g["certainty"], g["unresolved"], g["range"], g["reliable"]),
+                         (None, ["publication_bias"], ["high", "moderate"], True))
+        self.assertTrue(d["overall"]["provisional"])
+        d = self.adapter({"grade": "grade_resolved"}, "gr").check(DOCS["grade_resolved"])["data"]
+        self.assertEqual((d["grade"]["certainty"], d["grade"]["unresolved"], d["guards"]), ("moderate", [], []))
+        d = self.adapter({"grade": "grade_pb2"}, "gp").check(DOCS["grade_pb2"])["data"]
+        self.assertEqual([x["id"] for x in d["guards"]], ["PB2"])
+        self.assertEqual((d["grade"]["certainty"], d["grade"]["validator_certainty"], d["grade"]["reliable"]),
+                         (None, "moderate", False))
+        d = self.adapter({"grade": "grade_very_large"}, "gv").check(DOCS["grade_very_large"])["data"]
+        self.assertEqual((d["grade"]["certainty"], d["guards"]), ("high", []))           # +2, nincs VL-őr
+
+    def test_nos_and_robis(self):
+        ad = self.adapter()
+        d = ad.check(DOCS["nos_partial"], instrument=_instrument("nos"))["data"]
+        self.assertEqual(d["validator_reported"]["invalid"], ["S2"])
+        self.assertEqual((d["nos"]["total"], d["nos"]["provisional"]), (7, True))
+        self.assertIn(V.NOS_NOTE_FIXED, d["notes"])
+        self.assertNotIn(V.NOS_NOTE, d["notes"])
+        d = ad.check(DOCS["robis_phase3"])["data"]
+        self.assertEqual({x["domain"]: x["level"] for x in d["domains"]},
+                         {"1": "high", "2": "high", "3": "low", "4": "low", "P3": "high"})
 
 # ============================================================================ figure-forge
 class FigureForgeAdapterTests(_Tmp):
@@ -843,6 +1064,21 @@ class ValidatorRoutes(_RouteBase):
         self.call("POST", "/api/capabilities/refresh", {})
         st, _h, env = self.call("POST", "/api/validator/check", {"doc": DOCS["rob2"]})
         self.assertEqual((st, env["error"]["code"]), (424, "CAPABILITY_MISSING"))
+
+
+class ValidatorFixedRoutes(_RouteBase):
+    """A javított validatorral (2.0.0) a végpont nem figyelmeztet őrökre — egyik sem aktív."""
+    VAL = {"mode": "legacy", "version": "2.0.0"}
+
+    def test_check_route_without_guard_warning(self):
+        st, _h, env = self.call("POST", "/api/validator/check", {"doc": DOCS["probast_dev"]})
+        self.assertEqual(st, 200, env)
+        self.assertEqual((env["data"]["completeness_text"], env["data"]["validator_reported"]["answered"]),
+                         ("16/34", 16))
+        self.assertEqual((env["data"]["guards"], env["warnings"]), ([], []))
+        st, _h, env = self.call("POST", "/api/validator/check", {"doc": DOCS["robins_i_2016"]})
+        self.assertEqual(st, 200, env)
+        self.assertNotIn("comparable", env["data"])
 
 
 class ComposerRoutes(_RouteBase):

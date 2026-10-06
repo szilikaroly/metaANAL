@@ -114,8 +114,11 @@
     var notesText = notes.map(pick);
     var noteSaysOfficial = notesText.some(function (x) { return /hivatalos folyamatábra|official flowchart/i.test(x); });
     var rows = [];
-    rows.push(h('li', { 'class': 'item', dataset: { k: 'mode' } }, MA.ui.badge(res.legacy ? 'warning' : 'ok', null), ' ',
-      t('adp.val.modeLine', { version: res.validator_version || '?', mode: MA.adaptersCaps ? MA.adaptersCaps.modeText(res.mode) : String(res.mode || '') })));
+    // a javított validator (2.0.0) is bridge-módban fut (nincs kézfogás), de őr nélkül: ott nem „régi, őrökkel”
+    var plain = res.mode === 'bridge' && Array.isArray(res.guards_active) && !res.guards_active.length;
+    var modeTxt = plain ? t('adp.mode.bridgePlain') : (MA.adaptersCaps ? MA.adaptersCaps.modeText(res.mode) : String(res.mode || ''));
+    rows.push(h('li', { 'class': 'item', dataset: { k: 'mode' } }, MA.ui.badge(res.legacy && !plain ? 'warning' : 'ok', null), ' ',
+      t('adp.val.modeLine', { version: res.validator_version || '?', mode: modeTxt })));
     if (notComparable) {
       rows.push(h('li', { 'class': 'item', dataset: { k: 'completeness', comparable: '0' } }, MA.ui.badge('neutral', null), ' ',
         t('adp.val.completenessSent', { text: res.completeness_text || '—' })));

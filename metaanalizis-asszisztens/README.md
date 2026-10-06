@@ -212,7 +212,8 @@ nyílik) a motor ábráit magyar vagy angol felirattal, rétegzett SVG-ként adj
 visszaellenőriz a futás adataival (zöld jelvény csak teljes egyezésnél; a figure-forge auditja, ha használható,
 különben a pontos teendő); az értékelő űrlapokon a **„Keresztellenőrzés a validator pluginnal”** doboz
 „Összevetés a motorral” sorai mutatják az eltéréseket a plugin ismert hibáira vonatkozó őrökkel (H1–H4, H12
-polaritás, H13 tételszámozás) — az ítélet mindig a motoré és a tiéd, a plugin csak tájékoztat.
+polaritás, H13 tételszámozás; a validator 1.0.x-en — a javított 2.0.0-n egyik sem kell, és a ROBINS-I / QUIPS
+publikált tételszámai is átmennek) — az ítélet mindig a motoré és a tiéd, a plugin csak tájékoztat.
 A v1 motor-oldala már kész (2026-10-05): a kettős kinyerés egyeztetése, a natív értékelő eszközök (RoB 2, ROBINS-I/E,
 QUADAS-2, NOS, QUIPS, JBI, PROBAST+AI, TRIPOD+AI, AMSTAR 2; konszenzus, forgalmi lámpa, `rob`-szinkron), a GRADE / SoF,
 a kumulatív és a buborék-ábra, valamint a PRISMA 2020 folyamatábra-specifikáció a `metaelemzes/api.py` homlokzatán és a

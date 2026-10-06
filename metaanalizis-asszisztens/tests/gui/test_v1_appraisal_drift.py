@@ -9,7 +9,9 @@
 2. **Fixture ↔ motor** (FID-7): a fejlesztői fixture-ök a MOTOR kimenetei (``gen_appraisal_fixtures.py`` alapból a
    ``metaelemzes.api``-val fut; ``--check`` ezzel vet össze), az eszköz-definíciók azonosak az ``api.instrument_get``-tel,
    és minden ``schema``-mezős fixture-objektum, amelyhez a motornak szerződése van (metaelemzes/contracts), annak
-   megfelel (jsonschema, 2020-12). A validator vázával való összevetés a ``validator_ids``-en át marad.
+   megfelel (jsonschema, 2020-12). A validator vázával való összevetés verziófüggő: az 1.0.x régi ROBINS-I- és
+   QUIPS-számozásával a ``validator_ids``-en át, a javított (≥ 2.0.0) validatoréval a motor saját — publikált —
+   azonosítóival.
 3. **Fixture-alak** (mindig): a ``web/fixtures/appraisal_*.json`` a 4.2 borítékot és a 4.11 szerződés kötelező mezőit
    követi; a mintaértékelések útja a 2.4 elrendezés."""
 import glob
@@ -29,6 +31,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, ROOT)
 
+from ma_gui.adapters import validator as V  # noqa: E402
 from ma_gui.routes import appraisal_common as C  # noqa: E402
 
 FIX = os.path.join(ROOT, "ma_gui", "web", "fixtures")
@@ -53,9 +56,19 @@ def _run(vdir, script, *args):
     return out.stdout.decode("utf-8", "replace")
 
 
+def validator_version(vdir):
+    """A plugin.json verziója, vagy None."""
+    try:
+        v = _load_json(os.path.join(vdir, ".claude-plugin", "plugin.json")).get("version")
+    except (OSError, ValueError):
+        return None
+    return v if isinstance(v, str) else None
+
+
 def validator_items(vdir):
-    """{eszköz: [tétel-id …]} + {'probast-ai': {'development': [...], 'evaluation': [...]}, 'tripod-ai': [(id, D/E)]}."""
-    out = {}
+    """{eszköz: [tétel-id …]} + {'probast-ai': {'development': [...], 'evaluation': [...]}, 'tripod-ai': [(id, D/E)]},
+    és a '_version' kulcson a plugin verziója."""
+    out = {"_version": validator_version(vdir)}
     for tool in APPRAISE_TOOLS:
         ids = []
         for line in _run(vdir, "appraise.py", "--skeleton", tool, "--scope", "all").splitlines():
@@ -84,14 +97,18 @@ def validator_items(vdir):
 
 def compare(testcase, insts, vitems):
     """Az eszköz-definíciók (motor vagy fixture) összevetése a validator vázával."""
+    fixed = V.fixed_release({"version": vitems.get("_version")})
     for tool in APPRAISE_TOOLS:
         if tool not in insts:
             continue
-        # ahol a motor a publikált eszközt követi a validator helyett (ROBINS-I 2016, QUIPS 1a–6d; v1 javítás A),
-        # a validator akkori azonosítói a 'validator_ids' mezőben vannak — a sodródás-őr azzal vet össze (mint a
-        # motor saját test_v1_instruments.test_generic_ids_match-e)
-        mine = insts[tool].get("validator_ids") or [it["id"] for it in insts[tool]["items"]]
-        testcase.assertEqual(sorted(mine), sorted(vitems[tool]), "%s: a tétel-azonosítók eltérnek" % tool)
+        # ahol a motor a publikált eszközt követi a validator 1.0.x helyett (ROBINS-I 2016, QUIPS 1a–6d; v1 javítás
+        # A), az 1.0.x azonosítói a 'validator_ids' mezőben vannak — a régi pluginnal a sodródás-őr azzal vet össze
+        # (mint a motor saját test_v1_instruments.test_generic_ids_match-e). A javított validator (≥ 2.0.0) a
+        # publikált számozást használja: ott a motor SAJÁT azonosítóinak kell egyezniük (H13 nélkül).
+        own = [it["id"] for it in insts[tool]["items"]]
+        mine = own if fixed else (insts[tool].get("validator_ids") or own)
+        testcase.assertEqual(sorted(mine), sorted(vitems[tool]), "%s: a tétel-azonosítók eltérnek (validator %s)"
+                             % (tool, vitems.get("_version")))
     if "probast-ai" in insts:
         inst = insts["probast-ai"]
         for p in ("development", "evaluation"):

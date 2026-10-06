@@ -58,8 +58,9 @@ a Summary of Findings táblázatot és a kéziratba szánt mondatokat angolul is
   `ma.py appraisal schema <eszköz> --json` (tételek, tételenként megengedett válaszok, kezdőknek szóló súgó magyarul),
   `ma.py appraisal check <értékelés.json>` (teljesség — PROBAST+AI-nál menetenként —, implikált ítélet, AMSTAR 2, GRADE).
   Ha telepítve van a `validator` plugin, annak folyamata is használható; **figyelem:** a validator 1.0.0 GRADE-összesítése a
-  publikációs torzítás doménnél a „suspected / strongly suspected” választ nem minősíti le (ismert hiba) — a motor
-  GRADE-tára ezt kikényszeríti (4. döntés), a validatorét kézzel ellenőrizd. Predikciós modelleknél PROBAST+AI /
+  publikációs torzítás doménnél a „suspected / strongly suspected” választ nem minősíti le (ismert hiba; a validator
+  2.0.0 javítja: a „suspected” ott feloldatlan, a „strongly suspected” −1) — a motor GRADE-tára ezt kikényszeríti
+  (4. döntés), az 1.0.x validatorét kézzel ellenőrizd. Predikciós modelleknél PROBAST+AI /
   TRIPOD+AI: `ma.py appraisal schema probast-ai|tripod-ai`, a validator `prediction-model` folyamata vagy a
   `probast-tripod-ai` skill.
 
