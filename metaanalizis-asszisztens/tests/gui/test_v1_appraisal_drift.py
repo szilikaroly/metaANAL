@@ -37,6 +37,10 @@ from ma_gui.routes import appraisal_common as C  # noqa: E402
 FIX = os.path.join(ROOT, "ma_gui", "web", "fixtures")
 DEFAULT_PLUGINS = "/home/user/szilikaroly/szk-plugins/plugins"
 APPRAISE_TOOLS = ("rob2", "robins-i", "robins-e", "quadas2", "nos", "quips", "jbi", "amstar2")
+# ahol az eszköz változatai alternatívák (egy értékelés az egyiket használja), a javított validator (≥ 2.0.0) váza
+# hatókörönként vethető össze: a RoB 2 / ROBINS-I betartási változata, a NOS két űrlapja (a 2.0.0 a NOS-nál
+# --scope nélkül nem ad vázat)
+SCOPED = {"rob2": ("assignment", "adherence"), "robins-i": ("assignment", "adherence"), "nos": ("cohort", "case-control")}
 ROW_RE = re.compile(r"^\|\s*([0-9A-Za-z][0-9A-Za-z.\-]*)\s*\|")
 ALGORITHMS = ("published", "count", "conservative", "none", "validator-compatible")
 
@@ -68,14 +72,19 @@ def validator_version(vdir):
 def validator_items(vdir):
     """{eszköz: [tétel-id …]} + {'probast-ai': {'development': [...], 'evaluation': [...]}, 'tripod-ai': [(id, D/E)]},
     és a '_version' kulcson a plugin verziója."""
-    out = {"_version": validator_version(vdir)}
-    for tool in APPRAISE_TOOLS:
+    out = {"_version": validator_version(vdir), "_scoped": {}}
+
+    def skeleton_ids(tool, scope):
         ids = []
-        for line in _run(vdir, "appraise.py", "--skeleton", tool, "--scope", "all").splitlines():
+        for line in _run(vdir, "appraise.py", "--skeleton", tool, "--scope", scope).splitlines():
             m = ROW_RE.match(line)
             if m and m.group(1) not in ("#",):
                 ids.append(m.group(1))
-        out[tool] = ids
+        return ids
+    for tool in APPRAISE_TOOLS:
+        out[tool] = skeleton_ids(tool, "all")
+        for sc in SCOPED.get(tool, ()):
+            out["_scoped"].setdefault(tool, {})[sc] = skeleton_ids(tool, sc)
     pb, cur = {"development": [], "evaluation": []}, None
     for line in _run(vdir, "checklist.py", "--skeleton", "probast", "--scope", "both").splitlines():
         if line.startswith("### Quality (development)"):
@@ -105,8 +114,19 @@ def compare(testcase, insts, vitems):
         # A), az 1.0.x azonosítói a 'validator_ids' mezőben vannak — a régi pluginnal a sodródás-őr azzal vet össze
         # (mint a motor saját test_v1_instruments.test_generic_ids_match-e). A javított validator (≥ 2.0.0) a
         # publikált számozást használja: ott a motor SAJÁT azonosítóinak kell egyezniük (H13 nélkül).
-        own = [it["id"] for it in insts[tool]["items"]]
-        mine = own if fixed else (insts[tool].get("validator_ids") or own)
+        # a validator azonosítója: validator_id, ha a motor kulcsa eltér (RoB 2 betartási 2a.1–2a.6 → 2.1–2.6)
+        items = insts[tool]["items"]
+        if fixed and tool in SCOPED:
+            for sc in SCOPED[tool]:
+                mine = [it.get("validator_id") or it["id"] for it in items if sc in (it.get("scopes") or [sc])]
+                testcase.assertEqual(sorted(mine), sorted(vitems["_scoped"][tool][sc]),
+                                     "%s/%s: a tétel-azonosítók eltérnek (validator %s)" % (tool, sc,
+                                                                                          vitems.get("_version")))
+            continue
+        own = [it.get("validator_id") or it["id"] for it in items]
+        # az 1.0.x-ben nincs RoB 2 betartási változat: a validator_id-s (csak 2.0.0-tól létező) tételek kimaradnak
+        old = [it["id"] for it in items if not it.get("validator_id")]
+        mine = own if fixed else (insts[tool].get("validator_ids") or old)
         testcase.assertEqual(sorted(mine), sorted(vitems[tool]), "%s: a tétel-azonosítók eltérnek (validator %s)"
                              % (tool, vitems.get("_version")))
     if "probast-ai" in insts:

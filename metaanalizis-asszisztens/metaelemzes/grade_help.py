@@ -2487,8 +2487,8 @@ def _amstar_rating(answers_by_item, convention):
             continue
         if a == "no":
             (crit if item in AMSTAR2_CRITICAL else weak).append(item)
-        elif a == "partial_yes" and item in AMSTAR2_CRITICAL and convention == "weakness":
-            weak.append(item)
+        elif a == "partial_yes" and convention == "weakness":
+            weak.append(item)           # minden „részben igen” tételen (a 8. tételen is) — appraisal._amstar2_block
     if len(crit) > 1:
         rating = "critically_low"
     elif len(crit) == 1:
@@ -2504,7 +2504,8 @@ def amstar2_consistency(answers, convention=None, claimed=None):
     """AMSTAR 2 (Shea 2017) összbesorolás a hivatalos algoritmussal, MINDKÉT konvencióval (KB AMSTAR2-00; terv 3.5.13,
     5.4, H4). Kritikus tételek: 2, 4, 7, 9, 11, 13, 15. Kritikus tételen a „nem” kritikus hiba, egyéb tételen nem
     kritikus gyengeség; a „nem volt metaanalízis” (11, 12, 15) nem hiba. A „részben igen” (csak 2, 4, 7, 8, 9):
-    'meets' (projektkonvenció) — nem hiba; 'weakness' (validator 1.0.0) — kritikus tételen nem kritikus gyengeség.
+    'meets' (projektkonvenció) — nem hiba; 'weakness' (a validator 2.0.0 szabálya) — nem kritikus gyengeség, a 8.
+    tételen is (a validator 1.0.0 csak a kritikus tételeken számolta annak).
     Magas: legfeljebb egy nem kritikus gyengeség; mérsékelt: több nem kritikus gyengeség; alacsony: egy kritikus
     hiba; kritikusan alacsony: egynél több.
 
@@ -2594,7 +2595,7 @@ def amstar2_consistency(answers, convention=None, claimed=None):
             else:
                 warning = "A megadott besorolás (%s) nem egyezik a válaszokból adódóval (%s, '%s' konvenció)%s." % (
                     AMSTAR2_RATING_LABELS[claimed_n][0], AMSTAR2_RATING_LABELS[sel["rating"]][0], convention,
-                    ("; a '%s' konvencióval (validator 1.0.0) viszont egyezik" % other)
+                    ("; a '%s' konvencióval (a validator szabálya) viszont egyezik" % other)
                     if by_conv[other]["rating"] == claimed_n else "")
     if parts_missing:
         notes.append(_tr("A(z) %s tételt a hivatalos AMSTAR 2-űrlap RCT-re és NRSI-re KÜLÖN ítélteti — add meg a részeket "
@@ -2620,9 +2621,9 @@ def amstar2_consistency(answers, convention=None, claimed=None):
     sens = None
     if sensitive:
         ol = AMSTAR2_RATING_LABELS[by_conv[other]["rating"]]
-        sens = {"hu": "Konvenció-érzékenység: ha a „részben igen” kritikus tételen %s → %s (KB AMSTAR2-00)." % (
+        sens = {"hu": "Konvenció-érzékenység: ha a „részben igen” %s → %s (KB AMSTAR2-00)." % (
             "gyengeség" if other == "weakness" else "nem hiba", ol[0]),
-            "en": "Convention sensitivity: if 'partial yes' on a critical item %s → %s (KB AMSTAR2-00)." % (
+            "en": "Convention sensitivity: if 'partial yes' %s → %s (KB AMSTAR2-00)." % (
             "is a weakness" if other == "weakness" else "is not a flaw", ol[1])}
     return {"instrument": "amstar2", "algorithm": "published", "convention": convention, "rating": sel["rating"],
             "critical_flaws": list(sel["critical_flaws"]), "weaknesses": list(sel["weaknesses"]),

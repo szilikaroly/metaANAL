@@ -433,9 +433,11 @@ class ValidatorFixedGoldenTests(unittest.TestCase):
         by = {d["domain"]: d for d in doms}
         self.assertEqual(sorted(by), ["1", "2", "3", "4", "5"])           # az INCOMPLETE domén nem esik ki
         self.assertEqual((by["5"]["level"], by["5"]["incomplete"], by["5"]["validator_missing"]), (None, True, ["5.3"]))
-        self.assertEqual((by["2"]["level"], by["2"]["forced_by"]), ("high", ["2.6"]))
+        # a RoB 2 2019-es algoritmusa (1b2c906-tól): 2.3–2.5 Igen és 2.6 / 2.7 Nem → némi aggály, nem magas — mint a
+        # motorban; így az INCOMPLETE összítélet mellé nincs „legalább magas”
+        self.assertEqual((by["2"]["level"], by["2"]["forced_by"]), ("some", []))
         self.assertIsNone(overall)
-        self.assertEqual(V.rollup_incomplete(text), (True, "high"))
+        self.assertEqual(V.rollup_incomplete(text), (True, None))
         self.assertTrue(V.rollup_not_final(text))
         self.assertEqual(V.rollup_incomplete(_golden("rob2.rollup.txt")), (False, None))   # 1.0.0
         self.assertFalse(V.rollup_not_final(_golden("rob2.rollup.txt")))
@@ -444,7 +446,8 @@ class ValidatorFixedGoldenTests(unittest.TestCase):
         doms, overall, _l = V.parse_rollup_signalling(_golden2("robins_i_2016.rollup.txt"))
         by = {d["domain"]: d for d in doms}
         self.assertEqual((by["1"]["level"], by["1"]["forced_by"]), ("some", ["1.1"]))   # fordított, középső szint
-        self.assertEqual((by["2"]["level"], by["2"]["forced_by"]), ("some", ["2.1"]))
+        # a 2.1 irányító kérdés (84363b0): 2.1 Igen + 2.2 Nem → alacsony, mint a motorban
+        self.assertEqual((by["2"]["level"], by["2"]["forced_by"]), ("low", []))
         self.assertEqual(overall, "some")
         doms, overall, _l = V.parse_rollup_signalling(_golden2("quips_partly.rollup.txt"))
         by = {d["domain"]: d for d in doms}
@@ -511,6 +514,41 @@ class ValidatorFixedGoldenTests(unittest.TestCase):
 
 
 # ============================================================================ validator 2.0.0 (stub-futtatással)
+class ValidatorBridgeMappingTests(unittest.TestCase):
+    """A híd leképezései a motor és a validator 2.0.0 egyeztetése után (2026-10): a RoB 2 betartási változat kulcsai,
+    a QUADAS-2 alkalmazhatósága, a ROBINS-E graded No és a QUIPS N/A a javított szótárban."""
+
+    def test_rob2_adherence_keys_go_to_the_validator_ids(self):
+        inst = _instrument("rob2")
+        if not any(it.get("validator_id") for it in inst["items"]):
+            self.skipTest("a motor-definícióban nincs betartási változat")
+        vals = {"1.1": "yes", "2.3": "no", "2a.3": "yes", "2a.6": "not_applicable"}
+        self.assertEqual(V.scoped_values(vals, inst, "adherence"), {"1.1": "yes", "2.3": "yes", "2.6": "not_applicable"})
+        self.assertEqual(V.scoped_values(vals, inst, "assignment"), {"1.1": "yes", "2.3": "no"})
+        self.assertIs(V.scoped_values(vals, _instrument("robins-i"), "assignment"), vals)   # nincs validator_id
+
+    def test_quadas2_applicability_lines(self):
+        doc = {"tool": "quadas2", "applicability": [{"domain": "1", "judgement": "low"},
+                                                    {"domain": "2", "judgement": "high"},
+                                                    {"domain": 3, "judgement": None}]}
+        app = V.applicability_of(doc, "quadas2")
+        self.assertEqual(app, {"1": "Low", "2": "High"})
+        self.assertEqual(V.applicability_of(doc, "rob2"), {})
+        slots = [{"id": "1.1", "pass": None, "domain": "1"}, {"id": "2.1", "pass": None, "domain": "2"}]
+        md = V.bridge_markdown("quadas2", slots, {"1.1": "yes", "2.1": "no"}, True, None, app)[0]
+        self.assertIn("**Domain 1 applicability:** Low", md)
+        self.assertIn("**Domain 2 applicability:** High", md)
+        md = V.bridge_markdown("quadas2", slots, {"1.1": "yes"}, False, None, app)[0]
+        self.assertNotIn("applicability", md)                                  # az 1.0.x nem olvassa
+
+    def test_fixed_vocabulary_for_graded_no_and_quips_na(self):
+        self.assertEqual(V.answer_tokens("robins-e", True)["weak_no"], "Weak no")
+        self.assertEqual(V.answer_tokens("robins-e", True)["strong_no"], "Strong no")
+        self.assertEqual(V.answer_tokens("quips", True)["not_applicable"], "N/A")
+        self.assertEqual(V.unexpressible("robins-e", False), ("weak_no", "strong_no"))
+        self.assertEqual(V.unexpressible("quips", True), ())
+
+
 class ValidatorFixedAdapterTests(_Tmp):
     """A javított validator (2.0.0) bridge-módban: egyik 5.0-s őr sem kapcsol be, minden válasz átmegy, az eredmény
     összevethető a motoréval — a stub a rögzített 2.0.0-s kimeneteket adja."""
@@ -541,7 +579,7 @@ class ValidatorFixedAdapterTests(_Tmp):
         dom5 = {x["domain"]: x for x in d["domains"]}["5"]
         self.assertEqual((dom5["implied"], dom5["flags"], dom5["missing"]), (None, ["incomplete"], ["5.3"]))
         o = d["overall"]
-        self.assertEqual((o["implied"], o["provisional"], o["incomplete"], o["at_least"]), (None, True, True, "high"))
+        self.assertEqual((o["implied"], o["provisional"], o["incomplete"], o.get("at_least")), (None, True, True, None))
 
     def test_robins_i_and_quips_comparable(self):
         ad = self.adapter()
@@ -552,12 +590,25 @@ class ValidatorFixedAdapterTests(_Tmp):
         self.assertEqual((d["answered"], d["validator_reported"]["answered"]), (30, 30))
         self.assertTrue(d["validator_reported"]["agrees"])
         self.assertEqual(d["overall"]["implied"], "moderate")
-        self.assertEqual(d["rule_differences"], [{"item": "2.1", "domain": "2"}])   # tudatos eltérés: megjegyzés
-        self.assertTrue(any("2.1" in n["hu"] and "Table A" in n["hu"] for n in d["notes"] if isinstance(n, dict)))
-        no21 = copy.deepcopy(DOCS["robins_i_2016"])
-        no21["answers"]["2.1"] = {"value": "no"}
-        d = ad.check(no21, instrument=_instrument("robins-i"))["data"]
+        # a 2.1 mindkét oldalon irányító kérdés (szk-plugins#5, 84363b0): nincs szabálybeli eltérés
         self.assertNotIn("rule_differences", d)
+        # dokumentált konvenciók (a teljes válaszkombináció-felsorolás után csak ezek maradtak):
+        # C2 — 2.4 Nem, 2.5 NI: a motor a szigorúbb, a validator a „legalább” szintet adja
+        c2 = copy.deepcopy(DOCS["robins_i_2016"])
+        c2["answers"].update({"2.4": {"value": "no"}, "2.5": {"value": "no_information"}})
+        d = ad.check(c2, instrument=_instrument("robins-i"))["data"]
+        self.assertEqual(d["rule_differences"], [{"item": "2.5", "domain": "2", "kind": "C2"}])
+        self.assertTrue(any("2.5 NI" in n["hu"] and "legalább" in n["hu"] for n in d["notes"] if isinstance(n, dict)))
+        # … a nem kérdezett 2.5 NI-ja (2.4 Igen mellett) nem számít
+        stray = copy.deepcopy(DOCS["robins_i_2016"])
+        stray["answers"]["2.5"] = {"value": "no_information"}
+        self.assertNotIn("rule_differences", ad.check(stray, instrument=_instrument("robins-i"))["data"])
+        # C1 — „Nem alkalmazható” a kérdezett 2.5-ön (2.4 Nem): a motor NI-ként számol, a validator INCOMPLETE
+        c1 = copy.deepcopy(DOCS["robins_i_2016"])
+        c1["answers"]["2.4"] = {"value": "no"}
+        d = ad.check(c1, instrument=_instrument("robins-i"))["data"]
+        self.assertEqual(d["rule_differences"], [{"item": "2.5", "domain": "2", "kind": "C1"}])
+        self.assertTrue(any("INCOMPLETE" in n["en"] for n in d["notes"] if isinstance(n, dict)))
         d = ad.check(DOCS["quips_partly"], instrument=_instrument("quips"))["data"]
         self.assertEqual((d["guards"], d["answered"], d["validator_reported"]["answered"]), ([], 31, 31))
         self.assertNotIn("comparable", d)

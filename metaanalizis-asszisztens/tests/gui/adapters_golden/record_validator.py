@@ -72,7 +72,7 @@ def outputs(scripts, name, doc, version, cwd):
     else:
         slots = V.parse_skeleton(out["skeleton"], checklist=(script == "checklist.py"))
         md = V.bridge_markdown(tool, slots, V.bridge_values(doc, tool, fixed), fixed,
-                               V.skeleton_numbering(out["skeleton"]))[0]
+                               V.skeleton_numbering(out["skeleton"]), V.applicability_of(doc, tool))[0]
     path = os.path.join(cwd, name + ".md")
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(md)

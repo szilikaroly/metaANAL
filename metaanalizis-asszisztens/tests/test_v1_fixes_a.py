@@ -314,7 +314,8 @@ class TestM4ConsensusSources(_Proj):
 
 # ================================================================== methodology:M1 (RoB 2)
 def ref_d1(v):
-    """A RoB 2 (2019) 1. domén hivatalos ágai; az ellenőrizhetetlen ág (1.2 I + 1.1 N + 1.3 I) itt 'némi aggály'."""
+    """A RoB 2 (2019) 1. domén a kritériumtábla szerint (PMC8191126, 2. táblázat): az 1.2 I + 1.1 N + 1.3 I ág is
+    'némi aggály'."""
     if v["1.2"] in NS:
         return "high"
     if v["1.2"] == NI:
@@ -407,9 +408,10 @@ class TestM1Rob2Flowchart(unittest.TestCase):
                     self.assertEqual(got, want, (did, v))
                 else:
                     self.assertGreaterEqual(TIER[got], TIER[want], (did, v))
-        # 1. domén: legalább olyan szigorú; az egyetlen eltérés az ellenőrizhetetlen ág
-        run([("1.1", ALL5), ("1.2", ALL5), ("1.3", ALL5)], lambda k, v: v[k], ref_d1, "1", exact=False)
-        self.assertEqual(self.implied(rob2_answers(**{"1_1": N, "1_3": Y}), "1"), "high")
+        # 1. domén: pontosan a 2019-es kritériumtábla (PMC8191126, 2. táblázat) — a korábban „ellenőrizhetetlen”,
+        # szigorúbbra vett ág (1.2 I + 1.1 N + 1.3 I) a tábla szerint „némi aggály”, ahogy a validator 2.0.0-ban is
+        run([("1.1", ALL5), ("1.2", ALL5), ("1.3", ALL5)], lambda k, v: v[k], ref_d1, "1")
+        self.assertEqual(self.implied(rob2_answers(**{"1_1": N, "1_3": Y}), "1"), "some_concerns")
 
         def fill2(k, v):
             asked = {"2.3": v["2.1"] not in NS or v["2.2"] not in NS}

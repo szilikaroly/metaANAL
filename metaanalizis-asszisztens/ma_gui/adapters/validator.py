@@ -27,7 +27,8 @@ véleményét hozza, a hibái elleni őrökkel, felcímkézve.
   ember nem dönt 0 vagy −1 között indoklással (``grade.unresolved``); a bizonyosság ilyenkor ``null``.
 - **H4** (AMSTAR 2): eszközönkénti álnév-tábla a globális ``_norm`` helyett — a ``partial_yes`` mindig
   „Partial yes” szöveggel megy (soha „PY”, amit a validator „probably yes”-nek olvasna); az 1.0.0 besorolása a
-  ``weakness`` konvenciónak felel meg, és így is címkézzük (a projekt konvenciója ``meets``, KB AMSTAR2-00).
+  ``weakness`` konvenciónak felel meg (a 8. tétel „részben igen”-jét kivéve), és így is címkézzük (a projekt
+  konvenciója ``meets``, KB AMSTAR2-00). A 2.0.0 besorolása pontosan a motor ``weakness`` konvenciója.
 - **H12** (polaritás): a validator 1.0.0 referenciafájljában néhány tétel polaritás-címkéje eltér a publikált
   eszköztől (QUADAS-2 1.2/1.3, ROBINS-E 2.3/6.2 és ROBINS-I 6.3 „reverse”, a ROBINS-E 5.2 nem) — a motor
   definíciója a publikált változatot követi. Ha ilyen tétel válaszolt, az érintett domének és az összítélet
@@ -49,8 +50,14 @@ szótárával és kimenetével —
 - a kimenet új szavai: ``INCOMPLETE`` domén és összítélet (nincs ítélet, amíg hely üres), ``UNRESOLVED`` és
   ``INCOMPLETE`` GRADE-bizonyosság, fordított polaritású kiváltó tételek, középső szint („rules out low”), QUIPS
   „Partly”, ``Phase 3`` (ROBIS), ``INVALID`` (a tételnél nem választható válasz), ``exit 1: … not final``;
-- a ROBINS-I 2.1 tudatos szabálybeli eltérés: a plugin a 2016-os Table A szerint a középső szintet kikényszerítő
-  jelnek veszi, a motor irányító kérdésnek — ezt megjegyzés mondja ki (nem őr: nem a plugin hibája).
+- QUIPS: „Nem alkalmazható” a 3f/5e-n ``N/A``-ként; ROBINS-E 1.1 „gyenge / erős nem” ``Weak no`` / ``Strong no``;
+  RoB 2 betartási változat: a motor 2a.1–2a.6 kulcsai a validator 2.1–2.6-ján (``validator_id``, csak a hatókör
+  tételei mennek át);
+- a teljes válaszkombináció-felsorolás után (2026-10) csak dokumentált konvenció-eltérések maradtak, ezeket
+  megjegyzés mondja ki (``rule_differences``; nem őr, nem a plugin hibája): C1 — „Nem alkalmazható” kérdezett
+  tételen (a motor NI-ként számol, a validator INCOMPLETE); C2 — ROBINS-I/-E, ahol a válaszok a köztes és a felső
+  szint között nem döntenek (a motor a szigorúbbat adja, a validator a „legalább” szintet). A ROBINS-I 2.1 mindkettőben
+  irányító kérdés (a korábbi 2.1-megjegyzés megszűnt).
 
 Az implikált ítélet a validator ``algorithm`` címkéjével jön (``conservative`` = NEM a hivatalos folyamatábra) —
 hivatalos eredményként soha nem jeleníthető meg (6.5). Statisztikát nem számol; a teljesség csak darabszám."""
@@ -110,7 +117,7 @@ ANSWER_TOKENS = {
     "tripod-ai": {"present": "Present", "partial": "Partial", "missing": "Missing", "not_applicable": "N/A"},
 }
 # kanonikus értékek, amelyeket a validator 1.0.0 nem tud kifejezni (válasznak számítanak, de üresen mennek át)
-UNEXPRESSIBLE = {"amstar2": ("not_applicable",)}
+UNEXPRESSIBLE = {"amstar2": ("not_applicable",), "quips": ("not_applicable",), "robins-e": ("weak_no", "strong_no")}
 PUB_BIAS_DOMAIN = "5"
 
 # a validator első javított kiadása (szk-plugins#5): tételenkénti szótár, publikált ROBINS-I/QUIPS-számozás, helyes
@@ -118,7 +125,8 @@ PUB_BIAS_DOMAIN = "5"
 FIXED_VERSION = "2.0.0"
 # a javított kiadás szótár-többlete (a tételenkénti listája szerint: N/A csak az AMSTAR 2 11/12/15-ön, „Very large”
 # csak a GRADE 6.1-en — ugyanott, ahol a motor is megengedi)
-TOKENS_FIXED = {"amstar2": {"not_applicable": "N/A"}, "grade": {"very_large": "Very large"}}
+TOKENS_FIXED = {"amstar2": {"not_applicable": "N/A"}, "grade": {"very_large": "Very large"},
+                "quips": {"not_applicable": "N/A"}, "robins-e": {"weak_no": "Weak no", "strong_no": "Strong no"}}
 # GRADE: az ember által rögzített feloldás (resolution.step) a javított kiadás szótárában (a „Suspected” maga
 # feloldatlan — UNRESOLVED —, a döntést a plugin szavaival kell kimondani)
 PB_RESOLVED = {("suspected", 0): "undetected", ("suspected", -1): "strongly_suspected"}
@@ -188,9 +196,11 @@ GUARD_TEXT = {
                   "suspected' — its certainty is unreliable here. 'Suspected' stays unresolved until you choose 0 or "
                   "−1 with a reason; certainty comes from the engine."}, "rollup_unreliable"),
     "H4": ({"hu": "H4: a „Részben igen” kanonikusan ment át („Partial yes”, nem „PY”); a validator 1.0.0 besorolása a "
-                  "„weakness” konvenció szerinti (a projekt konvenciója „meets”, KB AMSTAR2-00).",
+                  "„weakness” konvenció szerinti, kivéve, hogy a 8. tétel „Részben igen”-jét teljesültnek veszi (a "
+                  "projekt konvenciója „meets”, KB AMSTAR2-00).",
             "en": "H4: 'Partial yes' was sent canonically ('Partial yes', never 'PY'); the validator 1.0.0 rating "
-                  "follows the 'weakness' convention (the project convention is 'meets', KB AMSTAR2-00)."},
+                  "follows the 'weakness' convention, except that it counts a 'Partial yes' on item 8 as met (the "
+                  "project convention is 'meets', KB AMSTAR2-00)."},
            "convention_weakness"),
 }
 GUARD_TEXT.update({
@@ -255,21 +265,105 @@ NOS_NOTE_FIXED = {"hu": "NOS: a „Részben igen” csak a kétcsillagos összeh
                   "en": "NOS: 'Partial yes' earns 1 star only on the two-star comparability item (C1/C2) — in the "
                         "validator and in the engine alike; the engine counts stars too. There is no official "
                         "threshold."}
-# a javított kiadás és a motor TUDATOS szabálybeli eltérései (nem a plugin hibái — más olvasat): eszköz → tétel →
-# (a kiváltó válaszok, a domén, a megjegyzés)
+# a javított kiadás és a motor TUDATOS szabálybeli eltérései (nem a plugin hibái — dokumentált konvenciók): a teljes
+# válaszkombináció-felsorolásnál (2026-10, szk-plugins#5 utáni egyeztetés) csak ezek maradtak.
+# C2 (ROBINS-I/-E): ahol a válaszok a köztes és a felső szint között nem döntenek (a korrekciós kérdés „Nincs
+# információ”; ROBINS-I 5.4 és 5.5 egyaránt N/VN), a motor konzervatív szabálya a szigorúbb szintet adja, a validator
+# a válaszok által kikényszerített minimumot („legalább”). eszköz → (domén, a kiváltó tételek, feltétel)
+_NI = ("no_information",)
+_NPN = ("no", "probably_no")
 RULE_DIFFERENCES_FIXED = {
-    "robins-i": {
-        "2.1": (("yes", "probably_yes"), "2", {
-            "hu": "ROBINS-I 2.1: a validator %s a 2016-os Table A szerint az „Igen / Valószínűleg igen” választ az "
-                  "alacsony szintet kizáró jelnek veszi (legalább mérsékelt); a motor irányító kérdésként kezeli (a "
-                  "2.2–2.3 dönt). Ha a 2.2 vagy a 2.3 „Nem”, a 2. domén validator-ítélete ezért szigorúbb lehet a "
-                  "motorénál — szabálybeli eltérés, nem hiba." % FIXED_VERSION,
-            "en": "ROBINS-I 2.1: validator %s reads 'Yes / Probably yes' as a marker that rules out Low (at least "
-                  "Moderate), following the 2016 Table A; the engine treats it as a routing question (2.2–2.3 decide). "
-                  "If 2.2 or 2.3 is 'No', the validator's domain 2 verdict may therefore be stricter than the "
-                  "engine's — a rule difference, not a bug." % FIXED_VERSION}),
-    },
+    "robins-i": (("2", ("2.5",), "ni"), ("4", ("4.6",), "ni"), ("5", ("5.4", "5.5"), "all_no")),
+    "robins-e": (("3", ("3.3",), "ni"), ("4", ("4.2",), "ni"), ("5", ("5.3",), "ni")),
 }
+RULE_DIFFERENCE_NOTE = {
+    "hu": "%s %s (%s. domén): a válaszok itt nem döntenek a köztes és a felső szint között — a motor konzervatív "
+          "szabálya a szigorúbb szintet adja, a validator %s a válaszok által kikényszerített minimumot („legalább”). "
+          "Dokumentált konvenció-eltérés, nem hiba; a doménítélet emberi döntés.",
+    "en": "%s %s (domain %s): the answers do not decide between the middle and the top tier here — the engine's "
+          "conservative rule takes the stricter tier, validator %s reports the tier the answers force ('at least'). A "
+          "documented convention difference, not a bug; the domain judgement is a human decision."}
+# C1 (RoB 2, ROBINS-I/-E): „Nem alkalmazható” olyan tételen, amelyet az útválasztás kérdez — a motor „Nincs
+# információ”-ként számolja és ítéletet javasol (routing_conflicts), a validator a domént INCOMPLETE-nek jelzi
+NA_ASKED_NOTE = {
+    "hu": "%s: „Nem alkalmazható” az útválasztás szerint kérdezett %s tételen — a motor „Nincs információ”-ként "
+          "számolja (konzervatív; routing_conflicts), a validator %s a domént hiányosnak (INCOMPLETE) jelzi. "
+          "Dokumentált konvenció-eltérés; válaszold meg a tételt.",
+    "en": "%s: 'Not applicable' at %s although the routing asks it — the engine counts it as 'No information' "
+          "(conservative; routing_conflicts), validator %s marks the domain INCOMPLETE. A documented convention "
+          "difference; answer the question."}
+NA_ASKED_TOOLS = ("rob2", "robins-i", "robins-e")
+
+
+def _evaluate(cond, value_of):
+    """Az eszköz-definíció ask_if-feltételének háromértékű kiértékelése (= metaelemzes.instruments.evaluate)."""
+    if cond is None or cond == {}:
+        return True
+    if not isinstance(cond, dict):
+        return None
+    if "always" in cond:
+        return bool(cond["always"])
+    if "item" in cond:
+        v = value_of(cond["item"])
+        return None if v is None else v in (cond.get("in") or ())
+    if "all" in cond:
+        res = [_evaluate(c, value_of) for c in cond.get("all") or ()]
+        return False if False in res else (None if None in res else True)
+    if "any" in cond:
+        res = [_evaluate(c, value_of) for c in cond.get("any") or ()]
+        return True if True in res else (None if None in res else False)
+    if "not" in cond:
+        r = _evaluate(cond["not"], value_of)
+        return None if r is None else not r
+    return None
+
+
+class _Route(object):
+    """Az eszköz-definíció útválasztása egy értékelésre (a motor _Routing-jának megfelelője): kérdezik-e a tételt
+    (ask_if), és a nem kérdezett tétel értéke 'not_applicable'."""
+
+    def __init__(self, values, instrument, scope):
+        self.values = values
+        self.items = {it.get("key") or it.get("id"): it for it in (instrument or {}).get("items") or ()
+                      if isinstance(it, dict) and (not it.get("scopes") or scope in it["scopes"])}
+        self._asked = {}
+
+    def asked(self, k):
+        if k not in self.items:
+            return None
+        if k not in self._asked:
+            self._asked[k] = None
+            self._asked[k] = _evaluate(self.items[k].get("ask_if"), self.value)
+        return self._asked[k]
+
+    def value(self, k):
+        if k not in self.items:
+            return None
+        return "not_applicable" if self.asked(k) is False else self.values.get(k)
+
+
+def na_where_asked(values, instrument, scope):
+    """A hatókör azon tételei, amelyekre „Nem alkalmazható” a válasz, bár az útválasztás kérdezi őket (és nem „ha
+    alkalmazható” tételek). A nem kérdezett tétel értéke 'not_applicable' (mint a motorban)."""
+    r = _Route(values, instrument, scope)
+    return [k for k, it in r.items.items() if values.get(k) == "not_applicable" and not it.get("if_applicable")
+            and r.asked(k) is True]
+
+
+def scoped_values(values, instrument, scope):
+    """A validatornak szánt értékek: ha a motor kulcsa eltér a validator azonosítójától (validator_id — RoB 2
+    betartási 2a.1–2a.6 → 2.1–2.6), csak a hatókör tételei, a validator azonosítóján; különben változatlanul."""
+    items = [it for it in (instrument or {}).get("items") or () if isinstance(it, dict)]
+    if not any(it.get("validator_id") for it in items):
+        return values
+    out = {}
+    for it in items:
+        if it.get("scopes") and scope not in it["scopes"]:
+            continue
+        k = it.get("key") or it.get("id")
+        if k in values:
+            out[it.get("validator_id") or it.get("id")] = values[k]
+    return out
 AMSTAR_NA_NOTE = {"hu": "A „Nem alkalmazható” AMSTAR 2-választ a validator 1.0.0 nem ismeri (hibának számolná), ezért "
                         "üresen ment át: a validator besorolása ideiglenes.",
                   "en": "validator 1.0.0 has no 'Not applicable' answer for AMSTAR 2 (it would count it as a flaw), so "
@@ -475,11 +569,27 @@ def slot_key(slot):
     return "%s/%s" % (slot["pass"], slot["id"]) if slot.get("pass") else slot["id"]
 
 
-def bridge_markdown(tool, slots, values, fixed=False, numbering=None):
+APPLICABILITY_TOOLS = ("quadas2",)
+
+
+def applicability_of(doc, tool):
+    """A QUADAS-2 doménenkénti alkalmazhatósági ítéletei a dokumentumból ({domén: „Low” | „High” | „Unclear”}): a
+    validator 2.0.0 a 3 domén ítéletét a rekordból olvassa, és nélküle a --verify / --rollup nem végleges."""
+    if tool not in APPLICABILITY_TOOLS:
+        return {}
+    out = {}
+    for a in doc.get("applicability") or ():
+        if isinstance(a, dict) and a.get("judgement") in ("low", "high", "unclear"):
+            out[str(a.get("domain"))] = a["judgement"].capitalize()
+    return out
+
+
+def bridge_markdown(tool, slots, values, fixed=False, numbering=None, applicability=None):
     """A validator sablonjával egyező Markdown — (szöveg, {kulcs: token}, invalid[], unexpressible[]).
     A kérdés-oszlopban „—”, a bizonyíték-oszlopban „[E<n>]”: válaszszótárbeli szó csak az ítélet-cellába kerül.
     ``fixed``: a javított kiadás szótára; ``numbering``: a váz számozás-jelölője, a fájl második sorába (a
-    jelölővel a plugin tudja, hogy a fájl a publikált számozást használja)."""
+    jelölővel a plugin tudja, hogy a fájl a publikált számozást használja); ``applicability``: {domén: ítélet} — a
+    váz „**Domain N applicability:**” soraiként (QUADAS-2)."""
     tokens = answer_tokens(tool, fixed)
     unexpr = unexpressible(tool, fixed)
     sent, invalid, skipped = {}, [], []
@@ -534,6 +644,8 @@ def bridge_markdown(tool, slots, values, fixed=False, numbering=None):
                       "| # | Signalling question | Answer | Evidence (quote or section) |", "|---|---|---|---|"]
             lines += [row(s) for s in slots if s["domain"] == d]
             lines.append("")
+            if fixed and (applicability or {}).get(d):
+                lines += ["**Domain %s applicability:** %s" % (d, applicability[d]), ""]
     return "\n".join(lines) + "\n", sent, invalid, skipped
 
 
@@ -803,20 +915,42 @@ class ValidatorAdapter(Adapter):
             shutil.rmtree(work, ignore_errors=True)
         if res.get("ok"):
             self._numbering_polarity(res["data"], tool, cap, instrument, doc, dropped)
-            self._rule_differences(res["data"], tool, cap, doc)
+            self._rule_differences(res["data"], tool, cap, doc, instrument, scope)
         return res
 
     @staticmethod
-    def _rule_differences(out, tool, cap, doc):
-        """A javított kiadás és a motor tudatos szabálybeli eltérései (``RULE_DIFFERENCES_FIXED``): megjegyzés, ha a
-        kiváltó válasz rögzítve van — a validator ítélete itt más olvasatot követ, nem hibás (ezért nem őr)."""
+    def _rule_differences(out, tool, cap, doc, instrument=None, scope=None):
+        """A javított kiadás és a motor dokumentált konvenció-eltérései: megjegyzés, ha a kiváltó válasz rögzítve van
+        — a validator ítélete itt más konvenciót követ, nem hibás (ezért nem őr). C2: ``RULE_DIFFERENCES_FIXED``
+        (ROBINS-I/-E, szigorúbb vs. „legalább”); C1: „Nem alkalmazható” kérdezett tételen (az eszköz-definíció
+        ask_if-je szerint)."""
         if not fixed_release(cap):
             return
         values = _values(doc)
-        for item, (trigger, domain, note) in sorted((RULE_DIFFERENCES_FIXED.get(tool) or {}).items()):
-            if values.get(item) in trigger:
-                out.setdefault("notes", []).append(note)
-                out.setdefault("rule_differences", []).append({"item": item, "domain": domain})
+        name = {"robins-i": "ROBINS-I", "robins-e": "ROBINS-E", "rob2": "RoB 2"}.get(tool, tool)
+        route = _Route(values, instrument, scope or _scope(doc, tool, instrument)) if isinstance(
+            instrument, dict) else None
+        for domain, items, cond in RULE_DIFFERENCES_FIXED.get(tool) or ():
+            # csak a kérdezett tétel számít (a kóbor válasz a nem kérdezett tételen egyik oldalon sem számít)
+            got = [route.value(i) if route else values.get(i) for i in items]
+            if cond == "ni":
+                hit = [i for i, v in zip(items, got) if v in _NI]
+            else:
+                hit = list(items) if all(v in _NPN for v in got) else []
+            if not hit:
+                continue
+            what = "/".join(hit) + (" NI" if cond == "ni" else " N/PN")
+            out.setdefault("notes", []).append({k: v % (name, what, domain, cap.get("version") or FIXED_VERSION)
+                                                for k, v in RULE_DIFFERENCE_NOTE.items()})
+            out.setdefault("rule_differences", []).append({"item": hit[0], "domain": domain, "kind": "C2"})
+        if tool in NA_ASKED_TOOLS and isinstance(instrument, dict):
+            for k in na_where_asked(values, instrument, scope or _scope(doc, tool, instrument)):
+                it = next((x for x in instrument.get("items") or () if (x.get("key") or x.get("id")) == k), {})
+                shown = it.get("official_id") or it.get("id") or k
+                out.setdefault("notes", []).append({lang: v % (name, shown, cap.get("version") or FIXED_VERSION)
+                                                    for lang, v in NA_ASKED_NOTE.items()})
+                out.setdefault("rule_differences", []).append({"item": shown, "domain": str(it.get("domain")),
+                                                               "kind": "C1"})
 
     def _numbering_polarity(self, out, tool, cap, instrument, doc, dropped):
         """H13 és H12 (a módtól független utófeldolgozás): őr-bejegyzés, összevethetőség, megbízhatóság."""
@@ -957,8 +1091,9 @@ class ValidatorAdapter(Adapter):
             return got
         slots = got["slots"]
         fixed = fixed_release(cap)
-        values = bridge_values(doc, tool, fixed)
-        md, sent, invalid, skipped = bridge_markdown(tool, slots, values, fixed, got.get("numbering"))
+        values = scoped_values(bridge_values(doc, tool, fixed), instrument, scope)
+        md, sent, invalid, skipped = bridge_markdown(tool, slots, values, fixed, got.get("numbering"),
+                                                     applicability_of(doc, tool))
         path = os.path.join(work, "appraisal.md")
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(md)

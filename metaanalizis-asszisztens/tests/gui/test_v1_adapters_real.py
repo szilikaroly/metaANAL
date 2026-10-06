@@ -262,8 +262,29 @@ class RealValidatorFixed(_RealValidatorBase):
             self.assertEqual(d["validator_reported"]["answered"], eng["answered"], name)
             self.assertEqual(d["overall"]["implied"], eng["overall"]["implied"], name)
             self.assertEqual(d["guards"], [], name)
+        # a 2.1 mindkét oldalon irányító kérdés (szk-plugins#5, 84363b0): a korábbi 2.1-megjegyzés megszűnt
         d = self.ad.check(docs["robins_i_2016"], instrument=self.instrument("robins-i"))["data"]
-        self.assertEqual(d["rule_differences"], [{"item": "2.1", "domain": "2"}])
+        self.assertNotIn("rule_differences", d)
+
+    def test_rob2_adherence_through_bridge(self):
+        """RoB 2 betartási változat: a motor 2a.1–2a.6 kulcsai a validator 2.1–2.6-ján mennek át, és az ítélet = motor."""
+        inst = self.instrument("rob2")
+        if not any(it.get("validator_id") for it in inst["items"]):
+            self.skipTest("a motor-definícióban nincs betartási változat")
+        ans = {"1.1": "yes", "1.2": "yes", "1.3": "no", "2a.1": "yes", "2a.2": "no", "2a.3": "yes",
+               "2a.4": "yes", "2a.5": "no", "2a.6": "yes", "3.1": "yes", "3.2": "not_applicable",
+               "3.3": "not_applicable", "3.4": "not_applicable", "4.1": "no", "4.2": "no", "4.3": "no",
+               "4.4": "not_applicable", "4.5": "not_applicable", "5.1": "yes", "5.2": "no", "5.3": "no",
+               "2.3": "no_information"}                       # kóbor besorolási válasz: nem mehet át
+        doc = {"schema": "szk.appraisal/v1", "tool": "rob2", "scope": "adherence",
+               "target": {"unit": "S1", "study_id": "S1", "key": "o1"}, "assessor": "SzK",
+               "answers": {k: {"value": v} for k, v in ans.items()}}
+        d = self.ad.check(doc, instrument=inst)["data"]
+        eng = api.appraisal_check(doc, instrument=api.instrument_get("rob2"))
+        self.assertEqual((d["validator_reported"]["answered"], d["validator_reported"]["expected"]), (21, 21))
+        self.assertEqual({x["domain"]: x["implied"] for x in d["domains"]}["2"], "some_concerns")
+        self.assertEqual(d["overall"]["implied"], eng["overall"]["implied"])
+        self.assertEqual(eng["overall"]["implied"], "some_concerns")
 
     def test_grade_resolution_through_bridge(self):
         docs = REC.load_docs()

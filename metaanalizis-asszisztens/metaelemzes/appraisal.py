@@ -23,15 +23,23 @@ Számítás (a felület nem számol):
     rob_sync_proposal(…)       → szk.ma.rob-sync-proposal/v1 (javasolt rob-cellák, 'calculated' eredet)
 
 Implikált ítélet: RoB 2, ROBINS-I/E, QUADAS-2, QUIPS — 'conservative' (NEM a hivatalos algoritmus címkéjével). A RoB 2
-gépi doménszabályai a 2019-es folyamatábra ágait követik (az ellenőrizhetetlen ágon a szigorúbb ítélettel, így sosem
-enyhébb a hivatalosnál), a ROBINS-I (2016) és a ROBINS-E (2023) szabályai a táblázatos kritériumokat és az
-útválasztást; a QUADAS-2 és a QUIPS a polaritás-alapú szabályt (amit a válaszok kikényszerítenek). Az útválasztás
-(ask_if) mindenhol érvényes: a nem kérdezett tétel válasza nem számít, a kérdezendő tételen adott 'Nem alkalmazható'
-'Nincs információ'-ként számít. AMSTAR 2, GRADE — 'published'; NOS — 'count' (küszöb nincs); PROBAST+AI, JBI,
-TRIPOD+AI — 'none' (emberi ítélet). A GRADE számított bizonyossága csak javaslat: lezárt GRADE-értékeléshez emberi
-bizonyosság (overall.judgement) és feloldott „gyanított” publikációs torzítás kell (4. döntés). Az AI-vázlat (origin:
-ai_draft) soha nem értékelő: a κ és a konszenzus elutasítja (6. döntés); a konszenzus-vázlat sem értékelő, és a saját
-.consensus.json fájljába kerül."""
+gépi doménszabályai a 2019-es algoritmust követik mindkét változatban (besorolás / betartás; a kritériumtábla
+újraközölve: PMC8191126, 2. táblázat), a ROBINS-I (2016) és a ROBINS-E (2023) szabályai a táblázatos kritériumokat és
+az útválasztást (a köztes / felső határesetben a szigorúbb szintet); a QUADAS-2 és a QUIPS a polaritás-alapú szabályt
+(amit a válaszok kikényszerítenek). Az útválasztás (ask_if) mindenhol érvényes: a nem kérdezett tétel válasza nem
+számít, a kérdezendő tételen adott 'Nem alkalmazható' 'Nincs információ'-ként számít (kivéve az „ha alkalmazható”
+tételeket), és az irányító kérdés NI-ja nem hagy „alacsony”-at, amíg semmi más nem dönt.
+
+A validator 2.0.0-val (szk-plugins#5) a teljes válaszkombináció-felsorolás után csak dokumentált konvenció-eltérések
+maradtak: C1 — 'Nem alkalmazható' kérdezett tételen (itt NI, routing_conflicts; a validatornál INCOMPLETE); C2 —
+ROBINS-I/-E köztes/felső határeset (itt a szigorúbb, a validatornál a kikényszerített „legalább” szint); C3 — AMSTAR 2
+'meets' (itt az alapértelmezett; a validator a 'weakness'-t számolja, amit itt is mutatunk); C4 — üres tétel, amelyet
+az útvonal nem ér el (itt nem hiányzik a doménítélethez, a validator a domént INCOMPLETE-nek jelzi).
+
+AMSTAR 2, GRADE — 'published'; NOS — 'count' (küszöb nincs); PROBAST+AI, JBI, TRIPOD+AI — 'none' (emberi ítélet). A
+GRADE számított bizonyossága csak javaslat: lezárt GRADE-értékeléshez emberi bizonyosság (overall.judgement) és
+feloldott „gyanított” publikációs torzítás kell (4. döntés). Az AI-vázlat (origin: ai_draft) soha nem értékelő: a κ és
+a konszenzus elutasítja (6. döntés); a konszenzus-vázlat sem értékelő, és a saját .consensus.json fájljába kerül."""
 import collections
 import copy
 import datetime
@@ -658,9 +666,15 @@ def _domain_rows(inst, slots, ps_list):
 
 
 class _Routing(object):
-    """Útválasztás egy értékelésben: kérdezik-e a tételt (ask_if), és mi a tétel effektív értéke. A 'Nem
-    alkalmazható' válasz olyan tételnél, amelyet az útválasztás szerint kérdezni kell, útválasztási ellentmondás: a
-    szabályok 'Nincs információ'-ként kezelik (konzervatív), és a kimenet 'routing_conflicts' listája megnevezi."""
+    """Útválasztás egy értékelésben: kérdezik-e a tételt (ask_if), és mi a tétel effektív értéke.
+
+    - A NEM kérdezett tétel (hamis ask_if) effektív értéke 'not_applicable', bármit rögzítettek is ott: a kóbor
+      válasz nem indíthat szabályt (validator-egyezés, 2026-10: a ROBINS-I 1.7 NI melletti 1.8 „Nem” korábban
+      „súlyos”-at adott, pedig az 1.8-at az 1.7 NI mellett nem kérdezik).
+    - A 'Nem alkalmazható' válasz olyan tételnél, amelyet az útválasztás szerint kérdezni kell, útválasztási
+      ellentmondás: a szabályok 'Nincs információ'-ként kezelik (konzervatív), és a kimenet 'routing_conflicts'
+      listája megnevezi — kivéve az „ha alkalmazható” tételeket (if_applicable: RoB 2 betartási 2.3–2.5), ahol a
+      'Nem alkalmazható' kérdezett tételen is érvényes válasz."""
 
     def __init__(self, inst, slots, vals):
         self.inst = inst
@@ -681,11 +695,28 @@ class _Routing(object):
         if key not in self.keys:
             return None
         v = self.vals.get(key)
+        if self.asked(key) is False:
+            return "not_applicable"
         if v == "not_applicable" and self.asked(key) is True:
+            it = self.inst.item(key)
+            if isinstance(it, dict) and it.get("if_applicable"):
+                return v
             if key not in self.conflicts:
                 self.conflicts.append(key)
             return "no_information"
         return v
+
+    def settled(self, key, its):
+        """Az irányító kérdés NI-ját egy általa (is) nyitott, kérdezett és határozott választ kapott tétel dönti el
+        (pl. ROBINS-E 5.1 NI + 5.2 Igen → 5.3): → a döntő tétel kulcsa vagy None (a validator settled_by-ja)."""
+        for q in its:
+            cond = q.get("ask_if")
+            if not cond or key not in _I.condition_items(cond) or self.asked(q["key"]) is not True:
+                continue
+            v = self.value(q["key"])
+            if v is not None and self.inst.kind(v) not in ("unknown", "na"):
+                return q["key"]
+        return None
 
 
 def _tier_worst(tiers):
@@ -777,7 +808,15 @@ def _conservative(inst, doc, slots, vals):
         else:
             for it in its:
                 key = it["key"]
-                if it.get("polarity") == "router" or route.asked(key) is False:
+                if route.asked(key) is False:
+                    continue
+                if it.get("polarity") == "router":
+                    # az irányító kérdés „Nincs információ” válasza nem hagyhatja „alacsony”-an a domént, amíg semmi
+                    # más nem dönti el (ROBINS-E 1.4 NI: az idővel változó expozíció kérdése nyitva marad) —
+                    # ugyanígy a validator 2.0.0-ban (settled_by)
+                    v = route.value(key)
+                    if v is not None and inst.kind(v) == "unknown" and not route.settled(key, its):
+                        unknown.append(it["id"])
                     continue
                 v = route.value(key)
                 if v is None:
@@ -814,6 +853,8 @@ def _conservative(inst, doc, slots, vals):
             else:
                 tier = "low"
                 why = _t("egyik jelző-kérdés sem jelez problémát", "no signalling question flags a problem")
+        for it in its:              # minden kérdezett tétel N/A-ja nevesül, akkor is, ha egy korábbi szabály döntött
+            route.value(it["key"])
         conflicts = [inst.item(k)["id"] for k in route.conflicts if inst.item(k) and str(inst.item(k)["domain"]) == did
                      and inst.item(k).get("pass") == ps]
         if conflicts:
@@ -846,14 +887,16 @@ def _conservative(inst, doc, slots, vals):
                                                             else "— (incomplete domain)")))
     if any(inst.rules(d["id"], scope) for d in inst.domains):
         lines.append(_t("Konzervatív szabály (%s) — NEM a hivatalos %s algoritmus: a publikált folyamatábra / "
-                        "kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb "
-                        "szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben "
-                        "vesd össze a hivatalos eszközzel, és ha eltérsz, indokold." % (
+                        "kritériumok ágait követi, de ahol a kritérium a válaszokból nem dönthető el (köztes vagy "
+                        "felső szint), a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs "
+                        "információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, "
+                        "indokold." % (
                             inst.rollup.get("basis") or "conservative", inst.name),
                         "Conservative rule (%s) — NOT the official %s algorithm: it follows the published "
-                        "flowchart / criteria branches but takes the stricter level where a branch could not be "
-                        "checked against the source, and follows the 'No information' branch on a routing conflict. "
-                        "Check borderline domains against the official tool and give a reason if you override." % (
+                        "flowchart / criteria branches but takes the stricter level where the answers cannot decide "
+                        "between the middle and the top tier, and follows the 'No information' branch on a routing "
+                        "conflict. Check borderline domains against the official tool and give a reason if you "
+                        "override." % (
                             inst.rollup.get("basis") or "conservative", inst.name)))
     else:
         lines.append(_t("Ez NEM a hivatalos %s folyamatábra: azt mutatja, amit a válaszok kikényszerítenek. "
@@ -918,10 +961,13 @@ def _amstar2_block(inst, slots, vals, convention):
             elif v == "not_applicable":
                 na.append(it["id"])
             elif v == "partial_yes":
+                # 'weakness': a „részben igen” MINDEN tételen (2, 4, 7, 8, 9) nem kritikus gyengeség — a 8. tételen
+                # is, ahogy a KB AMSTAR2-00 („ha hibának számítanád”) és a validator 2.0.0 számolja; 'meets':
+                # sehol sem az
                 if it.get("critical"):
                     pyc.append(it["id"])
-                    if conv == "weakness":
-                        weak.append(it["id"])
+                if conv == "weakness":
+                    weak.append(it["id"])
             elif v == "no":
                 (flaws if it.get("critical") else weak).append(it["id"])
         rating = ("critically_low" if len(flaws) > 1 else "low" if flaws else "moderate" if len(weak) > 1
@@ -940,13 +986,13 @@ def _amstar2_block(inst, slots, vals, convention):
         "Besorolás: %s (kritikus hiba %d; nem kritikus gyengeség %d)%s%s" % (
             inst.verdict_label(main["rating"]).upper(), len(main["critical_flaws"]), len(main["weaknesses"]),
             " — IDEIGLENES: %d tétel hiányzik" % len(main["unanswered"]) if main["unanswered"] else "",
-            (" · ha a „részben igen” kritikus tételen gyengeség lenne: %s"
+            (" · ha a „részben igen” gyengeség lenne: %s"
              % inst.verdict_label(other["rating"]).upper())
             if out["differs"] else ""),
         "Rating: %s (critical flaws %d; non-critical weaknesses %d)%s%s" % (
             inst.verdict_label(main["rating"], "en").upper(), len(main["critical_flaws"]), len(main["weaknesses"]),
             " — PROVISIONAL: %d item(s) unanswered" % len(main["unanswered"]) if main["unanswered"] else "",
-            (" · if 'partial yes' on a critical item counted as a weakness: %s"
+            (" · if 'partial yes' counted as a weakness: %s"
              % inst.verdict_label(other["rating"], "en").upper()) if out["differs"] else ""))
     out["note"] = _t("Az AMSTAR 2 az áttekintés eredményeibe vetett bizalmat minősíti, nem a bizonyosságot (az a "
                      "GRADE).", "AMSTAR 2 rates confidence in the review's results, not certainty (that is GRADE).")

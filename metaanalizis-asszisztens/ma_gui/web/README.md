@@ -509,7 +509,7 @@ A javított validator 2.0.0 (szk-plugins#5) mind a hat hibát javítja: a `caps.
 (`VALIDATOR_FIXED_IN` = `ma_gui.adapters.validator.FIXED_VERSION`) miatt ott egyik őr sem kapcsol be (az 1.0.x-en mind él), a
 bridge a javított szótárral (AMSTAR 2 `N/A`, GRADE `Very large`, a feloldott „suspected” a plugin szavaival) és a váz
 `numbering:` jelölőjével megy, és az új kimenetet (INCOMPLETE, UNRESOLVED, fordított polaritás, „Partly”, „Phase 3”,
-INVALID) olvassa; a ROBINS-I 2.1 tudatos szabálybeli eltérése (`rule_differences`) megjegyzés, nem őr. A 2.0.0 rögzített
+INVALID) olvassa. A teljes válaszkombináció-felsorolás (2026-10) után a motor és a 2.0.0 között csak dokumentált konvenció-eltérések maradtak, ezeket megjegyzés mondja ki (`rule_differences`, nem őr): C1 — „Nem alkalmazható” kérdezett tételen (a motor NI-ként számol, a validator INCOMPLETE), C2 — ROBINS-I/-E köztes/felső határeset (a motor a szigorúbb, a validator a „legalább” szintet adja); a ROBINS-I 2.1 mindkettőben irányító kérdés. A RoB 2 betartási változat (`adherence`) motor-kulcsai (2a.1–2a.6) a validator 2.1–2.6-ján mennek át (`validator_id`). A 2.0.0 rögzített
 kimenetei: `tests/gui/adapters_golden/validator-2.0.0/`; mindkét verzió goldenjeit a
 `python3 tests/gui/adapters_golden/record_validator.py <szk-plugins>/plugins` rögzíti (a valódi-plugin teszt ugyanezzel veti össze).
 

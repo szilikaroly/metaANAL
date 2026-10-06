@@ -178,7 +178,7 @@
       "validator_version": null,
       "engine_version": "0.1.0",
       "legacy": false,
-      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "instrument_sha256": "19d6aaaacb0a418b4a797d35b569167805f6b790409c7c90bce8432cdc980244",
       "scope": "assignment",
       "target": {
        "unit": "ARONSON1948",
@@ -357,12 +357,12 @@
        "official": false,
        "basis": "rob2-2019-flowchart-conservative",
        "label": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "text": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "lines": [
         {
@@ -390,8 +390,8 @@
          "en": "Implied overall: Some concerns — set by the worst domain."
         },
         {
-         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
-         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol a kritérium a válaszokból nem dönthető el (köztes vagy felső szint), a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where the answers cannot decide between the middle and the top tier, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
         }
        ],
        "provisional": false,
@@ -435,8 +435,8 @@
       "guards": [],
       "notes": [
        {
-        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
-        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti algoritmusait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve, a betartási változat 2. doménjével együtt; az 1., 3–5. domént és a betartási 2. domént összevetettük a 2019-es kritériumtáblával (újraközölve: PMC8191126, 2. táblázat), a besorolási 2. domént a sablon útválasztásával, és mindet a validator 2.0.0 algoritmusával — a válaszkombinációk teljes felsorolásán eltérés nélkül. A szabály „konzervatív” címkéjű, nem „publikált”: nem a hivatalos eszköz, és a kérdezendő tételen adott „Nem alkalmazható” választ „Nincs információ”-ként számolja (a validator az ilyen domént hiányosnak, INCOMPLETE-nek jelzi). A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the per-domain algorithms of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4) and the domain 2 of the effect-of-adhering variant; domains 1 and 3–5 and the adhering domain 2 were checked against the 2019 criteria table (reproduced in PMC8191126, Table 2), the assignment domain 2 against the template's routing, and all of them against the validator 2.0.0 algorithm — no disagreement over the full enumeration of answer combinations. The rule is labelled 'conservative', not 'published': it is not the official tool, and it counts 'Not applicable' on a question the routing asks as 'No information' (the validator marks such a domain INCOMPLETE instead). The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
       "warnings": [
@@ -627,7 +627,7 @@
       "validator_version": null,
       "engine_version": "0.1.0",
       "legacy": false,
-      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "instrument_sha256": "19d6aaaacb0a418b4a797d35b569167805f6b790409c7c90bce8432cdc980244",
       "scope": "assignment",
       "target": {
        "unit": "ARONSON1948",
@@ -808,12 +808,12 @@
        "official": false,
        "basis": "rob2-2019-flowchart-conservative",
        "label": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "text": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "lines": [
         {
@@ -841,8 +841,8 @@
          "en": "Implied overall: Some concerns — set by the worst domain."
         },
         {
-         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
-         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol a kritérium a válaszokból nem dönthető el (köztes vagy felső szint), a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where the answers cannot decide between the middle and the top tier, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
         }
        ],
        "provisional": false,
@@ -877,8 +877,8 @@
       "guards": [],
       "notes": [
        {
-        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
-        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti algoritmusait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve, a betartási változat 2. doménjével együtt; az 1., 3–5. domént és a betartási 2. domént összevetettük a 2019-es kritériumtáblával (újraközölve: PMC8191126, 2. táblázat), a besorolási 2. domént a sablon útválasztásával, és mindet a validator 2.0.0 algoritmusával — a válaszkombinációk teljes felsorolásán eltérés nélkül. A szabály „konzervatív” címkéjű, nem „publikált”: nem a hivatalos eszköz, és a kérdezendő tételen adott „Nem alkalmazható” választ „Nincs információ”-ként számolja (a validator az ilyen domént hiányosnak, INCOMPLETE-nek jelzi). A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the per-domain algorithms of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4) and the domain 2 of the effect-of-adhering variant; domains 1 and 3–5 and the adhering domain 2 were checked against the 2019 criteria table (reproduced in PMC8191126, Table 2), the assignment domain 2 against the template's routing, and all of them against the validator 2.0.0 algorithm — no disagreement over the full enumeration of answer combinations. The rule is labelled 'conservative', not 'published': it is not the official tool, and it counts 'Not applicable' on a question the routing asks as 'No information' (the validator marks such a domain INCOMPLETE instead). The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
       "warnings": [
@@ -1035,7 +1035,7 @@
       "validator_version": null,
       "engine_version": "0.1.0",
       "legacy": false,
-      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "instrument_sha256": "19d6aaaacb0a418b4a797d35b569167805f6b790409c7c90bce8432cdc980244",
       "scope": "assignment",
       "target": {
        "unit": "FERGUSON1949",
@@ -1220,12 +1220,12 @@
        "official": false,
        "basis": "rob2-2019-flowchart-conservative",
        "label": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "text": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "lines": [
         {
@@ -1253,8 +1253,8 @@
          "en": "Implied overall: — (incomplete domain) — set by the worst domain."
         },
         {
-         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
-         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol a kritérium a válaszokból nem dönthető el (köztes vagy felső szint), a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where the answers cannot decide between the middle and the top tier, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
         }
        ],
        "provisional": false,
@@ -1270,8 +1270,8 @@
       "guards": [],
       "notes": [
        {
-        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
-        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti algoritmusait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve, a betartási változat 2. doménjével együtt; az 1., 3–5. domént és a betartási 2. domént összevetettük a 2019-es kritériumtáblával (újraközölve: PMC8191126, 2. táblázat), a besorolási 2. domént a sablon útválasztásával, és mindet a validator 2.0.0 algoritmusával — a válaszkombinációk teljes felsorolásán eltérés nélkül. A szabály „konzervatív” címkéjű, nem „publikált”: nem a hivatalos eszköz, és a kérdezendő tételen adott „Nem alkalmazható” választ „Nincs információ”-ként számolja (a validator az ilyen domént hiányosnak, INCOMPLETE-nek jelzi). A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the per-domain algorithms of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4) and the domain 2 of the effect-of-adhering variant; domains 1 and 3–5 and the adhering domain 2 were checked against the 2019 criteria table (reproduced in PMC8191126, Table 2), the assignment domain 2 against the template's routing, and all of them against the validator 2.0.0 algorithm — no disagreement over the full enumeration of answer combinations. The rule is labelled 'conservative', not 'published': it is not the official tool, and it counts 'Not applicable' on a question the routing asks as 'No information' (the validator marks such a domain INCOMPLETE instead). The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
       "warnings": []
@@ -1423,7 +1423,7 @@
       "validator_version": null,
       "engine_version": "0.1.0",
       "legacy": false,
-      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "instrument_sha256": "19d6aaaacb0a418b4a797d35b569167805f6b790409c7c90bce8432cdc980244",
       "scope": "assignment",
       "target": {
        "unit": "ROSENTHAL1960",
@@ -1604,12 +1604,12 @@
        "official": false,
        "basis": "rob2-2019-flowchart-conservative",
        "label": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "text": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "lines": [
         {
@@ -1637,8 +1637,8 @@
          "en": "Implied overall: Some concerns — set by the worst domain."
         },
         {
-         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
-         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol a kritérium a válaszokból nem dönthető el (köztes vagy felső szint), a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where the answers cannot decide between the middle and the top tier, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
         }
        ],
        "provisional": false,
@@ -1654,8 +1654,8 @@
       "guards": [],
       "notes": [
        {
-        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
-        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti algoritmusait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve, a betartási változat 2. doménjével együtt; az 1., 3–5. domént és a betartási 2. domént összevetettük a 2019-es kritériumtáblával (újraközölve: PMC8191126, 2. táblázat), a besorolási 2. domént a sablon útválasztásával, és mindet a validator 2.0.0 algoritmusával — a válaszkombinációk teljes felsorolásán eltérés nélkül. A szabály „konzervatív” címkéjű, nem „publikált”: nem a hivatalos eszköz, és a kérdezendő tételen adott „Nem alkalmazható” választ „Nincs információ”-ként számolja (a validator az ilyen domént hiányosnak, INCOMPLETE-nek jelzi). A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the per-domain algorithms of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4) and the domain 2 of the effect-of-adhering variant; domains 1 and 3–5 and the adhering domain 2 were checked against the 2019 criteria table (reproduced in PMC8191126, Table 2), the assignment domain 2 against the template's routing, and all of them against the validator 2.0.0 algorithm — no disagreement over the full enumeration of answer combinations. The rule is labelled 'conservative', not 'published': it is not the official tool, and it counts 'Not applicable' on a question the routing asks as 'No information' (the validator marks such a domain INCOMPLETE instead). The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        },
        {
         "hu": "AI-vázlat: emberi jóváhagyásig csak javaslat, és SOHA nem számít második értékelőnek (6. döntés).",
@@ -1857,7 +1857,7 @@
       "validator_version": null,
       "engine_version": "0.1.0",
       "legacy": false,
-      "instrument_sha256": "f3b619e46c229d9e1283f3f5d9a034ad66d731298e81c5c213d4175a39bfbe03",
+      "instrument_sha256": "19d6aaaacb0a418b4a797d35b569167805f6b790409c7c90bce8432cdc980244",
       "scope": "assignment",
       "target": {
        "unit": "HART1977",
@@ -2036,12 +2036,12 @@
        "official": false,
        "basis": "rob2-2019-flowchart-conservative",
        "label": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "text": {
-        "hu": "Konzervatív szabály a RoB 2 (2019) folyamatábrái szerint — NEM a hivatalos RoB 2 algoritmus",
-        "en": "Conservative rule following the RoB 2 (2019) flowcharts — NOT the official RoB 2 algorithm"
+        "hu": "Konzervatív szabály a RoB 2 (2019) algoritmusai szerint — NEM a hivatalos RoB 2 eszköz",
+        "en": "Conservative rule following the RoB 2 (2019) algorithms — NOT the official RoB 2 tool"
        },
        "lines": [
         {
@@ -2069,8 +2069,8 @@
          "en": "Implied overall: Some concerns — set by the worst domain."
         },
         {
-         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
-         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+         "hu": "Konzervatív szabály (rob2-2019-flowchart-conservative) — NEM a hivatalos RoB 2 algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol a kritérium a válaszokból nem dönthető el (köztes vagy felső szint), a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (rob2-2019-flowchart-conservative) — NOT the official RoB 2 algorithm: it follows the published flowchart / criteria branches but takes the stricter level where the answers cannot decide between the middle and the top tier, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
         }
        ],
        "provisional": false,
@@ -2114,8 +2114,8 @@
       "guards": [],
       "notes": [
        {
-        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti folyamatábráinak ágait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve. A szabály „konzervatív”, nem „publikált”: a hivatalos útmutató nem volt elérhető minden ág tételes ellenőrzéséhez; ahol egy ág nem ellenőrizhető (1. domén: nem véletlen szekvencia + problémára utaló kiinduló különbség), a szigorúbb ítéletet adja, így sosem enyhébb a hivatalosnál. A „Nem alkalmazható” válasz egy kérdezendő tételen „Nincs információ”-ként számít. A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
-        "en": "The domain rules follow the branches of the per-domain flowcharts of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4). The rule is labelled 'conservative', not 'published': the official guidance was not available to check every branch; where a branch could not be checked (domain 1: non-random sequence with baseline differences suggesting a problem) it takes the stricter judgement, so it is never more lenient than the official algorithm. 'Not applicable' on an applicable question counts as 'No information'. The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
+        "hu": "A domének gépi szabályai (rules) a RoB 2 útmutató (2019. aug. 22.; Sterne és mtsai, BMJ 2019;366:l4898) doménenkénti algoritmusait követik, az irányító kérdéseket (2.1–2.4, 3.3, 4.3, 4.4) is beleértve, a betartási változat 2. doménjével együtt; az 1., 3–5. domént és a betartási 2. domént összevetettük a 2019-es kritériumtáblával (újraközölve: PMC8191126, 2. táblázat), a besorolási 2. domént a sablon útválasztásával, és mindet a validator 2.0.0 algoritmusával — a válaszkombinációk teljes felsorolásán eltérés nélkül. A szabály „konzervatív” címkéjű, nem „publikált”: nem a hivatalos eszköz, és a kérdezendő tételen adott „Nem alkalmazható” választ „Nincs információ”-ként számolja (a validator az ilyen domént hiányosnak, INCOMPLETE-nek jelzi). A doménítélet és az összítélet a Tiéd; ha eltérsz az implikálttól, indokold (X017). Összítélet: alacsony, ha minden domén alacsony; magas, ha bármely domén magas (vagy több „némi aggály” együtt — ez emberi ítélet).",
+        "en": "The domain rules follow the per-domain algorithms of the RoB 2 guidance (22 August 2019; Sterne et al., BMJ 2019;366:l4898), including the routing questions (2.1–2.4, 3.3, 4.3, 4.4) and the domain 2 of the effect-of-adhering variant; domains 1 and 3–5 and the adhering domain 2 were checked against the 2019 criteria table (reproduced in PMC8191126, Table 2), the assignment domain 2 against the template's routing, and all of them against the validator 2.0.0 algorithm — no disagreement over the full enumeration of answer combinations. The rule is labelled 'conservative', not 'published': it is not the official tool, and it counts 'Not applicable' on a question the routing asks as 'No information' (the validator marks such a domain INCOMPLETE instead). The domain and overall judgements are yours; give a reason if you depart from the implied one (X017). Overall: low if every domain is low; high if any domain is high (or several 'some concerns' together — a human judgement)."
        }
       ],
       "warnings": [
@@ -2212,7 +2212,7 @@
       "validator_version": null,
       "engine_version": "0.1.0",
       "legacy": false,
-      "instrument_sha256": "d740a69ec4189babbacce0160f46625fe758c623c5f54de62d0604e727a84252",
+      "instrument_sha256": "817dc8bd38ce622b65179ef7ad07954be439ea3cc603ccd5e0637cea9f1ef3da",
       "scope": "assignment",
       "target": {
        "unit": "FRIMODT1973",
@@ -2601,8 +2601,8 @@
          "en": "Implied overall: — (incomplete domain) — set by the worst domain."
         },
         {
-         "hu": "Konzervatív szabály (robins-i-2016-criteria-conservative) — NEM a hivatalos ROBINS-I algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol egy ág a forrással nem volt ellenőrizhető, a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
-         "en": "Conservative rule (robins-i-2016-criteria-conservative) — NOT the official ROBINS-I algorithm: it follows the published flowchart / criteria branches but takes the stricter level where a branch could not be checked against the source, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
+         "hu": "Konzervatív szabály (robins-i-2016-criteria-conservative) — NEM a hivatalos ROBINS-I algoritmus: a publikált folyamatábra / kritériumok ágait követi, de ahol a kritérium a válaszokból nem dönthető el (köztes vagy felső szint), a szigorúbb szintet adja, és útválasztási ellentmondásnál a „Nincs információ” ágon halad. Határesetben vesd össze a hivatalos eszközzel, és ha eltérsz, indokold.",
+         "en": "Conservative rule (robins-i-2016-criteria-conservative) — NOT the official ROBINS-I algorithm: it follows the published flowchart / criteria branches but takes the stricter level where the answers cannot decide between the middle and the top tier, and follows the 'No information' branch on a routing conflict. Check borderline domains against the official tool and give a reason if you override."
         }
        ],
        "provisional": false,
@@ -2618,8 +2618,8 @@
       "guards": [],
       "notes": [
        {
-        "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). A 3. és 7. domén a polaritás-alapú szabályt használja. A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
-        "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Domains 3 and 7 use the polarity rule. The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
+        "hu": "A 2016-os ROBINS-I-nek nincs a jelző-kérdésekből gépiesen számolható hivatalos algoritmusa; a domének gépi szabályai (rules) a Table B–C kritériumait követik konzervatívan (a „súlyos” és a „mérsékelt” közti határeset a szigorúbb oldalra kerül), és tiszteletben tartják az útválasztást (pl. az 1.3 irányító kérdés; a jól kezelt idővel változó zavarás mérsékelt, nem súlyos; korrigált szelekció mérsékelt). Az útválasztás a Table A szerinti: a „Nincs információ” egyetlen feltételes kérdést sem nyit meg (az 1.2 / 1.3 NI esetén sem az 1.4–1.6, sem az 1.7–1.8 ág nem következik), és a nem kérdezett tétel válasza nem számít. A 3. és 7. domén a polaritás-alapú szabályt használja (a 3.2 „Nem” a Table B szerint legalább mérsékelt, nem súlyos). A „kritikus” és a „nincs információ” ítéletet a szabály sosem adja: ezek emberi döntések. Ha eltérsz az implikálttól, indokold (X017).",
+        "en": "The 2016 ROBINS-I has no official algorithm computable from the signalling questions; the domain rules follow the Table B–C criteria conservatively (borderline serious/moderate goes to the stricter side) and respect the routing (e.g. 1.3 is a routing question; well-handled time-varying confounding is moderate, not serious; corrected selection is moderate). Routing follows Table A: 'No information' opens no conditional question (with NI at 1.2 / 1.3 neither the 1.4–1.6 nor the 1.7–1.8 branch follows), and an answer at a question that is not asked does not count. Domains 3 and 7 use the polarity rule (a 'No' at 3.2 is at least moderate per Table B, not serious). The rule never yields 'critical' or 'no information': these are human decisions. Give a reason if you depart from the implied judgement (X017)."
        }
       ],
       "warnings": []
@@ -5087,8 +5087,8 @@
        },
        "lines": [
         {
-         "hu": "Besorolás: MAGAS (kritikus hiba 0; nem kritikus gyengeség 1) — IDEIGLENES: 1 tétel hiányzik · ha a „részben igen” kritikus tételen gyengeség lenne: MÉRSÉKELT",
-         "en": "Rating: HIGH (critical flaws 0; non-critical weaknesses 1) — PROVISIONAL: 1 item(s) unanswered · if 'partial yes' on a critical item counted as a weakness: MODERATE"
+         "hu": "Besorolás: MAGAS (kritikus hiba 0; nem kritikus gyengeség 1) — IDEIGLENES: 1 tétel hiányzik · ha a „részben igen” gyengeség lenne: MÉRSÉKELT",
+         "en": "Rating: HIGH (critical flaws 0; non-critical weaknesses 1) — PROVISIONAL: 1 item(s) unanswered · if 'partial yes' counted as a weakness: MODERATE"
         }
        ],
        "provisional": true,
@@ -5138,8 +5138,8 @@
        "differs": true,
        "kb_ref": "AMSTAR2-00",
        "text": {
-        "hu": "Besorolás: MAGAS (kritikus hiba 0; nem kritikus gyengeség 1) — IDEIGLENES: 1 tétel hiányzik · ha a „részben igen” kritikus tételen gyengeség lenne: MÉRSÉKELT",
-        "en": "Rating: HIGH (critical flaws 0; non-critical weaknesses 1) — PROVISIONAL: 1 item(s) unanswered · if 'partial yes' on a critical item counted as a weakness: MODERATE"
+        "hu": "Besorolás: MAGAS (kritikus hiba 0; nem kritikus gyengeség 1) — IDEIGLENES: 1 tétel hiányzik · ha a „részben igen” gyengeség lenne: MÉRSÉKELT",
+        "en": "Rating: HIGH (critical flaws 0; non-critical weaknesses 1) — PROVISIONAL: 1 item(s) unanswered · if 'partial yes' counted as a weakness: MODERATE"
        },
        "note": {
         "hu": "Az AMSTAR 2 az áttekintés eredményeibe vetett bizalmat minősíti, nem a bizonyosságot (az a GRADE).",
