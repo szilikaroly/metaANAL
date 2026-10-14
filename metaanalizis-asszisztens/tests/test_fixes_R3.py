@@ -14,7 +14,7 @@ import shutil
 import tempfile
 import unittest
 
-from _helpers import ROOT, assert_close
+from _helpers import ROOT, assert_close, need_repo
 from metaelemzes import bias as B
 from metaelemzes import conversions as C
 from metaelemzes import models as M
@@ -405,6 +405,7 @@ class TestKBP12NoneTextIsZero(unittest.TestCase):
 
 
 # ================================================================ AG-14: --strict a sablonokban
+@need_repo
 class TestAG14StrictInTemplates(unittest.TestCase):
     def test_AG_14_every_logged_kb_reference_template_is_strict(self):
         docs = dict(agent_docs(), SKILL=_read(SKILL))

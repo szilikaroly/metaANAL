@@ -11,6 +11,17 @@ if ROOT not in sys.path:
 
 REF_PATH = os.path.join(HERE, "reference", "metafor_reference.json")
 
+# A repó .claude/ forrása (ágensek, skill) csak a repóból futtatva van jelen; a telepített pluginban
+# (<plugins>/cache/<marketplace>/<plugin>/<verzió>/) nincs — az ezeket olvasó dokumentációs tesztek ott kimaradnak.
+REPO = os.path.dirname(ROOT)
+HAS_REPO_SOURCES = os.path.isdir(os.path.join(REPO, ".claude", "agents"))
+
+
+def need_repo(obj):
+    """skipUnless-dekorátor a repó .claude/ forrását olvasó tesztekhez (osztályra és metódusra is)."""
+    import unittest
+    return unittest.skipUnless(HAS_REPO_SOURCES, "plugin-telepítésből fut: a repó .claude/ forrása nincs jelen")(obj)
+
 
 def load_reference():
     with open(REF_PATH, encoding="utf-8") as fh:
