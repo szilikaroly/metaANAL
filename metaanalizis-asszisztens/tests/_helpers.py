@@ -17,6 +17,25 @@ REPO = os.path.dirname(ROOT)
 HAS_REPO_SOURCES = os.path.isdir(os.path.join(REPO, ".claude", "agents"))
 
 
+def split_cmdline(cmd):
+    """A naplózott (újrafuttatható) parancssor szétbontása: POSIX-on shlex.split, Windows-on a cmd/CRT
+    szabályai szerint (CommandLineToArgvW) — a cli._replay_command ott subprocess.list2cmdline-nal idéz."""
+    if os.name != "nt":
+        import shlex
+        return shlex.split(cmd)
+    import ctypes
+    from ctypes import wintypes
+    fn = ctypes.windll.shell32.CommandLineToArgvW
+    fn.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_int)]
+    fn.restype = ctypes.POINTER(wintypes.LPWSTR)
+    n = ctypes.c_int()
+    argv = fn(cmd, ctypes.byref(n))
+    try:
+        return [argv[i] for i in range(n.value)]
+    finally:
+        ctypes.windll.kernel32.LocalFree(argv)
+
+
 def need_repo(obj):
     """skipUnless-dekorátor a repó .claude/ forrását olvasó tesztekhez (osztályra és metódusra is)."""
     import unittest

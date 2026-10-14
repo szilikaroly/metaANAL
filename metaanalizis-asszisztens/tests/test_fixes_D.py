@@ -361,7 +361,8 @@ class TestReadonlyUri(_Tmp):
         self.assertEqual(sorted(n for n in os.listdir(self.tmp) if os.path.isfile(os.path.join(self.tmp, n))), [])
 
     def test_uri_forms(self):
-        self.assertTrue(kb._readonly_uri("/x/kb#1/a%41?.sqlite").startswith("file:///x/kb%231/a%2541%3F.sqlite?mode=ro"))
+        posix = pathlib.PurePosixPath   # a platform Path-ja Windows-on meghajtóbetűt tenne a /x/… elé
+        self.assertEqual(kb._readonly_uri("/x/kb#1/a%41?.sqlite", path_cls=posix), "file:///x/kb%231/a%2541%3F.sqlite?mode=ro")
         win = pathlib.PureWindowsPath
         self.assertEqual(kb._readonly_uri(r"C:\SR #2\kb.sqlite", path_cls=win), "file:///C:/SR%20%232/kb.sqlite?mode=ro")
         self.assertEqual(kb._readonly_uri(r"\\server\share\kb.sqlite", path_cls=win), "file:////server/share/kb.sqlite?mode=ro")

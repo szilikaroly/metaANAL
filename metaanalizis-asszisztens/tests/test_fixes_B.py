@@ -9,14 +9,13 @@ import io
 import json
 import math
 import os
-import shlex
 import shutil
 import sqlite3
 import tempfile
 import unittest
 from contextlib import redirect_stdout, redirect_stderr
 
-from _helpers import ROOT, assert_close
+from _helpers import ROOT, assert_close, split_cmdline
 from metaelemzes import cli, conversions as C, effect_sizes as E, projekt, tableio, validate as V
 
 EXAMPLES = os.path.join(ROOT, "peldak")
@@ -558,7 +557,7 @@ class TestProjectRunLog(_TmpMixin, unittest.TestCase):
         con = sqlite3.connect(os.path.join(proj, "projekt.sqlite"))
         command, data_path, outdir, summary = con.execute("SELECT command, data_path, outdir, summary FROM run").fetchone()
         con.close()
-        argv = shlex.split(command)
+        argv = split_cmdline(command)
         self.assertTrue(os.path.isabs(argv[1]) and argv[1].endswith("ma.py"))
         self.assertEqual(argv[argv.index("--title") + 1], "BCG oltás RR")
         data_arg = argv[argv.index("--data") + 1]
@@ -596,7 +595,7 @@ class TestProjectRunLog(_TmpMixin, unittest.TestCase):
         ns = argparse.Namespace(out=None, _argv=["analyze", "--data=rel/x.csv", "--measure", "RR",
                                                 "--title", "a b'c", "--pro", "pp"])
         cmd = cli._replay_command(ns, "outdir")
-        argv = shlex.split(cmd)
+        argv = split_cmdline(cmd)
         self.assertIn("--data=" + os.path.abspath("rel/x.csv"), argv)
         self.assertEqual(argv[argv.index("--title") + 1], "a b'c")
         self.assertEqual(argv[argv.index("--pro") + 1], os.path.abspath("pp"))
