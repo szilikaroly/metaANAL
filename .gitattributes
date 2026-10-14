@@ -1,0 +1,10 @@
+# Minden szöveges fájl LF-fel kerül a munkakönyvtárba, a git core.autocrlf beállításától függetlenül.
+# Windows-on a Git alapértelmezése core.autocrlf=true: enélkül a klón (és a Claude Code marketplace-klónja)
+# CRLF-et kap, és a kanonikus bájtokat / SHA-t ellenőrző tesztek elbuknak (test_v1_instruments).
+* text=auto eol=lf
+# a Windows-os indító cmd.exe-nek CRLF kell
+*.cmd text eol=crlf
+*.png binary
+*.jpg binary
+*.pdf binary
+*.sqlite binary
