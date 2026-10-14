@@ -150,7 +150,9 @@ már van `permissions` rész, a sorokat abba fűzd be.
       "mcp__PubMed",
       "mcp__claude_ai_PubMed",
       "mcp__Clinical_Trials",
-      "mcp__claude_ai_Clinical_Trials"
+      "mcp__claude_ai_Clinical_Trials",
+      "mcp__plugin_bio-research_pubmed",
+      "mcp__plugin_bio-research_c-trials"
     ],
     "deny": [
       "Read(//**/_privat/**)",
@@ -169,7 +171,7 @@ már van `permissions` rész, a sorokat abba fűzd be.
   `Bash(python3 "<kicsomagolt mappa>/metaanalizis-asszisztens/ma.py" *)` — a gyorsítótáras sorok erre nem illeszkednek.
 - A `WebFetch` sorok a tudományos adatbázisok (PubMed, Europe PMC, Crossref, OpenAlex, ClinicalTrials.gov, PROSPERO …)
   lekérdezését, az `mcp__` sorok a PubMed és a ClinicalTrials.gov konnektort engedik (claude.ai → Beállítások →
-  Konnektorok; részletek: [ESZKOZOK_ES_HOZZAFERESEK.md](ESZKOZOK_ES_HOZZAFERESEK.md)).
+  Konnektorok, illetve az Anthropic bio-research pluginjának `mcp__plugin_bio-research_…` eszközei; részletek: [ESZKOZOK_ES_HOZZAFERESEK.md](ESZKOZOK_ES_HOZZAFERESEK.md)).
 - A `deny` sorok megtiltják, hogy Claude fájlolvasó eszközei a `_privat/` mappákba és a `_PHI` jelölésű fájlokba
   belenézzenek (9. pont).
 - A repóban dolgozva ezek nagy része már be van állítva (a repó `.claude/settings.json` fájlja).

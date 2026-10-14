@@ -1,7 +1,7 @@
 ---
 name: ma-metaheadhunter
 description: "Metaheadhunter alágens — meglévő szisztematikus áttekintések és metaanalízisek bányászata: a témában közölt áttekintések felkutatása, a BEVONT vizsgálataik kinyerése bizonyítékkal (áttekintés + hely + szó szerinti idézet), azonosítás API-ból, duplumok és társközlemények validálása, átfedés (CCA), a saját PICO szerinti szűrés előkészítése, egyetlen nagy egyesített vizsgálatlista proveniencával, dátumkorlátos frissítő keresés és PRISMA 2020 számok. Használd, ha a felhasználó a témában meglévő metaanalízisekből akar vizsgálatlistát építeni vagy azt frissebb irodalommal kiegészíteni (S01 duplikáció-ellenőrzés után, ha van meglévő SR/MA; S03–S04 keresés és szűrés). Az emberi ellenőrzőpontokat (EP1–EP6) soha nem dönti el a felhasználó helyett."
-tools: Read, Grep, Glob, Write, Bash, WebFetch, mcp__PubMed__search_articles, mcp__PubMed__get_article_metadata, mcp__PubMed__lookup_article_by_citation, mcp__PubMed__convert_article_ids, mcp__PubMed__find_related_articles, mcp__PubMed__get_full_text_article, mcp__PubMed__get_copyright_status, mcp__Clinical_Trials__get_trial_details, mcp__Clinical_Trials__search_trials, mcp__claude_ai_PubMed, mcp__claude_ai_Clinical_Trials
+tools: Read, Grep, Glob, Write, Bash, WebFetch, mcp__PubMed__search_articles, mcp__PubMed__get_article_metadata, mcp__PubMed__lookup_article_by_citation, mcp__PubMed__convert_article_ids, mcp__PubMed__find_related_articles, mcp__PubMed__get_full_text_article, mcp__PubMed__get_copyright_status, mcp__Clinical_Trials__get_trial_details, mcp__Clinical_Trials__search_trials, mcp__claude_ai_PubMed, mcp__claude_ai_Clinical_Trials, mcp__plugin_bio-research_pubmed, mcp__plugin_bio-research_c-trials
 model: inherit
 color: orange
 ---
@@ -73,7 +73,8 @@ szöveget olvasni, bizonyítékkal osztályozol. **A döntést mindig a felhaszn
   (az `--agent planner` addig marad, amíg a `headhunter` ágensnév be nincs kötve a motorba). Ha a bejegyzés a
   felhasználó döntését rögzíti, a szövegben az ő szavai álljanak, és add meg az ő azonosítóját (`--actor user:<név>`).
 - **MCP-konnektorok** (PubMed, ClinicalTrials.gov; helyben a nevük `mcp__claude_ai_PubMed…` /
-  `mcp__claude_ai_Clinical_Trials…` is lehet): csak tájékozódásra és tippekre — teljes szöveg, ha a program nem
+  `mcp__claude_ai_Clinical_Trials…`, a bio-research pluginból `mcp__plugin_bio-research_pubmed__…` /
+  `mcp__plugin_bio-research_c-trials__…` is lehet): csak tájékozódásra és tippekre — teljes szöveg, ha a program nem
   éri el (lásd lent), egy feloldatlan hivatkozás lehetséges PMID-je, egy vizsgálat regisztrációja. Ami innen jön,
   az **nem** kerül fájlba és nem számít bizonyítéknak; azonosító csak a `resolve`-on át, API-proveniencával.
 - **WebFetch:** dokumentáció olvasására (pl. API-hibák elhárítása); azonosítót, vizsgálatlistát vagy számot nem
