@@ -631,10 +631,10 @@ class TestFixtures(unittest.TestCase):
                 with open(os.path.join(FX, name), encoding="utf-8") as fh:
                     old = fh.read()
                 new = gen.render(name, obj)
-                if old != new and sys.platform == "win32":
-                    # a fixture-ök POSIX-on készülnek; a Windows-os libm az utolsó jegyekben eltérhet (~1e-13), és
-                    # ugyanezért a kimeneti fájlok sha256-ja is. Windows-on csak ezt az eltérést engedjük meg; a
-                    # referencia-platformon az egyezés továbbra is bájtra pontos.
+                if old != new and sys.platform in ("win32", "darwin"):
+                    # a fixture-ök Linuxon készülnek; a Windows-os és a macOS-es libm az utolsó jegyekben eltérhet
+                    # (~1e-13), és ugyanezért a kimeneti fájlok sha256-ja is. Ezeken csak ezt az eltérést engedjük meg;
+                    # a referencia-platformon az egyezés továbbra is bájtra pontos.
                     self.assertEqual(_platform_noise_diffs(json.loads(old), json.loads(new)), [], "elsodródott — futtasd: python3 tests/gui/ui/gen_fixtures_from_engine.py")
                     continue
                 self.assertEqual(old, new, "elsodródott — futtasd: python3 tests/gui/ui/gen_fixtures_from_engine.py")
