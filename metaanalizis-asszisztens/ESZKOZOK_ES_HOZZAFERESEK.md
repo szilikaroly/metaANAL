@@ -14,8 +14,10 @@ a tudásbázis `tool` táblájából és a `PREFLIGHT` ellenőrzőlistából.
 | **Consensus** | gyors tájékozódás a kérdésről a tervezés elején | opcionális | Nem helyettesíti a szisztematikus keresést. |
 | **Google Drive** | a teljes szövegű PDF-ek megosztása az ágensekkel | opcionális | Helyi mappa is megfelel (`tudasbazis/forrasok/` vagy a projektmappa). |
 
-A Claude Code a claude.ai konnektorokat helyben `mcp__claude_ai_<Név>__…` néven látja. Az alágensek mindkét
-névváltozatot engedélyezik, ezért ezzel nincs teendő.
+A Claude Code a claude.ai konnektorokat helyben `mcp__claude_ai_<Név>__…` néven látja. Ha a PubMed, a Clinical Trials
+és a Consensus nálad az Anthropic **bio-research** pluginjából jön (ott a claude.ai konnektor helyett), a nevük
+`mcp__plugin_bio-research_pubmed__…`, `mcp__plugin_bio-research_c-trials__…`, `mcp__plugin_bio-research_consensus__…`.
+Az alágensek mindegyik névváltozatot engedélyezik, ezért ezzel nincs teendő.
 
 ## 2. Claude Code-engedélyek
 

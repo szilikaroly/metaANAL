@@ -93,7 +93,9 @@ def codes(rep, code):
 
 class _Tmp(unittest.TestCase):
     def setUp(self):
-        self.tmp = tempfile.mkdtemp()
+        # realpath: macOS-en a /var/folders a /private/var/folders symlinkje; a cwd=p futás a feloldott utat látja,
+        # a nem feloldott self.tmp-vel összevetve az audit "más projekt" helyének nézné a futást.
+        self.tmp = os.path.realpath(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.tmp, True)
 
     def project(self, name="p", data="adatkinyeres.csv", text=None):

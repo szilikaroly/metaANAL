@@ -16,7 +16,7 @@ import re
 import shlex
 import unittest
 
-from _helpers import ROOT  # noqa: F401  (a sys.path beállítása)
+from _helpers import ROOT, need_repo  # noqa: F401  (a sys.path beállítása)
 from metaelemzes.headhunter import cli as HC
 from metaelemzes.headhunter import net, sources as SRC
 
@@ -57,6 +57,7 @@ def _documented_commands(text):
 class AgentCommandTests(unittest.TestCase):
     """DOC-1, DOC-2."""
 
+    @need_repo
     def test_every_documented_headhunter_command_parses(self):
         cmds = _documented_commands(_read(AGENT))
         self.assertGreater(len(cmds), 8)
@@ -68,6 +69,7 @@ class AgentCommandTests(unittest.TestCase):
                 bad.append("%s → %s" % (cmd, exc))
         self.assertEqual(bad, [])
 
+    @need_repo
     def test_l0_runs_before_init_without_a_project(self):
         agent = _read(AGENT)
         l0 = agent[agent.index("**L0"):agent.index("\n2.", agent.index("**L0"))]
@@ -106,6 +108,7 @@ class PluginAgentCountTests(unittest.TestCase):
 class SearchLogFileTests(unittest.TestCase):
     """DOC-4."""
 
+    @need_repo
     def test_nothing_promises_a_file_the_code_never_writes(self):
         name = "kereses_naplo_headhunter"
         written = False

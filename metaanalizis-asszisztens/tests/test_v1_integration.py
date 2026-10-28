@@ -21,7 +21,7 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from unittest import mock
 
-from _helpers import ROOT
+from _helpers import ROOT, need_repo
 from metaelemzes import api, cli
 
 REPO = os.path.dirname(ROOT)
@@ -118,6 +118,7 @@ class FigureCliTests(unittest.TestCase):
 
 
 class SkillAgentDocsTests(unittest.TestCase):
+    @need_repo
     def test_skill_s03_section_and_orchestrator(self):
         for skill in (os.path.join(REPO, ".claude", "skills", "metaanalizis", "SKILL.md"),
                       os.path.join(ROOT, "skills", "metaanalizis", "SKILL.md")):

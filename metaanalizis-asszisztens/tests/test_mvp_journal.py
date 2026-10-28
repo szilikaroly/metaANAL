@@ -257,6 +257,10 @@ class RevTest(_Tmp):
             r2, changed = w.poll()
             self.assertTrue(changed and r2 > r1)
             self.assertEqual(w.rev(), r2)
+            if os.name == "nt":
+                # a JournalRev szándékosan nyitva tartja a csak olvasó kapcsolatot; Windows-on a nyitott
+                # fájl nem törölhető (WinError 32), így a törlés/csere ág ott nem idézhető elő
+                return
             os.remove(projekt.db_path(self.p))
             r3, changed = w.poll()
             self.assertTrue(changed and r3 > r2)

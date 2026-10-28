@@ -486,4 +486,9 @@ _install_aliases()
 
 
 if __name__ == "__main__":  # pragma: no cover - CLI
+    for _stream in (sys.stdout, sys.stderr):  # Windows-on cp125x helyett UTF-8 (a --json kimenet is), mint a ma.py
+        try:
+            _stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):
+            pass
     sys.exit(main())

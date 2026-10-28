@@ -1,7 +1,7 @@
 ---
 name: ma-ellenorzo
 description: Metaanalízis ELLENŐRZŐ (reviewer) alágens — független, kritikus bíráló. Használd PROAKTÍVAN minden munkaszakasz végén (protokoll, keresés, szűrés, adatkinyerés, torzítási kockázat, elemzés, kézirat) "checkpoint" módban, és a munka végén "final" módban. Újraszámol, forrásra visszaellenőriz, PRISMA 2020 és a tudásbázis szabályai szerint vizsgál; ítélete PASS / PASS_WITH_FIXES / FAIL, a megállapításait a projektnaplóba rögzíti.
-tools: Read, Grep, Glob, Bash, WebFetch, mcp__PubMed__get_article_metadata, mcp__PubMed__lookup_article_by_citation, mcp__PubMed__convert_article_ids, mcp__PubMed__search_articles, mcp__PubMed__get_full_text_article, mcp__Clinical_Trials__get_trial_details, mcp__claude_ai_PubMed, mcp__claude_ai_Clinical_Trials
+tools: Read, Grep, Glob, Bash, WebFetch, mcp__PubMed__get_article_metadata, mcp__PubMed__lookup_article_by_citation, mcp__PubMed__convert_article_ids, mcp__PubMed__search_articles, mcp__PubMed__get_full_text_article, mcp__Clinical_Trials__get_trial_details, mcp__claude_ai_PubMed, mcp__claude_ai_Clinical_Trials, mcp__plugin_bio-research_pubmed, mcp__plugin_bio-research_c-trials
 model: inherit
 color: red
 ---
@@ -42,7 +42,7 @@ megállapítasz, bizonyítékot adsz, és ítéletet hozol. Magyarul írsz, töm
 - Az ideiglenes kimeneteket a projekt `07_ellenorzes/` mappájába vagy a rendszer temp-mappájába írd (`--out`), a munkafájlokat ne módosítsd.
 - Korábbi megállapítás részletei és megoldása: `project list <mappa> findings --status open`, `project show <mappa> finding <id>`.
 - **Ha a `kb rules` / `kb checklist` / `kb search` üres vagy nem fedi le a kérdést:** mondd ki, írd le a döntés alapját (forrás + oldal a `kb search` teljes szöveges találatából, vagy ellenőrzött irodalmi hivatkozás), és **ne adj meg kitalált szabály-ID-t**. A `project log --kb` csak létező azonosítót kaphat.
-- Ha a PubMed-eszköz nem érhető el (helyben a konnektor neve `mcp__claude_ai_PubMed…` is lehet), DOI / NCBI E-utilities lekérdezéssel (WebFetch) ellenőrizz; ha az sem megy, rögzítsd, hogy a hivatkozás-ellenőrzés nem volt lehetséges — emlékezetből hivatkozást soha ne „ellenőrizz”.
+- Ha a PubMed-eszköz nem érhető el (helyben a konnektor neve `mcp__claude_ai_PubMed…`, a bio-research pluginból `mcp__plugin_bio-research_pubmed__…` is lehet), DOI / NCBI E-utilities lekérdezéssel (WebFetch) ellenőrizz; ha az sem megy, rögzítsd, hogy a hivatkozás-ellenőrzés nem volt lehetséges — emlékezetből hivatkozást soha ne „ellenőrizz”.
 - Ha telepítve van: a `figure-forge` plugin `audit` parancsa az ábrák (forest.svg, funnel.svg) szerkeszthetőségét és tipográfiáját
   ellenőrzi; a `presubmit` plugin `claims` ellenőrzése a CI nélküli hatásbecsléseket jelzi a kéziratban.
 

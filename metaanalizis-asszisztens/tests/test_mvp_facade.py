@@ -691,7 +691,9 @@ class TestKbDefaultDb(unittest.TestCase):
     """A tudásbázis alapértelmezett helye: METAELEMZES_KB > a plugin adatmappája > tudasbazis/tudasbazis.sqlite."""
 
     def test_precedence(self):
-        repo = kb.ROOT
+        # szintetikus, nem plugin-gyorsítótárbeli gyökér: a telepített pluginból futtatva a kb.ROOT maga is
+        # plugin-elrendezés, ott a „nincs adatmappa” ág nem állna elő
+        repo = os.path.join(os.sep, "src", "metaANAL", "metaanalizis-asszisztens")
         self.assertEqual(kb._default_db({}, repo), os.path.join(kb.KB_DIR, "tudasbazis.sqlite"))
         self.assertEqual(kb._default_db({"CLAUDE_PLUGIN_DATA": "/x"}, repo), os.path.join("/x", "tudasbazis.sqlite"))
         self.assertEqual(kb._default_db({"CLAUDE_PLUGIN_DATA": "/x", "METAELEMZES_KB": "/k.sqlite"}, repo),

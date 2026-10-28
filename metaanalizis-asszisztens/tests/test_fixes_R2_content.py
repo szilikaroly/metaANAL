@@ -18,7 +18,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 
-from _helpers import ROOT, assert_close
+from _helpers import ROOT, assert_close, need_repo
 from metaelemzes import cli, kb, models, moderators, projekt, validate
 from metaelemzes import conversions as C
 
@@ -271,6 +271,7 @@ class TestRobToolExposure(unittest.TestCase):
             self.assertNotIn("NOS vagy más", rec, rid)
         self.assertIn("ROBINS-E", item("D-S06-001")["recommendation"])
 
+    @need_repo
     def test_KB_R2_05_template_and_skill(self):
         tpl = _read(os.path.join(SABLON, "protokoll_sablon.md"))
         line = [ln for ln in tpl.splitlines() if ln.startswith("- Eszköz (")][0]
@@ -331,6 +332,7 @@ CHECKLIST_REF = re.compile(r"kb checklist ([A-Z0-9_]+)")
 class TestPrismaPsDocumented(_KbTmp):
     """kb_content:KB-R2-07, agents_e2e:AG-15 (2)"""
 
+    @need_repo
     def test_KB_R2_07_readme_and_prompts_name_prisma_p_s(self):
         names = set(kb.checklist_names(self.db))
         self.assertTrue({"PRISMA_P", "PRISMA_S"} <= names)
@@ -343,6 +345,7 @@ class TestPrismaPsDocumented(_KbTmp):
         self.assertIn("kb checklist PRISMA_P", docs["ma-ellenorzo.md"])
         self.assertIn("kb checklist PRISMA_S", docs["ma-ellenorzo.md"])
 
+    @need_repo
     def test_KB_R2_07_documented_checklists_exist(self):
         names = set(kb.checklist_names(self.db))
         wanted = set()
@@ -447,6 +450,7 @@ class TestConvertKinds(unittest.TestCase):
                    it.get(f) or "" for f in ("recommendation", "text", "how_to_verify")))]
         self.assertEqual(bad, [])
 
+    @need_repo
     def test_AG_06_every_referenced_convert_kind_exists(self):
         texts = [text_of(it) for it in ITEMS.values()] + list(agent_docs().values()) + [_read(SKILL), _read(README)]
         ref = set()
@@ -488,6 +492,7 @@ class TestConvertKinds(unittest.TestCase):
 
 
 # ======================================================== értékelő: motoron kívüli képletek, naplózott futás
+@need_repo
 class TestEvaluatorCalculations(unittest.TestCase):
     """agents_e2e:AG-07"""
 
@@ -524,6 +529,7 @@ def _covered_stages(text, role):
     return stages, generic
 
 
+@need_repo
 class TestAgentRuleCoverage(_KbTmp):
     """agents_e2e:AG-08"""
 
@@ -584,6 +590,7 @@ class TestSmdEgger(unittest.TestCase):
         self.tmp = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.tmp, True)
 
+    @need_repo
     def test_AG_12_prompts_flag_smd_egger(self):
         docs = agent_docs()
         for d in ("ma-tervezo.md", "ma-ertekelo.md"):
@@ -653,6 +660,7 @@ class TestGitignorePhi(unittest.TestCase):
                   "reviews/x/03_adatok/x_PHI/adat.csv"):
             self.assertTrue(self.ignored(p), p)
 
+    @need_repo
     def test_AG_13_docs_list_the_actual_patterns(self):
         gi = _read(os.path.join(REPO, ".gitignore"))
         pats = [ln.strip() for ln in gi.splitlines()
@@ -676,6 +684,7 @@ class TestTau2MethodClaim(unittest.TestCase):
         self.tmp = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, self.tmp, True)
 
+    @need_repo
     def test_AG_15_skill_claim_matches_results_json(self):
         skill = _read(SKILL)
         self.assertNotIn("minden blokkjában a ténylegesen használt", skill)
